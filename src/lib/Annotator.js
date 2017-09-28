@@ -541,7 +541,19 @@ class Annotator extends EventEmitter {
         return this.annotationService.getThreadMap(this.fileVersionId).then(this.generateThreadMap);
     }
 
+    /**
+     * Generates a map of thread ID to annotations in thread by page.
+     *
+     * @private
+     * @param {Object} threadMap - Annotations to generate map from
+     * @return {void}
+     */
     generateThreadMap(threadMap) {
+        const { annotator } = this.options;
+        if (!annotator) {
+            return;
+        }
+
         // Generate map of page to threads
         Object.keys(threadMap).forEach((threadID) => {
             const annotations = threadMap[threadID];
@@ -553,11 +565,6 @@ class Annotator extends EventEmitter {
             // Bind events on valid annotation thread
             const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
             this.bindCustomListenersOnThread(thread);
-
-            const { annotator } = this.options;
-            if (!annotator) {
-                return;
-            }
 
             if (this.modeControllers[firstAnnotation.type]) {
                 const controller = this.modeControllers[firstAnnotation.type];

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import Annotation from '../Annotation';
 import AnnotationDialog from '../AnnotationDialog';
+import AnnotationService from '../AnnotationService';
 import * as annotatorUtil from '../annotatorUtil';
 import * as constants from '../annotationConstants';
 
@@ -10,6 +11,7 @@ const CLASS_CANNOT_ANNOTATE = 'cannot-annotate';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
+const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 const SELECTOR_DELETE_CONFIRMATION = '.delete-confirmation';
 
 let dialog;
@@ -28,7 +30,7 @@ describe('lib/AnnotationDialog', () => {
             annotatedElement: document.querySelector('.annotated-element'),
             container: document,
             location: {},
-            annotations: [],
+            annotations: {},
             canAnnotate: true
         });
         dialog.setup([]);
@@ -300,7 +302,7 @@ describe('lib/AnnotationDialog', () => {
             const dialogEl = document.createElement('div');
             sandbox.stub(dialog, 'generateDialogEl').returns(dialogEl);
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
-            stubs.add = sandbox.stub(dialog, 'addAnnotationElement');
+            stubs.addSorted = sandbox.stub(dialog, 'addSortedAnnotations');
 
             stubs.annotation = new Annotation({
                 annotationID: 'someID',
@@ -330,7 +332,59 @@ describe('lib/AnnotationDialog', () => {
             dialog.isMobile = true;
             dialog.setup([stubs.annotation, stubs.annotation], {});
             expect(stubs.bind).to.not.be.called;
-            expect(stubs.add).to.be.calledTwice;
+            expect(stubs.addSorted).to.be.called;
+        });
+    });
+
+    describe('addSortedAnnotations()', () => {
+        it('should add annotations to the dialog in chronological order', () => {
+            // Dates are provided as a string format from the API such as "2016-10-30T14:19:56",
+            // ensures that the method converts to a Date() format for comparison/sorting
+            // Hard coding dates to ensure formatting resembles API response
+            const threadID = AnnotationService.generateID();
+            const annotation1 = new Annotation({
+                annotationID: 1,
+                threadID,
+                text: 'blah',
+                threadNumber: '1',
+                user: { id: 1 },
+                permissions: { can_delete: false },
+                created: '2016-10-29T14:19:56'
+            });
+
+            // Ensures annotations are not provided in chronological order
+            const annotation3 = new Annotation({
+                annotationID: 3,
+                threadID,
+                text: 'blah3',
+                threadNumber: '1',
+                user: { id: 1 },
+                permissions: { can_delete: false },
+                created: '2016-10-30T14:19:56'
+            });
+
+            const annotation2 = new Annotation({
+                annotationID: 2,
+                threadID,
+                text: 'blah2',
+                threadNumber: '1',
+                user: { id: 1 },
+                permissions: { can_delete: false },
+                created: '2016-10-30T14:20:56'
+            });
+
+            // Chronologically ordered by annotationID -> [1, 3, 2]
+            const annotations = {
+                1: annotation1,
+                2: annotation2,
+                3: annotation3
+            };
+
+            dialog.addSortedAnnotations(annotations);
+            const annotationContainerEl = dialog.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
+            expect(annotationContainerEl.childNodes[0]).to.have.attr('data-annotation-id', '1');
+            expect(annotationContainerEl.childNodes[1]).to.have.attr('data-annotation-id', '3');
+            expect(annotationContainerEl.childNodes[2]).to.have.attr('data-annotation-id', '2');
         });
     });
 

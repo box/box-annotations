@@ -464,8 +464,7 @@ describe('lib/Annotator', () => {
                     someID2: [{}]
                 };
                 stubs.threadPromise = Promise.resolve(threadMap);
-                sandbox.stub(annotator, 'emit');
-                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+                stubs.map = sandbox.stub(annotator, 'generateThreadMap');
 
                 annotator.permissions = {
                     canViewAllAnnotations: true,
@@ -473,58 +472,85 @@ describe('lib/Annotator', () => {
                 };
             });
 
-            it('should not fetch existing annotations if the user does not have correct permissions', () => {
+            it('should not fetch existing annotations if the user does not have correct permissions', (done) => {
                 stubs.serviceMock.expects('getThreadMap').never();
                 annotator.permissions = {
                     canViewAllAnnotations: false,
                     canViewOwnAnnotations: false
                 };
+
                 const result = annotator.fetchAnnotations();
-                expect(result instanceof Promise).to.be.truthy;
+                result.should.be.fulfilled.then(() => {
+                    expect(result).to.be.truthy;
+                    done();
+                }).catch(() => {
+                    sinon.assert.failException;
+                });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(Promise.resolve());
+            it('should fetch existing annotations if the user can view all annotations', (done) => {
+                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: false,
                     canViewOwnAnnotations: true
                 };
+
                 const result = annotator.fetchAnnotations();
-                expect(result instanceof Promise).to.be.truthy;
+                result.should.be.fulfilled.then(() => {
+                    expect(result).to.be.truthy;
+                    expect(stubs.map).to.be.called;
+                    done();
+                }).catch(() => {
+                    sinon.assert.failException;
+                });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(Promise.resolve());
+            it('should fetch existing annotations if the user can view all annotations', (done) => {
+                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: true,
                     canViewOwnAnnotations: false
                 };
+
                 const result = annotator.fetchAnnotations();
-                expect(result instanceof Promise).to.be.truthy;
+                result.should.be.fulfilled.then(() => {
+                    expect(result).to.be.truthy;
+                    stubs.threadPromise.should.be.fulfilled.then(() => {
+                    expect(stubs.map).to.be.called;
+                        done();
+                    });
+                }).catch(() => {
+                    sinon.assert.failException;
+                });
+            });
+        });
+
+        describe('generateThreadMap()', () => {
+            beforeEach(() => {
+                stubs.threadMap = {
+                    someID: [{}, {}],
+                    someID2: [{}]
+                };
+                sandbox.stub(annotator, 'emit');
+                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
             });
 
-            it('should reset and create a new thread map by fetching annotation data from the server', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
+            it('should do nothing if annotator conf does not exist in options', () => {
+                annotator.options = {};
+                annotator.generateThreadMap(stubs.threadMap);
+                expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.fetch);
+            });
+
+            it('should reset and create a new thread map by from annotations fetched from server', () => {
                 stubs.createThread = sandbox.stub(annotator, 'createAnnotationThread');
                 stubs.createThread.onFirstCall();
                 stubs.createThread.onSecondCall().returns(stubs.thread);
                 sandbox.stub(annotator, 'bindCustomListenersOnThread');
 
-                const result = annotator.fetchAnnotations();
-                return stubs.threadPromise.then(() => {
-                    expect(annotator.threads).to.not.be.undefined;
-                    expect(annotator.createAnnotationThread).to.be.calledTwice;
-                    expect(annotator.bindCustomListenersOnThread).to.be.calledTwice;
-                    expect(result).to.be.an.object;
-                });
-            });
-
-            it('should emit a message to indicate that all annotations have been fetched', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
-                annotator.fetchAnnotations();
-                return stubs.threadPromise.then(() => {
-                    expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                });
+                annotator.generateThreadMap(stubs.threadMap);
+                expect(annotator.createAnnotationThread).to.be.calledTwice;
+                expect(annotator.bindCustomListenersOnThread).to.be.calledTwice;
+                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
             });
         });
 

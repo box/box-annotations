@@ -473,7 +473,7 @@ describe('lib/doc/DocAnnotator', () => {
             stubs.createAnnotationThread.returns(thread);
 
             annotator.createHighlightThread('some text with severe passive agression');
-            expect(stubs.createAnnotationThread).to.be.calledWith([], location, TYPES.highlight_comment);
+            expect(stubs.createAnnotationThread).to.be.calledWith({}, location, TYPES.highlight_comment);
         });
 
         it('should bail out of making an annotation if thread is null', () => {

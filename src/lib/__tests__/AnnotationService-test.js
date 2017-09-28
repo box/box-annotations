@@ -3,6 +3,7 @@ import fetchMock from 'fetch-mock';
 import '../polyfill';
 import Annotation from '../Annotation';
 import AnnotationService from '../AnnotationService';
+import * as annotatorUtil from '../annotatorUtil';
 
 const API_HOST = 'https://app.box.com/api';
 
@@ -160,11 +161,14 @@ describe('lib/AnnotationService', () => {
             });
 
             return annotationService.read(2).then((annotations) => {
-                expect(annotations.length).to.equal(2);
+                expect(Object.keys(annotations).length).to.equal(2);
 
-                const createdAnnotation1 = annotations[0];
-                const createdAnnotation2 = annotations[1];
+                const firstAnnotationId = Object.keys(annotations)[0];
+                const createdAnnotation1 = annotations[firstAnnotationId];
                 expect(createdAnnotation1.text).to.equal(annotation1.text);
+
+                const secondAnnotationId = Object.keys(annotations)[1];
+                const createdAnnotation2 = annotations[secondAnnotationId];
                 expect(createdAnnotation2.text).to.equal(annotation2.text);
             });
         });
@@ -227,97 +231,98 @@ describe('lib/AnnotationService', () => {
         it('should call read and then generate a map of thread ID to annotations in those threads', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                threadID: AnnotationService.generateID(),
+                annotationID: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
+                threadID: '123abc',
                 location: { x: 0, y: 0 }
             });
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                threadID: AnnotationService.generateID(),
+                annotationID: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
+                threadID: '456def',
                 location: { x: 0, y: 0 }
             });
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                threadID: annotation1.threadID,
+                annotationID: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
+                threadID: '123abc',
                 location: { x: 0, y: 0 }
             });
 
-            sandbox.stub(annotationService, 'read').returns(Promise.resolve([annotation1, annotation2, annotation3]));
+            const threads = {
+                1: annotation1,
+                2: annotation2,
+                3: annotation3
+            };
+            sandbox.stub(annotationService, 'read').returns(Promise.resolve(threads));
+            sandbox.stub(annotationService, 'createThreadMap').returns(threads);
 
             return annotationService.getThreadMap(2).then((threadMap) => {
-                expect(threadMap[annotation1.threadID].length).to.equal(2);
-                expect(threadMap[annotation2.threadID][0]).to.contain(annotation2);
-                expect(threadMap[annotation1.threadID][0].threadNumber).to.equal(threadMap[annotation1.threadID][1].threadNumber);
-                expect(threadMap[annotation1.threadID][0].threadNumber).to.not.equal(
-                    threadMap[annotation2.threadID][0].thread
-                );
+                expect(annotationService.createThreadMap).to.be.called;
             });
         });
     });
 
     describe('createThreadMap()', () => {
-        it('should create a thread map with the correct annotations, in the correct order', () => {
-            // Dates are provided as a string format from the API such as "2016-10-30T14:19:56",
-            // ensures that the method converts to a Date() format for comparison/sorting
-            // Hard coding dates to ensure formatting resembles API response
+        it('should create a thread map with the correct annotations', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                threadID: AnnotationService.generateID(),
+                annotationID: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
-                location: { x: 0, y: 0 },
-                created: '2016-10-29T14:19:56'
-            });
-
-            // Ensures annotations are not provided in chronological order
-            const annotation4 = new Annotation({
-                fileVersionId: 2,
-                threadID: annotation1.threadID,
-                type: 'point',
-                text: 'blah4',
-                threadNumber: '1',
-                location: { x: 0, y: 0 },
-                created: '2016-10-30T14:19:56'
+                threadID: '123abc',
+                location: { x: 0, y: 0 }
             });
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                threadID: AnnotationService.generateID(),
+                annotationID: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
-                location: { x: 0, y: 0 },
-                created: '2016-10-30T14:19:56'
+                threadID: '456def',
+                location: { x: 0, y: 0 }
             });
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                threadID: annotation1.threadID,
+                annotationID: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
-                location: { x: 0, y: 0 },
-                created: '2016-10-31T14:19:56'
+                threadID: '123abc',
+                location: { x: 0, y: 0 }
+            });
+
+            const annotation4 = new Annotation({
+                fileVersionId: 2,
+                annotationID: 4,
+                type: 'point',
+                text: 'blah4',
+                threadNumber: '1',
+                threadID: '123abc',
+                location: { x: 0, y: 0 }
             });
 
             const threadMap = annotationService.createThreadMap([annotation1, annotation2, annotation3, annotation4]);
 
-            expect(threadMap[annotation1.threadID].length).to.equal(3);
-            expect(threadMap[annotation1.threadID][0]).to.equal(annotation1);
-            expect(threadMap[annotation1.threadID][1]).to.equal(annotation4);
-            expect(threadMap[annotation1.threadID][0].threadNumber).to.equal(threadMap[annotation1.threadID][1].threadNumber);
-            expect(threadMap[annotation1.threadID][0].threadNumber).to.not.equal(threadMap[annotation2.threadID][0].threadNumber);
+            expect(Object.keys(threadMap[annotation1.threadID]).length).to.equal(3);
+
+            const thread = threadMap[annotation1.threadID];
+            expect(thread[1]).to.deep.equal(annotation1);
+            expect(thread[1].threadNumber).to.equal(annotation1.threadNumber);
+            expect(thread).to.not.contain(annotation2);
         });
     });
 
@@ -385,9 +390,10 @@ describe('lib/AnnotationService', () => {
             annotationService.annotations = [];
             annotationService.readFromMarker(resolve, reject, 2, 'a', 1);
             promise.then((result) => {
-                expect(result.length).to.equal(1);
-                expect(result[0].text).to.equal(annotation2.text);
-                expect(result[0].threadNumber).to.equal(annotation2.threadNumber);
+                expect(Object.keys(result).length).to.equal(1);
+                const firstAnnotation = annotatorUtil.getFirstAnnotation(result);
+                expect(firstAnnotation.text).to.equal(annotation2.text);
+                expect(firstAnnotation.threadNumber).to.equal(annotation2.threadNumber);
             });
         });
 

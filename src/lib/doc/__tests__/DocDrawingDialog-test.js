@@ -5,13 +5,13 @@ let docDrawingDialog;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/doc/DocDrawingDialog', () => {
+describe('lib/doc/DocDrawingDialog', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocDrawingDialog-test.html');
+        fixture.load('doc/__tests__/DocDrawingDialog-test.html');
         docDrawingDialog = new DocDrawingDialog({
             annotatedElement: document.querySelector('.annotated-element'),
             location: {},
