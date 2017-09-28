@@ -98,7 +98,7 @@ class ImageAnnotator extends Annotator {
      * it.
      *
      * @override
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} [type] - Optional annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -140,9 +140,9 @@ class ImageAnnotator extends Annotator {
     hideAllAnnotations() {
         const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
         const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        for (let i = 0; i < annotations.length; i++) {
-            annotatorUtil.hideElement(annotations[i]);
-        }
+        Object.keys(annotations).forEach((annotationID) => {
+            annotatorUtil.hideElement(annotations[annotationID]);
+        });
         annotatorUtil.hideElement(annotateButton);
     }
 
@@ -155,9 +155,9 @@ class ImageAnnotator extends Annotator {
     showAllAnnotations() {
         const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
         const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        for (let i = 0; i < annotations.length; i++) {
-            annotatorUtil.showElement(annotations[i]);
-        }
+        Object.keys(annotations).forEach((annotationID) => {
+            annotatorUtil.showElement(annotations[annotationID]);
+        });
         annotatorUtil.showElement(annotateButton);
     }
 }

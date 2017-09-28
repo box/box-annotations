@@ -115,7 +115,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * Sets up the drawing dialog element.
      *
      * @protected
-     * @param {Annotation[]} annotations - Annotations to show in the dialog
+     * @param {Object} annotations - Annotations to show in the dialog
      * @param {HTMLElement} threadEl - Annotation icon element
      * @return {void}
      */
@@ -134,8 +134,9 @@ class DocDrawingDialog extends AnnotationDialog {
 
         this.bindDOMListeners();
 
-        if (annotations.length > 0) {
-            this.assignDrawingLabel(annotations[0]);
+        if (Object.keys(annotations).length > 0) {
+            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            this.assignDrawingLabel(firstAnnotation);
         }
 
         this.element.appendChild(this.drawingDialogEl);
@@ -196,8 +197,9 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {HTMLElement} The drawing dialog element
      */
     generateDialogEl(annotations) {
-        const canCommit = annotations.length === 0;
-        const canDelete = canCommit || (annotations[0].permissions && annotations[0].permissions.can_delete);
+        const canCommit = Object.keys(annotations).length === 0;
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const canDelete = canCommit || (firstAnnotation.permissions && firstAnnotation.permissions.can_delete);
 
         const drawingButtonsEl = document.createElement('span');
         drawingButtonsEl.classList.add(constants.CLASS_ANNOTATION_DRAWING_BTNS);
