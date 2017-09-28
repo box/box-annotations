@@ -17,8 +17,8 @@
                     "exclude": [
                         "**/*-test.js",
                         "build/**",
-                        "src/lib/polyfill.js",
-                        "src/lib/browser.js",
+                        "src/polyfill.js",
+                        "src/browser.js",
                     ]
                 }],
                 ["babel-plugin-transform-require-ignore", { "extensions": [".scss"] }]
