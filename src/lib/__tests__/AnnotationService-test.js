@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import fetchMock from 'fetch-mock';
-import '../../polyfill';
+import '../polyfill';
 import Annotation from '../Annotation';
 import AnnotationService from '../AnnotationService';
 
@@ -9,7 +9,7 @@ const API_HOST = 'https://app.box.com/api';
 let annotationService;
 let sandbox;
 
-describe('lib/annotations/AnnotationService', () => {
+describe('lib/AnnotationService', () => {
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
         annotationService = new AnnotationService({

@@ -31,13 +31,13 @@ if (fs.existsSync('build/rsync.json')) {
 }
 
 const lib = path.resolve('src/lib');
-
 const languages = isRelease
     ? [
         'en-AU',
         'en-CA',
         'en-GB',
         'en-US',
+        'en-x-pseudo',
         'da-DK',
         'de-DE',
         'es-ES',
@@ -67,7 +67,7 @@ function updateConfig(conf, language, index) {
         },
         output: {
             path: path.resolve('dist', version, language),
-            filename: isRelease ? '[Name].min.js' : '[Name].js'
+            filename: '[Name].js'
         }
     });
 

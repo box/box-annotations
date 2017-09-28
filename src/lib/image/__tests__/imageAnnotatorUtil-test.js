@@ -9,13 +9,13 @@ const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
 
-describe('lib/annotations/image/imageAnnotatorUtil', () => {
+describe('lib/image/imageAnnotatorUtil', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/image/__tests__/imageAnnotatorUtil-test.html');
+        fixture.load('image/__tests__/imageAnnotatorUtil-test.html');
     });
 
     afterEach(() => {

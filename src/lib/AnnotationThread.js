@@ -3,7 +3,7 @@ import autobind from 'autobind-decorator';
 import Annotation from './Annotation';
 import AnnotationService from './AnnotationService';
 import * as annotatorUtil from './annotatorUtil';
-import { ICON_PLACED_ANNOTATION } from '../icons/icons';
+import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
     STATES,
     TYPES,

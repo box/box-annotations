@@ -1,7 +1,7 @@
 import AnnotationDialog from '../AnnotationDialog';
 import * as annotatorUtil from '../annotatorUtil';
 import * as constants from '../annotationConstants';
-import { ICON_DRAW_SAVE, ICON_DRAW_DELETE } from '../../icons/icons';
+import { ICON_DRAW_SAVE, ICON_DRAW_DELETE } from '../icons/icons';
 
 const LABEL_TEMPLATE = `<span class="${constants.CLASS_ANNOTATION_DRAWING_LABEL} ${constants.CLASS_HIDDEN}"></span>`;
 const COMMIT_TEMPLATE = `

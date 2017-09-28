@@ -24,13 +24,13 @@ const sandbox = sinon.sandbox.create();
 
 const CLASS_DEFAULT_CURSOR = 'bp-use-default-cursor';
 
-describe('lib/annotations/doc/DocAnnotator', () => {
+describe('lib/doc/DocAnnotator', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocAnnotator-test.html');
+        fixture.load('doc/__tests__/DocAnnotator-test.html');
 
         annotator = new DocAnnotator({
             permissions: {

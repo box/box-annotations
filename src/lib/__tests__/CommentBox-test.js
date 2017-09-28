@@ -6,7 +6,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_POST
 } from '../annotationConstants';
 
-describe('lib/annotations/CommentBox', () => {
+describe('lib/CommentBox', () => {
     const sandbox = sinon.sandbox.create();
     let commentBox;
     let parentEl;

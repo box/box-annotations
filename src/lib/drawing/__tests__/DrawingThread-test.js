@@ -9,7 +9,7 @@ let thread;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/drawing/DrawingThread', () => {
+describe('lib/drawing/DrawingThread', () => {
     before(() => {
         fixture.setBase('src/lib');
     });

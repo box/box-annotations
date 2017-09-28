@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import autobind from 'autobind-decorator';
 import AnnotationService from './AnnotationService';
 import * as annotatorUtil from './annotatorUtil';
-import { ICON_CLOSE } from '../icons/icons';
+import { ICON_CLOSE } from './icons/icons';
 import './Annotator.scss';
 import {
     CLASS_ACTIVE,

@@ -11,7 +11,7 @@ import * as annotatorUtil from '../../annotatorUtil';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
-describe('lib/annotations/doc/CreateHighlightDialog', () => {
+describe('lib/doc/CreateHighlightDialog', () => {
     const sandbox = sinon.sandbox.create();
     let dialog;
     let parentEl;

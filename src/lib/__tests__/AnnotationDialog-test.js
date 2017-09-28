@@ -16,13 +16,13 @@ let dialog;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('lib/annotations/AnnotationDialog', () => {
+describe('lib/AnnotationDialog', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/__tests__/AnnotationDialog-test.html');
+        fixture.load('__tests__/AnnotationDialog-test.html');
 
         dialog = new AnnotationDialog({
             annotatedElement: document.querySelector('.annotated-element'),

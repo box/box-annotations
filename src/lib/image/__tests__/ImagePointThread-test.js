@@ -8,13 +8,13 @@ import * as imageAnnotatorUtil from '../imageAnnotatorUtil';
 let thread;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/image/ImagePointThread', () => {
+describe('lib/image/ImagePointThread', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/image/__tests__/ImagePointThread-test.html');
+        fixture.load('image/__tests__/ImagePointThread-test.html');
 
         thread = new ImagePointThread({
             annotatedElement: document.querySelector('.annotated-element'),

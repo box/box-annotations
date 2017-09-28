@@ -3,7 +3,7 @@ import DrawingPath from '../DrawingPath';
 let drawingPath;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/drawing/DrawingPath', () => {
+describe('lib/drawing/DrawingPath', () => {
     before(() => {
         fixture.setBase('src/lib');
     });

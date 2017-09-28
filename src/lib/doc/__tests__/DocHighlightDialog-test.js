@@ -18,13 +18,13 @@ const DATA_TYPE_HIGHLIGHT_BTN = 'highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;
 
-describe('lib/annotations/doc/DocHighlightDialog', () => {
+describe('lib/doc/DocHighlightDialog', () => {
     before(() => {
         fixture.setBase('src/lib');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocHighlightDialog-test.html');
+        fixture.load('doc/__tests__/DocHighlightDialog-test.html');
 
         dialog = new DocHighlightDialog({
             annotatedElement: document.querySelector('.annotated-element'),
