@@ -23,7 +23,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_DRAW,
     THREAD_EVENT,
-    ANNOTATOR_EVENT
+    ANNOTATOR_EVENT,
+    POINT_ANNOTATION_ICON_HEIGHT
 } from '../annotationConstants';
 
 const MOUSEMOVE_THROTTLE_MS = 50;
@@ -247,7 +248,7 @@ class DocAnnotator extends Annotator {
             const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
             const browserCoordinates = [
                 clientEvent.clientX - pageDimensions.left,
-                clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP
+                clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP + POINT_ANNOTATION_ICON_HEIGHT / 2
             ];
             let [x, y] = browserCoordinates;
 
