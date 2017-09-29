@@ -195,24 +195,4 @@ describe('image/ImageAnnotator', () => {
             expect(thread.location.page).equals(1);
         });
     });
-
-    describe('hideAllAnnotations()', () => {
-        it('should hide all annotations on image', () => {
-            annotator.container = document;
-            annotator.hideAllAnnotations();
-            const annotation = document.querySelector(SELECTOR_ANNOTATION_POINT_BUTTON);
-            const classList = Array.from(annotation.classList);
-            expect(classList).to.include('bp-is-hidden');
-        });
-    });
-
-    describe('showAllAnnotations()', () => {
-        it('should show all annotations on image', () => {
-            annotator.container = document;
-            annotator.showAllAnnotations();
-            const annotation = document.querySelector(SELECTOR_ANNOTATION_POINT_BUTTON);
-            const classList = Array.from(annotation.classList);
-            expect(classList).to.not.include('bp-is-hidden');
-        });
-    });
 });
