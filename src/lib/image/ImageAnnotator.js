@@ -3,7 +3,6 @@ import Annotator from '../Annotator';
 import ImagePointThread from './ImagePointThread';
 import * as annotatorUtil from '../annotatorUtil';
 import * as imageAnnotatorUtil from './imageAnnotatorUtil';
-import { CLASS_ANNOTATION_POINT_MARKER, SELECTOR_ANNOTATION_BUTTON_POINT } from '../annotationConstants';
 
 const IMAGE_NODE_NAME = 'img';
 // Selector for image container OR multi-image container
@@ -135,36 +134,6 @@ class ImageAnnotator extends Annotator {
         thread = new ImagePointThread(threadParams);
         this.addThreadToMap(thread);
         return thread;
-    }
-
-    /**
-     * Hides all annotations on the image. Also hides button in header that
-     * enables point annotation mode
-     *
-     * @return {void}
-     */
-    hideAllAnnotations() {
-        const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
-        const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        Object.keys(annotations).forEach((annotationID) => {
-            annotatorUtil.hideElement(annotations[annotationID]);
-        });
-        annotatorUtil.hideElement(annotateButton);
-    }
-
-    /**
-     * Shows all annotations on the image. Shows button in header that
-     * enables point annotation mode
-     *
-     * @return {void}
-     */
-    showAllAnnotations() {
-        const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
-        const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        Object.keys(annotations).forEach((annotationID) => {
-            annotatorUtil.showElement(annotations[annotationID]);
-        });
-        annotatorUtil.showElement(annotateButton);
     }
 }
 
