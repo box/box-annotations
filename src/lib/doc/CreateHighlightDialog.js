@@ -1,10 +1,8 @@
-import EventEmitter from 'events';
+import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import CommentBox from '../CommentBox';
-import { hideElement, showElement } from '../annotatorUtil';
 import * as constants from '../annotationConstants';
 
-const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 const TITLE_HIGHLIGHT_TOGGLE = __('annotation_highlight_toggle');
 const TITLE_HIGHLIGHT_COMMENT = __('annotation_highlight_comment');
 const DATA_TYPE_HIGHLIGHT = 'add-highlight-btn';
@@ -35,7 +33,7 @@ export const CreateEvents = {
     commentPost: 'comment_highlight_post'
 };
 
-class CreateHighlightDialog extends EventEmitter {
+class CreateHighlightDialog extends CreateAnnotationDialog {
     /** @property {HTMLElement} - Container element for the dialog. */
     containerEl;
 
@@ -89,9 +87,6 @@ class CreateHighlightDialog extends EventEmitter {
     constructor(parentEl, config = {}) {
         super();
 
-        this.parentEl = parentEl;
-        this.isMobile = config.isMobile || false;
-        this.hasTouch = config.hasTouch || false;
         this.allowHighlight = config.allowHighlight !== undefined ? !!config.allowHighlight : true;
         this.allowComment = config.allowComment !== undefined ? !!config.allowComment : true;
 
@@ -108,139 +103,29 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     /**
-     * Set the parent container to next this dialog in.
-     *
-     * @public
-     * @param {HTMLElement} newParentEl - The element that will contain this.
-     * @return {void}
-     */
-    setParentEl(newParentEl) {
-        this.parentEl = newParentEl;
-    }
-
-    /**
-     * Set the coordinates to position the dialog at, and force an update.
-     *
-     * @public
-     * @param {number} x - The x coordinate to position the dialog at
-     * @param {number} y - The y coordinate to position the dialog at
-     * @return {void}
-     */
-    setPosition(x, y) {
-        this.position.x = x;
-        this.position.y = y;
-        this.updatePosition();
-    }
-
-    /**
-     * Show the dialog. Adds to the parent container if it isn't already there.
-     *
-     * @public
-     * @param {HTMLElement} [newParentEl] - The new parent container to nest this in.
-     * @return {void}
-     */
-    show(newParentEl) {
-        this.isVisible = true;
-        if (!this.containerEl) {
-            this.containerEl = this.createElement();
-        }
-
-        // Move to the correct parent element
-        if (newParentEl) {
-            this.setParentEl(newParentEl);
-        }
-
-        // Add to parent if it hasn't been added already
-        if (!this.parentEl.querySelector(`.${CLASS_CREATE_DIALOG}`)) {
-            this.parentEl.appendChild(this.containerEl);
-        }
-
-        this.setButtonVisibility(true);
-
-        showElement(this.containerEl);
-        this.emit(CreateEvents.init);
-    }
-
-    /**
-     * Hide the dialog, and clear out the comment box text entry.
-     *
-     * @return {void}
-     */
-    hide() {
-        this.isVisible = false;
-        if (!this.containerEl) {
-            return;
-        }
-
-        hideElement(this.containerEl);
-
-        if (this.commentBox) {
-            this.commentBox.hide();
-            this.commentBox.clear();
-        }
-    }
-
-    /**
      * [destructor]
      *
      * @return {void}
      */
     destroy() {
-        if (!this.containerEl) {
-            return;
-        }
-
-        this.hide();
-
-        // Stop interacting with this element from triggering outside actions
-        this.containerEl.removeEventListener('click', this.stopPropagation);
-        this.containerEl.removeEventListener('mouseup', this.stopPropagation);
-        this.containerEl.removeEventListener('dblclick', this.stopPropagation);
+        super.destroy();
 
         // Event listeners
-        this.highlightCreateEl.removeEventListener('click', this.onHighlightClick);
-        this.commentCreateEl.removeEventListener('click', this.onCommentClick);
-
-        if (this.hasTouch) {
+        if (this.highlightCreateEl) {
+            this.highlightCreateEl.removeEventListener('click', this.onHighlightClick);
             this.highlightCreateEl.removeEventListener('touchstart', this.stopPropagation);
-            this.commentCreateEl.removeEventListener('touchstart', this.stopPropagation);
             this.highlightCreateEl.removeEventListener('touchend', this.onHighlightClick);
-            this.commentCreateEl.removeEventListener('touchend', this.onCommentClick);
-            this.containerEl.removeEventListener('touchend', this.stopPropagation);
         }
 
-        this.containerEl.remove();
-        this.containerEl = null;
-        this.parentEl = null;
-
-        if (this.commentBox) {
-            this.commentBox.removeListener(CommentBox.CommentEvents.post, this.onCommentPost);
-            this.commentBox.removeListener(CommentBox.CommentEvents.cancel, this.onCommentCancel);
-            this.commentBox.destroy();
-            this.commentBox = null;
+        if (this.commentCreateEl) {
+            this.commentCreateEl.removeEventListener('click', this.onCommentClick);
+            this.commentCreateEl.removeEventListener('touchstart', this.stopPropagation);
         }
     }
 
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
-
-    /**
-     * Update the position styling for the dialog so that the chevron points to
-     * the desired location.
-     *
-     * @return {void}
-     */
-    updatePosition() {
-        if (this.isMobile) {
-            return;
-        }
-
-        // Plus 1 pixel for caret
-        this.containerEl.style.left = `${this.position.x - 1 - this.containerEl.clientWidth / 2}px`;
-        // Plus 5 pixels for caret
-        this.containerEl.style.top = `${this.position.y + 5}px`;
-    }
 
     /**
      * Fire an event notifying that the plain highlight button has been clicked.
@@ -288,43 +173,6 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     /**
-     * The cancel button has been pressed. Close the comment box, and return to
-     * default state.
-     *
-     * @return {void}
-     */
-    onCommentCancel() {
-        this.commentBox.hide();
-        this.setButtonVisibility(true);
-        this.updatePosition();
-    }
-
-    /**
-     * Hide or show the plain and comment buttons, in the dialog.
-     *
-     * @param {boolean} visible - If true, shows the plain and comment buttons
-     * @return {void}
-     */
-    setButtonVisibility(visible) {
-        if (visible) {
-            showElement(this.buttonsEl);
-        } else {
-            hideElement(this.buttonsEl);
-        }
-    }
-
-    /**
-     * Stop the dialog from propagating events to parent container. Pairs with
-     * giving focus to the text area in the comment box and clicking "Post".
-     *
-     * @param {Event} event - The DOM event coming from interacting with the element.
-     * @return {void}
-     */
-    stopPropagation(event) {
-        event.stopPropagation();
-    }
-
-    /**
      * Create the element containing highlight create and comment buttons, and comment box.
      *
      * @private
@@ -347,7 +195,7 @@ class CreateHighlightDialog extends EventEmitter {
             </div>`.trim();
 
         const highlightDialogEl = document.createElement('div');
-        highlightDialogEl.classList.add(CLASS_CREATE_DIALOG);
+        highlightDialogEl.classList.add(constants.CLASS_CREATE_DIALOG);
         highlightDialogEl.innerHTML = createHighlightDialogTemplate;
 
         // Get rid of the caret

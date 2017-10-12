@@ -60,8 +60,17 @@ class DocPointThread extends AnnotationThread {
 
         annotatorUtil.showElement(this.element);
 
-        if (this.state === STATES.pending) {
+        if (this.state !== STATES.pending) {
+            return;
+        }
+
+        if ((this.isMobile && this.annotations.length > 0) || !this.isMobile) {
             this.showDialog();
+        }
+
+        // Force dialogs to reposition on re-render
+        if (!this.isMobile) {
+            this.dialog.position();
         }
     }
 
