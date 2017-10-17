@@ -11,18 +11,25 @@
         "transform-decorators-legacy"
     ],
     "env": {
+        "npm": {
+            "plugins": [
+                [
+                    "babel-plugin-transform-require-ignore", {
+                        "extensions": [".scss", ".css"]
+                    }
+                ]
+            ]
+        },
         "test": {
             "plugins": [
                 ["istanbul", {
                     "exclude": [
                         "**/*-test.js",
                         "build/**",
-                        "src/polyfill.js",
-                        "src/browser.js",
                     ]
                 }],
                 ["babel-plugin-transform-require-ignore", { "extensions": [".scss"] }]
             ]
-        }
+        },
     }
 }
