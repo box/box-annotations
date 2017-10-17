@@ -30,12 +30,30 @@ reset_to_master() {
 
     # Reset to latest code and clear unstashed changes
     git reset --hard github-origin/master || return 1
-    git clean -f  || return 1
+
+    # Remove old local tags in case a build failed
+    git fetch --prune github-upstream '+refs/tags/*:refs/tags/*' || exit 1
+    git clean -fdX || return 1
+}
+
+install_dependencies() {
+    echo "--------------------------------------------------------"
+    echo "Installing all package dependencies"
+    echo "--------------------------------------------------------"
+    if yarn install; then
+        echo "----------------------------------------------------"
+        echo "Installed dependencies successfully."
+        echo "----------------------------------------------------"
+    else
+        echo "----------------------------------------------------"
+        echo "Error: Failed to run 'yarn install'!"
+        echo "----------------------------------------------------"
+        exit 1;
+    fi
 }
 
 
-build_lint_and_test() {
-    # The build command includes linting
+lint_and_test() {
     yarn run test || return 1
 }
 
@@ -92,9 +110,6 @@ update_readme() {
     # Replace 'v{VERSION}' string
     sed -i -e "s@v$OLD_VERSION@v$VERSION@g" README.md
 
-    # Replace 'annotations/{VERSION}' string
-    sed -i -e "s@annotations/$OLD_VERSION@annotations/$VERSION@g" README.md
-
     rm README.md-e
 }
 
@@ -134,11 +149,24 @@ push_to_github() {
             return 1
         fi
     fi
+
+    # Push GitHub release
+    echo "----------------------------------------------------------------------"
+    echo "Pushing new GitHub release"
+    echo "----------------------------------------------------------------------"
+    ./node_modules/.bin/conventional-github-releaser
 }
 
 
 # Check out latest code from git, build assets, increment version, and push tags
 push_new_release() {
+    if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] ; then
+        echo "----------------------------------------------------"
+        echo "Your branch is dirty!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
+
     # Get latest commited code and tags
     if $patch_release; then
         echo "----------------------------------------------------------------------"
@@ -156,21 +184,55 @@ push_new_release() {
         echo "----------------------------------------------------------------------"
         reset_to_master || return 1
     fi
+    # Install node modules
+    if ! install_dependencies; then
+        echo "----------------------------------------------------"
+        echo "Error in install_dependencies!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
-    # Run build script, linting, and tests
-    build_lint_and_test || return 1
+    # Do testing and linting
+    if ! lint_and_test; then
+        echo "----------------------------------------------------"
+        echo "Error in lint_and_test!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
-    # Bump the version number
-    increment_version || return 1
+    # Must bump version before changelog generation (should not create tag)
+    if ! increment_version; then
+        echo "----------------------------------------------------"
+        echo "Error in increment_version!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
     # Update changelog
-    update_changelog || return 1
+    if ! update_changelog; then
+        echo "----------------------------------------------------"
+        echo "Error in update_changelog!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
     # Update readme
-    # update_readme || return 1
+    if ! update_readme; then
+        echo "----------------------------------------------------"
+        echo "Error in update_readme!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
-    # Push to GitHub
-    push_to_github || return 1
+    # Push to github
+    if ! push_to_github; then
+        echo "----------------------------------------------------"
+        echo "Error in push_to_github!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
+
+    return 0
 }
 
 
