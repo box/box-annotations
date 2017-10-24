@@ -8,7 +8,7 @@ let loader;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotators/BoxAnnotations', () => {
+describe('BoxAnnotations', () => {
     beforeEach(() => {
         stubs = {};
         loader = new BoxAnnotations();

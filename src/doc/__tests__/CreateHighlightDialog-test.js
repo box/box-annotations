@@ -11,7 +11,7 @@ import * as annotatorUtil from '../../annotatorUtil';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
-describe('lib/annotations/doc/CreateHighlightDialog', () => {
+describe('doc/CreateHighlightDialog', () => {
     const sandbox = sinon.sandbox.create();
     let dialog;
     let parentEl;
@@ -21,11 +21,11 @@ describe('lib/annotations/doc/CreateHighlightDialog', () => {
     };
 
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/CreateHighlightDialog-test.html');
+        fixture.load('doc/__tests__/CreateHighlightDialog-test.html');
 
         const parentEl = document.querySelector('.bp-create-highlight-dialog-container');
         dialog = new CreateHighlightDialog(parentEl, { localized });

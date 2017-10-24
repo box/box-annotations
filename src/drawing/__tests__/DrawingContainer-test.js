@@ -3,9 +3,9 @@ import DrawingContainer from '../DrawingContainer';
 let drawingContainer;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/drawing/DrawingContainer', () => {
+describe('drawing/DrawingContainer', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {

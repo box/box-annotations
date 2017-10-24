@@ -11,13 +11,13 @@ import * as annotatorUtil from '../../annotatorUtil';
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('lib/annotations/doc/docAnnotatorUtil', () => {
+describe('doc/docAnnotatorUtil', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/docAnnotatorUtil-test.html');
+        fixture.load('doc/__tests__/docAnnotatorUtil-test.html');
     });
 
     afterEach(() => {

@@ -6,7 +6,7 @@ let annotationModeController;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/AnnotationModeController', () => {
+describe('AnnotationModeController', () => {
     beforeEach(() => {
         annotationModeController = new AnnotationModeController();
         stubs = {};
