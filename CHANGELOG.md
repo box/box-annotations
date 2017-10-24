@@ -1,3 +1,10 @@
+<a name="0.0.2"></a>
+## 0.0.2 (2017-10-24)
+
+* Fix: publish script ([f86e71c](https://github.com/box/box-annotations/commit/f86e71c))
+
+
+
 <a name="0.0.1"></a>
 ## 0.0.1 (2017-10-24)
 
