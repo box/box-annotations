@@ -1,6 +1,8 @@
 import DocAnnotator from './doc/DocAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
-import DrawingModeController from './drawing/DrawingModeController';
+import DrawingModeController from './controllers/DrawingModeController';
+import PointModeController from './controllers/PointModeController';
+import HighlightModeController from './controllers/HighlightModeController';
 import { TYPES } from './annotationConstants';
 import { canLoadAnnotations } from './annotatorUtil';
 
@@ -29,6 +31,15 @@ const ANNOTATORS = [
 ];
 
 const ANNOTATOR_TYPE_CONTROLLERS = {
+    [TYPES.point]: {
+        CONSTRUCTOR: PointModeController
+    },
+    [TYPES.highlight]: {
+        CONSTRUCTOR: HighlightModeController
+    },
+    [TYPES.highlight_comment]: {
+        CONSTRUCTOR: HighlightModeController
+    },
     [TYPES.draw]: {
         CONSTRUCTOR: DrawingModeController
     }

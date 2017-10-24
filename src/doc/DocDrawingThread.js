@@ -2,6 +2,7 @@ import DrawingPath from '../drawing/DrawingPath';
 import DrawingThread from '../drawing/DrawingThread';
 import DocDrawingDialog from '../doc/DocDrawingDialog';
 import {
+    THREAD_EVENT,
     STATES,
     DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
@@ -196,8 +197,12 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
-        this.dialog.addListener('annotationcreate', () => this.emit('softcommit'));
-        this.dialog.addListener('annotationdelete', () => this.emit('dialogdelete'));
+        this.dialog.addListener(THREAD_EVENT.create, () => {
+            this.emit('softcommit');
+        });
+        this.dialog.addListener(THREAD_EVENT.delete, () => {
+            this.emit('dialogdelete');
+        });
     }
 
     /**

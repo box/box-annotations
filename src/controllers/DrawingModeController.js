@@ -1,16 +1,23 @@
 import rbush from 'rbush';
-import AnnotationModeController from '../AnnotationModeController';
+import AnnotationModeController from './AnnotationModeController';
 import annotationsShell from './../annotationsShell.html';
 import * as annotatorUtil from '../annotatorUtil';
 import {
     CLASS_ANNOTATION_DRAW,
     TYPES,
+    THREAD_EVENT,
     STATES,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    DRAW_BORDER_OFFSET
+    SELECTOR_BOX_PREVIEW_BASE_HEADER,
+    SELECTOR_ANNOTATION_DRAWING_HEADER,
+    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
+    DRAW_BORDER_OFFSET,
+    CLASS_ACTIVE,
+    CLASS_ANNOTATION_MODE,
+    ANNOTATOR_EVENT
 } from '../annotationConstants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -34,28 +41,51 @@ class DrawingModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to redo a stroke on the pending drawing thread */
     redoButtonEl;
 
-    /**
-     * Register the annotator and any information associated with the annotator
-     *
-     * @inheritdoc
-     * @public
-     * @param {Annotator} annotator - The annotator to be associated with the controller
-     * @return {void}
-     */
-    registerAnnotator(annotator) {
-        super.registerAnnotator(annotator);
+    init(data) {
+        super.init(data);
 
-        if (annotator.options.header !== 'none') {
+        if (data.header !== 'none') {
             // We need to create our own header UI
-            this.setupHeader(annotator.container, annotationsShell);
+            this.setupHeader(this.container, annotationsShell);
         }
 
-        this.cancelButtonEl = annotator.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.postButtonEl = annotator.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-        this.undoButtonEl = annotator.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-        this.redoButtonEl = annotator.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
+        this.cancelButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+        this.postButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
+        this.undoButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
+        this.redoButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
+    }
 
-        this.annotator.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW);
+    /**
+     * Disables the specified annotation mode
+     *
+     * @return {void}
+     */
+    disableMode() {
+        this.emit(ANNOTATOR_EVENT.modeExit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
+
+        this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
+        this.buttonEl.classList.remove(CLASS_ACTIVE);
+
+        this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+
+        this.unbindModeListeners(); // Disable mode
+        this.emit('binddomlisteners');
+    }
+
+    /**
+     * Enables the specified annotation mode
+     *
+     * @return {void}
+     */
+    enableMode() {
+        this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+        this.buttonEl.classList.add(CLASS_ACTIVE);
+
+        this.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+
+        this.emit(ANNOTATOR_EVENT.modeEnter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
+        this.emit('unbinddomlisteners'); // Disable other annotations
+        this.bindModeListeners(); // Enable mode
     }
 
     /**
@@ -72,6 +102,10 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         this.threads.insert(thread);
+        this.emit('registerthread', thread);
+        thread.addListener('threadevent', (data) => {
+            this.handleThreadEvents(thread, data);
+        });
     }
 
     /**
@@ -88,26 +122,8 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         this.threads.remove(thread);
-    }
-
-    /**
-     * Binds custom event listeners for a thread.
-     *
-     * @inheritdoc
-     * @protected
-     * @param {AnnotationThread} thread - Thread to bind events to
-     * @return {void}
-     */
-    bindCustomListenersOnThread(thread) {
-        if (!thread) {
-            return;
-        }
-
-        super.bindCustomListenersOnThread(thread);
-
-        // On save, add the thread to the Rbush, on delete, remove it from the Rbush
-        thread.addListener('annotationsaved', () => this.registerThread(thread));
-        thread.addListener('annotationdelete', () => this.unregisterThread(thread));
+        this.emit('unregisterthread', thread);
+        thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
     /**
@@ -154,35 +170,37 @@ class DrawingModeController extends AnnotationModeController {
 
         // Setup
         this.currentThread = this.annotator.createAnnotationThread([], {}, TYPES.draw);
-        this.bindCustomListenersOnThread(this.currentThread);
+        this.currentThread.addListener('threadevent', (data) => {
+            this.handleThreadEvents(this.currentThread, data);
+        });
 
         // Get handlers
         this.pushElementHandler(
-            this.annotator.annotatedElement,
+            this.annotatedElement,
             ['mousemove', 'touchmove'],
             annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleMove)
         );
 
         this.pushElementHandler(
-            this.annotator.annotatedElement,
+            this.annotatedElement,
             ['mousedown', 'touchstart'],
             annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleStart)
         );
 
         this.pushElementHandler(
-            this.annotator.annotatedElement,
+            this.annotatedElement,
             ['mouseup', 'touchcancel', 'touchend'],
             annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleStop)
         );
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             this.currentThread.cancelUnsavedAnnotation();
-            this.annotator.toggleAnnotationHandler(TYPES.draw);
+            this.toggleAnnotationHandler();
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
             this.currentThread.saveAnnotation(TYPES.draw);
-            this.annotator.toggleAnnotationHandler(TYPES.draw);
+            this.toggleAnnotationHandler();
         });
 
         this.pushElementHandler(this.undoButtonEl, 'click', this.currentThread.undo);
@@ -198,12 +216,12 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Object} data - Extra data related to the annotation event
      * @return {void}
      */
-    handleAnnotationEvent(thread, data = {}) {
+    handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
             case 'locationassigned':
                 // Register the thread to the threadmap when a starting location is assigned. Should only occur once.
-                this.annotator.addThreadToMap(thread);
+                this.registerThread(thread);
                 break;
             case 'softcommit':
                 // Save the original thread, create a new thread and
@@ -237,6 +255,12 @@ class DrawingModeController extends AnnotationModeController {
                 break;
             case 'availableactions':
                 this.updateUndoRedoButtonEls(eventData.undo, eventData.redo);
+                break;
+            case THREAD_EVENT.save:
+                this.registerThread(thread);
+                break;
+            case THREAD_EVENT.delete:
+                this.unregisterThread(thread);
                 break;
             default:
         }

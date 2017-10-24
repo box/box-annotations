@@ -356,10 +356,8 @@ class DocAnnotator extends Annotator {
             thread = new DocPointThread(threadParams);
         }
 
-        if (!thread && this.notification) {
+        if (!thread) {
             this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
-        } else if (thread && (type !== TYPES.draw || location.page)) {
-            this.addThreadToMap(thread);
         }
 
         return thread;
@@ -381,7 +379,7 @@ class DocAnnotator extends Annotator {
         }
 
         // TODO (@jholdstock|@spramod) remove this if statement, and make super call, upon refactor.
-        const pageThreads = this.getThreadsOnPage(pageNum);
+        const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
             if (!this.isModeAnnotatable(thread.type)) {
@@ -586,7 +584,8 @@ class DocAnnotator extends Annotator {
         thread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
         thread.dialog.postAnnotation(commentText);
 
-        this.bindCustomListenersOnThread(thread);
+        const controller = this.modeControllers[highlightType];
+        controller.registerThread(thread);
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
@@ -628,7 +627,7 @@ class DocAnnotator extends Annotator {
 
         // Set all annotations that are in the 'hover' state to 'inactive'
         Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.getThreadsOnPage(page);
+            const pageThreads = this.threads[page] || {};
             const highlightThreads = this.getHighlightThreadsOnPage(pageThreads);
             highlightThreads.filter(isThreadInHoverState).forEach((thread) => {
                 thread.reset();
@@ -673,7 +672,7 @@ class DocAnnotator extends Annotator {
         this.mouseY = event.clientY;
 
         Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.getThreadsOnPage(page);
+            const pageThreads = this.threads[page] || {};
             const highlightThreads = this.getHighlightThreadsOnPage(pageThreads);
             highlightThreads.forEach((thread) => {
                 thread.onMousedown();
@@ -745,7 +744,7 @@ class DocAnnotator extends Annotator {
         const delayThreads = [];
         let hoverActive = false;
 
-        const pageThreads = this.getThreadsOnPage(page);
+        const pageThreads = this.threads[page] || {};
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
 
@@ -915,7 +914,7 @@ class DocAnnotator extends Annotator {
         let activeThread = null;
 
         const page = annotatorUtil.getPageInfo(event.target).page;
-        const pageThreads = this.getThreadsOnPage(page);
+        const pageThreads = this.threads[page] || {};
 
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
@@ -976,7 +975,7 @@ class DocAnnotator extends Annotator {
      */
     getHighlightThreadsOnPage(page) {
         const threads = [];
-        const pageThreads = this.getThreadsOnPage(page);
+        const pageThreads = this.threads[page] || {};
 
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
@@ -1034,32 +1033,27 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Handles annotation thread events and emits them to the viewer
+     * Handle events emitted by the annotaiton service
      *
      * @private
-     * @param {Object} [data] - Annotation thread event data
-     * @param {string} [data.event] - Annotation thread event
-     * @param {string} [data.data] - Annotation thread event data
+     * @param {Object} [data] - Annotation service event data
+     * @param {string} [data.event] - Annotation service event
+     * @param {string} [data.data] -
      * @return {void}
      */
-    handleAnnotationThreadEvents(data) {
-        if (!data.data || !data.data.threadID) {
-            return;
-        }
-
-        const thread = this.getThreadByID(data.data.threadID);
-        if (!thread) {
-            return;
-        }
-
-        super.handleAnnotationThreadEvents(data);
-
+    handleControllerEvents(data) {
         switch (data.event) {
-            case THREAD_EVENT.threadDelete:
-                this.showHighlightsOnPage(thread.location.page);
+            case 'showhighlights':
+                this.showHighlightsOnPage(data.data);
+                break;
+            case 'binddomlisteners':
+                if (this.createHighlightDialog) {
+                    this.createHighlightDialog.hide();
+                }
                 break;
             default:
         }
+        super.handleControllerEvents(data);
     }
 
     /**

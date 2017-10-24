@@ -717,3 +717,34 @@ export function canLoadAnnotations(permissions) {
 
     return !!canAnnotate || !!canViewAllAnnotations || !!canViewOwnAnnotations;
 }
+
+/**
+ * Adds thread to in-memory map.
+ *
+ * @protected
+ * @param {AnnotationThread} thread - Thread to add
+ * @param {Object} threadMap - Thread map
+ * @return {void}
+ */
+export function addThreadToMap(thread, threadMap) {
+    // Add thread to in-memory map
+    const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+    const pageThreads = threadMap[page] || {};
+    pageThreads[thread.threadID] = thread;
+    return { page, pageThreads };
+}
+
+/**
+ * Removes thread to in-memory map.
+ *
+ * @protected
+ * @param {AnnotationThread} thread - Thread to bind events to
+ * @param {Object} threadMap - Thread map
+ * @return {void}
+ */
+export function removeThreadFromMap(thread, threadMap) {
+    const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+    const pageThreads = threadMap[page] || {};
+    delete pageThreads[thread.threadID];
+    return { page, pageThreads };
+}
