@@ -15,13 +15,13 @@ import {
 let thread;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/doc/DocHighlightThread', () => {
+describe('doc/DocHighlightThread', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocHighlightThread-test.html');
+        fixture.load('doc/__tests__/DocHighlightThread-test.html');
 
         thread = new DocHighlightThread({
             annotatedElement: document.querySelector('.annotated-element'),

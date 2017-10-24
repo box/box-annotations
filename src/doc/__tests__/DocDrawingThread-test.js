@@ -13,13 +13,13 @@ let thread;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/doc/DocDrawingThread', () => {
+describe('doc/DocDrawingThread', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocDrawingThread-test.html');
+        fixture.load('doc/__tests__/DocDrawingThread-test.html');
         thread = new DocDrawingThread({
             annotationService: {
                 user: {

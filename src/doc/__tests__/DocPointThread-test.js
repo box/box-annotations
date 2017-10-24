@@ -9,13 +9,13 @@ import { STATES } from '../../annotationConstants';
 let pointThread;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/doc/DocPointThread', () => {
+describe('doc/DocPointThread', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocPointThread-test.html');
+        fixture.load('doc/__tests__/DocPointThread-test.html');
 
         pointThread = new DocPointThread({
             annotatedElement: document.querySelector('.annotated-element'),

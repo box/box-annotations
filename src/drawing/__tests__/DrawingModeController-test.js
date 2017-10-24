@@ -7,7 +7,7 @@ let drawingModeController;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/drawing/DrawingModeController', () => {
+describe('drawing/DrawingModeController', () => {
     beforeEach(() => {
         drawingModeController = new DrawingModeController();
         stubs = {};

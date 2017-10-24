@@ -43,16 +43,16 @@ const DIALOG_WIDTH = 81;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('lib/annotations/annotatorUtil', () => {
+describe('annotatorUtil', () => {
     let childEl;
     let parentEl;
 
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/__tests__/annotatorUtil-test.html');
+        fixture.load('__tests__/annotatorUtil-test.html');
 
         childEl = document.querySelector('.child');
         parentEl = document.querySelector('.parent');

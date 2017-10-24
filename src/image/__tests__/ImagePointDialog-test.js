@@ -6,13 +6,13 @@ import * as imageAnnotatorUtil from '../imageAnnotatorUtil';
 let dialog;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/image/ImagePointDialog', () => {
+describe('image/ImagePointDialog', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/image/__tests__/ImagePointDialog-test.html');
+        fixture.load('image/__tests__/ImagePointDialog-test.html');
 
         dialog = new ImagePointDialog({
             annotatedElement: document.querySelector('.annotated-element'),
