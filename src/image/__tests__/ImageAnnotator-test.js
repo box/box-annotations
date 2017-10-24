@@ -8,13 +8,13 @@ import { SELECTOR_ANNOTATION_POINT_BUTTON } from '../../annotationConstants';
 let annotator;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/image/ImageAnnotator', () => {
+describe('image/ImageAnnotator', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/image/__tests__/ImageAnnotator-test.html');
+        fixture.load('image/__tests__/ImageAnnotator-test.html');
 
         const options = {
             annotator: {

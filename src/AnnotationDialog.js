@@ -2,7 +2,7 @@ import autobind from 'autobind-decorator';
 import EventEmitter from 'events';
 import * as annotatorUtil from './annotatorUtil';
 import * as constants from './annotationConstants';
-import { ICON_CLOSE, ICON_DELETE } from '../icons/icons';
+import { ICON_CLOSE, ICON_DELETE } from './icons/icons';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;

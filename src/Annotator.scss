@@ -1,4 +1,5 @@
-@import '../boxuiVariables';
+@import 'boxui';
+@import 'boxuiVariables';
 
 $highlight-yellow: #fed94e;
 $highlight-yellow-active-hover: #ffc900;
@@ -21,7 +22,8 @@ $tablet: 'max-width: 768px';
     background-color: $fours;
 }
 
-.bp-annotate-draw-header {
+.bp-annotate-draw-header,
+.bp-header.bp-annotate-draw-header {
     background-color: $twos;
     border: none;
     position: relative;
@@ -61,6 +63,8 @@ $tablet: 'max-width: 768px';
 .bp-annotate-draw-undo-redo-container {
     margin: 0 auto;
 
+    .is-disabled.bp-btn-annotate-draw-undo,
+    .is-disabled.bp-btn-annotate-draw-redo,
     .bp-btn-annotate-draw-undo,
     .bp-btn-annotate-draw-redo {
         background: none;
@@ -450,15 +454,24 @@ $tablet: 'max-width: 768px';
 
         &:hover {
             color: $better-black;
+            padding: 8px;
         }
     }
 
     .bp-btn-annotate-draw-add {
         padding-right: 4px;
+
+        &:hover {
+            padding-right: 4px;
+        }
     }
 
     .bp-btn-annotate-draw-delete {
         padding-left: 4px;
+
+        &:hover {
+            padding-left: 4px;
+        }
     }
 
     .bp-highlight-comment-btn {

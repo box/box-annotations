@@ -23,13 +23,13 @@ let annotator;
 let stubs = {};
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/Annotator', () => {
+describe('Annotator', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/__tests__/Annotator-test.html');
+        fixture.load('__tests__/Annotator-test.html');
 
         const options = {
             annotator: {

@@ -1,6 +1,6 @@
 import rangy from 'rangy';
 /* eslint-disable no-unused-vars */
-// Workaround for rangy npm issue: https://github.com/timdown/rangy/issues/342
+// Workaround for rangy npm issue: https://github.com/timdown/rangy/lib/issues/342
 import rangyClassApplier from 'rangy/lib/rangy-classapplier';
 import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';

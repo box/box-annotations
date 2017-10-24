@@ -16,13 +16,13 @@ let thread;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('lib/annotations/AnnotationThread', () => {
+describe('AnnotationThread', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/__tests__/AnnotationThread-test.html');
+        fixture.load('__tests__/AnnotationThread-test.html');
 
         thread = new AnnotationThread({
             annotatedElement: document.querySelector('.annotated-element'),

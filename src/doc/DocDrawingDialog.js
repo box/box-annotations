@@ -1,7 +1,7 @@
 import AnnotationDialog from '../AnnotationDialog';
 import * as annotatorUtil from '../annotatorUtil';
 import * as constants from '../annotationConstants';
-import { ICON_DRAW_SAVE, ICON_DRAW_DELETE } from '../../icons/icons';
+import { ICON_DRAW_SAVE, ICON_DRAW_DELETE } from '../icons/icons';
 
 class DocDrawingDialog extends AnnotationDialog {
     /** @property {boolean} Whether or not the dialog is visible */

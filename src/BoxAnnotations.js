@@ -130,5 +130,4 @@ class BoxAnnotations {
     }
 }
 
-global.BoxAnnotations = BoxAnnotations;
 export default BoxAnnotations;
