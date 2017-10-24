@@ -149,12 +149,6 @@ push_to_github() {
             return 1
         fi
     fi
-
-    # Push GitHub release
-    echo "----------------------------------------------------------------------"
-    echo "Pushing new GitHub release"
-    echo "----------------------------------------------------------------------"
-    ./node_modules/.bin/conventional-github-releaser
 }
 
 
@@ -231,6 +225,12 @@ push_new_release() {
         echo "----------------------------------------------------"
         exit 1
     fi
+
+    # Push GitHub release
+    echo "----------------------------------------------------------------------"
+    echo "Pushing new GitHub release"
+    echo "----------------------------------------------------------------------"
+    ./node_modules/.bin/conventional-github-releaser
 
     return 0
 }
