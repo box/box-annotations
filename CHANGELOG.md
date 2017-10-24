@@ -1,3 +1,10 @@
+<a name="0.0.7"></a>
+## 0.0.7 (2017-10-24)
+
+* Fix: readme ([5a33530](https://github.com/box/box-annotations/commit/5a33530))
+
+
+
 <a name="0.0.6"></a>
 ## 0.0.6 (2017-10-24)
 
