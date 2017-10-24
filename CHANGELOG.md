@@ -1,3 +1,10 @@
+<a name="0.0.5"></a>
+## 0.0.5 (2017-10-24)
+
+* Chore: updating README ([90f3f0f](https://github.com/box/box-annotations/commit/90f3f0f))
+
+
+
 <a name="0.0.4"></a>
 ## 0.0.4 (2017-10-24)
 
