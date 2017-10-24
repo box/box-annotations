@@ -3,6 +3,7 @@ import ImageAnnotator from './image/ImageAnnotator';
 import DrawingModeController from './drawing/DrawingModeController';
 import { TYPES } from './annotationConstants';
 import { canLoadAnnotations } from './annotatorUtil';
+import './Annotator.scss';
 
 /**
  * NAME: The name of the annotator.
@@ -130,5 +131,4 @@ class BoxAnnotations {
     }
 }
 
-global.BoxAnnotations = BoxAnnotations;
 export default BoxAnnotations;

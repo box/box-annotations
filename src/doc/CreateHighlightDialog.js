@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../../icons/icons';
+import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import CommentBox from '../CommentBox';
 import { hideElement, showElement, generateBtn } from '../annotatorUtil';
 import * as constants from '../annotationConstants';

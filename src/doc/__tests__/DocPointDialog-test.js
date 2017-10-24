@@ -6,13 +6,13 @@ import * as docAnnotatorUtil from '../docAnnotatorUtil';
 let dialog;
 const sandbox = sinon.sandbox.create();
 
-describe('lib/annotations/doc/DocPointDialog', () => {
+describe('doc/DocPointDialog', () => {
     before(() => {
-        fixture.setBase('src/lib');
+        fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('annotations/doc/__tests__/DocPointDialog-test.html');
+        fixture.load('doc/__tests__/DocPointDialog-test.html');
 
         dialog = new DocPointDialog({
             annotatedElement: document.querySelector('.annotated-element'),
