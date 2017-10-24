@@ -1,3 +1,10 @@
+<a name="0.0.6"></a>
+## 0.0.6 (2017-10-24)
+
+* Chore: Cleaning up readme ([9324202](https://github.com/box/box-annotations/commit/9324202))
+
+
+
 <a name="0.0.5"></a>
 ## 0.0.5 (2017-10-24)
 
