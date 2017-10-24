@@ -1,3 +1,10 @@
+<a name="0.0.4"></a>
+## 0.0.4 (2017-10-24)
+
+* Fix: scripts ([615291c](https://github.com/box/box-annotations/commit/615291c))
+
+
+
 <a name="0.0.3"></a>
 ## 0.0.3 (2017-10-24)
 
