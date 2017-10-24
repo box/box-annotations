@@ -24,19 +24,15 @@ To use a different locale, replace `en-US` in the URLs above with any of the fol
 
 `en-AU`, `en-CA`, `en-GB`, `en-US`, `da-DK`, `de-DE`, `es-ES`, `fi-FI`, `fr-CA`, `fr-FR`, `it-IT`, `ja-JP`, `ko-KR`, `nb-NO`, `nl-NL`, `pl-PL`, `pt-BR`, `ru-RU`, `sv-SE`, `tr-TR`, `zh-CN`, `zh-TW`
 
-<!-- Usage
+Usage
 -----
-Box Annotations can be used either by including the JavaScript/CSS scripts linked above or by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
+Box Annotations can be used either by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
 
 CORS (Cross-Origin Resource Sharing)
 ------------------------------------
 For security purposes, you must whitelist your application's HTTP origin, omitting any trailing slash, in the configuration section of the Developer Console. For example, CodePen's domain is whitelisted for the demo application below.
 
 ![Screenshot of CORS whitelist](images/cors.png)
-
-Demo
-----
-View a demo and sample code on CodePen - http://codepen.io/box-platform/pen/rmZdjm. -->
 
 Initialization
 --------------
@@ -542,3 +538,72 @@ The image and multi-page image viewers support point annotations. The creation o
 #### Point Annotations
 
 See BoxAnnotations annotation [thread methods/events](#annotation-thread) and [dialog methods/events](#annotation-dialog).
+
+Development Setup
+-----------------
+1. Install Node v6.10.0 or higher.
+2. Install yarn package manager `https://yarnpkg.com/en/docs/install`. Alternatively, you can replace any `yarn` command with `npm`.
+2. Fork the upstream repo `https://github.com/box/box-annotations`.
+3. Clone your fork locally `git clone git@github.com:[YOUR GITHUB USERNAME]/box-annotations.git`.
+4. Navigate to the cloned folder `cd box-annotations`
+5. Add the upstream repo to your remotes `git remote add upstream git@github.com:box/box-annotations.git`.
+6. Verify your remotes are properly set up `git remote -v`. You should pull updates from the Box repo `upstream` and push changes to your fork `origin`.
+7. Install dependencies `yarn install`
+8. Test your first build! `yarn run build-lib`
+9. To link and test your local code changes, run `yarn link box-annotations` in this repository and again wherever [Box Content Preview](github.com/box/box-content-preview/) is cloned locally.
+```
+
+While Developing
+----------------
+Install the following plugins in your preferred editor
+
+* Editor Config (standardizes basic editor configuration)
+* ESLint (Javascript linting)
+* Prettier & Prettier - ESLint (Automatic Javascript formatting following ESLint config)
+* Stylelint (CSS linting)
+
+### Yarn commands
+
+* `yarn run build-lib` to generate resource bundles in the lib/ directory.
+* `yarn run watch` to only generate resource bundles in the lib/ directory on file changes.
+* `yarn run test` launches karma tests with PhantomJS.
+* `yarn run test -- --src=PATH/TO/SRC/FILENAME` launches test only for `src/PATH/TO/SRC/__tests__/FILENAME-test.js` instead of all tests. For example, `yarn run test -- --src=doc/DocAnnotator` launches tests for `src/doc/__tests__/DocAnnotator-test.js`. This also works for directories, e.g. `yarn run test -- --src=doc/`.
+* `yarn run debug` launches karma tests with PhantomJS for debugging. Open the URL mentioned in the console.
+* `yarn run debug -- --src=path/to/src/FILENAME` launches debugging for `src/path/to/src/__tests__/FILENAME-test.js` instead of all tests. Open the URL mentioned in the console.
+
+For more script commands see `package.json`. Test coverage reports are available under reports/coverage.
+
+### Config files
+
+* .babelrc - https://babeljs.io/docs/usage/babelrc/
+* .editorconfig - http://editorconfig.org/
+* .eslintignore - http://eslint.org/docs/user-guide/configuring#ignoring-files-and-directories
+* .eslintrc - http://eslint.org/docs/user-guide/configuring
+* .gitignore - https://git-scm.com/docs/gitignore
+* .stylelintrc - https://stylelint.io/user-guide/configuration/
+* .travis.yml - https://docs.travis-ci.com/user/customizing-the-build
+* browserslist - https://github.com/ai/browserslist
+* commitlint.config.js - https://github.com/marionebl/commitlint
+* postcss.config.js - https://github.com/postcss/postcss-loader
+
+Support
+-------
+If you have any questions, please search our [issues list](https://github.com/box/box-annotations/issues) to see if they have been previously answered. Report new issues [here](https://github.com/box/box-annotations/issues/new).
+
+For general Box Platform, API, and UI Element questions, please visit our [developer forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum) or contact us via one of our [available support channels](https://community.box.com/t5/Community/ct-p/English).
+
+Copyright and License
+---------------------
+Copyright 2016-2017 Box, Inc. All Rights Reserved.
+
+Licensed under the Box Software License Agreement v.20170516.
+You may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   https://github.com/box/box-content-preview/blob/master/LICENSE
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
