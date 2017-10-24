@@ -1,3 +1,10 @@
+<a name="0.0.3"></a>
+## 0.0.3 (2017-10-24)
+
+* Chore: cleaning up build script ([5d4fa55](https://github.com/box/box-annotations/commit/5d4fa55))
+
+
+
 <a name="0.0.2"></a>
 ## 0.0.2 (2017-10-24)
 
