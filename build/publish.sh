@@ -123,12 +123,13 @@ publish_to_npm() {
 
     git checkout master || exit 1
     git fetch release || exit 1
-    git reset --hard release/master || exit 1
+
+    VERSION=$(./build/current_version.sh)
+    git reset --hard v$VERSION || exit 1
+
     # Remove old local tags in case a build failed
     git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
     git clean -fdX || exit 1
-
-    VERSION=$(./build/current_version.sh)
 
     if [[ $(git status --porcelain 2>/dev/null| grep "^??") != "" ]] ; then
         echo "----------------------------------------------------"
