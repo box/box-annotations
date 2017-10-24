@@ -28,12 +28,6 @@ Usage
 -----
 Box Annotations can be used either by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
 
-CORS (Cross-Origin Resource Sharing)
-------------------------------------
-For security purposes, you must whitelist your application's HTTP origin, omitting any trailing slash, in the configuration section of the Developer Console. For example, CodePen's domain is whitelisted for the demo application below.
-
-![Screenshot of CORS whitelist](images/cors.png)
-
 Initialization
 --------------
 ```javascript
@@ -551,7 +545,6 @@ Development Setup
 7. Install dependencies `yarn install`
 8. Test your first build! `yarn run build-lib`
 9. To link and test your local code changes, run `yarn link box-annotations` in this repository and again wherever [Box Content Preview](github.com/box/box-content-preview/) is cloned locally.
-```
 
 While Developing
 ----------------
