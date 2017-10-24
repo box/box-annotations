@@ -1,6 +1,8 @@
 import DocAnnotator from './doc/DocAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
-import DrawingModeController from './drawing/DrawingModeController';
+import DrawingModeController from './controllers/DrawingModeController';
+import PointModeController from './controllers/PointModeController';
+import HighlightModeController from './controllers/HighlightModeController';
 import { TYPES } from './annotationConstants';
 import { canLoadAnnotations } from './annotatorUtil';
 
@@ -29,6 +31,15 @@ const ANNOTATORS = [
 ];
 
 const ANNOTATOR_TYPE_CONTROLLERS = {
+    [TYPES.point]: {
+        CONSTRUCTOR: PointModeController
+    },
+    [TYPES.highlight]: {
+        CONSTRUCTOR: HighlightModeController
+    },
+    [TYPES.highlight_comment]: {
+        CONSTRUCTOR: HighlightModeController
+    },
     [TYPES.draw]: {
         CONSTRUCTOR: DrawingModeController
     }
@@ -85,12 +96,35 @@ class BoxAnnotations {
 
         /* eslint-disable no-param-reassign */
         annotatorConfig.CONTROLLERS = {};
-        annotatorConfig.TYPE.forEach((type) => {
+        const annotatorTypes = this.getAnnotatorTypes(annotatorConfig);
+        annotatorTypes.forEach((type) => {
             if (type in ANNOTATOR_TYPE_CONTROLLERS) {
                 annotatorConfig.CONTROLLERS[type] = new ANNOTATOR_TYPE_CONTROLLERS[type].CONSTRUCTOR();
             }
         });
         /* eslint-enable no-param-reassign */
+    }
+
+    /**
+     * Determines the supported annotation types based on the viewer configurations
+     * if provided, otherwise using the viewer defaults
+     *
+     * @private
+     * @param {Object} annotatorConfig - The config where annotation type controller instances should be attached
+     * @return {void}
+     */
+    getAnnotatorTypes(annotatorConfig) {
+        const enabledTypes = this.viewerConfig.enabledTypes || [...annotatorConfig.DEFAULT_TYPES];
+
+        // Keeping disabledTypes for backwards compatibility
+        const disabledTypes = this.viewerConfig.disabledTypes || [];
+
+        return enabledTypes.filter((type) => {
+            return (
+                !disabledTypes.some((disabled) => disabled === type) &&
+                annotatorConfig.TYPE.some((allowed) => allowed === type)
+            );
+        });
     }
 
     /**
@@ -104,27 +138,15 @@ class BoxAnnotations {
     determineAnnotator(options, viewerConfig = {}, disabledAnnotators = []) {
         let modifiedAnnotator = null;
 
+        this.viewerConfig = viewerConfig;
         const hasAnnotationPermissions = canLoadAnnotations(options.file.permissions);
         const annotator = this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
-        if (!hasAnnotationPermissions || !annotator || viewerConfig.enabled === false) {
+        if (!hasAnnotationPermissions || !annotator || this.viewerConfig.enabled === false) {
             return modifiedAnnotator;
         }
 
         modifiedAnnotator = Object.assign({}, annotator);
-
-        const enabledTypes = viewerConfig.enabledTypes || [...modifiedAnnotator.DEFAULT_TYPES];
-
-        // Keeping disabledTypes for backwards compatibility
-        const disabledTypes = viewerConfig.disabledTypes || [];
-
-        const annotatorTypes = enabledTypes.filter((type) => {
-            return (
-                !disabledTypes.some((disabled) => disabled === type) &&
-                modifiedAnnotator.TYPE.some((allowed) => allowed === type)
-            );
-        });
-
-        modifiedAnnotator.TYPE = annotatorTypes;
+        modifiedAnnotator.TYPE = this.getAnnotatorTypes(modifiedAnnotator);
 
         return modifiedAnnotator;
     }
