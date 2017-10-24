@@ -22,11 +22,7 @@
         "sinon": false,
         "assert": false,
         "fixture": false,
-        "__": false,
-        "PDFJS": false,
-        "Box": false,
-        "DocumentTouch": false,
-        "ActiveXObject": false
+        "__": false
     },
     "rules": {
         "quotes": [
