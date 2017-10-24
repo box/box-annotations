@@ -20,8 +20,6 @@ If you are using Internet Explorer 11, which doesn't natively support promises, 
 
 Supported Locales
 -----------------
-To use a different locale, replace `en-US` in the URLs above with any of the following supported locales.
-
 `en-AU`, `en-CA`, `en-GB`, `en-US`, `da-DK`, `de-DE`, `es-ES`, `fi-FI`, `fr-CA`, `fr-FR`, `it-IT`, `ja-JP`, `ko-KR`, `nb-NO`, `nl-NL`, `pl-PL`, `pt-BR`, `ru-RU`, `sv-SE`, `tr-TR`, `zh-CN`, `zh-TW`
 
 Usage
