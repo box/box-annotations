@@ -80,26 +80,8 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     show() {
-        // Populate mobile annotations dialog with annotations information
-        if (this.isMobile) {
-            this.element = this.container.querySelector(`.${constants.CLASS_MOBILE_ANNOTATION_DIALOG}`);
-            annotatorUtil.showElement(this.element);
-            this.element.appendChild(this.dialogEl);
-
-            const commentEls = this.element.querySelectorAll(`.${CLASS_COMMENT}`);
-            if (this.highlightDialogEl && !commentEls.length) {
-                this.element.classList.add(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-
-                const headerEl = this.element.querySelector(constants.SELECTOR_MOBILE_DIALOG_HEADER);
-                headerEl.classList.add(constants.CLASS_HIDDEN);
-            }
-
-            const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-            dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
-
-            this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
-
-            this.bindDOMListeners();
+        if (this.element && !this.element.classList.contains(constants.CLASS_HIDDEN)) {
+            return;
         }
 
         const textAreaEl = this.hasAnnotations
@@ -112,9 +94,13 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
-        // Position and show - we need to reposition every time since the DOM
-        // could have changed from zooming
-        if (!this.isMobile) {
+        if (this.isMobile) {
+            // Populate mobile annotations dialog with annotations
+            // information
+            this.showMobileDialog();
+        } else {
+            // Position and show - we need to reposition every time since
+            // the DOM could have changed from zooming
             this.position();
         }
 
@@ -140,6 +126,27 @@ class AnnotationDialog extends EventEmitter {
         if (annotatorUtil.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
+    }
+
+    showMobileDialog() {
+        this.element = this.container.querySelector(`.${constants.CLASS_MOBILE_ANNOTATION_DIALOG}`);
+        annotatorUtil.showElement(this.element);
+        this.element.appendChild(this.dialogEl);
+
+        const commentEls = this.element.querySelectorAll(`.${CLASS_COMMENT}`);
+        if (this.highlightDialogEl && !commentEls.length) {
+            this.element.classList.add(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
+
+            const headerEl = this.element.querySelector(constants.SELECTOR_MOBILE_DIALOG_HEADER);
+            headerEl.classList.add(constants.CLASS_HIDDEN);
+        }
+
+        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
+
+        this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
+
+        this.bindDOMListeners();
     }
 
     /**

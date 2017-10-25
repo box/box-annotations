@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import autobind from 'autobind-decorator';
 import AnnotationService from './AnnotationService';
+import CreateAnnotationDialog, { CreateEvents } from './CreateAnnotationDialog';
 import * as annotatorUtil from './annotatorUtil';
 import { ICON_CLOSE } from './icons/icons';
 import './Annotator.scss';
@@ -18,6 +19,7 @@ import {
     ID_MOBILE_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     TYPES,
+    STATES,
     THREAD_EVENT,
     ANNOTATOR_EVENT
 } from './annotationConstants';
@@ -141,6 +143,12 @@ class Annotator extends EventEmitter {
         this.setScale(initialScale);
         this.setupAnnotations();
         this.showAnnotations();
+
+        if (!this.createPointDialog) {
+            return;
+        }
+
+        this.createPointDialog.addListener(CreateEvents.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
     }
 
     /**
@@ -199,6 +207,22 @@ class Annotator extends EventEmitter {
      */
     getAnnotateButton(annotatorSelector) {
         return this.container.querySelector(annotatorSelector);
+    }
+
+    /**
+     * Returns click handler for toggling annotation mode.
+     *
+     * @param {string} mode - Target annotation mode
+     * @return {Function|null} Click handler
+     */
+    getAnnotationModeClickHandler(mode) {
+        if (!mode || !this.isModeAnnotatable(mode)) {
+            return null;
+        }
+
+        return () => {
+            this.toggleAnnotationHandler(mode);
+        };
     }
 
     /**
@@ -424,6 +448,16 @@ class Annotator extends EventEmitter {
             </div>`.trim();
 
         this.container.appendChild(mobileDialogEl);
+
+        if (this.isModeAnnotatable(TYPES.point)) {
+            this.createPointDialog = new CreateAnnotationDialog(this.container, {
+                isMobile: this.isMobile,
+                hasTouch: this.hasTouch
+            });
+
+            this.createPointThread = this.createPointThread.bind(this);
+            this.createPointDialog.addListener(CreateEvents.post, this.createPointThread);
+        }
     }
 
     /**
@@ -613,8 +647,14 @@ class Annotator extends EventEmitter {
 
         // Create new thread with no annotations, show indicator, and show dialog
         const thread = this.createAnnotationThread([], location, TYPES.point);
+        this.pendingThreadID = thread.threadID;
 
         if (thread) {
+            if (this.isMobile) {
+                this.lastPointEvent = event;
+                this.container.appendChild(this.createPointDialog.containerEl);
+                this.createPointDialog.show(this.container);
+            }
             thread.show();
 
             // Bind events on thread
@@ -622,6 +662,41 @@ class Annotator extends EventEmitter {
         }
 
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
+    }
+
+    createPointThread(commentText) {
+        // Empty string will be passed in if no text submitted in comment
+        if (commentText === '' || !this.lastPointEvent) {
+            return null;
+        }
+
+        if (this.createPointDialog) {
+            this.createPointDialog.hide();
+        }
+
+        const location = this.getLocationFromEvent(this.lastPointEvent, TYPES.point);
+        if (!location) {
+            return null;
+        }
+
+        const pageThreads = this.getThreadsOnPage(location.page);
+        const thread = pageThreads[this.pendingThreadID];
+        this.lastPointEvent = null;
+        this.pendingThreadID = null;
+
+        if (!thread) {
+            return null;
+        }
+
+        thread.dialog.hasComments = true;
+        thread.state = STATES.hover;
+        thread.showDialog();
+        thread.dialog.postAnnotation(commentText);
+
+        this.bindCustomListenersOnThread(thread);
+
+        this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
+        return thread;
     }
 
     /**
@@ -766,23 +841,6 @@ class Annotator extends EventEmitter {
             canAnnotate: permissions.can_annotate || false,
             canViewAllAnnotations: permissions.can_view_annotations_all || false,
             canViewOwnAnnotations: permissions.can_view_annotations_self || false
-        };
-    }
-
-    /**
-     * Returns click handler for toggling annotation mode.
-     *
-     * @private
-     * @param {string} mode - Target annotation mode
-     * @return {Function|null} Click handler
-     */
-    getAnnotationModeClickHandler(mode) {
-        if (!mode || !this.isModeAnnotatable(mode)) {
-            return null;
-        }
-
-        return () => {
-            this.toggleAnnotationHandler(mode);
         };
     }
 
