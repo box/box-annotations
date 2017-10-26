@@ -356,7 +356,7 @@ class DocAnnotator extends Annotator {
             thread = new DocPointThread(threadParams);
         }
 
-        if (!thread && this.notification) {
+        if (!thread) {
             this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
         } else if (thread && (type !== TYPES.draw || location.page)) {
             this.addThreadToMap(thread);

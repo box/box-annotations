@@ -480,6 +480,26 @@ export function isPending(threadState) {
 }
 
 /**
+ * Checks whether a highlight annotation thread has the correct location params
+ *
+ * @param {Object} location Highlight annotation thread location object
+ * @return {boolean} Whether or not the highlight annotation has the correct location information
+ */
+export function validateHighlightLocation(location) {
+    return location && location.quadPoints;
+}
+
+/**
+ * Checks whether a draw annotation thread has the correct location params
+ *
+ * @param {Object} location Draw annotation thread location object
+ * @return {boolean} Whether or not the draw annotation has the correct location information
+ */
+export function validateDrawLocation(location) {
+    return location && location.minX && location.minY && location.maxX && location.maxY;
+}
+
+/**
  * Checks whether annotation thread is valid by checking whether each property
  * in THREAD_PARAMS on the specified file object is defined.
  *
@@ -488,6 +508,12 @@ export function isPending(threadState) {
  */
 export function validateThreadParams(thread) {
     if (thread) {
+        if (
+            (isHighlightAnnotation(thread.type) && !validateHighlightLocation(thread.location)) ||
+            (thread.type === TYPES.draw && !validateDrawLocation(thread.location))
+        ) {
+            return false;
+        }
         return THREAD_PARAMS.every((param) => typeof thread[param] !== 'undefined');
     }
     return false;
