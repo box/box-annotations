@@ -1,7 +1,6 @@
-module.exports = `Box UI Element
+module.exports = `Box Annotations
 
-Copyright 2016-present, Box, Inc.
-All rights reserved.
+Copyright 2016-present Box, Inc. All Rights Reserved.
 
 This source code is licensed under the Box Software License Agreement found
 in the LICENSE file in the root directory of this source tree. Additional

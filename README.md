@@ -24,7 +24,7 @@ Supported Locales
 
 Usage
 -----
-Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
+Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.com/package/box-annotations).
 
 Initialization
 --------------
@@ -72,7 +72,7 @@ const annotator = new annotatorConf.CONSTRUCTOR({
 | Parameter | Description |
 | --- | --- |
 | annotator | Viewer-specific annotator configurations object |
-| apiHost | Host for Box API calls i.e. 'https://app.box.com/api' |
+| apiHost | Host for Box API calls e.g. 'https://app.box.com/api' |
 | fileId | Box file ID |
 | token | A string auth token, see below for details on how to generate annotator tokens with appropriate scopes |
 | container | DOM node or selector where Preview should be placed |
@@ -581,17 +581,17 @@ Support
 -------
 If you have any questions, please search our [issues list](https://github.com/box/box-annotations/issues) to see if they have been previously answered. Report new issues [here](https://github.com/box/box-annotations/issues/new).
 
-For general Box Platform, API, and UI Element questions, please visit our [developer forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum) or contact us via one of our [available support channels](https://community.box.com/t5/Community/ct-p/English).
+For general Box Platform, API, Elements, and Annotations questions, please visit our [developer forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum) or contact us via one of our [available support channels](https://community.box.com/t5/Community/ct-p/English).
 
 Copyright and License
 ---------------------
-Copyright 2016-2017 Box, Inc. All Rights Reserved.
+Copyright 2016-present Box, Inc. All Rights Reserved.
 
 Licensed under the Box Software License Agreement v.20170516.
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://github.com/box/box-content-preview/blob/master/LICENSE
+   https://developer.box.com/docs/box-sdk-license
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
