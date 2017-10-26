@@ -24,7 +24,7 @@ Supported Locales
 
 Usage
 -----
-Box Annotations can be used either by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
+Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
 
 Initialization
 --------------
