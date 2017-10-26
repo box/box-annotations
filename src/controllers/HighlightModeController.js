@@ -44,10 +44,10 @@ class HighlightModeController extends AnnotationModeController {
      *
      * @return {void}
      */
-    disableMode() {
+    exit() {
         this.destroyPendingThreads();
         window.getSelection().removeAllRanges();
-        this.unbindModeListeners(); // Disable mode
+        this.unbindListeners(); // Disable mode
         this.emit('binddomlisteners');
     }
 
@@ -56,9 +56,9 @@ class HighlightModeController extends AnnotationModeController {
      *
      * @return {void}
      */
-    enableMode() {
+    enter() {
         this.emit('unbinddomlisteners'); // Disable other annotations
-        this.bindModeListeners(); // Enable mode
+        this.bindListeners(); // Enable mode
     }
 }
 

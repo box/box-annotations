@@ -96,12 +96,27 @@ class BoxAnnotations {
 
         /* eslint-disable no-param-reassign */
         annotatorConfig.CONTROLLERS = {};
-        annotatorConfig.TYPE.forEach((type) => {
+        const annotatorTypes = this.getAnnotatorTypes(annotatorConfig);
+        annotatorTypes.forEach((type) => {
             if (type in ANNOTATOR_TYPE_CONTROLLERS) {
                 annotatorConfig.CONTROLLERS[type] = new ANNOTATOR_TYPE_CONTROLLERS[type].CONSTRUCTOR();
             }
         });
         /* eslint-enable no-param-reassign */
+    }
+
+    getAnnotatorTypes(annotatorConfig) {
+        const enabledTypes = this.viewerConfig.enabledTypes || [...annotatorConfig.DEFAULT_TYPES];
+
+        // Keeping disabledTypes for backwards compatibility
+        const disabledTypes = this.viewerConfig.disabledTypes || [];
+
+        return enabledTypes.filter((type) => {
+            return (
+                !disabledTypes.some((disabled) => disabled === type) &&
+                annotatorConfig.TYPE.some((allowed) => allowed === type)
+            );
+        });
     }
 
     /**
@@ -115,27 +130,15 @@ class BoxAnnotations {
     determineAnnotator(options, viewerConfig = {}, disabledAnnotators = []) {
         let modifiedAnnotator = null;
 
+        this.viewerConfig = viewerConfig;
         const hasAnnotationPermissions = canLoadAnnotations(options.file.permissions);
         const annotator = this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
-        if (!hasAnnotationPermissions || !annotator || viewerConfig.enabled === false) {
+        if (!hasAnnotationPermissions || !annotator || this.viewerConfig.enabled === false) {
             return modifiedAnnotator;
         }
 
         modifiedAnnotator = Object.assign({}, annotator);
-
-        const enabledTypes = viewerConfig.enabledTypes || [...modifiedAnnotator.DEFAULT_TYPES];
-
-        // Keeping disabledTypes for backwards compatibility
-        const disabledTypes = viewerConfig.disabledTypes || [];
-
-        const annotatorTypes = enabledTypes.filter((type) => {
-            return (
-                !disabledTypes.some((disabled) => disabled === type) &&
-                modifiedAnnotator.TYPE.some((allowed) => allowed === type)
-            );
-        });
-
-        modifiedAnnotator.TYPE = annotatorTypes;
+        modifiedAnnotator.TYPE = this.getAnnotatorTypes(modifiedAnnotator);
 
         return modifiedAnnotator;
     }

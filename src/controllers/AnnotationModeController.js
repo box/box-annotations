@@ -33,9 +33,6 @@ class AnnotationModeController extends EventEmitter {
 
         if (data.modeButton) {
             this.modeButton = data.modeButton;
-            this.toggleAnnotationHandler = this.toggleAnnotationHandler.bind(this);
-            this.buttonEl = this.getModeButton(this.modeButton.selector);
-            this.buttonEl.addEventListener('click', this.toggleAnnotationHandler);
             this.showModeButton();
         }
 
@@ -53,7 +50,7 @@ class AnnotationModeController extends EventEmitter {
         });
 
         if (this.buttonEl) {
-            this.buttonEl.removeEventListener('click', this.toggleAnnotationHandler);
+            this.buttonEl.removeEventListener('click', this.toggleMode);
         }
     }
 
@@ -77,12 +74,13 @@ class AnnotationModeController extends EventEmitter {
             return;
         }
 
-        const annotateButtonEl = this.container.querySelector(this.modeButton.selector);
-        if (annotateButtonEl) {
-            annotateButtonEl.title = this.modeButton.title;
-            annotateButtonEl.classList.remove(CLASS_HIDDEN);
+        this.buttonEl = this.getModeButton(this.modeButton.selector);
+        if (this.buttonEl) {
+            this.buttonEl.title = this.modeButton.title;
+            this.buttonEl.classList.remove(CLASS_HIDDEN);
 
-            annotateButtonEl.addEventListener('click', this.toggleAnnotationHandler);
+            this.toggleMode = this.toggleMode.bind(this);
+            this.buttonEl.addEventListener('click', this.toggleMode);
         }
     }
 
@@ -92,7 +90,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    toggleAnnotationHandler() {
+    toggleMode() {
         this.destroyPendingThreads();
 
         // No specific mode available for annotation type
@@ -101,7 +99,7 @@ class AnnotationModeController extends EventEmitter {
         }
 
         // Exit any other annotation mode
-        this.emit('exitannotationmodes');
+        this.emit('togglemode');
     }
 
     /**
@@ -109,15 +107,15 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    disableMode() {
+    exit() {
         this.destroyPendingThreads();
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
         if (this.buttonEl) {
             this.buttonEl.classList.remove(CLASS_ACTIVE);
         }
 
-        this.unbindModeListeners(); // Disable mode
-        this.emit('binddomlisteners');
+        this.unbindListeners(); // Disable mode
+        this.emit(ANNOTATOR_EVENT.modeExit);
     }
 
     /**
@@ -125,18 +123,18 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    enableMode() {
+    enter() {
         this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
         if (this.buttonEl) {
             this.buttonEl.classList.add(CLASS_ACTIVE);
         }
 
-        this.emit('unbinddomlisteners'); // Disable other annotations
-        this.bindModeListeners(); // Enable mode
+        this.emit(ANNOTATOR_EVENT.modeEnter); // Disable other annotations
+        this.bindListeners(); // Enable mode
     }
 
     isModeEnabled() {
-        return this.buttonEl.classList.contains(CLASS_ACTIVE);
+        return this.buttonEl ? this.buttonEl.classList.contains(CLASS_ACTIVE) : false;
     }
 
     /**
@@ -145,7 +143,7 @@ class AnnotationModeController extends EventEmitter {
      * @public
      * @return {void}
      */
-    bindModeListeners() {
+    bindListeners() {
         const currentHandlerIndex = this.handlers.length;
         this.setupHandlers();
 
@@ -163,7 +161,7 @@ class AnnotationModeController extends EventEmitter {
      * @public
      * @return {void}
      */
-    unbindModeListeners() {
+    unbindListeners() {
         while (this.handlers.length > 0) {
             const handler = this.handlers.pop();
             const types = handler.type instanceof Array ? handler.type : [handler.type];

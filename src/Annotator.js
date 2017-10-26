@@ -368,11 +368,14 @@ class Annotator extends EventEmitter {
      * Returns whether or not annotator is in the specified annotation mode.
      *
      * @protected
-     * @param {string} mode - Current annotation mode
+     * @param {string} currentMode - Current annotation mode
      * @return {boolean} Whether or not in the specified annotation mode
      */
-    isInAnnotationMode(mode) {
-        return this.currentAnnotationMode === mode;
+    getCurrentAnnotationMode() {
+        return Object.keys(this.modeControllers).filter((mode) => {
+            const controller = this.modeControllers[mode];
+            return controller.isModeEnabled();
+        })[0];
     }
 
     //--------------------------------------------------------------------------
@@ -483,15 +486,15 @@ class Annotator extends EventEmitter {
      * @param {string} mode - Current annotation mode
      * @return {void}
      */
-    exitAnnotationModesExcept(mode) {
-        Object.keys(this.modeControllers).forEach((type) => {
-            const controller = this.modeControllers[type];
-            if (mode === type && !controller.isModeEnabled()) {
-                controller.enableMode();
-            } else {
-                controller.disableMode();
-            }
-        });
+    toggleAnnotationMode(mode) {
+        const currentMode = this.getCurrentAnnotationMode();
+        if (currentMode) {
+            this.modeControllers[currentMode].exit();
+        }
+
+        if (currentMode !== mode) {
+            this.modeControllers[mode].enter();
+        }
     }
 
     /**
@@ -584,19 +587,18 @@ class Annotator extends EventEmitter {
      */
     handleControllerEvents(data) {
         let opt = { page: 1, pageThreads: {} };
+        const headerSelector = data.data ? data.data.headerSelector : '';
         switch (data.event) {
-            case 'exitannotationmodes':
-                this.exitAnnotationModesExcept(data.mode);
+            case 'togglemode':
+                this.toggleAnnotationMode(data.mode);
                 break;
             case ANNOTATOR_EVENT.modeEnter:
-            case ANNOTATOR_EVENT.modeExit:
-                this.emit(data.event, { mode: data.mode, headerSelector: data.data.headerSelector });
-                break;
-            case 'binddomlisteners':
-                this.bindDOMListeners();
-                break;
-            case 'unbinddomlisteners':
+                this.emit(data.event, { mode: data.mode, headerSelector });
                 this.unbindDOMListeners();
+                break;
+            case ANNOTATOR_EVENT.modeExit:
+                this.emit(data.event, { mode: data.mode, headerSelector });
+                this.bindDOMListeners();
                 break;
             case 'registerthread':
                 opt = annotatorUtil.addThreadToMap(data.data, this.threads);

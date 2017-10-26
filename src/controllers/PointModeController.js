@@ -27,12 +27,12 @@ class PointModeController extends AnnotationModeController {
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             this.currentThread.cancelUnsavedAnnotation();
-            this.annotator.toggleAnnotationHandler(TYPES.point);
+            this.emit('togglemode');
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
             this.currentThread.saveAnnotation(TYPES.point);
-            this.annotator.toggleAnnotationHandler(TYPES.point);
+            this.emit('togglemode');
         });
     }
 
@@ -56,7 +56,7 @@ class PointModeController extends AnnotationModeController {
         }
 
         // Exits point annotation mode on first click
-        this.disableMode();
+        this.emit('togglemode');
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);

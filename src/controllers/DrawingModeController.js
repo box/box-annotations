@@ -3,7 +3,6 @@ import AnnotationModeController from './AnnotationModeController';
 import annotationsShell from './../annotationsShell.html';
 import * as annotatorUtil from '../annotatorUtil';
 import {
-    CLASS_ANNOTATION_DRAW,
     TYPES,
     THREAD_EVENT,
     STATES,
@@ -60,7 +59,7 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @return {void}
      */
-    disableMode() {
+    exit() {
         this.emit(ANNOTATOR_EVENT.modeExit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
 
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
@@ -68,7 +67,7 @@ class DrawingModeController extends AnnotationModeController {
 
         this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
 
-        this.unbindModeListeners(); // Disable mode
+        this.unbindListeners(); // Disable mode
         this.emit('binddomlisteners');
     }
 
@@ -77,7 +76,7 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @return {void}
      */
-    enableMode() {
+    enter() {
         this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
         this.buttonEl.classList.add(CLASS_ACTIVE);
 
@@ -85,7 +84,7 @@ class DrawingModeController extends AnnotationModeController {
 
         this.emit(ANNOTATOR_EVENT.modeEnter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
         this.emit('unbinddomlisteners'); // Disable other annotations
-        this.bindModeListeners(); // Enable mode
+        this.bindListeners(); // Enable mode
     }
 
     /**
@@ -133,8 +132,8 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    unbindModeListeners() {
-        super.unbindModeListeners();
+    unbindListeners() {
+        super.unbindListeners();
 
         annotatorUtil.disableElement(this.undoButtonEl);
         annotatorUtil.disableElement(this.redoButtonEl);
@@ -195,12 +194,12 @@ class DrawingModeController extends AnnotationModeController {
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             this.currentThread.cancelUnsavedAnnotation();
-            this.toggleAnnotationHandler();
+            this.toggleMode();
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
             this.currentThread.saveAnnotation(TYPES.draw);
-            this.toggleAnnotationHandler();
+            this.toggleMode();
         });
 
         this.pushElementHandler(this.undoButtonEl, 'click', this.currentThread.undo);
@@ -228,8 +227,8 @@ class DrawingModeController extends AnnotationModeController {
                 // start drawing at the location indicating the page change
                 this.currentThread = undefined;
                 thread.saveAnnotation(TYPES.draw);
-                this.unbindModeListeners();
-                this.bindModeListeners();
+                this.unbindListeners();
+                this.bindListeners();
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
@@ -242,8 +241,8 @@ class DrawingModeController extends AnnotationModeController {
                     // Soft delete, in-progress thread doesn't require a redraw or a delete on the server
                     // Clear in-progress thread and restart drawing
                     thread.destroy();
-                    this.unbindModeListeners();
-                    this.bindModeListeners();
+                    this.unbindListeners();
+                    this.bindListeners();
                 } else {
                     thread.deleteThread();
                     this.unregisterThread(thread);
