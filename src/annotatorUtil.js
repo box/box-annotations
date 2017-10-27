@@ -485,7 +485,7 @@ export function isPending(threadState) {
  * @param {Object} location Highlight annotation thread location object
  * @return {boolean} Whether or not the highlight annotation has the correct location information
  */
-export function validateHighlightLocation(location) {
+export function isHighlightLocationValid(location) {
     return location && location.quadPoints;
 }
 
@@ -495,7 +495,7 @@ export function validateHighlightLocation(location) {
  * @param {Object} location Draw annotation thread location object
  * @return {boolean} Whether or not the draw annotation has the correct location information
  */
-export function validateDrawLocation(location) {
+export function isDrawLocationValid(location) {
     return location && location.minX && location.minY && location.maxX && location.maxY;
 }
 
@@ -509,8 +509,8 @@ export function validateDrawLocation(location) {
 export function validateThreadParams(thread) {
     if (thread) {
         if (
-            (isHighlightAnnotation(thread.type) && !validateHighlightLocation(thread.location)) ||
-            (thread.type === TYPES.draw && !validateDrawLocation(thread.location))
+            (isHighlightAnnotation(thread.type) && !isHighlightLocationValid(thread.location)) ||
+            (thread.type === TYPES.draw && !isDrawLocationValid(thread.location))
         ) {
             return false;
         }
