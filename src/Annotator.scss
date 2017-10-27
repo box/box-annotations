@@ -199,6 +199,7 @@ $tablet: 'max-width: 768px';
         font-size: 13px;
         height: 34px;
         line-height: 13px;
+        margin: 0;
         max-width: 235px;
         min-height: 34px;
         padding: 7px;
@@ -441,7 +442,7 @@ $tablet: 'max-width: 768px';
 .bp-annotation-highlight-dialog:hover {
     background-color: $white;
     border: 1px solid $seesee;
-    border-radius: 2px;
+    border-radius: 3px;
     padding: 5px 6px;
 
     // Center buttons
@@ -476,6 +477,14 @@ $tablet: 'max-width: 768px';
     .bp-highlight-comment-btn {
         padding-top: 3px;
     }
+}
+
+.bp-create-highlight-comment {
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px 9px;
+    white-space: normal;
 }
 
 .bp-annotation-drawing-dialog {
