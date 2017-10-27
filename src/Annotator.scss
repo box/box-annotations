@@ -29,7 +29,8 @@ $tablet: 'max-width: 768px';
     position: relative;
 }
 
-.bp-btn-annotate-draw-cancel {
+.bp-btn-annotate-draw-cancel,
+.bp-header button.bp-btn-annotate-draw-cancel {
     background-color: $twos;
     border: solid $off-white 1px;
     color: $off-white;
@@ -39,7 +40,8 @@ $tablet: 'max-width: 768px';
     }
 }
 
-.bp-btn-annotate-draw-post {
+.bp-btn-annotate-draw-post,
+.bp-header button.bp-btn-annotate-draw-post {
     background-color: $off-white;
     color: $twos;
 
@@ -48,7 +50,8 @@ $tablet: 'max-width: 768px';
     }
 }
 
-.bp-annotate-draw-post-cancel-container {
+.bp-annotate-draw-post-cancel-container,
+.bp-container .bp-annotate-draw-post-cancel-container {
     margin-right: 20px;
     position: absolute;
     right: 0;
@@ -60,13 +63,14 @@ $tablet: 'max-width: 768px';
     }
 }
 
-.bp-annotate-draw-undo-redo-container {
+.bp-annotate-draw-undo-redo-container,
+.bp-container .bp-annotate-draw-undo-redo-container {
     margin: 0 auto;
 
     .is-disabled.bp-btn-annotate-draw-undo,
     .is-disabled.bp-btn-annotate-draw-redo,
-    .bp-btn-annotate-draw-undo,
-    .bp-btn-annotate-draw-redo {
+    button.bp-btn-annotate-draw-undo,
+    button.bp-btn-annotate-draw-redo {
         background: none;
         border: none;
         margin: 5px;
@@ -455,15 +459,16 @@ $tablet: 'max-width: 768px';
         &:hover {
             color: $better-black;
             padding: 8px;
-            padding-left: 4px;
         }
     }
 
-    .bp-btn-annotate-draw-add {
+    .bp-btn-annotate-draw-add,
+    .bp-btn-annotate-draw-add:hover {
         padding-right: 4px;
     }
 
-    .bp-btn-annotate-draw-delete {
+    .bp-btn-annotate-draw-delete,
+    .bp-btn-annotate-draw-delete:hover {
         padding-left: 4px;
     }
 
