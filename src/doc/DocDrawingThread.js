@@ -196,8 +196,12 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
-        this.dialog.addListener('annotationcreate', () => this.emit('softcommit'));
-        this.dialog.addListener('annotationdelete', () => this.emit('dialogdelete'));
+        this.dialog.addListener('annotationcreate', () => {
+            this.emit('softcommit');
+        });
+        this.dialog.addListener('annotationdelete', () => {
+            this.emit('dialogdelete');
+        });
     }
 
     /**
