@@ -1,7 +1,7 @@
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg?style=flat-square)](http://opensource.box.com/badges/)
 [![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
-[![version](https://img.shields.io/badge/version-v0.0.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
+[![version](https://img.shields.io/badge/version-v0.0.11-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
 
 
@@ -24,7 +24,7 @@ Supported Locales
 
 Usage
 -----
-Box Annotations can be used either by pulling from our [NPM package](https://www.npmjs.com/package/box-ui-elements).
+Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.com/package/box-annotations).
 
 Initialization
 --------------
@@ -69,21 +69,21 @@ const annotator = new annotatorConf.CONSTRUCTOR({
 });
 ```
 
-| Parameter | Description |
-| --- | --- |
-| annotator | Viewer-specific annotator configurations object |
-| apiHost | Host for Box API calls i.e. 'https://app.box.com/api' |
-| fileId | Box file ID |
-| token | A string auth token, see below for details on how to generate annotator tokens with appropriate scopes |
-| container | DOM node or selector where Preview should be placed |
-| file | File metadata object |
-| file.id | String `Box_File` id |
-| file.file_version.id | String `Box_File_Version` id |
-| file.permissions | File permissions object, see below on how to scope permissions  |
-| modeButtons | Object containing a CSS selector and accessibility message for the annotation mode button, see parameters and options example above |
+| Parameter | Default | Description |
+| --- | --- | --- |
+| annotator |  | Viewer-specific annotator configurations object |
+| apiHost |  | Host for Box API calls e.g. 'https://app.box.com/api' |
+| fileId |  | Box file ID |
+| token |  | A string auth token, see below for details on how to generate annotator tokens with appropriate scopes |
+| container |  | DOM node or selector where Preview should be placed |
+| file |  | File metadata object |
+| file.id |  | String `Box_File` id |
+| file.file_version.id |  | String `Box_File_Version` id |
+| file.permissions |  | File permissions object, see below on how to scope permissions  |
 
 | Option | Default | Description |
 | --- | --- | --- |
+| modeButtons |  | Object containing a CSS selector and accessibility message for the annotation mode button, see parameters and options example above |
 | isMobile | false | Whether the user's browser is on a mobile device |
 | hasTouch | false | Whether the mobile browser has touch enabled |
 | locale | en-US | Shared link URL |
@@ -472,65 +472,6 @@ Supported Annotation Types
 --------------------
 Point annotations are supported on both document and image formats. Highlight comment, highlight only, and draw annotations are only supported on document formats.
 
-### Document and Presentation Annotations
-
-The document and presentation viewers supports highlight comment, highlight only, draw and point annotations.
-
-<!-- ## Screenshot
-
-![Screenshot of document point annotations](../../../../images/doc_point.png)
-
-![Screenshot of document highlight annotations](../../../../images/doc_highlight.png)
-
-![Screenshot of document draw  annotations](../../../../images/doc_draw.png) -->
-
-#### Point Annotations
-
-See BoxAnnotations annotation [thread methods/events](#annotation-thread) and [dialog methods/events](#annotation-dialog).
-
-#### Highlight Only and Highlight Comment Annotations
-
-The following methods are available for only highlight annotation threads.
-
-| Method Name | Explanation | Method Parameters |
-| --- | --- | --- |
-| cancelFirstComment | Cancels the first comment in the thread |  ||
-| isOnHighlight | Checks if Mouse event is either over the text highlight or the annotations dialog | {Event} mouse event ||
-| activateDialog | Sets thread state to hover or active-hover accordingly and triggers dialog to remain open |  ||
-
-The following methods are available for only highlight annotation dialogs.
-
-| Method Name | Explanation | Method Parameters |
-| --- | --- | --- |
-| toggleHighlightDialogs | Toggles between the highlight annotations buttons dialog and the highlight comments dialog. Dialogs are toggled based on whether the highlight annotation has text comments or not |  ||
-| toggleHighlightIcon | Toggles the highlight icon color to a darker yellow based on if the user is hovering over the highlight to activate it | {string} RGBA fill style for highlight ||
-
-#### Draw Annotations
-
-The following methods are available for the annotation threads.
-
-| Method Name | Explanation | Method Parameters |
-| --- | --- | --- |
-| hasPageChanged | Determine if the drawing in progress if a drawing goes to a different page | {Object} current location information ||
-
-The following methods are available for the annotation dialogs.
-
-| Method Name | Explanation | Method Parameters |
-| --- | --- | --- |
-| isVisible | Returns whether or not the dialog is able to be seen |  ||
-
-### Image Annotations
-
-The image and multi-page image viewers support point annotations. The creation of annotations is disabled on rotated images.
-
-<!-- ## Screenshot
-
-![Screenshot of image point annotations](../../../../images/image_point.png) -->
-
-#### Point Annotations
-
-See BoxAnnotations annotation [thread methods/events](#annotation-thread) and [dialog methods/events](#annotation-dialog).
-
 Development Setup
 -----------------
 1. Install Node v6.10.0 or higher.
@@ -581,17 +522,17 @@ Support
 -------
 If you have any questions, please search our [issues list](https://github.com/box/box-annotations/issues) to see if they have been previously answered. Report new issues [here](https://github.com/box/box-annotations/issues/new).
 
-For general Box Platform, API, and UI Element questions, please visit our [developer forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum) or contact us via one of our [available support channels](https://community.box.com/t5/Community/ct-p/English).
+For general Box Platform, API, Elements, and Annotations questions, please visit our [developer forum](https://community.box.com/t5/Developer-Forum/bd-p/DeveloperForum) or contact us via one of our [available support channels](https://community.box.com/t5/Community/ct-p/English).
 
 Copyright and License
 ---------------------
-Copyright 2016-2017 Box, Inc. All Rights Reserved.
+Copyright 2016-present Box, Inc. All Rights Reserved.
 
 Licensed under the Box Software License Agreement v.20170516.
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   https://github.com/box/box-content-preview/blob/master/LICENSE
+   https://developer.box.com/docs/box-sdk-license
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
