@@ -421,6 +421,29 @@ class DocAnnotator extends Annotator {
         });
     }
 
+    /**
+     * Toggles annotation modes on and off. When an annotation mode is
+     * on, annotation threads will be created at that location.
+     *
+     * @param {string} mode - Current annotation mode
+     * @param {HTMLEvent} event - DOM event
+     * @return {void}
+     */
+    toggleAnnotationHandler(mode, event = {}) {
+        if (!this.isModeAnnotatable(mode)) {
+            return;
+        }
+
+        this.destroyPendingThreads();
+
+        if (this.createHighlightDialog.isVisible) {
+            document.getSelection().removeAllRanges();
+            this.createHighlightDialog.hide();
+        }
+
+        super.toggleAnnotationHandler(mode, event);
+    }
+
     //--------------------------------------------------------------------------
     // Protected
     //--------------------------------------------------------------------------
