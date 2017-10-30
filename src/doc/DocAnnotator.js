@@ -323,7 +323,7 @@ class DocAnnotator extends Annotator {
     createAnnotationThread(annotations, location, type) {
         let thread;
         const threadParams = this.getThreadParams(annotations, location, type);
-        if (!annotatorUtil.validateThreadParams(threadParams)) {
+        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }

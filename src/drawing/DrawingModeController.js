@@ -154,7 +154,8 @@ class DrawingModeController extends AnnotationModeController {
         /* eslint-enable require-jsdoc */
 
         // Setup
-        this.currentThread = new DocDrawingThread(this.annotator.getThreadParams([], {}, TYPES.draw));
+        const threadParams = this.annotator.getThreadParams([], {}, TYPES.draw);
+        this.currentThread = new DocDrawingThread(threadParams);
         this.bindCustomListenersOnThread(this.currentThread);
 
         // Get handlers

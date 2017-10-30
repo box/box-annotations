@@ -135,22 +135,15 @@ describe('drawing/DrawingModeController', () => {
     describe('setupHandlers()', () => {
         beforeEach(() => {
             drawingModeController.annotator = {
-                createAnnotationThread: sandbox.stub(),
+                getThreadParams: sandbox.stub().returns({
+                    annotatedElement: document
+                }),
                 getLocationFromEvent: sandbox.stub(),
                 annotatedElement: {}
             };
-            stubs.createThread = drawingModeController.annotator.createAnnotationThread;
+            stubs.getThreadParams = drawingModeController.annotator.getThreadParams;
             stubs.getLocation = drawingModeController.annotator.getLocationFromEvent;
             stubs.bindCustomListenersOnThread = sandbox.stub(drawingModeController, 'bindCustomListenersOnThread');
-
-            stubs.createThread.returns({
-                saveAnnotation: () => {},
-                undo: () => {},
-                redo: () => {},
-                handleMove: () => {},
-                handleStart: () => {},
-                handleStop: () => {}
-            });
         });
 
         it('should successfully contain draw mode handlers if undo and redo buttons do not exist', () => {
@@ -159,7 +152,7 @@ describe('drawing/DrawingModeController', () => {
             drawingModeController.redoButtonEl = undefined;
 
             drawingModeController.setupHandlers();
-            expect(stubs.createThread).to.be.called;
+            expect(stubs.getThreadParams).to.be.called;
             expect(stubs.bindCustomListenersOnThread).to.be.called;
             expect(drawingModeController.handlers.length).to.equal(4);
         });
@@ -172,7 +165,7 @@ describe('drawing/DrawingModeController', () => {
 
 
             drawingModeController.setupHandlers();
-            expect(stubs.createThread).to.be.called;
+            expect(stubs.getThreadParams).to.be.called;
             expect(stubs.bindCustomListenersOnThread).to.be.called;
             expect(drawingModeController.handlers.length).to.equal(7);
         });

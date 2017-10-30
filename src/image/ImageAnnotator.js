@@ -4,6 +4,7 @@ import ImagePointThread from './ImagePointThread';
 import * as annotatorUtil from '../annotatorUtil';
 import * as imageAnnotatorUtil from './imageAnnotatorUtil';
 import {
+    TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
     SELECTOR_ANNOTATION_BUTTON_POINT,
     ANNOTATOR_EVENT
@@ -112,12 +113,15 @@ class ImageAnnotator extends Annotator {
         }
 
         const threadParams = this.getThreadParams(annotations, location, type);
-        if (!annotatorUtil.validateThreadParams(threadParams)) {
+        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }
 
-        thread = new ImagePointThread(threadParams);
+        if (type === TYPES.point) {
+            thread = new ImagePointThread(threadParams);
+        }
+
         if (!thread) {
             this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
         } else {
