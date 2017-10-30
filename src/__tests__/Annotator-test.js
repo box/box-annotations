@@ -553,6 +553,7 @@ describe('Annotator', () => {
                     someID2: [{}]
                 };
                 sandbox.stub(annotator, 'emit');
+                sandbox.stub(annotatorUtil, 'getFirstAnnotation').returns({});
                 sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
             });
 
@@ -563,6 +564,7 @@ describe('Annotator', () => {
             });
 
             it('should reset and create a new thread map by from annotations fetched from server', () => {
+                annotator.options.annotator = { NAME: 'name' };
                 stubs.createThread = sandbox.stub(annotator, 'createAnnotationThread');
                 stubs.createThread.onFirstCall();
                 stubs.createThread.onSecondCall().returns(stubs.thread);

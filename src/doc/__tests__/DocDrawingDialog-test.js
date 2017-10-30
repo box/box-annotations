@@ -242,6 +242,13 @@ describe('doc/DocDrawingDialog', () => {
                     can_delete: true
                 }
             }
+            stubs.getFirstAnnotation = sandbox.stub(annotatorUtil, 'getFirstAnnotation').returns(annotation);
+        });
+
+        it('should do nothing if first annotation does not exist', () => {
+            stubs.getFirstAnnotation.returns(null);
+            const dialogEl = dialog.generateDialogEl([annotation]);
+            expect(dialogEl).to.be.null;
         });
 
         it('should generate the correctly formatted label dialog element', () => {
