@@ -636,6 +636,55 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
+    describe('toggleAnnotationHandler()', () => {
+        beforeEach(() => {
+            stubs.destroyStub = sandbox.stub(annotator, 'destroyPendingThreads');
+            stubs.annotationMode = sandbox.stub(annotator, 'isInAnnotationMode');
+            stubs.exitModes = sandbox.stub(annotator, 'exitAnnotationModesExcept');
+            stubs.disable = sandbox.stub(annotator, 'disableAnnotationMode');
+            stubs.enable = sandbox.stub(annotator, 'enableAnnotationMode');
+            sandbox.stub(annotator, 'getAnnotateButton');
+            stubs.isAnnotatable = sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+
+            annotator.modeButtons = {
+                point: { selector: 'point_btn' },
+                draw: { selector: 'draw_btn' }
+            };
+
+            annotator.createHighlightDialog = {
+                isVisible: false,
+                hide: sandbox.stub(),
+                destroy: sandbox.stub()
+            }
+        });
+
+        afterEach(() => {
+            annotator.modeButtons = {};
+        });
+
+        it('should do nothing if specified annotation type is not annotatable', () => {
+            stubs.isAnnotatable.returns(false);
+            annotator.toggleAnnotationHandler('bleh');
+            expect(stubs.destroyStub).to.not.be.called;
+        });
+
+        it('should hide the highlight dialog and remove selection if it is visible', () => {
+            const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
+                removeAllRanges: sandbox.stub()
+            });
+
+            annotator.toggleAnnotationHandler(TYPES.highlight);
+            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+            expect(getSelectionStub).to.not.be.called;
+
+            annotator.createHighlightDialog.isVisible = true;
+
+            annotator.toggleAnnotationHandler(TYPES.highlight);
+            expect(annotator.createHighlightDialog.hide).to.be.called;
+            expect(getSelectionStub).to.be.called;
+        });
+    });
+
     describe('setupAnnotations()', () => {
         const setupFunc = Annotator.prototype.setupAnnotations;
 
@@ -1079,7 +1128,7 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
         });
 
-        it('should hide the highlight dialog and clear selection if it is visible', () => {
+        it('should not hide the highlight dialog and clear selection if the CreateHighlightDialog is not visible', () => {
             annotator.createHighlightDialog = {
                 isVisible: false,
                 hide: sandbox.stub(),
@@ -1094,8 +1143,19 @@ describe('doc/DocAnnotator', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
             expect(getSelectionStub).to.not.be.called;
+        });
 
-            annotator.createHighlightDialog.isVisible = true;
+        it('should hide the highlight dialog and clear selection if the CreateHighlightDialog is visible', () => {
+            annotator.createHighlightDialog = {
+                isVisible: true,
+                hide: sandbox.stub(),
+                removeListener: sandbox.stub(),
+                destroy: sandbox.stub()
+            }
+
+            const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
+                removeAllRanges: sandbox.stub()
+            });
 
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.createHighlightDialog.hide).to.be.called;

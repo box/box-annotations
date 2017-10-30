@@ -421,6 +421,29 @@ class DocAnnotator extends Annotator {
         });
     }
 
+    /**
+     * Toggles annotation modes on and off. When an annotation mode is
+     * on, annotation threads will be created at that location.
+     *
+     * @param {string} mode - Current annotation mode
+     * @param {HTMLEvent} event - DOM event
+     * @return {void}
+     */
+    toggleAnnotationHandler(mode, event = {}) {
+        if (!this.isModeAnnotatable(mode)) {
+            return;
+        }
+
+        this.destroyPendingThreads();
+
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            document.getSelection().removeAllRanges();
+            this.createHighlightDialog.hide();
+        }
+
+        super.toggleAnnotationHandler(mode, event);
+    }
+
     //--------------------------------------------------------------------------
     // Protected
     //--------------------------------------------------------------------------
@@ -554,7 +577,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        if (this.createHighlightDialog) {
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisble) {
             this.createHighlightDialog.hide();
         }
 
@@ -838,7 +861,7 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        if (this.createHighlightDialog.isVisible) {
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
             document.getSelection().removeAllRanges();
         }
