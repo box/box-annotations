@@ -198,12 +198,9 @@ class DocDrawingDialog extends AnnotationDialog {
      */
     generateDialogEl(annotations) {
         const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
-        if (!firstAnnotation) {
-            return null;
-        }
-
-        const canCommit = Object.keys(annotations).length === 0;
-        const canDelete = canCommit || (firstAnnotation.permissions && firstAnnotation.permissions.can_delete);
+        const canCommit = !firstAnnotation;
+        const canDelete =
+            canCommit || (firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete);
 
         const drawingButtonsEl = document.createElement('span');
         drawingButtonsEl.classList.add(constants.CLASS_ANNOTATION_DRAWING_BTNS);

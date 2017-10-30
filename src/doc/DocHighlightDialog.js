@@ -331,7 +331,7 @@ class DocHighlightDialog extends AnnotationDialog {
         if (annotatorUtil.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoHighlighted, [
-                annotations[0].user.name
+                firstAnnotation.user.name
             ]);
             annotatorUtil.showElement(highlightLabelEl);
 

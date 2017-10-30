@@ -550,9 +550,10 @@ class Annotator extends EventEmitter {
         };
 
         // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            params.threadID = annotations[0].threadID;
-            params.threadNumber = annotations[0].threadNumber;
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
+            params.threadID = firstAnnotation.threadID;
+            params.threadNumber = firstAnnotation.threadNumber;
         }
 
         return params;
