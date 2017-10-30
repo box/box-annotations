@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import { insertTemplate } from './annotatorUtil';
 
 class AnnotationModeController extends EventEmitter {
-    /** @property {Array} - The array of annotation threads */
+    /** @property {Object} - Object of annotation threads indexed by threadID */
     threads = {};
 
     /** @property {Array} - The array of annotation handlers */

@@ -132,22 +132,13 @@ describe('drawing/DrawingModeController', () => {
     describe('setupHandlers()', () => {
         beforeEach(() => {
             controller.annotator = {
-                createAnnotationThread: sandbox.stub(),
+                getThreadParams: sandbox.stub(),
                 getLocationFromEvent: sandbox.stub(),
                 annotatedElement: {}
             };
-            stubs.createThread = controller.annotator.createAnnotationThread;
+            stubs.getParams = controller.annotator.getThreadParams.returns({});
             stubs.getLocation = controller.annotator.getLocationFromEvent;
             stubs.bindCustomListenersOnThread = sandbox.stub(controller, 'bindCustomListenersOnThread');
-
-            stubs.createThread.returns({
-                saveAnnotation: () => {},
-                undo: () => {},
-                redo: () => {},
-                handleMove: () => {},
-                handleStart: () => {},
-                handleStop: () => {}
-            });
         });
 
         it('should successfully contain draw mode handlers if undo and redo buttons do not exist', () => {
@@ -156,7 +147,7 @@ describe('drawing/DrawingModeController', () => {
             controller.redoButtonEl = undefined;
 
             controller.setupHandlers();
-            expect(stubs.createThread).to.be.called;
+            expect(stubs.getParams).to.be.called;
             expect(stubs.bindCustomListenersOnThread).to.be.called;
             expect(controller.handlers.length).to.equal(4);
         });
@@ -169,7 +160,7 @@ describe('drawing/DrawingModeController', () => {
 
 
             controller.setupHandlers();
-            expect(stubs.createThread).to.be.called;
+            expect(stubs.getParams).to.be.called;
             expect(stubs.bindCustomListenersOnThread).to.be.called;
             expect(controller.handlers.length).to.equal(7);
         });
