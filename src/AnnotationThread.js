@@ -203,16 +203,14 @@ class AnnotationThread extends EventEmitter {
 
         // If the user doesn't have permission to delete the entire highlight
         // annotation, display the annotation as a plain highlight
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        let firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
         let canDeleteAnnotation =
-            Object.keys(this.annotations).length > 0 &&
-            firstAnnotation.permissions &&
-            firstAnnotation.permissions.can_delete;
+            firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
         if (annotatorUtil.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
             this.cancelFirstComment();
 
             // If this annotation was the last one in the thread, destroy the thread
-        } else if (Object.keys(this.annotations).length === 0 || annotatorUtil.isPlainHighlight(this.annotations)) {
+        } else if (!firstAnnotation || annotatorUtil.isPlainHighlight(this.annotations)) {
             if (this.isMobile && this.dialog) {
                 this.dialog.hideMobileDialog();
                 this.dialog.removeAnnotation(annotationID);
@@ -240,16 +238,16 @@ class AnnotationThread extends EventEmitter {
             .then(() => {
                 // Ensures that blank highlight comment is also deleted when removing
                 // the last comment on a highlight
+                firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
                 canDeleteAnnotation =
-                    Object.keys(this.annotations).length > 0 &&
-                    firstAnnotation.permissions &&
-                    firstAnnotation.permissions.can_delete;
+                    firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
                 if (annotatorUtil.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
                     this.annotationService.delete(firstAnnotation.annotationID);
                 }
 
                 // Broadcast thread cleanup if needed
-                if (Object.keys(this.annotations).length === 0) {
+                firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+                if (!firstAnnotation) {
                     this.emit(THREAD_EVENT.threadCleanup);
                 }
 
@@ -303,7 +301,8 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     setup() {
-        if (Object.keys(this.annotations).length === 0) {
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        if (!firstAnnotation) {
             this.state = STATES.pending;
         } else {
             this.state = STATES.inactive;
@@ -531,7 +530,8 @@ class AnnotationThread extends EventEmitter {
 
         const mouseInDialog = annotatorUtil.isInDialog(event, this.dialog.element);
 
-        if (Object.keys(this.annotations).length !== 0 && !mouseInDialog) {
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        if (firstAnnotation && !mouseInDialog) {
             this.hideDialog();
         }
     }

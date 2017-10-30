@@ -1,6 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
+import { getFirstAnnotation } from '../annotatorUtil';
 import {
     STATES,
     DRAW_STATES,
@@ -239,7 +240,8 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     setup() {
-        if (Object.keys(this.annotations).length === 0) {
+        const firstAnnotation = getFirstAnnotation(this.annotations);
+        if (!firstAnnotation) {
             // Newly created thread
             this.state = STATES.pending;
         } else {
