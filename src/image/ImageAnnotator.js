@@ -111,33 +111,19 @@ class ImageAnnotator extends Annotator {
             fixedLocation.page = 1;
         }
 
-        const threadParams = {
-            annotatedElement: this.annotatedElement,
-            annotations,
-            annotationService: this.annotationService,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            locale: this.locale,
-            location: fixedLocation,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
+        const threadParams = this.getThreadParams(annotations, location, type);
         if (!annotatorUtil.validateThreadParams(threadParams)) {
             this.handleValidationError();
             return thread;
         }
 
-        // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            threadParams.threadID = annotations[0].threadID;
-            threadParams.threadNumber = annotations[0].threadNumber;
+        thread = new ImagePointThread(threadParams);
+        if (!thread) {
+            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
+        } else {
+            this.addThreadToMap(thread);
         }
 
-        thread = new ImagePointThread(threadParams);
-        this.addThreadToMap(thread);
         return thread;
     }
 

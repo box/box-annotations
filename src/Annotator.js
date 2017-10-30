@@ -523,6 +523,39 @@ class Annotator extends EventEmitter {
     }
 
     /**
+     * Gets thread params for the new annotation thread
+     *
+     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} location - Location object
+     * @param {string} [type] - Optional annotation type
+     * @return {AnnotationThread} Created annotation thread
+     */
+    getThreadParams(annotations, location, type) {
+        const params = {
+            annotatedElement: this.annotatedElement,
+            annotations,
+            annotationService: this.annotationService,
+            container: this.container,
+            fileVersionId: this.fileVersionId,
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch,
+            locale: this.locale,
+            location,
+            type,
+            permissions: this.permissions,
+            localized: this.localized
+        };
+
+        // Set existing thread ID if created with annotations
+        if (annotations.length > 0) {
+            params.threadID = annotations[0].threadID;
+            params.threadNumber = annotations[0].threadNumber;
+        }
+
+        return params;
+    }
+
+    /**
      * Binds custom event listeners for a thread.
      *
      * @protected

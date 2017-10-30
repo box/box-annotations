@@ -480,6 +480,16 @@ export function isPending(threadState) {
 }
 
 /**
+ * Checks whether a point annotation thread has the correct location params
+ *
+ * @param {Object} location Point annotation thread location object
+ * @return {boolean} Whether or not the point annotation has the correct location information
+ */
+export function isPointLocationValid(location) {
+    return location && location.x && location.y;
+}
+
+/**
  * Checks whether a highlight annotation thread has the correct location params
  *
  * @param {Object} location Highlight annotation thread location object
@@ -509,6 +519,7 @@ export function isDrawLocationValid(location) {
 export function validateThreadParams(thread) {
     if (thread) {
         if (
+            (thread.type === TYPES.point && isPointLocationValid(thread.type)) ||
             (isHighlightAnnotation(thread.type) && !isHighlightLocationValid(thread.location)) ||
             (thread.type === TYPES.draw && !isDrawLocationValid(thread.location))
         ) {
