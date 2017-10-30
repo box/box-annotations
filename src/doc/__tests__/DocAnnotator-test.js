@@ -11,6 +11,7 @@ import { CreateEvents } from '../CreateHighlightDialog';
 import * as annotatorUtil from '../../annotatorUtil';
 import * as docAnnotatorUtil from '../docAnnotatorUtil';
 import {
+    ANNOTATOR_EVENT,
     STATES,
     TYPES,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
@@ -52,7 +53,8 @@ describe('doc/DocAnnotator', () => {
                 locale: 'en-US'
             },
             localizedStrings: {
-                anonymousUserName: 'anonymous'
+                anonymousUserName: 'anonymous',
+                loadError: 'loaderror'
             }
         });
         annotator.annotatedElement = document.querySelector('.annotated-element');
@@ -355,7 +357,7 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             stubs.addThread = sandbox.stub(annotator, 'addThreadToMap');
             stubs.setupFunc = AnnotationThread.prototype.setup;
-            stubs.validateThread = sandbox.stub(annotatorUtil, 'validateThreadParams').returns(true);
+            stubs.validateThread = sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'handleValidationError');
             annotator.notification = {
                 show: sandbox.stub()
@@ -419,6 +421,13 @@ describe('doc/DocAnnotator', () => {
             expect(thread instanceof DocHighlightThread).to.be.false;
             expect(thread).to.be.empty;
             expect(annotator.handleValidationError).to.be.called;
+        });
+
+        it('should emit error and return undefined if thread fails to create', () => {
+            sandbox.stub(annotator, 'emit');
+            const thread = annotator.createAnnotationThread([], {}, 'random');
+            expect(thread).to.be.undefined;
+            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
     });
 

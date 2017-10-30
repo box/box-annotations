@@ -322,28 +322,8 @@ class DocAnnotator extends Annotator {
      */
     createAnnotationThread(annotations, location, type) {
         let thread;
-        const threadParams = {
-            annotatedElement: this.annotatedElement,
-            annotations,
-            annotationService: this.annotationService,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            locale: this.locale,
-            location,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
-        // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            threadParams.threadID = annotations[0].threadID;
-            threadParams.threadNumber = annotations[0].threadNumber;
-        }
-
-        if (!annotatorUtil.validateThreadParams(threadParams)) {
+        const threadParams = this.getThreadParams(annotations, location, type);
+        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }
@@ -356,8 +336,8 @@ class DocAnnotator extends Annotator {
             thread = new DocPointThread(threadParams);
         }
 
-        if (!thread && this.notification) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+        if (!thread) {
+            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
         } else if (thread && (type !== TYPES.draw || location.page)) {
             this.addThreadToMap(thread);
         }

@@ -480,14 +480,51 @@ export function isPending(threadState) {
 }
 
 /**
+ * Checks whether a point annotation thread has the correct location params
+ *
+ * @param {Object} location Point annotation thread location object
+ * @return {boolean} Whether or not the point annotation has the correct location information
+ */
+export function isPointLocationValid(location) {
+    return !!(location && location.x && location.y);
+}
+
+/**
+ * Checks whether a highlight annotation thread has the correct location params
+ *
+ * @param {Object} location Highlight annotation thread location object
+ * @return {boolean} Whether or not the highlight annotation has the correct location information
+ */
+export function isHighlightLocationValid(location) {
+    return !!(location && location.quadPoints);
+}
+
+/**
+ * Checks whether a draw annotation thread has the correct location params
+ *
+ * @param {Object} location Draw annotation thread location object
+ * @return {boolean} Whether or not the draw annotation has the correct location information
+ */
+export function isDrawLocationValid(location) {
+    return !!(location && location.minX && location.minY && location.maxX && location.maxY);
+}
+
+/**
  * Checks whether annotation thread is valid by checking whether each property
  * in THREAD_PARAMS on the specified file object is defined.
  *
  * @param {Object} thread Annotation thread params to check
  * @return {boolean} Whether or not annotation thread has all the required params
  */
-export function validateThreadParams(thread) {
+export function areThreadParamsValid(thread) {
     if (thread) {
+        if (
+            (thread.type === TYPES.point && !isPointLocationValid(thread.location)) ||
+            (isHighlightAnnotation(thread.type) && !isHighlightLocationValid(thread.location)) ||
+            (thread.type === TYPES.draw && !isDrawLocationValid(thread.location))
+        ) {
+            return false;
+        }
         return THREAD_PARAMS.every((param) => typeof thread[param] !== 'undefined');
     }
     return false;
