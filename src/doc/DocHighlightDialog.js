@@ -286,8 +286,8 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Determine if highlight buttons or comments dialog will display
-        if (Object.keys(annotations).length > 0) {
-            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
             this.hasComments = firstAnnotation.text !== '' || Object.keys(annotations).length > 1;
         }
 
@@ -315,22 +315,20 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.appendChild(this.dialogEl);
 
             // Adding thread number to dialog
-            if (Object.keys(annotations).length > 0) {
-                const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }
         }
 
         // Indicate that text is highlighted in the highlight buttons dialog
-        if (Object.keys(annotations).length > 0) {
+        if (firstAnnotation) {
             this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
         }
 
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
-        if (annotatorUtil.isPlainHighlight(annotations) && firstAnnotation.user.id !== '0') {
+        if (annotatorUtil.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoHighlighted, [
                 annotations[0].user.name

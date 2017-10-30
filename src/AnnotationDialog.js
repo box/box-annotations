@@ -286,8 +286,8 @@ class AnnotationDialog extends EventEmitter {
             this.element.appendChild(this.dialogEl);
 
             // Adding thread number to dialog
-            if (Object.keys(annotations).length > 0) {
-                const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }
 

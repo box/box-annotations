@@ -465,8 +465,8 @@ class Annotator extends EventEmitter {
             const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
             this.bindCustomListenersOnThread(thread);
 
-            if (this.modeControllers[firstAnnotation.type]) {
-                const controller = this.modeControllers[firstAnnotation.type];
+            const controller = this.modeControllers[firstAnnotation.type];
+            if (controller) {
                 controller.bindCustomListenersOnThread(thread);
                 controller.registerThread(thread);
             }

@@ -134,8 +134,8 @@ class DocDrawingDialog extends AnnotationDialog {
 
         this.bindDOMListeners();
 
-        if (Object.keys(annotations).length > 0) {
-            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
             this.assignDrawingLabel(firstAnnotation);
         }
 
@@ -197,8 +197,12 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {HTMLElement} The drawing dialog element
      */
     generateDialogEl(annotations) {
-        const canCommit = Object.keys(annotations).length === 0;
         const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (!firstAnnotation) {
+            return null;
+        }
+
+        const canCommit = Object.keys(annotations).length === 0;
         const canDelete = canCommit || (firstAnnotation.permissions && firstAnnotation.permissions.can_delete);
 
         const drawingButtonsEl = document.createElement('span');
