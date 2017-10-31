@@ -245,12 +245,6 @@ describe('doc/DocDrawingDialog', () => {
             stubs.getFirstAnnotation = sandbox.stub(annotatorUtil, 'getFirstAnnotation').returns(annotation);
         });
 
-        it('should do nothing if first annotation does not exist', () => {
-            stubs.getFirstAnnotation.returns(null);
-            const dialogEl = dialog.generateDialogEl([annotation]);
-            expect(dialogEl).to.be.null;
-        });
-
         it('should generate the correctly formatted label dialog element', () => {
             annotation.permissions.can_delete = false;
 
@@ -270,6 +264,7 @@ describe('doc/DocDrawingDialog', () => {
         });
 
         it('should generate a save and delete button', () => {
+            stubs.getFirstAnnotation.returns(null);
             const dialogEl = dialog.generateDialogEl([]);
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
