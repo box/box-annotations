@@ -472,6 +472,10 @@ Supported Annotation Types
 --------------------
 Point annotations are supported on both document and image formats. Highlight comment, highlight only, and draw annotations are only supported on document formats.
 
+Supported document file extensions: `pdf, doc, docx, ppt, pptx`
+
+Supported image file extensions: `ai, bmp, dcm, eps, gif, png, ps, psd, svs, tga, tif, tiff`
+
 Development Setup
 -----------------
 1. Install Node v6.10.0 or higher.
