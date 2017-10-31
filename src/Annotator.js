@@ -361,7 +361,7 @@ class Annotator extends EventEmitter {
      * Must be implemented to create the appropriate new thread, add it to the
      * in-memory map, and return the thread.
      *
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} type - Annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -437,34 +437,42 @@ class Annotator extends EventEmitter {
             return Promise.resolve(this.threads);
         }
 
-        return this.annotationService.getThreadMap(this.fileVersionId).then((threadMap) => {
-            // Generate map of page to threads
-            Object.keys(threadMap).forEach((threadID) => {
-                const annotations = threadMap[threadID];
-                const firstAnnotation = annotations[0];
+        return this.annotationService.getThreadMap(this.fileVersionId).then(this.generateThreadMap);
+    }
 
-                if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
-                    return;
-                }
+    /**
+     * Generates a map of thread ID to annotations in thread by page.
+     *
+     * @private
+     * @param {Object} threadMap - Annotations to generate map from
+     * @return {void}
+     */
+    generateThreadMap(threadMap) {
+        const { annotator } = this.options;
+        if (!annotator) {
+            return;
+        }
 
-                // Bind events on valid annotation thread
-                const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
-                this.bindCustomListenersOnThread(thread);
+        // Generate map of page to threads
+        Object.keys(threadMap).forEach((threadID) => {
+            const annotations = threadMap[threadID];
+            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
+                return;
+            }
 
-                const { annotator } = this.options;
-                if (!annotator) {
-                    return;
-                }
+            // Bind events on valid annotation thread
+            const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
+            this.bindCustomListenersOnThread(thread);
 
-                if (this.modeControllers[firstAnnotation.type]) {
-                    const controller = this.modeControllers[firstAnnotation.type];
-                    controller.bindCustomListenersOnThread(thread);
-                    controller.registerThread(thread);
-                }
-            });
-
-            this.emit(ANNOTATOR_EVENT.fetch);
+            const controller = this.modeControllers[firstAnnotation.type];
+            if (controller) {
+                controller.bindCustomListenersOnThread(thread);
+                controller.registerThread(thread);
+            }
         });
+
+        this.emit(ANNOTATOR_EVENT.fetch);
     }
 
     /**
@@ -542,9 +550,10 @@ class Annotator extends EventEmitter {
         };
 
         // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            params.threadID = annotations[0].threadID;
-            params.threadNumber = annotations[0].threadNumber;
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
+            params.threadID = firstAnnotation.threadID;
+            params.threadNumber = firstAnnotation.threadNumber;
         }
 
         return params;

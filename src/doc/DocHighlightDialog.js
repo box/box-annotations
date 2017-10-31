@@ -286,8 +286,9 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Determine if highlight buttons or comments dialog will display
-        if (annotations.length > 0) {
-            this.hasComments = annotations[0].text !== '' || annotations.length > 1;
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
+            this.hasComments = firstAnnotation.text !== '' || Object.keys(annotations).length > 1;
         }
 
         // Generate HTML of highlight dialog
@@ -295,7 +296,7 @@ class DocHighlightDialog extends AnnotationDialog {
         this.highlightDialogEl.classList.add(constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
 
         // Generate HTML of comments dialog
-        this.commentsDialogEl = this.generateDialogEl(annotations.length);
+        this.commentsDialogEl = this.generateDialogEl(Object.keys(annotations).length);
         this.commentsDialogEl.classList.add(constants.CLASS_ANNOTATION_CONTAINER);
 
         this.dialogEl = document.createElement('div');
@@ -314,23 +315,23 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.appendChild(this.dialogEl);
 
             // Adding thread number to dialog
-            if (annotations.length > 0) {
-                this.element.dataset.threadNumber = annotations[0].threadNumber;
+            if (firstAnnotation) {
+                this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }
         }
 
         // Indicate that text is highlighted in the highlight buttons dialog
-        if (annotations.length > 0) {
+        if (firstAnnotation) {
             this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
         }
 
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
-        if (annotatorUtil.isPlainHighlight(annotations) && annotations[0].user.id !== '0') {
+        if (annotatorUtil.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoHighlighted, [
-                annotations[0].user.name
+                firstAnnotation.user.name
             ]);
             annotatorUtil.showElement(highlightLabelEl);
 
@@ -338,7 +339,7 @@ class DocHighlightDialog extends AnnotationDialog {
                 // Hide all action buttons if user cannot annotate
                 const highlightButtons = this.highlightDialogEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
                 annotatorUtil.hideElement(highlightButtons);
-            } else if (annotations[0].permissions && !annotations[0].permissions.can_delete) {
+            } else if (firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
                 // Hide delete button on plain highlights if user doesn't have permissions
                 const addHighlightBtn = this.highlightDialogEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
                 annotatorUtil.hideElement(addHighlightBtn);
@@ -346,9 +347,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Add annotation elements
-        annotations.forEach((annotation) => {
-            this.addAnnotationElement(annotation);
-        });
+        this.addSortedAnnotations(annotations);
 
         if (!this.isMobile && this.canAnnotate) {
             this.bindDOMListeners();

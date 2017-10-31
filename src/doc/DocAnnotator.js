@@ -315,7 +315,7 @@ class DocAnnotator extends Annotator {
      * Creates the proper type of thread, adds it to in-memory map, and returns it.
      *
      * @override
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} [type] - Optional annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -344,6 +344,8 @@ class DocAnnotator extends Annotator {
 
         return thread;
     }
+
+    /**
 
     /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
@@ -570,7 +572,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const annotations = [];
+        const annotations = {};
         const thread = this.createAnnotationThread(annotations, location, highlightType);
         this.lastHighlightEvent = null;
         this.lastSelection = null;
