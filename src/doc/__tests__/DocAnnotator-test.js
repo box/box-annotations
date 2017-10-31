@@ -11,6 +11,7 @@ import { CreateEvents } from '../CreateHighlightDialog';
 import * as annotatorUtil from '../../annotatorUtil';
 import * as docAnnotatorUtil from '../docAnnotatorUtil';
 import {
+    ANNOTATOR_EVENT,
     STATES,
     TYPES,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
@@ -52,7 +53,8 @@ describe('doc/DocAnnotator', () => {
                 locale: 'en-US'
             },
             localizedStrings: {
-                anonymousUserName: 'anonymous'
+                anonymousUserName: 'anonymous',
+                loadError: 'loaderror'
             }
         });
         annotator.annotatedElement = document.querySelector('.annotated-element');
@@ -355,7 +357,7 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             stubs.addThread = sandbox.stub(annotator, 'addThreadToMap');
             stubs.setupFunc = AnnotationThread.prototype.setup;
-            stubs.validateThread = sandbox.stub(annotatorUtil, 'validateThreadParams').returns(true);
+            stubs.validateThread = sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'handleValidationError');
             annotator.notification = {
                 show: sandbox.stub()
@@ -419,6 +421,13 @@ describe('doc/DocAnnotator', () => {
             expect(thread instanceof DocHighlightThread).to.be.false;
             expect(thread).to.be.empty;
             expect(annotator.handleValidationError).to.be.called;
+        });
+
+        it('should emit error and return undefined if thread fails to create', () => {
+            sandbox.stub(annotator, 'emit');
+            const thread = annotator.createAnnotationThread([], {}, 'random');
+            expect(thread).to.be.undefined;
+            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
     });
 
@@ -491,7 +500,7 @@ describe('doc/DocAnnotator', () => {
             stubs.createAnnotationThread.returns(thread);
 
             annotator.createHighlightThread('some text with severe passive agression');
-            expect(stubs.createAnnotationThread).to.be.calledWith([], location, TYPES.highlight_comment);
+            expect(stubs.createAnnotationThread).to.be.calledWith({}, location, TYPES.highlight_comment);
         });
 
         it('should bail out of making an annotation if thread is null', () => {
@@ -633,6 +642,55 @@ describe('doc/DocAnnotator', () => {
 
             annotator.scaleAnnotationCanvases(1);
             expect(stubs.scaleCanvas).to.be.calledOnce;
+        });
+    });
+
+    describe('toggleAnnotationHandler()', () => {
+        beforeEach(() => {
+            stubs.destroyStub = sandbox.stub(annotator, 'destroyPendingThreads');
+            stubs.annotationMode = sandbox.stub(annotator, 'isInAnnotationMode');
+            stubs.exitModes = sandbox.stub(annotator, 'exitAnnotationModesExcept');
+            stubs.disable = sandbox.stub(annotator, 'disableAnnotationMode');
+            stubs.enable = sandbox.stub(annotator, 'enableAnnotationMode');
+            sandbox.stub(annotator, 'getAnnotateButton');
+            stubs.isAnnotatable = sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+
+            annotator.modeButtons = {
+                point: { selector: 'point_btn' },
+                draw: { selector: 'draw_btn' }
+            };
+
+            annotator.createHighlightDialog = {
+                isVisible: false,
+                hide: sandbox.stub(),
+                destroy: sandbox.stub()
+            }
+        });
+
+        afterEach(() => {
+            annotator.modeButtons = {};
+        });
+
+        it('should do nothing if specified annotation type is not annotatable', () => {
+            stubs.isAnnotatable.returns(false);
+            annotator.toggleAnnotationHandler('bleh');
+            expect(stubs.destroyStub).to.not.be.called;
+        });
+
+        it('should hide the highlight dialog and remove selection if it is visible', () => {
+            const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
+                removeAllRanges: sandbox.stub()
+            });
+
+            annotator.toggleAnnotationHandler(TYPES.highlight);
+            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+            expect(getSelectionStub).to.not.be.called;
+
+            annotator.createHighlightDialog.isVisible = true;
+
+            annotator.toggleAnnotationHandler(TYPES.highlight);
+            expect(annotator.createHighlightDialog.hide).to.be.called;
+            expect(getSelectionStub).to.be.called;
         });
     });
 
@@ -1079,7 +1137,7 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
         });
 
-        it('should hide the highlight dialog and clear selection if it is visible', () => {
+        it('should not hide the highlight dialog and clear selection if the CreateHighlightDialog is not visible', () => {
             annotator.createHighlightDialog = {
                 isVisible: false,
                 hide: sandbox.stub(),
@@ -1094,8 +1152,19 @@ describe('doc/DocAnnotator', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
             expect(getSelectionStub).to.not.be.called;
+        });
 
-            annotator.createHighlightDialog.isVisible = true;
+        it('should hide the highlight dialog and clear selection if the CreateHighlightDialog is visible', () => {
+            annotator.createHighlightDialog = {
+                isVisible: true,
+                hide: sandbox.stub(),
+                removeListener: sandbox.stub(),
+                destroy: sandbox.stub()
+            }
+
+            const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
+                removeAllRanges: sandbox.stub()
+            });
 
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.createHighlightDialog.hide).to.be.called;

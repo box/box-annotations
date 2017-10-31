@@ -3,11 +3,7 @@ import Annotator from '../Annotator';
 import ImagePointThread from './ImagePointThread';
 import * as annotatorUtil from '../annotatorUtil';
 import * as imageAnnotatorUtil from './imageAnnotatorUtil';
-import {
-    CLASS_ANNOTATION_POINT_MARKER,
-    SELECTOR_ANNOTATION_BUTTON_POINT,
-    ANNOTATOR_EVENT
-} from '../annotationConstants';
+import { ANNOTATOR_EVENT, TYPES } from '../annotationConstants';
 
 const IMAGE_NODE_NAME = 'img';
 // Selector for image container OR multi-image container
@@ -97,7 +93,7 @@ class ImageAnnotator extends Annotator {
      * it.
      *
      * @override
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} [type] - Optional annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -111,64 +107,23 @@ class ImageAnnotator extends Annotator {
             fixedLocation.page = 1;
         }
 
-        const threadParams = {
-            annotatedElement: this.annotatedElement,
-            annotations,
-            annotationService: this.annotationService,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            locale: this.locale,
-            location: fixedLocation,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
-        if (!annotatorUtil.validateThreadParams(threadParams)) {
+        const threadParams = this.getThreadParams(annotations, location, type);
+        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }
 
-        // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            threadParams.threadID = annotations[0].threadID;
-            threadParams.threadNumber = annotations[0].threadNumber;
+        if (type === TYPES.point) {
+            thread = new ImagePointThread(threadParams);
         }
 
-        thread = new ImagePointThread(threadParams);
-        this.addThreadToMap(thread);
+        if (!thread) {
+            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
+        } else {
+            this.addThreadToMap(thread);
+        }
+
         return thread;
-    }
-
-    /**
-     * Hides all annotations on the image. Also hides button in header that
-     * enables point annotation mode
-     *
-     * @return {void}
-     */
-    hideAllAnnotations() {
-        const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
-        const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        for (let i = 0; i < annotations.length; i++) {
-            annotatorUtil.hideElement(annotations[i]);
-        }
-        annotatorUtil.hideElement(annotateButton);
-    }
-
-    /**
-     * Shows all annotations on the image. Shows button in header that
-     * enables point annotation mode
-     *
-     * @return {void}
-     */
-    showAllAnnotations() {
-        const annotateButton = this.getAnnotateButton(SELECTOR_ANNOTATION_BUTTON_POINT);
-        const annotations = this.annotatedElement.getElementsByClassName(CLASS_ANNOTATION_POINT_MARKER);
-        for (let i = 0; i < annotations.length; i++) {
-            annotatorUtil.showElement(annotations[i]);
-        }
-        annotatorUtil.showElement(annotateButton);
     }
 }
 

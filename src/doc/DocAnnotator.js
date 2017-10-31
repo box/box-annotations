@@ -315,35 +315,15 @@ class DocAnnotator extends Annotator {
      * Creates the proper type of thread, adds it to in-memory map, and returns it.
      *
      * @override
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} [type] - Optional annotation type
      * @return {AnnotationThread} Created annotation thread
      */
     createAnnotationThread(annotations, location, type) {
         let thread;
-        const threadParams = {
-            annotatedElement: this.annotatedElement,
-            annotations,
-            annotationService: this.annotationService,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            locale: this.locale,
-            location,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
-        // Set existing thread ID if created with annotations
-        if (annotations.length > 0) {
-            threadParams.threadID = annotations[0].threadID;
-            threadParams.threadNumber = annotations[0].threadNumber;
-        }
-
-        if (!annotatorUtil.validateThreadParams(threadParams)) {
+        const threadParams = this.getThreadParams(annotations, location, type);
+        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }
@@ -356,14 +336,16 @@ class DocAnnotator extends Annotator {
             thread = new DocPointThread(threadParams);
         }
 
-        if (!thread && this.notification) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+        if (!thread) {
+            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
         } else if (thread && (type !== TYPES.draw || location.page)) {
             this.addThreadToMap(thread);
         }
 
         return thread;
     }
+
+    /**
 
     /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
@@ -419,6 +401,29 @@ class DocAnnotator extends Annotator {
                 docAnnotatorUtil.scaleCanvas(pageEl, annotationLayerEl);
             }
         });
+    }
+
+    /**
+     * Toggles annotation modes on and off. When an annotation mode is
+     * on, annotation threads will be created at that location.
+     *
+     * @param {string} mode - Current annotation mode
+     * @param {HTMLEvent} event - DOM event
+     * @return {void}
+     */
+    toggleAnnotationHandler(mode, event = {}) {
+        if (!this.isModeAnnotatable(mode)) {
+            return;
+        }
+
+        this.destroyPendingThreads();
+
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            document.getSelection().removeAllRanges();
+            this.createHighlightDialog.hide();
+        }
+
+        super.toggleAnnotationHandler(mode, event);
     }
 
     //--------------------------------------------------------------------------
@@ -554,7 +559,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        if (this.createHighlightDialog) {
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisble) {
             this.createHighlightDialog.hide();
         }
 
@@ -567,7 +572,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const annotations = [];
+        const annotations = {};
         const thread = this.createAnnotationThread(annotations, location, highlightType);
         this.lastHighlightEvent = null;
         this.lastSelection = null;
@@ -838,7 +843,7 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        if (this.createHighlightDialog.isVisible) {
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
             document.getSelection().removeAllRanges();
         }

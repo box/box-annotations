@@ -13,13 +13,17 @@ import {
     isElementInViewport,
     getAvatarHtml,
     getScale,
+    getFirstAnnotation,
     isPlainHighlight,
     isHighlightAnnotation,
     getDimensionScale,
     htmlEscape,
     repositionCaret,
     isPending,
-    validateThreadParams,
+    isPointLocationValid,
+    isHighlightLocationValid,
+    isDrawLocationValid,
+    areThreadParamsValid,
     eventToLocationHandler,
     decodeKeydown,
     getHeaders,
@@ -281,6 +285,16 @@ describe('annotatorUtil', () => {
         });
     });
 
+    describe('getFirstAnnotation()', () => {
+        it('should return the first annotation in thread', () => {
+            const annotations = {
+                def123: { id: 1 },
+                abc456: { id: 2 }
+            };
+            expect(getFirstAnnotation(annotations)).to.deep.equal({ id: 1 });
+        });
+    });
+
     describe('isPlainHighlight()', () => {
         it('should return true if highlight annotation is a plain highlight', () => {
             const annotations = [{ text: '' }];
@@ -411,10 +425,51 @@ describe('annotatorUtil', () => {
         });
     });
 
-    describe('validateThreadParams()', () => {
+    describe('isPointLocationValid()', () => {
         it('should return false if the thread is null or missing any expected params', () => {
-            expect(validateThreadParams(null)).to.be.false;
-            expect(validateThreadParams({ fileVersionId: 123 })).to.be.false;
+            expect(isPointLocationValid({})).to.be.false;
+            expect(isPointLocationValid({ x: 1, y: 2 })).to.be.true;
+        });
+    });
+
+    describe('isHighlightLocationValid()', () => {
+        it('should return false if the thread is null or missing any expected params', () => {
+            expect(isHighlightLocationValid({})).to.be.false;
+            expect(isHighlightLocationValid({ quadPoints: {} })).to.be.true;
+        });
+    });
+
+    describe('isDrawLocationValid()', () => {
+        it('should return false if the thread is null or missing any expected params', () => {
+            expect(isDrawLocationValid({})).to.be.false;
+            expect(isDrawLocationValid({ minX: 1, minY: 1, maxX: 2, maxY: 2 })).to.be.true;
+        });
+    });
+
+    describe('areThreadParamsValid()', () => {
+        it('should return false if the thread is null or missing any expected params', () => {
+            expect(areThreadParamsValid(null)).to.be.false;
+            expect(areThreadParamsValid({ fileVersionId: 123 })).to.be.false;
+        });
+
+        it('should return false if thread has invalid location', () => {
+            const threadParams = {
+                annotatedElement: {},
+                annotations: [],
+                annotationService: {},
+                fileVersionId: 123,
+                location: {},
+                locale: 'en-US'
+            };
+
+            threadParams.type = TYPES.point;
+            expect(areThreadParamsValid(threadParams)).to.be.false;
+
+            threadParams.type = TYPES.highlight;
+            expect(areThreadParamsValid(threadParams)).to.be.false;
+
+            threadParams.type = TYPES.draw;
+            expect(areThreadParamsValid(threadParams)).to.be.false;
         });
 
         it('should return true if the thread is has all expected params', () => {
@@ -423,11 +478,11 @@ describe('annotatorUtil', () => {
                 annotations: [],
                 annotationService: {},
                 fileVersionId: 123,
-                location: {},
+                location: { x: 1, y: 2 },
                 locale: 'en-US',
-                type: 'point'
+                type: TYPES.point
             };
-            expect(validateThreadParams(threadParams)).to.be.true;
+            expect(areThreadParamsValid(threadParams)).to.be.true;
         });
     });
 

@@ -3,7 +3,7 @@ import ImageAnnotator from '../ImageAnnotator';
 import ImagePointThread from '../ImagePointThread';
 import * as annotatorUtil from '../../annotatorUtil';
 import * as imageAnnotatorUtil from '../imageAnnotatorUtil';
-import { SELECTOR_ANNOTATION_POINT_BUTTON } from '../../annotationConstants';
+import { TYPES, ANNOTATOR_EVENT, SELECTOR_ANNOTATION_POINT_BUTTON } from '../../annotationConstants';
 
 let annotator;
 const sandbox = sinon.sandbox.create();
@@ -19,7 +19,7 @@ describe('image/ImageAnnotator', () => {
         const options = {
             annotator: {
                 NAME: 'name',
-                TYPE: ['point']
+                TYPE: [TYPES.point]
             }
         };
         annotator = new ImageAnnotator({
@@ -36,7 +36,8 @@ describe('image/ImageAnnotator', () => {
                 locale: 'en-US'
             },
             localizedStrings: {
-                anonymousUserName: 'anonymous'
+                anonymousUserName: 'anonymous',
+                loadError: 'loaderror'
             }
         });
         annotator.annotatedElement = annotator.getAnnotatedEl(document);
@@ -142,11 +143,19 @@ describe('image/ImageAnnotator', () => {
     });
 
     describe('createAnnotationThread()', () => {
+        it('should emit error and return undefined if thread fails to create', () => {
+            sandbox.stub(annotator, 'emit');
+            sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
+            const thread = annotator.createAnnotationThread([], {}, 'random');
+            expect(thread).to.be.undefined;
+            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+        });
+
         it('should create, add point thread to internal map, and return it', () => {
-            sandbox.stub(annotatorUtil, 'validateThreadParams').returns(true);
+            sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'addThreadToMap');
             sandbox.stub(annotator, 'handleValidationError');
-            const thread = annotator.createAnnotationThread([], { page: 2 }, 'point');
+            const thread = annotator.createAnnotationThread([], { page: 2 }, TYPES.point);
 
             expect(annotator.addThreadToMap).to.be.called;
             expect(thread instanceof ImagePointThread).to.be.true;
@@ -155,18 +164,18 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should emit error and return undefined if thread params are invalid', () => {
-            sandbox.stub(annotatorUtil, 'validateThreadParams').returns(false);
+            sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(false);
             sandbox.stub(annotator, 'handleValidationError');
-            const thread = annotator.createAnnotationThread([], {}, 'point');
+            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
             expect(thread instanceof ImagePointThread).to.be.false;
             expect(annotator.handleValidationError).to.be.called;
         });
 
         it('should force page number 1 if the annotation was created without one', () => {
-            sandbox.stub(annotatorUtil, 'validateThreadParams').returns(true);
+            sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'addThreadToMap');
             sandbox.stub(annotator, 'handleValidationError');
-            const thread = annotator.createAnnotationThread([], {}, 'point');
+            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
 
             expect(annotator.addThreadToMap).to.be.called;
             expect(thread instanceof ImagePointThread).to.be.true;
@@ -175,35 +184,15 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should force page number 1 if the annotation was created wit page number -1', () => {
-            sandbox.stub(annotatorUtil, 'validateThreadParams').returns(true);
+            sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'addThreadToMap');
             sandbox.stub(annotator, 'handleValidationError');
-            const thread = annotator.createAnnotationThread([], { page: -1 }, 'point');
+            const thread = annotator.createAnnotationThread([], { page: -1 }, TYPES.point);
 
             expect(annotator.addThreadToMap).to.be.called;
             expect(thread instanceof ImagePointThread).to.be.true;
             expect(annotator.handleValidationError).to.not.be.called;
             expect(thread.location.page).equals(1);
-        });
-    });
-
-    describe('hideAllAnnotations()', () => {
-        it('should hide all annotations on image', () => {
-            annotator.container = document;
-            annotator.hideAllAnnotations();
-            const annotation = document.querySelector(SELECTOR_ANNOTATION_POINT_BUTTON);
-            const classList = Array.from(annotation.classList);
-            expect(classList).to.include('bp-is-hidden');
-        });
-    });
-
-    describe('showAllAnnotations()', () => {
-        it('should show all annotations on image', () => {
-            annotator.container = document;
-            annotator.showAllAnnotations();
-            const annotation = document.querySelector(SELECTOR_ANNOTATION_POINT_BUTTON);
-            const classList = Array.from(annotation.classList);
-            expect(classList).to.not.include('bp-is-hidden');
         });
     });
 });

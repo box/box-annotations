@@ -265,11 +265,6 @@ class Annotator extends EventEmitter {
 
         this.destroyPendingThreads();
 
-        if (this.createHighlightDialog.isVisible) {
-            document.getSelection().removeAllRanges();
-            this.createHighlightDialog.hide();
-        }
-
         // No specific mode available for annotation type
         if (!(mode in this.modeButtons)) {
             return;
@@ -366,7 +361,7 @@ class Annotator extends EventEmitter {
      * Must be implemented to create the appropriate new thread, add it to the
      * in-memory map, and return the thread.
      *
-     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} type - Annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -442,34 +437,42 @@ class Annotator extends EventEmitter {
             return Promise.resolve(this.threads);
         }
 
-        return this.annotationService.getThreadMap(this.fileVersionId).then((threadMap) => {
-            // Generate map of page to threads
-            Object.keys(threadMap).forEach((threadID) => {
-                const annotations = threadMap[threadID];
-                const firstAnnotation = annotations[0];
+        return this.annotationService.getThreadMap(this.fileVersionId).then(this.generateThreadMap);
+    }
 
-                if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
-                    return;
-                }
+    /**
+     * Generates a map of thread ID to annotations in thread by page.
+     *
+     * @private
+     * @param {Object} threadMap - Annotations to generate map from
+     * @return {void}
+     */
+    generateThreadMap(threadMap) {
+        const { annotator } = this.options;
+        if (!annotator) {
+            return;
+        }
 
-                // Bind events on valid annotation thread
-                const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
-                this.bindCustomListenersOnThread(thread);
+        // Generate map of page to threads
+        Object.keys(threadMap).forEach((threadID) => {
+            const annotations = threadMap[threadID];
+            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
+                return;
+            }
 
-                const { annotator } = this.options;
-                if (!annotator) {
-                    return;
-                }
+            // Bind events on valid annotation thread
+            const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
+            this.bindCustomListenersOnThread(thread);
 
-                if (this.modeControllers[firstAnnotation.type]) {
-                    const controller = this.modeControllers[firstAnnotation.type];
-                    controller.bindCustomListenersOnThread(thread);
-                    controller.registerThread(thread);
-                }
-            });
-
-            this.emit(ANNOTATOR_EVENT.fetch);
+            const controller = this.modeControllers[firstAnnotation.type];
+            if (controller) {
+                controller.bindCustomListenersOnThread(thread);
+                controller.registerThread(thread);
+            }
         });
+
+        this.emit(ANNOTATOR_EVENT.fetch);
     }
 
     /**
@@ -520,6 +523,40 @@ class Annotator extends EventEmitter {
             return;
         }
         service.removeListener(ANNOTATOR_EVENT.error, this.handleServiceEvents);
+    }
+
+    /**
+     * Gets thread params for the new annotation thread
+     *
+     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} location - Location object
+     * @param {string} [type] - Optional annotation type
+     * @return {AnnotationThread} Created annotation thread
+     */
+    getThreadParams(annotations, location, type) {
+        const params = {
+            annotatedElement: this.annotatedElement,
+            annotations,
+            annotationService: this.annotationService,
+            container: this.container,
+            fileVersionId: this.fileVersionId,
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch,
+            locale: this.locale,
+            location,
+            type,
+            permissions: this.permissions,
+            localized: this.localized
+        };
+
+        // Set existing thread ID if created with annotations
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        if (firstAnnotation) {
+            params.threadID = firstAnnotation.threadID;
+            params.threadNumber = firstAnnotation.threadNumber;
+        }
+
+        return params;
     }
 
     /**

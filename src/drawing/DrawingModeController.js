@@ -1,6 +1,7 @@
 import rbush from 'rbush';
 import AnnotationModeController from '../AnnotationModeController';
 import annotationsShell from './../annotationsShell.html';
+import DocDrawingThread from '../doc/DocDrawingThread';
 import * as annotatorUtil from '../annotatorUtil';
 import {
     CLASS_ANNOTATION_DRAW,
@@ -155,7 +156,8 @@ class DrawingModeController extends AnnotationModeController {
         /* eslint-enable require-jsdoc */
 
         // Setup
-        this.currentThread = this.annotator.createAnnotationThread([], {}, TYPES.draw);
+        const threadParams = this.annotator.getThreadParams([], {}, TYPES.draw);
+        this.currentThread = new DocDrawingThread(threadParams);
         this.bindCustomListenersOnThread(this.currentThread);
 
         // Get handlers
