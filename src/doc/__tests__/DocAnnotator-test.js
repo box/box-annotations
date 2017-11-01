@@ -116,15 +116,12 @@ describe('doc/DocAnnotator', () => {
                 canAnnotate: true,
                 container: document,
                 annotationService: {},
-                file: {
-                    file_version: { id: 1 }
-                },
+                file: { file_version: { id: 1 } },
                 isMobile: false,
                 options,
                 modeButtons: {},
-                location: {
-                    locale: 'en-US'
-                }
+                location: { locale: 'en-US' },
+                localizedStrings: { anonymousUserName: 'anonymous' }
             });
             stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.plain, sinon.match.func).never();
         });
@@ -140,15 +137,12 @@ describe('doc/DocAnnotator', () => {
                 canAnnotate: true,
                 container: document,
                 annotationService: {},
-                file: {
-                    file_version: { id: 1 }
-                },
+                file: { file_version: { id: 1 } },
                 isMobile: false,
                 options,
                 modeButtons: {},
-                location: {
-                    locale: 'en-US'
-                }
+                location: { locale: 'en-US' },
+                localizedStrings: { anonymousUserName: 'anonymous' }
             });
             stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.comment, sinon.match.func).never();
             stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.commentPost, sinon.match.func).never();
