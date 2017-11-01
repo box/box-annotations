@@ -521,7 +521,7 @@ class Annotator extends EventEmitter {
         }
 
         /* istanbul ignore next */
-        service.addListener(ANNOTATOR_EVENT.error, this.handleServiceEvents);
+        service.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -535,7 +535,7 @@ class Annotator extends EventEmitter {
         if (!service || !(service instanceof AnnotationService)) {
             return;
         }
-        service.removeListener(ANNOTATOR_EVENT.error, this.handleServiceEvents);
+        service.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -981,7 +981,7 @@ class Annotator extends EventEmitter {
      * @param {string} [data.data] -
      * @return {void}
      */
-    handleServiceEvents(data) {
+    handleServicesErrors(data) {
         let errorMessage = '';
         switch (data.reason) {
             case 'read':

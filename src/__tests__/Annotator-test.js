@@ -620,35 +620,35 @@ describe('Annotator', () => {
             });
         });
 
-        describe('handleServiceEvents()', () => {
+        describe('handleServicesErrors()', () => {
             beforeEach(() => {
                 sandbox.stub(annotator, 'emit');
             });
 
             it('should emit annotatorerror on read error event', () => {
-                annotator.handleServiceEvents({ reason: 'read' });
+                annotator.handleServicesErrors({ reason: 'read' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
             });
 
             it('should emit annotatorerror and show annotations on create error event', () => {
-                annotator.handleServiceEvents({ reason: 'create' });
+                annotator.handleServicesErrors({ reason: 'create' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
                 expect(annotator.loadAnnotations).to.be.called;
             });
 
             it('should emit annotatorerror and show annotations on delete error event', () => {
-                annotator.handleServiceEvents({ reason: 'delete' });
+                annotator.handleServicesErrors({ reason: 'delete' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
                 expect(annotator.loadAnnotations).to.be.called;
             });
 
             it('should emit annotatorerror on authorization error event', () => {
-                annotator.handleServiceEvents({ reason: 'authorization' });
+                annotator.handleServicesErrors({ reason: 'authorization' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
             });
 
             it('should not emit annotatorerror when event does not match', () => {
-                annotator.handleServiceEvents({ reason: 'no match' });
+                annotator.handleServicesErrors({ reason: 'no match' });
                 expect(annotator.emit).to.not.be.called;
             });
         });
