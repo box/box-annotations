@@ -46,15 +46,17 @@ class DrawingModeController extends AnnotationModeController {
     init(data) {
         super.init(data);
 
+        // If the header coming from the preview options is not none (e.g.
+        // light, dark, or no value given), then we want to use our draw header.
+        // Otherwise we expect header UI to be handled by Preview’s consumer
         if (data.header !== 'none') {
-            // We need to create our own header UI
             this.setupHeader(this.container, annotationsShell);
         }
 
-        this.cancelButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.postButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-        this.undoButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-        this.redoButtonEl = this.getModeButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
+        this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+        this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
+        this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
+        this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
     }
 
     /**
@@ -67,9 +69,9 @@ class DrawingModeController extends AnnotationModeController {
         this.emit(ANNOTATOR_EVENT.modeExit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
 
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
-        this.buttonEl.classList.remove(CLASS_ACTIVE);
-
         this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+
+        this.buttonEl.classList.remove(CLASS_ACTIVE);
 
         this.unbindListeners(); // Disable mode
         this.emit('binddomlisteners');
@@ -83,9 +85,9 @@ class DrawingModeController extends AnnotationModeController {
      */
     enter() {
         this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        this.buttonEl.classList.add(CLASS_ACTIVE);
-
         this.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+
+        this.buttonEl.classList.add(CLASS_ACTIVE);
 
         this.emit(ANNOTATOR_EVENT.modeEnter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
         this.emit('unbinddomlisteners'); // Disable other annotations
@@ -154,20 +156,6 @@ class DrawingModeController extends AnnotationModeController {
 
         annotatorUtil.disableElement(this.undoButtonEl);
         annotatorUtil.disableElement(this.redoButtonEl);
-    }
-
-    /**
-     * Deselect a saved and selected thread
-     *
-     * @return {void}
-     */
-    removeSelection() {
-        if (!this.selectedThread) {
-            return;
-        }
-
-        this.selectedThread.clearBoundary();
-        this.selectedThread = undefined;
     }
 
     /**
@@ -325,6 +313,21 @@ class DrawingModeController extends AnnotationModeController {
         const index = Math.floor(Math.random() * intersectingThreads.length);
         const selected = intersectingThreads[index];
         this.select(selected);
+    }
+
+    /**
+     * Deselect a saved and selected thread
+     *
+     * @private
+     * @return {void}
+     */
+    removeSelection() {
+        if (!this.selectedThread) {
+            return;
+        }
+
+        this.selectedThread.clearBoundary();
+        this.selectedThread = undefined;
     }
 
     /**

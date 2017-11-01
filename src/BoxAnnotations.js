@@ -114,6 +114,10 @@ class BoxAnnotations {
      * @return {void}
      */
     getAnnotatorTypes(annotatorConfig) {
+        if (!this.viewerConfig) {
+            return [...annotatorConfig.DEFAULT_TYPES];
+        }
+
         const enabledTypes = this.viewerConfig.enabledTypes || [...annotatorConfig.DEFAULT_TYPES];
 
         // Keeping disabledTypes for backwards compatibility

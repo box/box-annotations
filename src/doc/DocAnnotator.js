@@ -337,7 +337,7 @@ class DocAnnotator extends Annotator {
         }
 
         if (!thread) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
         }
 
         return thread;
@@ -399,29 +399,6 @@ class DocAnnotator extends Annotator {
                 docAnnotatorUtil.scaleCanvas(pageEl, annotationLayerEl);
             }
         });
-    }
-
-    /**
-     * Toggles annotation modes on and off. When an annotation mode is
-     * on, annotation threads will be created at that location.
-     *
-     * @param {string} mode - Current annotation mode
-     * @param {HTMLEvent} event - DOM event
-     * @return {void}
-     */
-    toggleAnnotationHandler(mode, event = {}) {
-        if (!this.isModeAnnotatable(mode)) {
-            return;
-        }
-
-        this.destroyPendingThreads();
-
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
-            document.getSelection().removeAllRanges();
-            this.createHighlightDialog.hide();
-        }
-
-        super.toggleAnnotationHandler(mode, event);
     }
 
     //--------------------------------------------------------------------------
@@ -1049,12 +1026,20 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     handleControllerEvents(data) {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+
         switch (data.event) {
+            case 'togglemode':
+                if (isCreateDialogVisible) {
+                    document.getSelection().removeAllRanges();
+                    this.createHighlightDialog.hide();
+                }
+                break;
             case 'showhighlights':
                 this.showHighlightsOnPage(data.data);
                 break;
             case 'binddomlisteners':
-                if (this.createHighlightDialog) {
+                if (isCreateDialogVisible) {
                     this.createHighlightDialog.hide();
                 }
                 break;

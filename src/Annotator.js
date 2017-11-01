@@ -431,7 +431,7 @@ class Annotator extends EventEmitter {
     getCurrentAnnotationMode() {
         return Object.keys(this.modeControllers).filter((mode) => {
             const controller = this.modeControllers[mode];
-            return controller.isModeEnabled();
+            return controller.isEnabled();
         })[0];
     }
 
@@ -500,7 +500,7 @@ class Annotator extends EventEmitter {
 
         // Hide create annotations button if image is rotated
         const pointButtonSelector = this.modeButtons[TYPES.point].selector;
-        const pointAnnotateButton = controller.getModeButton(pointButtonSelector);
+        const pointAnnotateButton = controller.getButton(pointButtonSelector);
         if (rotationAngle !== 0) {
             annotatorUtil.hideElement(pointAnnotateButton);
         } else {

@@ -96,6 +96,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('destroy()', () => {
         it('should destroy the thread', () => {
+            sandbox.stub(thread, 'emit');
             thread.state = STATES.pending;
 
             // This stubs out a parent method by forcing the method we care about
@@ -108,6 +109,7 @@ describe('doc/DocHighlightThread', () => {
             thread.destroy();
 
             assert.equal(thread.element, null);
+            expect(thread.emit).to.be.calledWith('annotationthreadcleanup');
         });
     });
 

@@ -39,7 +39,7 @@ class AnnotationModeController extends EventEmitter {
 
         if (data.modeButton) {
             this.modeButton = data.modeButton;
-            this.showModeButton();
+            this.showButton();
         }
 
         this.handleThreadEvents = this.handleThreadEvents.bind(this);
@@ -71,7 +71,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {string} annotatorSelector - Class selector for a custom annotation button.
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
-    getModeButton(annotatorSelector) {
+    getButton(annotatorSelector) {
         return this.container.querySelector(annotatorSelector);
     }
 
@@ -80,12 +80,12 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    showModeButton() {
+    showButton() {
         if (!this.permissions.canAnnotate) {
             return;
         }
 
-        this.buttonEl = this.getModeButton(this.modeButton.selector);
+        this.buttonEl = this.getButton(this.modeButton.selector);
         if (this.buttonEl) {
             this.buttonEl.title = this.modeButton.title;
             this.buttonEl.classList.remove(CLASS_HIDDEN);
@@ -149,7 +149,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {boolean} Whether or not the annotation mode is enabled
      */
-    isModeEnabled() {
+    isEnabled() {
         return this.buttonEl ? this.buttonEl.classList.contains(CLASS_ACTIVE) : false;
     }
 
