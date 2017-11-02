@@ -106,51 +106,6 @@ describe('doc/DocAnnotator', () => {
         stubs = {};
     });
 
-    describe('constructor()', () => {
-        it('should not bind any plain highlight functions if they are disabled', () => {
-            const options = {
-                annotator: {
-                    NAME: 'name',
-                    TYPE: ['highlight-comment']
-                }
-            };
-            annotator = new DocAnnotator({
-                canAnnotate: true,
-                container: document,
-                annotationService: {},
-                file: { file_version: { id: 1 } },
-                isMobile: false,
-                options,
-                modeButtons: {},
-                location: { locale: 'en-US' },
-                localizedStrings: { anonymousUserName: 'anonymous' }
-            });
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.plain, sinon.match.func).never();
-        });
-
-        it('should not bind any comment highlight functions if they are disabled', () => {
-            const options = {
-                annotator: {
-                    NAME: 'name',
-                    TYPE: ['highlight']
-                }
-            };
-            annotator = new DocAnnotator({
-                canAnnotate: true,
-                container: document,
-                annotationService: {},
-                file: { file_version: { id: 1 } },
-                isMobile: false,
-                options,
-                modeButtons: {},
-                location: { locale: 'en-US' },
-                localizedStrings: { anonymousUserName: 'anonymous' }
-            });
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.comment, sinon.match.func).never();
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.commentPost, sinon.match.func).never();
-        });
-    });
-
     describe('init()', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
             stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.init, sinon.match.func);
@@ -575,6 +530,11 @@ describe('doc/DocAnnotator', () => {
     describe('renderAnnotationsOnPage()', () => {
         beforeEach(() => {
             sandbox.stub(annotator, 'scaleAnnotationCanvases');
+
+            annotator.modeControllers = {
+                'highlight': HighlightModeController,
+                'highlight-comment': HighlightModeController
+            };
         });
 
         it('should destroy any pending highlight annotations on the page', () => {
@@ -597,21 +557,17 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should call show on ONLY enabled annotation types', () => {
-            const plain = { state: 'I do not care', type: 'highlight', show: sandbox.stub() };
-            const comment = { state: 'I do not care', type: 'highlight-comment', show: sandbox.stub() };
-            const point = { state: 'I do not care', type: 'point', show: sandbox.stub() };
+            const plain = { threadID: 1, location: { page: 1 }, type: 'highlight', show: sandbox.stub() };
+            const comment = { threadID: 2, location: { page: 1 }, type: 'highlight-comment', show: sandbox.stub() };
+            const point = { threadID: 3, location: { page: 1 }, type: 'point', show: sandbox.stub() };
             const threads = [plain, comment, point];
-            annotator.threads = { 1: threads };
-            sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns(threads);
-            annotator.options.annotator = {
-                TYPE: ['highlight', 'point']
-            };
+            annotator.threads = { 1: { 1: plain, 2: comment, 3: point } };
+            sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([]);
 
             annotator.renderAnnotationsOnPage(1);
-
             expect(plain.show).to.be.called;
-            expect(point.show).to.be.called;
-            expect(comment.show).to.not.be.called;
+            expect(point.show).to.not.be.called;
+            expect(comment.show).to.be.called;
 
             annotator.threads = {};
         });
@@ -647,10 +603,12 @@ describe('doc/DocAnnotator', () => {
 
         beforeEach(() => {
             Object.defineProperty(Annotator.prototype, 'setupAnnotations', { value: sandbox.stub() });
-            annotator.plainHighlightEnabled = true;
-            annotator.commentHighlightEnabled = true;
-            annotator.highlighter = {
-                addClassApplier: sandbox.stub()
+            stubs.highlighter = { addClassApplier: sandbox.stub() };
+            sandbox.stub(rangy, 'createHighlighter').returns(stubs.highlighter);
+
+            annotator.modeControllers = {
+                'highlight': {},
+                'highlight-comment': {}
             };
         });
 
@@ -658,22 +616,19 @@ describe('doc/DocAnnotator', () => {
             Object.defineProperty(Annotator.prototype, 'setupAnnotations', { value: setupFunc });
         });
 
-        it('should call parent to setup annotations and initialize highlighter', () => {
-            sandbox.stub(rangy, 'createHighlighter').returns(annotator.highlighter);
-
-            annotator.setupAnnotations();
-            expect(rangy.createHighlighter).to.be.called;
-            expect(annotator.highlighter.addClassApplier).to.be.called;
+        it('should not bind any plain highlight functions if they are disabled', () => {
+            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.plain, sinon.match.func).never();
         });
 
-        it('should not create a highlighter if all forms of highlight are disabled', () => {
-            sandbox.stub(rangy, 'createHighlighter');
-            annotator.plainHighlightEnabled = false;
-            annotator.commentHighlightEnabled = false;
+        it('should not bind any comment highlight functions if they are disabled', () => {
+            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.comment, sinon.match.func).never();
+            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.commentPost, sinon.match.func).never();
+        });
 
+        it('should call parent to setup annotations and initialize highlighter', () => {
             annotator.setupAnnotations();
-            expect(rangy.createHighlighter).to.not.be.called;
-            expect(annotator.highlighter.addClassApplier).to.not.be.called;
+            expect(rangy.createHighlighter).to.be.called;
+            expect(stubs.highlighter.addClassApplier).to.be.called;
         });
     });
 

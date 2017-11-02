@@ -86,58 +86,6 @@ class DocAnnotator extends Annotator {
     showFirstDialogFilter;
 
     /**
-     * Creates and mananges plain highlight and comment highlight and point annotations
-     * on document files.
-     *
-     * [constructor]
-     *
-     * @inheritdoc
-     * @return {DocAnnotator} DocAnnotator instance
-     */
-    constructor(data) {
-        super(data);
-
-        this.plainHighlightEnabled = this.isModeAnnotatable(TYPES.highlight);
-        this.commentHighlightEnabled = this.isModeAnnotatable(TYPES.highlight_comment);
-        this.drawEnabled = this.isModeAnnotatable(TYPES.draw);
-
-        // Don't bind to draw specific handlers if we cannot draw
-        if (this.drawEnabled) {
-            this.drawingSelectionHandler = this.drawingSelectionHandler.bind(this);
-        }
-
-        // Don't bind to highlight specific handlers if we cannot highlight
-        if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
-            return;
-        }
-
-        // Explicit scoping
-        this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
-        this.showFirstDialogFilter = this.showFirstDialogFilter.bind(this);
-
-        this.createHighlightDialog = new CreateHighlightDialog(this.container, {
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            allowComment: this.commentHighlightEnabled,
-            allowHighlight: this.plainHighlightEnabled,
-            localized: this.localized
-        });
-
-        if (this.commentHighlightEnabled) {
-            this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.comment, this.highlightCurrentSelection);
-
-            this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.commentPost, this.createHighlightThread);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.createPlainHighlight = this.createPlainHighlight.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.plain, this.createPlainHighlight);
-        }
-    }
-
-    /**
      * [destructor]
      *
      * @return {void}
@@ -364,7 +312,8 @@ class DocAnnotator extends Annotator {
         const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
-            if (!this.isModeAnnotatable(thread.type)) {
+            const controller = this.modeControllers[thread.type];
+            if (!controller) {
                 return;
             }
 
@@ -415,8 +364,43 @@ class DocAnnotator extends Annotator {
     setupAnnotations() {
         super.setupAnnotations();
 
+        this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
+        this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
+        this.drawEnabled = !!this.modeControllers[TYPES.draw];
+
+        // Don't bind to draw specific handlers if we cannot draw
+        if (this.drawEnabled) {
+            this.drawingSelectionHandler = this.drawingSelectionHandler.bind(this);
+        }
+
+        // Don't bind to highlight specific handlers if we cannot highlight
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return;
+        }
+
+        // Explicit scoping
+        this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
+        this.showFirstDialogFilter = this.showFirstDialogFilter.bind(this);
+
+        this.createHighlightDialog = new CreateHighlightDialog(this.container, {
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch,
+            allowComment: this.commentHighlightEnabled,
+            allowHighlight: this.plainHighlightEnabled,
+            localized: this.localized
+        });
+
+        if (this.commentHighlightEnabled) {
+            this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
+            this.createHighlightDialog.addListener(CreateEvents.comment, this.highlightCurrentSelection);
+
+            this.createHighlightThread = this.createHighlightThread.bind(this);
+            this.createHighlightDialog.addListener(CreateEvents.commentPost, this.createHighlightThread);
+        }
+
+        if (this.plainHighlightEnabled) {
+            this.createPlainHighlight = this.createPlainHighlight.bind(this);
+            this.createHighlightDialog.addListener(CreateEvents.plain, this.createPlainHighlight);
         }
 
         // Init rangy and rangy highlight
