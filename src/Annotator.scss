@@ -80,12 +80,6 @@ $tablet: 'max-width: 768px';
     }
 }
 
-@media (max-width: 768px) {
-    .bp-annotate-draw-undo-redo-container {
-        margin: 0;
-    }
-}
-
 .bp-annotation-caret {
     left: 50%;
     position: absolute;
