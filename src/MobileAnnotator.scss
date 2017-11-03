@@ -238,3 +238,9 @@ $tablet: "(min-width: 768px)";
         }
     }
 }
+
+.bp-container .bp-annotate-draw-undo-redo-container {
+    @media #{$tablet} {
+        margin: 0;
+    }
+}
