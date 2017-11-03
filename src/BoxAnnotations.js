@@ -1,6 +1,6 @@
 import DocAnnotator from './doc/DocAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
-import DrawingModeController from './drawing/DrawingModeController';
+import DrawingModeController from './controllers/DrawingModeController';
 import { TYPES } from './annotationConstants';
 import { canLoadAnnotations } from './annotatorUtil';
 

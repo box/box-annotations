@@ -1,5 +1,5 @@
 import rbush from 'rbush';
-import AnnotationModeController from '../../AnnotationModeController';
+import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
 import * as annotatorUtil from '../../annotatorUtil';
 import { CLASS_ANNOTATION_DRAW} from '../../annotationConstants';
@@ -8,7 +8,7 @@ let controller;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('drawing/DrawingModeController', () => {
+describe('controllers/DrawingModeController', () => {
     beforeEach(() => {
         controller = new DrawingModeController();
         stubs = {};

@@ -2,7 +2,7 @@
 import BoxAnnotations from '../BoxAnnotations';
 import { TYPES } from '../annotationConstants';
 import * as annotatorUtil from '../annotatorUtil';
-import DrawingModeController from '../drawing/DrawingModeController';
+import DrawingModeController from '../controllers/DrawingModeController';
 
 let loader;
 let stubs;
@@ -133,7 +133,7 @@ describe('BoxAnnotations', () => {
                 enabled: true,
                 disabledTypes: ['point']
             };
-            
+
             const docAnnotator = {
                 NAME: 'Document',
                 VIEWER: ['Document'],
@@ -153,7 +153,7 @@ describe('BoxAnnotations', () => {
             });
             expect(loader.getAnnotatorsForViewer).to.be.called;
         });
-        
+
         it('should filter and only keep allowed types of annotations', () => {
             const config = {
                 enabled: true,
@@ -166,7 +166,7 @@ describe('BoxAnnotations', () => {
                 TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
                 DEFAULT_TYPES: ['point', 'highlight']
             };
-            
+
             sandbox.stub(loader, 'getAnnotatorsForViewer').returns(docAnnotator);
             const annotator = loader.determineAnnotator(stubs.options, config);
             expect(annotator.TYPE.includes('point')).to.be.true;
@@ -192,7 +192,7 @@ describe('BoxAnnotations', () => {
             };
             sandbox.stub(loader, 'getAnnotatorsForViewer').returns(docAnnotator);
             const annotator = loader.determineAnnotator(stubs.options, config);
-            
+
             expect(annotator.TYPE).to.deep.equal(['point', 'draw']);
         });
     });
