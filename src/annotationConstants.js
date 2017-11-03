@@ -138,6 +138,17 @@ export const THREAD_EVENT = {
     createError: 'annotationcreateerror'
 };
 
+export const CONTROLLER_EVENT = {
+    toggleMode: 'togglemode',
+    enter: 'annotationmodeenter',
+    exit: 'annotationmodeexit',
+    register: 'registerthread',
+    unregister: 'unregisterthread',
+    showHighlights: 'showhighlights',
+    bindDOMListeners: 'binddomlisteners',
+    unbindDOMListeners: 'unbinddomlisteners'
+};
+
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;
 

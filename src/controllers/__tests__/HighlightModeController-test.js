@@ -5,9 +5,9 @@ import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
-    ANNOTATOR_EVENT,
     THREAD_EVENT,
-    STATES
+    STATES,
+    CONTROLLER_EVENT
 } from '../../annotationConstants';
 
 let controller;
@@ -32,7 +32,7 @@ describe('controllers/HighlightModeController', () => {
             sandbox.stub(controller, 'unregisterThread');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).to.be.called;
-            expect(controller.emit).to.be.calledWith('showhighlights', 1);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.showHighlights, 1);
         });
     });
 
@@ -49,7 +49,7 @@ describe('controllers/HighlightModeController', () => {
 
             controller.exit();
             expect(controller.destroyPendingThreads).to.be.called;
-            expect(controller.emit).to.be.calledWith('binddomlisteners');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.bindDOMListeners);
             expect(controller.unbindListeners).to.be.called;
             expect(selection.removeAllRanges);
         });
@@ -63,7 +63,7 @@ describe('controllers/HighlightModeController', () => {
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
 
             controller.enter();
-            expect(controller.emit).to.be.calledWith('unbinddomlisteners');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
             expect(controller.bindListeners).to.be.called;
         });
     });

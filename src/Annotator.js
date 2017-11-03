@@ -13,7 +13,8 @@ import {
     CLASS_DIALOG_CLOSE,
     ID_MOBILE_ANNOTATION_DIALOG,
     TYPES,
-    ANNOTATOR_EVENT
+    ANNOTATOR_EVENT,
+    CONTROLLER_EVENT
 } from './annotationConstants';
 
 @autobind
@@ -668,23 +669,23 @@ class Annotator extends EventEmitter {
         let opt = { page: 1, pageThreads: {} };
         const headerSelector = data.data ? data.data.headerSelector : '';
         switch (data.event) {
-            case 'togglemode':
+            case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);
                 break;
-            case ANNOTATOR_EVENT.modeEnter:
+            case CONTROLLER_EVENT.enter:
                 this.emit(data.event, { mode: data.mode, headerSelector });
                 this.unbindDOMListeners();
                 break;
-            case ANNOTATOR_EVENT.modeExit:
+            case CONTROLLER_EVENT.exit:
                 this.emit(data.event, { mode: data.mode, headerSelector });
                 this.bindDOMListeners();
                 break;
-            case 'registerthread':
+            case CONTROLLER_EVENT.register:
                 opt = annotatorUtil.addThreadToMap(data.data, this.threads);
                 this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
                 break;
-            case 'unregisterthread':
+            case CONTROLLER_EVENT.unregister:
                 opt = annotatorUtil.removeThreadFromMap(data.data, this.threads);
                 this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);

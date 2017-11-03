@@ -23,7 +23,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_DRAW,
     THREAD_EVENT,
-    ANNOTATOR_EVENT
+    ANNOTATOR_EVENT,
+    CONTROLLER_EVENT
 } from '../annotationConstants';
 
 const MOUSEMOVE_THROTTLE_MS = 50;
@@ -1013,16 +1014,16 @@ class DocAnnotator extends Annotator {
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
 
         switch (data.event) {
-            case 'togglemode':
+            case CONTROLLER_EVENT.toggleMode:
                 if (isCreateDialogVisible) {
                     document.getSelection().removeAllRanges();
                     this.createHighlightDialog.hide();
                 }
                 break;
-            case 'showhighlights':
+            case CONTROLLER_EVENT.showHighlights:
                 this.showHighlightsOnPage(data.data);
                 break;
-            case 'binddomlisteners':
+            case CONTROLLER_EVENT.bindDOMListeners:
                 if (isCreateDialogVisible) {
                     this.createHighlightDialog.hide();
                 }

@@ -7,7 +7,8 @@ import {
     CLASS_ANNOTATION_MODE,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
-    STATES
+    STATES,
+    CONTROLLER_EVENT
 } from '../../annotationConstants';
 
 let controller;
@@ -76,7 +77,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.not.be.called;
-            expect(controller.emit).to.not.be.calledWith('togglemode');
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.toggleMode);
         });
 
         it('should not do anything if thread is invalid', () => {
@@ -85,7 +86,7 @@ describe('controllers/PointModeController', () => {
             stubs.threadMock.expects('show').never();
 
             controller.pointClickHandler(event);
-            expect(controller.emit).to.be.calledWith('togglemode');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.registerThread).to.not.be.called;
         });
 
@@ -97,7 +98,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.not.be.called;
-            expect(controller.emit).to.be.calledWith('togglemode');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
         });
 
         it('should create, show, and bind listeners to a thread', () => {
@@ -109,7 +110,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.be.called;
-            expect(controller.emit).to.be.calledWith('togglemode');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
         });
     });

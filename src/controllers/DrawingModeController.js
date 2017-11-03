@@ -17,7 +17,7 @@ import {
     DRAW_BORDER_OFFSET,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
-    ANNOTATOR_EVENT
+    CONTROLLER_EVENT
 } from '../annotationConstants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -66,7 +66,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     exit() {
-        this.emit(ANNOTATOR_EVENT.modeExit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
+        this.emit(CONTROLLER_EVENT.exit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
 
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
         this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
@@ -74,7 +74,7 @@ class DrawingModeController extends AnnotationModeController {
         this.buttonEl.classList.remove(CLASS_ACTIVE);
 
         this.unbindListeners(); // Disable mode
-        this.emit('binddomlisteners');
+        this.emit(CONTROLLER_EVENT.bindDOMListeners);
     }
 
     /**
@@ -89,8 +89,8 @@ class DrawingModeController extends AnnotationModeController {
 
         this.buttonEl.classList.add(CLASS_ACTIVE);
 
-        this.emit(ANNOTATOR_EVENT.modeEnter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
-        this.emit('unbinddomlisteners'); // Disable other annotations
+        this.emit(CONTROLLER_EVENT.enter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
+        this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 
@@ -114,7 +114,7 @@ class DrawingModeController extends AnnotationModeController {
             /* eslint-enable new-cap */
         }
         this.threads[page].insert(thread);
-        this.emit('registerthread', thread);
+        this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => {
             this.handleThreadEvents(thread, data);
         });
@@ -140,7 +140,7 @@ class DrawingModeController extends AnnotationModeController {
             /* eslint-enable new-cap */
         }
         this.threads[page].remove(thread);
-        this.emit('unregisterthread', thread);
+        this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 

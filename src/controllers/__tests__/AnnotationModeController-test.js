@@ -8,7 +8,8 @@ import {
     CLASS_ANNOTATION_MODE,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
-    STATES
+    STATES,
+    CONTROLLER_EVENT
 } from '../../annotationConstants';
 
 let controller;
@@ -134,13 +135,13 @@ describe('controllers/AnnotationModeController', () => {
         it('should destroy all threads', () => {
             controller.modeButton = undefined;
             controller.toggleMode();
-            expect(controller.emit).to.not.be.calledWith('togglemode');
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.toggleMode);
         });
 
         it('should only toggle the current annotation mode if it has a button', () => {
             controller.modeButton = {};
             controller.toggleMode();
-            expect(controller.emit).to.be.calledWith('togglemode');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
         });
     });
 
@@ -157,7 +158,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should exit annotation mode', () => {
             controller.exit();
             expect(controller.destroyPendingThreads).to.be.called;
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.modeExit);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
             expect(controller.unbindListeners).to.be.called;
         });
 
@@ -180,7 +181,7 @@ describe('controllers/AnnotationModeController', () => {
 
         it('should enter annotation mode', () => {
             controller.enter();
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.modeEnter);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter);
             expect(controller.bindListeners).to.be.called;
         });
 
@@ -254,7 +255,7 @@ describe('controllers/AnnotationModeController', () => {
 
             controller.registerThread(thread);
             expect(pageThreads[thread.threadID]).equals(thread);
-            expect(controller.emit).to.be.calledWith('registerthread', thread);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, thread);
             expect(thread.addListener).to.be.calledWith('threadevent', sinon.match.func);
         });
     });
@@ -275,7 +276,7 @@ describe('controllers/AnnotationModeController', () => {
 
             controller.unregisterThread(thread);
             expect(thread.threadID in pageThreads).to.be.falsy;
-            expect(controller.emit).to.be.calledWith('unregisterthread', thread);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, thread);
             expect(thread.removeListener).to.be.calledWith('threadevent', sinon.match.func);
         });
     });

@@ -16,7 +16,8 @@ import {
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     ANNOTATOR_EVENT,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CONTROLLER_EVENT
 } from '../annotationConstants';
 
 let annotator;
@@ -556,14 +557,14 @@ describe('Annotator', () => {
 
             it('should toggle annotation mode on togglemode', () => {
                 sandbox.stub(annotator, 'toggleAnnotationMode');
-                data.event = 'togglemode';
+                data.event = CONTROLLER_EVENT.toggleMode;
                 annotator.handleControllerEvents(data);
                 expect(annotator.toggleAnnotationMode).to.be.calledWith(mode);
             });
 
             it('should unbind dom listeners and emit message on mode enter', () => {
                 sandbox.stub(annotator, 'unbindDOMListeners');
-                data.event = ANNOTATOR_EVENT.modeEnter;
+                data.event = CONTROLLER_EVENT.enter;
                 annotator.handleControllerEvents(data);
                 expect(annotator.unbindDOMListeners).to.be.called;
                 expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
@@ -571,7 +572,7 @@ describe('Annotator', () => {
 
             it('should bind dom listeners and emit message on mode exit', () => {
                 sandbox.stub(annotator, 'bindDOMListeners');
-                data.event = ANNOTATOR_EVENT.modeExit;
+                data.event = CONTROLLER_EVENT.exit;
                 annotator.handleControllerEvents(data);
                 expect(annotator.bindDOMListeners).to.be.called;
                 expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
@@ -579,7 +580,7 @@ describe('Annotator', () => {
 
             it('should bind dom listeners and emit message on mode exit', () => {
                 sandbox.stub(annotatorUtil, 'addThreadToMap').returns(annotator.threads[1]);
-                data.event = 'registerthread';
+                data.event = CONTROLLER_EVENT.register;
                 annotator.handleControllerEvents(data);
                 expect(annotatorUtil.addThreadToMap).to.be.called;
                 expect(annotator.emit).to.be.calledWith(data.event, data.data);
@@ -587,7 +588,7 @@ describe('Annotator', () => {
 
             it('should bind dom listeners and emit message on mode exit', () => {
                 sandbox.stub(annotatorUtil, 'removeThreadFromMap').returns(annotator.threads[1]);
-                data.event = 'unregisterthread';
+                data.event = CONTROLLER_EVENT.unregister;
                 annotator.handleControllerEvents(data);
                 expect(annotatorUtil.removeThreadFromMap).to.be.called;
                 expect(annotator.emit).to.be.calledWith(data.event, data.data);

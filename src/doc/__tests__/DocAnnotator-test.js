@@ -17,7 +17,8 @@ import {
     TYPES,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CONTROLLER_EVENT
 } from '../../annotationConstants';
 
 let annotator;
@@ -34,10 +35,14 @@ describe('doc/DocAnnotator', () => {
     beforeEach(() => {
         fixture.load('doc/__tests__/DocAnnotator-test.html');
 
+        stubs.controller = { enter: () => {} };
+        stubs.controllerMock = sandbox.mock(stubs.controller);
+
         const options = {
             annotator: {
                 NAME: 'name',
-                TYPE: ['highlight', 'highlight-comment']
+                TYPE: ['highlight', 'highlight-comment'],
+                CONTROLLERS: { 'something': stubs.controller }
             }
         };
         annotator = new DocAnnotator({
@@ -1450,10 +1455,13 @@ describe('doc/DocAnnotator', () => {
     });
 
     describe('handleControllerEvents()', () => {
+        const mode = 'something';
+
         beforeEach(() => {
             const selection = document.getSelection();
             stubs.removeSelection = sandbox.stub(selection, 'removeAllRanges');
             sandbox.stub(annotator, 'showHighlightsOnPage');
+            sandbox.stub(annotator, 'toggleAnnotationMode');
             annotator.createHighlightDialog = {
                 isVisible: true,
                 hide: sandbox.stub(),
@@ -1465,34 +1473,34 @@ describe('doc/DocAnnotator', () => {
         })
 
         it('should clear selections and hide the createHighlightDialog on togglemode', () => {
-            annotator.handleControllerEvents({ event: 'togglemode' });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
             expect(stubs.removeSelection).to.be.called;
             expect(annotator.createHighlightDialog.hide).to.be.called;
         });
 
         it('should do nothing if createHighlightDialog is hidden or does not exist on togglemode', () => {
             annotator.createHighlightDialog = undefined;
-            annotator.handleControllerEvents({ event: 'togglemode' });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
             expect(stubs.removeSelection).to.not.be.called;
 
             annotator.createHighlightDialog = { isVisible: false };
-            annotator.handleControllerEvents({ event: 'togglemode' });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
             expect(stubs.removeSelection).to.not.be.called;
         });
 
         it('should show highlights on page on showhighlights', () => {
-            annotator.handleControllerEvents({ event: 'showhighlights', data: 1 });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.showHighlights, data: 1 });
             expect(annotator.showHighlightsOnPage).to.be.calledWith(1);
         });
 
         it('should hide the createHighlightDialog on binddomlisteners', () => {
-            annotator.handleControllerEvents({ event: 'binddomlisteners' });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
             expect(annotator.createHighlightDialog.hide).to.be.called;
         });
 
         it('should do nothing if createHighlightDialog is hidden or does not exist on binddomlisteners', () => {
             annotator.createHighlightDialog.isVisible = false
-            annotator.handleControllerEvents({ event: 'binddomlisteners' });
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
         });
     });

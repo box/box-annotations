@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { THREAD_EVENT } from '../annotationConstants';
+import { THREAD_EVENT, CONTROLLER_EVENT } from '../annotationConstants';
 
 class HighlightModeController extends AnnotationModeController {
     /**
@@ -16,7 +16,7 @@ class HighlightModeController extends AnnotationModeController {
     handleThreadEvents(thread, data) {
         switch (data.event) {
             case THREAD_EVENT.threadCleanup:
-                this.emit('showhighlights', thread.location.page);
+                this.emit(CONTROLLER_EVENT.showHighlights, thread.location.page);
                 break;
             default:
         }
@@ -34,7 +34,7 @@ class HighlightModeController extends AnnotationModeController {
         this.destroyPendingThreads();
         window.getSelection().removeAllRanges();
         this.unbindListeners(); // Disable mode
-        this.emit('binddomlisteners');
+        this.emit(CONTROLLER_EVENT.bindDOMListeners);
     }
 
     /**
@@ -44,7 +44,7 @@ class HighlightModeController extends AnnotationModeController {
      * @return {void}
      */
     enter() {
-        this.emit(''); // Disable other annotations
+        this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 }

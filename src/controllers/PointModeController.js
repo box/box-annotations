@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { TYPES, THREAD_EVENT } from '../annotationConstants';
+import { TYPES, THREAD_EVENT, CONTROLLER_EVENT } from '../annotationConstants';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to cancel the pending thread */
@@ -24,12 +24,12 @@ class PointModeController extends AnnotationModeController {
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             this.currentThread.cancelUnsavedAnnotation();
-            this.emit('togglemode');
+            this.emit(CONTROLLER_EVENT.toggleMode);
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
             this.currentThread.saveAnnotation(TYPES.point);
-            this.emit('togglemode');
+            this.emit(CONTROLLER_EVENT.toggleMode);
         });
     }
 
@@ -53,7 +53,7 @@ class PointModeController extends AnnotationModeController {
         }
 
         // Exits point annotation mode on first click
-        this.emit('togglemode');
+        this.emit(CONTROLLER_EVENT.toggleMode);
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);

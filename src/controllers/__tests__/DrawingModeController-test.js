@@ -11,7 +11,7 @@ import {
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
-    ANNOTATOR_EVENT
+    CONTROLLER_EVENT
 } from '../../annotationConstants';
 
 let controller;
@@ -83,7 +83,7 @@ describe('controllers/DrawingModeController', () => {
             controller.buttonEl.classList.add(CLASS_ACTIVE);
 
             controller.exit();
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.modeExit, sinon.match.object);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
             expect(controller.unbindListeners).to.be.called;
             expect(controller.emit).to.be.calledWith('binddomlisteners');
         });
@@ -98,9 +98,9 @@ describe('controllers/DrawingModeController', () => {
             controller.buttonEl = document.createElement('button');
 
             controller.enter();
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.modeEnter, sinon.match.object);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter, sinon.match.object);
             expect(controller.bindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith('unbinddomlisteners');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
         });
     });
 
@@ -112,13 +112,13 @@ describe('controllers/DrawingModeController', () => {
         it('should do nothing if thread does not exist', () => {
             stubs.thread = undefined;
             controller.registerThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith('registerthread', sinon.match.object);
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
         });
 
         it('should do nothing if thread location does not exist', () => {
             stubs.thread.location = undefined;
             controller.registerThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith('registerthread', sinon.match.object);
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
         });
 
         it('should internally keep track of the registered thread', () => {
@@ -128,7 +128,7 @@ describe('controllers/DrawingModeController', () => {
             controller.registerThread(stubs.thread);
             const thread = pageThreads.search(stubs.thread);
             expect(thread.includes(stubs.thread)).to.be.truthy;
-            expect(controller.emit).to.be.calledWith('registerthread', sinon.match.object);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
         });
     });
 
@@ -141,13 +141,13 @@ describe('controllers/DrawingModeController', () => {
         it('should do nothing if thread does not exist', () => {
             stubs.thread = undefined;
             controller.unregisterThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith('unregisterthread', sinon.match.object);
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
         });
 
         it('should do nothing if thread location does not exist', () => {
             stubs.thread.location = undefined;
             controller.unregisterThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith('unregisterthread', sinon.match.object);
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
         });
 
         it('should internally keep track of the registered thread', () => {
@@ -155,7 +155,7 @@ describe('controllers/DrawingModeController', () => {
             controller.unregisterThread(stubs.thread);
             const thread = pageThreads.search(stubs.thread);
             expect(thread.includes(stubs.thread)).to.be.falsy;
-            expect(controller.emit).to.be.calledWith('unregisterthread', sinon.match.object);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
         });
     });
 

@@ -5,7 +5,8 @@ import {
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     ANNOTATOR_EVENT,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CONTROLLER_EVENT
 } from '../annotationConstants';
 
 class AnnotationModeController extends EventEmitter {
@@ -110,7 +111,7 @@ class AnnotationModeController extends EventEmitter {
         }
 
         // Exit any other annotation mode
-        this.emit('togglemode');
+        this.emit(CONTROLLER_EVENT.toggleMode);
     }
 
     /**
@@ -126,7 +127,7 @@ class AnnotationModeController extends EventEmitter {
         }
 
         this.unbindListeners(); // Disable mode
-        this.emit(ANNOTATOR_EVENT.modeExit);
+        this.emit(CONTROLLER_EVENT.exit);
     }
 
     /**
@@ -140,7 +141,7 @@ class AnnotationModeController extends EventEmitter {
             this.buttonEl.classList.add(CLASS_ACTIVE);
         }
 
-        this.emit(ANNOTATOR_EVENT.modeEnter); // Disable other annotations
+        this.emit(CONTROLLER_EVENT.enter); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 
@@ -198,7 +199,7 @@ class AnnotationModeController extends EventEmitter {
     registerThread(thread) {
         const { page, pageThreads } = addThreadToMap(thread, this.threads);
         this.threads[page] = pageThreads;
-        this.emit('registerthread', thread);
+        this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
     }
 
@@ -212,7 +213,7 @@ class AnnotationModeController extends EventEmitter {
     unregisterThread(thread) {
         const { page, pageThreads } = removeThreadFromMap(thread, this.threads);
         this.threads[page] = pageThreads;
-        this.emit('unregisterthread', thread);
+        this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
