@@ -61,7 +61,7 @@ describe('doc/DocAnnotator', () => {
         annotator.annotationService = {};
         annotator.threads = {};
         annotator.modeControllers = {};
-        annotator.getAnnotationPermissions(annotator.options.file);
+        annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
 
         stubs.thread = {
             threadID: '123abc',

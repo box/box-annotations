@@ -336,6 +336,21 @@ describe('Annotator', () => {
             });
         });
 
+        describe('getAnnotationPermissions()', () => {
+            it('should return the appropriate annotation permissions for the file', () => {
+                const file = {
+                    permissions: {
+                        can_annotate: false,
+                        can_view_annotations_self: true
+                    }
+                };
+                annotator.getAnnotationPermissions(file);
+                expect(annotator.permissions.canAnnotate).to.be.truthy;
+                expect(annotator.permissions.canViewOwnAnnotations).to.be.falsy;
+                expect(annotator.permissions.canViewAllAnnotations).to.be.falsy;
+            });
+        });
+
         describe('setScale()', () => {
             it('should set a data-scale attribute on the annotated element', () => {
                 annotator.setScale(10);

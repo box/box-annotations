@@ -61,7 +61,7 @@ class Annotator extends EventEmitter {
         this.fileVersionId = file.file_version.id;
         this.fileId = file.id;
 
-        this.getAnnotationPermissions(this.options.file);
+        this.permissions = this.getAnnotationPermissions(this.options.file);
         this.annotationService = new AnnotationService({
             apiHost,
             fileId: this.fileId,
@@ -809,8 +809,7 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Returns whether or not the current annotation mode is enabled for
-     * the current viewer/annotator.
+     * Returns annotation permissions
      *
      * @private
      * @param {Object} file - File
@@ -818,7 +817,7 @@ class Annotator extends EventEmitter {
      */
     getAnnotationPermissions(file) {
         const permissions = file.permissions || {};
-        this.permissions = {
+        return {
             canAnnotate: permissions.can_annotate || false,
             canViewAllAnnotations: permissions.can_view_annotations_all || false,
             canViewOwnAnnotations: permissions.can_view_annotations_self || false
