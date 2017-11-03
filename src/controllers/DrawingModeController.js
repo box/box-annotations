@@ -132,16 +132,31 @@ class DrawingModeController extends AnnotationModeController {
         if (!thread || !thread.location) {
             return;
         }
-
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        if (!(page in this.threads)) {
-            /* eslint-disable new-cap */
-            this.threads[page] = new rbush();
-            /* eslint-enable new-cap */
-        }
+      
+        const page = thread.location.page || 1;
         this.threads[page].remove(thread);
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
+    }
+
+    /**
+     * Binds custom event listeners for a thread.
+     *
+     * @inheritdoc
+     * @protected
+     * @param {AnnotationThread} thread - Thread to bind events to
+     * @return {void}
+     */
+    bindCustomListenersOnThread(thread) {
+        if (!thread) {
+            return;
+        }
+
+        super.bindCustomListenersOnThread(thread);
+
+        // On save, add the thread to the Rbush, on delete, remove it from the Rbush
+        thread.addListener('annotationsaved', () => this.registerThread(thread));
+        thread.addListener('annotationdelete', () => this.unregisterThread(thread));
     }
 
     /**

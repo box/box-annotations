@@ -194,6 +194,5 @@ describe('BoxAnnotations', () => {
             const annotator = loader.determineAnnotator(stubs.options, config);
             expect(annotator).to.be.null;
         });
-
     });
 });

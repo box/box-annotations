@@ -1,4 +1,3 @@
-import EventEmitter from 'events';
 import { insertTemplate, isPending, addThreadToMap, removeThreadFromMap } from '../annotatorUtil';
 import {
     CLASS_HIDDEN,
@@ -197,8 +196,12 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     registerThread(thread) {
-        const { page, pageThreads } = addThreadToMap(thread, this.threads);
-        this.threads[page] = pageThreads;
+        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+        if (!(page in this.threads)) {
+            this.threads[page] = {};
+        }
+        const pageThreads = this.threads[page];
+        pageThreads[thread.threadID] = thread;
         this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
     }
@@ -211,8 +214,8 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     unregisterThread(thread) {
-        const { page, pageThreads } = removeThreadFromMap(thread, this.threads);
-        this.threads[page] = pageThreads;
+        const page = thread.location.page || 1;
+        delete this.threads[page][thread.threadID];
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
@@ -243,6 +246,40 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     removeSelection() {}
+
+    /**
+     * Binds custom event listeners for a thread.
+     *
+     * @protected
+     * @param {AnnotationThread} thread - Thread to bind events to
+     * @return {void}
+     */
+    bindCustomListenersOnThread(thread) {
+        if (!thread) {
+            return;
+        }
+
+        // TODO (@minhnguyen): Move annotator.bindCustomListenersOnThread logic to AnnotationModeController
+        this.annotator.bindCustomListenersOnThread(thread);
+        thread.addListener('threadevent', (data) => {
+            this.handleAnnotationEvent(thread, data);
+        });
+    }
+
+    /**
+     * Unbinds custom event listeners for the thread.
+     *
+     * @protected
+     * @param {AnnotationThread} thread - Thread to unbind events from
+     * @return {void}
+     */
+    unbindCustomListenersOnThread(thread) {
+        if (!thread) {
+            return;
+        }
+
+        thread.removeAllListeners('threadevent');
+    }
 
     /**
      * Set up and return the necessary handlers for the annotation mode
