@@ -21,15 +21,7 @@ const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
 const AVATAR_COLOR_COUNT = 9; // 9 colors defined in Box React UI avatar code
-const THREAD_PARAMS = [
-    'annotatedElement',
-    'annotations',
-    'annotationService',
-    'fileVersionId',
-    'locale',
-    'location',
-    'type'
-];
+const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
 
 //------------------------------------------------------------------------------
 // DOM Utils

@@ -115,7 +115,7 @@ describe('Annotator', () => {
 
             stubs.scale = sandbox.stub(annotator, 'setScale');
             stubs.setup = sandbox.stub(annotator, 'setupAnnotations');
-            stubs.show = sandbox.stub(annotator, 'showAnnotations');
+            stubs.show = sandbox.stub(annotator, 'loadAnnotations');
             stubs.setupMobileDialog = sandbox.stub(annotator, 'setupMobileDialog');
             stubs.getPermissions = sandbox.stub(annotator, 'getAnnotationPermissions');
 
@@ -135,15 +135,12 @@ describe('Annotator', () => {
             expect(stubs.scale).to.be.calledWith(5);
             expect(stubs.setup).to.be.called;
             expect(stubs.show).to.be.called;
-            expect(annotator.annotationService).to.not.be.null;
-            expect(stubs.getPermissions).to.be.called;
         });
 
         it('should setup mobile dialog for mobile browsers', () => {
             annotator.isMobile = true;
             annotator.init();
             expect(stubs.setupMobileDialog).to.be.called;
-            expect(stubs.getPermissions).to.be.called;
         });
     });
 
@@ -157,17 +154,31 @@ describe('Annotator', () => {
         });
     });
 
-    describe('showAnnotations()', () => {
+    describe('loadAnnotations()', () => {
+        beforeEach(() => {
+            sandbox.stub(annotator, 'renderAnnotations');
+            sandbox.stub(annotator, 'emit');
+        });
+
         it('should fetch and then render annotations', () => {
-            const renderStub = sandbox.stub(annotator, 'renderAnnotations');
-            const fetchPromise = Promise.resolve();
-            const fetchStub = sandbox.stub(annotator, 'fetchAnnotations').returns(fetchPromise);
+            annotator.fetchPromise = Promise.resolve();
+            annotator.loadAnnotations();
+            return annotator.fetchPromise.then(() => {
+                expect(annotator.renderAnnotations).to.be.called;
+                expect(annotator.emit).to.not.be.called;
+            }).catch((err) => {
+                sinon.assert.failException;
+            });
+        });
 
-            annotator.showAnnotations();
-
-            expect(fetchStub).to.be.called;
-            return fetchPromise.then(() => {
-                expect(renderStub).to.be.called;
+        it('should emit an error if the annotator fails to fetch and render annotations', () => {
+            annotator.fetchPromise = Promise.reject();
+            annotator.loadAnnotations();
+            return annotator.fetchPromise.then(() => {
+                sinon.assert.failException;
+            }).catch((err) => {
+                expect(annotator.renderAnnotations).to.not.be.called;
+                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
             });
         });
     });
@@ -193,7 +204,7 @@ describe('Annotator', () => {
             annotator.annotatedElement = annotatedEl;
             sandbox.stub(annotator, 'getAnnotatedEl').returns(annotatedEl);
             sandbox.stub(annotator, 'setupAnnotations');
-            sandbox.stub(annotator, 'showAnnotations');
+            sandbox.stub(annotator, 'loadAnnotations');
 
             stubs.thread.location = { page: 1 };
             stubs.thread2.location = { page: 2 };
@@ -276,6 +287,13 @@ describe('Annotator', () => {
 
                 annotator.renderAnnotationsOnPage('2');
             });
+
+            it('should set annotatedElement if thread was fetched before it was set', () => {
+                stubs.thread2.annotatedElement = undefined;
+                stubs.threadMock2.expects('show').once();
+                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+                annotator.renderAnnotationsOnPage('2');
+            });
         });
 
         describe('rotateAnnotations()', () => {
@@ -315,6 +333,21 @@ describe('Annotator', () => {
                 expect(stubs.hide).to.not.be.called;
                 expect(stubs.show).to.be.called;
                 expect(stubs.render).to.be.called;
+            });
+        });
+
+        describe('getAnnotationPermissions()', () => {
+            it('should return the appropriate annotation permissions for the file', () => {
+                const file = {
+                    permissions: {
+                        can_annotate: false,
+                        can_view_annotations_self: true
+                    }
+                };
+                annotator.getAnnotationPermissions(file);
+                expect(annotator.permissions.canAnnotate).to.be.truthy;
+                expect(annotator.permissions.canViewOwnAnnotations).to.be.falsy;
+                expect(annotator.permissions.canViewAllAnnotations).to.be.falsy;
             });
         });
 
@@ -484,12 +517,12 @@ describe('Annotator', () => {
                     someID2: [{}]
                 };
                 stubs.threadPromise = Promise.resolve(threadMap);
-                stubs.map = sandbox.stub(annotator, 'generateThreadMap');
 
                 annotator.permissions = {
                     canViewAllAnnotations: true,
                     canViewOwnAnnotations: true
                 };
+                sandbox.stub(annotator, 'emit');
             });
 
             it('should not fetch existing annotations if the user does not have correct permissions', (done) => {
@@ -518,7 +551,8 @@ describe('Annotator', () => {
                 const result = annotator.fetchAnnotations();
                 result.should.be.fulfilled.then(() => {
                     expect(result).to.be.truthy;
-                    expect(stubs.map).to.be.called;
+                    expect(annotator.threadMap).to.not.be.undefined;
+                    expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
                     done();
                 }).catch(() => {
                     sinon.assert.failException;
@@ -536,7 +570,8 @@ describe('Annotator', () => {
                 result.should.be.fulfilled.then(() => {
                     expect(result).to.be.truthy;
                     stubs.threadPromise.should.be.fulfilled.then(() => {
-                    expect(stubs.map).to.be.called;
+                        expect(annotator.threadMap).to.not.be.undefined;
+                        expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
                         done();
                     });
                 }).catch(() => {
@@ -551,15 +586,15 @@ describe('Annotator', () => {
                     someID: [{}, {}],
                     someID2: [{}]
                 };
-                sandbox.stub(annotator, 'emit');
                 sandbox.stub(annotatorUtil, 'getFirstAnnotation').returns({});
                 sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
                 annotator.options = {};
+                sandbox.stub(annotator, 'createAnnotationThread');
                 annotator.generateThreadMap(stubs.threadMap);
-                expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.fetch);
+                expect(annotator.createAnnotationThread).to.not.be.called;
             });
 
             it('should reset and create a new thread map by from annotations fetched from server', () => {
@@ -572,7 +607,6 @@ describe('Annotator', () => {
                 annotator.generateThreadMap(stubs.threadMap);
                 expect(annotator.createAnnotationThread).to.be.calledTwice;
                 expect(annotator.bindCustomListenersOnThread).to.be.calledTwice;
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
             });
         });
 
@@ -601,35 +635,35 @@ describe('Annotator', () => {
             });
         });
 
-        describe('handleServiceEvents()', () => {
+        describe('handleServicesErrors()', () => {
             beforeEach(() => {
                 sandbox.stub(annotator, 'emit');
             });
 
             it('should emit annotatorerror on read error event', () => {
-                annotator.handleServiceEvents({ reason: 'read' });
+                annotator.handleServicesErrors({ reason: 'read' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
             });
 
             it('should emit annotatorerror and show annotations on create error event', () => {
-                annotator.handleServiceEvents({ reason: 'create' });
+                annotator.handleServicesErrors({ reason: 'create' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
-                expect(annotator.showAnnotations).to.be.called;
+                expect(annotator.loadAnnotations).to.be.called;
             });
 
             it('should emit annotatorerror and show annotations on delete error event', () => {
-                annotator.handleServiceEvents({ reason: 'delete' });
+                annotator.handleServicesErrors({ reason: 'delete' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
-                expect(annotator.showAnnotations).to.be.called;
+                expect(annotator.loadAnnotations).to.be.called;
             });
 
             it('should emit annotatorerror on authorization error event', () => {
-                annotator.handleServiceEvents({ reason: 'authorization' });
+                annotator.handleServicesErrors({ reason: 'authorization' });
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
             });
 
             it('should not emit annotatorerror when event does not match', () => {
-                annotator.handleServiceEvents({ reason: 'no match' });
+                annotator.handleServicesErrors({ reason: 'no match' });
                 expect(annotator.emit).to.not.be.called;
             });
         });
@@ -1145,7 +1179,8 @@ describe('Annotator', () => {
                         }
                     },
                     location: { locale: 'en-US' },
-                    modeButtons: {}
+                    modeButtons: {},
+                    localizedStrings: { anonymousUserName: 'anonymous' }
                 });
 
                 const emitStub = sandbox.stub();

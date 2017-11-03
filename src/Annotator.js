@@ -50,9 +50,24 @@ class Annotator extends EventEmitter {
         this.hasTouch = options.hasTouch || false;
         this.localized = options.localizedStrings;
 
-        const { file } = this.options;
+        const { apiHost, file, token } = this.options;
         this.fileVersionId = file.file_version.id;
         this.fileId = file.id;
+
+        this.permissions = this.getAnnotationPermissions(this.options.file);
+        this.annotationService = new AnnotationService({
+            apiHost,
+            fileId: this.fileId,
+            token,
+            canAnnotate: this.permissions.canAnnotate,
+            anonymousUserName: this.localized.anonymousUserName
+        });
+
+        // Get applicable annotation mode controllers
+        const { CONTROLLERS } = this.options.annotator || {};
+        this.modeControllers = CONTROLLERS || {};
+
+        this.fetchPromise = this.fetchAnnotations();
     }
 
     /**
@@ -87,16 +102,6 @@ class Annotator extends EventEmitter {
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
 
-        this.getAnnotationPermissions(this.options.file);
-        const { apiHost, file, token } = this.options;
-        this.annotationService = new AnnotationService({
-            apiHost,
-            fileId: file.id,
-            token,
-            canAnnotate: this.permissions.canAnnotate,
-            anonymousUserName: this.localized.anonymousUserName
-        });
-
         // Set up mobile annotations dialog
         if (this.isMobile) {
             this.setupMobileDialog();
@@ -104,7 +109,7 @@ class Annotator extends EventEmitter {
 
         this.setScale(initialScale);
         this.setupAnnotations();
-        this.showAnnotations();
+        this.loadAnnotations();
     }
 
     /**
@@ -130,13 +135,19 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Fetches and shows saved annotations.
+     * Shows saved annotations.
      *
      * @return {void}
      */
-    showAnnotations() {
-        // Show annotations after we've generated an in-memory map
-        this.fetchAnnotations().then(this.renderAnnotations);
+    loadAnnotations() {
+        this.fetchPromise
+            .then(() => {
+                this.generateThreadMap(this.threadMap);
+                this.renderAnnotations();
+            })
+            .catch((error) => {
+                this.emit(ANNOTATOR_EVENT.loadError, error);
+            });
     }
 
     /**
@@ -302,7 +313,15 @@ class Annotator extends EventEmitter {
             return Promise.resolve(this.threads);
         }
 
-        return this.annotationService.getThreadMap(this.fileVersionId).then(this.generateThreadMap);
+        return this.annotationService
+            .getThreadMap(this.fileVersionId)
+            .then((threads) => {
+                this.threadMap = threads;
+                this.emit(ANNOTATOR_EVENT.fetch);
+            })
+            .catch((err) => {
+                this.emit(ANNOTATOR_EVENT.loadError, err);
+            });
     }
 
     /**
@@ -333,8 +352,6 @@ class Annotator extends EventEmitter {
                 controller.registerThread(thread);
             }
         });
-
-        this.emit(ANNOTATOR_EVENT.fetch);
     }
 
     /**
@@ -370,7 +387,7 @@ class Annotator extends EventEmitter {
         }
 
         /* istanbul ignore next */
-        service.addListener(ANNOTATOR_EVENT.error, this.handleServiceEvents);
+        service.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -384,7 +401,7 @@ class Annotator extends EventEmitter {
         if (!service || !(service instanceof AnnotationService)) {
             return;
         }
-        service.removeListener(ANNOTATOR_EVENT.error, this.handleServiceEvents);
+        service.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -470,6 +487,12 @@ class Annotator extends EventEmitter {
                 return;
             }
 
+            // Sets the annotatedElement if the thread was fetched before the
+            // dependent document/viewer finished loading
+            if (!thread.annotatedElement) {
+                thread.annotatedElement = this.annotatedElement;
+            }
+
             thread.show();
         });
     }
@@ -509,8 +532,7 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Returns whether or not the current annotation mode is enabled for
-     * the current viewer/annotator.
+     * Returns annotation permissions
      *
      * @private
      * @param {Object} file - File
@@ -518,7 +540,7 @@ class Annotator extends EventEmitter {
      */
     getAnnotationPermissions(file) {
         const permissions = file.permissions || {};
-        this.permissions = {
+        return {
             canAnnotate: permissions.can_annotate || false,
             canViewAllAnnotations: permissions.can_view_annotations_all || false,
             canViewOwnAnnotations: permissions.can_view_annotations_self || false
@@ -602,7 +624,7 @@ class Annotator extends EventEmitter {
      * @param {string} [data.data] -
      * @return {void}
      */
-    handleServiceEvents(data) {
+    handleServicesErrors(data) {
         let errorMessage = '';
         switch (data.reason) {
             case 'read':
@@ -610,11 +632,11 @@ class Annotator extends EventEmitter {
                 break;
             case 'create':
                 errorMessage = this.localized.createError;
-                this.showAnnotations();
+                this.loadAnnotations();
                 break;
             case 'delete':
                 errorMessage = this.localized.deleteError;
-                this.showAnnotations();
+                this.loadAnnotations();
                 break;
             case 'authorization':
                 errorMessage = this.localized.authError;
