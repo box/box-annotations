@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { ANNOTATOR_EVENT, THREAD_EVENT } from '../annotationConstants';
+import { THREAD_EVENT } from '../annotationConstants';
 
 class HighlightModeController extends AnnotationModeController {
     /**
@@ -16,28 +16,12 @@ class HighlightModeController extends AnnotationModeController {
     handleThreadEvents(thread, data) {
         switch (data.event) {
             case THREAD_EVENT.threadCleanup:
-                // Thread should be cleaned up, unbind listeners - we
-                // don't do this in annotationdelete listener since thread
-                // may still need to respond to error messages
-                this.unregisterThread(thread);
                 this.emit('showhighlights', thread.location.page);
                 break;
-            case THREAD_EVENT.threadDelete:
-                // Thread was deleted, remove from thread map
-                this.unregisterThread(thread);
-                this.emit(data.event, data.data);
-                break;
-            case THREAD_EVENT.deleteError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.deleteError);
-                this.emit(data.event, data.data);
-                break;
-            case THREAD_EVENT.createError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
-                this.emit(data.event, data.data);
-                break;
             default:
-                this.emit(data.event, data.data);
         }
+
+        super.handleThreadEvents(thread, data);
     }
 
     /**
@@ -60,7 +44,7 @@ class HighlightModeController extends AnnotationModeController {
      * @return {void}
      */
     enter() {
-        this.emit('unbinddomlisteners'); // Disable other annotations
+        this.emit(''); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 }

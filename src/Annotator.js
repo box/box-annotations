@@ -256,7 +256,7 @@ class Annotator extends EventEmitter {
     setupControllers() {
         const { CONTROLLERS } = this.options.annotator || {};
         this.modeControllers = CONTROLLERS || {};
-        this.modeButtons = this.options.modeButtons;
+        this.modeButtons = this.options.modeButtons || {};
         Object.keys(this.modeControllers).forEach((type) => {
             const controller = this.modeControllers[type];
             controller.init({
@@ -439,17 +439,17 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Returns whether or not annotator is in the specified annotation mode.
+     * Returns the current annotation mode
      *
      * @protected
-     * @param {string} currentMode - Current annotation mode
-     * @return {boolean} Whether or not in the specified annotation mode
+     * @return {string|null} Current annotation mode
      */
     getCurrentAnnotationMode() {
-        return Object.keys(this.modeControllers).filter((mode) => {
+        const modes = Object.keys(this.modeControllers).filter((mode) => {
             const controller = this.modeControllers[mode];
             return controller.isEnabled();
-        })[0];
+        });
+        return modes[0] || null;
     }
 
     //--------------------------------------------------------------------------

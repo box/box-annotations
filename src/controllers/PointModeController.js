@@ -2,13 +2,10 @@ import AnnotationModeController from './AnnotationModeController';
 import { TYPES, THREAD_EVENT } from '../annotationConstants';
 
 class PointModeController extends AnnotationModeController {
-    /** @property {DrawingThread} - The currently selected DrawingThread */
-    selectedThread;
-
-    /** @property {HTMLElement} - The button to cancel the pending drawing thread */
+    /** @property {HTMLElement} - The button to cancel the pending thread */
     cancelButtonEl;
 
-    /** @property {HTMLElement} - The button to commit the pending drawing thread */
+    /** @property {HTMLElement} - The button to commit the pending thread */
     postButtonEl;
 
     /**
@@ -72,7 +69,7 @@ class PointModeController extends AnnotationModeController {
             this.registerThread(thread);
         }
 
-        this.annotator.emit(THREAD_EVENT.pending, thread.getThreadEventData());
+        this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
     }
 }
 
