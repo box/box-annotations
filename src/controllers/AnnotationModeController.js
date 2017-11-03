@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { insertTemplate } from './annotatorUtil';
+import { insertTemplate } from '../annotatorUtil';
 
 class AnnotationModeController extends EventEmitter {
     /** @property {Object} - Object of annotation threads indexed by threadID */

@@ -1,5 +1,5 @@
 import rbush from 'rbush';
-import AnnotationModeController from '../AnnotationModeController';
+import AnnotationModeController from './AnnotationModeController';
 import annotationsShell from './../annotationsShell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
 import * as annotatorUtil from '../annotatorUtil';

@@ -1,12 +1,12 @@
 import AnnotationModeController from '../AnnotationModeController';
-import DocDrawingThread from '../doc/DocDrawingThread';
-import * as util from '../annotatorUtil';
+import DocDrawingThread from '../../doc/DocDrawingThread';
+import * as util from '../../annotatorUtil';
 
 let controller;
 let stubs;
 const sandbox = sinon.sandbox.create();
 
-describe('AnnotationModeController', () => {
+describe('controllers/AnnotationModeController', () => {
     beforeEach(() => {
         controller = new AnnotationModeController();
         stubs = {};
