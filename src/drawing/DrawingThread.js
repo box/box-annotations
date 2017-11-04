@@ -148,17 +148,20 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     deleteThread() {
-        this.annotations.forEach(this.deleteAnnotationWithID);
+        Object.keys(this.annotations).forEach((annotationID) => this.deleteAnnotationWithID({ annotationID }));
 
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
+
         // Clear the drawn thread and its boundary
-        this.concreteContext.clearRect(
-            x - DRAW_BORDER_OFFSET,
-            y + DRAW_BORDER_OFFSET,
-            width + DRAW_BORDER_OFFSET * 2,
-            height - DRAW_BORDER_OFFSET * 2
-        );
+        if (this.concreteContext) {
+            this.concreteContext.clearRect(
+                x - DRAW_BORDER_OFFSET,
+                y + DRAW_BORDER_OFFSET,
+                width + DRAW_BORDER_OFFSET * 2,
+                height - DRAW_BORDER_OFFSET * 2
+            );
+        }
 
         this.clearBoundary();
 
