@@ -258,6 +258,11 @@ class Annotator extends EventEmitter {
         const { CONTROLLERS } = this.options.annotator || {};
         this.modeControllers = CONTROLLERS || {};
         this.modeButtons = this.options.modeButtons || {};
+
+        const options = {
+            header: this.options.header,
+            isTouchCompatible: this.isMobile && this.hasTouch
+        };
         Object.keys(this.modeControllers).forEach((type) => {
             const controller = this.modeControllers[type];
             controller.init({
@@ -265,9 +270,10 @@ class Annotator extends EventEmitter {
                 annotatedElement: this.annotatedElement,
                 mode: type,
                 modeButton: this.modeButtons[type],
-                header: this.options.header,
+
                 permissions: this.permissions,
-                annotator: this
+                annotator: this,
+                options
             });
 
             this.handleControllerEvents = this.handleControllerEvents.bind(this);

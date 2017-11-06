@@ -49,7 +49,7 @@ class DrawingModeController extends AnnotationModeController {
         // light, dark, or no value given), then we want to use our draw
         // header. Otherwise we expect header UI to be handled by Preview’s
         // consumer
-        if (data.header !== 'none') {
+        if (data.options.header !== 'none') {
             this.setupHeader(this.container, annotationsShell);
         }
 
@@ -141,6 +141,13 @@ class DrawingModeController extends AnnotationModeController {
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
+    /**
+     * Bind the DOM listeners for this mode
+     *
+     * @inheritdoc
+     * @public
+     * @return {void}
+     */
     bindDOMListeners() {
         if (this.isTouchCompatible) {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
@@ -149,6 +156,13 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
+    /**
+     * Unbind the DOM listeners for this mode
+     *
+     * @inheritdoc
+     * @public
+     * @return {void}
+     */
     unbindDOMListeners() {
         if (this.isTouchCompatible) {
             this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
@@ -157,6 +171,13 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
+    /**
+     * Bind the mode listeners and store each handler for future unbinding
+     *
+     * @inheritdoc
+     * @public
+     * @return {void}
+     */
     bindListeners() {
         super.bindListeners();
         this.unbindDOMListeners();

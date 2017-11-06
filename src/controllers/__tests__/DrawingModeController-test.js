@@ -56,7 +56,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should get all the mode buttons and initialize the controller', () => {
-            controller.init({ header: 'none' });
+            controller.init({ options: { header: 'none' } });
             expect(controller.setupHeader).to.not.be.called;
             expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
             expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
@@ -65,7 +65,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should replace the draw annotations header if using the preview header', () => {
-            controller.init({ header: 'light' });
+            controller.init({ options: { header: 'light' } });
             expect(controller.setupHeader).to.be.called;
         });
     });
@@ -121,6 +121,16 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
         });
 
+        it('should create new rbush for page if it does not already exist', () => {
+            stubs.thread.location.page = 2;
+
+            controller.registerThread(stubs.thread);
+
+            const thread = controller.threads[2].search(stubs.thread);
+            expect(thread.includes(stubs.thread)).to.be.truthy;
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
+        });
+
         it('should internally keep track of the registered thread', () => {
             const pageThreads = controller.threads[1];
             expect(pageThreads.search(stubs.thread)).to.deep.equal([]);
@@ -159,15 +169,81 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
+    describe('bindDOMListeners()', () => {
+        beforeEach(() => {
+            controller.annotatedElement = {
+                addEventListener: sandbox.stub()
+            };
+            stubs.add = controller.annotatedElement.addEventListener;
+        });
+
+        it('should unbind the mobileDOM listeners', () => {
+            controller.isTouchCompatible = true;
+            controller.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('touchstart', sinon.match.func);
+        });
+
+        it('should unbind the DOM listeners', () => {
+            controller.isTouchCompatible = false;
+            controller.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
+        });
+    });
+
+    describe('unbindDOMListeners()', () => {
+        beforeEach(() => {
+            controller.annotatedElement = {
+                removeEventListener: sandbox.stub()
+            };
+            stubs.remove = controller.annotatedElement.removeEventListener;
+        });
+
+        it('should unbind the mobileDOM listeners', () => {
+            controller.isTouchCompatible = true;
+            controller.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('touchstart', sinon.match.func);
+        });
+
+        it('should unbind the DOM listeners', () => {
+            controller.isTouchCompatible = false;
+            controller.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
+        });
+    });
+
+    describe('bindListeners()', () => {
+        it('should disable undo and redo buttons', () => {
+            sandbox.stub(controller, 'unbindDOMListeners');
+            const handlerObj = {
+                type: 'event',
+                func: () => {},
+                eventObj: {
+                    addEventListener: sandbox.stub()
+                }
+            };
+            sandbox.stub(controller, 'setupHandlers', () => {
+                controller.handlers = [handlerObj];
+            });
+            expect(controller.handlers.length).to.equal(0);
+
+            controller.bindListeners();
+            expect(controller.unbindDOMListeners).to.be.called;
+        });
+    });
+
     describe('unbindListeners()', () => {
         it('should disable undo and redo buttons', () => {
             sandbox.stub(annotatorUtil, 'disableElement');
+            sandbox.stub(controller, 'bindDOMListeners');
 
+            controller.annotatedElement = document.createElement('div');
             controller.undoButtonEl = 'test1';
             controller.redoButtonEl = 'test2';
+
             controller.unbindListeners();
             expect(annotatorUtil.disableElement).to.be.calledWith(controller.undoButtonEl);
             expect(annotatorUtil.disableElement).to.be.calledWith(controller.redoButtonEl);
+            expect(controller.bindDOMListeners);
         });
     });
 
@@ -196,6 +272,10 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('handleThreadEvents()', () => {
+        beforeEach(() => {
+            stubs.thread.dialog = {};
+        });
+
         it('should add thread to map on locationassigned', () => {
             sandbox.stub(controller, 'registerThread');
             controller.handleThreadEvents(stubs.thread, {
@@ -296,20 +376,16 @@ describe('controllers/DrawingModeController', () => {
             expect(unregisterThreadStub).to.be.called;
         });
 
-        it('should save the thread', () => {
-            sandbox.stub(controller, 'registerThread');
-            controller.handleThreadEvents(stubs.thread, {
-                event: THREAD_EVENT.save
-            });
-            expect(controller.registerThread).to.be.called;
-        });
+        it('should not delete a thread if the dialog no longer exists', () => {
+            stubs.thread.dialog = null;
+            controller.threads[1] = new rbush();
+            controller.registerThread(stubs.thread);
+            const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
 
-        it('should delete the thread', () => {
-            sandbox.stub(controller, 'unregisterThread');
             controller.handleThreadEvents(stubs.thread, {
-                event: THREAD_EVENT.delete
+                event: 'dialogdelete'
             });
-            expect(controller.unregisterThread).to.be.called;
+            expect(unregisterThreadStub).to.not.be.called;
         });
     });
 
@@ -327,6 +403,13 @@ describe('controllers/DrawingModeController', () => {
             controller.handleSelection();
             expect(stubs.getLoc).to.not.be.called;
         })
+
+        it('should do nothing if no location exists', () => {
+            stubs.clean = sandbox.stub(controller, 'removeSelection');
+            stubs.getLoc.returns(null);
+            controller.handleSelection('event');
+            expect(stubs.clean).to.not.be.called;
+        });
 
         it('should call select on an thread found in the data store', () => {
             stubs.select = sandbox.stub(controller, 'select');
