@@ -4,6 +4,7 @@ import DocHighlightDialog from './DocHighlightDialog';
 import * as annotatorUtil from '../annotatorUtil';
 import * as docAnnotatorUtil from './docAnnotatorUtil';
 import {
+    THREAD_EVENT,
     STATES,
     TYPES,
     SELECTOR_ADD_HIGHLIGHT_BTN,
@@ -64,6 +65,7 @@ class DocHighlightThread extends AnnotationThread {
         if (this.state === STATES.pending) {
             window.getSelection().removeAllRanges();
         }
+        this.emit(THREAD_EVENT.threadCleanup);
     }
 
     /**

@@ -72,6 +72,7 @@ class AnnotationThread extends EventEmitter {
         if (this.dialog && !this.isMobile) {
             this.unbindCustomListenersOnDialog();
             this.dialog.destroy();
+            this.dialog = null;
         }
 
         if (this.element) {

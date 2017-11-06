@@ -119,8 +119,6 @@ class ImageAnnotator extends Annotator {
 
         if (!thread) {
             this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
-        } else {
-            this.addThreadToMap(thread);
         }
 
         return thread;

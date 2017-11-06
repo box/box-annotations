@@ -332,7 +332,7 @@ $tablet: 'max-width: 768px';
     width: 24px;
 
     &:hover {
-        z-index: 10000; // Ensure activated point annotation icon is above dialog
+        z-index: 9999; // Ensure activated point annotation icon is above dialog
     }
 
     svg {

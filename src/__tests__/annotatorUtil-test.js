@@ -33,7 +33,9 @@ import {
     prevDefAndStopProp,
     canLoadAnnotations,
     insertTemplate,
-    generateBtn
+    generateBtn,
+    addThreadToMap,
+    removeThreadFromMap
 } from '../annotatorUtil';
 import {
     STATES,
@@ -740,6 +742,24 @@ describe('annotatorUtil', () => {
         it('should return true if user has at least can_view_annotations_self permissions', () => {
             stubs.permissions.can_view_annotations_self = true;
             expect(canLoadAnnotations(stubs.permissions)).to.be.true;
+        });
+    });
+
+    describe('addThreadToMap()', () => {
+        it('should add thread to in-memory map', () => {
+            const thread = { threadID: '123abc', location: { page: 2 } };
+            const result = addThreadToMap(thread, {});
+            expect(result.page).equals(2);
+            expect(result.pageThreads).to.deep.equal({ '123abc': thread });
+        });
+    });
+
+    describe('removeThreadFromMap()', () => {
+        it('should remove thread from in-memory map', () => {
+            const thread = { threadID: '123abc', location: { page: 2 } };
+            const result = removeThreadFromMap(thread, { '123abc': thread });
+            expect(result.page).equals(2);
+            expect(result.pageThreads).to.deep.equal({});
         });
     });
 });

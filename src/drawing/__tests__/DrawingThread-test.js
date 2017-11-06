@@ -85,14 +85,14 @@ describe('drawing/DrawingThread', () => {
                 destroy: sandbox.stub()
             };
 
-            thread.annotations = ['annotation'];
+            thread.annotations = { '123abc': {} };
 
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).to.be.called;
             expect(thread.concreteContext.clearRect).to.be.called;
             expect(thread.clearBoundary).to.be.called;
-            expect(thread.deleteAnnotationWithID).to.be.calledWith('annotation');
+            expect(thread.deleteAnnotationWithID).to.be.calledWith({ annotationID: '123abc' });
             expect(thread.pathContainer).to.equal(null);
         });
     });

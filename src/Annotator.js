@@ -5,21 +5,16 @@ import * as annotatorUtil from './annotatorUtil';
 import { ICON_CLOSE } from './icons/icons';
 import './Annotator.scss';
 import {
-    CLASS_ACTIVE,
     CLASS_HIDDEN,
-    SELECTOR_BOX_PREVIEW_BASE_HEADER,
     DATA_TYPE_ANNOTATION_DIALOG,
     CLASS_MOBILE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_MODE,
-    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
     CLASS_MOBILE_DIALOG_HEADER,
     CLASS_DIALOG_CLOSE,
     ID_MOBILE_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_DRAWING_HEADER,
     TYPES,
-    THREAD_EVENT,
-    ANNOTATOR_EVENT
+    ANNOTATOR_EVENT,
+    CONTROLLER_EVENT
 } from './annotationConstants';
 
 @autobind
@@ -54,7 +49,6 @@ class Annotator extends EventEmitter {
         this.validationErrorEmitted = false;
         this.isMobile = options.isMobile || false;
         this.hasTouch = options.hasTouch || false;
-        this.annotationModeHandlers = [];
         this.localized = options.localizedStrings;
 
         const { apiHost, file, token } = this.options;
@@ -83,27 +77,9 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     destroy() {
-        this.unbindModeListeners();
-
-        if (this.threads) {
-            Object.keys(this.threads).forEach((page) => {
-                const pageThreads = this.getThreadsOnPage(page);
-
-                Object.keys(pageThreads).forEach((threadID) => {
-                    const thread = pageThreads[threadID];
-                    this.unbindCustomListenersOnThread(thread);
-                });
-            });
-        }
-
         // Destroy all annotate buttons
-        Object.keys(this.modeButtons).forEach((type) => {
-            const handler = this.getAnnotationModeClickHandler(type);
-            const buttonEl = this.container.querySelector(this.modeButtons[type].selector);
-
-            if (buttonEl) {
-                buttonEl.removeEventListener('click', handler);
-            }
+        Object.keys(this.modeControllers).forEach((mode) => {
+            this.modeControllers[mode].destroy();
         });
 
         this.unbindDOMListeners();
@@ -132,13 +108,6 @@ class Annotator extends EventEmitter {
             this.setupMobileDialog();
         }
 
-        // Show the annotate button for all enabled types for the
-        // current viewer
-        this.modeButtons = this.options.modeButtons;
-        Object.keys(this.modeButtons).forEach((type) => {
-            this.showModeAnnotateButton(type);
-        });
-
         this.setScale(initialScale);
         this.setupAnnotations();
         this.loadAnnotations();
@@ -164,42 +133,6 @@ class Annotator extends EventEmitter {
         }
 
         return true;
-    }
-
-    /**
-     * Shows the annotate button for the specified mode
-     *
-     * @param {string} currentMode - Annotation mode
-     * @return {void}
-     */
-    showModeAnnotateButton(currentMode) {
-        const mode = this.modeButtons[currentMode];
-        if (!mode || !this.permissions.canAnnotate || !this.isModeAnnotatable(currentMode)) {
-            return;
-        }
-
-        const annotateButtonEl = this.container.querySelector(mode.selector);
-        if (annotateButtonEl) {
-            annotateButtonEl.title = mode.title;
-            annotateButtonEl.classList.remove(CLASS_HIDDEN);
-
-            const handler = this.getAnnotationModeClickHandler(currentMode);
-            annotateButtonEl.addEventListener('click', handler);
-
-            if (this.modeControllers[currentMode]) {
-                this.modeControllers[currentMode].registerAnnotator(this);
-            }
-        }
-    }
-
-    /**
-     * Gets the annotation button element.
-     *
-     * @param {string} annotatorSelector - Class selector for a custom annotation button.
-     * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
-     */
-    getAnnotateButton(annotatorSelector) {
-        return this.container.querySelector(annotatorSelector);
     }
 
     /**
@@ -240,7 +173,7 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        const pageThreads = this.getThreadsOnPage(pageNum);
+        const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
             thread.hide();
@@ -255,97 +188,6 @@ class Annotator extends EventEmitter {
      */
     setScale(scale) {
         this.annotatedElement.setAttribute('data-scale', scale);
-    }
-
-    /**
-     * Toggles annotation modes on and off. When an annotation mode is
-     * on, annotation threads will be created at that location.
-     *
-     * @param {string} mode - Current annotation mode
-     * @param {HTMLEvent} event - DOM event
-     * @return {void}
-     */
-    toggleAnnotationHandler(mode, event = {}) {
-        if (!this.isModeAnnotatable(mode)) {
-            return;
-        }
-
-        this.destroyPendingThreads();
-
-        // No specific mode available for annotation type
-        if (!(mode in this.modeButtons)) {
-            return;
-        }
-
-        const buttonSelector = this.modeButtons[mode].selector;
-        const buttonEl = event.target || this.getAnnotateButton(buttonSelector);
-
-        // Exit any other annotation mode
-        this.exitAnnotationModesExcept(mode);
-
-        // If in annotation mode, turn it off
-        if (this.isInAnnotationMode(mode)) {
-            this.disableAnnotationMode(mode, buttonEl);
-
-            // Remove annotation mode
-            this.currentAnnotationMode = null;
-        } else {
-            this.enableAnnotationMode(mode, buttonEl);
-
-            // Update annotation mode
-            this.currentAnnotationMode = mode;
-        }
-    }
-
-    /**
-     * Disables the specified annotation mode
-     *
-     * @param {string} mode - Current annotation mode
-     * @param {HTMLElement} buttonEl - Annotation button element
-     * @return {void}
-     */
-    disableAnnotationMode(mode, buttonEl) {
-        if (!this.isModeAnnotatable(mode)) {
-            return;
-        } else if (this.isInAnnotationMode(mode)) {
-            this.currentAnnotationMode = null;
-            this.emit(ANNOTATOR_EVENT.modeExit, { mode, headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
-        }
-
-        this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
-        if (buttonEl) {
-            buttonEl.classList.remove(CLASS_ACTIVE);
-
-            if (mode === TYPES.draw) {
-                this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-            }
-        }
-
-        this.unbindModeListeners(mode); // Disable mode
-        this.bindDOMListeners(); // Re-enable other annotations
-    }
-
-    /**
-     * Enables the specified annotation mode
-     *
-     * @param {string} mode - Current annotation mode
-     * @param {HTMLElement} buttonEl - Annotation button element
-     * @return {void}
-     */
-    enableAnnotationMode(mode, buttonEl) {
-        this.emit(ANNOTATOR_EVENT.modeEnter, { mode, headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
-
-        this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        if (buttonEl) {
-            buttonEl.classList.add(CLASS_ACTIVE);
-
-            if (mode === TYPES.draw) {
-                this.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-            }
-        }
-
-        this.unbindDOMListeners(); // Disable other annotations
-        this.bindModeListeners(mode); // Enable mode
     }
 
     //--------------------------------------------------------------------------
@@ -403,6 +245,40 @@ class Annotator extends EventEmitter {
         this.bindDOMListeners();
         this.bindCustomListenersOnService(this.annotationService);
         this.addListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
+        this.setupControllers();
+    }
+
+    /**
+     * Mode controllers setup.
+     *
+     * @protected
+     * @return {void}
+     */
+    setupControllers() {
+        const { CONTROLLERS } = this.options.annotator || {};
+        this.modeControllers = CONTROLLERS || {};
+        this.modeButtons = this.options.modeButtons || {};
+
+        const options = {
+            header: this.options.header,
+            isTouchCompatible: this.isMobile && this.hasTouch
+        };
+        Object.keys(this.modeControllers).forEach((type) => {
+            const controller = this.modeControllers[type];
+            controller.init({
+                container: this.container,
+                annotatedElement: this.annotatedElement,
+                mode: type,
+                modeButton: this.modeButtons[type],
+
+                permissions: this.permissions,
+                annotator: this,
+                options
+            });
+
+            this.handleControllerEvents = this.handleControllerEvents.bind(this);
+            controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
+        });
     }
 
     /**
@@ -478,11 +354,8 @@ class Annotator extends EventEmitter {
 
             // Bind events on valid annotation thread
             const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
-            this.bindCustomListenersOnThread(thread);
-
             const controller = this.modeControllers[firstAnnotation.type];
             if (controller) {
-                controller.bindCustomListenersOnThread(thread);
                 controller.registerThread(thread);
             }
         });
@@ -573,160 +446,17 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Binds custom event listeners for a thread.
+     * Returns the current annotation mode
      *
      * @protected
-     * @param {AnnotationThread} thread - Thread to bind events to
-     * @return {void}
+     * @return {string|null} Current annotation mode
      */
-    bindCustomListenersOnThread(thread) {
-        if (!thread) {
-            return;
-        }
-
-        thread.addListener('threadevent', this.handleAnnotationThreadEvents);
-    }
-
-    /**
-     * Unbinds custom event listeners for the thread.
-     *
-     * @protected
-     * @param {AnnotationThread} thread - Thread to bind events to
-     * @return {void}
-     */
-    unbindCustomListenersOnThread(thread) {
-        thread.removeListener('threadevent', this.handleAnnotationThreadEvents);
-    }
-
-    /**
-     * Binds event listeners for annotation modes.
-     *
-     * @protected
-     * @param {string} mode - Current annotation mode
-     * @return {void}
-     */
-    bindModeListeners(mode) {
-        const handlers = [];
-
-        if (mode === TYPES.point) {
-            handlers.push(
-                {
-                    type: 'mousedown',
-                    func: this.pointClickHandler,
-                    eventObj: this.annotatedElement
-                },
-                {
-                    type: 'touchstart',
-                    func: this.pointClickHandler,
-                    eventObj: this.annotatedElement
-                }
-            );
-        } else if (mode === TYPES.draw && this.modeControllers[mode]) {
-            this.modeControllers[mode].bindModeListeners();
-        }
-
-        handlers.forEach((handler) => {
-            handler.eventObj.addEventListener(handler.type, handler.func, false);
-            this.annotationModeHandlers.push(handler);
+    getCurrentAnnotationMode() {
+        const modes = Object.keys(this.modeControllers).filter((mode) => {
+            const controller = this.modeControllers[mode];
+            return controller.isEnabled();
         });
-    }
-
-    /**
-     * Event handler for adding a point annotation. Creates a point annotation
-     * thread at the clicked location.
-     *
-     * @protected
-     * @param {Event} event - DOM event
-     * @return {void}
-     */
-    pointClickHandler(event) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        // Determine if a point annotation dialog is already open and close the
-        // current open dialog
-        const hasPendingThreads = this.destroyPendingThreads();
-        if (hasPendingThreads) {
-            return;
-        }
-
-        // Exits point annotation mode on first click
-        const buttonSelector = this.modeButtons[TYPES.point].selector;
-        const buttonEl = this.getAnnotateButton(buttonSelector);
-        this.disableAnnotationMode(TYPES.point, buttonEl);
-
-        // Get annotation location from click event, ignore click if location is invalid
-        const location = this.getLocationFromEvent(event, TYPES.point);
-        if (!location) {
-            return;
-        }
-
-        // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.createAnnotationThread([], location, TYPES.point);
-
-        if (thread) {
-            thread.show();
-
-            // Bind events on thread
-            this.bindCustomListenersOnThread(thread);
-        }
-
-        this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
-    }
-
-    /**
-     * Unbinds event listeners for annotation modes.
-     *
-     * @protected
-     * @param {string} mode - Annotation mode to be unbound
-     * @return {void}
-     */
-    unbindModeListeners(mode) {
-        while (this.annotationModeHandlers.length > 0) {
-            const handler = this.annotationModeHandlers.pop();
-            handler.eventObj.removeEventListener(handler.type, handler.func);
-        }
-
-        if (this.modeControllers[mode]) {
-            this.modeControllers[mode].unbindModeListeners();
-        }
-    }
-
-    /**
-     * Adds thread to in-memory map.
-     *
-     * @protected
-     * @param {AnnotationThread} thread - Thread to add
-     * @return {void}
-     */
-    addThreadToMap(thread) {
-        // Add thread to in-memory map
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        const pageThreads = this.getThreadsOnPage(page);
-        pageThreads[thread.threadID] = thread;
-    }
-
-    /**
-     * Removes thread to in-memory map.
-     *
-     * @protected
-     * @param {AnnotationThread} thread - Thread to bind events to
-     * @return {void}
-     */
-    removeThreadFromMap(thread) {
-        const page = thread.location.page || 1;
-        delete this.threads[page][thread.threadID];
-    }
-
-    /**
-     * Returns whether or not annotator is in the specified annotation mode.
-     *
-     * @protected
-     * @param {string} mode - Current annotation mode
-     * @return {boolean} Whether or not in the specified annotation mode
-     */
-    isInAnnotationMode(mode) {
-        return this.currentAnnotationMode === mode;
+        return modes[0] || null;
     }
 
     //--------------------------------------------------------------------------
@@ -757,7 +487,7 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        const pageThreads = this.getThreadsOnPage(pageNum);
+        const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
             if (!this.isModeAnnotatable(thread.type)) {
@@ -793,14 +523,14 @@ class Annotator extends EventEmitter {
 
         // Only show/hide point annotation button if user has the
         // appropriate permissions
-        if (!this.permissions.canAnnotate) {
+        const controller = this.modeControllers[TYPES.point];
+        if (!this.permissions.canAnnotate || !controller) {
             return;
         }
 
         // Hide create annotations button if image is rotated
         const pointButtonSelector = this.modeButtons[TYPES.point].selector;
-        const pointAnnotateButton = this.getAnnotateButton(pointButtonSelector);
-
+        const pointAnnotateButton = controller.getButton(pointButtonSelector);
         if (rotationAngle !== 0) {
             annotatorUtil.hideElement(pointAnnotateButton);
         } else {
@@ -825,23 +555,6 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Returns click handler for toggling annotation mode.
-     *
-     * @private
-     * @param {string} mode - Target annotation mode
-     * @return {Function|null} Click handler
-     */
-    getAnnotationModeClickHandler(mode) {
-        if (!mode || !this.isModeAnnotatable(mode)) {
-            return null;
-        }
-
-        return () => {
-            this.toggleAnnotationHandler(mode);
-        };
-    }
-
-    /**
      * Orient annotations to the correct scale and orientation of the annotated document.
      *
      * @private
@@ -859,53 +572,15 @@ class Annotator extends EventEmitter {
      * @param {string} mode - Current annotation mode
      * @return {void}
      */
-    exitAnnotationModesExcept(mode) {
-        Object.keys(this.modeButtons).forEach((type) => {
-            if (mode === type) {
-                return;
-            }
-
-            const buttonSelector = this.modeButtons[type].selector;
-            if (!this.modeButtons[type].button) {
-                this.modeButtons[type].button = this.getAnnotateButton(buttonSelector);
-            }
-
-            this.disableAnnotationMode(type, this.modeButtons[type].button);
-        });
-    }
-
-    /**
-     * Gets threads on page
-     *
-     * @private
-     * @param {number} page - Current page number
-     * @return {Map|[]} Threads on page
-     */
-    getThreadsOnPage(page) {
-        if (!(page in this.threads)) {
-            this.threads[page] = {};
+    toggleAnnotationMode(mode) {
+        const currentMode = this.getCurrentAnnotationMode();
+        if (currentMode) {
+            this.modeControllers[currentMode].exit();
         }
 
-        return this.threads[page];
-    }
-
-    /**
-     * Gets thread specified by threadID
-     *
-     * @private
-     * @param {number} threadID - Thread ID
-     * @return {AnnotationThread} Annotation thread specified by threadID
-     */
-    getThreadByID(threadID) {
-        let thread = null;
-        Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.getThreadsOnPage(page);
-            if (threadID in pageThreads) {
-                thread = pageThreads[threadID];
-            }
-        });
-
-        return thread;
+        if (currentMode !== mode) {
+            this.modeControllers[mode].enter();
+        }
     }
 
     /**
@@ -926,30 +601,6 @@ class Annotator extends EventEmitter {
                 thread.scrollIntoView();
             }
         });
-    }
-
-    /**
-     * Destroys pending threads.
-     *
-     * @private
-     * @return {boolean} Whether or not any pending threads existed on the
-     * current file
-     */
-    destroyPendingThreads() {
-        let hasPendingThreads = false;
-
-        Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.getThreadsOnPage(page);
-
-            Object.keys(pageThreads).forEach((threadID) => {
-                const thread = pageThreads[threadID];
-                if (annotatorUtil.isPending(thread.state)) {
-                    hasPendingThreads = true;
-                    thread.destroy();
-                }
-            });
-        });
-        return hasPendingThreads;
     }
 
     /**
@@ -1012,42 +663,37 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Handles annotation thread events and emits them to the viewer
+     * Handle events emitted by the annotation service
      *
      * @private
-     * @param {Object} [data] - Annotation thread event data
-     * @param {string} [data.event] - Annotation thread event
-     * @param {string} [data.data] - Annotation thread event data
+     * @param {Object} [data] - Annotation service event data
+     * @param {string} [data.event] - Annotation service event
+     * @param {string} [data.data] -
      * @return {void}
      */
-    handleAnnotationThreadEvents(data) {
-        if (!data.data || !data.data.threadID) {
-            return;
-        }
-
-        const thread = this.getThreadByID(data.data.threadID);
-        if (!thread) {
-            return;
-        }
-
+    handleControllerEvents(data) {
+        let opt = { page: 1, pageThreads: {} };
+        const headerSelector = data.data ? data.data.headerSelector : '';
         switch (data.event) {
-            case THREAD_EVENT.threadCleanup:
-                // Thread should be cleaned up, unbind listeners - we
-                // don't do this in annotationdelete listener since thread
-                // may still need to respond to error messages
-                this.unbindCustomListenersOnThread(thread);
+            case CONTROLLER_EVENT.toggleMode:
+                this.toggleAnnotationMode(data.mode);
                 break;
-            case THREAD_EVENT.threadDelete:
-                // Thread was deleted, remove from thread map
-                this.removeThreadFromMap(thread);
+            case CONTROLLER_EVENT.enter:
+                this.emit(data.event, { mode: data.mode, headerSelector });
+                this.unbindDOMListeners();
+                break;
+            case CONTROLLER_EVENT.exit:
+                this.emit(data.event, { mode: data.mode, headerSelector });
+                this.bindDOMListeners();
+                break;
+            case CONTROLLER_EVENT.register:
+                opt = annotatorUtil.addThreadToMap(data.data, this.threads);
+                this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
                 break;
-            case THREAD_EVENT.deleteError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.deleteError);
-                this.emit(data.event, data.data);
-                break;
-            case THREAD_EVENT.createError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+            case CONTROLLER_EVENT.unregister:
+                opt = annotatorUtil.removeThreadFromMap(data.data, this.threads);
+                this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
                 break;
             default:

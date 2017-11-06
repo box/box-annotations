@@ -3,6 +3,8 @@ import BoxAnnotations from '../BoxAnnotations';
 import { TYPES } from '../annotationConstants';
 import * as annotatorUtil from '../annotatorUtil';
 import DrawingModeController from '../controllers/DrawingModeController';
+import PointModeController from '../controllers/PointModeController';
+import HighlightModeController from '../controllers/HighlightModeController';
 
 let loader;
 let stubs;
@@ -60,6 +62,70 @@ describe('BoxAnnotations', () => {
         });
     });
 
+    describe('instantiateControllers()', () => {
+        it('Should do nothing when a controller exists', () => {
+            const config = {
+                CONTROLLERS: {
+                    [TYPES.draw]: {
+                        CONSTRUCTOR: sandbox.stub()
+                    }
+                }
+            };
+
+            expect(() => loader.instantiateControllers(config)).to.not.throw();
+        });
+
+        it('Should do nothing when given an undefined object', () => {
+            const config = undefined;
+            expect(() => loader.instantiateControllers(config)).to.not.throw();
+        });
+
+        it('Should do nothing when config has no types', () => {
+            const config = {
+                TYPE: undefined
+            };
+            expect(() => loader.instantiateControllers(config)).to.not.throw();
+        });
+
+        it('Should instantiate controllers and assign them to the CONTROLLERS attribute', () => {
+            const config = {
+                TYPE: [TYPES.draw, 'typeWithoutController']
+            };
+            loader.viewerConfig = { enabledTypes: [TYPES.draw] };
+
+            loader.instantiateControllers(config);
+            expect(config.CONTROLLERS).to.not.equal(undefined);
+            expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).to.be.truthy;
+            const assignedControllers = Object.keys(config.CONTROLLERS);
+            expect(assignedControllers.length).to.equal(1);
+        });
+    });
+
+    describe('getAnnotatorTypes()', () => {
+        beforeEach(() => {
+            stubs.config = {
+                NAME: 'Document',
+                VIEWER: ['Document'],
+                TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
+                DEFAULT_TYPES: ['point', 'highlight']
+            };
+        });
+
+        it('should filter disabled annotation types from the annotator.TYPE', () => {
+            loader.viewerConfig = { disabledTypes: ['point'] };
+            expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['highlight']);
+        });
+
+        it('should filter and only keep allowed types of annotations', () => {
+            loader.viewerConfig = { enabledTypes: ['point', 'timestamp'] };
+            expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['point']);
+        });
+
+        it('should respect default annotators if none provided', () => {
+            expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['point', 'highlight']);
+        });
+    });
+
     describe('determineAnnotator()', () => {
         beforeEach(() => {
             stubs.instantiateControllers = sandbox.stub(loader, 'instantiateControllers');
@@ -80,6 +146,7 @@ describe('BoxAnnotations', () => {
                     NAME: 'Document'
                 }
             }
+            sandbox.stub(loader, 'getAnnotatorTypes').returns(['point']);
         });
 
         it('should not return an annotator if the user has incorrect permissions/scopes', () => {
@@ -126,112 +193,6 @@ describe('BoxAnnotations', () => {
             sandbox.stub(loader, 'getAnnotatorsForViewer').returns(stubs.annotator);
             const annotator = loader.determineAnnotator(stubs.options, config);
             expect(annotator).to.be.null;
-        });
-
-        it('should filter disabled annotation types from the annotator.TYPE', () => {
-            const config = {
-                enabled: true,
-                disabledTypes: ['point']
-            };
-
-            const docAnnotator = {
-                NAME: 'Document',
-                VIEWER: ['Document'],
-                TYPE: ['point', 'highlight'],
-                DEFAULT_TYPES: ['point', 'highlight']
-            };
-            sandbox.stub(loader, 'getAnnotatorsForViewer').returns(docAnnotator);
-            const annotator = loader.determineAnnotator(stubs.options, config);
-
-            expect(annotator.TYPE.includes('point')).to.be.false;
-            expect(annotator.TYPE.includes('highlight')).to.be.true;
-            expect(annotator).to.deep.equal({
-                NAME: 'Document',
-                VIEWER: ['Document'],
-                TYPE: ['highlight'],
-                DEFAULT_TYPES: ['point', 'highlight']
-            });
-            expect(loader.getAnnotatorsForViewer).to.be.called;
-        });
-
-        it('should filter and only keep allowed types of annotations', () => {
-            const config = {
-                enabled: true,
-                enabledTypes: ['point', 'timestamp']
-            };
-
-            const docAnnotator = {
-                NAME: 'Document',
-                VIEWER: ['Document'],
-                TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
-                DEFAULT_TYPES: ['point', 'highlight']
-            };
-
-            sandbox.stub(loader, 'getAnnotatorsForViewer').returns(docAnnotator);
-            const annotator = loader.determineAnnotator(stubs.options, config);
-            expect(annotator.TYPE.includes('point')).to.be.true;
-            expect(annotator.TYPE.includes('highlight')).to.be.false;
-            expect(annotator).to.deep.equal({
-                NAME: 'Document',
-                VIEWER: ['Document'],
-                TYPE: ['point'],
-                DEFAULT_TYPES: ['point', 'highlight']
-            });
-        });
-
-        it('should respect default annotators if none provided', () => {
-            const config = {
-                enabled: true
-            };
-
-            const docAnnotator = {
-                NAME: 'Document',
-                VIEWER: ['Document'],
-                TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
-                DEFAULT_TYPES: ['point', 'draw']
-            };
-            sandbox.stub(loader, 'getAnnotatorsForViewer').returns(docAnnotator);
-            const annotator = loader.determineAnnotator(stubs.options, config);
-
-            expect(annotator.TYPE).to.deep.equal(['point', 'draw']);
-        });
-    });
-
-    describe('instantiateControllers()', () => {
-        it('Should do nothing when a controller exists', () => {
-            const config = {
-                CONTROLLERS: {
-                    [TYPES.draw]: {
-                        CONSTRUCTOR: sandbox.stub()
-                    }
-                }
-            };
-
-            expect(() => loader.instantiateControllers(config)).to.not.throw();
-        });
-
-        it('Should do nothing when given an undefined object', () => {
-            const config = undefined;
-            expect(() => loader.instantiateControllers(config)).to.not.throw();
-        });
-
-        it('Should do nothing when config has no types', () => {
-            const config = {
-                TYPE: undefined
-            };
-            expect(() => loader.instantiateControllers(config)).to.not.throw();
-        });
-
-        it('Should instantiate controllers and assign them to the CONTROLLERS attribute', () => {
-            const config = {
-                TYPE: [TYPES.draw, 'typeWithoutController']
-            };
-
-            loader.instantiateControllers(config);
-            expect(config.CONTROLLERS).to.not.equal(undefined);
-            expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).to.be.truthy;
-            const assignedControllers = Object.keys(config.CONTROLLERS);
-            expect(assignedControllers.length).to.equal(1);
         });
     });
 });
