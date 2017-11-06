@@ -5,7 +5,6 @@ import DocDrawingThread from '../doc/DocDrawingThread';
 import * as annotatorUtil from '../annotatorUtil';
 import {
     TYPES,
-    THREAD_EVENT,
     STATES,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
@@ -47,8 +46,9 @@ class DrawingModeController extends AnnotationModeController {
         super.init(data);
 
         // If the header coming from the preview options is not none (e.g.
-        // light, dark, or no value given), then we want to use our draw header.
-        // Otherwise we expect header UI to be handled by Preview’s consumer
+        // light, dark, or no value given), then we want to use our draw
+        // header. Otherwise we expect header UI to be handled by Preview’s
+        // consumer
         if (data.header !== 'none') {
             this.setupHeader(this.container, annotationsShell);
         }
@@ -57,6 +57,8 @@ class DrawingModeController extends AnnotationModeController {
         this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
         this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
+
+        this.handleSelection = this.handleSelection.bind(this);
     }
 
     /**
@@ -132,31 +134,32 @@ class DrawingModeController extends AnnotationModeController {
         if (!thread || !thread.location) {
             return;
         }
-      
-        const page = thread.location.page || 1;
+
+        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
         this.threads[page].remove(thread);
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
-    /**
-     * Binds custom event listeners for a thread.
-     *
-     * @inheritdoc
-     * @protected
-     * @param {AnnotationThread} thread - Thread to bind events to
-     * @return {void}
-     */
-    bindCustomListenersOnThread(thread) {
-        if (!thread) {
-            return;
+    bindDOMListeners() {
+        if (this.isTouchCompatible) {
+            this.annotatedElement.addEventListener('touchstart', this.handleSelection);
+        } else {
+            this.annotatedElement.addEventListener('click', this.handleSelection);
         }
+    }
 
-        super.bindCustomListenersOnThread(thread);
+    unbindDOMListeners() {
+        if (this.isTouchCompatible) {
+            this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
+        } else {
+            this.annotatedElement.removeEventListener('click', this.handleSelection);
+        }
+    }
 
-        // On save, add the thread to the Rbush, on delete, remove it from the Rbush
-        thread.addListener('annotationsaved', () => this.registerThread(thread));
-        thread.addListener('annotationdelete', () => this.unregisterThread(thread));
+    bindListeners() {
+        super.bindListeners();
+        this.unbindDOMListeners();
     }
 
     /**
@@ -168,6 +171,7 @@ class DrawingModeController extends AnnotationModeController {
      */
     unbindListeners() {
         super.unbindListeners();
+        this.bindDOMListeners();
 
         annotatorUtil.disableElement(this.undoButtonEl);
         annotatorUtil.disableElement(this.redoButtonEl);
@@ -258,6 +262,10 @@ class DrawingModeController extends AnnotationModeController {
 
                 break;
             case 'dialogdelete':
+                if (!thread.dialog) {
+                    return;
+                }
+
                 if (thread.state === STATES.pending) {
                     // Soft delete, in-progress thread doesn't require a redraw or a delete on the server
                     // Clear in-progress thread and restart drawing
@@ -277,14 +285,10 @@ class DrawingModeController extends AnnotationModeController {
             case 'availableactions':
                 this.updateUndoRedoButtonEls(eventData.undo, eventData.redo);
                 break;
-            case THREAD_EVENT.save:
-                this.registerThread(thread);
-                break;
-            case THREAD_EVENT.delete:
-                this.unregisterThread(thread);
-                break;
             default:
         }
+
+        super.handleThreadEvents(thread, data);
     }
 
     /**

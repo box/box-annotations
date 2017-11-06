@@ -1,3 +1,4 @@
+import EventEmitter from 'events';
 import { insertTemplate, isPending, addThreadToMap, removeThreadFromMap } from '../annotatorUtil';
 import {
     CLASS_HIDDEN,
@@ -196,12 +197,8 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     registerThread(thread) {
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        if (!(page in this.threads)) {
-            this.threads[page] = {};
-        }
-        const pageThreads = this.threads[page];
-        pageThreads[thread.threadID] = thread;
+        const { page, pageThreads } = addThreadToMap(thread, this.threads);
+        this.threads[page] = pageThreads;
         this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
     }
@@ -214,8 +211,8 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     unregisterThread(thread) {
-        const page = thread.location.page || 1;
-        delete this.threads[page][thread.threadID];
+        const { page, pageThreads } = removeThreadFromMap(thread, this.threads);
+        this.threads[page] = pageThreads;
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }

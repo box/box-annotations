@@ -148,7 +148,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     deleteThread() {
-        Object.keys(this.annotations).forEach(this.deleteAnnotationWithID);
+        Object.keys(this.annotations).forEach((annotationID) => this.deleteAnnotationWithID({ annotationID }));
 
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
