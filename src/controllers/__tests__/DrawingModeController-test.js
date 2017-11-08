@@ -279,6 +279,7 @@ describe('controllers/DrawingModeController', () => {
         it('should restart mode listeners from the thread on softcommit', () => {
             sandbox.stub(controller, 'unbindListeners');
             sandbox.stub(controller, 'bindListeners');
+            sandbox.stub(controller, 'registerThread');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'softcommit'
             });
@@ -318,6 +319,7 @@ describe('controllers/DrawingModeController', () => {
                     location: 'not empty'
                 }
             };
+            sandbox.stub(controller, 'registerThread');
             sandbox.stub(controller, 'unbindListeners');
             sandbox.stub(controller, 'bindListeners', () => {
                 controller.currentThread = thread2;
