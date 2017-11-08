@@ -92,7 +92,7 @@ describe('doc/DocAnnotator', () => {
             destroy: () => {},
             show: () => {},
             hide: () => {},
-            setPosition: () => {}
+            setPosition: () => {},
         };
         stubs.createDialogMock = sandbox.mock(annotator.createHighlightDialog);
     });
@@ -426,6 +426,13 @@ describe('doc/DocAnnotator', () => {
             annotator.lastHighlightEvent = {};
             stubs.createDialogMock.expects('hide').never();
             annotator.createHighlightThread('');
+        });
+
+        it('should hide the dialog if it exists and is visible', () => {
+            annotator.lastHighlightEvent = {};
+            annotator.createHighlightDialog.isVisible = true;
+            stubs.createDialogMock.expects('hide').once();
+            annotator.createHighlightThread('some text');
         });
 
         it('should do nothing and return null if there was no highlight event on the previous action', () => {

@@ -363,11 +363,12 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     setupAnnotations() {
-        super.setupAnnotations();
-
+        // Determine enabled annotation types before binding mode controller listeners
         this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
         this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
         this.drawEnabled = !!this.modeControllers[TYPES.draw];
+
+        super.setupAnnotations();
 
         // Don't bind to draw specific handlers if we cannot draw
         if (this.drawEnabled) {
@@ -519,7 +520,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisble) {
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
         }
 
@@ -590,7 +591,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (!this.createHighlightDialog.isVisble) {
+        if (!this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.show(this.container);
         }
 
