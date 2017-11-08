@@ -276,14 +276,6 @@ describe('controllers/DrawingModeController', () => {
             stubs.thread.dialog = {};
         });
 
-        it('should add thread to map on locationassigned', () => {
-            sandbox.stub(controller, 'registerThread');
-            controller.handleThreadEvents(stubs.thread, {
-                event: 'locationassigned'
-            });
-            expect(controller.registerThread).to.be.called;
-        });
-
         it('should restart mode listeners from the thread on softcommit', () => {
             sandbox.stub(controller, 'unbindListeners');
             sandbox.stub(controller, 'bindListeners');
@@ -293,6 +285,7 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(stubs.thread.saveAnnotation).to.be.called;
+            expect(controller.registerThread).to.be.called;
             expect(stubs.thread.handleStart).to.not.be.called;
         });
 
