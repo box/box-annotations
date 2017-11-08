@@ -1,3 +1,12 @@
+<a name="0.2.1"></a>
+## 0.2.1 (2017-11-08)
+
+* Fix: Drawing CSS (#23) ([0493fcd](https://github.com/box/box-annotations/commit/0493fcd))
+* Fix: fix highlight selection and typos (#21) ([ca54d5e](https://github.com/box/box-annotations/commit/ca54d5e)), closes [#21](https://github.com/box/box-annotations/issues/21)
+* Fix: Only registering thread with controller on save (#22) ([ff75bf1](https://github.com/box/box-annotations/commit/ff75bf1))
+
+
+
 <a name="0.2.0"></a>
 # 0.2.0 (2017-11-08)
 
