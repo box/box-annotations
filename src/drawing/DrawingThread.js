@@ -69,7 +69,6 @@ class DrawingThread extends AnnotationThread {
         // Recreate stored paths
         if (this.location && this.location.paths) {
             this.setBoundary();
-            this.emit('locationassigned');
 
             this.location.paths.forEach((drawingPathData) => {
                 const pathInstance = new DrawingPath(drawingPathData);

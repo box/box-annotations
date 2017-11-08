@@ -75,7 +75,6 @@ class DocDrawingThread extends DrawingThread {
                 dimensions: location.dimensions
             };
             this.checkAndHandleScaleUpdate();
-            this.emit('locationassigned');
         }
 
         this.drawingFlag = DRAW_STATES.drawing;

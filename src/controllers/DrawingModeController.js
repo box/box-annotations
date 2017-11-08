@@ -264,15 +264,13 @@ class DrawingModeController extends AnnotationModeController {
     handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
-            case 'locationassigned':
-                // Register the thread to the threadmap when a starting location is assigned. Should only occur once.
-                this.registerThread(thread);
-                break;
             case 'softcommit':
                 // Save the original thread, create a new thread and
                 // start drawing at the location indicating the page change
                 this.currentThread = undefined;
                 thread.saveAnnotation(TYPES.draw);
+                this.registerThread(thread);
+
                 this.unbindListeners();
                 this.bindListeners();
 
