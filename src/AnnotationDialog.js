@@ -791,7 +791,13 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     fitDialogHeightInPage() {
-        this.dialogEl.style.maxHeight = `${this.container.clientHeight / 2}px`;
+        const maxHeight = this.container.clientHeight / 2 - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
+        this.dialogEl.style.maxHeight = `${maxHeight}px`;
+
+        const commentsEl = this.dialogEl.querySelector(`.${constants.CLASS_ANNOTATION_CONTAINER}`);
+        if (commentsEl) {
+            commentsEl.style.maxHeight = `${maxHeight}px`;
+        }
     }
 }
 
