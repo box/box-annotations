@@ -1,5 +1,6 @@
 import AnnotationModeController from './AnnotationModeController';
 import { TYPES, THREAD_EVENT, CONTROLLER_EVENT } from '../annotationConstants';
+import CreateAnnotationDialog, { CreateEvents } from '../CreateAnnotationDialog';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to cancel the pending thread */
@@ -7,6 +8,39 @@ class PointModeController extends AnnotationModeController {
 
     /** @property {HTMLElement} - The button to commit the pending thread */
     postButtonEl;
+
+    init(data) {
+        super.init(data);
+
+        if (!this.createPointDialog) {
+            return;
+        }
+
+        this.createPointDialog.addListener(CreateEvents.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
+    }
+
+    setupSharedDialog(container, options) {
+        this.createPointDialog = new CreateAnnotationDialog(this.container, {
+            isMobile: options.isMobile,
+            hasTouch: options.hasTouch,
+            localized: options.localized
+        });
+
+        this.createPointDialog.addListener(CreateEvents.post, (commentText) => {
+            this.emit(CONTROLLER_EVENT.createThread, {
+                commentText,
+                lastPointEvent: this.lastPointEvent,
+                pendingThreadID: this.pendingThreadID
+            });
+
+            this.lastPointEvent = null;
+            this.pendingThreadID = null;
+
+            if (this.createPointDialog && this.createPointDialog.isVisible) {
+                this.createPointDialog.hide();
+            }
+        });
+    }
 
     /**
      * Set up and return the necessary handlers for the annotation mode
@@ -64,12 +98,19 @@ class PointModeController extends AnnotationModeController {
 
         // Create new thread with no annotations, show indicator, and show dialog
         const thread = this.annotator.createAnnotationThread([], location, TYPES.point);
-
-        if (thread) {
-            thread.show();
-            this.registerThread(thread);
+        if (!thread) {
+            return;
         }
 
+        if (this.isMobile) {
+            this.lastPointEvent = event;
+            this.pendingThreadID = thread.threadID;
+            this.container.appendChild(this.createPointDialog.containerEl);
+            this.createPointDialog.show(this.container);
+        }
+
+        thread.show();
+        this.registerThread(thread);
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
     }
 }

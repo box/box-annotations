@@ -178,13 +178,15 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should unbind the mobileDOM listeners', () => {
-            controller.isTouchCompatible = true;
+            controller.isMobile = true;
+            controller.hasTouch = true;
             controller.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('touchstart', sinon.match.func);
         });
 
         it('should unbind the DOM listeners', () => {
-            controller.isTouchCompatible = false;
+            controller.isMobile = true;
+            controller.hasTouch = false;
             controller.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
         });
@@ -199,13 +201,15 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should unbind the mobileDOM listeners', () => {
-            controller.isTouchCompatible = true;
+            controller.isMobile = true;
+            controller.hasTouch = true;
             controller.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('touchstart', sinon.match.func);
         });
 
         it('should unbind the DOM listeners', () => {
-            controller.isTouchCompatible = false;
+            controller.isMobile = true;
+            controller.hasTouch = false;
             controller.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
         });

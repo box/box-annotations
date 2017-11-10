@@ -21,6 +21,8 @@ export const CLASS_BUTTON_CONTAINER = 'button-container';
 export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 export const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 export const CLASS_MOBILE_ANNOTATION_DIALOG = 'bp-mobile-annotation-dialog';
+export const CLASS_MOBILE_CREATE_ANNOTATION_DIALOG = 'bp-mobile-create-annotation-dialog';
+export const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 export const CLASS_MOBILE_DIALOG_HEADER = 'bp-annotation-mobile-header';
 export const CLASS_DIALOG_CLOSE = 'bp-annotation-dialog-close';
 export const CLASS_TEXTAREA = 'bp-textarea';
@@ -111,6 +113,11 @@ export const TYPES = {
     highlight: 'highlight',
     draw: 'draw',
     highlight_comment: 'highlight-comment'
+};
+
+export const ANNOTATOR_TYPE = {
+    doc: 'document',
+    image: 'image'
 };
 
 export const HIGHLIGHT_FILL = {

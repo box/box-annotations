@@ -13,6 +13,8 @@ import {
     CLASS_DIALOG_CLOSE,
     ID_MOBILE_ANNOTATION_DIALOG,
     TYPES,
+    STATES,
+    THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT
 } from './annotationConstants';
@@ -67,6 +69,8 @@ class Annotator extends EventEmitter {
         // Get applicable annotation mode controllers
         const { CONTROLLERS } = this.options.annotator || {};
         this.modeControllers = CONTROLLERS || {};
+
+        this.createPointThread = this.createPointThread.bind(this);
 
         this.fetchPromise = this.fetchAnnotations();
     }
@@ -261,7 +265,8 @@ class Annotator extends EventEmitter {
 
         const options = {
             header: this.options.header,
-            isTouchCompatible: this.isMobile && this.hasTouch
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch
         };
         Object.keys(this.modeControllers).forEach((type) => {
             const controller = this.modeControllers[type];
@@ -270,7 +275,6 @@ class Annotator extends EventEmitter {
                 annotatedElement: this.annotatedElement,
                 mode: type,
                 modeButton: this.modeButtons[type],
-
                 permissions: this.permissions,
                 annotator: this,
                 options
@@ -302,6 +306,14 @@ class Annotator extends EventEmitter {
             </div>`.trim();
 
         this.container.appendChild(mobileDialogEl);
+
+        if (this.isModeAnnotatable(TYPES.point)) {
+            this.modeControllers[TYPES.point].setupSharedDialog(this.container, {
+                isMobile: this.isMobile,
+                hasTouch: this.hasTouch,
+                localized: this.localized
+            });
+        }
     }
 
     /**
@@ -457,6 +469,44 @@ class Annotator extends EventEmitter {
             return controller.isEnabled();
         });
         return modes[0] || null;
+    }
+
+    /**
+     * Creates a point annotation thread, adds it to in-memory map, and returns it.
+     *
+     * @private
+     * @param {Object} data - Thread data
+     * @param {string} data.commentText - The text for the first comment in
+     * the thread.
+     * @param {string} data.lastPointEvent - Point event for the annotation location
+     * @return {AnnotationThread} Created point annotation thread
+     */
+    createPointThread(data) {
+        // Empty string will be passed in if no text submitted in comment
+        const { commentText, lastPointEvent, pendingThreadID } = data;
+        if (commentText.trim() === '' || !lastPointEvent || !pendingThreadID) {
+            return null;
+        }
+
+        const location = this.getLocationFromEvent(lastPointEvent, TYPES.point);
+        if (!location) {
+            return null;
+        }
+
+        const pageThreads = this.threads[location.page] || {};
+        const thread = pageThreads[pendingThreadID];
+        if (!thread) {
+            return null;
+        }
+
+        thread.dialog.hasComments = true;
+        thread.state = STATES.hover;
+        thread.showDialog();
+        thread.dialog.postAnnotation(commentText);
+
+        // this.modeControllers[TYPES.point].registerThread(thread);
+        this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
+        return thread;
     }
 
     //--------------------------------------------------------------------------
@@ -695,6 +745,9 @@ class Annotator extends EventEmitter {
                 opt = annotatorUtil.removeThreadFromMap(data.data, this.threads);
                 this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
+                break;
+            case CONTROLLER_EVENT.createThread:
+                this.createPointThread(data.data);
                 break;
             default:
                 this.emit(data.event, data.data);

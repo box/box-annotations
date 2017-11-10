@@ -79,8 +79,9 @@ class CommentBox extends EventEmitter {
         super();
 
         this.parentEl = parentEl;
-
         this.hasTouch = config.hasTouch;
+
+        this.localized = config.localized;
         this.cancelText = config.localized.cancelButton;
         this.postText = config.localized.postButton;
         this.placeholderText = config.localized.addCommentPlaceholder;
@@ -89,6 +90,8 @@ class CommentBox extends EventEmitter {
         this.focus = this.focus.bind(this);
         this.onCancel = this.onCancel.bind(this);
         this.onPost = this.onPost.bind(this);
+
+        this.containerEl = this.createCommentBox();
     }
 
     /**
@@ -192,7 +195,7 @@ class CommentBox extends EventEmitter {
      */
     createHTML() {
         const containerEl = document.createElement('section');
-        containerEl.classList.add('bp-create-highlight-comment');
+        containerEl.classList.add('bp-create-comment');
         containerEl.innerHTML = `
             <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA} ${constants.CLASS_ACTIVE}"
                 placeholder="${this.placeholderText}"></textarea>
@@ -274,10 +277,10 @@ class CommentBox extends EventEmitter {
         this.cancelEl.addEventListener('click', this.onCancel);
         this.postEl.addEventListener('click', this.onPost);
         if (this.hasTouch) {
-            this.textAreaEl.addEventListener('keydown', this.focus);
+            this.textAreaEl.addEventListener('focus', this.focus);
             containerEl.addEventListener('touchend', this.preventDefaultAndPropagation.bind(this));
-            this.cancelEl.addEventListener('touchend', this.onCancel);
-            this.postEl.addEventListener('touchend', this.onPost);
+            this.cancelEl.addEventListener('touchend', this.onCancel.bind(this));
+            this.postEl.addEventListener('touchend', this.onPost.bind(this));
         }
 
         return containerEl;
