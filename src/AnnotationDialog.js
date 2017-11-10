@@ -17,6 +17,7 @@ const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
 const CLASS_BUTTON_DELETE_CONFIRM = 'confirm-delete-btn';
+const CLASS_INVALID_INPUT = 'bp-invalid-input';
 
 @autobind
 class AnnotationDialog extends EventEmitter {
@@ -240,6 +241,7 @@ class AnnotationDialog extends EventEmitter {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         const text = textInput || annotationTextEl.value;
         if (text.trim() === '') {
+            annotationTextEl.classList.add(CLASS_INVALID_INPUT);
             return;
         }
 
@@ -330,10 +332,42 @@ class AnnotationDialog extends EventEmitter {
         this.element.addEventListener('mouseup', this.stopPropagation);
         this.element.addEventListener('wheel', this.stopPropagation);
 
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (replyTextEl) {
+            replyTextEl.addEventListener('focus', this.focusReplyEl);
+        }
+
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        if (annotationTextEl) {
+            annotationTextEl.addEventListener('focus', this.focusCommentsEl);
+        }
+
         if (!this.isMobile) {
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
         }
+    }
+
+    /**
+     * Removes red border around reply textarea on focus
+     *
+     * @protected
+     * @return {void}
+     */
+    focusReplyEl() {
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        replyTextEl.classList.remove(CLASS_INVALID_INPUT);
+    }
+
+    /**
+     * Removes red border around annotation comments textarea on focus
+     *
+     * @protected
+     * @return {void}
+     */
+    focusCommentsEl() {
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        annotationTextEl.classList.remove(CLASS_INVALID_INPUT);
     }
 
     /**
@@ -347,6 +381,16 @@ class AnnotationDialog extends EventEmitter {
         this.element.removeEventListener('click', this.clickHandler);
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
+
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (replyTextEl) {
+            replyTextEl.removeEventListener('focus', this.focusReplyEl);
+        }
+
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        if (annotationTextEl) {
+            annotationTextEl.removeEventListener('focus', this.focusCommentsEl);
+        }
 
         if (!this.isMobile) {
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
@@ -626,6 +670,7 @@ class AnnotationDialog extends EventEmitter {
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         const text = replyTextEl.value;
         if (text.trim() === '') {
+            replyTextEl.classList.add(CLASS_INVALID_INPUT);
             return;
         }
 
