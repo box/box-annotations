@@ -155,9 +155,6 @@ class AnnotationThread extends EventEmitter {
         const tempAnnotation = new Annotation(tempAnnotationData);
         this.saveAnnotationToThread(tempAnnotation);
 
-        // Changing state from pending
-        this.state = STATES.hover;
-
         // Save annotation on server
         return this.annotationService
             .create(annotationData)
@@ -499,7 +496,11 @@ class AnnotationThread extends EventEmitter {
             this.dialog.removeAnnotation(tempAnnotation.annotationID);
         }
 
-        this.showDialog();
+        if (this.isMobile) {
+            // Changing state from pending
+            this.state = STATES.hover;
+            this.showDialog();
+        }
         this.emit(THREAD_EVENT.save);
     }
 
