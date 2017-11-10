@@ -192,6 +192,7 @@ $tablet: "(min-width: 768px)";
     @include border-top-bottom;
 }
 
+.bp-mobile-annotation-dialog .annotation-container section[data-section="create"],
 .bp-mobile-annotation-dialog .annotation-container {
     @media #{$tablet} {
         left: auto;
