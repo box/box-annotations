@@ -240,7 +240,9 @@ $tablet: "(min-width: 768px)";
 }
 
 .bp-container .bp-annotate-draw-undo-redo-container {
+    margin: 0;
+
     @media #{$tablet} {
-        margin: 0;
+        margin: 0 auto;
     }
 }
