@@ -509,6 +509,8 @@ describe('doc/DocHighlightDialog', () => {
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('mousedown', sinon.match.func);
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
         });
@@ -520,6 +522,8 @@ describe('doc/DocHighlightDialog', () => {
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('mousedown', sinon.match.func);
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
@@ -532,6 +536,8 @@ describe('doc/DocHighlightDialog', () => {
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('mousedown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
         });
@@ -543,6 +549,8 @@ describe('doc/DocHighlightDialog', () => {
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('mousedown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
             expect(stubs.remove).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
