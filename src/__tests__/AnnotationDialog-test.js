@@ -1025,10 +1025,25 @@ describe('AnnotationDialog', () => {
 
     describe('fitDialogHeightInPage()', () => {
         it('should allow scrolling on annotations dialog if file is a powerpoint', () => {
-            dialog.dialogEl = { style: {} };
+            dialog.dialogEl = {
+                style: {},
+                querySelector: sandbox.stub().returns(null)
+            };
             dialog.container = { clientHeight: 100 };
             dialog.fitDialogHeightInPage();
-            expect(dialog.dialogEl.style.maxHeight).equals('50px');
+            expect(dialog.dialogEl.style.maxHeight).equals('20px');
+        });
+
+        it('should allow scrolling on annotations dialog if file is a powerpoint', () => {
+            const commentsEl = document.createElement('div');
+            dialog.dialogEl = {
+                style: {},
+                querySelector: sandbox.stub().returns(commentsEl)
+            };
+            dialog.container = { clientHeight: 100 };
+            dialog.fitDialogHeightInPage();
+            expect(dialog.dialogEl.style.maxHeight).equals('20px');
+            expect(commentsEl.style.maxHeight).equals('20px');
         });
     });
 });

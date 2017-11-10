@@ -168,7 +168,6 @@ describe('AnnotationThread', () => {
                     threadNumber: '1'
                 })
             );
-            expect(thread.state).to.equal(STATES.hover);
         });
 
         it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {
@@ -210,7 +209,6 @@ describe('AnnotationThread', () => {
             stubs.create = sandbox.stub(annotationService, 'create');
             stubs.saveAnnotationToThread = sandbox.stub(thread, 'saveAnnotationToThread');
             sandbox.stub(thread, 'getThreadEventData').returns({});
-            sandbox.stub(thread, 'showDialog');
         });
 
         it('should save annotation to thread if it does not exist in annotations array', () => {
@@ -242,6 +240,23 @@ describe('AnnotationThread', () => {
             });
 
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+        });
+
+        it('should only show dialog immediately on mobile devices', () => {
+            const serverAnnotation = { threadNumber: 1 };
+            const tempAnnotation = serverAnnotation;
+            sandbox.stub(thread, 'showDialog');
+
+            // Don't show dialog on web browsers
+            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            expect(thread.showDialog).to.not.be.called;
+            expect(thread.state).not.equals(STATES.hover);
+
+            // Only show dialog on mobile browsers
+            thread.isMobile = true;
+            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            expect(thread.showDialog).to.be.called;
+            expect(thread.state).equals(STATES.hover);
         });
     })
 
