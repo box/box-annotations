@@ -907,6 +907,8 @@ class DocAnnotator extends Annotator {
                 }
 
                 consumed = consumed || threadActive;
+            } else if (this.isMobile) {
+                thread.hideDialog();
             }
         });
 
