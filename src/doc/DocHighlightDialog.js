@@ -364,6 +364,8 @@ class DocHighlightDialog extends AnnotationDialog {
     bindDOMListeners() {
         this.element.addEventListener('mousedown', this.mousedownHandler);
         this.element.addEventListener('keydown', this.keydownHandler);
+        this.element.addEventListener('mouseup', this.stopPropagation);
+        this.element.addEventListener('wheel', this.stopPropagation);
 
         if (!this.isMobile) {
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
@@ -381,6 +383,8 @@ class DocHighlightDialog extends AnnotationDialog {
     unbindDOMListeners() {
         this.element.removeEventListener('mousedown', this.mousedownHandler);
         this.element.removeEventListener('keydown', this.keydownHandler);
+        this.element.removeEventListener('mouseup', this.stopPropagation);
+        this.element.removeEventListener('wheel', this.stopPropagation);
 
         if (!this.isMobile) {
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);

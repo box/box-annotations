@@ -21,18 +21,18 @@ reset_to_master() {
     git tag -l | xargs git tag -d || return 1
 
     # Add the origin remote if it is not present
-    if ! git remote get-url github-origin; then
-        git remote add github-origin git@github.com:box/box-annotations.git || return 1
+    if ! git remote get-url release; then
+        git remote add release git@github.com:box/box-annotations.git || return 1
     fi
 
     # Fetch latest code with tags
-    git fetch --tags github-origin || return 1;
+    git fetch --tags release || return 1;
 
     # Reset to latest code and clear unstashed changes
-    git reset --hard github-origin/master || return 1
+    git reset --hard release/master || return 1
 
     # Remove old local tags in case a build failed
-    git fetch --prune github-upstream '+refs/tags/*:refs/tags/*' || exit 1
+    git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
     git clean -fdX || return 1
 }
 

@@ -105,9 +105,10 @@
     "github-release": "./node_modules/.bin/conventional-github-releaser",
     "changelog": "./node_modules/.bin/conventional-changelog -i CHANGELOG.md --same-file",
     "release": "yarn run clean && yarn run lint && yarn run test && yarn run prod",
-    "minor": "./build/release.sh -n && ./build/publish.sh",
-    "major": "./build/release.sh -m && ./build/publish.sh",
-    "patch": "./build/release.sh -p && ./build/publish.sh"
+    "publish": "./build/publish.sh",
+    "minor": "./build/release.sh -n && yarn run publish",
+    "major": "./build/release.sh -m && yarn run publish",
+    "patch": "./build/release.sh -p && yarn run publish"
   },
   "lint-staged": {
     "src/**/*.js": [
