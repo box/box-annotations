@@ -788,9 +788,29 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     drawingSelectionHandler(event) {
-        if (this.modeControllers[TYPES.draw]) {
-            this.modeControllers[TYPES.draw].handleSelection(event);
+        const controller = this.modeControllers[TYPES.draw];
+        if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
+            controller.handleSelection(event);
         }
+    }
+
+    /**
+     * Returns whether any mode controller is currently creating an
+     * annotation thread
+     *
+     * @private
+     * @return {boolean} Whether any controller has a pending thread
+     */
+    isCreatingAnnotation() {
+        let isPending = false;
+        Object.keys(this.modeControllers).some((mode) => {
+            const controller = this.modeControllers[mode];
+            if (controller.hasPendingThreads) {
+                isPending = true;
+            }
+            return isPending;
+        });
+        return isPending;
     }
 
     /**

@@ -59,6 +59,7 @@ class AnnotationThread extends EventEmitter {
         this.hasTouch = data.hasTouch;
         this.permissions = data.permissions;
         this.localized = data.localized;
+        this.state = STATES.inactive;
 
         this.setup();
     }

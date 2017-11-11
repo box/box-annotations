@@ -129,6 +129,7 @@ class AnnotationModeController extends EventEmitter {
 
         this.unbindListeners(); // Disable mode
         this.emit(CONTROLLER_EVENT.exit);
+        this.hasPendingThreads = false;
     }
 
     /**
@@ -267,6 +268,11 @@ class AnnotationModeController extends EventEmitter {
      */
     handleThreadEvents(thread, data) {
         switch (data.event) {
+            case THREAD_EVENT.save:
+            case THREAD_EVENT.cancel:
+                this.hasPendingThreads = false;
+                this.emit(data.event, data.data);
+                break;
             case THREAD_EVENT.threadCleanup:
                 // Thread should be cleaned up, unbind listeners - we
                 // don't do this in annotationdelete listener since thread
