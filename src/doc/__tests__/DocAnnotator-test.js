@@ -80,7 +80,8 @@ describe('doc/DocAnnotator', () => {
             show: () => {},
             reset: () => {},
             destroy: () => {},
-            onMousemove: () => {}
+            onMousemove: () => {},
+            hideDialog: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
 
@@ -1276,6 +1277,14 @@ describe('doc/DocAnnotator', () => {
         afterEach(() => {
             stubs.thread.state = 'invalid';
             annotator.threads = {};
+        });
+
+        it('should hide threads that are not pending nor highlights', () => {
+            stubs.thread.type = TYPES.point;
+            stubs.thread.state = STATES.hover;
+            annotator.isMobile = true;
+            stubs.threadMock.expects('hideDialog');
+            annotator.highlightClickHandler(stubs.event);
         });
 
         it('should cancel the first comment of pending point thread', () => {
