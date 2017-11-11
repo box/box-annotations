@@ -157,6 +157,13 @@ export const CONTROLLER_EVENT = {
     unbindDOMListeners: 'unbinddomlisteners'
 };
 
+export const CREATE_EVENT = {
+    init: 'init',
+    post: 'post_comment',
+    plain: 'plain_highlight_create',
+    comment: 'comment_highlight_edit'
+};
+
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;
 

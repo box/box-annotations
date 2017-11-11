@@ -1,6 +1,6 @@
 import AnnotationModeController from './AnnotationModeController';
-import { TYPES, THREAD_EVENT, CONTROLLER_EVENT } from '../annotationConstants';
-import CreateAnnotationDialog, { CreateEvents } from '../CreateAnnotationDialog';
+import { TYPES, THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT } from '../annotationConstants';
+import CreateAnnotationDialog from '../CreateAnnotationDialog';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to cancel the pending thread */
@@ -16,7 +16,7 @@ class PointModeController extends AnnotationModeController {
             return;
         }
 
-        this.createPointDialog.addListener(CreateEvents.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
+        this.createPointDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
     }
 
     setupSharedDialog(container, options) {
@@ -26,7 +26,7 @@ class PointModeController extends AnnotationModeController {
             localized: options.localized
         });
 
-        this.createPointDialog.addListener(CreateEvents.post, (commentText) => {
+        this.createPointDialog.addListener(CREATE_EVENT.post, (commentText) => {
             this.emit(CONTROLLER_EVENT.createThread, {
                 commentText,
                 lastPointEvent: this.lastPointEvent,

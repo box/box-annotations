@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-expressions */
-import CreateHighlightDialog, { CreateEvents } from '../CreateHighlightDialog';
+import CreateHighlightDialog from '../CreateHighlightDialog';
 import {
     CLASS_ADD_HIGHLIGHT_BTN,
     CLASS_ADD_HIGHLIGHT_COMMENT_BTN,
     CLASS_ANNOTATION_CARET,
-    CLASS_HIDDEN
+    CLASS_HIDDEN,
+    CREATE_EVENT
 } from '../../annotationConstants';
 import CommentBox from '../../CommentBox';
 import * as annotatorUtil from '../../annotatorUtil';
@@ -118,7 +119,7 @@ describe('doc/CreateHighlightDialog', () => {
             const emit = sandbox.stub(dialog, 'emit');
             dialog.show();
             expect(dialog.containerEl.classList.contains(CLASS_HIDDEN)).to.be.false;
-            expect(emit).to.be.calledWith(CreateEvents.init);
+            expect(emit).to.be.calledWith(CREATE_EVENT.init);
         });
     });
 
@@ -281,7 +282,7 @@ describe('doc/CreateHighlightDialog', () => {
         it('should invoke the "plain" highlight event', () => {
             const emit = sandbox.stub(dialog, 'emit');
             dialog.onHighlightClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(emit).to.be.calledWith(CreateEvents.plain);
+            expect(emit).to.be.calledWith(CREATE_EVENT.plain);
         });
     });
 
@@ -293,7 +294,7 @@ describe('doc/CreateHighlightDialog', () => {
         it('should invoke the "comment" highlight event', () => {
             const emit = sandbox.stub(dialog, 'emit');
             dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(emit).to.be.calledWith(CreateEvents.comment);
+            expect(emit).to.be.calledWith(CREATE_EVENT.comment);
         });
 
         it('should show the comment box', () => {
@@ -330,7 +331,7 @@ describe('doc/CreateHighlightDialog', () => {
             const emit = sandbox.stub(dialog, 'emit');
             const text = 'some text';
             dialog.onCommentPost(text);
-            expect(emit).to.be.calledWith(CreateEvents.commentPost, text);
+            expect(emit).to.be.calledWith(CREATE_EVENT.post, text);
         });
 
         it('should invoke clear() on the comment box', () => {

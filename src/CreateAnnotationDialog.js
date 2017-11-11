@@ -4,17 +4,9 @@ import { hideElement, showElement } from './annotatorUtil';
 import {
     CLASS_MOBILE_CREATE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_CREATE_DIALOG
+    CLASS_CREATE_DIALOG,
+    CREATE_EVENT
 } from './annotationConstants';
-
-/**
- * Events emitted by this component.
- * TODO(@spramod): Evaluate if these events need to be propogated to viewer
- */
-export const CreateEvents = {
-    init: 'init__create',
-    post: 'post'
-};
 
 class CreateAnnotationDialog extends EventEmitter {
     /** @property {HTMLElement} - Container element for the dialog. */
@@ -117,7 +109,7 @@ class CreateAnnotationDialog extends EventEmitter {
         this.setButtonVisibility(true);
 
         showElement(this.containerEl);
-        this.emit(CreateEvents.init);
+        this.emit(CREATE_EVENT.init);
 
         this.commentBox.show();
         this.commentBox.focus();
@@ -204,7 +196,7 @@ class CreateAnnotationDialog extends EventEmitter {
      * @return {void}
      */
     onCommentPost(text) {
-        this.emit(CreateEvents.post, text);
+        this.emit(CREATE_EVENT.post, text);
         this.hide();
     }
 

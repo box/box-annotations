@@ -10,7 +10,7 @@ import Annotator from '../Annotator';
 import DocHighlightThread from './DocHighlightThread';
 import DocPointThread from './DocPointThread';
 import DocDrawingThread from './DocDrawingThread';
-import CreateHighlightDialog, { CreateEvents } from './CreateHighlightDialog';
+import CreateHighlightDialog from './CreateHighlightDialog';
 import * as annotatorUtil from '../annotatorUtil';
 import * as docAnnotatorUtil from './docAnnotatorUtil';
 import {
@@ -24,7 +24,8 @@ import {
     CLASS_ANNOTATION_LAYER_DRAW,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    CREATE_EVENT
 } from '../annotationConstants';
 
 const MOUSEMOVE_THROTTLE_MS = 50;
@@ -98,12 +99,12 @@ class DocAnnotator extends Annotator {
         }
 
         if (this.commentHighlightEnabled) {
-            this.createHighlightDialog.removeListener(CreateEvents.comment, this.highlightCurrentSelection);
-            this.createHighlightDialog.removeListener(CreateEvents.commentPost, this.createHighlightThread);
+            this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
+            this.createHighlightDialog.removeListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
-            this.createHighlightDialog.removeListener(CreateEvents.plain, this.createPlainHighlight);
+            this.createHighlightDialog.removeListener(CREATE_EVENT.plain, this.createPlainHighlight);
         }
 
         this.createHighlightDialog.destroy();
@@ -121,7 +122,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.createHighlightDialog.addListener(CreateEvents.init, () =>
+        this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
             this.emit(THREAD_EVENT.pending, TYPES.highlight)
         );
     }
@@ -398,15 +399,15 @@ class DocAnnotator extends Annotator {
 
         if (this.commentHighlightEnabled) {
             this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.comment, this.highlightCurrentSelection);
+            this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
 
             this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.commentPost, this.createHighlightThread);
+            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
             this.createPlainHighlight = this.createPlainHighlight.bind(this);
-            this.createHighlightDialog.addListener(CreateEvents.plain, this.createPlainHighlight);
+            this.createHighlightDialog.addListener(CREATE_EVENT.plain, this.createPlainHighlight);
         }
 
         // Init rangy and rangy highlight
