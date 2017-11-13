@@ -151,34 +151,27 @@ describe('AnnotationDialog', () => {
             expect(textArea).to.have.class(constants.CLASS_ACTIVE);
             expect(dialog.activateReply).to.not.be.called;
         });
+    });
 
+    describe('showMobileDialog()', () => {
         it('should populate the mobile dialog if using a mobile browser', () => {
-            dialog.isMobile = true;
             dialog.highlightDialogEl = null;
             stubs.show = sandbox.stub(annotatorUtil, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
 
-            dialog.show();
+            dialog.showMobileDialog();
             expect(stubs.show).to.be.calledWith(dialog.element);
             expect(stubs.bind).to.be.called;
-            expect(dialog.position).to.not.be.called;
-            expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).to.be.true;
-        });
-
-        it('should add the animation class to the the mobile dialog if using a mobile browser', () => {
-            dialog.isMobile = true;
-
-            dialog.show();
+            expect(dialog.element.classList.contains(constants.CLASS_MOBILE_ANNOTATION_DIALOG)).to.be.true;
             expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).to.be.true;
         });
 
         it('should reset the annotation dialog to be a plain highlight if no comments are present', () => {
-            dialog.isMobile = true;
             dialog.highlightDialogEl = {};
             sandbox.stub(dialog.element, 'querySelectorAll').withArgs('.annotation-comment').returns([]);
             stubs.show = sandbox.stub(annotatorUtil, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
-            dialog.show();
+            dialog.showMobileDialog();
 
             expect(dialog.element.classList.contains(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT)).to.be.true;
         });

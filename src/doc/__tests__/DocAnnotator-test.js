@@ -17,7 +17,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     THREAD_EVENT,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    CREATE_EVENT
 } from '../../annotationConstants';
 
 let annotator;
@@ -113,7 +114,6 @@ describe('doc/DocAnnotator', () => {
 
     describe('init()', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
-            stubs.createDialogMock.expects('addListener').withArgs(CREATE_EVENT.init, sinon.match.func);
             annotator.init(1);
             expect(annotator.annotatedElement.id).to.not.be.undefined;
         });

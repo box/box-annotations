@@ -307,8 +307,9 @@ class Annotator extends EventEmitter {
 
         this.container.appendChild(mobileDialogEl);
 
-        if (this.isModeAnnotatable(TYPES.point)) {
-            this.modeControllers[TYPES.point].setupSharedDialog(this.container, {
+        const pointController = this.modeControllers[TYPES.point];
+        if (pointController) {
+            pointController.setupSharedDialog(this.container, {
                 isMobile: this.isMobile,
                 hasTouch: this.hasTouch,
                 localized: this.localized
@@ -479,12 +480,13 @@ class Annotator extends EventEmitter {
      * @param {string} data.commentText - The text for the first comment in
      * the thread.
      * @param {string} data.lastPointEvent - Point event for the annotation location
+     * @param {string} data.pendingThreadID - Thread ID for the current pending point thread
      * @return {AnnotationThread} Created point annotation thread
      */
     createPointThread(data) {
         // Empty string will be passed in if no text submitted in comment
         const { commentText, lastPointEvent, pendingThreadID } = data;
-        if (commentText.trim() === '' || !lastPointEvent || !pendingThreadID) {
+        if (!lastPointEvent || !pendingThreadID || !commentText || commentText.trim() === '') {
             return null;
         }
 
@@ -504,7 +506,6 @@ class Annotator extends EventEmitter {
         thread.showDialog();
         thread.dialog.postAnnotation(commentText);
 
-        // this.modeControllers[TYPES.point].registerThread(thread);
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
     }

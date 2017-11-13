@@ -82,9 +82,9 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     show() {
+        // Populate mobile annotations dialog with annotations
+        // information
         if (this.isMobile) {
-            // Populate mobile annotations dialog with annotations
-            // information
             this.showMobileDialog();
         }
 
@@ -98,9 +98,9 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
+        // Position and show - we need to reposition every time since
+        // the DOM could have changed from zooming
         if (!this.isMobile) {
-            // Position and show - we need to reposition every time since
-            // the DOM could have changed from zooming
             this.position();
         }
 

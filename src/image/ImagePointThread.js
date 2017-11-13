@@ -34,13 +34,11 @@ class ImagePointThread extends AnnotationThread {
 
         annotatorUtil.showElement(this.element);
 
-        if (this.state !== STATES.pending) {
+        if (this.state !== STATES.pending || (this.isMobile && Object.keys(this.annotations).length === 0)) {
             return;
         }
 
-        if ((this.isMobile && this.annotations.length > 0) || !this.isMobile) {
-            this.showDialog();
-        }
+        this.showDialog();
 
         // Force dialogs to reposition on re-render
         if (!this.isMobile) {

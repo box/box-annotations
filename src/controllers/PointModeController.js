@@ -17,17 +17,15 @@ class PointModeController extends AnnotationModeController {
      * @param {Object} options - Controller options to pass into the create dialog
      * @return {void}
      */
-    setupMobileSharedDialog(container, options) {
+    setupSharedDialog(container, options) {
         this.createDialog = new CreateAnnotationDialog(container, {
             isMobile: options.isMobile,
             hasTouch: options.hasTouch,
             localized: options.localized
         });
-        this.createDialog.createElement();
 
         this.createDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
 
-        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
         this.createDialog.addListener(CREATE_EVENT.cancel, () => {
             const thread = this.getThreadByID(this.pendingThreadID);
             this.unregisterThread(thread);
@@ -45,6 +43,8 @@ class PointModeController extends AnnotationModeController {
 
             this.hideSharedDialog();
         });
+
+        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
     }
 
     /**
@@ -125,6 +125,7 @@ class PointModeController extends AnnotationModeController {
         if (this.isMobile) {
             this.lastPointEvent = event;
             this.pendingThreadID = thread.threadID;
+
             this.container.appendChild(this.createDialog.containerEl);
             this.createDialog.show(this.container);
             this.createDialog.showCommentBox();

@@ -124,19 +124,17 @@ describe('CommentBox', () => {
     describe('show()', () => {
         it('should invoke createComment box, if UI has not been created', () => {
             const containerEl = document.createElement('div');
+            commentBox.containerEl = undefined;
+
             const create = sandbox.stub(commentBox, 'createCommentBox').returns(containerEl);
-
-            commentBox.show();
-            expect(create).to.be.called;
-            // Nullify to prevent fail during destroy
-            commentBox.containerEl = null;
-        });
-
-        it('should add the container element to the parent, if the UI has not been created', () => {
             const append = sandbox.stub(parentEl, 'appendChild');
 
             commentBox.show();
+            expect(create).to.be.called;
             expect(append).to.be.calledWith(commentBox.containerEl);
+
+            // Nullify to prevent fail during destroy
+            commentBox.containerEl = null;
         });
 
         it('should remove the hidden class from the container', () => {
@@ -147,6 +145,7 @@ describe('CommentBox', () => {
 
     describe('destroy()', () => {
         it('should do nothing if it\'s UI has not been created', () => {
+            commentBox.containerEl = undefined;
             const unchanged = 'not even the right kind of data';
             commentBox.parentEl = unchanged;
             commentBox.destroy();
@@ -190,7 +189,7 @@ describe('CommentBox', () => {
 
         it('should create and return a section element with bp-create-highlight-comment class on it', () => {
             expect(el.nodeName).to.equal('SECTION');
-            expect(el.classList.contains('bp-create-highlight-comment')).to.be.true;
+            expect(el.classList.contains('bp-create-comment')).to.be.true;
         });
 
         it('should create a text area with the provided placeholder text', () => {
@@ -304,6 +303,8 @@ describe('CommentBox', () => {
             expect(uiElement.addEventListener).to.be.calledWith('keydown', commentBox.focus);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', commentBox.onCancel);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', commentBox.onPost);
+
+            commentBox.containerEl = null;
         });
     });
 });
