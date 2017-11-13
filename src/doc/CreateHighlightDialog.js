@@ -78,8 +78,8 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
     constructor(parentEl, config = {}) {
         super(parentEl, config);
 
-        this.allowHighlight = config.allowHighlight || true;
-        this.allowComment = config.allowComment || true;
+        this.allowHighlight = !!config.allowHighlight || true;
+        this.allowComment = !!config.allowComment || true;
 
         // Explicit scope binding for event listeners
         if (this.allowHighlight) {
@@ -118,13 +118,15 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         super.destroy();
 
         // Event listeners
-        this.highlightCreateEl.removeEventListener('click', this.onHighlightClick);
-        this.commentCreateEl.removeEventListener('click', this.onCommentClick);
-
-        if (this.hasTouch) {
+        if (this.highlightCreateEl) {
+            this.highlightCreateEl.removeEventListener('click', this.onHighlightClick);
             this.highlightCreateEl.removeEventListener('touchstart', this.stopPropagation);
-            this.commentCreateEl.removeEventListener('touchstart', this.stopPropagation);
             this.highlightCreateEl.removeEventListener('touchend', this.onHighlightClick);
+        }
+
+        if (this.commentCreateEl) {
+            this.commentCreateEl.removeEventListener('click', this.onCommentClick);
+            this.commentCreateEl.removeEventListener('touchstart', this.stopPropagation);
             this.commentCreateEl.removeEventListener('touchend', this.onCommentClick);
         }
     }
@@ -263,7 +265,7 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
 
         // Events for comment button
         if (this.allowComment) {
-            this.setupCommentBox(highlightDialogEl);
+            this.commentBox = this.setupCommentBox(highlightDialogEl);
 
             this.commentCreateEl = highlightDialogEl.querySelector(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
             this.commentCreateEl.addEventListener('click', this.onCommentClick);

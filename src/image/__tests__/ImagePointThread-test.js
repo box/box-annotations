@@ -43,7 +43,6 @@ describe('image/ImagePointThread', () => {
         beforeEach(() => {
             sandbox.stub(annotatorUtil, 'showElement');
             sandbox.stub(thread, 'showDialog');
-            sandbox.stub(thread.dialog, 'position');
         });
 
         it('should position and show the thread', () => {

@@ -46,8 +46,8 @@ class CreateAnnotationDialog extends EventEmitter {
         super();
 
         this.parentEl = parentEl;
-        this.isMobile = config.isMobile || false;
-        this.hasTouch = config.hasTouch || false;
+        this.isMobile = !!config.isMobile || false;
+        this.hasTouch = !!config.hasTouch || false;
         this.localized = config.localized;
         this.isVisible = false;
     }
@@ -248,18 +248,20 @@ class CreateAnnotationDialog extends EventEmitter {
      */
     setupCommentBox(containerEl) {
         // Create comment boxt
-        this.commentBox = new CommentBox(containerEl, {
+        const commentBox = new CommentBox(containerEl, {
             hasTouch: this.hasTouch,
             localized: this.localized
         });
-        containerEl.appendChild(this.commentBox.containerEl);
+        containerEl.appendChild(commentBox.containerEl);
 
         // Event listeners
-        this.commentBox.addListener(CommentBox.CommentEvents.post, this.onCommentPost.bind(this));
-        this.commentBox.addListener(CommentBox.CommentEvents.cancel, this.onCommentCancel.bind(this));
+        commentBox.addListener(CommentBox.CommentEvents.post, this.onCommentPost.bind(this));
+        commentBox.addListener(CommentBox.CommentEvents.cancel, this.onCommentCancel.bind(this));
 
         // Hide comment box, by default
-        this.commentBox.hide();
+        commentBox.hide();
+
+        return commentBox;
     }
 
     /**
@@ -283,7 +285,7 @@ class CreateAnnotationDialog extends EventEmitter {
             this.containerEl.addEventListener('touchend', this.stopPropagation);
         }
 
-        this.setupCommentBox(this.containerEl);
+        this.commentBox = this.setupCommentBox(this.containerEl);
         this.containerEl.appendChild(this.commentBox.containerEl);
     }
 }
