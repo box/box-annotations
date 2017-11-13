@@ -125,6 +125,15 @@ class DocAnnotator extends Annotator {
         this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
             this.emit(THREAD_EVENT.pending, TYPES.highlight)
         );
+
+        if (this.commentHighlightEnabled) {
+            this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
+            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
+        }
+
+        if (this.plainHighlightEnabled) {
+            this.createHighlightDialog.addListener(CREATE_EVENT.plain, this.createPlainHighlight);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -396,19 +405,7 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             localized: this.localized
         });
-
-        if (this.commentHighlightEnabled) {
-            this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-
-            this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.createPlainHighlight = this.createPlainHighlight.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.plain, this.createPlainHighlight);
-        }
+        this.createHighlightDialog.createElement();
 
         // Init rangy and rangy highlight
         this.highlighter = rangy.createHighlighter();
@@ -525,7 +522,8 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        if (isCreateDialogVisible) {
             this.createHighlightDialog.hide();
         }
 
@@ -596,7 +594,8 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (!this.createHighlightDialog.isVisible) {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        if (!isCreateDialogVisible) {
             this.createHighlightDialog.show(this.container);
         }
 
@@ -832,7 +831,8 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        if (isCreateDialogVisible) {
             this.createHighlightDialog.hide();
             document.getSelection().removeAllRanges();
         }

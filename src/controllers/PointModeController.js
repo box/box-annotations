@@ -9,37 +9,57 @@ class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to commit the pending thread */
     postButtonEl;
 
-    init(data) {
-        super.init(data);
-
-        if (!this.createPointDialog) {
-            return;
-        }
-
-        this.createPointDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
-    }
-
-    setupSharedDialog(container, options) {
-        this.createPointDialog = new CreateAnnotationDialog(this.container, {
+    /**
+     * Set up the shared mobile dialog and associated listeners
+     *
+     * @protected
+     * @param {HTMLElement} container - The container element for the file
+     * @param {Object} options - Controller options to pass into the create dialog
+     * @return {void}
+     */
+    setupMobileSharedDialog(container, options) {
+        this.createDialog = new CreateAnnotationDialog(container, {
             isMobile: options.isMobile,
             hasTouch: options.hasTouch,
             localized: options.localized
         });
+        this.createDialog.createElement();
 
-        this.createPointDialog.addListener(CREATE_EVENT.post, (commentText) => {
+        this.createDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
+
+        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
+        this.createDialog.addListener(CREATE_EVENT.cancel, () => {
+            const thread = this.getThreadByID(this.pendingThreadID);
+            this.unregisterThread(thread);
+            thread.destroy();
+
+            this.hideSharedDialog();
+        });
+
+        this.createDialog.addListener(CREATE_EVENT.post, (commentText) => {
             this.emit(CONTROLLER_EVENT.createThread, {
                 commentText,
                 lastPointEvent: this.lastPointEvent,
                 pendingThreadID: this.pendingThreadID
             });
 
-            this.lastPointEvent = null;
-            this.pendingThreadID = null;
-
-            if (this.createPointDialog && this.createPointDialog.isVisible) {
-                this.createPointDialog.hide();
-            }
+            this.hideSharedDialog();
         });
+    }
+
+    /**
+     * Hides the shared mobile dialog and clears associated data
+     *
+     * @protected
+     * @return {void}
+     */
+    hideSharedDialog() {
+        this.lastPointEvent = null;
+        this.pendingThreadID = null;
+
+        if (this.createDialog && this.createDialog.isVisible) {
+            this.createDialog.hide();
+        }
     }
 
     /**
@@ -105,8 +125,9 @@ class PointModeController extends AnnotationModeController {
         if (this.isMobile) {
             this.lastPointEvent = event;
             this.pendingThreadID = thread.threadID;
-            this.container.appendChild(this.createPointDialog.containerEl);
-            this.createPointDialog.show(this.container);
+            this.container.appendChild(this.createDialog.containerEl);
+            this.createDialog.show(this.container);
+            this.createDialog.showCommentBox();
         }
 
         thread.show();

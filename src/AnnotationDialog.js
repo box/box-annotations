@@ -82,18 +82,10 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     show() {
-        if (this.element && !this.element.classList.contains(constants.CLASS_HIDDEN)) {
-            return;
-        }
-
         if (this.isMobile) {
             // Populate mobile annotations dialog with annotations
             // information
             this.showMobileDialog();
-        } else {
-            // Position and show - we need to reposition every time since
-            // the DOM could have changed from zooming
-            this.position();
         }
 
         const textAreaEl = this.hasAnnotations
@@ -104,6 +96,12 @@ class AnnotationDialog extends EventEmitter {
         const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
         if (textareaIsActive && this.element.parentNode) {
             return;
+        }
+
+        if (!this.isMobile) {
+            // Position and show - we need to reposition every time since
+            // the DOM could have changed from zooming
+            this.position();
         }
 
         // Activate appropriate textarea

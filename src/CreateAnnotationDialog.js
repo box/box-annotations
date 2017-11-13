@@ -1,12 +1,7 @@
 import EventEmitter from 'events';
 import CommentBox from './CommentBox';
 import { hideElement, showElement } from './annotatorUtil';
-import {
-    CLASS_MOBILE_CREATE_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_DIALOG,
-    CLASS_CREATE_DIALOG,
-    CREATE_EVENT
-} from './annotationConstants';
+import { CLASS_MOBILE_CREATE_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, CREATE_EVENT } from './annotationConstants';
 
 class CreateAnnotationDialog extends EventEmitter {
     /** @property {HTMLElement} - Container element for the dialog. */
@@ -54,8 +49,7 @@ class CreateAnnotationDialog extends EventEmitter {
         this.isMobile = config.isMobile || false;
         this.hasTouch = config.hasTouch || false;
         this.localized = config.localized;
-
-        this.containerEl = this.createElement();
+        this.isVisible = false;
     }
 
     /**
@@ -93,7 +87,7 @@ class CreateAnnotationDialog extends EventEmitter {
     show(newParentEl) {
         this.isVisible = true;
         if (!this.containerEl) {
-            this.containerEl = this.createElement();
+            this.createElement();
         }
 
         // Move to the correct parent element
@@ -101,16 +95,19 @@ class CreateAnnotationDialog extends EventEmitter {
             this.setParentEl(newParentEl);
         }
 
-        // Add to parent if it hasn't been added already
-        if (!this.parentEl.querySelector(`.${CLASS_CREATE_DIALOG}`)) {
-            this.parentEl.appendChild(this.containerEl);
-        }
-
         this.setButtonVisibility(true);
 
         showElement(this.containerEl);
         this.emit(CREATE_EVENT.init);
+    }
 
+    /**
+     * Show the comment box in the dialog
+     *
+     * @public
+     * @return {void}
+     */
+    showCommentBox() {
         this.commentBox.show();
         this.commentBox.focus();
     }
@@ -129,6 +126,7 @@ class CreateAnnotationDialog extends EventEmitter {
         hideElement(this.containerEl);
 
         if (this.commentBox) {
+            this.commentBox.hide();
             this.commentBox.clear();
         }
     }
@@ -197,7 +195,10 @@ class CreateAnnotationDialog extends EventEmitter {
      */
     onCommentPost(text) {
         this.emit(CREATE_EVENT.post, text);
-        this.hide();
+        if (text) {
+            this.commentBox.clear();
+            this.commentBox.blur();
+        }
     }
 
     /**
@@ -207,6 +208,8 @@ class CreateAnnotationDialog extends EventEmitter {
      * @return {void}
      */
     onCommentCancel() {
+        this.emit(CREATE_EVENT.cancel);
+        this.commentBox.hide();
         this.setButtonVisibility(true);
         this.updatePosition();
     }
@@ -237,42 +240,51 @@ class CreateAnnotationDialog extends EventEmitter {
     }
 
     /**
+     * Create the comment box element and appends it to the create dialog element
+     *
+     * @private
+     * @param {HTMLElement} containerEl - The parent element for the commentbox
+     * @return {void}
+     */
+    setupCommentBox(containerEl) {
+        // Create comment boxt
+        this.commentBox = new CommentBox(containerEl, {
+            hasTouch: this.hasTouch,
+            localized: this.localized
+        });
+        containerEl.appendChild(this.commentBox.containerEl);
+
+        // Event listeners
+        this.commentBox.addListener(CommentBox.CommentEvents.post, this.onCommentPost.bind(this));
+        this.commentBox.addListener(CommentBox.CommentEvents.cancel, this.onCommentCancel.bind(this));
+
+        // Hide comment box, by default
+        this.commentBox.hide();
+    }
+
+    /**
      * Create the element containing highlight create and comment buttons, and comment box.
      *
      * @private
      * @return {HTMLElement} The element containing Highlight creation UI
      */
     createElement() {
-        // Create comment box
-        this.commentBox = new CommentBox(this.containerEl, {
-            hasTouch: this.hasTouch,
-            localized: this.localized
-        });
-
-        // Event listeners
-        this.commentBox.addListener(CommentBox.CommentEvents.post, this.onCommentPost.bind(this));
-        this.commentBox.addListener(CommentBox.CommentEvents.cancel, this.onCommentCancel.bind(this));
-
-        const containerEl = document.createElement('div');
-        containerEl.classList.add(CLASS_MOBILE_CREATE_ANNOTATION_DIALOG);
-        containerEl.classList.add(CLASS_ANNOTATION_DIALOG);
-        containerEl.appendChild(this.commentBox.containerEl);
+        this.containerEl = document.createElement('div');
+        this.containerEl.classList.add(CLASS_MOBILE_CREATE_ANNOTATION_DIALOG);
+        this.containerEl.classList.add(CLASS_ANNOTATION_DIALOG);
 
         // Stop interacting with this element from triggering outside actions
-        containerEl.addEventListener('click', this.stopPropagation);
-        containerEl.addEventListener('mouseup', this.stopPropagation);
-        containerEl.addEventListener('dblclick', this.stopPropagation);
+        this.containerEl.addEventListener('click', this.stopPropagation);
+        this.containerEl.addEventListener('mouseup', this.stopPropagation);
+        this.containerEl.addEventListener('dblclick', this.stopPropagation);
 
         // touch events
         if (this.hasTouch) {
-            containerEl.addEventListener('touchend', this.stopPropagation);
+            this.containerEl.addEventListener('touchend', this.stopPropagation);
         }
 
-        // Hide create dialog, by default
-        this.commentBox.show();
-        hideElement(containerEl);
-
-        return containerEl;
+        this.setupCommentBox(this.containerEl);
+        this.containerEl.appendChild(this.commentBox.containerEl);
     }
 }
 

@@ -22,6 +22,7 @@ export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 export const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 export const CLASS_MOBILE_ANNOTATION_DIALOG = 'bp-mobile-annotation-dialog';
 export const CLASS_MOBILE_CREATE_ANNOTATION_DIALOG = 'bp-mobile-create-annotation-dialog';
+export const CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG = 'bp-mobile-create-highlight-dialog';
 export const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 export const CLASS_MOBILE_DIALOG_HEADER = 'bp-annotation-mobile-header';
 export const CLASS_DIALOG_CLOSE = 'bp-annotation-dialog-close';
@@ -88,6 +89,7 @@ export const SELECTOR_MOBILE_DIALOG_HEADER = `.${CLASS_MOBILE_DIALOG_HEADER}`;
 export const SELECTOR_DIALOG_CLOSE = `.${CLASS_DIALOG_CLOSE}`;
 export const SELECTOR_HIGHLIGHT_BTNS = `.${CLASS_HIGHLIGHT_BTNS}`;
 export const SELECTOR_ADD_HIGHLIGHT_BTN = `.${CLASS_ADD_HIGHLIGHT_BTN}`;
+export const SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN = `.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`;
 export const SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
 
 export const PERMISSION_ANNOTATE = 'can_annotate';
@@ -160,6 +162,7 @@ export const CONTROLLER_EVENT = {
 export const CREATE_EVENT = {
     init: 'init',
     post: 'post_comment',
+    cancel: 'cancel',
     plain: 'plain_highlight_create',
     comment: 'comment_highlight_edit'
 };
