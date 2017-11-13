@@ -408,8 +408,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.addEventListener).to.be.calledWith('focus', dialog.focusReplyEl);
-            expect(annotationTextEl.addEventListener).to.be.calledWith('focus', dialog.focusCommentsEl);
+            expect(replyTextEl.addEventListener).to.be.calledWith('keydown', dialog.focusReplyEl);
+            expect(annotationTextEl.addEventListener).to.be.calledWith('keydown', dialog.focusCommentsEl);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -441,8 +441,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.focusReplyEl);
-            expect(annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.focusCommentsEl);
+            expect(replyTextEl.removeEventListener).to.be.calledWith('keydown', dialog.focusReplyEl);
+            expect(annotationTextEl.removeEventListener).to.be.calledWith('keydown', dialog.focusCommentsEl);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {

@@ -45,6 +45,7 @@ export const CLASS_ANNOTATION_DRAWING_HEADER = 'bp-annotate-draw-header';
 export const CLASS_ANNNOTATION_DRAWING_BACKGROUND = 'bp-annotate-draw-background';
 export const CLASS_ADD_DRAWING_BTN = 'bp-btn-annotate-draw-add';
 export const CLASS_DELETE_DRAWING_BTN = 'bp-btn-annotate-draw-delete';
+export const CLASS_INVALID_INPUT = 'bp-invalid-input';
 
 export const DATA_TYPE_ANNOTATION_DIALOG = 'annotation-dialog';
 export const DATA_TYPE_ANNOTATION_INDICATOR = 'annotation-indicator';
