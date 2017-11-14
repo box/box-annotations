@@ -1450,23 +1450,57 @@ describe('doc/DocAnnotator', () => {
     });
 
     describe('drawingSelectionHandler()', () => {
-        it('should use the controller to select with the event', () => {
-            const drawController = {
+        beforeEach(() => {
+            stubs.drawController = {
                 handleSelection: sandbox.stub(),
                 removeSelection: sandbox.stub()
             };
             annotator.modeControllers = {
-                [TYPES.draw]: drawController
+                [TYPES.draw]: stubs.drawController
             };
 
+            stubs.isCreatingAnnotation = sandbox.stub(annotator, 'isCreatingAnnotation').returns(false);
+        });
+
+        it('should use the controller to select with the event', () => {
             const evt = 'event';
             annotator.drawingSelectionHandler(evt);
-            expect(drawController.handleSelection).to.be.calledWith(evt);
+            expect(stubs.drawController.handleSelection).to.be.calledWith(evt);
+        });
+
+        it('should do nothing if a mode is creating an annotation', () => {
+            stubs.isCreatingAnnotation.returns(true);
+            annotator.drawingSelectionHandler('irrelevant');
+            expect(stubs.drawController.handleSelection).to.not.be.called;
+        });
+
+        it('should do nothing if a highlight is being created', () => {
+            annotator.isCreatingHighlight = true;
+            annotator.drawingSelectionHandler('irrelevant');
+            expect(stubs.drawController.handleSelection).to.not.be.called;
         });
 
         it('should not error when no modeButtons exist for draw', () => {
             annotator.modeButtons = {};
             expect(() => annotator.drawingSelectionHandler('irrelevant')).to.not.throw();
+        });
+    });
+
+    describe('isCreatingAnnotation()', () => {
+        it('should return true if a mode is creating an annotation', () => {
+            annotator.modeControllers = {
+                [TYPES.draw]: { hasPendingThread: false },
+                [TYPES.point]: { hasPendingThread: true }
+            };
+            expect(annotator.isCreatingAnnotation()).to.be.truthy;
+        });
+
+        it('should return false if all modes are NOT creating annotations', () => {
+            annotator.modeControllers = {
+                [TYPES.draw]: { hasPendingThread: false },
+                [TYPES.point]: { hasPendingThread: false }
+            };
+            expect(annotator.isCreatingAnnotation()).to.be.falsy;
         });
     });
 

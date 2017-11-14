@@ -129,6 +129,7 @@ class AnnotationModeController extends EventEmitter {
 
         this.unbindListeners(); // Disable mode
         this.emit(CONTROLLER_EVENT.exit);
+        this.hadPendingThreads = false;
     }
 
     /**
@@ -267,6 +268,11 @@ class AnnotationModeController extends EventEmitter {
      */
     handleThreadEvents(thread, data) {
         switch (data.event) {
+            case THREAD_EVENT.save:
+            case THREAD_EVENT.cancel:
+                this.hadPendingThreads = false;
+                this.emit(data.event, data.data);
+                break;
             case THREAD_EVENT.threadCleanup:
                 // Thread should be cleaned up, unbind listeners - we
                 // don't do this in annotationdelete listener since thread
@@ -334,7 +340,7 @@ class AnnotationModeController extends EventEmitter {
      * current file
      */
     destroyPendingThreads() {
-        let hasPendingThreads = false;
+        let hadPendingThreads = false;
 
         Object.keys(this.threads).forEach((page) => {
             const pageThreads = this.threads[page] || {};
@@ -342,12 +348,12 @@ class AnnotationModeController extends EventEmitter {
             Object.keys(pageThreads).forEach((threadID) => {
                 const thread = pageThreads[threadID];
                 if (isPending(thread.state)) {
-                    hasPendingThreads = true;
+                    hadPendingThreads = true;
                     thread.destroy();
                 }
             });
         });
-        return hasPendingThreads;
+        return hadPendingThreads;
     }
 
     /**
