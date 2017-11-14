@@ -805,7 +805,7 @@ class DocAnnotator extends Annotator {
         let isPending = false;
         Object.keys(this.modeControllers).some((mode) => {
             const controller = this.modeControllers[mode];
-            if (controller.hasPendingThreads) {
+            if (controller.hadPendingThreads) {
                 isPending = true;
             }
             return isPending;

@@ -160,7 +160,7 @@ describe('controllers/AnnotationModeController', () => {
             expect(controller.destroyPendingThreads).to.be.called;
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
             expect(controller.unbindListeners).to.be.called;
-            expect(controller.hasPendingThreads).to.be.falsy;
+            expect(controller.hadPendingThreads).to.be.falsy;
         });
 
         it('should deactive mode button if available', () => {
@@ -306,15 +306,15 @@ describe('controllers/AnnotationModeController', () => {
             }
         });
 
-        it('should mark hasPendingThreads as false and emit event on thread save or cancel', () => {
+        it('should mark hadPendingThreads as false and emit event on thread save or cancel', () => {
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.save, sinon.match.object);
-            expect(controller.hasPendingThreads).to.be.falsy;
+            expect(controller.hadPendingThreads).to.be.falsy;
 
-            controller.hasPendingThreads = true;
+            controller.hadPendingThreads = true;
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.cancel, data: {} });
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.cancel, sinon.match.object);
-            expect(controller.hasPendingThreads).to.be.falsy;
+            expect(controller.hadPendingThreads).to.be.falsy;
         });
 
         it('should unregister thread on threadCleanup', () => {
