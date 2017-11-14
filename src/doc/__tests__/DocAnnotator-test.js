@@ -584,6 +584,17 @@ describe('doc/DocAnnotator', () => {
 
             annotator.threads = {};
         });
+
+        it('should clear and hide createHighlightDialog on page render', () => {
+            annotator.createHighlightDialog = {
+                isVisible: true,
+                hide: () => {},
+                destroy: () => {}
+            };
+            const createMock = sandbox.mock(annotator.createHighlightDialog);
+            createMock.expects('hide');
+            annotator.renderAnnotationsOnPage(1);
+        });
     });
 
     describe('scaleAnnotationCanvases()', () => {

@@ -331,6 +331,10 @@ class DocAnnotator extends Annotator {
                 thread.destroy();
             }
         });
+
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            this.createHighlightDialog.hide();
+        }
     }
 
     /**
