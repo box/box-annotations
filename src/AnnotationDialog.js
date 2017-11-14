@@ -55,6 +55,8 @@ class AnnotationDialog extends EventEmitter {
         this.canAnnotate = data.canAnnotate;
         this.locale = data.locale;
         this.isMobile = data.isMobile;
+
+        this.validateTextArea = this.validateTextArea.bind(this);
     }
 
     /**
@@ -333,12 +335,12 @@ class AnnotationDialog extends EventEmitter {
 
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
-            replyTextEl.addEventListener('keydown', this.focusReplyEl);
+            replyTextEl.addEventListener('focus', this.validateTextArea);
         }
 
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         if (annotationTextEl) {
-            annotationTextEl.addEventListener('keydown', this.focusCommentsEl);
+            annotationTextEl.addEventListener('focus', this.validateTextArea);
         }
 
         if (!this.isMobile) {
@@ -348,25 +350,19 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Removes red border around reply textarea on focus
+     * Removes red border around textarea on focus
      *
      * @protected
+     * @param {Event} event Keyboard event
      * @return {void}
      */
-    focusReplyEl() {
-        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        replyTextEl.classList.remove(constants.CLASS_INVALID_INPUT);
-    }
+    validateTextArea(event) {
+        const textEl = event.target;
+        if (textEl.type !== 'textarea' || textEl.value.trim() === '') {
+            return;
+        }
 
-    /**
-     * Removes red border around annotation comments textarea on focus
-     *
-     * @protectedg
-     * @return {void}
-     */
-    focusCommentsEl() {
-        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        annotationTextEl.classList.remove(constants.CLASS_INVALID_INPUT);
+        textEl.classList.remove(constants.CLASS_INVALID_INPUT);
     }
 
     /**
@@ -383,12 +379,12 @@ class AnnotationDialog extends EventEmitter {
 
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
-            replyTextEl.removeEventListener('keydown', this.focusReplyEl);
+            replyTextEl.removeEventListener('focus', this.validateTextArea);
         }
 
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         if (annotationTextEl) {
-            annotationTextEl.removeEventListener('keydown', this.focusCommentsEl);
+            annotationTextEl.removeEventListener('focus', this.validateTextArea);
         }
 
         if (!this.isMobile) {

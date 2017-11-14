@@ -408,8 +408,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.addEventListener).to.be.calledWith('keydown', dialog.focusReplyEl);
-            expect(annotationTextEl.addEventListener).to.be.calledWith('keydown', dialog.focusCommentsEl);
+            expect(replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+            expect(annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -423,6 +423,31 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            dialog.element = null;
+        });
+    });
+
+    describe('validateTextArea()', () => {
+        it('should do nothing if keyboard event was not in a textarea', () => {
+            stubs.textEl = document.createElement('div');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
+        });
+
+        it('should do nothing if textarea is blank', () => {
+            stubs.textEl = document.createElement('textarea');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
+        });
+
+        it('should remove red border around textarea', () => {
+            stubs.textEl = document.createElement('textarea');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            stubs.textEl.value = 'words';
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.not.have.class(constants.CLASS_INVALID_INPUT);
         });
     });
 
@@ -441,8 +466,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.removeEventListener).to.be.calledWith('keydown', dialog.focusReplyEl);
-            expect(annotationTextEl.removeEventListener).to.be.calledWith('keydown', dialog.focusCommentsEl);
+            expect(replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+            expect(annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
