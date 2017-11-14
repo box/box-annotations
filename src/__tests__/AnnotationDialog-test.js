@@ -13,6 +13,7 @@ const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 const SELECTOR_DELETE_CONFIRMATION = '.delete-confirmation';
+const CLASS_INVALID_INPUT = 'bp-invalid-input';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -395,6 +396,10 @@ describe('AnnotationDialog', () => {
     describe('bindDOMListeners()', () => {
         it('should bind DOM listeners', () => {
             stubs.add = sandbox.stub(dialog.element, 'addEventListener');
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            sandbox.stub(replyTextEl, 'addEventListener');
+            const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            sandbox.stub(annotationTextEl, 'addEventListener');
 
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
@@ -403,6 +408,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            expect(replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+            expect(annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -416,12 +423,41 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            dialog.element = null;
+        });
+    });
+
+    describe('validateTextArea()', () => {
+        it('should do nothing if keyboard event was not in a textarea', () => {
+            stubs.textEl = document.createElement('div');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
+        });
+
+        it('should do nothing if textarea is blank', () => {
+            stubs.textEl = document.createElement('textarea');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
+        });
+
+        it('should remove red border around textarea', () => {
+            stubs.textEl = document.createElement('textarea');
+            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            stubs.textEl.value = 'words';
+            dialog.validateTextArea({ target: stubs.textEl });
+            expect(stubs.textEl).to.not.have.class(constants.CLASS_INVALID_INPUT);
         });
     });
 
     describe('unbindDOMListeners()', () => {
         it('should unbind DOM listeners', () => {
             stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            sandbox.stub(replyTextEl, 'removeEventListener');
+            const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            sandbox.stub(annotationTextEl, 'removeEventListener');
 
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
@@ -430,6 +466,8 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
+            expect(replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+            expect(annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -750,10 +788,12 @@ describe('AnnotationDialog', () => {
         });
     });
 
-    describe('_postAannotation()', () => {
+    describe('postAnnotation()', () => {
         it('should not post an annotation to the dialog if it has no text', () => {
+            const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             dialog.postAnnotation();
             expect(stubs.emit).to.not.be.called;
+            expect(annotationTextEl).to.have.class(CLASS_INVALID_INPUT);
         });
 
         it('should post an annotation to the dialog if it has text', () => {
@@ -851,9 +891,11 @@ describe('AnnotationDialog', () => {
                 })
             );
             dialog.activateReply();
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
 
             dialog.postReply();
             expect(stubs.emit).to.not.be.called;
+            expect(replyTextEl).to.have.class(CLASS_INVALID_INPUT);
         });
 
         it('should post a reply to the dialog if it has text', () => {
