@@ -6,7 +6,7 @@ import * as annotatorUtil from '../../annotatorUtil';
 import * as docAnnotatorUtil from '../docAnnotatorUtil';
 import { STATES } from '../../annotationConstants';
 
-let pointThread;
+let thread;
 const sandbox = sinon.sandbox.create();
 
 describe('doc/DocPointThread', () => {
@@ -17,7 +17,7 @@ describe('doc/DocPointThread', () => {
     beforeEach(() => {
         fixture.load('doc/__tests__/DocPointThread-test.html');
 
-        pointThread = new DocPointThread({
+        thread = new DocPointThread({
             annotatedElement: document.querySelector('.annotated-element'),
             annotations: [],
             annotationService: {},
@@ -33,7 +33,7 @@ describe('doc/DocPointThread', () => {
 
     afterEach(() => {
         sandbox.verifyAndRestore();
-        pointThread = null;
+        thread = null;
     });
 
     describe('showDialog', () => {
@@ -47,18 +47,18 @@ describe('doc/DocPointThread', () => {
                 value: sandbox.stub()
             });
 
-            pointThread.showDialog();
+            thread.showDialog();
 
             expect(AnnotationThread.prototype.showDialog).to.not.be.called;
         });
 
         it('should call parent showDialog if user can\'t annotate', () => {
-            pointThread.permissions.canAnnotate = false;
+            thread.permissions.canAnnotate = false;
             Object.defineProperty(Object.getPrototypeOf(DocPointThread.prototype), 'showDialog', {
                 value: sandbox.stub()
             });
 
-            pointThread.showDialog();
+            thread.showDialog();
 
             expect(AnnotationThread.prototype.showDialog).to.be.called;
         });
@@ -69,53 +69,75 @@ describe('doc/DocPointThread', () => {
                 value: sandbox.stub()
             });
 
-            pointThread.showDialog();
+            thread.showDialog();
 
             expect(AnnotationThread.prototype.showDialog).to.be.called;
         });
     });
 
     describe('show', () => {
+        beforeEach(() => {
+            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(thread, 'showDialog');
+            sandbox.stub(thread.dialog, 'position');
+        });
+
         it('should position and show the thread', () => {
             sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
 
-            pointThread.show();
+            thread.show();
 
             expect(docAnnotatorUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
-                pointThread.location,
-                pointThread.annotatedElement
+                thread.location,
+                thread.annotatedElement
             );
-            expect(annotatorUtil.showElement).to.be.calledWith(pointThread.element);
+            expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
+            expect(thread.dialog.position).to.be.called;
         });
 
         it('should show the dialog if the state is pending', () => {
             sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(pointThread, 'showDialog');
 
-            pointThread.state = STATES.pending;
-            pointThread.show();
+            thread.state = STATES.pending;
+            thread.show();
 
-            expect(pointThread.showDialog).to.be.called;
+            expect(thread.showDialog).to.be.called;
         });
 
         it('should not show the dialog if the state is not pending', () => {
             sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(pointThread, 'showDialog');
 
-            pointThread.state = STATES.inactive;
-            pointThread.show();
+            thread.state = STATES.inactive;
+            thread.show();
 
-            expect(pointThread.showDialog).to.not.be.called;
+            expect(thread.showDialog).to.not.be.called;
+        });
+
+        it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
+            thread.isMobile = true;
+            thread.annotations = {};
+
+            thread.state = STATES.inactive;
+            thread.show();
+
+            expect(thread.showDialog).to.not.be.called;
+        });
+
+        it('should not position dialog if user is on a mobile device', () => {
+            thread.isMobile = true;
+            thread.annotations = { '123abc': {} };
+
+            thread.show();
+
+            expect(thread.showDialog).to.be.called;
+            expect(thread.dialog.position).to.not.be.called;
         });
     });
 
     describe('createDialog', () => {
         it('should initialize an appropriate dialog', () => {
-            pointThread.createDialog();
-            expect(pointThread.dialog instanceof DocPointDialog).to.be.true;
+            thread.createDialog();
+            expect(thread.dialog instanceof DocPointDialog).to.be.true;
         });
     });
 });

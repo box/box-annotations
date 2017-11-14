@@ -8,7 +8,6 @@ import DocAnnotator from '../DocAnnotator';
 import DocHighlightThread from '../DocHighlightThread';
 import DocDrawingThread from '../DocDrawingThread';
 import DocPointThread from '../DocPointThread';
-import { CreateEvents } from '../CreateHighlightDialog';
 import * as annotatorUtil from '../../annotatorUtil';
 import * as docAnnotatorUtil from '../docAnnotatorUtil';
 import {
@@ -18,7 +17,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     THREAD_EVENT,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    CREATE_EVENT
 } from '../../annotationConstants';
 
 let annotator;
@@ -114,7 +114,6 @@ describe('doc/DocAnnotator', () => {
 
     describe('init()', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.init, sinon.match.func);
             annotator.init(1);
             expect(annotator.annotatedElement.id).to.not.be.undefined;
         });
@@ -641,12 +640,12 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should not bind any plain highlight functions if they are disabled', () => {
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.plain, sinon.match.func).never();
+            stubs.createDialogMock.expects('addListener').withArgs(CREATE_EVENT.plain, sinon.match.func).never();
         });
 
         it('should not bind any comment highlight functions if they are disabled', () => {
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.comment, sinon.match.func).never();
-            stubs.createDialogMock.expects('addListener').withArgs(CreateEvents.commentPost, sinon.match.func).never();
+            stubs.createDialogMock.expects('addListener').withArgs(CREATE_EVENT.comment, sinon.match.func).never();
+            stubs.createDialogMock.expects('addListener').withArgs(CREATE_EVENT.post, sinon.match.func).never();
         });
 
         it('should call parent to setup annotations and initialize highlighter', () => {

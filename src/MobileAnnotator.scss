@@ -8,13 +8,15 @@ $tablet: "(min-width: 768px)";
     border-width: 1px 0;
 }
 
-.bp-mobile-annotation-dialog {
+.bp-mobile-annotation-dialog,
+.bp-mobile-create-annotation-dialog {
     background: white;
     border-top: 0;
     height: 100%;
     position: absolute;
     top: 0;
     width: 100%;
+    z-index: 99999;
 
     &.bp-animate-show-dialog {
         &:not(.bp-plain-highlight) {
@@ -37,6 +39,12 @@ $tablet: "(min-width: 768px)";
             animation-fill-mode: forwards;
         }
     }
+}
+
+.bp-mobile-create-annotation-dialog {
+    bottom: 0;
+    height: auto;
+    top: auto;
 }
 
 .bp-create-annotation-dialog.bp-mobile-annotation-dialog {
@@ -77,6 +85,7 @@ $tablet: "(min-width: 768px)";
     }
 }
 
+.bp-mobile-create-annotation-dialog,
 .bp-mobile-annotation-dialog.bp-annotation-dialog {
     .annotation-container {
         background-color: $white;
@@ -180,8 +189,9 @@ $tablet: "(min-width: 768px)";
 }
 
 .bp-mobile-annotation-dialog .bp-annotation-highlight-btns,
-.bp-mobile-annotation-dialog .bp-create-highlight-comment,
-.bp-mobile-annotation-dialog .annotation-container section[data-section="create"] {
+.bp-mobile-annotation-dialog .bp-create-comment,
+.bp-mobile-annotation-dialog .annotation-container section[data-section="create"],
+.bp-mobile-create-annotation-dialog {
     background: white;
     bottom: 0;
     left: 0;
@@ -192,7 +202,6 @@ $tablet: "(min-width: 768px)";
     @include border-top-bottom;
 }
 
-.bp-mobile-annotation-dialog .annotation-container section[data-section="create"],
 .bp-mobile-annotation-dialog .annotation-container {
     @media #{$tablet} {
         left: auto;

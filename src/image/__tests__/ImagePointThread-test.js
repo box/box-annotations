@@ -40,10 +40,13 @@ describe('image/ImagePointThread', () => {
     });
 
     describe('show', () => {
-        it('should position and show the thread', () => {
-            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+        beforeEach(() => {
             sandbox.stub(annotatorUtil, 'showElement');
             sandbox.stub(thread, 'showDialog');
+        });
+
+        it('should position and show the thread', () => {
+            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
 
@@ -56,8 +59,6 @@ describe('image/ImagePointThread', () => {
 
         it('should show the dialog if the state is pending', () => {
             sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(thread, 'showDialog');
 
             thread.state = STATES.pending;
             thread.show();
@@ -68,8 +69,6 @@ describe('image/ImagePointThread', () => {
 
         it('should not show the dialog if the state is not pending', () => {
             sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(thread, 'showDialog');
 
             thread.state = STATES.inactive;
             thread.show();
@@ -82,8 +81,6 @@ describe('image/ImagePointThread', () => {
             thread.state = STATES.pending;
 
             sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(thread, 'showDialog');
 
             thread.show();
 
@@ -95,6 +92,26 @@ describe('image/ImagePointThread', () => {
             expect(thread.dialog.position).to.not.be.called;
             expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
             expect()
+        });
+
+        it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
+            thread.isMobile = true;
+            thread.annotations = {};
+
+            thread.state = STATES.inactive;
+            thread.show();
+
+            expect(thread.showDialog).to.not.be.called;
+        });
+
+        it('should not position dialog if user is on a mobile device', () => {
+            thread.isMobile = true;
+            thread.annotations = { '123abc': {} };
+
+            thread.show();
+
+            expect(thread.showDialog).to.be.called;
+            expect(thread.dialog.position).to.not.be.called;
         });
     });
 

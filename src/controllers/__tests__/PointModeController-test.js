@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import PointModeController from '../PointModeController';
+import CreateAnnotationDialog from '../../CreateAnnotationDialog';
 import * as util from '../../annotatorUtil';
 import {
     CLASS_HIDDEN,
@@ -8,7 +9,8 @@ import {
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     STATES,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    CREATE_EVENT
 } from '../../annotationConstants';
 
 let controller;
@@ -20,7 +22,8 @@ describe('controllers/PointModeController', () => {
         controller = new PointModeController();
         stubs.thread = {
             show: () => {},
-            getThreadEventData: () => {}
+            getThreadEventData: () => {},
+            destroy: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
 
@@ -37,6 +40,68 @@ describe('controllers/PointModeController', () => {
         sandbox.verifyAndRestore();
         stubs = {};
         controller = null;
+    });
+
+    describe('setupSharedDialog', () => {
+        it('should create a shared annotation dialog', () => {
+            const options = {
+                isMobile: true,
+                hasTouch: false,
+                localized: { cancelButton: 'cancel' }
+            };
+
+            controller.setupSharedDialog(document.createElement('div'), options);
+            expect(controller.createDialog).to.not.be.undefined;
+        });
+    });
+
+    describe('onDialogCancel()', () => {
+        it('should unregister/destroy the pending thread and clear the create dialog', () => {
+            sandbox.stub(controller, 'getThreadByID').returns(stubs.thread);
+            sandbox.stub(controller, 'unregisterThread');
+            sandbox.stub(controller, 'hideSharedDialog');
+
+            stubs.threadMock.expects('destroy');
+            controller.onDialogCancel();
+            expect(controller.unregisterThread).to.be.calledWith(stubs.thread);
+            expect(controller.hideSharedDialog).to.be.called;
+        });
+    });
+
+    describe('onDialogPost()', () => {
+        it('should notify listeners of post event and clear the create dialog', () => {
+            sandbox.stub(controller, 'hideSharedDialog');
+            controller.lastPointEvent = {};
+            controller.pendingThreadID = '123abc';
+
+            controller.onDialogPost('text');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.createThread, {
+                commentText: 'text',
+                lastPointEvent: {},
+                pendingThreadID: '123abc'
+            });
+            expect(controller.hideSharedDialog).to.be.called;
+        });
+    });
+
+    describe('hideSharedDialog', () => {
+        it('should not hide the shared annotation dialog if already hidden', () => {
+            controller.createDialog = { hide: () => {} };
+            const createMock = sandbox.mock(controller.createDialog);
+            controller.createDialog.isVisible = false;
+
+            createMock.expects('hide').never();
+            controller.hideSharedDialog();
+        });
+
+        it('should hide the shared annotation dialog', () => {
+            controller.createDialog = { hide: () => {} };
+            const createMock = sandbox.mock(controller.createDialog);
+            controller.createDialog.isVisible = true;
+
+            createMock.expects('hide');
+            controller.hideSharedDialog();
+        });
     });
 
     describe('setupHandlers()', () => {
@@ -113,6 +178,28 @@ describe('controllers/PointModeController', () => {
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
             expect(controller.hadPendingThreads).to.be.truthy;
+            expect(controller.registerThread).to.be.calledWith(stubs.thread);
+        });
+
+        it('should show the create dialog', () => {
+            stubs.destroy.returns(false);
+            stubs.annotatorMock.expects('getLocationFromEvent').returns({});
+            stubs.annotatorMock.expects('createAnnotationThread').returns(stubs.thread);
+            stubs.threadMock.expects('getThreadEventData').returns('data');
+            stubs.threadMock.expects('show');
+
+            controller.isMobile = true;
+            controller.container = document.createElement('div');
+            controller.createDialog = {
+                containerEl: document.createElement('div'),
+                show: () => {},
+                showCommentBox: () => {}
+            };
+            const createMock = sandbox.mock(controller.createDialog);
+            createMock.expects('show').withArgs(controller.container);
+            createMock.expects('showCommentBox');
+
+            controller.pointClickHandler(event);
         });
     });
 });

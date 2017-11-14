@@ -79,6 +79,7 @@ describe('Annotator', () => {
             removeListener: () => {},
             scrollIntoView: () => {},
             getThreadEventData: () => {},
+            showDialog: () => {},
             type: 'something',
             location: { page: 1 }
         };
@@ -158,6 +159,23 @@ describe('Annotator', () => {
             };
             annotator.setupMobileDialog();
             expect(annotator.container.appendChild).to.be.called;
+        });
+
+        it('should setup shared point dialog in the point controller', () => {
+            annotator.container = {
+                appendChild: sandbox.mock()
+            };
+            annotator.modeControllers = {
+                'point': { setupSharedDialog: sandbox.stub() }
+            };
+            const pointController = annotator.modeControllers['point'];
+
+            annotator.setupMobileDialog();
+            expect(pointController.setupSharedDialog).to.be.calledWith(annotator.container, {
+                isMobile: annotator.isMobile,
+                hasTouch: annotator.hasTouch,
+                localized: annotator.localized
+            });
         });
     });
 
@@ -593,6 +611,13 @@ describe('Annotator', () => {
                 expect(annotatorUtil.removeThreadFromMap).to.be.called;
                 expect(annotator.emit).to.be.calledWith(data.event, data.data);
             });
+
+            it('should create a point annotation thread on createThread', () => {
+                sandbox.stub(annotator, 'createPointThread');
+                data.event = CONTROLLER_EVENT.createThread;
+                annotator.handleControllerEvents(data);
+                expect(annotator.createPointThread).to.be.calledWith(data.data);
+            });
         });
 
         describe('unbindCustomListenersOnService()', () => {
@@ -636,6 +661,47 @@ describe('Annotator', () => {
             it('should null if no controllers exist', () => {
                 annotator.modeControllers = {};
                 expect(annotator.getCurrentAnnotationMode()).to.be.null;
+            });
+        });
+
+        describe('createPointThread()', () => {
+            beforeEach(() => {
+                stubs.getLoc = sandbox.stub(annotator, 'getLocationFromEvent').returns({ page: 1 });
+                sandbox.stub(annotator, 'emit');
+                stubs.thread.dialog = { postAnnotation: sandbox.stub() };
+            });
+
+            it('should do nothing if the point data is invalid', () => {
+                annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: ' ' });
+                annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc' });
+                annotator.createPointThread({ lastPointEvent: {}, commentText: ' ' });
+                annotator.createPointThread({ pendingThreadID: '123abc', commentText: ' ' });
+                expect(annotator.emit).to.not.be.called;
+            });
+
+            it('should do nothing if no location is returned fom the lastPointEvent', () => {
+                stubs.getLoc.returns(null);
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
+                expect(annotator.emit).to.not.be.called;
+                expect(result).to.be.null;
+            });
+
+            it('should do nothing the thread does not exist in the page specified by lastPointEvent', () => {
+                annotator.threads = {};
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
+                expect(annotator.emit).to.not.be.called;
+                expect(result).to.be.null;
+            });
+
+            it('should create a point annotation thread using lastPointEvent', () => {
+                stubs.threadMock.expects('showDialog');
+                stubs.threadMock.expects('getThreadEventData').returns({});
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
+                expect(stubs.thread.dialog.hasComments).to.be.truthy;
+                expect(stubs.thread.state).equals(STATES.hover);
+                expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
+                expect(annotator.emit).to.be.calledWith(THREAD_EVENT.threadSave, sinon.match.object);
+                expect(result).to.not.be.null;
             });
         });
 
