@@ -87,12 +87,6 @@ class CommentBox extends EventEmitter {
         this.placeholderText = config.localized.addCommentPlaceholder;
 
         this.containerEl = this.createCommentBox();
-
-        // Explicit scope binding for event listeners
-        this.focus = this.focus.bind(this);
-        this.onCancel = this.onCancel.bind(this);
-        this.onPost = this.onPost.bind(this);
-        this.preventDefaultAndPropagation = this.preventDefaultAndPropagation.bind(this);
     }
 
     /**
@@ -164,23 +158,24 @@ class CommentBox extends EventEmitter {
             return;
         }
 
+        this.containerEl.removeEventListener('touchend', this.preventDefaultAndPropagation);
+
         this.containerEl.remove();
         this.parentEl = null;
         this.containerEl = null;
 
         if (this.cancelEl) {
             this.cancelEl.removeEventListener('click', this.onCancel);
-            this.cancelEl.removeEventListener('touchstart', this.onCancel);
+            this.cancelEl.removeEventListener('touchend', this.onCancel);
         }
 
         if (this.postEl) {
             this.postEl.removeEventListener('click', this.onPost);
-            this.postEl.removeEventListener('touchstart', this.onPost);
+            this.postEl.removeEventListener('touchend', this.onPost);
         }
 
         if (this.textAreaEl) {
             this.textAreaEl.removeEventListener('focus', this.focus);
-            this.textAreaEl.removeEventListener('keydown', this.focus);
         }
     }
 
@@ -274,15 +269,16 @@ class CommentBox extends EventEmitter {
         this.postEl = containerEl.querySelector(constants.SELECTOR_ANNOTATION_BUTTON_POST);
 
         // Add event listeners
-        this.textAreaEl.addEventListener('focus', this.focus);
-        this.cancelEl.addEventListener('click', this.onCancel);
-        this.postEl.addEventListener('click', this.onPost);
 
         if (this.hasTouch) {
-            this.textAreaEl.addEventListener('keydown', this.focus);
-            containerEl.addEventListener('touchend', this.preventDefaultAndPropagation);
-            this.cancelEl.addEventListener('touchend', this.onCancel);
-            this.postEl.addEventListener('touchend', this.onPost);
+            this.textAreaEl.addEventListener('focus', this.focus.bind(this));
+            containerEl.addEventListener('touchend', this.preventDefaultAndPropagation.bind(this));
+            this.cancelEl.addEventListener('touchend', this.onCancel.bind(this));
+            this.postEl.addEventListener('touchend', this.onPost.bind(this));
+        } else {
+            this.textAreaEl.addEventListener('focus', this.focus);
+            this.cancelEl.addEventListener('click', this.onCancel);
+            this.postEl.addEventListener('click', this.onPost);
         }
 
         return containerEl;

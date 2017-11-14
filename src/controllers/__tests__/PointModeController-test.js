@@ -22,7 +22,8 @@ describe('controllers/PointModeController', () => {
         controller = new PointModeController();
         stubs.thread = {
             show: () => {},
-            getThreadEventData: () => {}
+            getThreadEventData: () => {},
+            destroy: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
 
@@ -51,6 +52,35 @@ describe('controllers/PointModeController', () => {
 
             controller.setupSharedDialog(document.createElement('div'), options);
             expect(controller.createDialog).to.not.be.undefined;
+        });
+    });
+
+    describe('onDialogCancel()', () => {
+        it('should unregister/destroy the pending thread and clear the create dialog', () => {
+            sandbox.stub(controller, 'getThreadByID').returns(stubs.thread);
+            sandbox.stub(controller, 'unregisterThread');
+            sandbox.stub(controller, 'hideSharedDialog');
+
+            stubs.threadMock.expects('destroy');
+            controller.onDialogCancel();
+            expect(controller.unregisterThread).to.be.calledWith(stubs.thread);
+            expect(controller.hideSharedDialog).to.be.called;
+        });
+    });
+
+    describe('onDialogPost()', () => {
+        it('should notify listeners of post event and clear the create dialog', () => {
+            sandbox.stub(controller, 'hideSharedDialog');
+            controller.lastPointEvent = {};
+            controller.pendingThreadID = '123abc';
+
+            controller.onDialogPost('text');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.createThread, {
+                commentText: 'text',
+                lastPointEvent: {},
+                pendingThreadID: '123abc'
+            });
+            expect(controller.hideSharedDialog).to.be.called;
         });
     });
 

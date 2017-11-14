@@ -23,28 +23,46 @@ class PointModeController extends AnnotationModeController {
             hasTouch: options.hasTouch,
             localized: options.localized
         });
+        this.createDialog.createElement();
+
+        this.onDialogCancel = this.onDialogCancel.bind(this);
+        this.onDialogPost = this.onDialogPost.bind(this);
+        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
 
         this.createDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
+        this.createDialog.addListener(CREATE_EVENT.cancel, this.onDialogCancel);
+        this.createDialog.addListener(CREATE_EVENT.post, this.onDialogPost);
+    }
 
-        this.createDialog.addListener(CREATE_EVENT.cancel, () => {
-            const thread = this.getThreadByID(this.pendingThreadID);
-            this.unregisterThread(thread);
-            thread.destroy();
+    /**
+     * Unregister/destroy the pending thread and then clear the create dialog
+     *
+     * @private
+     * @return {void}
+     */
+    onDialogCancel() {
+        const thread = this.getThreadByID(this.pendingThreadID);
+        this.unregisterThread(thread);
+        thread.destroy();
 
-            this.hideSharedDialog();
+        this.hideSharedDialog();
+    }
+
+    /**
+     * Notify listeners of post event and then clear the create dialog
+     *
+     * @private
+     * @param {string} commentText Annotation comment text
+     * @return {void}
+     */
+    onDialogPost(commentText) {
+        this.emit(CONTROLLER_EVENT.createThread, {
+            commentText,
+            lastPointEvent: this.lastPointEvent,
+            pendingThreadID: this.pendingThreadID
         });
 
-        this.createDialog.addListener(CREATE_EVENT.post, (commentText) => {
-            this.emit(CONTROLLER_EVENT.createThread, {
-                commentText,
-                lastPointEvent: this.lastPointEvent,
-                pendingThreadID: this.pendingThreadID
-            });
-
-            this.hideSharedDialog();
-        });
-
-        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
+        this.hideSharedDialog();
     }
 
     /**
