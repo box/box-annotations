@@ -112,6 +112,7 @@ describe('controllers/PointModeController', () => {
             expect(controller.registerThread).to.be.called;
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
+            expect(controller.hadPendingThreads).to.be.truthy;
         });
     });
 });
