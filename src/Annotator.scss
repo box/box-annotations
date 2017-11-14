@@ -204,6 +204,10 @@ $tablet: 'max-width: 768px';
         &.bp-is-active {
             min-height: 68px;
         }
+
+        &.bp-invalid-input {
+            border-color: fade-out($great-balls-of-fire, .5);
+        }
     }
 
     .annotation-comment {
