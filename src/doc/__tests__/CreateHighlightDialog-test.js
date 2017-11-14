@@ -271,8 +271,9 @@ describe('doc/CreateHighlightDialog', () => {
             const width = dialog.containerEl.clientWidth;
             const x = 50;
             dialog.position.x = x;
+            sandbox.stub(annotatorUtil, 'repositionCaret').returns(x);
             dialog.updatePosition();
-            expect(dialog.containerEl.style.left).to.equal(`${x - 1 - width / 2}px`);
+            expect(dialog.containerEl.style.left).to.equal(`${x}px`);
         });
     });
 

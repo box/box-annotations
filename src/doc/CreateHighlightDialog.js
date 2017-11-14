@@ -1,12 +1,13 @@
 import EventEmitter from 'events';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import CommentBox from '../CommentBox';
-import { hideElement, showElement, generateBtn } from '../annotatorUtil';
+import { hideElement, showElement, generateBtn, repositionCaret } from '../annotatorUtil';
 import * as constants from '../annotationConstants';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 const DATA_TYPE_HIGHLIGHT = 'add-highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
+const HIGHLIGHT_BTNS_WIDTH = 78;
 
 /**
  * Events emitted by this component.
@@ -224,8 +225,17 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
+        const dialogX = this.position.x - 1 - this.containerEl.clientWidth / 2;
+        const xPos = repositionCaret(
+            this.containerEl,
+            dialogX,
+            HIGHLIGHT_BTNS_WIDTH,
+            this.position.x,
+            this.parentEl.clientWidth
+        );
+
         // Plus 1 pixel for caret
-        this.containerEl.style.left = `${this.position.x - 1 - this.containerEl.clientWidth / 2}px`;
+        this.containerEl.style.left = `${xPos}px`;
         // Plus 5 pixels for caret
         this.containerEl.style.top = `${this.position.y + 5}px`;
     }
