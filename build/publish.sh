@@ -129,7 +129,7 @@ publish_to_npm() {
 
     # Remove old local tags in case a build failed
     git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
-    git clean -fdX || exit 1
+    git clean -fd || exit 1
 
     if [[ $(git status --porcelain 2>/dev/null| grep "^??") != "" ]] ; then
         echo "----------------------------------------------------"
