@@ -86,6 +86,7 @@ class CommentBox extends EventEmitter {
         this.placeholderText = config.localized.addCommentPlaceholder;
 
         // Explicit scope binding for event listeners
+        this.focus = this.focus.bind(this);
         this.onCancel = this.onCancel.bind(this);
         this.onPost = this.onPost.bind(this);
     }
@@ -98,6 +99,7 @@ class CommentBox extends EventEmitter {
     focus() {
         if (this.textAreaEl) {
             this.textAreaEl.focus();
+            this.textAreaEl.classList.remove(constants.CLASS_INVALID_INPUT);
         }
     }
 
@@ -161,11 +163,20 @@ class CommentBox extends EventEmitter {
         this.containerEl.remove();
         this.parentEl = null;
         this.containerEl = null;
-        this.cancelEl.removeEventListener('click', this.onCancel);
-        this.postEl.removeEventListener('click', this.onPost);
-        if (this.hasTouch) {
+
+        if (this.cancelEl) {
+            this.cancelEl.removeEventListener('click', this.onCancel);
             this.cancelEl.removeEventListener('touchstart', this.onCancel);
+        }
+
+        if (this.postEl) {
+            this.postEl.removeEventListener('click', this.onPost);
             this.postEl.removeEventListener('touchstart', this.onPost);
+        }
+
+        if (this.textAreaEl) {
+            this.textAreaEl.removeEventListener('focus', this.focus);
+            this.textAreaEl.removeEventListener('keydown', this.focus);
         }
     }
 
@@ -232,7 +243,14 @@ class CommentBox extends EventEmitter {
     onPost(event) {
         // stops touch propogating to a click event
         this.preventDefaultAndPropagation(event);
-        this.emit(CommentBox.CommentEvents.post, this.textAreaEl.value);
+
+        const text = this.textAreaEl.value;
+        if (text.trim() === '') {
+            this.textAreaEl.classList.add(constants.CLASS_INVALID_INPUT);
+            return;
+        }
+
+        this.emit(CommentBox.CommentEvents.post, text);
         this.clear();
     }
 
@@ -252,9 +270,11 @@ class CommentBox extends EventEmitter {
         this.postEl = containerEl.querySelector(constants.SELECTOR_ANNOTATION_BUTTON_POST);
 
         // Add event listeners
+        this.textAreaEl.addEventListener('focus', this.focus);
         this.cancelEl.addEventListener('click', this.onCancel);
         this.postEl.addEventListener('click', this.onPost);
         if (this.hasTouch) {
+            this.textAreaEl.addEventListener('keydown', this.focus);
             containerEl.addEventListener('touchend', this.preventDefaultAndPropagation.bind(this));
             this.cancelEl.addEventListener('touchend', this.onCancel);
             this.postEl.addEventListener('touchend', this.onPost);

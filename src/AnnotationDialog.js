@@ -55,6 +55,8 @@ class AnnotationDialog extends EventEmitter {
         this.canAnnotate = data.canAnnotate;
         this.locale = data.locale;
         this.isMobile = data.isMobile;
+
+        this.validateTextArea = this.validateTextArea.bind(this);
     }
 
     /**
@@ -240,6 +242,7 @@ class AnnotationDialog extends EventEmitter {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         const text = textInput || annotationTextEl.value;
         if (text.trim() === '') {
+            annotationTextEl.classList.add(constants.CLASS_INVALID_INPUT);
             return;
         }
 
@@ -330,10 +333,36 @@ class AnnotationDialog extends EventEmitter {
         this.element.addEventListener('mouseup', this.stopPropagation);
         this.element.addEventListener('wheel', this.stopPropagation);
 
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (replyTextEl) {
+            replyTextEl.addEventListener('focus', this.validateTextArea);
+        }
+
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        if (annotationTextEl) {
+            annotationTextEl.addEventListener('focus', this.validateTextArea);
+        }
+
         if (!this.isMobile) {
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
         }
+    }
+
+    /**
+     * Removes red border around textarea on focus
+     *
+     * @protected
+     * @param {Event} event Keyboard event
+     * @return {void}
+     */
+    validateTextArea(event) {
+        const textEl = event.target;
+        if (textEl.type !== 'textarea' || textEl.value.trim() === '') {
+            return;
+        }
+
+        textEl.classList.remove(constants.CLASS_INVALID_INPUT);
     }
 
     /**
@@ -347,6 +376,16 @@ class AnnotationDialog extends EventEmitter {
         this.element.removeEventListener('click', this.clickHandler);
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
+
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (replyTextEl) {
+            replyTextEl.removeEventListener('focus', this.validateTextArea);
+        }
+
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        if (annotationTextEl) {
+            annotationTextEl.removeEventListener('focus', this.validateTextArea);
+        }
 
         if (!this.isMobile) {
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
@@ -626,6 +665,7 @@ class AnnotationDialog extends EventEmitter {
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         const text = replyTextEl.value;
         if (text.trim() === '') {
+            replyTextEl.classList.add(constants.CLASS_INVALID_INPUT);
             return;
         }
 
