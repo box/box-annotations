@@ -87,11 +87,6 @@ class CommentBox extends EventEmitter {
         this.placeholderText = config.localized.addCommentPlaceholder;
 
         this.containerEl = this.createCommentBox();
-
-        // Explicit scope binding for event listeners
-        this.focus = this.focus.bind(this);
-        this.onCancel = this.onCancel.bind(this);
-        this.onPost = this.onPost.bind(this);
     }
 
     /**
@@ -273,8 +268,12 @@ class CommentBox extends EventEmitter {
         this.cancelEl = containerEl.querySelector(constants.SELECTOR_ANNOTATION_BUTTON_CANCEL);
         this.postEl = containerEl.querySelector(constants.SELECTOR_ANNOTATION_BUTTON_POST);
 
-        // Add event listeners
+        // Explicit scope binding for event listeners
+        this.focus = this.focus.bind(this);
+        this.onCancel = this.onCancel.bind(this);
+        this.onPost = this.onPost.bind(this);
 
+        // Add event listeners
         if (this.hasTouch) {
             this.textAreaEl.addEventListener('focus', this.focus);
             containerEl.addEventListener('touchend', this.preventDefaultAndPropagation.bind(this));
