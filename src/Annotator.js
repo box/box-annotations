@@ -293,19 +293,19 @@ class Annotator extends EventEmitter {
      */
     setupMobileDialog() {
         // Generate HTML of dialog
-        const mobileDialogEl = document.createElement('div');
-        mobileDialogEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_DIALOG);
-        mobileDialogEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
-        mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
-        mobileDialogEl.classList.add(CLASS_HIDDEN);
-        mobileDialogEl.id = ID_MOBILE_ANNOTATION_DIALOG;
+        this.mobileDialogEl = document.createElement('div');
+        this.mobileDialogEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_DIALOG);
+        this.mobileDialogEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
+        this.mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
+        this.mobileDialogEl.classList.add(CLASS_HIDDEN);
+        this.mobileDialogEl.id = ID_MOBILE_ANNOTATION_DIALOG;
 
-        mobileDialogEl.innerHTML = `
+        this.mobileDialogEl.innerHTML = `
             <div class="${CLASS_MOBILE_DIALOG_HEADER}">
                 <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
             </div>`.trim();
 
-        this.container.appendChild(mobileDialogEl);
+        this.container.appendChild(this.mobileDialogEl);
 
         const pointController = this.modeControllers[TYPES.point];
         if (pointController) {
