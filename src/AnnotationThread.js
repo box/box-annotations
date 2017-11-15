@@ -155,6 +155,7 @@ class AnnotationThread extends EventEmitter {
         tempAnnotationData.modified = tempAnnotationData.created;
         const tempAnnotation = new Annotation(tempAnnotationData);
         this.saveAnnotationToThread(tempAnnotation);
+        this.state = STATES.inactive;
 
         // Save annotation on server
         return this.annotationService
