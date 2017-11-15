@@ -22,6 +22,7 @@ import {
     PAGE_PADDING_BOTTOM,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_DRAW,
+    CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
@@ -572,8 +573,11 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     onSelectionChange(event) {
-        // Do nothing if in a text area
-        if (document.activeElement.nodeName.toLowerCase() === 'textarea') {
+        // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
+        const isHidden = this.mobileDialogEl && this.mobileDialogEl.classList.contains(CLASS_HIDDEN);
+        const pointController = this.modeControllers[TYPES.point];
+        const isCreatingPoint = pointController && pointController.pendingThreadID !== null;
+        if (isCreatingPoint || !isHidden || document.activeElement.nodeName.toLowerCase() === 'textarea') {
             return;
         }
 

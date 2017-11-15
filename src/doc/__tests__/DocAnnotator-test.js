@@ -14,6 +14,7 @@ import {
     ANNOTATOR_EVENT,
     STATES,
     TYPES,
+    CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     THREAD_EVENT,
@@ -1101,22 +1102,39 @@ describe('doc/DocAnnotator', () => {
     describe('onSelectionChange()', () => {
         beforeEach(() => {
             annotator.setupAnnotations();
+            annotator.mobileDialogEl = document.createElement('div');
+            annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
 
-            annotator.highlighter = {
-                removeAllHighlights: sandbox.stub()
+            annotator.highlighter = { removeAllHighlights: sandbox.stub() };
+            annotator.modeControllers = {
+                'point': { pendingThreadID: null }
             };
+
+            stubs.getSelStub = sandbox.stub(window, 'getSelection');
         });
 
         it('should do nothing if focus is on a text input element', () => {
             const textAreaEl = document.createElement('textarea');
             annotator.annotatedElement.appendChild(textAreaEl);
             textAreaEl.focus();
-            const getSelStub = sandbox.stub(window, 'getSelection');
 
             annotator.onSelectionChange({
                 nodeName: 'textarea'
             });
-            expect(getSelStub).to.not.be.called;
+            expect(stubs.getSelStub).to.not.be.called;
+        });
+
+        it('should do nothing the shared mobile dialog is visible', () => {
+            annotator.mobileDialogEl.classList.remove(CLASS_HIDDEN);
+
+            annotator.onSelectionChange({});
+            expect(stubs.getSelStub).to.not.be.called;
+        });
+
+        it('should do nothing the the user is currently creating a point annotation', () => {
+            annotator.modeControllers['point'].pendingThreadID = 'something';
+            annotator.onSelectionChange({});
+            expect(stubs.getSelStub).to.not.be.called;
         });
 
         it('should clear out previous highlights if a new highlight range is being created', () => {
@@ -1128,7 +1146,7 @@ describe('doc/DocAnnotator', () => {
                 anchorNode: 'not_derp'
             };
             annotator.lastSelection = lastSelection;
-            sandbox.stub(window, 'getSelection').returns(selection);
+            stubs.getSelStub.returns(selection);
 
             annotator.onSelectionChange({});
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
@@ -1138,7 +1156,7 @@ describe('doc/DocAnnotator', () => {
             const selection = {
                 toString: () => '' // Causes invalid selection
             };
-            sandbox.stub(window, 'getSelection').returns(selection);
+            stubs.getSelStub.returns(selection);
             annotator.lastSelection = selection;
             annotator.lastHighlightEvent = {};
 
@@ -1155,7 +1173,7 @@ describe('doc/DocAnnotator', () => {
                 isCollapsed: false,
                 toString: () => 'asdf'
             };
-            sandbox.stub(window, 'getSelection').returns(selection);
+            stubs.getSelStub.returns(selection);
             annotator.lastSelection = selection;
             annotator.lastHighlightEvent = {};
             annotator.createHighlightDialog.isVisible = false;
@@ -1181,7 +1199,7 @@ describe('doc/DocAnnotator', () => {
             annotator.lastHighlightEvent = {};
             annotator.threads = { 1: { '123abc': stubs.thread } };
 
-            sandbox.stub(window, 'getSelection').returns(selection);
+            stubs.getSelStub.returns(selection);
             sandbox.stub(annotator.createHighlightDialog, 'show');
             sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([thread]);
 
