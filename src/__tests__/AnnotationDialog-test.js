@@ -247,7 +247,7 @@ describe('AnnotationDialog', () => {
         it('should add annotation to the dialog and deactivate the reply area', () => {
             dialog.addAnnotation(new Annotation({}));
             expect(stubs.addEl).to.be.called;
-            expect(stubs.deactivate).to.be.calledWith(true);
+            expect(stubs.deactivate).to.be.calledWithExactly();
         });
 
         it('should hide the create section and show the show section if there are no annotations', () => {

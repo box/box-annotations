@@ -225,7 +225,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         this.addAnnotationElement(annotation);
-        this.deactivateReply(true); // Deactivate reply area and focus
+        this.deactivateReply(); // Deactivate reply area and focus
     }
 
     /**
