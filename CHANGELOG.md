@@ -1,3 +1,12 @@
+<a name="0.3.1"></a>
+## 0.3.1 (2017-11-15)
+
+* Fix: Disable highlight creation when the mobile shared dialog is visible (#35) ([de7f392](https://github.com/box/box-annotations/commit/de7f392))
+* Fix: Ensure commentbox event listeners are bound properly (#37) ([fcce638](https://github.com/box/box-annotations/commit/fcce638))
+*  Fix: Ensure newly created threads are set as inactive while saving (#38) ([8072fa8](https://github.com/box/box-annotations/commit/8072fa8))
+
+
+
 <a name="0.3.0"></a>
 # 0.3.0 (2017-11-14)
 
