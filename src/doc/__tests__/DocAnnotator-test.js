@@ -1107,7 +1107,7 @@ describe('doc/DocAnnotator', () => {
 
             annotator.highlighter = { removeAllHighlights: sandbox.stub() };
             annotator.modeControllers = {
-                'point': { pendingThreadID: null }
+                'point': {}
             };
 
             stubs.getSelStub = sandbox.stub(window, 'getSelection');
