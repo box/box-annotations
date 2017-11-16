@@ -576,7 +576,7 @@ class DocAnnotator extends Annotator {
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const isHidden = this.mobileDialogEl && this.mobileDialogEl.classList.contains(CLASS_HIDDEN);
         const pointController = this.modeControllers[TYPES.point];
-        const isCreatingPoint = pointController && pointController.pendingThreadID !== null;
+        const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
         if (isCreatingPoint || !isHidden || document.activeElement.nodeName.toLowerCase() === 'textarea') {
             return;
         }
