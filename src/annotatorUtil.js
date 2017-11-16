@@ -9,8 +9,7 @@ import {
     CLASS_ACTIVE,
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
-    CLASS_DISABLED,
-    CLASS_BUTTON
+    CLASS_DISABLED
 } from './annotationConstants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -267,16 +266,15 @@ export function insertTemplate(node, template, beforeNode = null) {
  * Returns a button HTMLElement with specified information
  *
  * @public
- * @param {string} className Button CSS class
+ * @param {string[]} classNames Button CSS class
  * @param {string} title Accessibilty title
  * @param {string} content Button HTML content
  * @param {string} [dataType] Optional data type
  * @return {HTMLElement} Button
  */
-export function generateBtn(className, title, content, dataType = '') {
+export function generateBtn(classNames, title, content, dataType = '') {
     const buttonEl = document.createElement('button');
-    buttonEl.classList.add(CLASS_BUTTON);
-    buttonEl.classList.add(className);
+    classNames.forEach((className) => buttonEl.classList.add(className));
     buttonEl.title = title;
     buttonEl.innerHTML = content;
     buttonEl.setAttribute('data-type', dataType);

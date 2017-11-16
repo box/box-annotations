@@ -40,7 +40,7 @@ class AnnotationModeController extends EventEmitter {
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
 
-        if (data.modeButton) {
+        if (data.modeButton && this.permissions.canAnnotate) {
             this.modeButton = data.modeButton;
             this.showButton();
         }

@@ -183,9 +183,12 @@ $tablet: 'max-width: 768px';
         border-radius: 4px;
         overflow-x: hidden;
         overflow-y: auto;
-        padding: 15px;
         white-space: normal;
         width: 282px; // Hard-coded width to solve layout issues
+    }
+
+    .annotation-container section {
+        padding: 15px;
     }
 
     .bp-textarea {
@@ -457,6 +460,10 @@ $tablet: 'max-width: 768px';
         padding-top: 1px;
     }
 
+    .bp-highlight-comment-btn {
+        padding-top: 3px;
+    }
+
     .bp-btn-annotate-draw-add,
     .bp-btn-annotate-draw-delete {
         color: lighten($better-black, 10%);
@@ -479,10 +486,6 @@ $tablet: 'max-width: 768px';
     .bp-btn-annotate-draw-delete:active,
     .bp-btn-annotate-draw-delete:hover {
         padding-left: 4px;
-    }
-
-    .bp-highlight-comment-btn {
-        padding-top: 3px;
     }
 }
 
@@ -551,7 +554,7 @@ $tablet: 'max-width: 768px';
 
 .bp-annotation-drawing-label,
 .bp-annotation-highlight-label {
-    padding: 8px 0 8px 8px;
+    padding: 8px 4px;
     width: 100%;
 }
 
