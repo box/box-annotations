@@ -228,17 +228,6 @@ $tablet: 'max-width: 768px';
         }
     }
 
-    &.cannot-annotate {
-        .annotation-comment:last-child {
-            padding-bottom: 0;
-        }
-
-        .delete-comment-btn,
-        .reply-container {
-            display: none;
-        }
-    }
-
     .profile-image-container {
         display: inline-block;
         padding-right: 5px;
@@ -438,13 +427,6 @@ $tablet: 'max-width: 768px';
     display: table;
     position: absolute;
     z-index: 9999;
-
-    &.cannot-annotate {
-        .bp-add-highlight-btn,
-        .bp-highlight-comment-btn {
-            display: none;
-        }
-    }
 }
 
 .bp-annotation-drawing-dialog,

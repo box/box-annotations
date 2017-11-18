@@ -7,7 +7,6 @@ import * as constants from '../annotationConstants';
 
 const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
-const CLASS_CANNOT_ANNOTATE = 'cannot-annotate';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
