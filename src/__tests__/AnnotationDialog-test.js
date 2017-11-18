@@ -109,15 +109,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.position).to.be.called;
         });
 
-        it('should hide the reply/edit/delete UI if user cannot annotate', () => {
-            dialog.canAnnotate = false;
-            dialog.hasAnnotations = true;
-            dialog.deactivateReply();
-
-            dialog.show();
-            expect(dialog.element).to.have.class(CLASS_CANNOT_ANNOTATE);
-        });
-
         it('should focus textarea if in viewport', () => {
             dialog.canAnnotate = false;
             dialog.hasAnnotations = true;
@@ -711,7 +702,7 @@ describe('AnnotationDialog', () => {
             expect(username).to.contain.html('user');
         });
 
-        it('should hide the delete icon if the user does\'nt have delete permissions', () => {
+        it('should not the delete icon if the user does not have delete permissions', () => {
             dialog.addAnnotationElement(
                 new Annotation({
                     annotationID: 1,
@@ -721,10 +712,10 @@ describe('AnnotationDialog', () => {
                 })
             );
             const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.have.class(constants.CLASS_HIDDEN);
+            expect(deleteButton).to.be.null;
         });
 
-        it('should make the delete icon hidden if the delete permission is not specified', () => {
+        it('should not add the delete icon if the delete permission is not specified', () => {
             dialog.addAnnotationElement(
                 new Annotation({
                     annotationID: 1,
@@ -734,7 +725,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.have.class(constants.CLASS_HIDDEN);
+            expect(deleteButton).to.be.null;
         });
 
         it('should make delete icon visible if the user has delete permission', () => {

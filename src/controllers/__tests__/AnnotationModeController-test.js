@@ -44,13 +44,25 @@ describe('controllers/AnnotationModeController', () => {
     describe('init()', () => {
         it('should init controller', () => {
             sandbox.stub(controller, 'showButton');
-            controller.init({ modeButton: {} });
+            controller.init({
+                modeButton: {},
+                permissions: { canAnnotate: true }
+            });
             expect(controller.showButton).to.be.called;
         });
 
         it('should not show modeButton if none provided', () => {
             sandbox.stub(controller, 'showButton');
             controller.init({});
+            expect(controller.showButton).to.not.be.called;
+        });
+
+        it('should not show modeButton if none provided', () => {
+            sandbox.stub(controller, 'showButton');
+            controller.init({
+                modeButton: {},
+                permissions: { canAnnotate: false }
+            });
             expect(controller.showButton).to.not.be.called;
         });
     });

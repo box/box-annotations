@@ -242,7 +242,8 @@ describe('annotatorUtil', () => {
 
     describe('generateBtn()', () => {
         it('should return button node from specified details', () => {
-            const btn = generateBtn('class', 'title', document.createElement('div'), 'type');
+            const btn = generateBtn(['class', 'bp-btn-plain'], 'title', document.createElement('div'), 'type');
+            expect(btn).to.not.have.class('nope');
             expect(btn).to.have.class('bp-btn-plain');
             expect(btn).to.have.class('class');
             expect(btn).to.have.attribute('data-type', 'type');
