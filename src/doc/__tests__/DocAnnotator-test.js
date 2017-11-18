@@ -1042,6 +1042,16 @@ describe('doc/DocAnnotator', () => {
             stubs.click = sandbox.stub(annotator, 'highlightClickHandler');
         });
 
+        it('should not trigger a highlight or creation if a point annotation is pending', () => {
+            annotator.modeControllers = {
+                'point': { hadPendingThreads: true }
+            };
+            annotator.highlightMouseupHandler({});
+            expect(stubs.create).to.not.be.called;
+            expect(stubs.click).to.not.be.called;
+            expect(annotator.isCreatingHighlight).to.be.false;
+        })
+
         it('should call highlightCreateHandler if not on mobile, and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(stubs.create).to.be.called;
