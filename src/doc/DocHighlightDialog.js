@@ -598,7 +598,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         if (canDeleteAnnotation) {
             const addHighlightBtn = annotatorUtil.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_ADD_HIGHLIGHT_BTN],
+                [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_BTN],
                 this.localized.highlightToggle,
                 ICON_HIGHLIGHT,
                 constants.DATA_TYPE_HIGHLIGHT
@@ -607,7 +607,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         const addCommentBtn = annotatorUtil.generateBtn(
-            [constants.CLASS_BUTTON, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
+            [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
             this.localized.highlightComment,
             ICON_HIGHLIGHT_COMMENT,
             constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT

@@ -196,10 +196,10 @@ class CommentBox extends EventEmitter {
             <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA} ${constants.CLASS_ACTIVE}"
                 placeholder="${this.placeholderText}"></textarea>
             <div class="${constants.CLASS_BUTTON_CONTAINER}">
-                <button class="bp-btn ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}">
+                <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}">
                     ${this.cancelText}
                 </button>
-                <button class="bp-btn bp-btn-primary ${constants.CLASS_ANNOTATION_BUTTON_POST}">
+                <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}">
                     ${this.postText}
                 </button>
             </div>`.trim();

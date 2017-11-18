@@ -14,7 +14,7 @@ import {
     SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
     CLASS_MOBILE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_BUTTON
+    CLASS_BUTTON_PLAIN
 } from '../annotationConstants';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
@@ -214,7 +214,7 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
 
         if (this.allowHighlight) {
             const highlightEl = generateBtn(
-                [CLASS_BUTTON, CLASS_ADD_HIGHLIGHT_BTN],
+                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_BTN],
                 this.localized.highlightToggle,
                 ICON_HIGHLIGHT,
                 DATA_TYPE_HIGHLIGHT
@@ -224,7 +224,7 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
 
         if (this.allowComment) {
             const commentEl = generateBtn(
-                [CLASS_BUTTON, CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
+                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
                 this.localized.highlightComment,
                 ICON_HIGHLIGHT_COMMENT,
                 DATA_TYPE_ADD_HIGHLIGHT_COMMENT

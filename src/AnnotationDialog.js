@@ -596,7 +596,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const deleteBtn = annotatorUtil.generateBtn(
-            [constants.CLASS_BUTTON, CLASS_BUTTON_DELETE_COMMENT],
+            [constants.CLASS_BUTTON_PLAIN, CLASS_BUTTON_DELETE_COMMENT],
             this.localized.deleteButton,
             ICON_DELETE,
             constants.DATA_TYPE_DELETE
@@ -618,16 +618,15 @@ class AnnotationDialog extends EventEmitter {
         deleteConfirmEl.appendChild(deleteBtnsEl);
 
         const cancelDeleteBtn = annotatorUtil.generateBtn(
-            ['bp-btn', CLASS_CANCEL_DELETE],
+            [constants.CLASS_BUTTON, CLASS_CANCEL_DELETE],
             this.localized.cancelButton,
             this.localized.cancelButton,
             constants.DATA_TYPE_CANCEL_DELETE
         );
-        cancelDeleteBtn.classList.add('bp-btn');
         deleteBtnsEl.appendChild(cancelDeleteBtn);
 
         const confirmDeleteBtn = annotatorUtil.generateBtn(
-            ['bp-btn', CLASS_BUTTON_DELETE_CONFIRM, 'bp-btn-primary'],
+            [constants.CLASS_BUTTON, CLASS_BUTTON_DELETE_CONFIRM, constants.CLASS_BUTTON_PRIMARY],
             this.localized.deleteButton,
             this.localized.deleteButton,
             constants.DATA_TYPE_CONFIRM_DELETE
@@ -781,10 +780,10 @@ class AnnotationDialog extends EventEmitter {
                 <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA}"
                     placeholder="${this.localized.addCommentPlaceholder}"></textarea>
                 <div class="${constants.CLASS_BUTTON_CONTAINER}">
-                    <button class="bp-btn ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL}">
+                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL}">
                         ${this.localized.cancelButton}
                     </button>
-                    <button class="bp-btn bp-btn-primary ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST}">
+                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST}">
                         ${this.localized.postButton}
                     </button>
                 </div>
@@ -796,10 +795,10 @@ class AnnotationDialog extends EventEmitter {
                         placeholder="${this.localized
         .replyPlaceholder}" data-type="${constants.DATA_TYPE_REPLY_TEXTAREA}"></textarea>
                     <div class="${constants.CLASS_BUTTON_CONTAINER} ${constants.CLASS_HIDDEN}">
-                        <button class="bp-btn ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL_REPLY}">
+                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL_REPLY}">
                             ${this.localized.cancelButton}
                         </button>
-                        <button class="bp-btn bp-btn-primary ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST_REPLY}">
+                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST_REPLY}">
                             ${this.localized.postButton}
                         </button>
                     </div>
