@@ -370,7 +370,7 @@ describe('doc/DocAnnotator', () => {
             stubs.validateThread.returns(false);
             const thread = annotator.createAnnotationThread([], {}, TYPES.highlight);
             expect(thread instanceof DocHighlightThread).to.be.false;
-            expect(thread).to.be.empty;
+            expect(thread).to.be.undefined;
             expect(annotator.handleValidationError).to.be.called;
         });
 
@@ -1041,6 +1041,16 @@ describe('doc/DocAnnotator', () => {
             stubs.create = sandbox.stub(annotator, 'highlightCreateHandler');
             stubs.click = sandbox.stub(annotator, 'highlightClickHandler');
         });
+
+        it('should not trigger a highlight or creation if a point annotation is pending', () => {
+            annotator.modeControllers = {
+                'point': { hadPendingThreads: true }
+            };
+            annotator.highlightMouseupHandler({});
+            expect(stubs.create).to.not.be.called;
+            expect(stubs.click).to.not.be.called;
+            expect(annotator.isCreatingHighlight).to.be.false;
+        })
 
         it('should call highlightCreateHandler if not on mobile, and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });

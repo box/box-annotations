@@ -154,7 +154,7 @@ describe('AnnotationThread', () => {
             stubs.updateTemp = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.updateTemp).to.be.called;
                 done();
             }).catch(() => {
@@ -177,7 +177,7 @@ describe('AnnotationThread', () => {
             stubs.serverSave = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.handleError).to.be.called;
                 done();
             }).catch(() => {
@@ -328,8 +328,8 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog').never();
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
-                stubs.threadPromise.should.be.fulfilled.then(() => {
+            promise.then(() => {
+                stubs.threadPromise.then(() => {
                     expect(stubs.destroy).to.be.called;
                     done();
                 });
@@ -344,7 +344,7 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 done();
             }).catch(() => {
                 sinon.assert.failException;
@@ -358,7 +358,7 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('deactivateReply');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 done();
             }).catch(() => {
                 sinon.assert.failException;
@@ -367,7 +367,7 @@ describe('AnnotationThread', () => {
 
         it('should make a server call to delete an annotation with the specified ID if useServer is true', (done) => {
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.emit).to.not.be.calledWith(THREAD_EVENT.threadCleanup);
                 expect(annotationService.delete).to.be.calledWith('someID');
                 done();
@@ -382,7 +382,7 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(annotationService.delete).to.be.calledWith('someID');
                 done();
             }).catch(() => {
@@ -392,7 +392,7 @@ describe('AnnotationThread', () => {
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(annotationService.delete).to.not.be.called;
                 done();
             }).catch(() => {
@@ -405,7 +405,7 @@ describe('AnnotationThread', () => {
             stubs.serviceDelete.returns(Promise.reject());
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 sinon.assert.failException;
             }).catch(() => {
                 expect(annotationService.delete).to.be.called;
@@ -427,7 +427,7 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
                 expect(stubs.emit).to.be.calledWith(THREAD_EVENT.delete);
                 done();
