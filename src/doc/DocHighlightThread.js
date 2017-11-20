@@ -520,7 +520,7 @@ class DocHighlightThread extends AnnotationThread {
         let eventOccurredInHighlight = false;
 
         const points = this.location.quadPoints;
-        const length = points.length;
+        const { length } = points;
 
         let index = 0;
         while (index < length && !eventOccurredInHighlight) {

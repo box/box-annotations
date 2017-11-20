@@ -296,7 +296,7 @@ class DrawingModeController extends AnnotationModeController {
                     this.unregisterThread(thread);
 
                     // Redraw any threads that the deleted thread could have been overlapping
-                    const page = thread.location.page;
+                    const { page } = thread.location;
                     this.threads[page].all().forEach((drawingThread) => drawingThread.show());
                 }
 

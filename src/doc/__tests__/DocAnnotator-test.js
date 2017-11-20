@@ -370,7 +370,7 @@ describe('doc/DocAnnotator', () => {
             stubs.validateThread.returns(false);
             const thread = annotator.createAnnotationThread([], {}, TYPES.highlight);
             expect(thread instanceof DocHighlightThread).to.be.false;
-            expect(thread).to.be.empty;
+            expect(thread).to.be.undefined;
             expect(annotator.handleValidationError).to.be.called;
         });
 
