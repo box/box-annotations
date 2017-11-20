@@ -843,6 +843,12 @@ class DocAnnotator extends Annotator {
 
         this.isCreatingHighlight = false;
 
+        // Prevent the creation of highlights if the user is currently creating a point annotation
+        const pointController = this.modeControllers[TYPES.point];
+        if (pointController && pointController.hadPendingThreads) {
+            return;
+        }
+
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
