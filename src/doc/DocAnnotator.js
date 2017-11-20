@@ -912,7 +912,7 @@ class DocAnnotator extends Annotator {
         let consumed = false;
         let activeThread = null;
 
-        const page = annotatorUtil.getPageInfo(event.target).page;
+        const { page } = annotatorUtil.getPageInfo(event.target);
         const pageThreads = this.threads[page] || {};
 
         Object.keys(pageThreads).forEach((threadID) => {
@@ -1021,7 +1021,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     removeRangyHighlight(highlight) {
-        const highlights = this.highlighter.highlights;
+        const { highlights } = this.highlighter;
         if (!Array.isArray(highlights)) {
             return;
         }

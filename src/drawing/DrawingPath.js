@@ -153,7 +153,7 @@ class DrawingPath {
      * @return {Object} A bounding rectangle and the stroke paths it contains
      */
     static extractDrawingInfo(pathA, accumulator) {
-        let paths = accumulator.paths;
+        let { paths } = accumulator;
         const apath = { path: pathA.path };
         if (!paths) {
             paths = [apath];

@@ -272,7 +272,7 @@ class DrawingThread extends AnnotationThread {
          *           the amount of re-renders onto a temporary memory canvas.
          */
         if (clearCanvas) {
-            const canvas = context.canvas;
+            const { canvas } = context;
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
@@ -417,7 +417,7 @@ class DrawingThread extends AnnotationThread {
      */
     clearBoundary() {
         if (this.drawingContext) {
-            const canvas = this.drawingContext.canvas;
+            const { canvas } = this.drawingContext;
             this.drawingContext.clearRect(0, 0, canvas.width, canvas.height);
         }
 
