@@ -60,7 +60,7 @@ class ImageAnnotator extends Annotator {
         let [x, y] = [clientEvent.clientX - imageDimensions.left, clientEvent.clientY - imageDimensions.top];
 
         // Do not create annotation if event doesn't have coordinates
-        if (isNaN(x) || isNaN(y)) {
+        if (Number.isNaN(x) || Number.isNaN(y)) {
             this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
             return location;
         }
