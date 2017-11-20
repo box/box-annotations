@@ -241,13 +241,11 @@ describe('AnnotationDialog', () => {
     describe('addAnnotation()', () => {
         beforeEach(() => {
             stubs.addEl = sandbox.stub(dialog, 'addAnnotationElement');
-            stubs.deactivate = sandbox.stub(dialog, 'deactivateReply');
         });
 
         it('should add annotation to the dialog and deactivate the reply area', () => {
             dialog.addAnnotation(new Annotation({}));
             expect(stubs.addEl).to.be.called;
-            expect(stubs.deactivate).to.be.calledWithExactly();
         });
 
         it('should hide the create section and show the show section if there are no annotations', () => {
@@ -515,6 +513,7 @@ describe('AnnotationDialog', () => {
     describe('mouseenterHandler()', () => {
         beforeEach(() => {
             stubs.show = sandbox.stub(annotatorUtil, 'showElement');
+            stubs.activate = sandbox.stub(dialog, 'activateReply');
         });
 
         it('should show the element only if the element is currently hidden', () => {
@@ -522,11 +521,13 @@ describe('AnnotationDialog', () => {
 
             dialog.mouseenterHandler();
             expect(annotatorUtil.showElement).to.be.called;
+            expect(stubs.activate).to.be.called;
         });
 
         it('should do nothing if the element is already shown', () => {
             dialog.mouseenterHandler();
             expect(annotatorUtil.showElement).to.not.be.called;
+            expect(stubs.activate).to.be.called;
         });
 
         it('should emit \'annotationcommentpending\' when user hovers back into a dialog that has a pending comment', () => {
@@ -537,6 +538,7 @@ describe('AnnotationDialog', () => {
             dialog.mouseenterHandler();
             expect(stubs.show).to.be.called;
             expect(stubs.emit).to.be.calledWith('annotationcommentpending');
+            expect(stubs.activate).to.be.called;
         });
     });
 
