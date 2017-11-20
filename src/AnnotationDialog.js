@@ -219,7 +219,6 @@ class AnnotationDialog extends EventEmitter {
         }
 
         this.addAnnotationElement(annotation);
-        this.deactivateReply(); // Deactivate reply area and focus
     }
 
     /**
@@ -412,10 +411,10 @@ class AnnotationDialog extends EventEmitter {
             if (replyTextArea.textContent !== '' || commentsTextArea.textContent !== '') {
                 this.emit('annotationcommentpending');
             }
-
-            // Ensure textarea stays open
-            this.activateReply();
         }
+
+        // Ensure textarea stays open
+        this.activateReply();
     }
 
     /**

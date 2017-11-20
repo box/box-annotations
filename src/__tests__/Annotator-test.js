@@ -428,7 +428,7 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.should.be.fulfilled.then(() => {
+                result.then(() => {
                     expect(result).to.be.truthy;
                     done();
                 }).catch(() => {
@@ -444,7 +444,7 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.should.be.fulfilled.then(() => {
+                result.then(() => {
                     expect(result).to.be.truthy;
                     expect(annotator.threadMap).to.not.be.undefined;
                     expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
@@ -462,9 +462,9 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.should.be.fulfilled.then(() => {
+                result.then(() => {
                     expect(result).to.be.truthy;
-                    stubs.threadPromise.should.be.fulfilled.then(() => {
+                    stubs.threadPromise.then(() => {
                         expect(annotator.threadMap).to.not.be.undefined;
                         expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
                         done();

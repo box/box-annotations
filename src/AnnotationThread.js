@@ -220,6 +220,8 @@ class AnnotationThread extends EventEmitter {
             // Otherwise, remove deleted annotation from dialog
         } else if (this.dialog) {
             this.dialog.removeAnnotation(annotationID);
+            this.showDialog();
+            this.dialog.deactivateReply();
         }
 
         if (!useServer) {
@@ -553,6 +555,7 @@ class AnnotationThread extends EventEmitter {
 
         if (this.dialog) {
             this.dialog.addAnnotation(annotation);
+            this.dialog.activateReply();
         }
     }
 

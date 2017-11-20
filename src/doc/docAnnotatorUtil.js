@@ -189,8 +189,7 @@ export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
     const pageDimensions = pageEl.getBoundingClientRect();
     const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
     const zoomScale = annotatorUtil.getScale(annotatedElement);
-    let x = location.x;
-    let y = location.y;
+    let { x, y } = location;
 
     // If needed, scale coords comparing current dimensions with saved dimensions
     const dimensionScale = annotatorUtil.getDimensionScale(
@@ -322,7 +321,7 @@ export function isValidSelection(selection) {
 export function scaleCanvas(pageEl, annotationLayerEl) {
     const pageDimensions = pageEl.getBoundingClientRect();
     const pxRatio = window.devicePixelRatio || 1;
-    const width = pageDimensions.width;
+    const { width } = pageDimensions;
     const height = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
 
     const scaledCanvas = annotationLayerEl;

@@ -209,7 +209,7 @@ class AnnotationService extends EventEmitter {
         // Construct map of thread ID to annotations
         Object.keys(annotations).forEach((annotationID) => {
             const annotation = annotations[annotationID];
-            const threadID = annotation.threadID;
+            const { threadID } = annotation;
             const thread = threadMap[threadID] || [];
             threadMap[threadID] = thread;
             thread[annotation.annotationID] = annotation;

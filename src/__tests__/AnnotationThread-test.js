@@ -37,6 +37,7 @@ describe('AnnotationThread', () => {
         });
 
         thread.dialog = {
+            activateReply: () => {},
             addListener: () => {},
             addAnnotation: () => {},
             destroy: () => {},
@@ -153,7 +154,7 @@ describe('AnnotationThread', () => {
             stubs.updateTemp = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.updateTemp).to.be.called;
                 done();
             }).catch(() => {
@@ -176,7 +177,7 @@ describe('AnnotationThread', () => {
             stubs.serverSave = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.handleError).to.be.called;
                 done();
             }).catch(() => {
@@ -302,6 +303,7 @@ describe('AnnotationThread', () => {
             thread.dialog = {
                 addListener: () => {},
                 addAnnotation: () => {},
+                deactivateReply: () => {},
                 destroy: () => {},
                 removeAllListeners: () => {},
                 show: () => {},
@@ -314,6 +316,7 @@ describe('AnnotationThread', () => {
             stubs.isPlain = sandbox.stub(annotatorUtil, 'isPlainHighlight');
             stubs.cancel = sandbox.stub(thread, 'cancelFirstComment');
             stubs.destroy = sandbox.stub(thread, 'destroy');
+            sandbox.stub(thread, 'showDialog');
             sandbox.stub(thread, 'getThreadEventData').returns({
                 threadNumber: 1
             });
@@ -325,8 +328,8 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog').never();
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
-                stubs.threadPromise.should.be.fulfilled.then(() => {
+            promise.then(() => {
+                stubs.threadPromise.then(() => {
                     expect(stubs.destroy).to.be.called;
                     done();
                 });
@@ -341,7 +344,7 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 done();
             }).catch(() => {
                 sinon.assert.failException;
@@ -352,9 +355,10 @@ describe('AnnotationThread', () => {
             // Add another annotation to thread so 'someID' isn't the only annotation
             thread.annotations[stubs.annotation2.annotationID] = stubs.annotation2;
             stubs.dialogMock.expects('removeAnnotation').withArgs('someID');
+            stubs.dialogMock.expects('deactivateReply');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 done();
             }).catch(() => {
                 sinon.assert.failException;
@@ -363,7 +367,7 @@ describe('AnnotationThread', () => {
 
         it('should make a server call to delete an annotation with the specified ID if useServer is true', (done) => {
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.emit).to.not.be.calledWith(THREAD_EVENT.threadCleanup);
                 expect(annotationService.delete).to.be.calledWith('someID');
                 done();
@@ -378,7 +382,7 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(annotationService.delete).to.be.calledWith('someID');
                 done();
             }).catch(() => {
@@ -388,7 +392,7 @@ describe('AnnotationThread', () => {
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
             const promise = thread.deleteAnnotation('someID', false);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(annotationService.delete).to.not.be.called;
                 done();
             }).catch(() => {
@@ -401,7 +405,7 @@ describe('AnnotationThread', () => {
             stubs.serviceDelete.returns(Promise.reject());
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 sinon.assert.failException;
             }).catch(() => {
                 expect(annotationService.delete).to.be.called;
@@ -423,7 +427,7 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID');
-            promise.should.be.fulfilled.then(() => {
+            promise.then(() => {
                 expect(stubs.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
                 expect(stubs.emit).to.be.calledWith(THREAD_EVENT.delete);
                 done();
@@ -760,7 +764,6 @@ describe('AnnotationThread', () => {
 
     describe('saveAnnotationToThread()', () => {
         it('should add the annotation to the thread, and add to the dialog when the dialog exists', () => {
-            stubs.add = sandbox.stub(thread.dialog, 'addAnnotation');
             stubs.push = sandbox.stub(thread.annotations, 'push');
             const annotation = new Annotation({
                 fileVersionId: '2',
@@ -772,13 +775,13 @@ describe('AnnotationThread', () => {
                 created: Date.now()
             });
 
+            stubs.dialogMock.expects('activateReply');
+            stubs.dialogMock.expects('addAnnotation').withArgs(annotation);
             thread.saveAnnotationToThread(annotation);
-            expect(stubs.add).to.be.calledWith(annotation);
             expect(thread.annotations[annotation.annotationID]).to.not.be.undefined;
         });
 
         it('should not try to push an annotation to the dialog if it doesn\'t exist', () => {
-            stubs.add = sandbox.stub(thread.dialog, 'addAnnotation');
             const annotation = new Annotation({
                 fileVersionId: '2',
                 threadID: '1',
@@ -790,8 +793,9 @@ describe('AnnotationThread', () => {
             });
 
             thread.dialog = undefined;
+            stubs.dialogMock.expects('activateReply').never();
+            stubs.dialogMock.expects('addAnnotation').never();
             thread.saveAnnotationToThread(annotation);
-            expect(stubs.add).to.not.be.called;
             expect(thread.annotations[annotation.annotationID]).to.not.be.undefined;
         });
     });
