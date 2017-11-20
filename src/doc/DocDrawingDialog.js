@@ -212,7 +212,7 @@ class DocDrawingDialog extends AnnotationDialog {
 
         if (canCommit) {
             const commitButton = annotatorUtil.generateBtn(
-                constants.CLASS_ADD_DRAWING_BTN,
+                [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_DRAWING_BTN],
                 this.localized.drawSave,
                 `${ICON_DRAW_SAVE} ${this.localized.saveButton}`
             );
@@ -221,7 +221,7 @@ class DocDrawingDialog extends AnnotationDialog {
 
         if (canDelete) {
             const deleteButton = annotatorUtil.generateBtn(
-                constants.CLASS_DELETE_DRAWING_BTN,
+                [constants.CLASS_BUTTON_PLAIN, constants.CLASS_DELETE_DRAWING_BTN],
                 this.localized.drawDelete,
                 `${ICON_DRAW_DELETE} ${this.localized.deleteButton}`
             );

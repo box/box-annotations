@@ -122,20 +122,23 @@ class DocHighlightDialog extends AnnotationDialog {
      */
     show(showPlain = true, showComment = true) {
         const plainButtonEl = this.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
+        if (plainButtonEl) {
+            if (showPlain) {
+                annotatorUtil.showElement(plainButtonEl);
+            } else {
+                annotatorUtil.hideElement(plainButtonEl);
+            }
+        }
+
         const commentButtonEl = this.highlightDialogEl.querySelector(
             `button.${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`
         );
-
-        if (showPlain) {
-            annotatorUtil.showElement(plainButtonEl);
-        } else {
-            annotatorUtil.hideElement(plainButtonEl);
-        }
-
-        if (showComment) {
-            annotatorUtil.showElement(commentButtonEl);
-        } else {
-            annotatorUtil.hideElement(commentButtonEl);
+        if (commentButtonEl) {
+            if (showComment) {
+                annotatorUtil.showElement(commentButtonEl);
+            } else {
+                annotatorUtil.hideElement(commentButtonEl);
+            }
         }
 
         super.show();
@@ -292,7 +295,8 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Generate HTML of highlight dialog
-        this.highlightDialogEl = this.generateHighlightDialogEl();
+        const canDelete = firstAnnotation ? firstAnnotation.permissions.can_delete : this.canAnnotate;
+        this.highlightDialogEl = this.generateHighlightDialogEl(canDelete);
         this.highlightDialogEl.classList.add(constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
 
         // Generate HTML of comments dialog
@@ -334,16 +338,6 @@ class DocHighlightDialog extends AnnotationDialog {
                 firstAnnotation.user.name
             ]);
             annotatorUtil.showElement(highlightLabelEl);
-
-            if (!this.canAnnotate) {
-                // Hide all action buttons if user cannot annotate
-                const highlightButtons = this.highlightDialogEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
-                annotatorUtil.hideElement(highlightButtons);
-            } else if (firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
-                // Hide delete button on plain highlights if user doesn't have permissions
-                const addHighlightBtn = this.highlightDialogEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
-                annotatorUtil.hideElement(addHighlightBtn);
-            }
         }
 
         // Add annotation elements
@@ -401,6 +395,10 @@ class DocHighlightDialog extends AnnotationDialog {
      */
     toggleHighlightIcon(fillStyle) {
         const addHighlightBtn = this.dialogEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
+        if (!addHighlightBtn) {
+            return;
+        }
+
         if (fillStyle === constants.HIGHLIGHT_FILL.active) {
             addHighlightBtn.classList.add(constants.CLASS_ACTIVE);
         } else {
@@ -579,24 +577,43 @@ class DocHighlightDialog extends AnnotationDialog {
      * Generates the highlight annotation dialog DOM element
      *
      * @private
+     * @param {booelan} canDeleteAnnotation  Whether or not the user can delete the highlight annotation
      * @return {HTMLElement} Highlight annotation dialog DOM element
      */
-    generateHighlightDialogEl() {
+    generateHighlightDialogEl(canDeleteAnnotation) {
         const highlightDialogEl = document.createElement('div');
-        highlightDialogEl.innerHTML = `
-            <span class="${CLASS_HIGHLIGHT_LABEL} ${constants.CLASS_HIDDEN}"></span>
-            <span class="${constants.CLASS_HIGHLIGHT_BTNS}">
-                <button class="bp-btn-plain ${constants.CLASS_ADD_HIGHLIGHT_BTN}"
-                    data-type="${constants.DATA_TYPE_HIGHLIGHT}"
-                    title="${this.localized.highlightToggle}">
-                    ${ICON_HIGHLIGHT}
-                </button>
-                <button class="bp-btn-plain ${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}"
-                    data-type="${constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT}"
-                    title="${this.localized.highlightComment}">
-                    ${ICON_HIGHLIGHT_COMMENT}
-                </button>
-            </span>`.trim();
+
+        const highlightLabelEl = document.createElement('span');
+        highlightLabelEl.classList.add(CLASS_HIGHLIGHT_LABEL);
+        highlightLabelEl.classList.add(constants.CLASS_HIDDEN);
+        highlightDialogEl.appendChild(highlightLabelEl);
+
+        if (!this.canAnnotate) {
+            return highlightDialogEl;
+        }
+
+        const highlightButtons = document.createElement('span');
+        highlightButtons.classList.add(constants.CLASS_HIGHLIGHT_BTNS);
+        highlightDialogEl.appendChild(highlightButtons);
+
+        if (canDeleteAnnotation) {
+            const addHighlightBtn = annotatorUtil.generateBtn(
+                [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_BTN],
+                this.localized.highlightToggle,
+                ICON_HIGHLIGHT,
+                constants.DATA_TYPE_HIGHLIGHT
+            );
+            highlightButtons.appendChild(addHighlightBtn);
+        }
+
+        const addCommentBtn = annotatorUtil.generateBtn(
+            [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
+            this.localized.highlightComment,
+            ICON_HIGHLIGHT_COMMENT,
+            constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT
+        );
+        highlightButtons.appendChild(addCommentBtn);
+
         return highlightDialogEl;
     }
 }

@@ -183,9 +183,12 @@ $tablet: 'max-width: 768px';
         border-radius: 4px;
         overflow-x: hidden;
         overflow-y: auto;
-        padding: 15px;
         white-space: normal;
         width: 282px; // Hard-coded width to solve layout issues
+    }
+
+    .annotation-container section {
+        padding: 15px;
     }
 
     .bp-textarea {
@@ -222,17 +225,6 @@ $tablet: 'max-width: 768px';
 
         &:last-child {
             border-bottom: 0;
-        }
-    }
-
-    &.cannot-annotate {
-        .annotation-comment:last-child {
-            padding-bottom: 0;
-        }
-
-        .delete-comment-btn,
-        .reply-container {
-            display: none;
         }
     }
 
@@ -435,13 +427,6 @@ $tablet: 'max-width: 768px';
     display: table;
     position: absolute;
     z-index: 9999;
-
-    &.cannot-annotate {
-        .bp-add-highlight-btn,
-        .bp-highlight-comment-btn {
-            display: none;
-        }
-    }
 }
 
 .bp-annotation-drawing-dialog,
@@ -455,6 +440,10 @@ $tablet: 'max-width: 768px';
     // Center buttons
     .bp-add-highlight-btn {
         padding-top: 1px;
+    }
+
+    .bp-highlight-comment-btn {
+        padding-top: 3px;
     }
 
     .bp-btn-annotate-draw-add,
@@ -479,10 +468,6 @@ $tablet: 'max-width: 768px';
     .bp-btn-annotate-draw-delete:active,
     .bp-btn-annotate-draw-delete:hover {
         padding-left: 4px;
-    }
-
-    .bp-highlight-comment-btn {
-        padding-top: 3px;
     }
 }
 
@@ -551,7 +536,7 @@ $tablet: 'max-width: 768px';
 
 .bp-annotation-drawing-label,
 .bp-annotation-highlight-label {
-    padding: 8px 0 8px 8px;
+    padding: 8px 4px;
     width: 100%;
 }
 

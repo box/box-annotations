@@ -458,30 +458,6 @@ describe('doc/DocHighlightDialog', () => {
             expect(stubs.show).to.be.called;
         });
 
-        it('should hide all buttons on plain highlights if user does not have canAnnotate permissions', () => {
-            sandbox.stub(annotatorUtil, 'isPlainHighlight').returns(true);
-            dialog.canAnnotate = false;
-
-            dialog.setup([stubs.annotation]);
-            const highlightLabelEl = dialog.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            const highlightBtns = dialog.highlightDialogEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
-            const addHighlightBtn = dialog.highlightDialogEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
-            expect(stubs.show).to.be.calledWith(highlightLabelEl);
-            expect(stubs.hide).to.be.calledWith(highlightBtns);
-            expect(stubs.hide).to.not.be.calledWith(addHighlightBtn);
-        });
-
-        it('should hide delete button on plain highlights if user does not have delete permissions', () => {
-            sandbox.stub(annotatorUtil, 'isPlainHighlight').returns(true);
-            stubs.annotation.permissions.can_delete = false;
-
-            dialog.setup([stubs.annotation]);
-            const highlightLabelEl = dialog.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            const addHighlightBtn = dialog.highlightDialogEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
-            expect(stubs.show).to.be.calledWith(highlightLabelEl);
-            expect(stubs.hide).to.be.calledWith(addHighlightBtn);
-        });
-
         it('should add annotation elements', () => {
             stubs.add = sandbox.stub(dialog, 'addAnnotationElement');
             dialog.setup([stubs.annotation, stubs.annotation]);
@@ -724,6 +700,20 @@ describe('doc/DocHighlightDialog', () => {
             const highlightEl = dialog.generateHighlightDialogEl();
             const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
             expect(highlightBtnEl).to.not.be.null;
+        });
+
+        it('should not add any buttons if the user cannot annotate', () => {
+            dialog.canAnnotate = false;
+            const highlightEl = dialog.generateHighlightDialogEl();
+            const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
+            expect(highlightBtnEl).to.be.null;
+        });
+
+        it('should not add the add highlight button if the user cannot delete annotations', () => {
+            const canDeleteAnnotation = false;
+            const highlightEl = dialog.generateHighlightDialogEl(canDeleteAnnotation);
+            const addHighlightBtn = highlightEl.querySelector(`.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
+            expect(addHighlightBtn).to.be.null;
         });
     });
 });

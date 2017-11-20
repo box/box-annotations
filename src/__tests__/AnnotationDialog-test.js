@@ -7,7 +7,6 @@ import * as constants from '../annotationConstants';
 
 const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
-const CLASS_CANNOT_ANNOTATE = 'cannot-annotate';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
@@ -107,15 +106,6 @@ describe('AnnotationDialog', () => {
 
             dialog.show();
             expect(stubs.position).to.be.called;
-        });
-
-        it('should hide the reply/edit/delete UI if user cannot annotate', () => {
-            dialog.canAnnotate = false;
-            dialog.hasAnnotations = true;
-            dialog.deactivateReply();
-
-            dialog.show();
-            expect(dialog.element).to.have.class(CLASS_CANNOT_ANNOTATE);
         });
 
         it('should focus textarea if in viewport', () => {
@@ -713,7 +703,7 @@ describe('AnnotationDialog', () => {
             expect(username).to.contain.html('user');
         });
 
-        it('should hide the delete icon if the user does\'nt have delete permissions', () => {
+        it('should not the delete icon if the user does not have delete permissions', () => {
             dialog.addAnnotationElement(
                 new Annotation({
                     annotationID: 1,
@@ -723,10 +713,10 @@ describe('AnnotationDialog', () => {
                 })
             );
             const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.have.class(constants.CLASS_HIDDEN);
+            expect(deleteButton).to.be.null;
         });
 
-        it('should make the delete icon hidden if the delete permission is not specified', () => {
+        it('should not add the delete icon if the delete permission is not specified', () => {
             dialog.addAnnotationElement(
                 new Annotation({
                     annotationID: 1,
@@ -736,7 +726,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.have.class(constants.CLASS_HIDDEN);
+            expect(deleteButton).to.be.null;
         });
 
         it('should make delete icon visible if the user has delete permission', () => {
