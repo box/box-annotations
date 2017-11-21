@@ -425,6 +425,63 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
+    describe('handleDraw()', () => {
+        it('should clear the text selection and show the thread', () => {
+            const selectionStub = {
+                removeAllRanges: sandbox.stub()
+            };
+            sandbox.stub(window, 'getSelection').returns(selectionStub);
+            sandbox.stub(thread, 'show');
+
+            thread.handleDraw();
+            expect(thread.show).to.be.called;
+            expect(thread.state).to.equal(STATES.pending_active);
+            expect(selectionStub.removeAllRanges).to.be.called;
+        });
+    });
+
+    describe('handleCommentPending()', () => {
+        it('should set the thread state to pending active', () => {
+            thread.handleCommentPending();
+            expect(thread.state).to.equal(STATES.pending_active);
+        });
+    });
+
+    describe('handleCreate()', () => {
+        it('should create a plain highlight and save', () => {
+            sandbox.stub(thread, 'saveAnnotation');
+            thread.handleCreate();
+            expect(thread.saveAnnotation).to.be.calledWith(TYPES.highlight, '');
+        });
+
+        it('should create a highlight comment and save', () => {
+            sandbox.stub(thread, 'saveAnnotation');
+            sandbox.stub(thread.dialog, 'toggleHighlightCommentsReply');
+            thread.annotations = { 1: {}, 2: {}, 3: {} };
+
+            thread.handleCreate({ text: 'something' });
+            expect(thread.saveAnnotation).to.be.calledWith(TYPES.highlight_comment, 'something');
+        });
+    });
+
+    describe('handleDelete()', () => {
+        beforeEach(() => {
+            sandbox.stub(thread, 'deleteAnnotation');
+            sandbox.stub(thread.dialog, 'toggleHighlightCommentsReply');
+            thread.annotations = { 1: { annotationID: 1 }, 2: { annotationID: 2 }, 3: {} };
+        });
+
+        it('should delete the specified annotationID', () => {
+            thread.handleDelete({ annotationID: 2 });
+            expect(thread.deleteAnnotation).to.be.calledWith(2);
+        });
+
+        it('should delete the first annotation in the thread if no annotationID is provided', () => {
+            thread.handleDelete();
+            expect(thread.deleteAnnotation).to.be.calledWith(1);
+        });
+    });
+
     describe('bindCustomListenersOnDialog()', () => {
         it('should bind custom listeners on dialog', () => {
             thread.dialog = {

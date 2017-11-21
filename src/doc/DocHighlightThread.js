@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import AnnotationThread from '../AnnotationThread';
 import DocHighlightDialog from './DocHighlightDialog';
 import * as annotatorUtil from '../annotatorUtil';
@@ -16,7 +15,6 @@ import {
 
 const HOVER_TIMEOUT_MS = 75;
 
-@autobind
 class DocHighlightThread extends AnnotationThread {
     /**
      * Cached page element for the document.
@@ -333,6 +331,64 @@ class DocHighlightThread extends AnnotationThread {
     setupElement() {}
 
     /**
+     * Clear text selection and show annotation dialog on 'annotationdraw'
+     *
+     * @private
+     * @return {void}
+     */
+    handleDraw() {
+        this.state = STATES.pending_active;
+        window.getSelection().removeAllRanges();
+        this.show();
+    }
+
+    /**
+     * Set the thread state to pending active on 'annotationcommentpending'
+     *
+     * @private
+     * @return {void}
+     */
+    handleCommentPending() {
+        this.state = STATES.pending_active;
+    }
+
+    /**
+     * Create the appropriate type of highlight annotation thread on
+     * 'annotationcreate'
+     *
+     * @private
+     * @param {Object} data Event data
+     * @return {void}
+     */
+    handleCreate(data) {
+        if (data) {
+            this.type = TYPES.highlight_comment;
+            this.dialog.toggleHighlightCommentsReply(Object.keys(this.annotations).length);
+        } else {
+            this.type = TYPES.highlight;
+        }
+
+        this.saveAnnotation(this.type, data ? data.text : '');
+    }
+
+    /**
+     * Delete the annotation annotation or the thread's first annotation based on
+     * if an annotationID is specified on 'annotationdelete'
+     *
+     * @private
+     * @param {Object} data Event data
+     * @return {void}
+     */
+    handleDelete(data) {
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        if (data) {
+            this.deleteAnnotation(data.annotationID);
+        } else if (firstAnnotation) {
+            this.deleteAnnotation(firstAnnotation.annotationID);
+        }
+    }
+
+    /**
      * Binds custom event listeners for the dialog.
      *
      * @protected
@@ -341,44 +397,18 @@ class DocHighlightThread extends AnnotationThread {
      */
     /* istanbul ignore next */
     bindCustomListenersOnDialog() {
-        // Annotation drawn
-        this.dialog.addListener('annotationdraw', () => {
-            this.state = STATES.pending_active;
-            window.getSelection().removeAllRanges();
-            this.show();
-        });
+        // Explicitly bind listeners
+        this.handleDraw = this.handleDraw.bind(this);
+        this.handleCommentPending = this.handleCommentPending.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.cancelFirstComment = this.cancelFirstComment.bind(this);
 
-        // Annotation drawn
-        this.dialog.addListener('annotationcommentpending', () => {
-            this.state = STATES.pending_active;
-        });
-
-        // Annotation created
-        this.dialog.addListener('annotationcreate', (data) => {
-            if (data) {
-                this.type = TYPES.highlight_comment;
-                this.dialog.toggleHighlightCommentsReply(Object.keys(this.annotations).length);
-            } else {
-                this.type = TYPES.highlight;
-            }
-
-            this.saveAnnotation(this.type, data ? data.text : '');
-        });
-
-        // Annotation canceled
-        this.dialog.addListener('annotationcancel', () => {
-            this.cancelFirstComment();
-        });
-
-        // Annotation deleted
-        this.dialog.addListener('annotationdelete', (data) => {
-            const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
-            if (data) {
-                this.deleteAnnotation(data.annotationID);
-            } else if (firstAnnotation) {
-                this.deleteAnnotation(firstAnnotation.annotationID);
-            }
-        });
+        this.dialog.addListener('annotationdraw', this.handleDraw);
+        this.dialog.addListener('annotationcommentpending', this.handleCommentPending);
+        this.dialog.addListener('annotationcreate', this.handleCreate);
+        this.dialog.addListener('annotationcancel', this.cancelFirstComment);
+        this.dialog.addListener('annotationdelete', this.handleDelete);
     }
 
     /**

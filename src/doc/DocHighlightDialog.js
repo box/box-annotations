@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import AnnotationDialog from '../AnnotationDialog';
 import * as annotatorUtil from '../annotatorUtil';
 import * as docAnnotatorUtil from './docAnnotatorUtil';
@@ -13,11 +12,20 @@ const HIGHLIGHT_DIALOG_HEIGHT = 38;
 const PAGE_PADDING_BOTTOM = 15;
 const PAGE_PADDING_TOP = 15;
 
-@autobind
 class DocHighlightDialog extends AnnotationDialog {
     //--------------------------------------------------------------------------
     // Public
     //--------------------------------------------------------------------------
+
+    /**
+     * @inheritdoc
+     */
+    constructor(data) {
+        super(data);
+
+        // Explicitly bind listeners
+        this.mousedownHandler = this.mousedownHandler.bind(this);
+    }
 
     /**
      * Saves an annotation with the associated text or blank if only
