@@ -1,11 +1,9 @@
-import autobind from 'autobind-decorator';
 import AnnotationDialog from '../AnnotationDialog';
 import * as annotatorUtil from '../annotatorUtil';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
 
-@autobind
 class ImagePointDialog extends AnnotationDialog {
     //--------------------------------------------------------------------------
     // Abstract Implementations
