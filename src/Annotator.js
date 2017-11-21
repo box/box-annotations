@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import autobind from 'autobind-decorator';
 import AnnotationService from './AnnotationService';
 import * as annotatorUtil from './annotatorUtil';
 import { ICON_CLOSE } from './icons/icons';
@@ -19,7 +18,6 @@ import {
     CONTROLLER_EVENT
 } from './annotationConstants';
 
-@autobind
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -70,9 +68,13 @@ class Annotator extends EventEmitter {
         const { CONTROLLERS } = this.options.annotator || {};
         this.modeControllers = CONTROLLERS || {};
 
-        this.createPointThread = this.createPointThread.bind(this);
-
         this.fetchPromise = this.fetchAnnotations();
+
+        // Explicitly binding listeners
+        this.createPointThread = this.createPointThread.bind(this);
+        this.scaleAnnotations = this.scaleAnnotations.bind(this);
+        this.handleControllerEvents = this.handleControllerEvents.bind(this);
+        this.handleServicesErrors = this.handleServicesErrors.bind(this);
     }
 
     /**
@@ -224,11 +226,11 @@ class Annotator extends EventEmitter {
     /* eslint-enable no-unused-vars */
 
     /**
-    * Must be implemented to determine the annotated element in the viewer.
-    *
-    * @param {HTMLElement} containerEl - Container element for the viewer
-    * @return {HTMLElement} Annotated element in the viewer
-    */
+     * Must be implemented to determine the annotated element in the viewer.
+     *
+     * @param {HTMLElement} containerEl - Container element for the viewer
+     * @return {HTMLElement} Annotated element in the viewer
+     */
     /* eslint-disable no-unused-vars */
     getAnnotatedEl(containerEl) {}
     /* eslint-enable no-unused-vars */
