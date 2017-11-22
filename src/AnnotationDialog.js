@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import EventEmitter from 'events';
 import * as annotatorUtil from './annotatorUtil';
 import * as constants from './annotationConstants';
@@ -17,7 +16,6 @@ const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
 const CLASS_BUTTON_DELETE_CONFIRM = 'confirm-delete-btn';
 
-@autobind
 class AnnotationDialog extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -55,7 +53,16 @@ class AnnotationDialog extends EventEmitter {
         this.locale = data.locale;
         this.isMobile = data.isMobile;
 
+        // Explicitly bind listeners
+        this.keydownHandler = this.keydownHandler.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
+        this.stopPropagation = this.stopPropagation.bind(this);
         this.validateTextArea = this.validateTextArea.bind(this);
+
+        if (!this.isMobile) {
+            this.mouseenterHandler = this.mouseenterHandler.bind(this);
+            this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
+        }
     }
 
     /**
@@ -141,6 +148,8 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+
+        this.hideMobileDialog = this.hideMobileDialog.bind(this);
         dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
 
         this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
@@ -779,10 +788,14 @@ class AnnotationDialog extends EventEmitter {
                 <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA}"
                     placeholder="${this.localized.addCommentPlaceholder}"></textarea>
                 <div class="${constants.CLASS_BUTTON_CONTAINER}">
-                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL}">
+                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${
+    constants.DATA_TYPE_CANCEL
+}">
                         ${this.localized.cancelButton}
                     </button>
-                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST}">
+                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${
+    constants.CLASS_ANNOTATION_BUTTON_POST
+}" data-type="${constants.DATA_TYPE_POST}">
                         ${this.localized.postButton}
                     </button>
                 </div>
@@ -791,13 +804,18 @@ class AnnotationDialog extends EventEmitter {
                 <div class="${CLASS_COMMENTS_CONTAINER}"></div>
                 <div class="${CLASS_REPLY_CONTAINER}">
                     <textarea class="${constants.CLASS_TEXTAREA} ${CLASS_REPLY_TEXTAREA}"
-                        placeholder="${this.localized
-        .replyPlaceholder}" data-type="${constants.DATA_TYPE_REPLY_TEXTAREA}"></textarea>
+                        placeholder="${this.localized.replyPlaceholder}" data-type="${
+    constants.DATA_TYPE_REPLY_TEXTAREA
+}"></textarea>
                     <div class="${constants.CLASS_BUTTON_CONTAINER} ${constants.CLASS_HIDDEN}">
-                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${constants.DATA_TYPE_CANCEL_REPLY}">
+                        <button class="${constants.CLASS_BUTTON} ${
+    constants.CLASS_ANNOTATION_BUTTON_CANCEL
+}" data-type="${constants.DATA_TYPE_CANCEL_REPLY}">
                             ${this.localized.cancelButton}
                         </button>
-                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}" data-type="${constants.DATA_TYPE_POST_REPLY}">
+                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${
+    constants.CLASS_ANNOTATION_BUTTON_POST
+}" data-type="${constants.DATA_TYPE_POST_REPLY}">
                             ${this.localized.postButton}
                         </button>
                     </div>
