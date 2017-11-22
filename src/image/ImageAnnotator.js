@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import Annotator from '../Annotator';
 import ImagePointThread from './ImagePointThread';
 import * as annotatorUtil from '../annotatorUtil';
@@ -9,7 +8,6 @@ const IMAGE_NODE_NAME = 'img';
 // Selector for image container OR multi-image container
 const ANNOTATED_ELEMENT_SELECTOR = '.bp-image, .bp-images-wrapper';
 
-@autobind
 class ImageAnnotator extends Annotator {
     //--------------------------------------------------------------------------
     // Abstract Implementations
