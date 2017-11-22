@@ -5,7 +5,6 @@ import rangyClassApplier from 'rangy/lib/rangy-classapplier';
 import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 /* eslint-enable no-unused-vars */
-import autobind from 'autobind-decorator';
 import Annotator from '../Annotator';
 import DocHighlightThread from './DocHighlightThread';
 import DocPointThread from './DocPointThread';
@@ -52,7 +51,6 @@ function isThreadInHoverState(thread) {
     return thread.state === STATES.hover;
 }
 
-@autobind
 class DocAnnotator extends Annotator {
     /** @property {Event} - For tracking the most recent event fired by mouse move event. */
     mouseMoveEvent;
@@ -366,8 +364,6 @@ class DocAnnotator extends Annotator {
         this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
         this.drawEnabled = !!this.modeControllers[TYPES.draw];
 
-        super.setupAnnotations();
-
         // Don't bind to draw specific handlers if we cannot draw
         if (this.drawEnabled) {
             this.drawingSelectionHandler = this.drawingSelectionHandler.bind(this);
@@ -380,7 +376,12 @@ class DocAnnotator extends Annotator {
 
         // Explicit scoping
         this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
-        this.showFirstDialogFilter = this.showFirstDialogFilter.bind(this);
+        this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
+        this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
+
+        if (this.isMobile && this.hasTouch) {
+            this.onSelectionChange = this.onSelectionChange.bind(this);
+        }
 
         this.createHighlightDialog = new CreateHighlightDialog(this.container, {
             isMobile: this.isMobile,
@@ -416,6 +417,8 @@ class DocAnnotator extends Annotator {
                 tagNames: ['span', 'a']
             })
         );
+
+        super.setupAnnotations();
     }
 
     /**
@@ -760,7 +763,7 @@ class DocAnnotator extends Annotator {
         // hovered over at the same time, only the top-most highlight
         // dialog will be displayed and the others will be hidden
         // without delay
-        delayThreads.forEach(this.showFirstDialogFilter);
+        delayThreads.forEach((threadID, index) => this.showFirstDialogFilter(threadID, index));
     }
 
     /**

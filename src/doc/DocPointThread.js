@@ -1,4 +1,3 @@
-import autobind from 'autobind-decorator';
 import AnnotationThread from '../AnnotationThread';
 import DocPointDialog from './DocPointDialog';
 import * as annotatorUtil from '../annotatorUtil';
@@ -10,7 +9,6 @@ const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
 
-@autobind
 class DocPointThread extends AnnotationThread {
     //--------------------------------------------------------------------------
     // Public
