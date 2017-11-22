@@ -380,10 +380,13 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     handleDelete(data) {
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
         if (data) {
             this.deleteAnnotation(data.annotationID);
-        } else if (firstAnnotation) {
+            return;
+        }
+
+        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        if (firstAnnotation) {
             this.deleteAnnotation(firstAnnotation.annotationID);
         }
     }
