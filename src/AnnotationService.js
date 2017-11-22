@@ -1,10 +1,8 @@
 import 'whatwg-fetch';
 import EventEmitter from 'events';
-import autobind from 'autobind-decorator';
 import Annotation from './Annotation';
 import { getHeaders } from './annotatorUtil';
 
-@autobind
 class AnnotationService extends EventEmitter {
     //--------------------------------------------------------------------------
     // Static
@@ -59,6 +57,9 @@ class AnnotationService extends EventEmitter {
             id: '0',
             name: this.anonymousUserName
         };
+
+        // Explicitly bind listeners
+        this.createThreadMap = this.createThreadMap.bind(this);
     }
 
     /**
@@ -255,8 +256,9 @@ class AnnotationService extends EventEmitter {
      * @return {Promise} Promise that resolves with fetched annotations
      */
     getReadUrl(fileVersionId, marker = null, limit = null) {
-        let apiUrl = `${this.api}/2.0/files/${this
-            .fileId}/annotations?version=${fileVersionId}&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
+        let apiUrl = `${this.api}/2.0/files/${this.fileId}/annotations?version=${
+            fileVersionId
+        }&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
         if (marker) {
             apiUrl += `&marker=${marker}`;
         }

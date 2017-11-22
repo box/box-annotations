@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import autobind from 'autobind-decorator';
 import Annotation from './Annotation';
 import AnnotationService from './AnnotationService';
 import * as annotatorUtil from './annotatorUtil';
@@ -12,7 +11,6 @@ import {
     THREAD_EVENT
 } from './annotationConstants';
 
-@autobind
 class AnnotationThread extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -60,6 +58,13 @@ class AnnotationThread extends EventEmitter {
         this.permissions = data.permissions;
         this.localized = data.localized;
         this.state = STATES.inactive;
+
+        // Explicitly bind listeners
+        this.showDialog = this.showDialog.bind(this);
+
+        if (!this.isMobile) {
+            this.mouseoutHandler = this.mouseoutHandler.bind(this);
+        }
 
         this.setup();
     }
@@ -380,6 +385,11 @@ class AnnotationThread extends EventEmitter {
         if (!this.dialog) {
             return;
         }
+
+        // Explicitly bind listeners to the dialog
+        this.createAnnotation = this.createAnnotation.bind(this);
+        this.cancelUnsavedAnnotation = this.cancelUnsavedAnnotation.bind(this);
+        this.deleteAnnotationWithID = this.deleteAnnotationWithID.bind(this);
 
         this.dialog.addListener('annotationcreate', this.createAnnotation);
         this.dialog.addListener('annotationcancel', this.cancelUnsavedAnnotation);
