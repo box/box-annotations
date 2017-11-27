@@ -557,6 +557,55 @@ describe('AnnotationDialog', () => {
         });
     });
 
+    describe('enable()', () => {
+        it('should enable all buttons in specified annotation element', () => {
+            dialog.element = document.createElement('div');
+
+            const annotationEl = document.createElement('div');
+            annotationEl.setAttribute('data-annotation-id', '123');
+            dialog.element.appendChild(annotationEl);
+
+            // Add buttons
+            const btn = document.createElement('button');
+            btn.classList.add(constants.CLASS_DISABLED);
+            sandbox.stub(annotationEl, 'querySelectorAll').returns([btn, btn]);
+
+            const wrongEl = document.createElement('div');
+            wrongEl.setAttribute('data-annotation-id', 'invalid');
+            sandbox.stub(wrongEl, 'querySelectorAll');
+            dialog.element.appendChild(wrongEl);
+
+            dialog.enable('123');
+            expect(annotationEl.querySelectorAll).to.be.called;
+            expect(btn).to.not.have.class(constants.CLASS_DISABLED)
+            expect(wrongEl.querySelectorAll).to.not.be.called;
+        });
+    });
+
+    describe('disable()', () => {
+        it('should disable all buttons in specified annotation element', () => {
+            dialog.element = document.createElement('div');
+
+            const annotationEl = document.createElement('div');
+            annotationEl.setAttribute('data-annotation-id', '123');
+            dialog.element.appendChild(annotationEl);
+
+            // Add buttons
+            const btn = document.createElement('button');
+            sandbox.stub(annotationEl, 'querySelectorAll').returns([btn, btn]);
+
+            const wrongEl = document.createElement('div');
+            wrongEl.setAttribute('data-annotation-id', 'invalid');
+            sandbox.stub(wrongEl, 'querySelectorAll');
+            dialog.element.appendChild(wrongEl);
+
+            dialog.disable('123');
+            expect(annotationEl.querySelectorAll).to.be.called;
+            expect(btn).to.have.class(constants.CLASS_DISABLED)
+            expect(wrongEl.querySelectorAll).to.not.be.called;
+        });
+    });
+
     describe('clickHandler()', () => {
         beforeEach(() => {
             stubs.event = {
