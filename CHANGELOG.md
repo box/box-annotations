@@ -1,3 +1,16 @@
+<a name="0.5.0"></a>
+# 0.5.0 (2017-11-27)
+
+* Chore: Disable dialog actions until annotation is saved on the server (#48) ([6dbcda2](https://github.com/box/box-annotations/commit/6dbcda2))
+* Chore: Remove autobind from base classes (#44) ([639f8d2](https://github.com/box/box-annotations/commit/639f8d2))
+* Chore: Remove autobind from doc classes (#46) ([d7ded88](https://github.com/box/box-annotations/commit/d7ded88))
+* Chore: Remove autobind from Image classes (#45) ([1dda3a4](https://github.com/box/box-annotations/commit/1dda3a4))
+* Chore: Remove NPM install from release/publish scripts (#50) ([48822c4](https://github.com/box/box-annotations/commit/48822c4))
+* Update: Remaining packages (#49) ([4dab273](https://github.com/box/box-annotations/commit/4dab273))
+*  Update: Sinon to v4.1.2 & remove autobind-decorator (#47) ([eea7dcf](https://github.com/box/box-annotations/commit/eea7dcf))
+
+
+
 <a name="0.4.0"></a>
 # 0.4.0 (2017-11-21)
 
