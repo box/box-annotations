@@ -33,7 +33,7 @@ reset_to_master() {
 
     # Remove old local tags in case a build failed
     git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
-    git clean -fdX || return 1
+    git clean -fd || return 1
 }
 
 install_dependencies() {
