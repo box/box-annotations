@@ -224,7 +224,7 @@ describe('controllers/AnnotationModeController', () => {
                     addEventListener: sandbox.stub()
                 }
             };
-            sandbox.stub(controller, 'setupHandlers', () => {
+            sandbox.stub(controller, 'setupHandlers').callsFake(() => {
                 controller.handlers = [handlerObj];
             });
             expect(controller.handlers.length).to.equal(0);

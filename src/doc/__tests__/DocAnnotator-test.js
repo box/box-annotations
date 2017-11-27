@@ -928,7 +928,7 @@ describe('doc/DocAnnotator', () => {
 
             let timer = 0;
             window.performance = window.performance || { now: () => {} };
-            sandbox.stub(window.performance, 'now', () => {
+            sandbox.stub(window.performance, 'now').callsFake(() => {
                 return (timer += 500);
             });
 
