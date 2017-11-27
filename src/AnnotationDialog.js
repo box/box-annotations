@@ -442,11 +442,11 @@ class AnnotationDialog extends EventEmitter {
      * Enable all buttons for the temporary annotation element
      *
      * @protected
-     * @param {string} tempAnnotationID Annotation of temporary annotation element
+     * @param {string} annotationID Annotation of saved annotation element
      * @return {void}
      */
-    enable(tempAnnotationID) {
-        const annotationEl = this.element.querySelector(`[data-annotation-id="${tempAnnotationID}"]`);
+    enable(annotationID) {
+        const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
         if (!annotationEl) {
             return;
         }

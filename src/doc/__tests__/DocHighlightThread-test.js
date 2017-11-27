@@ -60,6 +60,7 @@ describe('doc/DocHighlightThread', () => {
             // Adding a plain highlight annotation to the thread
             sandbox.stub(thread.annotationService, 'create').returns(Promise.resolve({}));
             sandbox.stub(thread.dialog, 'position');
+            sandbox.stub(thread.dialog, 'disable');
             thread.saveAnnotation('highlight', '');
 
             // Cancel first comment on existing annotation
