@@ -447,11 +447,11 @@ class AnnotationDialog extends EventEmitter {
      */
     enable(tempAnnotationID) {
         const annotationEl = this.element.querySelector(`[data-annotation-id="${tempAnnotationID}"]`);
-        let btns = [];
-        if (annotationEl) {
-            btns = annotationEl.querySelectorAll('button');
+        if (!annotationEl) {
+            return;
         }
 
+        const btns = annotationEl.querySelectorAll('button');
         btns.forEach((btn) => {
             btn.classList.remove(constants.CLASS_DISABLED);
         });
@@ -466,12 +466,11 @@ class AnnotationDialog extends EventEmitter {
      */
     disable(tempAnnotationID) {
         const annotationEl = this.element.querySelector(`[data-annotation-id="${tempAnnotationID}"]`);
-        let btns = [];
-        if (annotationEl) {
-            btns = annotationEl.querySelectorAll('button');
+        if (!annotationEl) {
+            return;
         }
 
-        // Disable all buttons in specified element
+        const btns = annotationEl.querySelectorAll('button');
         btns.forEach((btn) => {
             btn.classList.add(constants.CLASS_DISABLED);
         });
