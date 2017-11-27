@@ -147,6 +147,13 @@ describe('AnnotationThread', () => {
 
             sandbox.stub(thread, 'getThreadEventData').returns({});
             stubs.create = sandbox.stub(annotationService, 'create');
+            thread.dialog = {
+                addAnnotation: () => {},
+                activateReply: () => {},
+                disable: () => {}
+            };
+            const dialogMock = sandbox.mock(thread.dialog);
+            dialogMock.expects('disable');
         });
 
         it('should save an annotation with the specified type and text', (done) => {
@@ -241,6 +248,27 @@ describe('AnnotationThread', () => {
             });
 
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+        });
+
+        it('should update thread number and replace temporary annotation if dialog exists', () => {
+            const serverAnnotation = { annotationID: 123 };
+            const tempAnnotation = { annotationID: 1 };
+            thread.threadNumber = 'something';
+            thread.dialog = {
+                addAnnotation: () => {},
+                removeAnnotation: () => {},
+                enable: () => {},
+                element: {
+                    dataset: { threadNumber: undefined }
+                }
+            };
+            const dialogMock = sandbox.mock(thread.dialog);
+
+            dialogMock.expects('enable').withArgs(serverAnnotation.annotationID);
+            dialogMock.expects('addAnnotation').withArgs(serverAnnotation);
+            dialogMock.expects('removeAnnotation').withArgs(tempAnnotation.annotationID);
+            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            expect(thread.dialog.element.dataset.threadNumber).to.not.be.undefined;
         });
 
         it('should only show dialog immediately on mobile devices', () => {
