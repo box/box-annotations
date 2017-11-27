@@ -225,7 +225,7 @@ describe('controllers/DrawingModeController', () => {
                     addEventListener: sandbox.stub()
                 }
             };
-            sandbox.stub(controller, 'setupHandlers', () => {
+            sandbox.stub(controller, 'setupHandlers').callsFake(() => {
                 controller.handlers = [handlerObj];
             });
             expect(controller.handlers.length).to.equal(0);
@@ -325,7 +325,7 @@ describe('controllers/DrawingModeController', () => {
             };
             sandbox.stub(controller, 'registerThread');
             sandbox.stub(controller, 'unbindListeners');
-            sandbox.stub(controller, 'bindListeners', () => {
+            sandbox.stub(controller, 'bindListeners').callsFake(() => {
                 controller.currentThread = thread2;
             });
 
