@@ -162,6 +162,10 @@ class AnnotationThread extends EventEmitter {
         this.saveAnnotationToThread(tempAnnotation);
         this.state = STATES.inactive;
 
+        if (this.dialog) {
+            this.dialog.disable(tempAnnotation.annotationID);
+        }
+
         // Save annotation on server
         return this.annotationService
             .create(annotationData)
@@ -508,6 +512,7 @@ class AnnotationThread extends EventEmitter {
             // Remove temporary annotation and replace it with the saved annotation
             this.dialog.addAnnotation(savedAnnotation);
             this.dialog.removeAnnotation(tempAnnotation.annotationID);
+            this.dialog.enable(savedAnnotation.annotationID);
         }
 
         if (this.isMobile) {
