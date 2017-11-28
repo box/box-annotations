@@ -6,9 +6,9 @@ import {
     DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
-} from '../annotationConstants';
-import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docAnnotatorUtil';
-import { createLocation, getScale } from '../annotatorUtil';
+} from '../constants';
+import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
+import { createLocation, getScale } from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */

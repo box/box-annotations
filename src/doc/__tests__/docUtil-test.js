@@ -1,23 +1,23 @@
 /* eslint-disable no-unused-expressions */
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
+import * as docUtil from '../docUtil';
 import {
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_CONTAINER,
     CLASS_ANNOTATION_DIALOG,
     DATA_TYPE_ANNOTATION_DIALOG
-} from '../../annotationConstants';
-import * as annotatorUtil from '../../annotatorUtil';
+} from '../../constants';
+import * as util from '../../util';
 
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('doc/docAnnotatorUtil', () => {
+describe('doc/docUtil', () => {
     before(() => {
         fixture.setBase('src');
     });
 
     beforeEach(() => {
-        fixture.load('doc/__tests__/docAnnotatorUtil-test.html');
+        fixture.load('doc/__tests__/docUtil-test.html');
     });
 
     afterEach(() => {
@@ -29,33 +29,33 @@ describe('doc/docAnnotatorUtil', () => {
     describe('isPresentation()', () => {
         it('should return false if annotatedElement is a document', () => {
             const docEl = document.querySelector('.annotatedElement');
-            const result = docAnnotatorUtil.isPresentation(docEl);
+            const result = docUtil.isPresentation(docEl);
             expect(result).to.be.false;
         });
 
         it('should return true if annotatedElement is a presentation', () => {
             const docEl = document.querySelector('.annotatedElement');
             docEl.classList.add('bp-doc-presentation');
-            const result = docAnnotatorUtil.isPresentation(docEl);
+            const result = docUtil.isPresentation(docEl);
             expect(result).to.be.true;
         });
     });
 
     describe('isInDialog()', () => {
         it('should return false if no dialog element exists', () => {
-            const result = annotatorUtil.isInDialog({ clientX: 8, clientY: 8 });
+            const result = util.isInDialog({ clientX: 8, clientY: 8 });
             expect(result).to.be.false;
         });
 
         it('should return true if the event is in the given dialog', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            const result = annotatorUtil.isInDialog({ clientX: 8, clientY: 8 }, dialogEl);
+            const result = util.isInDialog({ clientX: 8, clientY: 8 }, dialogEl);
             expect(result).to.be.true;
         });
 
         it('should return false if the event is in the given dialog', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            const result = annotatorUtil.isInDialog({ clientX: 100, clientY: 100 }, dialogEl);
+            const result = util.isInDialog({ clientX: 100, clientY: 100 }, dialogEl);
             expect(result).to.be.false;
         });
     });
@@ -64,7 +64,7 @@ describe('doc/docAnnotatorUtil', () => {
         it('should return false if no annotation dialog is open', () => {
             const currDialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
             currDialogEl.classList.add('bp-is-hidden');
-            const result = docAnnotatorUtil.hasActiveDialog(document);
+            const result = docUtil.hasActiveDialog(document);
             expect(result).to.be.false;
         });
 
@@ -77,7 +77,7 @@ describe('doc/docAnnotatorUtil', () => {
             openDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
             docEl.appendChild(openDialogEl);
 
-            const result = docAnnotatorUtil.hasActiveDialog(document);
+            const result = docUtil.hasActiveDialog(document);
             expect(result).to.be.true;
         });
     });
@@ -85,12 +85,12 @@ describe('doc/docAnnotatorUtil', () => {
     describe('isPointInPolyOpt()', () => {
         it('should return true if point is inside polygon', () => {
             const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
-            expect(docAnnotatorUtil.isPointInPolyOpt(polygon, 50, 50)).to.be.true;
+            expect(docUtil.isPointInPolyOpt(polygon, 50, 50)).to.be.true;
         });
 
         it('should return false if point is outside polygon', () => {
             const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
-            expect(docAnnotatorUtil.isPointInPolyOpt(polygon, 120, 50)).to.be.false;
+            expect(docUtil.isPointInPolyOpt(polygon, 120, 50)).to.be.false;
         });
     });
 
@@ -101,11 +101,11 @@ describe('doc/docAnnotatorUtil', () => {
             range.selectNode(barEl.childNodes[0]);
             const selection = window.getSelection();
             selection.addRange(range);
-            expect(docAnnotatorUtil.isSelectionPresent()).to.be.true;
+            expect(docUtil.isSelectionPresent()).to.be.true;
         });
 
         it('should return false if there is no non-empty selection on the page', () => {
-            expect(docAnnotatorUtil.isSelectionPresent()).to.be.false;
+            expect(docUtil.isSelectionPresent()).to.be.false;
         });
     });
 
@@ -115,7 +115,7 @@ describe('doc/docAnnotatorUtil', () => {
 
             // 300 * 4/3 * 0.5, 1000 - 300 * 4/3 * 0.5
             const expected = [200, 800];
-            expect(docAnnotatorUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
+            expect(docUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
         });
     });
 
@@ -125,7 +125,7 @@ describe('doc/docAnnotatorUtil', () => {
 
             // 400 * 3/4 / 0.5 to fixed 4, (1000 - 400) * 3/4 / 0.5 to fixed 4
             const expected = [Number(600).toFixed(4), Number(900).toFixed(4)];
-            expect(docAnnotatorUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
+            expect(docUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
         });
     });
 
@@ -144,20 +144,20 @@ describe('doc/docAnnotatorUtil', () => {
             annotatedEl.style.height = '1030px';
             annotatedEl.style.width = '600px';
 
-            expect(docAnnotatorUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).to.deep.equals([400, 600]);
+            expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).to.deep.equals([400, 600]);
         });
     });
 
     describe('getLowerRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
 
-        expect(docAnnotatorUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([10, 0]);
+        expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([10, 0]);
     });
 
     describe('getTopRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
 
-        expect(docAnnotatorUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([0, 0]);
+        expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([0, 0]);
     });
 
     describe('isValidSelection', () => {
@@ -167,7 +167,7 @@ describe('doc/docAnnotatorUtil', () => {
                 isCollapsed: false,
                 toString: () => 'I am valid!'
             };
-            expect(docAnnotatorUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).to.be.false;
         });
 
         it('should return false if the selection isn\'t collapsed', () => {
@@ -176,7 +176,7 @@ describe('doc/docAnnotatorUtil', () => {
                 isCollapsed: true,
                 toString: () => 'I am valid!'
             };
-            expect(docAnnotatorUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).to.be.false;
         });
 
         it('should return false if the selection is empty', () => {
@@ -185,7 +185,7 @@ describe('doc/docAnnotatorUtil', () => {
                 isCollapsed: false,
                 toString: () => ''
             };
-            expect(docAnnotatorUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).to.be.false;
         });
 
         it('should return true if the selection is valid', () => {
@@ -194,7 +194,7 @@ describe('doc/docAnnotatorUtil', () => {
                 isCollapsed: false,
                 toString: () => 'I am valid!'
             };
-            expect(docAnnotatorUtil.isValidSelection(selection)).to.be.true;
+            expect(docUtil.isValidSelection(selection)).to.be.true;
         });
     });
 
@@ -223,7 +223,7 @@ describe('doc/docAnnotatorUtil', () => {
         });
 
         it('should adjust canvas height and width and return the scaled canvas', () => {
-            const scaledCanvas = docAnnotatorUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
+            const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
             expect(scaledCanvas.width).equals(width);
             expect(scaledCanvas.height).equals(stubs.canvasHeight);
             expect(scaledCanvas.style.width).not.equals(`${width}px`);
@@ -234,7 +234,7 @@ describe('doc/docAnnotatorUtil', () => {
             const pxRatio = 2;
             window.devicePixelRatio = pxRatio;
 
-            const scaledCanvas = docAnnotatorUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
+            const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
 
             expect(scaledCanvas.width).equals(width * pxRatio);
             expect(scaledCanvas.height).equals(stubs.canvasHeight * pxRatio);
@@ -262,17 +262,17 @@ describe('doc/docAnnotatorUtil', () => {
                 insertBefore: sandbox.stub()
             };
 
-            sandbox.stub(docAnnotatorUtil, 'scaleCanvas').returns(stubs.annotationLayer);
+            sandbox.stub(docUtil, 'scaleCanvas').returns(stubs.annotationLayer);
         });
 
         it('should return null if there is no pageEl', () => {
-            const result = docAnnotatorUtil.getContext(null, 'random-class-name', 0, 0);
+            const result = docUtil.getContext(null, 'random-class-name', 0, 0);
             expect(result).to.equal(null);
         });
 
         it('should not insert into the pageEl if the annotationLayerEl already exists', () => {
             stubs.pageEl.querySelector.returns(stubs.annotationLayer);
-            docAnnotatorUtil.getContext(stubs.pageEl, 'random-class-name');
+            docUtil.getContext(stubs.pageEl, 'random-class-name');
             expect(stubs.annotationLayer.getContext).to.be.called;
             expect(stubs.pageEl.insertBefore).to.not.be.called;
         });
@@ -284,7 +284,7 @@ describe('doc/docAnnotatorUtil', () => {
             stubs.pageEl.getBoundingClientRect.returns({ width: 0, height: 0 });
             const docStub = sandbox.stub(document, 'createElement').returns(stubs.annotationLayer);
 
-            docAnnotatorUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
+            docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
             expect(docStub).to.be.called;
             expect(stubs.annotationLayer.getContext).to.be.called;
             expect(stubs.annotationLayer.classList.add).to.be.called;
@@ -299,20 +299,20 @@ describe('doc/docAnnotatorUtil', () => {
             const truePageEl = document.querySelector(`.page[data-page-number="${page}"]`);
             docEl.appendChild(truePageEl);
 
-            const pageEl = docAnnotatorUtil.getPageEl(docEl, page);
+            const pageEl = docUtil.getPageEl(docEl, page);
             expect(pageEl).equals(truePageEl);
         });
     });
 
     describe('isDialogDataType()', () => {
         it('should return true if the mouse event occured in a highlight dialog', () => {
-            sandbox.stub(annotatorUtil, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
-            expect(docAnnotatorUtil.isDialogDataType({})).to.be.true;
+            sandbox.stub(util, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
+            expect(docUtil.isDialogDataType({})).to.be.true;
         });
 
         it('should return false if the mouse event occured outside a highlight dialog', () => {
-            sandbox.stub(annotatorUtil, 'findClosestDataType').returns('something');
-            expect(docAnnotatorUtil.isDialogDataType({})).to.be.false;
+            sandbox.stub(util, 'findClosestDataType').returns('something');
+            expect(docUtil.isDialogDataType({})).to.be.false;
         });
     });
 });

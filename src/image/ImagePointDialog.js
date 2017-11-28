@@ -1,5 +1,5 @@
 import AnnotationDialog from '../AnnotationDialog';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
@@ -18,7 +18,7 @@ class ImagePointDialog extends AnnotationDialog {
     position() {
         // Show dialog so we can get width
         this.annotatedElement.appendChild(this.element);
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
         const dialogDimensions = this.element.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
 
@@ -39,7 +39,7 @@ class ImagePointDialog extends AnnotationDialog {
             imageEl.clientWidth > this.annotatedElement.clientWidth
                 ? imageEl.clientWidth
                 : this.annotatedElement.clientWidth;
-        dialogLeftX = annotatorUtil.repositionCaret(this.element, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth);
+        dialogLeftX = util.repositionCaret(this.element, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth);
 
         // Position the dialog
         this.element.style.left = `${dialogLeftX}px`;

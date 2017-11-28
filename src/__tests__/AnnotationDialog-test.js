@@ -2,8 +2,8 @@
 import Annotation from '../Annotation';
 import AnnotationDialog from '../AnnotationDialog';
 import AnnotationService from '../AnnotationService';
-import * as annotatorUtil from '../annotatorUtil';
-import * as constants from '../annotationConstants';
+import * as util from '../util';
+import * as constants from '../constants';
 
 const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
@@ -112,7 +112,7 @@ describe('AnnotationDialog', () => {
             dialog.canAnnotate = false;
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
-            sandbox.stub(annotatorUtil, 'isElementInViewport').returns(true);
+            sandbox.stub(util, 'isElementInViewport').returns(true);
 
             dialog.show();
             expect(document.activeElement).to.have.class(CLASS_REPLY_TEXTAREA);
@@ -146,7 +146,7 @@ describe('AnnotationDialog', () => {
     describe('showMobileDialog()', () => {
         it('should populate the mobile dialog if using a mobile browser', () => {
             dialog.highlightDialogEl = null;
-            stubs.show = sandbox.stub(annotatorUtil, 'showElement');
+            stubs.show = sandbox.stub(util, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
 
             dialog.showMobileDialog();
@@ -159,7 +159,7 @@ describe('AnnotationDialog', () => {
         it('should reset the annotation dialog to be a plain highlight if no comments are present', () => {
             dialog.highlightDialogEl = {};
             sandbox.stub(dialog.element, 'querySelectorAll').withArgs('.annotation-comment').returns([]);
-            stubs.show = sandbox.stub(annotatorUtil, 'showElement');
+            stubs.show = sandbox.stub(util, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
             dialog.showMobileDialog();
 
@@ -170,14 +170,14 @@ describe('AnnotationDialog', () => {
     describe('hideMobileDialog()', () => {
         it('should do nothing if the dialog element does not exist', () => {
             dialog.element = null;
-            stubs.hide = sandbox.stub(annotatorUtil, 'hideElement');
+            stubs.hide = sandbox.stub(util, 'hideElement');
             dialog.hideMobileDialog();
             expect(stubs.hide).to.not.be.called;
         });
 
         it('should hide and reset the mobile annotations dialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
-            stubs.hide = sandbox.stub(annotatorUtil, 'hideElement');
+            stubs.hide = sandbox.stub(util, 'hideElement');
             stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
             stubs.cancel = sandbox.stub(dialog, 'cancelAnnotation');
             dialog.hasAnnotations = true;
@@ -208,9 +208,9 @@ describe('AnnotationDialog', () => {
     describe('hide()', () => {
         it('should do nothing if element is already hidden', () => {
             dialog.element.classList.add(constants.CLASS_HIDDEN);
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
             dialog.hide();
-            expect(annotatorUtil.hideElement).to.not.have.called;
+            expect(util.hideElement).to.not.have.called;
         });
 
         it('should hide dialog immediately', () => {
@@ -502,7 +502,7 @@ describe('AnnotationDialog', () => {
 
     describe('mouseenterHandler()', () => {
         beforeEach(() => {
-            stubs.show = sandbox.stub(annotatorUtil, 'showElement');
+            stubs.show = sandbox.stub(util, 'showElement');
             stubs.activate = sandbox.stub(dialog, 'activateReply');
         });
 
@@ -510,13 +510,13 @@ describe('AnnotationDialog', () => {
             dialog.element.classList.add(constants.CLASS_HIDDEN);
 
             dialog.mouseenterHandler();
-            expect(annotatorUtil.showElement).to.be.called;
+            expect(util.showElement).to.be.called;
             expect(stubs.activate).to.be.called;
         });
 
         it('should do nothing if the element is already shown', () => {
             dialog.mouseenterHandler();
-            expect(annotatorUtil.showElement).to.not.be.called;
+            expect(util.showElement).to.not.be.called;
             expect(stubs.activate).to.be.called;
         });
 
@@ -616,7 +616,7 @@ describe('AnnotationDialog', () => {
             stubs.cancel = sandbox.stub(dialog, 'cancelAnnotation');
             stubs.deactivate = sandbox.stub(dialog, 'deactivateReply');
             stubs.activate = sandbox.stub(dialog, 'activateReply');
-            stubs.findClosest = sandbox.stub(annotatorUtil, 'findClosestDataType');
+            stubs.findClosest = sandbox.stub(util, 'findClosestDataType');
             stubs.showDelete = sandbox.stub(dialog, 'showDeleteConfirmation');
             stubs.hideDelete = sandbox.stub(dialog, 'hideDeleteConfirmation');
             stubs.delete = sandbox.stub(dialog, 'deleteAnnotation');
@@ -856,18 +856,18 @@ describe('AnnotationDialog', () => {
     describe('activateReply()', () => {
         it('should do nothing if the dialogEl does not exist', () => {
             dialog.dialogEl = null;
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
             dialog.activateReply();
-            expect(annotatorUtil.showElement).to.not.be.called;
+            expect(util.showElement).to.not.be.called;
         });
 
         it('should do nothing if reply textarea is already active', () => {
             const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
             replyTextEl.classList.add('bp-is-active');
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
 
             dialog.activateReply();
-            expect(annotatorUtil.showElement).to.not.be.called;
+            expect(util.showElement).to.not.be.called;
         });
 
         it('should show the correct UI when the reply textarea is activated', () => {
@@ -890,10 +890,10 @@ describe('AnnotationDialog', () => {
     describe('deactivateReply()', () => {
         it('should do nothing if element does not exist', () => {
             dialog.dialogEl = null;
-            sandbox.stub(annotatorUtil, 'resetTextarea');
+            sandbox.stub(util, 'resetTextarea');
 
             dialog.deactivateReply();
-            expect(annotatorUtil.resetTextarea).to.not.be.called;
+            expect(util.resetTextarea).to.not.be.called;
         });
 
         it('should show the correct UI when the reply textarea is deactivated', () => {
@@ -977,7 +977,7 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: true }
                 })
             );
-            const showElementStub = sandbox.stub(annotatorUtil, 'showElement');
+            const showElementStub = sandbox.stub(util, 'showElement');
 
             dialog.showDeleteConfirmation(1);
             expect(showElementStub).to.be.called;
@@ -994,7 +994,7 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: true }
                 })
             );
-            const hideElementStub = sandbox.stub(annotatorUtil, 'hideElement');
+            const hideElementStub = sandbox.stub(util, 'hideElement');
             dialog.showDeleteConfirmation(1);
 
             dialog.hideDeleteConfirmation(1);

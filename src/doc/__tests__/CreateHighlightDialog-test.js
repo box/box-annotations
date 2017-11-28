@@ -6,9 +6,9 @@ import {
     CLASS_ANNOTATION_CARET,
     CLASS_HIDDEN,
     CREATE_EVENT
-} from '../../annotationConstants';
+} from '../../constants';
 import CommentBox from '../../CommentBox';
-import * as annotatorUtil from '../../annotatorUtil';
+import * as util from '../../util';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
@@ -140,7 +140,7 @@ describe('doc/CreateHighlightDialog', () => {
             const width = dialog.containerEl.clientWidth;
             const x = 50;
             dialog.position.x = x;
-            sandbox.stub(annotatorUtil, 'repositionCaret').returns(x);
+            sandbox.stub(util, 'repositionCaret').returns(x);
             dialog.updatePosition();
             expect(dialog.containerEl.style.left).to.equal(`${x}px`);
         });

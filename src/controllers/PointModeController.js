@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { TYPES, THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT } from '../annotationConstants';
+import { TYPES, THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 
 class PointModeController extends AnnotationModeController {

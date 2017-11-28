@@ -1,4 +1,4 @@
-import { createLocation, round } from '../annotatorUtil';
+import { createLocation, round } from '../util';
 
 class DrawingPath {
     //--------------------------------------------------------------------------

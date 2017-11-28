@@ -2,15 +2,15 @@
 import DocHighlightDialog from '../DocHighlightDialog';
 import DocHighlightThread from '../DocHighlightThread';
 import AnnotationService from '../../AnnotationService';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
+import * as util from '../../util';
+import * as docUtil from '../docUtil';
 import {
     STATES,
     TYPES,
     HIGHLIGHT_FILL,
     SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
     SELECTOR_ANNOTATION_DIALOG
-} from '../../annotationConstants';
+} from '../../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();
@@ -187,11 +187,11 @@ describe('doc/DocHighlightThread', () => {
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
                 value: sandbox.stub()
             });
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
 
             plainHighlightThread.deleteAnnotation(1);
 
-            expect(annotatorUtil.hideElement).to.be.called;
+            expect(util.hideElement).to.be.called;
         });
 
         it('should display the add highlight button if the user has permissions', () => {
@@ -217,11 +217,11 @@ describe('doc/DocHighlightThread', () => {
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
                 value: sandbox.stub()
             });
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
 
             plainHighlightThread.deleteAnnotation(1);
 
-            expect(annotatorUtil.hideElement).to.not.be.called;
+            expect(util.hideElement).to.not.be.called;
         });
     });
 
@@ -273,7 +273,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should return true if mouse event is over highlight dialog', () => {
             sandbox.stub(thread, 'isInHighlight').returns(false);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(true);
+            sandbox.stub(util, 'isInDialog').returns(true);
 
             const result = thread.isOnHighlight({});
 
@@ -282,7 +282,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should return false if mouse event is neither over the highlight or the dialog', () => {
             sandbox.stub(thread, 'isInHighlight').returns(false);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(false);
+            sandbox.stub(util, 'isInDialog').returns(false);
 
             const result = thread.isOnHighlight({});
 
@@ -292,7 +292,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('activateDialog()', () => {
         it('should set to hover and trigger dialog mouseenter event if thread is not in the active or active-hover state', () => {
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(true);
+            sandbox.stub(util, 'isInDialog').returns(true);
             sandbox.stub(thread.dialog, 'mouseenterHandler');
             thread.state = STATES.inactive;
 
@@ -304,7 +304,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should ensure element is set up before calling mouse events', () => {
             thread.dialog.element = null;
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(true);
+            sandbox.stub(util, 'isInDialog').returns(true);
             sandbox.stub(thread.dialog, 'setup');
             sandbox.stub(thread.dialog, 'mouseenterHandler');
 
@@ -316,7 +316,7 @@ describe('doc/DocHighlightThread', () => {
     describe('onMousemove()', () => {
         it('should delay drawing highlight if mouse is hovering over a highlight dialog and not pending comment', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(true);
+            sandbox.stub(util, 'isInDialog').returns(true);
             thread.state = STATES.inactive;
 
             const result = thread.onMousemove({});
@@ -327,7 +327,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should do nothing if mouse is hovering over a highlight dialog and pending comment', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(true);
+            sandbox.stub(util, 'isInDialog').returns(true);
             sandbox.stub(thread, 'activateDialog');
             thread.state = STATES.pending_active;
 
@@ -339,7 +339,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should delay drawing highlight if mouse is hovering over a highlight', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(false);
+            sandbox.stub(util, 'isInDialog').returns(false);
             sandbox.stub(thread, 'isInHighlight').returns(true);
             sandbox.stub(thread, 'activateDialog');
             thread.state = STATES.hover;
@@ -352,7 +352,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should not delay drawing highlight if mouse is not in highlight and the state is not already inactive', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(false);
+            sandbox.stub(util, 'isInDialog').returns(false);
             sandbox.stub(thread, 'isInHighlight').returns(false);
             thread.state = STATES.hover;
 
@@ -364,7 +364,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should not delay drawing highlight if the state is already inactive', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(annotatorUtil, 'isInDialog').returns(false);
+            sandbox.stub(util, 'isInDialog').returns(false);
             sandbox.stub(thread, 'isInHighlight').returns(false);
             thread.state = STATES.inactive;
 
@@ -522,12 +522,12 @@ describe('doc/DocHighlightThread', () => {
     describe('draw()', () => {
         it('should not draw if no context exists', () => {
             sandbox.stub(thread, 'getPageEl');
-            sandbox.stub(docAnnotatorUtil, 'getContext').returns(null);
-            sandbox.stub(annotatorUtil, 'getScale');
+            sandbox.stub(docUtil, 'getContext').returns(null);
+            sandbox.stub(util, 'getScale');
 
             thread.draw('fill');
             expect(thread.pageEl).to.be.undefined;
-            expect(annotatorUtil.getScale).to.not.be.called;
+            expect(util.getScale).to.not.be.called;
         });
     });
 
@@ -538,11 +538,11 @@ describe('doc/DocHighlightThread', () => {
             };
             pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
             const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(annotatorUtil, 'getDimensionScale').returns(false);
+            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
             const convertStub = sandbox
-                .stub(docAnnotatorUtil, 'convertPDFSpaceToDOMSpace')
+                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
                 .returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
@@ -558,11 +558,11 @@ describe('doc/DocHighlightThread', () => {
             };
             pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
             const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(annotatorUtil, 'getDimensionScale').returns(true);
+            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(true);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
             const convertStub = sandbox
-                .stub(docAnnotatorUtil, 'convertPDFSpaceToDOMSpace')
+                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
                 .returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
@@ -578,13 +578,13 @@ describe('doc/DocHighlightThread', () => {
             };
             pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
             const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(annotatorUtil, 'getDimensionScale').returns(false);
+            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
             const convertStub = sandbox
-                .stub(docAnnotatorUtil, 'convertPDFSpaceToDOMSpace')
+                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
                 .returns([0, 0, 0, 0, 0, 0, 0, 0]);
-            const pointInPolyStub = sandbox.stub(docAnnotatorUtil, 'isPointInPolyOpt');
+            const pointInPolyStub = sandbox.stub(docUtil, 'isPointInPolyOpt');
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
             expect(pageElStub).to.be.called;

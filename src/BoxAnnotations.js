@@ -3,8 +3,8 @@ import ImageAnnotator from './image/ImageAnnotator';
 import DrawingModeController from './controllers/DrawingModeController';
 import PointModeController from './controllers/PointModeController';
 import HighlightModeController from './controllers/HighlightModeController';
-import { TYPES } from './annotationConstants';
-import { canLoadAnnotations } from './annotatorUtil';
+import { TYPES } from './constants';
+import { canLoadAnnotations } from './util';
 
 /**
  * NAME: The name of the annotator.

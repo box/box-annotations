@@ -2,9 +2,9 @@
 import DocPointDialog from '../DocPointDialog';
 import DocPointThread from '../DocPointThread';
 import AnnotationThread from '../../AnnotationThread';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
-import { STATES } from '../../annotationConstants';
+import * as util from '../../util';
+import * as docUtil from '../docUtil';
+import { STATES } from '../../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();
@@ -38,7 +38,7 @@ describe('doc/DocPointThread', () => {
 
     describe('showDialog', () => {
         it('should not call parent showDialog if user can annotate and there is a selection present', () => {
-            sandbox.stub(docAnnotatorUtil, 'isSelectionPresent').returns(true);
+            sandbox.stub(docUtil, 'isSelectionPresent').returns(true);
 
             // This stubs out a parent method by forcing the method we care about
             // in the prototype of the prototype of DocPointThread (ie
@@ -64,7 +64,7 @@ describe('doc/DocPointThread', () => {
         });
 
         it('should call parent showDialog if there isn\'t a selection present', () => {
-            sandbox.stub(docAnnotatorUtil, 'isSelectionPresent').returns(false);
+            sandbox.stub(docUtil, 'isSelectionPresent').returns(false);
             Object.defineProperty(Object.getPrototypeOf(DocPointThread.prototype), 'showDialog', {
                 value: sandbox.stub()
             });
@@ -77,24 +77,24 @@ describe('doc/DocPointThread', () => {
 
     describe('show', () => {
         beforeEach(() => {
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
             sandbox.stub(thread, 'showDialog');
         });
 
         it('should show the thread', () => {
-            sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
 
-            expect(docAnnotatorUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
+            expect(docUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
                 thread.location,
                 thread.annotatedElement
             );
-            expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
+            expect(util.showElement).to.be.calledWith(thread.element);
         });
 
         it('should show the dialog if the state is pending', () => {
-            sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.state = STATES.pending;
             thread.show();
@@ -103,7 +103,7 @@ describe('doc/DocPointThread', () => {
         });
 
         it('should not show the dialog if the state is not pending', () => {
-            sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.state = STATES.inactive;
             thread.show();

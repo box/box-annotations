@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import BoxAnnotations from '../BoxAnnotations';
-import { TYPES } from '../annotationConstants';
-import * as annotatorUtil from '../annotatorUtil';
+import { TYPES } from '../constants';
+import * as util from '../util';
 import DrawingModeController from '../controllers/DrawingModeController';
 import PointModeController from '../controllers/PointModeController';
 import HighlightModeController from '../controllers/HighlightModeController';
@@ -129,7 +129,7 @@ describe('BoxAnnotations', () => {
     describe('determineAnnotator()', () => {
         beforeEach(() => {
             stubs.instantiateControllers = sandbox.stub(loader, 'instantiateControllers');
-            stubs.canLoad = sandbox.stub(annotatorUtil, 'canLoadAnnotations').returns(true);
+            stubs.canLoad = sandbox.stub(util, 'canLoadAnnotations').returns(true);
 
             stubs.annotator = {
                 NAME: 'Document',

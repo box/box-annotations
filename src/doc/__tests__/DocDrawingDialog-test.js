@@ -1,5 +1,5 @@
-import * as annotatorUtil from '../../annotatorUtil';
-import * as constants from '../../annotationConstants';
+import * as util from '../../util';
+import * as constants from '../../constants';
 import DocDrawingDialog from '../DocDrawingDialog';
 
 let dialog;
@@ -206,12 +206,12 @@ describe('doc/DocDrawingDialog', () => {
         it('should hide the element with css', () => {
             const element = 'e';
 
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
             dialog.element = element;
             expect(dialog.visible).to.be.truthy;
 
             dialog.hide();
-            expect(annotatorUtil.hideElement).to.be.calledWith(element);
+            expect(util.hideElement).to.be.calledWith(element);
             expect(dialog.visible).to.be.falsy;
         });
     });
@@ -220,12 +220,12 @@ describe('doc/DocDrawingDialog', () => {
         it('should show the element with css', () => {
             const element = 'e';
 
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
             dialog.element = element;
             expect(dialog.visible).to.be.falsy;
 
             dialog.show();
-            expect(annotatorUtil.showElement).to.be.calledWith(element);
+            expect(util.showElement).to.be.calledWith(element);
             expect(dialog.visible).to.be.truthy;
         });
     });
@@ -242,7 +242,7 @@ describe('doc/DocDrawingDialog', () => {
                     can_delete: true
                 }
             }
-            stubs.getFirstAnnotation = sandbox.stub(annotatorUtil, 'getFirstAnnotation').returns(annotation);
+            stubs.getFirstAnnotation = sandbox.stub(util, 'getFirstAnnotation').returns(annotation);
         });
 
         it('should generate the correctly formatted label dialog element', () => {
@@ -280,14 +280,14 @@ describe('doc/DocDrawingDialog', () => {
             dialog.drawingDialogEl = {
                 querySelector: sandbox.stub().returns(drawingLabelEl)
             };
-            sandbox.stub(annotatorUtil, 'replacePlaceholders').returns(notYaoMing);
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'replacePlaceholders').returns(notYaoMing);
+            sandbox.stub(util, 'showElement');
 
             dialog.assignDrawingLabel('non empty');
             expect(drawingLabelEl.textContent).to.equal(notYaoMing);
             expect(dialog.drawingDialogEl.querySelector).to.be.called;
-            expect(annotatorUtil.replacePlaceholders).to.be.called;
-            expect(annotatorUtil.showElement).to.be.called;
+            expect(util.replacePlaceholders).to.be.called;
+            expect(util.showElement).to.be.called;
         });
 
         it('should do nothing when given an invalid annotation or does not have a dialog', () => {

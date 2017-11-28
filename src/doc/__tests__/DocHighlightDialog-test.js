@@ -2,10 +2,9 @@
 import DocHighlightDialog from '../DocHighlightDialog';
 import Annotation from '../../Annotation';
 import AnnotationDialog from '../../AnnotationDialog';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
-import * as util from '../../annotatorUtil';
-import * as constants from '../../annotationConstants';
+import * as util from '../../util';
+import * as docUtil from '../docUtil';
+import * as constants from '../../constants';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -265,8 +264,8 @@ describe('doc/DocHighlightDialog', () => {
         beforeEach(() => {
             stubs.scaled = sandbox.stub(dialog, 'getScaledPDFCoordinates').returns([150, 2]);
             stubs.width = sandbox.stub(dialog, 'getDialogWidth');
-            stubs.caret = sandbox.stub(annotatorUtil, 'repositionCaret');
-            stubs.show = sandbox.stub(annotatorUtil, 'showElement');
+            stubs.caret = sandbox.stub(util, 'repositionCaret');
+            stubs.show = sandbox.stub(util, 'showElement');
             stubs.fit = sandbox.stub(dialog, 'fitDialogHeightInPage');
         });
 
@@ -322,7 +321,7 @@ describe('doc/DocHighlightDialog', () => {
             const commentsDialogEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
             commentsDialogEl.classList.add(constants.CLASS_HIDDEN);
 
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
             sandbox.stub(dialog, 'position');
 
             dialog.toggleHighlightDialogs();
@@ -335,7 +334,7 @@ describe('doc/DocHighlightDialog', () => {
             const commentsDialogEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
             commentsDialogEl.classList.remove(constants.CLASS_HIDDEN);
 
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
             sandbox.stub(dialog, 'position');
 
             dialog.toggleHighlightDialogs();
@@ -394,8 +393,8 @@ describe('doc/DocHighlightDialog', () => {
                 },
                 threadNumber: 1
             });
-            stubs.show = sandbox.stub(annotatorUtil, 'showElement');
-            stubs.hide = sandbox.stub(annotatorUtil, 'hideElement');
+            stubs.show = sandbox.stub(util, 'showElement');
+            stubs.hide = sandbox.stub(util, 'hideElement');
         });
 
         it('should create a dialog element if it does not already exist', () => {
@@ -453,7 +452,7 @@ describe('doc/DocHighlightDialog', () => {
         });
 
         it('should setup and show plain highlight dialog', () => {
-            sandbox.stub(annotatorUtil, 'isPlainHighlight').returns(true);
+            sandbox.stub(util, 'isPlainHighlight').returns(true);
             dialog.setup([stubs.annotation]);
             expect(stubs.show).to.be.called;
         });
@@ -559,7 +558,7 @@ describe('doc/DocHighlightDialog', () => {
         };
 
         beforeEach(() => {
-            stubs.dataType = sandbox.stub(annotatorUtil, 'findClosestDataType');
+            stubs.dataType = sandbox.stub(util, 'findClosestDataType');
             sandbox.stub(dialog, 'toggleHighlight');
             sandbox.stub(dialog, 'toggleHighlightCommentsReply');
             sandbox.stub(dialog, 'toggleHighlightDialogs');
@@ -633,13 +632,13 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should focus the add comment area if it exists', () => {
             stubs.textMock.expects('focus');
-            sandbox.stub(annotatorUtil, 'isElementInViewport').returns(true);
+            sandbox.stub(util, 'isElementInViewport').returns(true);
             dialog.focusAnnotationsTextArea();
         });
 
         it('should do nothing if the add comment area does not exist', () => {
             stubs.textMock.expects('focus').never();
-            sandbox.stub(annotatorUtil, 'isElementInViewport').returns(false);
+            sandbox.stub(util, 'isElementInViewport').returns(false);
             dialog.focusAnnotationsTextArea();
         });
     });
@@ -667,9 +666,9 @@ describe('doc/DocHighlightDialog', () => {
         it('should lower right corner coordinates of dialog when a highlight does not have comments', () => {
             dialog.hasComments = false;
 
-            sandbox.stub(annotatorUtil, 'getScale').returns(1);
-            sandbox.stub(annotatorUtil, 'getDimensionScale');
-            stubs.corner = sandbox.stub(docAnnotatorUtil, 'getLowerRightCornerOfLastQuadPoint').returns([200, 2]);
+            sandbox.stub(util, 'getScale').returns(1);
+            sandbox.stub(util, 'getDimensionScale');
+            stubs.corner = sandbox.stub(docUtil, 'getLowerRightCornerOfLastQuadPoint').returns([200, 2]);
 
             dialog.getScaledPDFCoordinates({}, 100);
 

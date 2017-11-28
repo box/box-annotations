@@ -1,8 +1,8 @@
 import AnnotationThread from '../AnnotationThread';
 import DocPointDialog from './DocPointDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as docAnnotatorUtil from './docAnnotatorUtil';
-import { STATES } from '../annotationConstants';
+import * as util from '../util';
+import * as docUtil from './docUtil';
+import { STATES } from '../constants';
 
 const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -22,7 +22,7 @@ class DocPointThread extends AnnotationThread {
      */
     showDialog() {
         // Don't show dialog if user can annotate and there is a current selection
-        if (this.permissions.canAnnotate && docAnnotatorUtil.isSelectionPresent()) {
+        if (this.permissions.canAnnotate && docUtil.isSelectionPresent()) {
             return;
         }
 
@@ -42,10 +42,7 @@ class DocPointThread extends AnnotationThread {
     show() {
         const pageEl =
             this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
-        const [browserX, browserY] = docAnnotatorUtil.getBrowserCoordinatesFromLocation(
-            this.location,
-            this.annotatedElement
-        );
+        const [browserX, browserY] = docUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to page
         this.element.style.left = `${browserX - POINT_ANNOTATION_ICON_WIDTH / 2}px`;
@@ -56,7 +53,7 @@ class DocPointThread extends AnnotationThread {
             PAGE_PADDING_TOP}px`;
         pageEl.appendChild(this.element);
 
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
 
         if (this.state !== STATES.pending || (this.isMobile && Object.keys(this.annotations).length === 0)) {
             return;

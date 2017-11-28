@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
-import { getFirstAnnotation } from '../annotatorUtil';
+import { getFirstAnnotation } from '../util';
 import {
     STATES,
     DRAW_STATES,
@@ -10,7 +10,7 @@ import {
     DRAW_BORDER_OFFSET,
     DRAW_DASHED_SPACING,
     THREAD_EVENT
-} from '../annotationConstants';
+} from '../constants';
 
 class DrawingThread extends AnnotationThread {
     /** @property {number} - Drawing state */

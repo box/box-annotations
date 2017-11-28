@@ -1,7 +1,7 @@
 import rbush from 'rbush';
 import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
-import * as annotatorUtil from '../../annotatorUtil';
+import * as util from '../../util';
 import {
     THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
@@ -12,7 +12,7 @@ import {
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
-} from '../../annotationConstants';
+} from '../../constants';
 
 let controller;
 let stubs = {};
@@ -237,7 +237,7 @@ describe('controllers/DrawingModeController', () => {
 
     describe('unbindListeners()', () => {
         it('should disable undo and redo buttons', () => {
-            sandbox.stub(annotatorUtil, 'disableElement');
+            sandbox.stub(util, 'disableElement');
             sandbox.stub(controller, 'bindDOMListeners');
 
             controller.annotatedElement = document.createElement('div');
@@ -245,8 +245,8 @@ describe('controllers/DrawingModeController', () => {
             controller.redoButtonEl = 'test2';
 
             controller.unbindListeners();
-            expect(annotatorUtil.disableElement).to.be.calledWith(controller.undoButtonEl);
-            expect(annotatorUtil.disableElement).to.be.calledWith(controller.redoButtonEl);
+            expect(util.disableElement).to.be.calledWith(controller.undoButtonEl);
+            expect(util.disableElement).to.be.calledWith(controller.redoButtonEl);
             expect(controller.bindDOMListeners);
         });
     });
@@ -455,8 +455,8 @@ describe('controllers/DrawingModeController', () => {
         beforeEach(() => {
             controller.undoButtonEl = 'undo';
             controller.redoButtonEl = 'redo';
-            stubs.enable = sandbox.stub(annotatorUtil, 'enableElement');
-            stubs.disable = sandbox.stub(annotatorUtil, 'disableElement');
+            stubs.enable = sandbox.stub(util, 'enableElement');
+            stubs.disable = sandbox.stub(util, 'disableElement');
         });
 
         it('should disable both when the counts are 0', () => {

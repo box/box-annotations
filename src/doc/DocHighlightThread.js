@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DocHighlightDialog from './DocHighlightDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as docAnnotatorUtil from './docAnnotatorUtil';
+import * as util from '../util';
+import * as docUtil from './docUtil';
 import {
     THREAD_EVENT,
     STATES,
@@ -11,7 +11,7 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM
-} from '../annotationConstants';
+} from '../constants';
 
 const HOVER_TIMEOUT_MS = 75;
 
@@ -33,7 +33,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     cancelFirstComment() {
-        if (annotatorUtil.isPlainHighlight(this.annotations)) {
+        if (util.isPlainHighlight(this.annotations)) {
             if (this.isMobile) {
                 this.dialog.hideCommentsDialog();
                 this.state = STATES.inactive;
@@ -114,7 +114,7 @@ class DocHighlightThread extends AnnotationThread {
 
         // Hide delete button on plain highlights if user doesn't have
         // permissions
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (!firstAnnotation) {
             return;
         }
@@ -122,7 +122,7 @@ class DocHighlightThread extends AnnotationThread {
         const hasComments = firstAnnotation.text !== '' || Object.keys(this.annotations).length > 1;
         if (hasComments && firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
             const addHighlightBtn = this.dialog.element.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN);
-            annotatorUtil.hideElement(addHighlightBtn);
+            util.hideElement(addHighlightBtn);
         }
     }
 
@@ -176,7 +176,7 @@ class DocHighlightThread extends AnnotationThread {
      * the annotations dialog
      */
     isOnHighlight(event) {
-        return annotatorUtil.isInDialog(event, this.dialog.element) || this.isInHighlight(event);
+        return util.isInDialog(event, this.dialog.element) || this.isInHighlight(event);
     }
 
     /**
@@ -207,7 +207,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     onMousemove(event) {
         // If mouse is in dialog, change state to hover or active-hover
-        if (annotatorUtil.isInDialog(event, this.dialog.element)) {
+        if (util.isInDialog(event, this.dialog.element)) {
             // Keeps dialog open if comment is pending
             if (this.state === STATES.pending_active) {
                 return false;
@@ -305,7 +305,7 @@ class DocHighlightThread extends AnnotationThread {
         });
 
         // Ensures that previously created annotations have the right type
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (!firstAnnotation) {
             return;
         }
@@ -385,7 +385,7 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (firstAnnotation) {
             this.deleteAnnotation(firstAnnotation.annotationID);
         }
@@ -442,7 +442,7 @@ class DocHighlightThread extends AnnotationThread {
     scrollIntoView() {
         this.scrollToPage();
 
-        const [yPos] = docAnnotatorUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
+        const [yPos] = docUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
 
         // Adjust scroll to highlight position
         this.adjustScroll(this.annotatedElement.scrollTop + yPos);
@@ -458,15 +458,15 @@ class DocHighlightThread extends AnnotationThread {
     /* istanbul ignore next */
     draw(fillStyle) {
         const pageEl = this.getPageEl();
-        const context = docAnnotatorUtil.getContext(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+        const context = docUtil.getContext(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
         if (!context) {
             return;
         }
 
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
-        const zoomScale = annotatorUtil.getScale(this.annotatedElement);
-        const dimensionScale = annotatorUtil.getDimensionScale(
+        const zoomScale = util.getScale(this.annotatedElement);
+        const dimensionScale = util.getDimensionScale(
             this.location.dimensions,
             pageDimensions,
             zoomScale,
@@ -482,7 +482,7 @@ class DocHighlightThread extends AnnotationThread {
                 });
             }
 
-            const browserQuadPoint = docAnnotatorUtil.convertPDFSpaceToDOMSpace(scaledQuadPoint, pageHeight, zoomScale);
+            const browserQuadPoint = docUtil.convertPDFSpaceToDOMSpace(scaledQuadPoint, pageHeight, zoomScale);
             const [x1, y1, x2, y2, x3, y3, x4, y4] = browserQuadPoint;
 
             context.fillStyle = fillStyle;
@@ -527,8 +527,8 @@ class DocHighlightThread extends AnnotationThread {
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
-        const zoomScale = annotatorUtil.getScale(this.annotatedElement);
-        const dimensionScale = annotatorUtil.getDimensionScale(
+        const zoomScale = util.getScale(this.annotatedElement);
+        const dimensionScale = util.getDimensionScale(
             this.location.dimensions,
             pageDimensions,
             zoomScale,
@@ -567,15 +567,11 @@ class DocHighlightThread extends AnnotationThread {
                 }
             }
 
-            const browserQuadPoint = docAnnotatorUtil.convertPDFSpaceToDOMSpace(scaledQuadPoint, pageHeight, zoomScale);
+            const browserQuadPoint = docUtil.convertPDFSpaceToDOMSpace(scaledQuadPoint, pageHeight, zoomScale);
 
             const [x1, y1, x2, y2, x3, y3, x4, y4] = browserQuadPoint;
 
-            eventOccurredInHighlight = docAnnotatorUtil.isPointInPolyOpt(
-                [[x1, y1], [x2, y2], [x3, y3], [x4, y4]],
-                x,
-                y
-            );
+            eventOccurredInHighlight = docUtil.isPointInPolyOpt([[x1, y1], [x2, y2], [x3, y3], [x4, y4]], x, y);
 
             index += 1;
         }
@@ -591,7 +587,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     getPageEl() {
         if (!this.pageEl) {
-            this.pageEl = docAnnotatorUtil.getPageEl(this.annotatedElement, this.location.page);
+            this.pageEl = docUtil.getPageEl(this.annotatedElement, this.location.page);
         }
         return this.pageEl;
     }

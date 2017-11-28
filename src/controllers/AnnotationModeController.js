@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { insertTemplate, isPending, addThreadToMap, removeThreadFromMap } from '../annotatorUtil';
+import { insertTemplate, isPending, addThreadToMap, removeThreadFromMap } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -7,7 +7,7 @@ import {
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT
-} from '../annotationConstants';
+} from '../constants';
 
 class AnnotationModeController extends EventEmitter {
     /** @property {Object} - Object containing annotation threads */
@@ -321,13 +321,13 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
-      * Setups the header for the annotation mode
-      *
-      * @protected
-      * @param {HTMLElement} container - Container element
-      * @param {HTMLElement} header - Header to add to DOM
-      * @return {void}
-      */
+     * Setups the header for the annotation mode
+     *
+     * @protected
+     * @param {HTMLElement} container - Container element
+     * @param {HTMLElement} header - Header to add to DOM
+     * @return {void}
+     */
     setupHeader(container, header) {
         const baseHeaderEl = container.firstElementChild;
         insertTemplate(container, header, baseHeaderEl);

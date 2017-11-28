@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as imageAnnotatorUtil from '../imageAnnotatorUtil';
+import * as util from '../../util';
+import * as imageUtil from '../imageUtil';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -42,14 +42,14 @@ describe('image/ImagePointDialog', () => {
     describe('position()', () => {
         it('should position the dialog at the right place and show it', () => {
             dialog.container = { clientHeight: 1 };
-            sandbox.stub(annotatorUtil, 'repositionCaret');
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'repositionCaret');
+            sandbox.stub(util, 'showElement');
             sandbox.stub(dialog, 'flipDialog').returns([]);
 
             dialog.position();
 
-            expect(annotatorUtil.repositionCaret).to.be.called;
-            expect(annotatorUtil.showElement).to.be.called;
+            expect(util.repositionCaret).to.be.called;
+            expect(util.showElement).to.be.called;
             expect(dialog.flipDialog).to.be.called;
         });
     });

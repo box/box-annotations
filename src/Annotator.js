@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import AnnotationService from './AnnotationService';
-import * as annotatorUtil from './annotatorUtil';
+import * as util from './util';
 import { ICON_CLOSE } from './icons/icons';
 import './Annotator.scss';
 import {
@@ -16,7 +16,7 @@ import {
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT
-} from './annotationConstants';
+} from './constants';
 
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -362,7 +362,7 @@ class Annotator extends EventEmitter {
         // Generate map of page to threads
         Object.keys(threadMap).forEach((threadID) => {
             const annotations = threadMap[threadID];
-            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            const firstAnnotation = util.getFirstAnnotation(annotations);
             if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
                 return;
             }
@@ -451,7 +451,7 @@ class Annotator extends EventEmitter {
         };
 
         // Set existing thread ID if created with annotations
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = util.getFirstAnnotation(annotations);
         if (firstAnnotation) {
             params.threadID = firstAnnotation.threadID;
             params.threadNumber = firstAnnotation.threadNumber;
@@ -585,9 +585,9 @@ class Annotator extends EventEmitter {
         const pointButtonSelector = this.modeButtons[TYPES.point].selector;
         const pointAnnotateButton = controller.getButton(pointButtonSelector);
         if (rotationAngle !== 0) {
-            annotatorUtil.hideElement(pointAnnotateButton);
+            util.hideElement(pointAnnotateButton);
         } else {
-            annotatorUtil.showElement(pointAnnotateButton);
+            util.showElement(pointAnnotateButton);
         }
     }
 
@@ -740,12 +740,12 @@ class Annotator extends EventEmitter {
                 this.bindDOMListeners();
                 break;
             case CONTROLLER_EVENT.register:
-                opt = annotatorUtil.addThreadToMap(data.data, this.threads);
+                opt = util.addThreadToMap(data.data, this.threads);
                 this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
                 break;
             case CONTROLLER_EVENT.unregister:
-                opt = annotatorUtil.removeThreadFromMap(data.data, this.threads);
+                opt = util.removeThreadFromMap(data.data, this.threads);
                 this.threads[opt.page] = opt.pageThreads;
                 this.emit(data.event, data.data);
                 break;

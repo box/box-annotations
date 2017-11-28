@@ -1,6 +1,6 @@
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
-import { generateBtn, repositionCaret } from '../annotatorUtil';
+import { generateBtn, repositionCaret } from '../util';
 import {
     CREATE_EVENT,
     CLASS_ANNOTATION_CARET,
@@ -15,7 +15,7 @@ import {
     CLASS_MOBILE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
     CLASS_BUTTON_PLAIN
-} from '../annotationConstants';
+} from '../constants';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 const DATA_TYPE_HIGHLIGHT = 'add-highlight-btn';

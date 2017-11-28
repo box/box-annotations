@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import Annotation from './Annotation';
 import AnnotationService from './AnnotationService';
-import * as annotatorUtil from './annotatorUtil';
+import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
     STATES,
@@ -9,7 +9,7 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     THREAD_EVENT
-} from './annotationConstants';
+} from './constants';
 
 class AnnotationThread extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     hide() {
-        annotatorUtil.hideElement(this.element);
+        util.hideElement(this.element);
     }
 
     /**
@@ -212,14 +212,14 @@ class AnnotationThread extends EventEmitter {
 
         // If the user doesn't have permission to delete the entire highlight
         // annotation, display the annotation as a plain highlight
-        let firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        let firstAnnotation = util.getFirstAnnotation(this.annotations);
         let canDeleteAnnotation =
             firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-        if (annotatorUtil.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
+        if (util.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
             this.cancelFirstComment();
 
             // If this annotation was the last one in the thread, destroy the thread
-        } else if (!firstAnnotation || annotatorUtil.isPlainHighlight(this.annotations)) {
+        } else if (!firstAnnotation || util.isPlainHighlight(this.annotations)) {
             if (this.isMobile && this.dialog) {
                 this.dialog.hideMobileDialog();
                 this.dialog.removeAnnotation(annotationID);
@@ -249,15 +249,15 @@ class AnnotationThread extends EventEmitter {
             .then(() => {
                 // Ensures that blank highlight comment is also deleted when removing
                 // the last comment on a highlight
-                firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+                firstAnnotation = util.getFirstAnnotation(this.annotations);
                 canDeleteAnnotation =
                     firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-                if (annotatorUtil.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
+                if (util.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
                     this.annotationService.delete(firstAnnotation.annotationID);
                 }
 
                 // Broadcast thread cleanup if needed
-                firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+                firstAnnotation = util.getFirstAnnotation(this.annotations);
                 if (!firstAnnotation) {
                     this.emit(THREAD_EVENT.threadCleanup);
                 }
@@ -312,7 +312,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     setup() {
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (!firstAnnotation) {
             this.state = STATES.pending;
         } else {
@@ -423,7 +423,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     cancelUnsavedAnnotation() {
-        if (!annotatorUtil.isPending(this.state)) {
+        if (!util.isPending(this.state)) {
             return;
         }
 
@@ -549,9 +549,9 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const mouseInDialog = annotatorUtil.isInDialog(event, this.dialog.element);
+        const mouseInDialog = util.isInDialog(event, this.dialog.element);
 
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(this.annotations);
+        const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (firstAnnotation && !mouseInDialog) {
             this.hideDialog();
         }

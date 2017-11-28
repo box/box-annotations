@@ -5,7 +5,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_POST,
     CLASS_INVALID_INPUT
-} from '../annotationConstants';
+} from '../constants';
 
 describe('CommentBox', () => {
     const sandbox = sinon.sandbox.create();

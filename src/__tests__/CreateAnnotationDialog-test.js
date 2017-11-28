@@ -8,9 +8,9 @@ import {
     CLASS_ANNOTATION_CARET,
     CLASS_HIDDEN,
     CREATE_EVENT
-} from '../annotationConstants';
+} from '../constants';
 import CommentBox from '../CommentBox';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
@@ -310,15 +310,15 @@ describe('CreateAnnotationDialog', () => {
 
     describe('setButtonVisibility()', () => {
         it('should show the buttons if given "true"', () => {
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
             dialog.setButtonVisibility(true);
-            expect(annotatorUtil.showElement).to.be.calledWith(dialog.buttonsEl);
+            expect(util.showElement).to.be.calledWith(dialog.buttonsEl);
         });
 
         it('should hide the buttons if given "false"', () => {
-            sandbox.stub(annotatorUtil, 'hideElement');
+            sandbox.stub(util, 'hideElement');
             dialog.setButtonVisibility(false);
-            expect(annotatorUtil.hideElement).to.be.calledWith(dialog.buttonsEl);
+            expect(util.hideElement).to.be.calledWith(dialog.buttonsEl);
         });
     });
 
