@@ -79,10 +79,9 @@ describe('doc/DocPointThread', () => {
         beforeEach(() => {
             sandbox.stub(annotatorUtil, 'showElement');
             sandbox.stub(thread, 'showDialog');
-            sandbox.stub(thread.dialog, 'position');
         });
 
-        it('should position and show the thread', () => {
+        it('should show the thread', () => {
             sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
@@ -92,7 +91,6 @@ describe('doc/DocPointThread', () => {
                 thread.annotatedElement
             );
             expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
-            expect(thread.dialog.position).to.be.called;
         });
 
         it('should show the dialog if the state is pending', () => {
@@ -121,16 +119,6 @@ describe('doc/DocPointThread', () => {
             thread.show();
 
             expect(thread.showDialog).to.not.be.called;
-        });
-
-        it('should not position dialog if user is on a mobile device', () => {
-            thread.isMobile = true;
-            thread.annotations = { '123abc': {} };
-
-            thread.show();
-
-            expect(thread.showDialog).to.be.called;
-            expect(thread.dialog.position).to.not.be.called;
         });
     });
 
