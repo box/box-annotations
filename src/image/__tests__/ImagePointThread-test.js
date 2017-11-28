@@ -29,9 +29,6 @@ describe('image/ImagePointThread', () => {
             }
         });
 
-        thread.dialog = {
-            position: sandbox.stub()
-        };
         thread.isMobile = false;
     });
 
@@ -45,7 +42,7 @@ describe('image/ImagePointThread', () => {
             sandbox.stub(thread, 'showDialog');
         });
 
-        it('should position and show the thread', () => {
+        it('should show the thread', () => {
             sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
@@ -64,7 +61,6 @@ describe('image/ImagePointThread', () => {
             thread.show();
 
             expect(thread.showDialog).to.be.called;
-            expect(thread.dialog.position).to.be.called;
         });
 
         it('should not show the dialog if the state is not pending', () => {
@@ -75,25 +71,7 @@ describe('image/ImagePointThread', () => {
 
             expect(thread.showDialog).to.not.be.called;
         });
-
-        it('should not re-position the dialog if pending but on a mobile device', () => {
-            thread.isMobile = true;
-            thread.state = STATES.pending;
-
-            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-
-            thread.show();
-
-            expect(imageUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
-                thread.location,
-                thread.annotatedElement
-            );
-
-            expect(thread.dialog.position).to.not.be.called;
-            expect(util.showElement).to.be.calledWith(thread.element);
-            expect()
-        });
-
+      
         it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
             thread.isMobile = true;
             thread.annotations = {};
@@ -102,16 +80,6 @@ describe('image/ImagePointThread', () => {
             thread.show();
 
             expect(thread.showDialog).to.not.be.called;
-        });
-
-        it('should not position dialog if user is on a mobile device', () => {
-            thread.isMobile = true;
-            thread.annotations = { '123abc': {} };
-
-            thread.show();
-
-            expect(thread.showDialog).to.be.called;
-            expect(thread.dialog.position).to.not.be.called;
         });
     });
 

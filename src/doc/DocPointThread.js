@@ -60,11 +60,6 @@ class DocPointThread extends AnnotationThread {
         }
 
         this.showDialog();
-
-        // Force dialogs to reposition on re-render
-        if (!this.isMobile) {
-            this.dialog.position();
-        }
     }
 
     /**
