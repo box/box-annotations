@@ -240,7 +240,11 @@ class AnnotationDialog extends EventEmitter {
         const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
         if (annotationEl) {
             annotationEl.parentNode.removeChild(annotationEl);
-            this.deactivateReply(); // Deactivate reply area and focus
+        }
+
+        const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (replyTextEl) {
+            replyTextEl.focus();
         }
     }
 
@@ -260,6 +264,7 @@ class AnnotationDialog extends EventEmitter {
 
         this.emit('annotationcreate', { text });
         annotationTextEl.value = '';
+        annotationTextEl.focus();
     }
 
     //--------------------------------------------------------------------------
@@ -766,6 +771,7 @@ class AnnotationDialog extends EventEmitter {
 
         this.emit('annotationcreate', { text });
         replyTextEl.value = '';
+        replyTextEl.focus();
     }
 
     /**
