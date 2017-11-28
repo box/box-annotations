@@ -36,7 +36,7 @@ This will create your own copy of our repository.
 The upstream source is the project under the Box organization on GitHub. To add an upstream source for this project, type:
 
 ```
-git remote add upstream git@github.com:box/box-content-preview.git
+git remote add upstream git@github.com:box/box-annotations.git
 ```
 
 This will come in useful later.
