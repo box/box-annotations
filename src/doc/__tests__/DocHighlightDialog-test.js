@@ -4,7 +4,6 @@ import Annotation from '../../Annotation';
 import AnnotationDialog from '../../AnnotationDialog';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import * as util from '../../util';
 import * as constants from '../../constants';
 
 let dialog;
