@@ -36,20 +36,20 @@ import {
     generateBtn,
     addThreadToMap,
     removeThreadFromMap
-} from '../annotatorUtil';
+} from '../util';
 import {
     STATES,
     TYPES,
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_CARET
-} from '../annotationConstants';
+} from '../constants';
 
 const DIALOG_WIDTH = 81;
 
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-describe('annotatorUtil', () => {
+describe('util', () => {
     let childEl;
     let parentEl;
 
@@ -58,7 +58,7 @@ describe('annotatorUtil', () => {
     });
 
     beforeEach(() => {
-        fixture.load('__tests__/annotatorUtil-test.html');
+        fixture.load('__tests__/util-test.html');
 
         childEl = document.querySelector('.child');
         parentEl = document.querySelector('.parent');

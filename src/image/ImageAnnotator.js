@@ -1,8 +1,8 @@
 import Annotator from '../Annotator';
 import ImagePointThread from './ImagePointThread';
-import * as annotatorUtil from '../annotatorUtil';
-import * as imageAnnotatorUtil from './imageAnnotatorUtil';
-import { ANNOTATOR_EVENT, TYPES } from '../annotationConstants';
+import * as util from '../util';
+import * as imageUtil from './imageUtil';
+import { ANNOTATOR_EVENT, TYPES } from '../constants';
 
 const IMAGE_NODE_NAME = 'img';
 // Selector for image container OR multi-image container
@@ -51,7 +51,7 @@ class ImageAnnotator extends Annotator {
         }
 
         // If no image page was selected, ignore, as all images have a page number.
-        const { page } = annotatorUtil.getPageInfo(imageEl);
+        const { page } = util.getPageInfo(imageEl);
 
         // Location based only on image position
         const imageDimensions = imageEl.getBoundingClientRect();
@@ -64,9 +64,9 @@ class ImageAnnotator extends Annotator {
         }
 
         // Scale location coordinates according to natural image size
-        const scale = annotatorUtil.getScale(this.annotatedElement);
+        const scale = util.getScale(this.annotatedElement);
         const rotation = Number(imageEl.getAttribute('data-rotation-angle'));
-        [x, y] = imageAnnotatorUtil.getLocationWithoutRotation(x / scale, y / scale, rotation, imageDimensions, scale);
+        [x, y] = imageUtil.getLocationWithoutRotation(x / scale, y / scale, rotation, imageDimensions, scale);
 
         // We save the dimensions of the annotated element so we can
         // compare to the element being rendered on and scale as appropriate
@@ -106,7 +106,7 @@ class ImageAnnotator extends Annotator {
         }
 
         const threadParams = this.getThreadParams(annotations, location, type);
-        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
+        if (!util.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }

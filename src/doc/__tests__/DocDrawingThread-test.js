@@ -1,5 +1,5 @@
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
-import * as annotatorUtil from '../../annotatorUtil';
+import * as docUtil from '../docUtil';
+import * as util from '../../util';
 import DocDrawingThread from '../DocDrawingThread';
 import DocDrawingDialog from '../DocDrawingDialog';
 import AnnotationThread from '../../AnnotationThread';
@@ -7,7 +7,7 @@ import DrawingPath from '../../drawing/DrawingPath';
 import {
     DRAW_STATES,
     STATES
-} from '../../annotationConstants';
+} from '../../constants';
 
 let thread;
 let stubs;
@@ -52,7 +52,7 @@ describe('doc/DocDrawingThread', () => {
                 isEmpty: sandbox.stub()
             };
 
-            sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([location.x, location.y]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([location.x, location.y]);
         });
 
         it("should not add a coordinate when the state is not 'draw'", () => {
@@ -94,7 +94,7 @@ describe('doc/DocDrawingThread', () => {
             sandbox.stub(window, 'requestAnimationFrame');
             sandbox.stub(thread, 'checkAndHandleScaleUpdate');
             sandbox.stub(thread, 'hasPageChanged').returns(false);
-            sandbox.stub(docAnnotatorUtil, 'getPageEl')
+            sandbox.stub(docUtil, 'getPageEl')
                    .returns(context);
 
             thread.drawingFlag = DRAW_STATES.idle;
@@ -180,28 +180,28 @@ describe('doc/DocDrawingThread', () => {
     describe('checkAndHandleScaleUpdate()', () => {
         it('should update the drawing information when the scale has changed', () => {
             sandbox.stub(thread, 'setContextStyles');
-            sandbox.stub(annotatorUtil, 'getScale').returns(1.4);
-            sandbox.stub(docAnnotatorUtil, 'getPageEl');
-            sandbox.stub(docAnnotatorUtil, 'getContext');
+            sandbox.stub(util, 'getScale').returns(1.4);
+            sandbox.stub(docUtil, 'getPageEl');
+            sandbox.stub(docUtil, 'getContext');
             thread.lastScaleFactor = 1.1;
             thread.location = {
                 page: 1
             };
             thread.checkAndHandleScaleUpdate();
             expect(thread.lastScaleFactor).to.equal(1.4);
-            expect(annotatorUtil.getScale).to.be.called;
-            expect(docAnnotatorUtil.getPageEl).to.be.called;
-            expect(docAnnotatorUtil.getContext).to.be.called;
+            expect(util.getScale).to.be.called;
+            expect(docUtil.getPageEl).to.be.called;
+            expect(docUtil.getContext).to.be.called;
             expect(thread.setContextStyles).to.be.called;
         });
 
         it('should do nothing when the scale has not changed', () => {
-            sandbox.stub(annotatorUtil, 'getScale').returns(1.4);
-            sandbox.stub(docAnnotatorUtil, 'getPageEl');
+            sandbox.stub(util, 'getScale').returns(1.4);
+            sandbox.stub(docUtil, 'getPageEl');
             thread.lastScaleFactor = 1.4;
             thread.checkAndHandleScaleUpdate();
-            expect(annotatorUtil.getScale).to.be.called;
-            expect(docAnnotatorUtil.getPageEl).to.not.be.called;
+            expect(util.getScale).to.be.called;
+            expect(docUtil.getPageEl).to.not.be.called;
         });
     });
 
@@ -216,7 +216,7 @@ describe('doc/DocDrawingThread', () => {
                 y: 2
             };
 
-            sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([3,4]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([3,4]);
             const returnValue = thread.reconstructBrowserCoordFromLocation(documentLocation);
 
             expect(returnValue).to.deep.equal({
@@ -366,7 +366,7 @@ describe('doc/DocDrawingThread', () => {
         beforeEach(() => {
             sandbox.stub(thread, 'checkAndHandleScaleUpdate');
             sandbox.stub(thread, 'setContextStyles');
-            stubs.context = sandbox.stub(docAnnotatorUtil, 'getContext');
+            stubs.context = sandbox.stub(docUtil, 'getContext');
         });
 
         it('should return the pending drawing context when the state is pending', () => {
@@ -381,7 +381,7 @@ describe('doc/DocDrawingThread', () => {
 
             const retValue = thread.selectContext();
             expect(thread.checkAndHandleScaleUpdate).to.be.called;
-            expect(docAnnotatorUtil.getContext).to.not.be.called;
+            expect(docUtil.getContext).to.not.be.called;
             expect(retValue).to.deep.equal(thread.drawingContext);
         });
 
@@ -400,7 +400,7 @@ describe('doc/DocDrawingThread', () => {
             const retValue = thread.selectContext();
             expect(thread.checkAndHandleScaleUpdate).to.be.called;
             expect(thread.setContextStyles).to.be.called;
-            expect(docAnnotatorUtil.getContext).to.be.called;
+            expect(docUtil.getContext).to.be.called;
             expect(retValue).to.deep.equal(thread.concreteContext);
         });
     });
@@ -419,8 +419,8 @@ describe('doc/DocDrawingThread', () => {
                 dimensions: 'not empty'
             };
 
-            stubs.createLocation = sandbox.stub(annotatorUtil, 'createLocation');
-            stubs.getBrowserCoordinates = sandbox.stub(docAnnotatorUtil, 'getBrowserCoordinatesFromLocation');
+            stubs.createLocation = sandbox.stub(util, 'createLocation');
+            stubs.getBrowserCoordinates = sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation');
             stubs.getBrowserCoordinates.onCall(0).returns([5, 5]);
             stubs.getBrowserCoordinates.onCall(1).returns([50, 45]);
 

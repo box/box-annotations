@@ -1,8 +1,8 @@
 import rbush from 'rbush';
 import AnnotationModeController from './AnnotationModeController';
-import annotationsShell from './../annotationsShell.html';
+import shell from './../shell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 import {
     TYPES,
     STATES,
@@ -17,7 +17,7 @@ import {
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
-} from '../annotationConstants';
+} from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
     /** @property {DrawingThread} - The currently selected DrawingThread */
@@ -50,7 +50,7 @@ class DrawingModeController extends AnnotationModeController {
         // header. Otherwise we expect header UI to be handled by Preview’s
         // consumer
         if (data.options.header !== 'none') {
-            this.setupHeader(this.container, annotationsShell);
+            this.setupHeader(this.container, shell);
         }
 
         this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
@@ -194,8 +194,8 @@ class DrawingModeController extends AnnotationModeController {
         super.unbindListeners();
         this.bindDOMListeners();
 
-        annotatorUtil.disableElement(this.undoButtonEl);
-        annotatorUtil.disableElement(this.redoButtonEl);
+        util.disableElement(this.undoButtonEl);
+        util.disableElement(this.redoButtonEl);
     }
 
     /**
@@ -223,19 +223,19 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(
             this.annotatedElement,
             ['mousemove', 'touchmove'],
-            annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleMove)
+            util.eventToLocationHandler(locationFunction, this.currentThread.handleMove)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mousedown', 'touchstart'],
-            annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleStart)
+            util.eventToLocationHandler(locationFunction, this.currentThread.handleStart)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mouseup', 'touchcancel', 'touchend'],
-            annotatorUtil.eventToLocationHandler(locationFunction, this.currentThread.handleStop)
+            util.eventToLocationHandler(locationFunction, this.currentThread.handleStop)
         );
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
@@ -391,17 +391,17 @@ class DrawingModeController extends AnnotationModeController {
     updateUndoRedoButtonEls(undoCount, redoCount) {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
-                annotatorUtil.enableElement(this.undoButtonEl);
+                util.enableElement(this.undoButtonEl);
             } else if (undoCount === 0) {
-                annotatorUtil.disableElement(this.undoButtonEl);
+                util.disableElement(this.undoButtonEl);
             }
         }
 
         if (this.redoButtonEl) {
             if (redoCount === 1) {
-                annotatorUtil.enableElement(this.redoButtonEl);
+                util.enableElement(this.redoButtonEl);
             } else if (redoCount === 0) {
-                annotatorUtil.disableElement(this.redoButtonEl);
+                util.disableElement(this.redoButtonEl);
             }
         }
     }

@@ -8,8 +8,8 @@ import DocAnnotator from '../DocAnnotator';
 import DocHighlightThread from '../DocHighlightThread';
 import DocDrawingThread from '../DocDrawingThread';
 import DocPointThread from '../DocPointThread';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
+import * as util from '../../util';
+import * as docUtil from '../docUtil';
 import {
     ANNOTATOR_EVENT,
     STATES,
@@ -20,7 +20,7 @@ import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
     CREATE_EVENT
-} from '../../annotationConstants';
+} from '../../constants';
 
 let annotator;
 let stubs = {};
@@ -86,7 +86,7 @@ describe('doc/DocAnnotator', () => {
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
 
-        stubs.getPageInfo = sandbox.stub(annotatorUtil, 'getPageInfo');
+        stubs.getPageInfo = sandbox.stub(util, 'getPageInfo');
         annotator.createHighlightDialog = {
             emit: () => {},
             addListener: () => {},
@@ -141,7 +141,7 @@ describe('doc/DocAnnotator', () => {
             };
             annotator.isMobile = false;
 
-            stubs.selection = sandbox.stub(docAnnotatorUtil, 'isSelectionPresent').returns(true);
+            stubs.selection = sandbox.stub(docUtil, 'isSelectionPresent').returns(true);
             stubs.pageEl = {
                 getBoundingClientRect: sandbox.stub().returns({
                     width: dimensions.x,
@@ -152,16 +152,16 @@ describe('doc/DocAnnotator', () => {
             };
             stubs.getPageInfo.returns({ pageEl: stubs.pageEl, page });
 
-            stubs.getHighlights = sandbox.stub(docAnnotatorUtil, 'getHighlightAndHighlightEls').returns({
+            stubs.getHighlights = sandbox.stub(docUtil, 'getHighlightAndHighlightEls').returns({
                 highlight: {},
                 highlightEls: []
             });
 
-            stubs.findClosest = sandbox.stub(annotatorUtil, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
-            stubs.scale = sandbox.stub(annotatorUtil, 'getScale').returns(1);
+            stubs.findClosest = sandbox.stub(util, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
+            stubs.scale = sandbox.stub(util, 'getScale').returns(1);
 
             // stub highlight methods
-            stubs.points = sandbox.stub(docAnnotatorUtil, 'getQuadPoints');
+            stubs.points = sandbox.stub(docUtil, 'getQuadPoints');
             stubs.getSel = sandbox.stub(window, 'getSelection').returns({});
             stubs.saveSel = sandbox.stub(rangy, 'saveSelection');
             stubs.removeRangy = sandbox.stub(annotator, 'removeRangyHighlight');
@@ -221,16 +221,16 @@ describe('doc/DocAnnotator', () => {
             it('should not return a location if click event does not have coordinates', () => {
                 stubs.selection.returns(false);
                 stubs.findClosest.returns('not-a-dialog');
-                sandbox.stub(docAnnotatorUtil, 'convertDOMSpaceToPDFSpace');
+                sandbox.stub(docUtil, 'convertDOMSpaceToPDFSpace');
 
                 expect(annotator.getLocationFromEvent({}, TYPES.point)).to.be.null;
-                expect(docAnnotatorUtil.convertDOMSpaceToPDFSpace).to.not.be.called;
+                expect(docUtil.convertDOMSpaceToPDFSpace).to.not.be.called;
             });
 
             it('should return a valid point location if click is valid', () => {
                 stubs.selection.returns(false);
                 stubs.findClosest.returns('not-a-dialog');
-                sandbox.stub(docAnnotatorUtil, 'convertDOMSpaceToPDFSpace').returns([x, y]);
+                sandbox.stub(docUtil, 'convertDOMSpaceToPDFSpace').returns([x, y]);
 
                 const location = annotator.getLocationFromEvent(stubs.event, TYPES.point);
                 expect(location).to.deep.equal({ x, y, page, dimensions });
@@ -313,7 +313,7 @@ describe('doc/DocAnnotator', () => {
     describe('createAnnotationThread()', () => {
         beforeEach(() => {
             stubs.setupFunc = AnnotationThread.prototype.setup;
-            stubs.validateThread = sandbox.stub(annotatorUtil, 'areThreadParamsValid').returns(true);
+            stubs.validateThread = sandbox.stub(util, 'areThreadParamsValid').returns(true);
             sandbox.stub(annotator, 'handleValidationError');
             annotator.notification = {
                 show: sandbox.stub()
@@ -559,7 +559,7 @@ describe('doc/DocAnnotator', () => {
             stubs.inactiveMock = sandbox.mock(inactiveThread);
             stubs.inactiveMock.expects('destroy').never();
 
-            stubs.isPending = sandbox.stub(annotatorUtil, 'isPending').returns(false);
+            stubs.isPending = sandbox.stub(util, 'isPending').returns(false);
             stubs.isPending.withArgs(STATES.pending).returns(true);
 
             const threads = [pendingThread, inactiveThread];
@@ -599,7 +599,7 @@ describe('doc/DocAnnotator', () => {
 
     describe('scaleAnnotationCanvases()', () => {
         beforeEach(() => {
-            stubs.scaleCanvas = sandbox.stub(docAnnotatorUtil, 'scaleCanvas');
+            stubs.scaleCanvas = sandbox.stub(docUtil, 'scaleCanvas');
 
             // Add pageEl
             stubs.pageEl = document.createElement('div');
@@ -924,7 +924,7 @@ describe('doc/DocAnnotator', () => {
 
             stubs.getPageInfo = stubs.getPageInfo.returns({ pageEl: {}, page: 1 });
             stubs.clock = sinon.useFakeTimers();
-            stubs.isDialog = sandbox.stub(docAnnotatorUtil, 'isDialogDataType');
+            stubs.isDialog = sandbox.stub(docUtil, 'isDialogDataType');
 
             let timer = 0;
             window.performance = window.performance || { now: () => {} };
@@ -1229,7 +1229,7 @@ describe('doc/DocAnnotator', () => {
             pageInfo = { pageEl: {}, page: 1 };
 
             stubs.getPageInfo = stubs.getPageInfo.returns(pageInfo);
-            stubs.hasActiveDialog = sandbox.stub(docAnnotatorUtil, 'hasActiveDialog').returns(false);
+            stubs.hasActiveDialog = sandbox.stub(docUtil, 'hasActiveDialog').returns(false);
             stubs.getThreads = sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([]);
             stubs.getLocation = sandbox.stub(annotator, 'getLocationFromEvent').returns(undefined);
             stubs.createThread = sandbox.stub(annotator, 'createAnnotationThread');
@@ -1376,7 +1376,7 @@ describe('doc/DocAnnotator', () => {
                 removeAllListeners: sandbox.stub()
             };
             annotator.threads = { 1: { '123abc': thread } };
-            stubs.isHighlight = sandbox.stub(annotatorUtil, 'isHighlightAnnotation').returns(thread);
+            stubs.isHighlight = sandbox.stub(util, 'isHighlightAnnotation').returns(thread);
 
             const threads = annotator.getHighlightThreadsOnPage(1);
             expect(stubs.isHighlight).to.be.calledWith(TYPES.highlight);

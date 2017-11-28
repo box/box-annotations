@@ -10,7 +10,7 @@ import {
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED
-} from './annotationConstants';
+} from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
 const HEADER_CLIENT_VERSION = 'X-Box-Client-Version';

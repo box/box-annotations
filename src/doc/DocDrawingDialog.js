@@ -1,6 +1,6 @@
 import AnnotationDialog from '../AnnotationDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as constants from '../annotationConstants';
+import * as util from '../util';
+import * as constants from '../constants';
 import { ICON_DRAW_SAVE, ICON_DRAW_DELETE } from '../icons/icons';
 
 class DocDrawingDialog extends AnnotationDialog {
@@ -33,7 +33,7 @@ class DocDrawingDialog extends AnnotationDialog {
             return;
         }
 
-        this.element.removeEventListener('click', annotatorUtil.prevDefAndStopProp);
+        this.element.removeEventListener('click', util.prevDefAndStopProp);
         if (this.pageEl && this.pageEl.contains(this.element)) {
             this.pageEl.removeChild(this.element);
         }
@@ -122,7 +122,7 @@ class DocDrawingDialog extends AnnotationDialog {
     setup(annotations) {
         // Create outermost element container
         this.element = document.createElement('div');
-        this.element.addEventListener('click', annotatorUtil.prevDefAndStopProp);
+        this.element.addEventListener('click', util.prevDefAndStopProp);
         this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
 
         // Create the dialog element consisting of a label, save, and delete button
@@ -134,7 +134,7 @@ class DocDrawingDialog extends AnnotationDialog {
 
         this.bindDOMListeners();
 
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = util.getFirstAnnotation(annotations);
         if (firstAnnotation) {
             this.assignDrawingLabel(firstAnnotation);
         }
@@ -174,7 +174,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {void}
      */
     hide() {
-        annotatorUtil.hideElement(this.element);
+        util.hideElement(this.element);
         this.visible = false;
     }
 
@@ -185,7 +185,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {void}
      */
     show() {
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
         this.visible = true;
     }
 
@@ -197,7 +197,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {HTMLElement} The drawing dialog element
      */
     generateDialogEl(annotations) {
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = util.getFirstAnnotation(annotations);
         const canCommit = !firstAnnotation;
         const canDelete =
             canCommit || (firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete);
@@ -211,7 +211,7 @@ class DocDrawingDialog extends AnnotationDialog {
         drawingButtonsEl.appendChild(labelTemplate);
 
         if (canCommit) {
-            const commitButton = annotatorUtil.generateBtn(
+            const commitButton = util.generateBtn(
                 [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_DRAWING_BTN],
                 this.localized.drawSave,
                 `${ICON_DRAW_SAVE} ${this.localized.saveButton}`
@@ -220,7 +220,7 @@ class DocDrawingDialog extends AnnotationDialog {
         }
 
         if (canDelete) {
-            const deleteButton = annotatorUtil.generateBtn(
+            const deleteButton = util.generateBtn(
                 [constants.CLASS_BUTTON_PLAIN, constants.CLASS_DELETE_DRAWING_BTN],
                 this.localized.drawDelete,
                 `${ICON_DRAW_DELETE} ${this.localized.deleteButton}`
@@ -250,9 +250,9 @@ class DocDrawingDialog extends AnnotationDialog {
 
         const drawingLabelEl = this.drawingDialogEl.querySelector(`.${constants.CLASS_ANNOTATION_DRAWING_LABEL}`);
         const username = savedAnnotation.user ? savedAnnotation.user.name : constants.USER_ANONYMOUS;
-        drawingLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoDrew, [username]);
+        drawingLabelEl.textContent = util.replacePlaceholders(this.localized.whoDrew, [username]);
 
-        annotatorUtil.showElement(drawingLabelEl);
+        util.showElement(drawingLabelEl);
     }
 
     /**

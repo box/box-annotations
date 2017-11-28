@@ -3,7 +3,7 @@ import AnnotationService from '../../AnnotationService';
 import {
     STATES,
     THREAD_EVENT
-} from '../../annotationConstants'
+} from '../../constants'
 
 let thread;
 let stubs;

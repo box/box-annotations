@@ -10,8 +10,8 @@ import DocHighlightThread from './DocHighlightThread';
 import DocPointThread from './DocPointThread';
 import DocDrawingThread from './DocDrawingThread';
 import CreateHighlightDialog from './CreateHighlightDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as docAnnotatorUtil from './docAnnotatorUtil';
+import * as util from '../util';
+import * as docUtil from './docUtil';
 import {
     STATES,
     TYPES,
@@ -26,7 +26,7 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
     CREATE_EVENT
-} from '../annotationConstants';
+} from '../constants';
 
 const MOUSEMOVE_THROTTLE_MS = 50;
 const HOVER_TIMEOUT_MS = 75;
@@ -147,7 +147,7 @@ class DocAnnotator extends Annotator {
      */
     getLocationFromEvent(event, annotationType) {
         let location = null;
-        const zoomScale = annotatorUtil.getScale(this.annotatedElement);
+        const zoomScale = util.getScale(this.annotatedElement);
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
@@ -160,18 +160,18 @@ class DocAnnotator extends Annotator {
 
             // If click isn't on a page, ignore
             const eventTarget = clientEvent.target;
-            const { pageEl, page } = annotatorUtil.getPageInfo(eventTarget);
+            const { pageEl, page } = util.getPageInfo(eventTarget);
             if (!pageEl) {
                 return location;
             }
 
             // If there is a selection, ignore
-            if (docAnnotatorUtil.isSelectionPresent()) {
+            if (docUtil.isSelectionPresent()) {
                 return location;
             }
 
             // If click is inside an annotation dialog, ignore
-            const dataType = annotatorUtil.findClosestDataType(eventTarget);
+            const dataType = util.findClosestDataType(eventTarget);
             if (dataType === DATA_TYPE_ANNOTATION_DIALOG || dataType === DATA_TYPE_ANNOTATION_INDICATOR) {
                 return location;
             }
@@ -192,11 +192,7 @@ class DocAnnotator extends Annotator {
                 return location;
             }
 
-            const pdfCoordinates = docAnnotatorUtil.convertDOMSpaceToPDFSpace(
-                browserCoordinates,
-                pageHeight,
-                zoomScale
-            );
+            const pdfCoordinates = docUtil.convertDOMSpaceToPDFSpace(browserCoordinates, pageHeight, zoomScale);
             [x, y] = pdfCoordinates;
 
             // We save the dimensions of the annotated element scaled to 100%
@@ -208,22 +204,20 @@ class DocAnnotator extends Annotator {
             };
 
             location = { x, y, page, dimensions };
-        } else if (annotatorUtil.isHighlightAnnotation(annotationType)) {
+        } else if (util.isHighlightAnnotation(annotationType)) {
             if (!this.highlighter || !this.highlighter.highlights.length) {
                 return location;
             }
 
             // Get correct page
-            let { pageEl, page } = annotatorUtil.getPageInfo(window.getSelection().anchorNode);
+            let { pageEl, page } = util.getPageInfo(window.getSelection().anchorNode);
             if (!pageEl) {
                 // The ( .. ) around assignment is required syntax
-                ({ pageEl, page } = annotatorUtil.getPageInfo(
-                    this.annotatedElement.querySelector(`.${CLASS_RANGY_HIGHLIGHT}`)
-                ));
+                ({ pageEl, page } = util.getPageInfo(this.annotatedElement.querySelector(`.${CLASS_RANGY_HIGHLIGHT}`)));
             }
 
             // Use highlight module to calculate quad points
-            const { highlightEls } = docAnnotatorUtil.getHighlightAndHighlightEls(this.highlighter, pageEl);
+            const { highlightEls } = docUtil.getHighlightAndHighlightEls(this.highlighter, pageEl);
 
             // Do not create highlight annotation if no highlights are detected
             if (highlightEls.length === 0) {
@@ -232,7 +226,7 @@ class DocAnnotator extends Annotator {
 
             const quadPoints = [];
             highlightEls.forEach((element) => {
-                quadPoints.push(docAnnotatorUtil.getQuadPoints(element, pageEl, zoomScale));
+                quadPoints.push(docUtil.getQuadPoints(element, pageEl, zoomScale));
             });
 
             // We save the dimensions of the annotated element scaled to 100%
@@ -264,12 +258,12 @@ class DocAnnotator extends Annotator {
     createAnnotationThread(annotations, location, type) {
         let thread;
         const threadParams = this.getThreadParams(annotations, location, type);
-        if (!annotatorUtil.areThreadParamsValid(threadParams)) {
+        if (!util.areThreadParamsValid(threadParams)) {
             this.handleValidationError();
             return thread;
         }
 
-        if (annotatorUtil.isHighlightAnnotation(type)) {
+        if (util.isHighlightAnnotation(type)) {
             thread = new DocHighlightThread(threadParams);
         } else if (type === TYPES.draw) {
             thread = new DocDrawingThread(threadParams);
@@ -316,7 +310,7 @@ class DocAnnotator extends Annotator {
         // Destroy current pending highlight annotation
         const highlightThreads = this.getHighlightThreadsOnPage(pageNum);
         highlightThreads.forEach((thread) => {
-            if (annotatorUtil.isPending(thread.state)) {
+            if (util.isPending(thread.state)) {
                 /* eslint-disable no-console */
                 console.error('Pending annotation thread destroyed', thread.threadNumber);
                 /* eslint-enable no-console */
@@ -342,7 +336,7 @@ class DocAnnotator extends Annotator {
         ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
             const annotationLayerEl = pageEl.querySelector(`.${annotationLayerClass}`);
             if (annotationLayerEl) {
-                docAnnotatorUtil.scaleCanvas(pageEl, annotationLayerEl);
+                docUtil.scaleCanvas(pageEl, annotationLayerEl);
             }
         });
     }
@@ -593,7 +587,7 @@ class DocAnnotator extends Annotator {
         }
 
         // Bail if mid highlight and tapping on the screen
-        if (!docAnnotatorUtil.isValidSelection(selection)) {
+        if (!docUtil.isValidSelection(selection)) {
             this.lastSelection = null;
             this.lastHighlightEvent = null;
             this.createHighlightDialog.hide();
@@ -714,14 +708,14 @@ class DocAnnotator extends Annotator {
         // Determine if mouse is over any highlight dialog
         // and ignore hover events of any highlights below
         const event = this.mouseMoveEvent;
-        if (docAnnotatorUtil.isDialogDataType(event.target)) {
+        if (docUtil.isDialogDataType(event.target)) {
             return;
         }
 
         this.mouseMoveEvent = null;
         this.throttleTimer = performance.now();
         // Only filter through highlight threads on the current page
-        const { page } = annotatorUtil.getPageInfo(event.target);
+        const { page } = util.getPageInfo(event.target);
         const delayThreads = [];
         let hoverActive = false;
 
@@ -731,7 +725,7 @@ class DocAnnotator extends Annotator {
 
             // Determine if any highlight threads on page are pending or active
             // and ignore hover events of any highlights below
-            if (!annotatorUtil.isHighlightAnnotation(thread.type) || thread.state === STATES.pending) {
+            if (!util.isHighlightAnnotation(thread.type) || thread.state === STATES.pending) {
                 return;
             }
 
@@ -877,12 +871,12 @@ class DocAnnotator extends Annotator {
         event.stopPropagation();
 
         const selection = window.getSelection();
-        if (!docAnnotatorUtil.isValidSelection(selection)) {
+        if (!docUtil.isValidSelection(selection)) {
             return;
         }
 
         // Select page of first node selected
-        const { pageEl } = annotatorUtil.getPageInfo(selection.anchorNode);
+        const { pageEl } = util.getPageInfo(selection.anchorNode);
         if (!pageEl) {
             return;
         }
@@ -921,20 +915,20 @@ class DocAnnotator extends Annotator {
         let consumed = false;
         let activeThread = null;
 
-        const { page } = annotatorUtil.getPageInfo(event.target);
+        const { page } = util.getPageInfo(event.target);
         const pageThreads = this.threads[page] || {};
 
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
 
-            if (annotatorUtil.isPending(thread.state)) {
+            if (util.isPending(thread.state)) {
                 // Destroy any pending highlights on click outside the highlight
                 if (thread.type === TYPES.point) {
                     thread.destroy();
                 } else {
                     thread.cancelFirstComment();
                 }
-            } else if (annotatorUtil.isHighlightAnnotation(thread.type)) {
+            } else if (util.isHighlightAnnotation(thread.type)) {
                 // We use this to prevent a mousedown from activating two different
                 // highlights at the same time - this tracks whether a delegated
                 // mousedown activated some highlight, and then informs the other
@@ -989,7 +983,7 @@ class DocAnnotator extends Annotator {
 
         Object.keys(pageThreads).forEach((threadID) => {
             const thread = pageThreads[threadID];
-            if (annotatorUtil.isHighlightAnnotation(thread.type)) {
+            if (util.isHighlightAnnotation(thread.type)) {
                 threads.push(thread);
             }
         });

@@ -1,4 +1,4 @@
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 import {
     CLASS_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_HIGHLIGHT_DIALOG,
@@ -16,7 +16,7 @@ import {
     DATA_TYPE_DELETE,
     DATA_TYPE_CANCEL_DELETE,
     DATA_TYPE_CONFIRM_DELETE
-} from '../annotationConstants';
+} from '../constants';
 
 const PREVIEW_PRESENTATION_CLASS = 'bp-doc-presentation';
 const HEIGHT_PADDING = 30;
@@ -188,16 +188,11 @@ export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
     const pageEl = annotatedElement.querySelector(`[data-page-number="${location.page}"]`) || annotatedElement;
     const pageDimensions = pageEl.getBoundingClientRect();
     const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
-    const zoomScale = annotatorUtil.getScale(annotatedElement);
+    const zoomScale = util.getScale(annotatedElement);
     let { x, y } = location;
 
     // If needed, scale coords comparing current dimensions with saved dimensions
-    const dimensionScale = annotatorUtil.getDimensionScale(
-        location.dimensions,
-        pageDimensions,
-        zoomScale,
-        HEIGHT_PADDING
-    );
+    const dimensionScale = util.getDimensionScale(location.dimensions, pageDimensions, zoomScale, HEIGHT_PADDING);
     if (dimensionScale) {
         x *= dimensionScale.x;
         y *= dimensionScale.y;
@@ -387,6 +382,6 @@ export function getPageEl(annotatedEl, pageNum) {
  * @return {boolean} Whether mouse event occured in a highlight dialog
  */
 export function isDialogDataType(eventTarget) {
-    const dataType = annotatorUtil.findClosestDataType(eventTarget);
+    const dataType = util.findClosestDataType(eventTarget);
     return DIALOG_DATATYPES.indexOf(dataType) !== -1;
 }

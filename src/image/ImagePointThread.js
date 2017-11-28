@@ -1,8 +1,8 @@
 import AnnotationThread from '../AnnotationThread';
 import ImagePointDialog from './ImagePointDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as imageAnnotatorUtil from './imageAnnotatorUtil';
-import { STATES } from '../annotationConstants';
+import * as util from '../util';
+import * as imageUtil from './imageUtil';
+import { STATES } from '../constants';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
@@ -20,17 +20,14 @@ class ImagePointThread extends AnnotationThread {
      * @return {void}
      */
     show() {
-        const [browserX, browserY] = imageAnnotatorUtil.getBrowserCoordinatesFromLocation(
-            this.location,
-            this.annotatedElement
-        );
+        const [browserX, browserY] = imageUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to image
         this.element.style.left = `${browserX - POINT_ANNOTATION_ICON_WIDTH / 2}px`;
         this.element.style.top = `${browserY - POINT_ANNOTATION_ICON_HEIGHT + POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
         this.annotatedElement.appendChild(this.element);
 
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
 
         if (this.state !== STATES.pending || (this.isMobile && Object.keys(this.annotations).length === 0)) {
             return;

@@ -2,7 +2,7 @@
 import fetchMock from 'fetch-mock';
 import Annotation from '../Annotation';
 import AnnotationService from '../AnnotationService';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 
 const API_HOST = 'https://app.box.com/api';
 
@@ -390,7 +390,7 @@ describe('AnnotationService', () => {
             annotationService.readFromMarker(resolve, reject, 2, 'a', 1);
             promise.then((result) => {
                 expect(Object.keys(result).length).to.equal(1);
-                const firstAnnotation = annotatorUtil.getFirstAnnotation(result);
+                const firstAnnotation = util.getFirstAnnotation(result);
                 expect(firstAnnotation.text).to.equal(annotation2.text);
                 expect(firstAnnotation.threadNumber).to.equal(annotation2.threadNumber);
             });

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import DocPointDialog from '../DocPointDialog';
-import * as annotatorUtil from '../../annotatorUtil';
-import * as docAnnotatorUtil from '../docAnnotatorUtil';
+import * as util from '../../util';
+import * as docUtil from '../docUtil';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -38,14 +38,14 @@ describe('doc/DocPointDialog', () => {
 
     describe('position()', () => {
         it('should position the dialog at the right place and show it', () => {
-            sandbox.stub(annotatorUtil, 'showElement');
-            sandbox.stub(annotatorUtil, 'repositionCaret');
+            sandbox.stub(util, 'showElement');
+            sandbox.stub(util, 'repositionCaret');
             sandbox.stub(dialog, 'flipDialog').returns([]);
 
             dialog.position();
 
-            expect(annotatorUtil.repositionCaret).to.be.called;
-            expect(annotatorUtil.showElement).to.be.called;
+            expect(util.repositionCaret).to.be.called;
+            expect(util.showElement).to.be.called;
             expect(dialog.flipDialog).to.be.called;
         });
     });

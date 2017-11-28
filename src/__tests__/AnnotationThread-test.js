@@ -2,7 +2,7 @@
 import EventEmitter from 'events';
 import AnnotationThread from '../AnnotationThread';
 import Annotation from '../Annotation';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 import {
     STATES,
     TYPES,
@@ -10,7 +10,7 @@ import {
     DATA_TYPE_ANNOTATION_INDICATOR,
     CLASS_HIDDEN,
     THREAD_EVENT
-} from '../annotationConstants';
+} from '../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();
@@ -341,7 +341,7 @@ describe('AnnotationThread', () => {
             };
             stubs.dialogMock = sandbox.mock(thread.dialog);
 
-            stubs.isPlain = sandbox.stub(annotatorUtil, 'isPlainHighlight');
+            stubs.isPlain = sandbox.stub(util, 'isPlainHighlight');
             stubs.cancel = sandbox.stub(thread, 'cancelFirstComment');
             stubs.destroy = sandbox.stub(thread, 'destroy');
             sandbox.stub(thread, 'showDialog');
@@ -761,7 +761,7 @@ describe('AnnotationThread', () => {
 
     describe('mouseoutHandler()', () => {
         it('should do nothing if event does not exist', () => {
-            stubs.isInDialog = sandbox.stub(annotatorUtil, 'isInDialog');
+            stubs.isInDialog = sandbox.stub(util, 'isInDialog');
             thread.mouseoutHandler();
             expect(stubs.isInDialog).to.not.be.called;
         });

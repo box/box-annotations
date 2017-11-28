@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { THREAD_EVENT, CONTROLLER_EVENT } from '../annotationConstants';
+import { THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
     /**

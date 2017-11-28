@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
 import ImagePointThread from '../ImagePointThread';
-import * as annotatorUtil from '../../annotatorUtil';
-import { STATES } from '../../annotationConstants';
-import * as imageAnnotatorUtil from '../imageAnnotatorUtil';
+import * as util from '../../util';
+import { STATES } from '../../constants';
+import * as imageUtil from '../imageUtil';
 
 let thread;
 const sandbox = sinon.sandbox.create();
@@ -41,24 +41,24 @@ describe('image/ImagePointThread', () => {
 
     describe('show', () => {
         beforeEach(() => {
-            sandbox.stub(annotatorUtil, 'showElement');
+            sandbox.stub(util, 'showElement');
             sandbox.stub(thread, 'showDialog');
         });
 
         it('should position and show the thread', () => {
-            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
 
-            expect(imageAnnotatorUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
+            expect(imageUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
                 thread.location,
                 thread.annotatedElement
             );
-            expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
+            expect(util.showElement).to.be.calledWith(thread.element);
         });
 
         it('should show the dialog if the state is pending', () => {
-            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.state = STATES.pending;
             thread.show();
@@ -68,7 +68,7 @@ describe('image/ImagePointThread', () => {
         });
 
         it('should not show the dialog if the state is not pending', () => {
-            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.state = STATES.inactive;
             thread.show();
@@ -80,17 +80,17 @@ describe('image/ImagePointThread', () => {
             thread.isMobile = true;
             thread.state = STATES.pending;
 
-            sandbox.stub(imageAnnotatorUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
+            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
 
             thread.show();
 
-            expect(imageAnnotatorUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
+            expect(imageUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
                 thread.location,
                 thread.annotatedElement
             );
 
             expect(thread.dialog.position).to.not.be.called;
-            expect(annotatorUtil.showElement).to.be.calledWith(thread.element);
+            expect(util.showElement).to.be.calledWith(thread.element);
             expect()
         });
 

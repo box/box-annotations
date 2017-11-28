@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
-import * as annotatorUtil from './annotatorUtil';
-import * as constants from './annotationConstants';
+import * as util from './util';
+import * as constants from './constants';
 import { ICON_CLOSE, ICON_DELETE } from './icons/icons';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -124,7 +124,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         // Focus the textarea if visible
-        if (annotatorUtil.isElementInViewport(textAreaEl)) {
+        if (util.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
     }
@@ -136,7 +136,7 @@ class AnnotationDialog extends EventEmitter {
      */
     showMobileDialog() {
         this.element = this.container.querySelector(`.${constants.CLASS_MOBILE_ANNOTATION_DIALOG}`);
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
         this.element.appendChild(this.dialogEl);
 
         const commentEls = this.element.querySelectorAll(`.${CLASS_COMMENT}`);
@@ -183,7 +183,7 @@ class AnnotationDialog extends EventEmitter {
         const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
         dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
 
-        annotatorUtil.hideElement(this.element);
+        util.hideElement(this.element);
         this.unbindDOMListeners();
 
         // Cancel any unsaved annotations
@@ -204,7 +204,7 @@ class AnnotationDialog extends EventEmitter {
             this.hideMobileDialog();
         }
 
-        annotatorUtil.hideElement(this.element);
+        util.hideElement(this.element);
         this.deactivateReply();
 
         // Make sure entire thread icon displays for flipped dialogs
@@ -222,8 +222,8 @@ class AnnotationDialog extends EventEmitter {
         if (!this.hasAnnotations) {
             const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
             const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
-            annotatorUtil.hideElement(createSectionEl);
-            annotatorUtil.showElement(showSectionEl);
+            util.hideElement(createSectionEl);
+            util.showElement(showSectionEl);
             this.hasAnnotations = true;
         }
 
@@ -301,7 +301,7 @@ class AnnotationDialog extends EventEmitter {
             this.element.appendChild(this.dialogEl);
 
             // Adding thread number to dialog
-            const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+            const firstAnnotation = util.getFirstAnnotation(annotations);
             if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }
@@ -413,7 +413,7 @@ class AnnotationDialog extends EventEmitter {
      */
     mouseenterHandler() {
         if (this.element.classList.contains(constants.CLASS_HIDDEN)) {
-            annotatorUtil.showElement(this.element);
+            util.showElement(this.element);
 
             const replyTextArea = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
             const commentsTextArea = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
@@ -490,11 +490,11 @@ class AnnotationDialog extends EventEmitter {
     keydownHandler(event) {
         event.stopPropagation();
 
-        const key = annotatorUtil.decodeKeydown(event);
+        const key = util.decodeKeydown(event);
         if (key === 'Escape') {
             this.hide();
         } else {
-            const dataType = annotatorUtil.findClosestDataType(event.target);
+            const dataType = util.findClosestDataType(event.target);
             if (dataType === CLASS_REPLY_TEXTAREA) {
                 this.activateReply();
             }
@@ -523,8 +523,8 @@ class AnnotationDialog extends EventEmitter {
         event.stopPropagation();
 
         const eventTarget = event.target;
-        const dataType = annotatorUtil.findClosestDataType(eventTarget);
-        const annotationID = annotatorUtil.findClosestDataType(eventTarget, 'data-annotation-id');
+        const dataType = util.findClosestDataType(eventTarget);
+        const annotationID = util.findClosestDataType(eventTarget, 'data-annotation-id');
 
         switch (dataType) {
             // Clicking 'Post' button to create an annotation
@@ -581,18 +581,18 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     addAnnotationElement(annotation) {
-        const userId = annotatorUtil.htmlEscape(annotation.user.id || '0');
+        const userId = util.htmlEscape(annotation.user.id || '0');
 
         // Temporary until annotation user API is available
         let userName;
         if (userId === '0') {
             userName = this.localized.posting;
         } else {
-            userName = annotatorUtil.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
+            userName = util.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
         }
 
-        const avatarUrl = annotatorUtil.htmlEscape(annotation.user.avatarUrl || '');
-        const avatarHtml = annotatorUtil.getAvatarHtml(avatarUrl, userId, userName, this.localized.profileAlt);
+        const avatarUrl = util.htmlEscape(annotation.user.avatarUrl || '');
+        const avatarHtml = util.getAvatarHtml(avatarUrl, userId, userName, this.localized.profileAlt);
         const created = new Date(annotation.created).toLocaleString(this.locale, {
             month: '2-digit',
             day: '2-digit',
@@ -600,7 +600,7 @@ class AnnotationDialog extends EventEmitter {
             hour: '2-digit',
             minute: '2-digit'
         });
-        const text = annotatorUtil.htmlEscape(annotation.text);
+        const text = util.htmlEscape(annotation.text);
 
         const annotationEl = document.createElement('div');
         annotationEl.classList.add(CLASS_COMMENT);
@@ -641,7 +641,7 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
-        const deleteBtn = annotatorUtil.generateBtn(
+        const deleteBtn = util.generateBtn(
             [constants.CLASS_BUTTON_PLAIN, CLASS_BUTTON_DELETE_COMMENT],
             this.localized.deleteButton,
             ICON_DELETE,
@@ -663,7 +663,7 @@ class AnnotationDialog extends EventEmitter {
         deleteBtnsEl.classList.add(constants.CLASS_BUTTON_CONTAINER);
         deleteConfirmEl.appendChild(deleteBtnsEl);
 
-        const cancelDeleteBtn = annotatorUtil.generateBtn(
+        const cancelDeleteBtn = util.generateBtn(
             [constants.CLASS_BUTTON, CLASS_CANCEL_DELETE],
             this.localized.cancelButton,
             this.localized.cancelButton,
@@ -671,7 +671,7 @@ class AnnotationDialog extends EventEmitter {
         );
         deleteBtnsEl.appendChild(cancelDeleteBtn);
 
-        const confirmDeleteBtn = annotatorUtil.generateBtn(
+        const confirmDeleteBtn = util.generateBtn(
             [constants.CLASS_BUTTON, CLASS_BUTTON_DELETE_CONFIRM, constants.CLASS_BUTTON_PRIMARY],
             this.localized.deleteButton,
             this.localized.deleteButton,
@@ -711,7 +711,7 @@ class AnnotationDialog extends EventEmitter {
 
         const replyButtonEls = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
         replyTextEl.classList.add(constants.CLASS_ACTIVE);
-        annotatorUtil.showElement(replyButtonEls);
+        util.showElement(replyButtonEls);
 
         // Auto scroll annotations dialog to bottom where new comment was added
         const annotationsEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
@@ -735,11 +735,11 @@ class AnnotationDialog extends EventEmitter {
         const replyContainerEl = this.dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
         const replyTextEl = replyContainerEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-        annotatorUtil.resetTextarea(replyTextEl, clearText);
-        annotatorUtil.hideElement(replyButtonEls);
+        util.resetTextarea(replyTextEl, clearText);
+        util.hideElement(replyButtonEls);
 
         // Only focus on textarea if dialog is visible
-        if (annotatorUtil.isElementInViewport(replyTextEl)) {
+        if (util.isElementInViewport(replyTextEl)) {
             replyTextEl.focus();
         }
 
@@ -780,8 +780,8 @@ class AnnotationDialog extends EventEmitter {
         const deleteConfirmationEl = annotationEl.querySelector(`.${CLASS_DELETE_CONFIRMATION}`);
         const cancelDeleteButtonEl = annotationEl.querySelector(`.${CLASS_CANCEL_DELETE}`);
         const deleteButtonEl = annotationEl.querySelector(constants.SELECTOR_DELETE_COMMENT_BTN);
-        annotatorUtil.hideElement(deleteButtonEl);
-        annotatorUtil.showElement(deleteConfirmationEl);
+        util.hideElement(deleteButtonEl);
+        util.showElement(deleteConfirmationEl);
         cancelDeleteButtonEl.focus();
     }
 
@@ -796,8 +796,8 @@ class AnnotationDialog extends EventEmitter {
         const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
         const deleteConfirmationEl = annotationEl.querySelector(`.${CLASS_DELETE_CONFIRMATION}`);
         const deleteButtonEl = annotationEl.querySelector(constants.SELECTOR_DELETE_COMMENT_BTN);
-        annotatorUtil.showElement(deleteButtonEl);
-        annotatorUtil.hideElement(deleteConfirmationEl);
+        util.showElement(deleteButtonEl);
+        util.hideElement(deleteConfirmationEl);
         deleteButtonEl.focus();
     }
 

@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import HighlightModeController from '../HighlightModeController';
-import * as util from '../../annotatorUtil';
+import * as util from '../../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -8,7 +8,7 @@ import {
     THREAD_EVENT,
     STATES,
     CONTROLLER_EVENT
-} from '../../annotationConstants';
+} from '../../constants';
 
 let controller;
 let stubs = {};

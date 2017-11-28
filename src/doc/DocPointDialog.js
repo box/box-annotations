@@ -1,5 +1,5 @@
 import AnnotationDialog from '../AnnotationDialog';
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 
 const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -22,7 +22,7 @@ class DocPointDialog extends AnnotationDialog {
 
         // Show dialog so we can get width
         pageEl.appendChild(this.element);
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
         const dialogDimensions = this.element.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         const pageDimensions = pageEl.getBoundingClientRect();
@@ -37,7 +37,7 @@ class DocPointDialog extends AnnotationDialog {
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
-        dialogLeftX = annotatorUtil.repositionCaret(
+        dialogLeftX = util.repositionCaret(
             this.element,
             dialogLeftX,
             dialogWidth,

@@ -1,4 +1,4 @@
-import * as annotatorUtil from '../annotatorUtil';
+import * as util from '../util';
 
 const IMAGE_PADDING = 15;
 const ROTATION_ONCE_DEG = -90;
@@ -85,7 +85,7 @@ export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
         annotatedElement.querySelector('img');
     const wrapperDimensions = annotatedElement.getBoundingClientRect();
     const imageDimensions = imageEl.getBoundingClientRect();
-    const scale = annotatorUtil.getScale(annotatedElement);
+    const scale = util.getScale(annotatedElement);
 
     // Get image padding
     const topPadding = imageDimensions.top - wrapperDimensions.top + annotatedElement.scrollTop;

@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
-import * as constants from './annotationConstants';
-import { hideElement, showElement } from './annotatorUtil';
+import * as constants from './constants';
+import { hideElement, showElement } from './util';
 
 class CommentBox extends EventEmitter {
     /**
@@ -193,13 +193,17 @@ class CommentBox extends EventEmitter {
         const containerEl = document.createElement('section');
         containerEl.classList.add('bp-create-comment');
         containerEl.innerHTML = `
-            <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA} ${constants.CLASS_ACTIVE}"
+            <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA} ${
+    constants.CLASS_ACTIVE
+}"
                 placeholder="${this.placeholderText}"></textarea>
             <div class="${constants.CLASS_BUTTON_CONTAINER}">
                 <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}">
                     ${this.cancelText}
                 </button>
-                <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${constants.CLASS_ANNOTATION_BUTTON_POST}">
+                <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${
+    constants.CLASS_ANNOTATION_BUTTON_POST
+}">
                     ${this.postText}
                 </button>
             </div>`.trim();

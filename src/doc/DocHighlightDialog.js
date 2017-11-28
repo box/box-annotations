@@ -1,8 +1,8 @@
 import AnnotationDialog from '../AnnotationDialog';
-import * as annotatorUtil from '../annotatorUtil';
-import * as docAnnotatorUtil from './docAnnotatorUtil';
+import * as util from '../util';
+import * as docUtil from './docUtil';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
-import * as constants from '../annotationConstants';
+import * as constants from '../constants';
 
 const CLASS_HIGHLIGHT_DIALOG = 'bp-highlight-dialog';
 const CLASS_TEXT_HIGHLIGHTED = 'bp-is-text-highlighted';
@@ -41,10 +41,10 @@ class DocHighlightDialog extends AnnotationDialog {
         // Will be displayed as '{name} highlighted'
         if (annotation.text === '' && annotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            highlightLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoHighlighted, [
+            highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 annotation.user.name
             ]);
-            annotatorUtil.showElement(highlightLabelEl);
+            util.showElement(highlightLabelEl);
 
             // Only reposition if mouse is still hovering over the dialog and not mobile
             if (!this.isMobile) {
@@ -104,10 +104,10 @@ class DocHighlightDialog extends AnnotationDialog {
             return;
         }
 
-        annotatorUtil.hideElement(this.commentsDialogEl);
+        util.hideElement(this.commentsDialogEl);
 
         this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
-        annotatorUtil.showElement(this.highlightDialogEl);
+        util.showElement(this.highlightDialogEl);
         this.hasComments = false;
     }
 
@@ -132,9 +132,9 @@ class DocHighlightDialog extends AnnotationDialog {
         const plainButtonEl = this.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
         if (plainButtonEl) {
             if (showPlain) {
-                annotatorUtil.showElement(plainButtonEl);
+                util.showElement(plainButtonEl);
             } else {
-                annotatorUtil.hideElement(plainButtonEl);
+                util.hideElement(plainButtonEl);
             }
         }
 
@@ -143,9 +143,9 @@ class DocHighlightDialog extends AnnotationDialog {
         );
         if (commentButtonEl) {
             if (showComment) {
-                annotatorUtil.showElement(commentButtonEl);
+                util.showElement(commentButtonEl);
             } else {
-                annotatorUtil.hideElement(commentButtonEl);
+                util.hideElement(commentButtonEl);
             }
         }
 
@@ -186,13 +186,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
-        dialogX = annotatorUtil.repositionCaret(
-            this.element,
-            dialogX,
-            highlightDialogWidth,
-            browserX,
-            pageDimensions.width
-        );
+        dialogX = util.repositionCaret(this.element, dialogX, highlightDialogWidth, browserX, pageDimensions.width);
 
         if (dialogY < 0) {
             dialogY = 0;
@@ -203,7 +197,7 @@ class DocHighlightDialog extends AnnotationDialog {
         this.element.style.left = `${dialogX}px`;
         this.element.style.top = `${dialogY + PAGE_PADDING_TOP}px`;
         this.fitDialogHeightInPage();
-        annotatorUtil.showElement(this.element);
+        util.showElement(this.element);
     }
 
     /**
@@ -224,10 +218,10 @@ class DocHighlightDialog extends AnnotationDialog {
         // Displays comments dialog and hides highlight annotations button
         if (commentsDialogIsHidden) {
             this.element.classList.remove(CLASS_HIGHLIGHT_DIALOG);
-            annotatorUtil.hideElement(this.highlightDialogEl);
+            util.hideElement(this.highlightDialogEl);
 
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
-            annotatorUtil.showElement(this.commentsDialogEl);
+            util.showElement(this.commentsDialogEl);
             this.hasComments = true;
             // Activate comments textarea
             const textAreaEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
@@ -236,10 +230,10 @@ class DocHighlightDialog extends AnnotationDialog {
             // Displays the highlight and comment buttons dialog and
             // hides the comments dialog
             this.element.classList.remove(constants.CLASS_ANNOTATION_DIALOG);
-            annotatorUtil.hideElement(this.commentsDialogEl);
+            util.hideElement(this.commentsDialogEl);
 
             this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
-            annotatorUtil.showElement(this.highlightDialogEl);
+            util.showElement(this.highlightDialogEl);
             this.hasComments = false;
         }
 
@@ -263,13 +257,13 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Ensures that "Add a comment here" text area is shown
         if (hasAnnotations) {
-            annotatorUtil.hideElement(replyTextEl);
-            annotatorUtil.showElement(commentTextEl);
+            util.hideElement(replyTextEl);
+            util.showElement(commentTextEl);
             this.deactivateReply();
         } else {
             // Ensures that "Reply" text area is shown
-            annotatorUtil.hideElement(commentTextEl);
-            annotatorUtil.showElement(replyTextEl);
+            util.hideElement(commentTextEl);
+            util.showElement(replyTextEl);
             this.activateReply();
         }
 
@@ -297,7 +291,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Determine if highlight buttons or comments dialog will display
-        const firstAnnotation = annotatorUtil.getFirstAnnotation(annotations);
+        const firstAnnotation = util.getFirstAnnotation(annotations);
         if (firstAnnotation) {
             this.hasComments = firstAnnotation.text !== '' || Object.keys(annotations).length > 1;
         }
@@ -340,12 +334,12 @@ class DocHighlightDialog extends AnnotationDialog {
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
-        if (annotatorUtil.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
+        if (util.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            highlightLabelEl.textContent = annotatorUtil.replacePlaceholders(this.localized.whoHighlighted, [
+            highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 firstAnnotation.user.name
             ]);
-            annotatorUtil.showElement(highlightLabelEl);
+            util.showElement(highlightLabelEl);
         }
 
         // Add annotation elements
@@ -428,7 +422,7 @@ class DocHighlightDialog extends AnnotationDialog {
      */
     keydownHandler(event) {
         event.stopPropagation();
-        if (annotatorUtil.decodeKeydown(event) === 'Enter') {
+        if (util.decodeKeydown(event) === 'Enter') {
             this.mousedownHandler(event);
         }
         super.keydownHandler(event);
@@ -443,7 +437,7 @@ class DocHighlightDialog extends AnnotationDialog {
      */
     mousedownHandler(event) {
         event.stopPropagation();
-        const dataType = annotatorUtil.findClosestDataType(event.target);
+        const dataType = util.findClosestDataType(event.target);
 
         switch (dataType) {
             // Clicking 'Highlight' button to create or remove a highlight
@@ -498,7 +492,7 @@ class DocHighlightDialog extends AnnotationDialog {
      */
     focusAnnotationsTextArea() {
         const textAreaEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        if (annotatorUtil.isElementInViewport(textAreaEl)) {
+        if (util.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
     }
@@ -518,15 +512,15 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Switches to 'visibility: hidden' to ensure that dialog takes up
         // DOM space while still being invisible
-        annotatorUtil.hideElementVisibility(this.element);
-        annotatorUtil.showElement(this.element);
+        util.hideElementVisibility(this.element);
+        util.showElement(this.element);
 
         this.highlightDialogWidth = this.element.getBoundingClientRect().width;
 
         // Switches back to 'display: none' to so that it no longer takes up place
         // in the DOM while remaining hidden
-        annotatorUtil.hideElement(this.element);
-        annotatorUtil.showInvisibleElement(this.element);
+        util.hideElement(this.element);
+        util.showInvisibleElement(this.element);
 
         // Reset dialog left positioning
         this.element.style.left = prevDialogX;
@@ -545,12 +539,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * @return {number[]} [x,y] coordinates in DOM space in CSS
      */
     getScaledPDFCoordinates(pageDimensions, pageHeight) {
-        const zoomScale = annotatorUtil.getScale(this.annotatedElement);
+        const zoomScale = util.getScale(this.annotatedElement);
 
-        let [x, y] = docAnnotatorUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
+        let [x, y] = docUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
 
         // If needed, scale coordinates comparing current dimensions with saved dimensions
-        const dimensionScale = annotatorUtil.getDimensionScale(
+        const dimensionScale = util.getDimensionScale(
             this.location.dimensions,
             pageDimensions,
             zoomScale,
@@ -561,7 +555,7 @@ class DocHighlightDialog extends AnnotationDialog {
             y *= dimensionScale.y;
         }
 
-        return docAnnotatorUtil.convertPDFSpaceToDOMSpace([x, y], pageHeight, zoomScale);
+        return docUtil.convertPDFSpaceToDOMSpace([x, y], pageHeight, zoomScale);
     }
 
     /**
@@ -605,7 +599,7 @@ class DocHighlightDialog extends AnnotationDialog {
         highlightDialogEl.appendChild(highlightButtons);
 
         if (canDeleteAnnotation) {
-            const addHighlightBtn = annotatorUtil.generateBtn(
+            const addHighlightBtn = util.generateBtn(
                 [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_BTN],
                 this.localized.highlightToggle,
                 ICON_HIGHLIGHT,
@@ -614,7 +608,7 @@ class DocHighlightDialog extends AnnotationDialog {
             highlightButtons.appendChild(addHighlightBtn);
         }
 
-        const addCommentBtn = annotatorUtil.generateBtn(
+        const addCommentBtn = util.generateBtn(
             [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
             this.localized.highlightComment,
             ICON_HIGHLIGHT_COMMENT,

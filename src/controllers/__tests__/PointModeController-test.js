@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import PointModeController from '../PointModeController';
 import CreateAnnotationDialog from '../../CreateAnnotationDialog';
-import * as util from '../../annotatorUtil';
+import * as util from '../../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -11,7 +11,7 @@ import {
     STATES,
     CONTROLLER_EVENT,
     CREATE_EVENT
-} from '../../annotationConstants';
+} from '../../constants';
 
 let controller;
 let stubs = {};
