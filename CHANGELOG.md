@@ -1,3 +1,10 @@
+<a name="0.5.1"></a>
+## 0.5.1 (2017-11-30)
+
+* Fix: Iterate through dialog buttons NodeList in an IE compatible way (#54) ([f5a9985](https://github.com/box/box-annotations/commit/f5a9985))
+
+
+
 <a name="0.5.0"></a>
 # 0.5.0 (2017-11-27)
 
