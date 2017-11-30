@@ -143,6 +143,33 @@ describe('AnnotationDialog', () => {
         });
     });
 
+    describe('scrollToLastComment()', () => {
+        it('should set the dialog scroll height to the bottom of the comments container', () => {
+            const annotationEl = {
+                scrollHeight: 500,
+                clientHeight: 300,
+                scrollTop: 0
+            };
+            sandbox.stub(dialog.dialogEl, 'querySelector').returns(annotationEl);
+
+            dialog.scrollToLastComment();
+            expect(annotationEl.scrollTop).equals(200);
+        });
+
+        it('should set the flipped dialog scroll height to the bottom of the comments container', () => {
+            const annotationEl = {
+                scrollHeight: 500,
+                clientHeight: 500,
+                scrollTop: 0
+            };
+            dialog.dialogEl.classList.add('bp-annotation-dialog-flipped');
+            sandbox.stub(dialog.dialogEl, 'querySelector').returns(annotationEl);
+
+            dialog.scrollToLastComment();
+            expect(annotationEl.scrollTop).equals(500);
+        });
+    });
+
     describe('showMobileDialog()', () => {
         it('should populate the mobile dialog if using a mobile browser', () => {
             dialog.highlightDialogEl = null;
