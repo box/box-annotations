@@ -457,7 +457,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const btns = annotationEl.querySelectorAll('button');
-        btns.forEach((btn) => {
+        Array.prototype.forEach.call(btns, (btn) => {
             btn.classList.remove(constants.CLASS_DISABLED);
         });
     }
@@ -476,7 +476,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const btns = annotationEl.querySelectorAll('button');
-        btns.forEach((btn) => {
+        Array.prototype.forEach.call(btns, (btn) => {
             btn.classList.add(constants.CLASS_DISABLED);
         });
     }
