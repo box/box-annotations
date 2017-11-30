@@ -161,12 +161,14 @@ describe('AnnotationThread', () => {
             stubs.updateTemp = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.then(() => {
-                expect(stubs.updateTemp).to.be.called;
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    expect(stubs.updateTemp).to.be.called;
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
             expect(stubs.create).to.be.calledWith(
                 sinon.match({
                     fileVersionId: '1',
@@ -184,12 +186,14 @@ describe('AnnotationThread', () => {
             stubs.serverSave = sandbox.stub(thread, 'updateTemporaryAnnotation');
 
             const promise = thread.saveAnnotation('point', 'blah');
-            promise.then(() => {
-                expect(stubs.handleError).to.be.called;
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    expect(stubs.handleError).to.be.called;
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
             expect(stubs.create).to.be.called;
             expect(stubs.serverSave).to.not.be.called;
         });
@@ -229,7 +233,7 @@ describe('AnnotationThread', () => {
         it('should overwrite a local annotation to the thread if it does exist as an associated annotation', () => {
             const serverAnnotation = { annotationID: 123 };
             const tempAnnotation = { annotationID: 1 };
-            const isServerAnnotation = (annotation => (annotation === serverAnnotation));
+            const isServerAnnotation = (annotation) => annotation === serverAnnotation;
 
             thread.annotations[tempAnnotation.annotationID] = tempAnnotation;
             expect(thread.annotations[123]).to.be.undefined;
@@ -287,7 +291,7 @@ describe('AnnotationThread', () => {
             expect(thread.showDialog).to.be.called;
             expect(thread.state).equals(STATES.hover);
         });
-    })
+    });
 
     describe('deleteAnnotation()', () => {
         let annotationService;
@@ -318,7 +322,7 @@ describe('AnnotationThread', () => {
 
             thread = new AnnotationThread({
                 annotatedElement: document.querySelector('.annotated-element'),
-                annotations: { 'someID': stubs.annotation },
+                annotations: { someID: stubs.annotation },
                 annotationService,
                 fileVersionId: '1',
                 isMobile: false,
@@ -331,7 +335,7 @@ describe('AnnotationThread', () => {
             thread.dialog = {
                 addListener: () => {},
                 addAnnotation: () => {},
-                deactivateReply: () => {},
+                activateReply: () => {},
                 destroy: () => {},
                 removeAllListeners: () => {},
                 show: () => {},
@@ -356,14 +360,16 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog').never();
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.then(() => {
-                stubs.threadPromise.then(() => {
-                    expect(stubs.destroy).to.be.called;
-                    done();
+            promise
+                .then(() => {
+                    stubs.threadPromise.then(() => {
+                        expect(stubs.destroy).to.be.called;
+                        done();
+                    });
+                })
+                .catch(() => {
+                    sinon.assert.failException;
                 });
-            }).catch(() => {
-                sinon.assert.failException;
-            });
         });
 
         it('should destroy the thread and hide the mobile dialog if the deleted annotation was the last annotation in the thread on mobile', (done) => {
@@ -372,36 +378,42 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('hideMobileDialog');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.then(() => {
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', (done) => {
             // Add another annotation to thread so 'someID' isn't the only annotation
             thread.annotations[stubs.annotation2.annotationID] = stubs.annotation2;
             stubs.dialogMock.expects('removeAnnotation').withArgs('someID');
-            stubs.dialogMock.expects('deactivateReply');
+            stubs.dialogMock.expects('activateReply');
 
             const promise = thread.deleteAnnotation('someID', false);
-            promise.then(() => {
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should make a server call to delete an annotation with the specified ID if useServer is true', (done) => {
             const promise = thread.deleteAnnotation('someID', true);
-            promise.then(() => {
-                expect(stubs.emit).to.not.be.calledWith(THREAD_EVENT.threadCleanup);
-                expect(annotationService.delete).to.be.calledWith('someID');
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    expect(stubs.emit).to.not.be.calledWith(THREAD_EVENT.threadCleanup);
+                    expect(annotationService.delete).to.be.calledWith('someID');
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', (done) => {
@@ -410,35 +422,40 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.then(() => {
-                expect(annotationService.delete).to.be.calledWith('someID');
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    expect(annotationService.delete).to.be.calledWith('someID');
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
             const promise = thread.deleteAnnotation('someID', false);
-            promise.then(() => {
-                expect(annotationService.delete).to.not.be.called;
-                done();
-            }).catch(() => {
-            sinon.assert.failException;
-            });
-
+            promise
+                .then(() => {
+                    expect(annotationService.delete).to.not.be.called;
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should broadcast an error if there was an error deleting from server', (done) => {
             stubs.serviceDelete.returns(Promise.reject());
 
             const promise = thread.deleteAnnotation('someID', true);
-            promise.then(() => {
-                sinon.assert.failException;
-            }).catch(() => {
-                expect(annotationService.delete).to.be.called;
-                done();
-            });
+            promise
+                .then(() => {
+                    sinon.assert.failException;
+                })
+                .catch(() => {
+                    expect(annotationService.delete).to.be.called;
+                    done();
+                });
         });
 
         it('should toggle highlight dialogs with the delete of the last comment if user does not have permission to delete the entire annotation', () => {
@@ -455,13 +472,15 @@ describe('AnnotationThread', () => {
             stubs.isPlain.returns(true);
 
             const promise = thread.deleteAnnotation('someID');
-            promise.then(() => {
-                expect(stubs.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
-                expect(stubs.emit).to.be.calledWith(THREAD_EVENT.delete);
-                done();
-            }).catch(() => {
-                sinon.assert.failException;
-            });
+            promise
+                .then(() => {
+                    expect(stubs.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
+                    expect(stubs.emit).to.be.calledWith(THREAD_EVENT.delete);
+                    done();
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
             expect(stubs.cancel).to.not.be.called;
             expect(stubs.destroy).to.be.called;
         });
@@ -474,7 +493,7 @@ describe('AnnotationThread', () => {
             thread.scrollIntoView();
             expect(thread.scrollToPage);
             expect(thread.centerAnnotation).to.be.calledWith(sinon.match.number);
-        })
+        });
     });
 
     describe('scrollToPage()', () => {
