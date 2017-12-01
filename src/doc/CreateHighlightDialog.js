@@ -79,8 +79,8 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
     constructor(parentEl, config = {}) {
         super(parentEl, config);
 
-        this.allowHighlight = !!config.allowHighlight || true;
-        this.allowComment = !!config.allowComment || true;
+        this.allowHighlight = config.allowHighlight || false;
+        this.allowComment = config.allowComment || false;
 
         // Explicit scope binding for event listeners
         if (this.allowHighlight) {
@@ -92,6 +92,8 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
             this.onCommentPost = this.onCommentPost.bind(this);
             this.onCommentCancel = this.onCommentCancel.bind(this);
         }
+
+        this.createElement();
     }
 
     /**
