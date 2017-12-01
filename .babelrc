@@ -24,6 +24,7 @@
                 ["istanbul", {
                     "exclude": [
                         "**/*-test.js",
+                        "src/lib/polyfill.js",
                         "build/**",
                     ]
                 }],
