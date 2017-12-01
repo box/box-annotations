@@ -230,7 +230,7 @@ class AnnotationThread extends EventEmitter {
         } else if (this.dialog) {
             this.dialog.removeAnnotation(annotationID);
             this.showDialog();
-            this.dialog.deactivateReply();
+            this.dialog.activateReply();
         }
 
         if (!useServer) {

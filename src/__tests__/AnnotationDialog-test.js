@@ -185,7 +185,10 @@ describe('AnnotationDialog', () => {
 
         it('should reset the annotation dialog to be a plain highlight if no comments are present', () => {
             dialog.highlightDialogEl = {};
-            sandbox.stub(dialog.element, 'querySelectorAll').withArgs('.annotation-comment').returns([]);
+            sandbox
+                .stub(dialog.element, 'querySelectorAll')
+                .withArgs('.annotation-comment')
+                .returns([]);
             stubs.show = sandbox.stub(util, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
             dialog.showMobileDialog();
@@ -279,8 +282,6 @@ describe('AnnotationDialog', () => {
 
     describe('removeAnnotation()', () => {
         it('should remove annotation element and deactivate reply', () => {
-            stubs.deactivate = sandbox.stub(dialog, 'deactivateReply');
-
             dialog.addAnnotation(
                 new Annotation({
                     annotationID: 'someID',
@@ -293,14 +294,13 @@ describe('AnnotationDialog', () => {
             dialog.removeAnnotation('someID');
             const annotationEl = dialog.element.querySelector('[data-annotation-id="someID"]');
             expect(annotationEl).to.be.null;
-            expect(stubs.deactivate).to.be.called;
         });
 
-        it('should not do anything if the specified annotation does not exist', () => {
-            stubs.deactivate = sandbox.stub(dialog, 'deactivateReply');
-
+        it('should focus the reply text area', () => {
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            sandbox.stub(replyTextEl, 'focus');
             dialog.removeAnnotation('someID');
-            expect(stubs.deactivate).to.not.be.called;
+            expect(replyTextEl.focus).to.be.called;
         });
     });
 
@@ -604,7 +604,7 @@ describe('AnnotationDialog', () => {
 
             dialog.enable('123');
             expect(annotationEl.querySelectorAll).to.be.called;
-            expect(btn).to.not.have.class(constants.CLASS_DISABLED)
+            expect(btn).to.not.have.class(constants.CLASS_DISABLED);
             expect(wrongEl.querySelectorAll).to.not.be.called;
         });
     });
@@ -628,7 +628,7 @@ describe('AnnotationDialog', () => {
 
             dialog.disable('123');
             expect(annotationEl.querySelectorAll).to.be.called;
-            expect(btn).to.have.class(constants.CLASS_DISABLED)
+            expect(btn).to.have.class(constants.CLASS_DISABLED);
             expect(wrongEl.querySelectorAll).to.not.be.called;
         });
     });
@@ -867,9 +867,11 @@ describe('AnnotationDialog', () => {
         it('should clear the annotation text element after posting', () => {
             const annotationTextEl = document.querySelector('textarea');
             annotationTextEl.innerHTML += 'the preview SDK is great!';
+            sandbox.stub(annotationTextEl, 'focus');
 
             dialog.postAnnotation();
             expect(annotationTextEl).to.have.value('');
+            expect(annotationTextEl.focus).to.be.called;
         });
     });
 
@@ -988,9 +990,11 @@ describe('AnnotationDialog', () => {
             const replyTextEl = document.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
+            sandbox.stub(replyTextEl, 'focus');
 
             dialog.postReply();
             expect(replyTextEl).to.have.value('');
+            expect(replyTextEl.focus).to.be.called;
         });
     });
 
@@ -1113,7 +1117,7 @@ describe('AnnotationDialog', () => {
             dialog.toggleFlippedThreadEl();
             expect(stubs.add).to.be.called;
             expect(stubs.remove).to.not.be.called;
-        })
+        });
 
         it('should flip thread icon if dialog is flipped and not hidden', () => {
             dialog.element.classList.add(CLASS_FLIPPED_DIALOG);
@@ -1123,7 +1127,7 @@ describe('AnnotationDialog', () => {
             dialog.toggleFlippedThreadEl();
             expect(stubs.add).to.not.be.called;
             expect(stubs.remove).to.be.called;
-        })
+        });
     });
 
     describe('fitDialogHeightInPage()', () => {
