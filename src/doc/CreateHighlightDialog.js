@@ -224,16 +224,6 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
             buttonsEl.appendChild(highlightEl);
         }
 
-        if (this.allowComment) {
-            const commentEl = generateBtn(
-                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
-                this.localized.highlightComment,
-                ICON_HIGHLIGHT_COMMENT,
-                DATA_TYPE_ADD_HIGHLIGHT_COMMENT
-            );
-            buttonsEl.appendChild(commentEl);
-        }
-
         const dialogEl = document.createElement('div');
         dialogEl.classList.add(CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
         dialogEl.appendChild(buttonsEl);
@@ -266,8 +256,16 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
             }
         }
 
-        // Events for comment button
         if (this.allowComment) {
+            const commentEl = generateBtn(
+                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
+                this.localized.highlightComment,
+                ICON_HIGHLIGHT_COMMENT,
+                DATA_TYPE_ADD_HIGHLIGHT_COMMENT
+            );
+            buttonsEl.appendChild(commentEl);
+
+            // Events for comment button
             this.commentBox = this.setupCommentBox(highlightDialogEl);
 
             this.commentCreateEl = highlightDialogEl.querySelector(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);

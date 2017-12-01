@@ -30,7 +30,11 @@ describe('doc/CreateHighlightDialog', () => {
 
         const parentEl = document.createElement('div');
         parentEl.classList.add('bp-create-dialog-container');
-        dialog = new CreateHighlightDialog(parentEl, { localized });
+        dialog = new CreateHighlightDialog(parentEl, {
+            allowHighlight: true,
+            allowComment: true,
+            localized
+        });
     });
 
     afterEach(() => {
@@ -40,10 +44,10 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     describe('contructor()', () => {
-        it('should default to enable highlights and comments if no config passed in', () => {
+        it('should default to disable highlights and comments if no config passed in', () => {
             const instance = new CreateHighlightDialog(document.createElement('div'));
-            expect(instance.allowHighlight).to.be.true;
-            expect(instance.allowComment).to.be.true;
+            expect(instance.allowHighlight).to.be.false;
+            expect(instance.allowComment).to.be.false;
         });
 
         it('should take config falsey value to disable highlights and comments, when passed in', () => {
@@ -228,6 +232,7 @@ describe('doc/CreateHighlightDialog', () => {
 
         it('should not create a comment box or button if comments are disabled', () => {
             dialog.allowComment = false;
+            dialog.commentBox = undefined;
             dialog.createElement();
 
             expect(dialog.containerEl.querySelector(`.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`)).to.not.exist;
