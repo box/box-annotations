@@ -261,8 +261,6 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     setupControllers() {
-        const { CONTROLLERS } = this.options.annotator || {};
-        this.modeControllers = CONTROLLERS || {};
         this.modeButtons = this.options.modeButtons || {};
 
         const options = {
