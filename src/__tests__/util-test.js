@@ -14,6 +14,7 @@ import {
     getAvatarHtml,
     getScale,
     getFirstAnnotation,
+    getLastAnnotation,
     isPlainHighlight,
     isHighlightAnnotation,
     getDimensionScale,
@@ -295,6 +296,16 @@ describe('util', () => {
                 abc456: { id: 2 }
             };
             expect(getFirstAnnotation(annotations)).to.deep.equal({ id: 1 });
+        });
+    });
+
+    describe('getLastAnnotation()', () => {
+        it('should return the last annotation in thread', () => {
+            const annotations = {
+                def123: { id: 1 },
+                abc456: { id: 2 }
+            };
+            expect(getLastAnnotation(annotations)).to.deep.equal({ id: 2 });
         });
     });
 

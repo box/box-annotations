@@ -227,13 +227,8 @@ describe('Annotator', () => {
 
     describe('setupControllers()', () => {
         it('should instantiate controllers for enabled types', () => {
-            annotator.options = {
-                annotator: {
-                    NAME: 'name',
-                    CONTROLLERS: { 'something': stubs.controller }
-                },
-                modeButtons: { 'something': {} }
-            };
+            annotator.modeControllers = { 'something': stubs.controller };
+            annotator.options = { modeButtons: { 'something': {} } }
 
             stubs.controllerMock.expects('init');
             stubs.controllerMock.expects('addListener').withArgs('annotationcontrollerevent', sinon.match.func);
@@ -310,21 +305,6 @@ describe('Annotator', () => {
                 stubs.threadMock2.expects('show').never();
                 stubs.threadMock3.expects('show').never();
                 annotator.renderAnnotationsOnPage(1);
-            });
-
-            it('should not call show() if the thread type is disabled', () => {
-                const badType = 'not_accepted';
-                stubs.thread3.type = badType;
-                stubs.thread2.type = 'something';
-
-                stubs.threadMock3.expects('show').never();
-                stubs.threadMock2.expects('show').once();
-
-                const isModeAnn = sandbox.stub(annotator, 'isModeAnnotatable');
-                isModeAnn.withArgs(badType).returns(false);
-                isModeAnn.withArgs('something').returns(true);
-
-                annotator.renderAnnotationsOnPage('2');
             });
 
             it('should set annotatedElement if thread was fetched before it was set', () => {
@@ -478,9 +458,10 @@ describe('Annotator', () => {
         describe('generateThreadMap()', () => {
             beforeEach(() => {
                 stubs.threadMap = { '123abc': stubs.thread };
-                const annotation = { location: {}, type: 'something' };
+                const annotation = { location: {}, type: 'highlight' };
+                const lastAnnotation = { location: {}, type: 'highlight-comment' };
                 sandbox.stub(util, 'getFirstAnnotation').returns(annotation);
-                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+                sandbox.stub(util, 'getLastAnnotation').returns(lastAnnotation);
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
@@ -491,17 +472,24 @@ describe('Annotator', () => {
             });
 
             it('should reset and create a new thread map by from annotations fetched from server', () => {
-                annotator.options.annotator = { NAME: 'name' };
+                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
                 sandbox.stub(annotator, 'createAnnotationThread').returns(stubs.thread);
                 annotator.generateThreadMap(stubs.threadMap);
                 expect(annotator.createAnnotationThread).to.be.called;
             });
 
             it('should register thread if controller exists', () => {
-                annotator.options.annotator = { NAME: 'name' };
-                annotator.modeControllers['something'] = stubs.controller;
+                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
+                annotator.modeControllers['highlight-comment'] = stubs.controller;
                 sandbox.stub(annotator, 'createAnnotationThread').returns(stubs.thread);
                 stubs.controllerMock.expects('registerThread');
+                annotator.generateThreadMap(stubs.threadMap);
+            });
+
+            it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
+                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight'] };
+                annotator.modeControllers['highlight-comment'] = stubs.controller;
+                stubs.controllerMock.expects('registerThread').never();
                 annotator.generateThreadMap(stubs.threadMap);
             });
         });

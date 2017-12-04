@@ -365,6 +365,7 @@ class DocAnnotator extends Annotator {
 
         // Don't bind to highlight specific handlers if we cannot highlight
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
+            super.setupAnnotations();
             return;
         }
 
@@ -384,7 +385,6 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             localized: this.localized
         });
-        this.createHighlightDialog.createElement();
 
         this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
             this.emit(THREAD_EVENT.pending, TYPES.highlight)
@@ -425,7 +425,9 @@ class DocAnnotator extends Annotator {
     bindDOMListeners() {
         super.bindDOMListeners();
 
-        this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
+        if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
+            this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
+        }
 
         // Prevent all forms of highlight annotations if annotating (or plain AND comment highlights) is disabled
         if (!this.permissions.canAnnotate) {
