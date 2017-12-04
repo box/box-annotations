@@ -20,7 +20,7 @@ If you are using Internet Explorer 11, which doesn't natively support promises, 
 
 Supported Locales
 -----------------
-`en-AU`, `en-CA`, `en-GB`, `en-US`, `da-DK`, `de-DE`, `es-ES`, `fi-FI`, `fr-CA`, `fr-FR`, `it-IT`, `ja-JP`, `ko-KR`, `nb-NO`, `nl-NL`, `pl-PL`, `pt-BR`, `ru-RU`, `sv-SE`, `tr-TR`, `zh-CN`, `zh-TW`
+`en-AU`, `en-CA`, `en-GB`, `en-US`, `bn-IN`, `da-DK`, `de-DE`, `es-419`, `es-ES`, `fi-FI`, `fr-CA`, `fr-FR`, `hi-IN`,`it-IT`, `ja-JP`, `ko-KR`, `nb-NO`, `nl-NL`, `pl-PL`, `pt-BR`, `ru-RU`, `sv-SE`, `tr-TR`, `zh-CN`, `zh-TW`
 
 Usage
 -----
@@ -29,16 +29,18 @@ Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.
 Initialization
 --------------
 ```javascript
-/* global BoxAnnotations */
+import BoxAnnotations from 'box-annotations/lib/BoxAnnotations.js'
+import 'box-annotations/lib/Annotator.scss';
+
 const boxAnnotations = new BoxAnnotations();
-const annotatorConf = boxAnnotations.determineAnnotator(options, disabledAnnotationTypes);
+const annotatorConf = boxAnnotations.determineAnnotator(options, viewerConfig, disabledAnnotationTypes);
 
 // Construct and init annotator
 const annotator = new annotatorConf.CONSTRUCTOR(options);
 
 annotator.init(scale);
 ```
-Where `disabledAnnotationTypes` is a string of valid annotation types to disable. See [Enabling/Disabling Annotations and Annotation Types](#enablingdisabling-annotations-and-annotation-types) below for more details on viewer specific annotation configurations.
+Where `viewerConfig` is an optional object of viewer-specific annotations options and `disabledAnnotationTypes` is an optional string array of valid annotation types to disable. See [Enabling/Disabling Annotations and Annotation Types](#enablingdisabling-annotations-and-annotation-types) below for more details on viewer specific annotation configurations.
 
 Parameters & Options
 -------
@@ -199,9 +201,11 @@ Events
 Events can be bound to the annotator object with `addListener` and removed with `removeListener`. Event listeners should be bound before `showAnnotations()` is called, otherwise events can be missed.
 
 ```javascript
-/* global BoxAnnotations */
+import BoxAnnotations from 'box-annotations/lib/BoxAnnotations.js'
+import 'box-annotations/lib/Annotator.scss';
+
 const boxAnnotations = new BoxAnnotations();
-const annotatorConf = boxAnnotations.determineAnnotator(options, disabledAnnotationTypes);
+const annotatorConf = boxAnnotations.determineAnnotator(options, viewerConfig, disabledAnnotationTypes);
 
 // Construct and init annotator
 const annotator = new annotatorConf.CONSTRUCTOR(options);
