@@ -227,13 +227,8 @@ describe('Annotator', () => {
 
     describe('setupControllers()', () => {
         it('should instantiate controllers for enabled types', () => {
-            annotator.options = {
-                annotator: {
-                    NAME: 'name',
-                    CONTROLLERS: { 'something': stubs.controller }
-                },
-                modeButtons: { 'something': {} }
-            };
+            annotator.modeControllers = { 'something': stubs.controller };
+            annotator.options = { modeButtons: { 'something': {} } }
 
             stubs.controllerMock.expects('init');
             stubs.controllerMock.expects('addListener').withArgs('annotationcontrollerevent', sinon.match.func);
