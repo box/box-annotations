@@ -385,7 +385,6 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             localized: this.localized
         });
-        this.createHighlightDialog.createElement();
 
         this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
             this.emit(THREAD_EVENT.pending, TYPES.highlight)
