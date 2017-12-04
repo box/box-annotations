@@ -723,8 +723,8 @@ describe('doc/DocAnnotator', () => {
             annotator.commentHighlightEnabled = false;
             annotator.drawEnabled = true;
 
-            stubs.elMock.expects('addEventListener').withArgs('mouseup', sinon.match.func);
             stubs.elMock.expects('addEventListener').withArgs('click', sinon.match.func);
+            stubs.elMock.expects('addEventListener').never().withArgs('mouseup', sinon.match.func);
             stubs.elMock.expects('addEventListener').never().withArgs('dblclick', sinon.match.func);
             stubs.elMock.expects('addEventListener').never().withArgs('mousedown', sinon.match.func);
             stubs.elMock.expects('addEventListener').never().withArgs('contextmenu', sinon.match.func);
