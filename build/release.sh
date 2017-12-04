@@ -178,6 +178,7 @@ push_new_release() {
         echo "----------------------------------------------------------------------"
         reset_to_master || return 1
     fi
+
     # Install node modules
     if ! install_dependencies; then
         echo "----------------------------------------------------"
