@@ -261,8 +261,6 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     setupControllers() {
-        const { CONTROLLERS } = this.options.annotator || {};
-        this.modeControllers = CONTROLLERS || {};
         this.modeButtons = this.options.modeButtons || {};
 
         const options = {
@@ -282,7 +280,6 @@ class Annotator extends EventEmitter {
                 options
             });
 
-            this.handleControllerEvents = this.handleControllerEvents.bind(this);
             controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
         });
     }
@@ -362,12 +359,17 @@ class Annotator extends EventEmitter {
         // Generate map of page to threads
         Object.keys(threadMap).forEach((threadID) => {
             const annotations = threadMap[threadID];
-            const firstAnnotation = util.getFirstAnnotation(annotations);
-            if (!firstAnnotation || !this.isModeAnnotatable(firstAnnotation.type)) {
+
+            // NOTE: Using the last annotation to evaluate if the annotation type
+            // is enabled because highlight comment annotations may have a plain
+            // highlight as the first annotation in the thread.
+            const lastAnnotation = util.getLastAnnotation(annotations);
+            if (!lastAnnotation || !this.isModeAnnotatable(lastAnnotation.type)) {
                 return;
             }
 
             // Bind events on valid annotation thread
+            const firstAnnotation = util.getLastAnnotation(annotations);
             const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
             const controller = this.modeControllers[firstAnnotation.type];
             if (controller) {
@@ -542,13 +544,9 @@ class Annotator extends EventEmitter {
 
         const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {
-            const thread = pageThreads[threadID];
-            if (!this.isModeAnnotatable(thread.type)) {
-                return;
-            }
-
             // Sets the annotatedElement if the thread was fetched before the
             // dependent document/viewer finished loading
+            const thread = pageThreads[threadID];
             if (!thread.annotatedElement) {
                 thread.annotatedElement = this.annotatedElement;
             }

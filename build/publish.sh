@@ -1,7 +1,26 @@
 #!/bin/bash
 
+
 # Temp version
 VERSION="XXX"
+
+
+reset_to_latest_tag() {
+    # Wipe tags
+    git tag -l | xargs git tag -d || return 1
+
+    # Add the origin remote if it is not present
+    if ! git remote get-url release; then
+        git remote add release git@github.com:box/box-annotations.git || return 1
+    fi
+
+    # Fetch latest code with tags
+    git fetch --tags release || return 1;
+
+    # Remove old local tags in case a build failed
+    git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
+    git clean -fd || return 1
+}
 
 install_dependencies() {
     echo "--------------------------------------------------------"
@@ -98,14 +117,6 @@ push_to_npm() {
     fi
 }
 
-add_remote() {
-    # Add the release remote if it is not present
-    if git remote get-url release; then
-        git remote remove release || return 1
-    fi
-    git remote add release git@github.com:box/box-annotations.git || return 1
-}
-
 publish_to_npm() {
     if [[ $(git diff --shortstat 2> /dev/null | tail -n1) != "" ]] ; then
         echo "----------------------------------------------------"
@@ -114,22 +125,14 @@ publish_to_npm() {
         exit 1
     fi
 
-    if ! add_remote; then
+    if ! reset_to_latest_tag ; then
         echo "----------------------------------------------------"
-        echo "Error in add_remote!"
+        echo "Error in reset_to_latest_tag!"
         echo "----------------------------------------------------"
-        exit 1
     fi
 
-    git checkout master || exit 1
-    git fetch release || exit 1
-
+    # The current version being published
     VERSION=$(./build/current_version.sh)
-    git reset --hard v$VERSION || exit 1
-
-    # Remove old local tags in case a build failed
-    git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
-    git clean -fd || exit 1
 
     if [[ $(git status --porcelain 2>/dev/null| grep "^??") != "" ]] ; then
         echo "----------------------------------------------------"
@@ -192,6 +195,7 @@ publish_to_npm() {
     fi
 }
 
+
 # Execute this entire script
 if ! publish_to_npm; then
     echo "----------------------------------------------------"
@@ -199,6 +203,7 @@ if ! publish_to_npm; then
     echo "----------------------------------------------------"
     exit 1
 fi
+
 
 echo "----------------------------------------------------"
 echo "Checking out back to master"

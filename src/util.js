@@ -357,6 +357,18 @@ export function getFirstAnnotation(annotations) {
 }
 
 /**
+ * Return first annotation in thread
+ *
+ * @param {Object} annotations - Annotations in thread
+ * @return {Annotation} First annotation in thread
+ */
+export function getLastAnnotation(annotations) {
+    const numAnnotations = Object.keys(annotations).length;
+    const lastAnnotationID = Object.keys(annotations)[numAnnotations - 1];
+    return annotations[lastAnnotationID];
+}
+
+/**
  * Whether or not a highlight annotation has comments or is a plain highlight
  *
  * @param {Object} annotations Annotations in highlight thread

@@ -127,6 +127,22 @@ class AnnotationDialog extends EventEmitter {
         if (util.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
+
+        this.scrollToLastComment();
+    }
+
+    /**
+     * Auto scroll annotations dialog to bottom where new comment was added
+     *
+     * @return {void}
+     */
+    scrollToLastComment() {
+        const annotationsEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
+        if (annotationsEl) {
+            const isDialogFlipped = this.dialogEl.classList.contains(CLASS_FLIPPED_DIALOG);
+            const clientHeight = isDialogFlipped ? 0 : annotationsEl.clientHeight;
+            annotationsEl.scrollTop = annotationsEl.scrollHeight - clientHeight;
+        }
     }
 
     /**
@@ -718,11 +734,7 @@ class AnnotationDialog extends EventEmitter {
         replyTextEl.classList.add(constants.CLASS_ACTIVE);
         util.showElement(replyButtonEls);
 
-        // Auto scroll annotations dialog to bottom where new comment was added
-        const annotationsEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
-        if (annotationsEl) {
-            annotationsEl.scrollTop = annotationsEl.scrollHeight - annotationsEl.clientHeight;
-        }
+        this.scrollToLastComment();
     }
 
     /**
@@ -748,11 +760,7 @@ class AnnotationDialog extends EventEmitter {
             replyTextEl.focus();
         }
 
-        // Auto scroll annotations dialog to bottom where new comment was added
-        const annotationsEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
-        if (annotationsEl) {
-            annotationsEl.scrollTop = annotationsEl.scrollHeight - annotationsEl.clientHeight;
-        }
+        this.scrollToLastComment();
     }
 
     /**

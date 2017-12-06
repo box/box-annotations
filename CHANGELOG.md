@@ -1,3 +1,22 @@
+<a name="0.6.0"></a>
+# 0.6.0 (2017-12-05)
+
+* Update: packages (#60) ([dbb1b79](https://github.com/box/box-annotations/commit/dbb1b79))
+* Create .vscode/settings.json ([df9fb5d](https://github.com/box/box-annotations/commit/df9fb5d))
+* Create ISSUE_TEMPLATE.md ([e4334fc](https://github.com/box/box-annotations/commit/e4334fc))
+* Update CONTRIBUTING.md ([f340c37](https://github.com/box/box-annotations/commit/f340c37))
+* Update README.md ([4d53d04](https://github.com/box/box-annotations/commit/4d53d04))
+* Fix: Clarify separation between plain and comment highlights (#58) ([496ceec](https://github.com/box/box-annotations/commit/496ceec))
+* Fix: Don't collapse dialog text area when a comment is deleted (#53) ([f7fbad0](https://github.com/box/box-annotations/commit/f7fbad0))
+* Fix: Ensure point annotations are set up even when highlights are disabled (#57) ([93681b5](https://github.com/box/box-annotations/commit/93681b5))
+* Fix: Iterate through dialog buttons NodeList in an IE compatible way (#54) ([789d78b](https://github.com/box/box-annotations/commit/789d78b))
+* Fix: Publish script to reset to latest tag instead of to master (#55) ([182233a](https://github.com/box/box-annotations/commit/182233a))
+* Fix: Scrolling to bottom of flipped dialogs (#56) ([89b50e2](https://github.com/box/box-annotations/commit/89b50e2))
+* Chore: Remove redundant point dialog positioning (#52) ([ce3538a](https://github.com/box/box-annotations/commit/ce3538a))
+* Chore: Renaming annotator classes names to be more generic (#51) ([21cc74c](https://github.com/box/box-annotations/commit/21cc74c))
+
+
+
 <a name="0.5.0"></a>
 # 0.5.0 (2017-11-27)
 
