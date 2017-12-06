@@ -34,9 +34,9 @@ if (isRelease) {
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             openAnalyzer: false,
-            reportFilename: '../../../reports/webpack-stats.html',
+            reportFilename: '../reports/webpack-stats.html',
             generateStatsFile: true,
-            statsFilename: '../../../reports/webpack-stats.json'
+            statsFilename: '../reports/webpack-stats.json'
         })
     );
 
