@@ -262,6 +262,10 @@ describe('doc/docUtil', () => {
                 insertBefore: sandbox.stub()
             };
 
+            stubs.canvasWrapper = {
+                appendChild: sandbox.stub()
+            };
+
             sandbox.stub(docUtil, 'scaleCanvas').returns(stubs.annotationLayer);
         });
 
@@ -277,11 +281,12 @@ describe('doc/docUtil', () => {
             expect(stubs.pageEl.insertBefore).to.not.be.called;
         });
 
-        it('should insert into the pageEl if the annotationLayerEl does not exist', () => {
+        it('should insert after the page textlayer if the annotationLayerEl does not exist and the text layer is available', () => {
             stubs.annotationLayer.getContext.returns({
                 scale: sandbox.stub()
             });
             stubs.pageEl.getBoundingClientRect.returns({ width: 0, height: 0 });
+            stubs.pageEl.querySelector.onSecondCall().returns({});
             const docStub = sandbox.stub(document, 'createElement').returns(stubs.annotationLayer);
 
             docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
@@ -289,6 +294,23 @@ describe('doc/docUtil', () => {
             expect(stubs.annotationLayer.getContext).to.be.called;
             expect(stubs.annotationLayer.classList.add).to.be.called;
             expect(stubs.pageEl.insertBefore).to.be.called;
+            expect(stubs.canvasWrapper.appendChild).to.not.be.called;
+        });
+
+        it('should insert into the page canvasWrapper if the annotationLayerEl does not exist and no text layer is available', () => {
+            stubs.annotationLayer.getContext.returns({
+                scale: sandbox.stub()
+            });
+            stubs.pageEl.getBoundingClientRect.returns({ width: 0, height: 0 });
+            const docStub = sandbox.stub(document, 'createElement').returns(stubs.annotationLayer);
+            stubs.pageEl.querySelector.onThirdCall().returns(stubs.canvasWrapper);
+
+            docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
+            expect(docStub).to.be.called;
+            expect(stubs.annotationLayer.getContext).to.be.called;
+            expect(stubs.annotationLayer.classList.add).to.be.called;;
+            expect(stubs.pageEl.insertBefore).to.not.be.called;
+            expect(stubs.canvasWrapper.appendChild).to.be.called;
         });
     });
 
