@@ -348,17 +348,25 @@ export function getContext(pageEl, annotationLayerClass) {
         return null;
     }
 
-    // Create annotation layer if one does not exist (e.g. first load or page resize)
+    // Return existing annotation layer if it already exists
     let annotationLayerEl = pageEl.querySelector(`.${annotationLayerClass}`);
-    if (!annotationLayerEl) {
-        annotationLayerEl = document.createElement('canvas');
-        annotationLayerEl.classList.add(annotationLayerClass);
-        annotationLayerEl = scaleCanvas(pageEl, annotationLayerEl);
-
-        const textLayerEl = pageEl.querySelector('.textLayer');
-        pageEl.insertBefore(annotationLayerEl, textLayerEl);
+    if (annotationLayerEl) {
+        return annotationLayerEl.getContext('2d');
     }
 
+    // Create annotation layer (e.g. first load or page resize)
+    annotationLayerEl = document.createElement('canvas');
+    annotationLayerEl.classList.add(annotationLayerClass);
+    annotationLayerEl = scaleCanvas(pageEl, annotationLayerEl);
+
+    const textLayerEl = pageEl.querySelector('.textLayer');
+    if (textLayerEl) {
+        pageEl.insertBefore(annotationLayerEl, textLayerEl);
+    } else {
+        // Ensure the annotation layer is added before the point annotations
+        const canvasWrapperEl = pageEl.querySelector('.canvasWrapper');
+        canvasWrapperEl.appendChild(annotationLayerEl);
+    }
     return annotationLayerEl.getContext('2d');
 }
 
