@@ -1,3 +1,10 @@
+<a name="0.6.1"></a>
+## 0.6.1 (2017-12-07)
+
+*  New: Generate webpack build for annotations.js/css (#59) ([658d511](https://github.com/box/box-annotations/commit/658d511))
+
+
+
 <a name="0.6.0"></a>
 # 0.6.0 (2017-12-05)
 
