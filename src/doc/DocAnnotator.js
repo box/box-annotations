@@ -427,6 +427,10 @@ class DocAnnotator extends Annotator {
 
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
+
+            if (!this.hasTouch || !this.isMobile) {
+                this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
+            }
         }
 
         // Prevent all forms of highlight annotations if annotating (or plain AND comment highlights) is disabled
@@ -453,7 +457,6 @@ class DocAnnotator extends Annotator {
                 this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
                 this.annotatedElement.addEventListener('mousedown', this.highlightMousedownHandler);
                 this.annotatedElement.addEventListener('contextmenu', this.highlightMousedownHandler);
-                this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
             }
         }
     }
