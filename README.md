@@ -490,7 +490,7 @@ Development Setup
 5. Add the upstream repo to your remotes `git remote add upstream git@github.com:box/box-annotations.git`.
 6. Verify your remotes are properly set up `git remote -v`. You should pull updates from the Box repo `upstream` and push changes to your fork `origin`.
 7. Install dependencies `yarn install`
-8. Test your first build! `yarn run build-lib`
+8. Test your first build! `yarn run build`
 9. To link and test your local code changes, run `yarn link` in this repository and `yarn link box-annotations` wherever [Box Content Preview](github.com/box/box-content-preview/) is cloned locally.
 
 While Developing
@@ -504,8 +504,8 @@ Install the following plugins in your preferred editor
 
 ### Yarn commands
 
-* `yarn run build-lib` to generate resource bundles in the lib/ directory.
-* `yarn run watch` to only generate resource bundles in the lib/ directory on file changes.
+* `yarn run build` to generate resource bundles and JS webpack bundles.
+* `yarn run watch` to only generate JS webpack bundles on file changes.
 * `yarn run test` launches karma tests with PhantomJS.
 * `yarn run test -- --src=PATH/TO/SRC/FILENAME` launches test only for `src/PATH/TO/SRC/__tests__/FILENAME-test.js` instead of all tests. For example, `yarn run test -- --src=doc/DocAnnotator` launches tests for `src/doc/__tests__/DocAnnotator-test.js`. This also works for directories, e.g. `yarn run test -- --src=doc/`.
 * `yarn run debug` launches karma tests with PhantomJS for debugging. Open the URL mentioned in the console.
