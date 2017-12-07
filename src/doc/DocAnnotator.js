@@ -425,32 +425,32 @@ class DocAnnotator extends Annotator {
     bindDOMListeners() {
         super.bindDOMListeners();
 
-        if (this.hasTouch && this.isMobile) {
-            if (this.drawEnabled) {
-                this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
-            }
+        // Highlight listeners on desktop & mobile
+        if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
+            this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
+        }
+
+        if (this.hasTouch && this.isMobile && this.drawEnabled) {
+            this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
         } else {
             if (this.drawEnabled) {
                 this.annotatedElement.addEventListener('click', this.drawingSelectionHandler);
             }
 
-            // Highlight listeners
+            // Desktop-only highlight listeners
             if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
-                this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
                 this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
             }
         }
 
-        // Prevent all forms of highlight annotations if annotating (or plain AND comment highlights) is disabled
-        if (!this.permissions.canAnnotate || !this.plainHighlightEnabled || !!this.commentHighlightEnabled) {
+        // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
+        if (!this.permissions.canAnnotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
             return;
         }
 
         if (this.hasTouch && this.isMobile) {
-            // Highlight listeners
             document.addEventListener('selectionchange', this.onSelectionChange);
         } else {
-            // Highlight listeners
             this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.addEventListener('contextmenu', this.highlightMousedownHandler);

@@ -678,15 +678,41 @@ describe('doc/DocAnnotator', () => {
 
         it('should bind DOM listeners if user can annotate and highlight', () => {
             stubs.elMock.expects('addEventListener').withArgs('mouseup', sinon.match.func);
+            stubs.elMock.expects('addEventListener').withArgs('mousemove', sinon.match.func);
             stubs.elMock.expects('addEventListener').withArgs('dblclick', sinon.match.func);
             stubs.elMock.expects('addEventListener').withArgs('mousedown', sinon.match.func);
             stubs.elMock.expects('addEventListener').withArgs('contextmenu', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('mousemove', sinon.match.func);
             stubs.elMock.expects('addEventListener').withArgs('click', sinon.match.func)
             annotator.bindDOMListeners();
         });
 
-        it('should bind selectionchange and touchstart event, on the document, if on mobile and can annotate', () => {
+        it('should bind draw selection handlers regardless of if the user can annotate ', () => {
+            annotator.permissions.canAnnotate = false;
+            const annotatedElementListen = sandbox.spy(annotator.annotatedElement, 'addEventListener');
+
+            // Desktop draw selection handlers
+            annotator.bindDOMListeners();
+            expect(annotatedElementListen).to.be.calledWith('click', annotator.drawingSelectionHandler);
+
+            // Mobile draw selection handlers
+            annotator.isMobile = true;
+            annotator.hasTouch = true;
+            annotator.bindDOMListeners();
+            expect(annotatedElementListen).to.be.calledWith('touchstart', annotator.drawingSelectionHandler);
+        });
+
+        it('should bind highlight mouse move handlers regardless of if the user can annotate only on desktop', () => {
+            annotator.permissions.canAnnotate = false;
+            annotator.plainHighlightEnabled = true;
+            annotator.commentHighlightEnabled = true;
+            annotator.drawEnabled = false;
+
+            stubs.elMock.expects('addEventListener').withArgs('mouseup', sinon.match.func);
+            stubs.elMock.expects('addEventListener').withArgs('mousemove', sinon.match.func);
+            annotator.bindDOMListeners();
+        });
+
+        it('should bind selectionchange event on the document, if on mobile and can annotate', () => {
             annotator.isMobile = true;
             annotator.hasTouch = true;
             annotator.drawEnabled = true;
@@ -697,10 +723,9 @@ describe('doc/DocAnnotator', () => {
             annotator.bindDOMListeners();
 
             expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
-            expect(annotatedElementListen).to.be.calledWith('touchstart', sinon.match.func);
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch enabled, mobile enabled', () => {
+        it('should not bind selection change event if both annotation types are disabled, and touch and mobile enabled', () => {
             annotator.isMobile = true;
             annotator.hasTouch = true;
             annotator.plainHighlightEnabled = false;
@@ -713,10 +738,9 @@ describe('doc/DocAnnotator', () => {
             annotator.bindDOMListeners();
 
             expect(docListen).to.not.be.calledWith('selectionchange', sinon.match.func);
-            expect(annotatedElementListen).to.be.calledWith('touchstart', sinon.match.func);
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch disabled, mobile disabled', () => {
+        it('should not bind selection change event if both annotation types are disabled, and touch and mobile disabled', () => {
             annotator.isMobile = false;
             annotator.hasTouch = false;
             annotator.plainHighlightEnabled = false;
@@ -728,7 +752,6 @@ describe('doc/DocAnnotator', () => {
             stubs.elMock.expects('addEventListener').never().withArgs('dblclick', sinon.match.func);
             stubs.elMock.expects('addEventListener').never().withArgs('mousedown', sinon.match.func);
             stubs.elMock.expects('addEventListener').never().withArgs('contextmenu', sinon.match.func);
-            stubs.elMock.expects('addEventListener').never().withArgs('mousemove', sinon.match.func);
 
             annotator.bindDOMListeners();
         });
