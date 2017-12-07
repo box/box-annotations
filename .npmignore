@@ -19,6 +19,7 @@ src
 .git
 .gitignore
 .npmignore
+.eslintignore
 .stylelintignore
 .stylelintrc
 .vscode
@@ -34,3 +35,5 @@ flow
 browserslist
 .conventional-changelog-lintrc
 *~~bak
+commitlint.config.js
+package.json

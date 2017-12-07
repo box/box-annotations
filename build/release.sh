@@ -53,8 +53,9 @@ install_dependencies() {
 }
 
 
-lint_and_test() {
-    yarn run test || return 1
+build_lint_and_test() {
+    # The build command includes linting
+    yarn run build && yarn run test || return 1
 }
 
 
@@ -188,9 +189,9 @@ push_new_release() {
     fi
 
     # Do testing and linting
-    if ! lint_and_test; then
+    if ! build_lint_and_test; then
         echo "----------------------------------------------------"
-        echo "Error in lint_and_test!"
+        echo "Error in build_lint_and_test!"
         echo "----------------------------------------------------"
         exit 1
     fi
