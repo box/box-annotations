@@ -98,10 +98,12 @@ class AnnotationDialog extends EventEmitter {
             ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
             : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
 
-        // Don't re-position if reply textarea is already active
-        const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
-        if (textareaIsActive && this.element.parentNode) {
-            return;
+        if (this.canAnnotate) {
+            // Don't re-position if reply textarea is already active
+            const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
+            if (textareaIsActive && this.element.parentNode) {
+                return;
+            }
         }
 
         // Position and show - we need to reposition every time since
@@ -110,22 +112,24 @@ class AnnotationDialog extends EventEmitter {
             this.position();
         }
 
-        // Activate appropriate textarea
-        if (this.hasAnnotations) {
-            this.activateReply();
-        } else {
-            textAreaEl.classList.add(constants.CLASS_ACTIVE);
-        }
+        if (this.canAnnotate) {
+            // Activate appropriate textarea
+            if (this.hasAnnotations) {
+                this.activateReply();
+            } else {
+                textAreaEl.classList.add(constants.CLASS_ACTIVE);
+            }
 
-        // Move cursor to end of text area
-        if (textAreaEl.selectionStart) {
-            textAreaEl.selectionEnd = textAreaEl.value.length;
-            textAreaEl.selectionStart = textAreaEl.selectionEnd;
-        }
+            // Move cursor to end of text area
+            if (textAreaEl.selectionStart) {
+                textAreaEl.selectionEnd = textAreaEl.value.length;
+                textAreaEl.selectionStart = textAreaEl.selectionEnd;
+            }
 
-        // Focus the textarea if visible
-        if (util.isElementInViewport(textAreaEl)) {
-            textAreaEl.focus();
+            // Focus the textarea if visible
+            if (util.isElementInViewport(textAreaEl)) {
+                textAreaEl.focus();
+            }
         }
 
         this.scrollToLastComment();
@@ -438,7 +442,10 @@ class AnnotationDialog extends EventEmitter {
 
             const replyTextArea = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
             const commentsTextArea = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            if (replyTextArea.textContent !== '' || commentsTextArea.textContent !== '') {
+            if (
+                (replyTextArea && replyTextArea.textContent !== '') ||
+                (commentsTextArea && commentsTextArea.textContent !== '')
+            ) {
                 this.emit('annotationcommentpending');
             }
         }
@@ -723,6 +730,9 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const replyTextEl = this.dialogEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+        if (!replyTextEl) {
+            return;
+        }
 
         // Don't activate if reply textarea is already active
         const isActive = replyTextEl.classList.contains(constants.CLASS_ACTIVE);
@@ -750,6 +760,10 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const replyContainerEl = this.dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
+        if (!replyContainerEl) {
+            return;
+        }
+
         const replyTextEl = replyContainerEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
         util.resetTextarea(replyTextEl, clearText);
@@ -835,44 +849,88 @@ class AnnotationDialog extends EventEmitter {
      */
     generateDialogEl(numAnnotations) {
         const dialogEl = document.createElement('div');
-        dialogEl.innerHTML = `
-            <section class="${numAnnotations ? constants.CLASS_HIDDEN : ''}" data-section="create">
-                <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA}"
-                    placeholder="${this.localized.addCommentPlaceholder}"></textarea>
-                <div class="${constants.CLASS_BUTTON_CONTAINER}">
-                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_ANNOTATION_BUTTON_CANCEL}" data-type="${
-    constants.DATA_TYPE_CANCEL
-}">
-                        ${this.localized.cancelButton}
-                    </button>
-                    <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${
-    constants.CLASS_ANNOTATION_BUTTON_POST
-}" data-type="${constants.DATA_TYPE_POST}">
-                        ${this.localized.postButton}
-                    </button>
-                </div>
-            </section>
-            <section class="${numAnnotations ? '' : constants.CLASS_HIDDEN}" data-section="show">
-                <div class="${CLASS_COMMENTS_CONTAINER}"></div>
-                <div class="${CLASS_REPLY_CONTAINER}">
-                    <textarea class="${constants.CLASS_TEXTAREA} ${CLASS_REPLY_TEXTAREA}"
-                        placeholder="${this.localized.replyPlaceholder}" data-type="${
-    constants.DATA_TYPE_REPLY_TEXTAREA
-}"></textarea>
-                    <div class="${constants.CLASS_BUTTON_CONTAINER} ${constants.CLASS_HIDDEN}">
-                        <button class="${constants.CLASS_BUTTON} ${
-    constants.CLASS_ANNOTATION_BUTTON_CANCEL
-}" data-type="${constants.DATA_TYPE_CANCEL_REPLY}">
-                            ${this.localized.cancelButton}
-                        </button>
-                        <button class="${constants.CLASS_BUTTON} ${constants.CLASS_BUTTON_PRIMARY} ${
-    constants.CLASS_ANNOTATION_BUTTON_POST
-}" data-type="${constants.DATA_TYPE_POST_REPLY}">
-                            ${this.localized.postButton}
-                        </button>
-                    </div>
-                </div>
-            </section>`.trim();
+
+        if (this.canAnnotate) {
+            const createSectionEl = document.createElement('section');
+            createSectionEl.setAttribute('data-section', 'create');
+            if (numAnnotations) {
+                createSectionEl.classList.add(constants.CLASS_HIDDEN);
+            }
+            dialogEl.appendChild(createSectionEl);
+
+            const createTextArea = document.createElement('textarea');
+            createTextArea.classList.add(constants.CLASS_TEXTAREA);
+            createTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
+            createTextArea.placeHolder = this.localized.addCommentPlaceholder;
+            createSectionEl.appendChild(createTextArea);
+
+            const createBtnsContainer = document.createElement('div');
+            createBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
+            createSectionEl.appendChild(createBtnsContainer);
+
+            const cancelBtn = util.generateBtn(
+                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
+                this.localized.cancelButton,
+                this.localized.cancelButton,
+                constants.DATA_TYPE_CANCEL
+            );
+            createBtnsContainer.appendChild(cancelBtn);
+
+            const postBtn = util.generateBtn(
+                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
+                this.localized.postButton,
+                this.localized.postButton,
+                constants.DATA_TYPE_POST
+            );
+            createBtnsContainer.appendChild(postBtn);
+        }
+
+        const showSectionEl = document.createElement('section');
+        showSectionEl.setAttribute('data-section', 'show');
+        if (!numAnnotations) {
+            showSectionEl.classList.add(constants.CLASS_HIDDEN);
+        }
+        dialogEl.appendChild(showSectionEl);
+
+        const showCommentsContainer = document.createElement('div');
+        showCommentsContainer.classList.add(CLASS_COMMENTS_CONTAINER);
+        showSectionEl.appendChild(showCommentsContainer);
+
+        if (this.canAnnotate) {
+            const replyContainer = document.createElement('div');
+            replyContainer.classList.add(CLASS_REPLY_CONTAINER);
+            showSectionEl.appendChild(replyContainer);
+
+            const replyTextArea = document.createElement('textarea');
+            replyTextArea.classList.add(constants.CLASS_TEXTAREA);
+            replyTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
+            replyTextArea.classList.add(CLASS_REPLY_TEXTAREA);
+            replyTextArea.placeHolder = this.localized.replyPlaceholder;
+            replyTextArea.setAttribute('data-type', constants.DATA_TYPE_REPLY_TEXTAREA);
+            replyContainer.appendChild(replyTextArea);
+
+            const replyBtnsContainer = document.createElement('div');
+            replyBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
+            replyBtnsContainer.classList.add(constants.CLASS_HIDDEN);
+            replyContainer.appendChild(replyBtnsContainer);
+
+            const cancelBtn = util.generateBtn(
+                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
+                this.localized.cancelButton,
+                this.localized.cancelButton,
+                constants.DATA_TYPE_CANCEL_REPLY
+            );
+            replyBtnsContainer.appendChild(cancelBtn);
+
+            const postBtn = util.generateBtn(
+                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
+                this.localized.postButton,
+                this.localized.postButton,
+                constants.DATA_TYPE_POST_REPLY
+            );
+            replyBtnsContainer.appendChild(postBtn);
+        }
+
         return dialogEl;
     }
 
