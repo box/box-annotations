@@ -89,7 +89,7 @@ build_assets() {
     echo "----------------------------------------------------"
     echo "Starting babel build for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run build-lib; then
+    if yarn run build; then
         echo "----------------------------------------------------"
         echo "Built babel assets for version" $VERSION
         echo "----------------------------------------------------"
