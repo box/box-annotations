@@ -11,12 +11,10 @@ const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const license = require('./license');
 
-const src = path.resolve('src');
-
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {
-        annotations: [`${src}/BoxAnnotations.js`]
+        annotations: ['./index.js']
     },
     output: {
         path: path.resolve('lib'),
