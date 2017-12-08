@@ -1,3 +1,11 @@
+<a name="0.6.2"></a>
+## 0.6.2 (2017-12-08)
+
+* Update: Exporting BoxAnnotations correctly in npm package (#65) ([cf95efa](https://github.com/box/box-annotations/commit/cf95efa))
+* Fix: Use correct build script in publish.sh (#64) ([a90b0e8](https://github.com/box/box-annotations/commit/a90b0e8))
+
+
+
 <a name="0.6.1"></a>
 ## 0.6.1 (2017-12-07)
 
