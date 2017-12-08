@@ -1,2 +1,1 @@
-module.exports = require('./lib/annotations.js');
-module.exports = require('./lib/annotations.css');
+export { default as BoxAnnotations } from './src/BoxAnnotations.js';
