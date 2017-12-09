@@ -14,7 +14,7 @@ const license = require('./license');
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {
-        annotations: ['./index.js']
+        annotations: ['./src/BoxAnnotations.js']
     },
     output: {
         path: path.resolve('lib'),

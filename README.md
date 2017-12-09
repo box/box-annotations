@@ -29,8 +29,7 @@ Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.
 Initialization
 --------------
 ```javascript
-import BoxAnnotations from 'box-annotations/lib/BoxAnnotations.js'
-import 'box-annotations/lib/Annotator.scss';
+import BoxAnnotations from 'box-annotations';
 
 const boxAnnotations = new BoxAnnotations();
 const annotatorConf = boxAnnotations.determineAnnotator(options, viewerConfig, disabledAnnotationTypes);
@@ -201,8 +200,7 @@ Events
 Events can be bound to the annotator object with `addListener` and removed with `removeListener`. Event listeners should be bound before `showAnnotations()` is called, otherwise events can be missed.
 
 ```javascript
-import BoxAnnotations from 'box-annotations/lib/BoxAnnotations.js'
-import 'box-annotations/lib/Annotator.scss';
+import BoxAnnotations from 'box-annotations';
 
 const boxAnnotations = new BoxAnnotations();
 const annotatorConf = boxAnnotations.determineAnnotator(options, viewerConfig, disabledAnnotationTypes);

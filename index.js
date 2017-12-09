@@ -1,1 +1,4 @@
-export { default as BoxAnnotations } from './src/BoxAnnotations.js';
+import './lib/annotations.css';
+import './lib/annotations.js';
+
+export default BoxAnnotations;
