@@ -1,3 +1,10 @@
+<a name="0.6.3"></a>
+## 0.6.3 (2017-12-09)
+
+* Fix: BoxAnnotations module export (#66) ([84fe12f](https://github.com/box/box-annotations/commit/84fe12f))
+
+
+
 <a name="0.6.2"></a>
 ## 0.6.2 (2017-12-08)
 
