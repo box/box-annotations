@@ -49,10 +49,18 @@ class BoxAnnotations {
     /**
      * [constructor]
      *
+     * @param {Object} options - Viewer-specific annotator options
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor() {
+    constructor(options = {}) {
         this.annotators = ANNOTATORS;
+        this.options = options;
+
+        // Filter out supported annotation types based on provided options
+        Object.keys(options).forEach((annotatorName) => {
+            const annotator = this.annotators[annotatorName];
+            annotator.TYPE = this.getAnnotatorTypes(annotator);
+        });
     }
 
     /**
@@ -67,8 +75,8 @@ class BoxAnnotations {
     /**
      * Get all annotators for a given viewer.
      *
-     * @param {string} viewerName - Name of the viewer to get annotators for
-     * @param {Array} [disabledAnnotators] - List of disabled annotators
+     * @param {string} viewerName Name of the viewer to get annotators for
+     * @param {Array} [disabledAnnotators] List of disabled annotators
      * @return {Object} Annotator for the viewer
      */
     getAnnotatorsForViewer(viewerName, disabledAnnotators = []) {
@@ -86,7 +94,7 @@ class BoxAnnotations {
      * has already been instantiated or the config is invalid.
      *
      * @private
-     * @param {Object} annotatorConfig - The config where annotation type controller instances should be attached
+     * @param {Object} annotatorConfig The config where annotation type controller instances should be attached
      * @return {void}
      */
     instantiateControllers(annotatorConfig) {
@@ -110,7 +118,7 @@ class BoxAnnotations {
      * if provided, otherwise using the viewer defaults
      *
      * @private
-     * @param {Object} annotatorConfig - The config where annotation type controller instances should be attached
+     * @param {Object} annotatorConfig The config where annotation type controller instances should be attached
      * @return {void}
      */
     getAnnotatorTypes(annotatorConfig) {
@@ -134,25 +142,20 @@ class BoxAnnotations {
     /**
      * Chooses an annotator based on viewer.
      *
-     * @param {Object} options - Viewer options
-     * @param {Object} [viewerConfig] - Viewer-specific annotations configs
-     * @param {Array} [disabledAnnotators] - List of disabled annotators
+     * @param {Object} options Viewer options
+     * @param {Object} [viewerConfig] Viewer-specific annotations configs
+     * @param {Array} [disabledAnnotators] List of disabled annotators
      * @return {Object|null} A copy of the annotator to use, if available
      */
     determineAnnotator(options, viewerConfig = {}, disabledAnnotators = []) {
-        let modifiedAnnotator = null;
-
         this.viewerConfig = viewerConfig;
         const hasAnnotationPermissions = canLoadAnnotations(options.file.permissions);
         const annotator = this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
         if (!hasAnnotationPermissions || !annotator || this.viewerConfig.enabled === false) {
-            return modifiedAnnotator;
+            return null;
         }
 
-        modifiedAnnotator = Object.assign({}, annotator);
-        modifiedAnnotator.TYPE = this.getAnnotatorTypes(modifiedAnnotator);
-
-        return modifiedAnnotator;
+        return this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
     }
 }
 
