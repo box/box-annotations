@@ -94,7 +94,7 @@ class AnnotationDialog extends EventEmitter {
             this.showMobileDialog();
         }
 
-        const textAreaEl = this.hasAnnotations
+        let textAreaEl = this.hasAnnotations
             ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
             : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
 
@@ -112,24 +112,9 @@ class AnnotationDialog extends EventEmitter {
             this.position();
         }
 
+        // Activate and move cursor in the appropriate text area if not in read-only mode
         if (this.canAnnotate) {
-            // Activate appropriate textarea
-            if (this.hasAnnotations) {
-                this.activateReply();
-            } else {
-                textAreaEl.classList.add(constants.CLASS_ACTIVE);
-            }
-
-            // Move cursor to end of text area
-            if (textAreaEl.selectionStart) {
-                textAreaEl.selectionEnd = textAreaEl.value.length;
-                textAreaEl.selectionStart = textAreaEl.selectionEnd;
-            }
-
-            // Focus the textarea if visible
-            if (util.isElementInViewport(textAreaEl)) {
-                textAreaEl.focus();
-            }
+            textAreaEl = this.focusTextArea();
         }
 
         this.scrollToLastComment();
@@ -719,6 +704,38 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
+     * Activates appropriate textarea and adjusts the cursor position on focus
+     *
+     * @private
+     * @return {HTMLElement} textAreaEl
+     */
+    focusTextArea() {
+        const textAreaEl = this.hasAnnotations
+            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+
+        // Activate appropriate textarea
+        if (this.hasAnnotations) {
+            this.activateReply();
+        } else {
+            textAreaEl.classList.add(constants.CLASS_ACTIVE);
+        }
+
+        // Move cursor to end of text area
+        if (textAreaEl.selectionStart) {
+            textAreaEl.selectionEnd = textAreaEl.value.length;
+            textAreaEl.selectionStart = textAreaEl.selectionEnd;
+        }
+
+        // Focus the textarea if visible
+        if (util.isElementInViewport(textAreaEl)) {
+            textAreaEl.focus();
+        }
+
+        return textAreaEl;
+    }
+
+    /**
      * Activates reply textarea.
      *
      * @private
@@ -850,6 +867,7 @@ class AnnotationDialog extends EventEmitter {
     generateDialogEl(numAnnotations) {
         const dialogEl = document.createElement('div');
 
+        // Create Section including the create comment box
         if (this.canAnnotate) {
             const createSectionEl = document.createElement('section');
             createSectionEl.setAttribute('data-section', 'create');
@@ -885,6 +903,7 @@ class AnnotationDialog extends EventEmitter {
             createBtnsContainer.appendChild(postBtn);
         }
 
+        // Show section including the annotations container
         const showSectionEl = document.createElement('section');
         showSectionEl.setAttribute('data-section', 'show');
         if (!numAnnotations) {
@@ -896,6 +915,7 @@ class AnnotationDialog extends EventEmitter {
         showCommentsContainer.classList.add(CLASS_COMMENTS_CONTAINER);
         showSectionEl.appendChild(showCommentsContainer);
 
+        // Reply container including the reply text area and post/cancel buttons
         if (this.canAnnotate) {
             const replyContainer = document.createElement('div');
             replyContainer.classList.add(CLASS_REPLY_CONTAINER);
