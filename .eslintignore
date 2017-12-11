@@ -1,3 +1,4 @@
 src/third-party/*
 dist/*
 **/__tests__/*
+index.js
