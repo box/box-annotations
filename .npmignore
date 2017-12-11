@@ -1,6 +1,7 @@
 *~
 .vimrc
 .sublime-project
+.github
 .swp
 coverage
 reports
@@ -37,3 +38,4 @@ browserslist
 *~~bak
 commitlint.config.js
 package.json
+*.log
