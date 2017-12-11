@@ -8,6 +8,7 @@ import * as constants from '../constants';
 const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
+const CLASS_REPLY_CONTAINER = 'reply-container';
 const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
@@ -72,6 +73,8 @@ describe('AnnotationDialog', () => {
     describe('show()', () => {
         beforeEach(() => {
             stubs.position = sandbox.stub(dialog, 'position');
+            stubs.focus = sandbox.stub(dialog, 'focusTextArea');
+            dialog.canAnnotate = true;
         });
 
         it('should not re-show dialog if already shown on page', () => {
@@ -80,6 +83,12 @@ describe('AnnotationDialog', () => {
 
             dialog.show();
             expect(stubs.position).to.not.be.called;
+        });
+
+        it('should not check if textarea is active in readonly mode', () => {
+            dialog.canAnnotate = false;
+            dialog.show();
+            expect(stubs.focus).to.not.be.called;
         });
 
         it('should not re-position dialog if already shown on page', () => {
@@ -96,6 +105,7 @@ describe('AnnotationDialog', () => {
 
             dialog.show();
             expect(stubs.position).to.be.called;
+            expect(stubs.focus).to.be.called;
         });
 
         it('should position the dialog', () => {
@@ -106,38 +116,36 @@ describe('AnnotationDialog', () => {
 
             dialog.show();
             expect(stubs.position).to.be.called;
+            expect(stubs.focus).to.be.called;
         });
+    });
 
+    describe('focusTextArea()', () => {
         it('should focus textarea if in viewport', () => {
-            dialog.canAnnotate = false;
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
             sandbox.stub(util, 'isElementInViewport').returns(true);
 
-            dialog.show();
+            const textArea = dialog.focusTextArea();
             expect(document.activeElement).to.have.class(CLASS_REPLY_TEXTAREA);
         });
 
         it('should activate reply textarea if dialog has annotations', () => {
-            dialog.canAnnotate = false;
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
             sandbox.stub(dialog, 'activateReply');
 
-            dialog.show();
-            const textArea = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            const textArea = dialog.focusTextArea();
             expect(textArea).to.not.have.class(constants.CLASS_ACTIVE);
             expect(dialog.activateReply).to.be.called;
         });
 
         it('should activate textarea if dialog does not have annotations', () => {
-            dialog.canAnnotate = false;
             dialog.hasAnnotations = false;
             dialog.deactivateReply();
             sandbox.stub(dialog, 'activateReply');
 
-            dialog.show();
-            const textArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            const textArea = dialog.focusTextArea();
             expect(textArea).to.have.class(constants.CLASS_ACTIVE);
             expect(dialog.activateReply).to.not.be.called;
         });
@@ -557,6 +565,17 @@ describe('AnnotationDialog', () => {
             expect(stubs.emit).to.be.calledWith('annotationcommentpending');
             expect(stubs.activate).to.be.called;
         });
+
+        it('should not emit \'annotationcommentpending\' in read-only mode', () => {
+            dialog.element.classList.add(constants.CLASS_HIDDEN);
+            const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            commentsTextArea.parentNode.removeChild(commentsTextArea);
+
+            dialog.mouseenterHandler();
+            expect(stubs.show).to.be.called;
+            expect(stubs.emit).to.not.be.calledWith('annotationcommentpending');
+            expect(stubs.activate).to.be.called;
+        });
     });
 
     describe('mouseleaveHandler()', () => {
@@ -899,6 +918,15 @@ describe('AnnotationDialog', () => {
             expect(util.showElement).to.not.be.called;
         });
 
+        it('should do nothing if reply text area does not exist', () => {
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            replyTextEl.parentNode.removeChild(replyTextEl);
+            sandbox.stub(util, 'showElement');
+
+            dialog.activateReply();
+            expect(util.showElement).to.not.be.called;
+        });
+
         it('should show the correct UI when the reply textarea is activated', () => {
             document.querySelector('textarea').innerHTML += 'the preview SDK is great!';
             dialog.addAnnotationElement({
@@ -923,6 +951,15 @@ describe('AnnotationDialog', () => {
 
             dialog.deactivateReply();
             expect(util.resetTextarea).to.not.be.called;
+        });
+
+        it('should do nothing if reply text area does not exist', () => {
+            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_CONTAINER}`);
+            replyTextEl.parentNode.removeChild(replyTextEl);
+            sandbox.stub(util, 'showElement');
+
+            dialog.deactivateReply();
+            expect(util.showElement).to.not.be.called;
         });
 
         it('should show the correct UI when the reply textarea is deactivated', () => {
@@ -1063,6 +1100,18 @@ describe('AnnotationDialog', () => {
             const createSectionEl = dialogEl.querySelector(constants.SECTION_CREATE);
             const showSectionEl = dialogEl.querySelector(constants.SECTION_SHOW);
             expect(createSectionEl).to.have.class(constants.CLASS_HIDDEN);
+            expect(showSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
+        });
+
+        it('should not add the create section nor the reply container in read-only mode', () => {
+            dialog.canAnnotate = false;
+            const dialogEl = dialog.generateDialogEl(1);
+
+            const createSectionEl = dialogEl.querySelector(constants.SECTION_CREATE);
+            const replyContainerEl = dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
+            const showSectionEl = dialogEl.querySelector(constants.SECTION_SHOW);
+            expect(createSectionEl).to.be.null;
+            expect(replyContainerEl).to.be.null;
             expect(showSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
         });
     });
