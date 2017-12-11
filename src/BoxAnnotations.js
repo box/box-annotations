@@ -55,12 +55,6 @@ class BoxAnnotations {
     constructor(options = {}) {
         this.annotators = ANNOTATORS;
         this.options = options;
-
-        // Filter out supported annotation types based on provided options
-        Object.keys(options).forEach((annotatorName) => {
-            const annotator = this.annotators[annotatorName];
-            annotator.TYPE = this.getAnnotatorTypes(annotator);
-        });
     }
 
     /**
@@ -114,7 +108,7 @@ class BoxAnnotations {
     }
 
     /**
-     * Determines the supported annotation types based on the viewer configurations
+     * Determines the supported annotation types based on the viewer configurations or passed in options
      * if provided, otherwise using the viewer defaults
      *
      * @private
@@ -122,7 +116,14 @@ class BoxAnnotations {
      * @return {void}
      */
     getAnnotatorTypes(annotatorConfig) {
-        if (!this.viewerConfig) {
+        if (this.options && this.options[annotatorConfig.NAME]) {
+            // Sets supported annotation types based on passed in options
+            const annotatorOptions = this.options[annotatorConfig.NAME];
+            if (annotatorOptions.enabledTypes) {
+                return annotatorOptions.enabledTypes;
+            }
+        } else if (!this.viewerConfig) {
+            // Sets supported annotation types to viewer-specific defaults
             return [...annotatorConfig.DEFAULT_TYPES];
         }
 
@@ -148,14 +149,19 @@ class BoxAnnotations {
      * @return {Object|null} A copy of the annotator to use, if available
      */
     determineAnnotator(options, viewerConfig = {}, disabledAnnotators = []) {
+        let modifiedAnnotator = null;
+
         this.viewerConfig = viewerConfig;
         const hasAnnotationPermissions = canLoadAnnotations(options.file.permissions);
         const annotator = this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
         if (!hasAnnotationPermissions || !annotator || this.viewerConfig.enabled === false) {
-            return null;
+            return modifiedAnnotator;
         }
 
-        return this.getAnnotatorsForViewer(options.viewer.NAME, disabledAnnotators);
+        modifiedAnnotator = Object.assign({}, annotator);
+        modifiedAnnotator.TYPE = this.getAnnotatorTypes(modifiedAnnotator);
+
+        return modifiedAnnotator;
     }
 }
 
