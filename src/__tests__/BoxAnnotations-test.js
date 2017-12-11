@@ -111,6 +111,13 @@ describe('BoxAnnotations', () => {
             };
         });
 
+        it('should use the specified types from options', () => {
+            loader.options = {
+                'Document': { enabledTypes: ['draw'] }
+            }
+            expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['draw']);
+        });
+
         it('should filter disabled annotation types from the annotator.TYPE', () => {
             loader.viewerConfig = { disabledTypes: ['point'] };
             expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['highlight']);
