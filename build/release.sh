@@ -128,7 +128,7 @@ push_to_github() {
 
     # Push release to GitHub
     if $patch_release; then
-        if git push github-upstream v$VERSION --no-verify; then
+        if git push release v$VERSION --no-verify; then
             echo "----------------------------------------------------------------------"
             echo "Pushed version" $VERSION "to git successfully"
             echo "----------------------------------------------------------------------"
@@ -139,7 +139,7 @@ push_to_github() {
             return 1
         fi
     else
-        if git push github-upstream master --tags --no-verify; then
+        if git push release master --tags --no-verify; then
             echo "----------------------------------------------------------------------"
             echo "Pushed version" $VERSION "to git successfully"
             echo "----------------------------------------------------------------------"
