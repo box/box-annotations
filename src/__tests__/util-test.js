@@ -207,27 +207,11 @@ describe('util', () => {
 
             resetTextarea(textAreaEl);
 
-            assert.ok(!textAreaEl.classList.contains('bp-is-active'), 'Should be inactive');
-            assert.equal(textAreaEl.value, 'test', 'Value should NOT be reset');
-            assert.equal(textAreaEl.style.width, '', 'Width should be reset');
-            assert.equal(textAreaEl.style.height, '', 'Height should be reset');
-        });
-
-        it('should reset text area', () => {
-            const textAreaEl = document.querySelector('.textarea');
-
-            // Fake making text area 'active'
-            textAreaEl.classList.add('bp-is-active');
-            textAreaEl.value = 'test';
-            textAreaEl.style.width = '10px';
-            textAreaEl.style.height = '10px';
-
-            resetTextarea(textAreaEl, true);
-
-            assert.ok(!textAreaEl.classList.contains('bp-is-active'), 'Should be inactive');
-            assert.equal(textAreaEl.value, '', 'Value should be reset');
-            assert.equal(textAreaEl.style.width, '', 'Width should be reset');
-            assert.equal(textAreaEl.style.height, '', 'Height should be reset');
+            expect(textAreaEl).to.not.have.class('bp-is-active');
+            expect(textAreaEl).to.not.have.class('bp-invalid-input');
+            expect(textAreaEl.value).equals('test');
+            expect(textAreaEl.style.width).equals('');
+            expect(textAreaEl.style.height).equals('');
         });
     });
 

@@ -74,6 +74,7 @@ describe('AnnotationDialog', () => {
         beforeEach(() => {
             stubs.position = sandbox.stub(dialog, 'position');
             stubs.focus = sandbox.stub(dialog, 'focusTextArea');
+            stubs.scroll = sandbox.stub(dialog, 'scrollToLastComment');
             dialog.canAnnotate = true;
         });
 
@@ -82,6 +83,7 @@ describe('AnnotationDialog', () => {
             dialog.activateReply();
 
             dialog.show();
+            expect(stubs.scroll).to.be.called;
             expect(stubs.position).to.not.be.called;
         });
 
@@ -106,6 +108,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.position).to.be.called;
             expect(stubs.focus).to.be.called;
+            expect(stubs.scroll).to.be.called;
         });
 
         it('should position the dialog', () => {
@@ -117,6 +120,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.position).to.be.called;
             expect(stubs.focus).to.be.called;
+            expect(stubs.scroll).to.be.called;
         });
     });
 
@@ -158,7 +162,7 @@ describe('AnnotationDialog', () => {
                 clientHeight: 300,
                 scrollTop: 0
             };
-            sandbox.stub(dialog.dialogEl, 'querySelector').returns(annotationEl);
+            sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
 
             dialog.scrollToLastComment();
             expect(annotationEl.scrollTop).equals(200);
@@ -171,7 +175,7 @@ describe('AnnotationDialog', () => {
                 scrollTop: 0
             };
             dialog.dialogEl.classList.add('bp-annotation-dialog-flipped');
-            sandbox.stub(dialog.dialogEl, 'querySelector').returns(annotationEl);
+            sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
 
             dialog.scrollToLastComment();
             expect(annotationEl.scrollTop).equals(500);

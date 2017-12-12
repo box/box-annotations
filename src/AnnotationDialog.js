@@ -102,6 +102,7 @@ class AnnotationDialog extends EventEmitter {
             // Don't re-position if reply textarea is already active
             const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
             if (textareaIsActive && this.element.parentNode) {
+                this.scrollToLastComment();
                 return;
             }
         }
@@ -126,7 +127,7 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     scrollToLastComment() {
-        const annotationsEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
+        const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
         if (annotationsEl) {
             const isDialogFlipped = this.dialogEl.classList.contains(CLASS_FLIPPED_DIALOG);
             const clientHeight = isDialogFlipped ? 0 : annotationsEl.clientHeight;
@@ -753,6 +754,7 @@ class AnnotationDialog extends EventEmitter {
 
         // Don't activate if reply textarea is already active
         const isActive = replyTextEl.classList.contains(constants.CLASS_ACTIVE);
+        replyTextEl.classList.remove(constants.CLASS_INVALID_INPUT);
         if (isActive) {
             return;
         }

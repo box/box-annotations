@@ -9,7 +9,8 @@ import {
     CLASS_ACTIVE,
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
-    CLASS_DISABLED
+    CLASS_DISABLED,
+    CLASS_INVALID_INPUT
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -198,6 +199,7 @@ export function resetTextarea(element, clearText) {
     textareaEl.style.width = '';
     textareaEl.style.height = '';
     textareaEl.classList.remove(CLASS_ACTIVE);
+    textareaEl.classList.remove(CLASS_INVALID_INPUT);
 
     if (clearText) {
         textareaEl.value = '';
