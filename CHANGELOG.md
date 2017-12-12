@@ -1,3 +1,21 @@
+<a name="0.7.0"></a>
+# 0.7.0 (2017-12-12)
+
+*  New: Generate webpack build for annotations.js/css (#59) ([0b6e44d](https://github.com/box/box-annotations/commit/0b6e44d))
+* Update release.sh ([02baf38](https://github.com/box/box-annotations/commit/02baf38))
+* Fix: BoxAnnotations module export (#66) ([443dcbe](https://github.com/box/box-annotations/commit/443dcbe))
+* Fix: Don't add text areas without canAnnotate permissions (#62) ([9d1db9e](https://github.com/box/box-annotations/commit/9d1db9e))
+* Fix: Enable drawingSelection & highlightMouseMove handlers for read-only permissions (#61) ([33bda6a](https://github.com/box/box-annotations/commit/33bda6a))
+* Fix: Ensure annotation layer is before point annotations (#63) ([8e0f27b](https://github.com/box/box-annotations/commit/8e0f27b))
+* Fix: Ensure mobile header doesn't get hidden when keyboard hides (#69) ([e5a1749](https://github.com/box/box-annotations/commit/e5a1749))
+* Fix: Scroll to bottom of mobile dialogs (#70) ([7a33849](https://github.com/box/box-annotations/commit/7a33849))
+* Fix: Use correct build script in publish.sh (#64) ([4e8fe9d](https://github.com/box/box-annotations/commit/4e8fe9d))
+* New: Allow BoxAnnotations to be instantiated independently and passed into Preview as an option (#68 ([8c1637a](https://github.com/box/box-annotations/commit/8c1637a))
+* Chore: Ignore proper files in .ignore files (#67) ([36606cc](https://github.com/box/box-annotations/commit/36606cc))
+* Update: Exporting BoxAnnotations correctly in npm package (#65) ([f501edc](https://github.com/box/box-annotations/commit/f501edc))
+
+
+
 <a name="0.6.0"></a>
 # 0.6.0 (2017-12-05)
 
