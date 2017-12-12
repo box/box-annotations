@@ -175,7 +175,7 @@ $tablet: 'max-width: 768px';
     cursor: default; // Overrides cursor: none from annotation mode
     position: absolute;
     text-align: left;
-    z-index: 9999; // Annotation dialog should be above other content
+    z-index: 130; // Annotation dialog should be above other content
 
     .annotation-container {
         background-color: $white;
@@ -337,7 +337,7 @@ $tablet: 'max-width: 768px';
     width: 24px;
 
     &:hover {
-        z-index: 9999; // Ensure activated point annotation icon is above dialog
+        z-index: 130; // Ensure activated point annotation icon is above dialog
     }
 
     svg {
@@ -426,7 +426,7 @@ $tablet: 'max-width: 768px';
     color: $fours;
     display: table;
     position: absolute;
-    z-index: 9999;
+    z-index: 130;
 }
 
 .bp-annotation-drawing-dialog,
