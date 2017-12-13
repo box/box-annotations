@@ -395,6 +395,7 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Hides annotations.
      *
+     * @private
      * @return {void}
      */
     hideAnnotations() {
@@ -406,6 +407,7 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Hides annotations on a specified page.
      *
+     * @private
      * @param {number} pageNum - Page number
      * @return {void}
      */

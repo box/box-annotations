@@ -467,7 +467,9 @@ $tablet: 'max-width: 768px';
     .bp-btn-annotate-draw-delete,
     .bp-btn-annotate-draw-delete:active,
     .bp-btn-annotate-draw-delete:hover {
-        padding-left: 4px;
+        font-size: 13px;
+        margin-top: -3px;
+        padding: 4px;
     }
 }
 
