@@ -618,9 +618,9 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        Object.values(this.threads).forEach((pageThreads) => {
-            if (threadID in pageThreads) {
-                const thread = pageThreads[threadID];
+        Object.keys(this.modeControllers).forEach((mode) => {
+            const thread = this.modeControllers[mode].getThreadByID(threadID);
+            if (thread) {
                 thread.scrollIntoView();
             }
         });
