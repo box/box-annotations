@@ -220,6 +220,19 @@ class AnnotationModeController extends EventEmitter {
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
+    applyActionToThreads(func, pageNum) {
+        if (pageNum) {
+            const pageThreads = this.threads[pageNum] || {};
+            Object.keys(pageThreads).forEach((threadID) => func(pageThreads[threadID]));
+            return;
+        }
+
+        Object.keys(this.threads).forEach((page) => {
+            const pageThreads = this.threads[page] || {};
+            Object.keys(pageThreads).forEach((threadID) => func(pageThreads[threadID]));
+        });
+    }
+
     /**
      * Gets thread specified by threadID
      *
@@ -416,6 +429,11 @@ class AnnotationModeController extends EventEmitter {
                 const thread = pageThreads[threadID];
                 if (isPending(thread.state)) {
                     hadPendingThreads = true;
+
+                    /* eslint-disable no-console */
+                    console.error('Pending annotation thread destroyed', thread.threadNumber);
+                    /* eslint-enable no-console */
+
                     thread.destroy();
                 }
             });
