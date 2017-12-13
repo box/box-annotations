@@ -163,9 +163,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     hideAnnotations() {
-        Object.keys(this.threads).forEach((pageNum) => {
-            this.hideAnnotationsOnPage(pageNum);
-        });
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].hideAnnotations());
     }
 
     /**
@@ -175,15 +173,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     hideAnnotationsOnPage(pageNum) {
-        if (!this.threads) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum] || {};
-        Object.keys(pageThreads).forEach((threadID) => {
-            const thread = pageThreads[threadID];
-            thread.hide();
-        });
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].hideAnnotationsOnPage(pageNum));
     }
 
     /**
@@ -525,9 +515,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     renderAnnotations() {
-        Object.keys(this.threads).forEach((pageNum) => {
-            this.renderAnnotationsOnPage(pageNum);
-        });
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderAnnotations());
     }
 
     /**
@@ -538,21 +526,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     renderAnnotationsOnPage(pageNum) {
-        if (!this.threads) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum] || {};
-        Object.keys(pageThreads).forEach((threadID) => {
-            // Sets the annotatedElement if the thread was fetched before the
-            // dependent document/viewer finished loading
-            const thread = pageThreads[threadID];
-            if (!thread.annotatedElement) {
-                thread.annotatedElement = this.annotatedElement;
-            }
-
-            thread.show();
-        });
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderAnnotationsOnPage(pageNum));
     }
 
     /**

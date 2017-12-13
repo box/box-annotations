@@ -334,6 +334,72 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
+     * Renders annotations from memory.
+     *
+     * @private
+     * @return {void}
+     */
+    renderAnnotations() {
+        Object.keys(this.threads).forEach((pageNum) => {
+            this.renderAnnotationsOnPage(pageNum);
+        });
+    }
+
+    /**
+     * Renders annotations from memory for a specified page.
+     *
+     * @private
+     * @param {number} pageNum - Page number
+     * @return {void}
+     */
+    renderAnnotationsOnPage(pageNum) {
+        if (!this.threads) {
+            return;
+        }
+
+        const pageThreads = this.threads[pageNum] || {};
+        Object.keys(pageThreads).forEach((threadID) => {
+            // Sets the annotatedElement if the thread was fetched before the
+            // dependent document/viewer finished loading
+            const thread = pageThreads[threadID];
+            if (!thread.annotatedElement) {
+                thread.annotatedElement = this.annotatedElement;
+            }
+
+            thread.show();
+        });
+    }
+
+    /**
+     * Hides annotations.
+     *
+     * @return {void}
+     */
+    hideAnnotations() {
+        Object.keys(this.threads).forEach((pageNum) => {
+            this.hideAnnotationsOnPage(pageNum);
+        });
+    }
+
+    /**
+     * Hides annotations on a specified page.
+     *
+     * @param {number} pageNum - Page number
+     * @return {void}
+     */
+    hideAnnotationsOnPage(pageNum) {
+        if (!this.threads) {
+            return;
+        }
+
+        const pageThreads = this.threads[pageNum] || {};
+        Object.keys(pageThreads).forEach((threadID) => {
+            const thread = pageThreads[threadID];
+            thread.hide();
+        });
+    }
+
+    /**
      * Destroys pending threads.
      *
      * @private
