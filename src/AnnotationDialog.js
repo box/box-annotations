@@ -881,7 +881,7 @@ class AnnotationDialog extends EventEmitter {
             const createTextArea = document.createElement('textarea');
             createTextArea.classList.add(constants.CLASS_TEXTAREA);
             createTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            createTextArea.placeHolder = this.localized.addCommentPlaceholder;
+            createTextArea.placeholder = this.localized.addCommentPlaceholder;
             createSectionEl.appendChild(createTextArea);
 
             const createBtnsContainer = document.createElement('div');
@@ -927,7 +927,7 @@ class AnnotationDialog extends EventEmitter {
             replyTextArea.classList.add(constants.CLASS_TEXTAREA);
             replyTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
             replyTextArea.classList.add(CLASS_REPLY_TEXTAREA);
-            replyTextArea.placeHolder = this.localized.replyPlaceholder;
+            replyTextArea.placeholder = this.localized.replyPlaceholder;
             replyTextArea.setAttribute('data-type', constants.DATA_TYPE_REPLY_TEXTAREA);
             replyContainer.appendChild(replyTextArea);
 
