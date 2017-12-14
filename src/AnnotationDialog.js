@@ -614,27 +614,7 @@ class AnnotationDialog extends EventEmitter {
             hour: '2-digit',
             minute: '2-digit'
         });
-        const annotationText = annotation.text;
-        // Respect newline characters
-        const newlineRegex = /\r\n|\n\r|\n|\r/g;
-        const newlineList = annotationText.replace(newlineRegex, '\n').split('\n');
-        const textEl = document.createElement('p');
-
-        // If newlines are present, add in breaks for each one
-        if (newlineList.length > 1) {
-            newlineList.forEach((text) => {
-                if (text === '') {
-                    textEl.appendChild(document.createElement('br'));
-                } else {
-                    const contentEl = document.createElement('p');
-                    contentEl.textContent = text;
-                    textEl.appendChild(contentEl);
-                }
-            });
-        } else {
-            // Otherwise just use the textContent
-            textEl.textContent = annotationText;
-        }
+        const textEl = util.createCommentTextNode(annotation.text);
 
         const annotationEl = document.createElement('div');
         annotationEl.classList.add(CLASS_COMMENT);

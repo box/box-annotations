@@ -22,6 +22,7 @@ const CLIENT_VERSION = __VERSION__;
 
 const AVATAR_COLOR_COUNT = 9; // 9 colors defined in Box React UI avatar code
 const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
+const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
 //------------------------------------------------------------------------------
 // DOM Utils
@@ -800,4 +801,35 @@ export function removeThreadFromMap(thread, threadMap) {
     const pageThreads = threadMap[page] || {};
     delete pageThreads[thread.threadID];
     return { page, pageThreads };
+}
+
+/**
+ * Creates a paragraph node that preserves newline characters.
+ *
+ * @param {string} annotationText - Text that belongs to an annotation.
+ * @return {HTMLElement} An HTML Element containing newline preserved text.
+ */
+export function createCommentTextNode(annotationText) {
+    const newlineList = annotationText.replace(NEWLINE_REGEX, '\n').split('\n');
+    const textEl = document.createElement('p');
+
+    // If newlines are present...
+    if (newlineList.length > 1) {
+        newlineList.forEach((text) => {
+            if (text === '') {
+                // ...Add in <br/> for each one...
+                textEl.appendChild(document.createElement('br'));
+            } else {
+                // ...Otherwise use the text that exists there.
+                const contentEl = document.createElement('p');
+                contentEl.textContent = text;
+                textEl.appendChild(contentEl);
+            }
+        });
+    } else {
+        // Otherwise just use the text
+        textEl.textContent = annotationText;
+    }
+
+    return textEl;
 }
