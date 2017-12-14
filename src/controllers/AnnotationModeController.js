@@ -25,6 +25,9 @@ class AnnotationModeController extends EventEmitter {
     /** @property {string} - Mode for annotation controller */
     mode;
 
+    /** @property {CreateAnnotationDialog} - UI used to create new highlight annotations. */
+    createDialog;
+
     /**
      * Initializes mode controller.
      *
@@ -36,6 +39,7 @@ class AnnotationModeController extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
         this.annotator = data.annotator;
+        this.localized = data.localized;
         this.permissions = data.permissions || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
@@ -46,6 +50,8 @@ class AnnotationModeController extends EventEmitter {
         }
 
         this.handleThreadEvents = this.handleThreadEvents.bind(this);
+
+        this.setupSharedDialog();
     }
 
     /**
@@ -66,6 +72,52 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
+
+        if (this.createDialog && this.createDialog.isVisible) {
+            this.createDialog.hide();
+        }
+    }
+
+    /**
+     * Set up the shared mobile dialog and associated listeners
+     *
+     * @protected
+     * @param {HTMLElement} container - The container element for the file
+     * @param {Object} options - Controller options to pass into the create dialog
+     * @return {void}
+     */
+    setupSharedDialog() {}
+
+    /**
+     * Hides the shared mobile dialog and clears associated data
+     *
+     * @protected
+     * @return {void}
+     */
+    hideSharedDialog() {
+        this.lastEvent = null;
+        this.pendingThreadID = null;
+
+        if (this.createDialog && this.createDialog.isVisible) {
+            this.createDialog.hide();
+        }
+    }
+
+    /**
+     * Notify listeners of post event and then clear the create dialog
+     *
+     * @private
+     * @param {string} commentText Annotation comment text
+     * @return {void}
+     */
+    onDialogPost(commentText) {
+        this.emit(CONTROLLER_EVENT.createThread, {
+            commentText,
+            lastEvent: this.lastEvent,
+            pendingThreadID: this.pendingThreadID
+        });
+
+        this.hideSharedDialog();
     }
 
     /**
@@ -391,6 +443,9 @@ class AnnotationModeController extends EventEmitter {
         if (!this.threads) {
             return;
         }
+
+        // Destroy current pending annotation
+        this.destroyPendingThreads();
 
         const pageThreads = this.threads[pageNum] || {};
         Object.keys(pageThreads).forEach((threadID) => {

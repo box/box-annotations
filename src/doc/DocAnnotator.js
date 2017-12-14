@@ -9,7 +9,6 @@ import Annotator from '../Annotator';
 import DocHighlightThread from './DocHighlightThread';
 import DocPointThread from './DocPointThread';
 import DocDrawingThread from './DocDrawingThread';
-import CreateHighlightDialog from './CreateHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
 import {
@@ -24,8 +23,7 @@ import {
     CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
-    CONTROLLER_EVENT,
-    CREATE_EVENT
+    CONTROLLER_EVENT
 } from '../constants';
 
 const MOUSEMOVE_THROTTLE_MS = 50;
@@ -64,9 +62,6 @@ class DocAnnotator extends Annotator {
     /** @property {number} - Timer used to throttle highlight event process. */
     throttleTimer = 0;
 
-    /** @property {CreateHighlightDialog} - UI used to create new highlight annotations. */
-    createHighlightDialog;
-
     /** @property {Event} - For delaying creation of highlight quad points and dialog. Tracks the
      * current selection event, made in a previous event. */
     lastHighlightEvent;
@@ -85,30 +80,6 @@ class DocAnnotator extends Annotator {
 
     /** @property {Function} - Reference to filter function that has been bound TODO(@jholdstock): remove on refactor. */
     showFirstDialogFilter;
-
-    /**
-     * [destructor]
-     *
-     * @return {void}
-     */
-    destroy() {
-        super.destroy();
-        if (!this.createHighlightDialog) {
-            return;
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-            this.createHighlightDialog.removeListener(CREATE_EVENT.post, this.createHighlightThread);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.createHighlightDialog.removeListener(CREATE_EVENT.plain, this.createPlainHighlight);
-        }
-
-        this.createHighlightDialog.destroy();
-        this.createHighlightDialog = null;
-    }
 
     /** @inheritdoc */
     init(initialScale) {
@@ -353,31 +324,6 @@ class DocAnnotator extends Annotator {
             this.onSelectionChange = this.onSelectionChange.bind(this);
         }
 
-        this.createHighlightDialog = new CreateHighlightDialog(this.container, {
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            allowComment: this.commentHighlightEnabled,
-            allowHighlight: this.plainHighlightEnabled,
-            localized: this.localized
-        });
-
-        this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
-            this.emit(THREAD_EVENT.pending, TYPES.highlight)
-        );
-
-        if (this.commentHighlightEnabled) {
-            this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-
-            this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.createPlainHighlight = this.createPlainHighlight.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.plain, this.createPlainHighlight);
-        }
-
         // Init rangy and rangy highlight
         this.highlighter = rangy.createHighlighter();
         this.highlighter.addClassApplier(
@@ -496,9 +442,12 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        const createDialog = this.plainHighlightEnabled
+            ? this.modeControllers[TYPES.highlight].createDialog
+            : this.modeControllers[TYPES.highlight_comment].createDialog;
+        const isCreateDialogVisible = createDialog && createDialog.isVisible;
         if (isCreateDialogVisible) {
-            this.createHighlightDialog.hide();
+            createDialog.hide();
         }
 
         this.isCreatingHighlight = false;
@@ -563,17 +512,20 @@ class DocAnnotator extends Annotator {
         }
 
         // Bail if mid highlight and tapping on the screen
+        const createDialog = this.plainHighlightEnabled
+            ? this.modeControllers[TYPES.highlight].createDialog
+            : this.modeControllers[TYPES.highlight_comment].createDialog;
         if (!docUtil.isValidSelection(selection)) {
             this.lastSelection = null;
             this.lastHighlightEvent = null;
-            this.createHighlightDialog.hide();
+            createDialog.hide();
             this.highlighter.removeAllHighlights();
             return;
         }
 
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        const isCreateDialogVisible = createDialog && createDialog.isVisible;
         if (!isCreateDialogVisible) {
-            this.createHighlightDialog.show(this.container);
+            createDialog.show(this.container);
         }
 
         const { page } = util.getPageInfo(event.target);
@@ -821,13 +773,14 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        const createDialog = this.plainHighlightEnabled
+            ? this.modeControllers[TYPES.highlight].createDialog
+            : this.modeControllers[TYPES.highlight_comment].createDialog;
+        const isCreateDialogVisible = createDialog && createDialog.isVisible;
         if (isCreateDialogVisible) {
-            this.createHighlightDialog.hide();
+            createDialog.hide();
             document.getSelection().removeAllRanges();
         }
-
-        this.isCreatingHighlight = false;
 
         // Prevent the creation of highlights if the user is currently creating a point annotation
         const pointController = this.modeControllers[TYPES.point];
@@ -839,8 +792,8 @@ class DocAnnotator extends Annotator {
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if (this.createHighlightDialog && (this.didMouseMove || event.type === 'dblclick')) {
-            this.highlightCreateHandler(event);
+        if (createDialog && (this.didMouseMove || event.type === 'dblclick')) {
+            this.highlightCreateHandler(event, createDialog);
         } else {
             this.highlightClickHandler(event);
         }
@@ -853,10 +806,11 @@ class DocAnnotator extends Annotator {
      * ANNOTATION_TYPE_HIGHLIGHT_COMMENT.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event,
+     * @param {CreateHighlightDialog} createDialog Create highlight dialog object
      * @return {void}
      */
-    highlightCreateHandler(event) {
+    highlightCreateHandler(event, createDialog) {
         event.stopPropagation();
 
         const selection = window.getSelection();
@@ -882,10 +836,10 @@ class DocAnnotator extends Annotator {
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
 
-        this.createHighlightDialog.show(dialogParentEl);
+        createDialog.show(dialogParentEl);
 
         if (!this.isMobile) {
-            this.createHighlightDialog.setPosition(right - pageLeft, bottom - pageTop);
+            createDialog.setPosition(right - pageLeft, bottom - pageTop);
         }
 
         this.isCreatingHighlight = true;
@@ -1031,22 +985,36 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     handleControllerEvents(data) {
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
-                if (isCreateDialogVisible) {
-                    document.getSelection().removeAllRanges();
-                    this.createHighlightDialog.hide();
-                }
+                document.getSelection().removeAllRanges();
+                this.modeControllers[TYPES.highlight].createDialog.hide();
+                this.modeControllers[TYPES.highlight_comment].createDialog.hide();
                 break;
             case CONTROLLER_EVENT.showHighlights:
                 this.showHighlightsOnPage(data.data);
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
-                if (isCreateDialogVisible) {
-                    this.createHighlightDialog.hide();
+                this.modeControllers[TYPES.highlight].createDialog.hide();
+                this.modeControllers[TYPES.highlight_comment].createDialog.hide();
+                break;
+            case CONTROLLER_EVENT.createThread:
+                if (!util.isHighlightAnnotation(data.mode)) {
+                    return;
                 }
+
+                if (!data.data.commentText) {
+                    this.createPlainHighlight();
+                } else {
+                    this.createHighlightThread(data.data.commentText);
+                }
+                break;
+            case CONTROLLER_EVENT.createPendingThread:
+                if (!util.isHighlightAnnotation(data.mode)) {
+                    return;
+                }
+
+                this.highlightCurrentSelection();
                 break;
             default:
         }

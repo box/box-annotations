@@ -1,4 +1,4 @@
-import CreateAnnotationDialog from '../CreateAnnotationDialog';
+import CreateAnnotationDialog from './CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import { generateBtn, repositionCaret } from '../util';
 import {

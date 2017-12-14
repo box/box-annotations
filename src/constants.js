@@ -158,7 +158,9 @@ export const CONTROLLER_EVENT = {
     unregister: 'unregisterthread',
     showHighlights: 'showhighlights',
     bindDOMListeners: 'binddomlisteners',
-    unbindDOMListeners: 'unbinddomlisteners'
+    unbindDOMListeners: 'unbinddomlisteners',
+    createThread: 'createannotationthread',
+    createPendingThread: 'creatependingthread'
 };
 
 export const CREATE_EVENT = {
