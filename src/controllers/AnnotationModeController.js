@@ -397,41 +397,6 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
-     * Hides annotations.
-     *
-     * @private
-     * @return {void}
-     */
-    hideAnnotations() {
-        if (!this.threads) {
-            return;
-        }
-
-        Object.keys(this.threads).forEach((pageNum) => {
-            this.hideAnnotationsOnPage(pageNum);
-        });
-    }
-
-    /**
-     * Hides annotations on a specified page.
-     *
-     * @private
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
-    hideAnnotationsOnPage(pageNum) {
-        if (!this.threads) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum] || {};
-        Object.keys(pageThreads).forEach((threadID) => {
-            const thread = pageThreads[threadID];
-            thread.hide();
-        });
-    }
-
-    /**
      * Destroys pending threads.
      *
      * @private

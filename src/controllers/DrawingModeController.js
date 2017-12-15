@@ -371,23 +371,6 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Hides annotations on a specified page.
-     *
-     * @inheritdoc
-     * @private
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
-    hideAnnotationsOnPage(pageNum) {
-        if (!this.threads || !this.threads[pageNum]) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum].all() || [];
-        pageThreads.forEach((threadID) => pageThreads[threadID].hide());
-    }
-
-    /**
      * Deselect a saved and selected thread
      *
      * @private

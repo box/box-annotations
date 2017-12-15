@@ -279,8 +279,6 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-
-    /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
      *
      * @override
@@ -291,15 +289,6 @@ class DocAnnotator extends Annotator {
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
         super.renderAnnotationsOnPage(pageNum);
-
-        // Destroy current pending highlight annotation
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].destroyPendingThreads();
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].destroyPendingThreads();
-        }
 
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();

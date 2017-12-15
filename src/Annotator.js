@@ -158,25 +158,6 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Hides annotations.
-     *
-     * @return {void}
-     */
-    hideAnnotations() {
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].hideAnnotations());
-    }
-
-    /**
-     * Hides annotations on a specified page.
-     *
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
-    hideAnnotationsOnPage(pageNum) {
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].hideAnnotationsOnPage(pageNum));
-    }
-
-    /**
      * Sets the zoom scale.
      *
      * @param {number} scale - current zoom scale
@@ -513,7 +494,11 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     renderAnnotations() {
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderAnnotations());
+        Object.keys(this.modeControllers).forEach((mode) => {
+            const controller = this.modeControllers[mode];
+            controller.renderAnnotations();
+            controller.destroyPendingThreads();
+        });
     }
 
     /**
