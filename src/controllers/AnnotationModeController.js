@@ -362,6 +362,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderAnnotations() {
+        if (!this.threads) {
+            return;
+        }
+
         Object.keys(this.threads).forEach((pageNum) => {
             this.renderAnnotationsOnPage(pageNum);
         });
@@ -399,6 +403,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     hideAnnotations() {
+        if (!this.threads) {
+            return;
+        }
+
         Object.keys(this.threads).forEach((pageNum) => {
             this.hideAnnotationsOnPage(pageNum);
         });
