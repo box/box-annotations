@@ -882,22 +882,52 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        /**
+         * Get endContainer
+         * Get endOffset
+         * Check to see if endContainer of range is text node or not
+         * if (textNode) Wonky insertion of dummy node
+         *     else Insert a dummy node
+         * use getQuadPoints(dummyNode) to calculate bottom right point
+         * position dialog
+         */
+
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
-        const rects = lastRange.getClientRects();
-        if (rects.length === 0) {
-            return;
+        const { endContainer, endOffset } = lastRange;
+        const dummyEl = document.createElement('a');
+        // dummyEl.className = 'dummy';
+        // dummyEl.appendChild(document.createTextNode(' span contents '))
+        // let tempContainer;
+
+        if (endContainer.nodeName === '#text') {
+            // Insert dummy, maybe a span?
+            const parentEl = endContainer.parentNode;
+            const textSplit = endContainer.splitText(endOffset);
+            parentEl.insertBefore(dummyEl, textSplit);
+        } else {
+            console.log(endContainer);
+            // tempContainer = endContainer;
         }
 
-        const { right, bottom } = rects[rects.length - 1];
         const pageDimensions = pageEl.getBoundingClientRect();
-        const pageLeft = pageDimensions.left;
-        const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
+        // const pageWidth = pageDimensions.width;
+        const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+
+        const zoomScale = util.getScale(this.annotatedElement);
+        const endRect = docUtil.getQuadPoints(dummyEl, pageEl, zoomScale);
+        const points = docUtil.convertPDFSpaceToDOMSpace(endRect, pageHeight, zoomScale);
+        const lowerRight = docUtil.getLowerRightCornerOfLastQuadPoint([points]);
+
+        // dummyEl.parentNode.removeChild(dummyEl);
+        // const pageDimensions = pageEl.getBoundingClientRect();
+        // const pageLeft = pageDimensions.left;
+        // const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
 
         this.createHighlightDialog.show(dialogParentEl);
 
         if (!this.isMobile) {
-            this.createHighlightDialog.setPosition(right - pageLeft, bottom - pageTop);
+            this.createHighlightDialog.setPosition(lowerRight[0], lowerRight[1]);
         }
 
         this.isCreatingHighlight = true;
