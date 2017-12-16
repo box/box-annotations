@@ -180,7 +180,7 @@ describe('Annotator', () => {
 
     describe('loadAnnotations()', () => {
         beforeEach(() => {
-            sandbox.stub(annotator, 'renderAnnotations');
+            sandbox.stub(annotator, 'render');
             sandbox.stub(annotator, 'emit');
         });
 
@@ -188,7 +188,7 @@ describe('Annotator', () => {
             annotator.fetchPromise = Promise.resolve();
             annotator.loadAnnotations();
             return annotator.fetchPromise.then(() => {
-                expect(annotator.renderAnnotations).to.be.called;
+                expect(annotator.render).to.be.called;
                 expect(annotator.emit).to.not.be.called;
             }).catch((err) => {
                 sinon.assert.failException;
@@ -201,7 +201,7 @@ describe('Annotator', () => {
             return annotator.fetchPromise.then(() => {
                 sinon.assert.failException;
             }).catch((err) => {
-                expect(annotator.renderAnnotations).to.not.be.called;
+                expect(annotator.render).to.not.be.called;
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
             });
         });
@@ -260,40 +260,40 @@ describe('Annotator', () => {
             });
         });
 
-        describe('renderAnnotations()', () => {
+        describe('render()', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
                     'type': {
-                        renderAnnotations: sandbox.stub(),
+                        render: sandbox.stub(),
                         destroyPendingThreads: sandbox.stub()
                     },
                     'type2': {
-                        renderAnnotations: sandbox.stub(),
+                        render: sandbox.stub(),
                         destroyPendingThreads: sandbox.stub()
                     }
                 };
 
-                annotator.renderAnnotations();
-                expect(annotator.modeControllers['type'].renderAnnotations).to.be.called;
+                annotator.render();
+                expect(annotator.modeControllers['type'].render).to.be.called;
                 expect(annotator.modeControllers['type'].destroyPendingThreads).to.be.called;
-                expect(annotator.modeControllers['type2'].renderAnnotations).to.be.called;
+                expect(annotator.modeControllers['type2'].render).to.be.called;
                 expect(annotator.modeControllers['type2'].destroyPendingThreads).to.be.called;
             });
         });
 
-        describe('renderAnnotationsOnPage()', () => {
+        describe('renderPage()', () => {
             it('should call hide on each thread in map on page 1', () => {
                 annotator.modeControllers = {
                     'type': {
-                        renderAnnotationsOnPage: sandbox.stub()
+                        renderPage: sandbox.stub()
                     },
                     'type2': {
-                        renderAnnotationsOnPage: sandbox.stub()
+                        renderPage: sandbox.stub()
                     }
                 };
-                annotator.renderAnnotationsOnPage(1);
-                expect(annotator.modeControllers['type'].renderAnnotationsOnPage).to.be.calledWith(1);
-                expect(annotator.modeControllers['type2'].renderAnnotationsOnPage).to.be.called;
+                annotator.renderPage(1);
+                expect(annotator.modeControllers['type'].renderPage).to.be.calledWith(1);
+                expect(annotator.modeControllers['type2'].renderPage).to.be.called;
             });
         });
 
@@ -302,8 +302,8 @@ describe('Annotator', () => {
                 annotator.permissions.canAnnotate = true;
                 stubs.hide = sandbox.stub(util, 'hideElement');
                 stubs.show = sandbox.stub(util, 'showElement');
-                stubs.render = sandbox.stub(annotator, 'renderAnnotations');
-                stubs.renderPage = sandbox.stub(annotator, 'renderAnnotationsOnPage');
+                stubs.render = sandbox.stub(annotator, 'render');
+                stubs.renderPage = sandbox.stub(annotator, 'renderPage');
 
                 annotator.modeButtons = {
                     point: { selector: 'point_btn' },

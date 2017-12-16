@@ -361,13 +361,13 @@ class AnnotationModeController extends EventEmitter {
      * @private
      * @return {void}
      */
-    renderAnnotations() {
+    render() {
         if (!this.threads) {
             return;
         }
 
         Object.keys(this.threads).forEach((pageNum) => {
-            this.renderAnnotationsOnPage(pageNum);
+            this.renderPage(pageNum);
         });
     }
 
@@ -378,7 +378,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderAnnotationsOnPage(pageNum) {
+    renderPage(pageNum) {
         if (!this.threads) {
             return;
         }

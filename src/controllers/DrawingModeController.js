@@ -361,7 +361,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderAnnotationsOnPage(pageNum) {
+    renderPage(pageNum) {
         if (!this.threads || !this.threads[pageNum]) {
             return;
         }

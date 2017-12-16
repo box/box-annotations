@@ -285,10 +285,10 @@ class DocAnnotator extends Annotator {
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderAnnotationsOnPage(pageNum) {
+    renderPage(pageNum) {
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
-        super.renderAnnotationsOnPage(pageNum);
+        super.renderPage(pageNum);
 
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
@@ -974,11 +974,11 @@ class DocAnnotator extends Annotator {
         }
 
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].renderAnnotationsOnPage(page);
+            this.modeControllers[TYPES.highlight].renderPage(page);
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].renderAnnotationsOnPage(page);
+            this.modeControllers[TYPES.highlight_comment].renderPage(page);
         }
     }
 

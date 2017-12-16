@@ -427,24 +427,24 @@ describe('controllers/AnnotationModeController', () => {
         });
     });
 
-    describe('renderAnnotations()', () => {
+    describe('render()', () => {
         beforeEach(() => {
-            stubs.renderPage = sandbox.stub(controller, 'renderAnnotationsOnPage');
+            stubs.renderPage = sandbox.stub(controller, 'renderPage');
         });
 
         it('should do nothing if no threads exist', () => {
-            controller.renderAnnotations();
+            controller.render();
             expect(stubs.renderPage).to.not.be.called;
         });
 
         it('should render the annotations on every page', () => {
             controller.threads = { 1: {}, 2: {} };
-            controller.renderAnnotations();
+            controller.render();
             expect(stubs.renderPage).to.be.calledTwice;
         });
     });
 
-    describe('renderAnnotationsOnPage()', () => {
+    describe('renderPage()', () => {
         const thread = {
             annotatedElement: undefined,
             show: () => {}
@@ -457,7 +457,7 @@ describe('controllers/AnnotationModeController', () => {
 
         it('should do nothing if no threads exist', () => {
             stubs.threadMock.expects('show').never();
-            controller.renderAnnotationsOnPage(1);
+            controller.renderPage(1);
         });
 
         it('should render the annotations on every page', () => {
@@ -466,7 +466,7 @@ describe('controllers/AnnotationModeController', () => {
                 2: { '456def': thread } // wrong page
             };
             stubs.threadMock.expects('show').once();
-            controller.renderAnnotationsOnPage(1);
+            controller.renderPage(1);
             expect(thread.annotatedElement).equals('el');
         });
     });

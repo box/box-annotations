@@ -425,7 +425,7 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
-    describe('renderAnnotationsOnPage()', () => {
+    describe('renderPage()', () => {
         const thread = {
             threadID: '123abc',
             location: { page: 1 },
@@ -439,18 +439,18 @@ describe('controllers/DrawingModeController', () => {
 
         it('should do nothing if no threads exist or none are on the specified page', () => {
             stubs.threadMock.expects('show').never();
-            controller.renderAnnotationsOnPage(1);
+            controller.renderPage(1);
 
             controller.threads = {};
             controller.registerThread(thread);
-            controller.renderAnnotationsOnPage(2);
+            controller.renderPage(2);
         });
 
         it('should render the annotations on every page', () => {
             controller.threads = {};
             controller.registerThread(thread);
             stubs.threadMock.expects('show').once();
-            controller.renderAnnotationsOnPage(1);
+            controller.renderPage(1);
         });
     });
 

@@ -150,7 +150,7 @@ class Annotator extends EventEmitter {
         this.fetchPromise
             .then(() => {
                 this.generateThreadMap(this.threadMap);
-                this.renderAnnotations();
+                this.render();
             })
             .catch((error) => {
                 this.emit(ANNOTATOR_EVENT.loadError, error);
@@ -493,10 +493,10 @@ class Annotator extends EventEmitter {
      * @private
      * @return {void}
      */
-    renderAnnotations() {
+    render() {
         Object.keys(this.modeControllers).forEach((mode) => {
             const controller = this.modeControllers[mode];
-            controller.renderAnnotations();
+            controller.render();
             controller.destroyPendingThreads();
         });
     }
@@ -508,8 +508,8 @@ class Annotator extends EventEmitter {
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderAnnotationsOnPage(pageNum) {
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderAnnotationsOnPage(pageNum));
+    renderPage(pageNum) {
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
     }
 
     /**
@@ -524,9 +524,9 @@ class Annotator extends EventEmitter {
         // Only render a specific page's annotations unless no page number
         // is specified
         if (pageNum) {
-            this.renderAnnotationsOnPage(pageNum);
+            this.renderPage(pageNum);
         } else {
-            this.renderAnnotations();
+            this.render();
         }
 
         // Only show/hide point annotation button if user has the

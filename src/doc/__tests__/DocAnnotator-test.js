@@ -403,7 +403,7 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             stubs.getLocationFromEvent = sandbox.stub(annotator, 'getLocationFromEvent');
             stubs.createAnnotationThread = sandbox.stub(annotator, 'createAnnotationThread');
-            stubs.renderAnnotationsOnPage = sandbox.stub(annotator, 'renderAnnotationsOnPage');
+            stubs.renderPage = sandbox.stub(annotator, 'renderPage');
 
             annotator.highlighter = {
                 removeAllHighlights: sandbox.stub()
@@ -540,15 +540,15 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('renderAnnotationsOnPage()', () => {
+    describe('renderPage()', () => {
         beforeEach(() => {
             sandbox.stub(annotator, 'scaleAnnotationCanvases');
             annotator.modeControllers = {
                 'type': {
-                    renderAnnotationsOnPage: sandbox.stub()
+                    renderPage: sandbox.stub()
                 },
                 'type2': {
-                    renderAnnotationsOnPage: sandbox.stub()
+                    renderPage: sandbox.stub()
                 }
             };
         });
@@ -561,10 +561,10 @@ describe('doc/DocAnnotator', () => {
             };
             const createMock = sandbox.mock(annotator.createHighlightDialog);
             createMock.expects('hide');
-            annotator.renderAnnotationsOnPage(1);
+            annotator.renderPage(1);
             expect(annotator.scaleAnnotationCanvases).to.be.calledWith(1);
-            expect(annotator.modeControllers['type'].renderAnnotationsOnPage).to.be.calledWith(1);
-            expect(annotator.modeControllers['type2'].renderAnnotationsOnPage).to.be.calledWith(1);
+            expect(annotator.modeControllers['type'].renderPage).to.be.calledWith(1);
+            expect(annotator.modeControllers['type2'].renderPage).to.be.calledWith(1);
         });
     });
 
@@ -1404,10 +1404,10 @@ describe('doc/DocAnnotator', () => {
 
             annotator.modeControllers = {
                 'highlight': {
-                    renderAnnotationsOnPage: () => {}
+                    renderPage: () => {}
                 },
                 'highlight-comment': {
-                    renderAnnotationsOnPage: () => {}
+                    renderPage: () => {}
                 }
             };
             stubs.highlightMock = sandbox.mock(annotator.modeControllers['highlight']);
@@ -1451,7 +1451,7 @@ describe('doc/DocAnnotator', () => {
             stubs.mock.expects('clearRect');
 
             annotator.plainHighlightEnabled = true;
-            stubs.highlightMock.expects('renderAnnotationsOnPage').withArgs(0);
+            stubs.highlightMock.expects('renderPage').withArgs(0);
             annotator.showHighlightsOnPage(0);
         });
 
@@ -1462,7 +1462,7 @@ describe('doc/DocAnnotator', () => {
             stubs.mock.expects('clearRect');
 
             annotator.commentHighlightEnabled = true;
-            stubs.commentMock.expects('renderAnnotationsOnPage').withArgs(0);
+            stubs.commentMock.expects('renderPage').withArgs(0);
             annotator.showHighlightsOnPage(0);
         });
     });
