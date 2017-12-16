@@ -229,6 +229,15 @@ class AnnotationModeController extends EventEmitter {
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
+    /**
+     * Apply predicate method to every thread on either the specified page or
+     * the entire file
+     *
+     * @private
+     * @param {Function} func Predicate method to apply on threads
+     * @param {number} [pageNum] Optional page number
+     * @return {void}
+     */
     applyActionToThreads(func, pageNum) {
         if (pageNum) {
             const pageThreads = this.threads[pageNum] || {};

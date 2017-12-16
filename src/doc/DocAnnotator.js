@@ -722,6 +722,13 @@ class DocAnnotator extends Annotator {
         this.delayThreads.forEach((threadID, index) => this.showFirstDialogFilter(threadID, index));
     }
 
+    /**
+     * Determines if the specified therad is being hovered over
+     *
+     * @private
+     * @param {AnnotationThread} thread highlight thread to check
+     * @return {void}
+     */
     checkThread(thread) {
         // Determine if any highlight threads on page are pending or active
         // and ignore hover events of any highlights below
@@ -912,6 +919,13 @@ class DocAnnotator extends Annotator {
         }
     }
 
+    /**
+     * Delegates click event to click handlers for threads on the page.
+     *
+     * @private
+     * @param {AnnotationThread} thread Highlight thread to check
+     * @return {void}
+     */
     clickThread(thread) {
         if (util.isPending(thread.state)) {
             // Destroy any pending highlights on click outside the highlight
