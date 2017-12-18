@@ -173,6 +173,7 @@ $tablet: 'max-width: 768px';
 .bp-create-annotation-dialog {
     border-top: 20px solid transparent; // Transparent border for hover detection
     cursor: default; // Overrides cursor: none from annotation mode
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     text-align: left;
     z-index: 130; // Annotation dialog should be above other content
@@ -429,6 +430,7 @@ $tablet: 'max-width: 768px';
     border-top: 20px solid transparent; // Transparent border for hover detection
     color: $fours;
     display: table;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     z-index: 130;
 }
@@ -439,6 +441,7 @@ $tablet: 'max-width: 768px';
     background-color: $white;
     border: 1px solid $seesee;
     border-radius: 3px;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     padding: 5px 6px;
 
     // Center buttons
@@ -471,7 +474,9 @@ $tablet: 'max-width: 768px';
     .bp-btn-annotate-draw-delete,
     .bp-btn-annotate-draw-delete:active,
     .bp-btn-annotate-draw-delete:hover {
-        padding-left: 4px;
+        font-size: 13px;
+        margin-top: -3px;
+        padding: 4px;
     }
 }
 
