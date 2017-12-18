@@ -425,6 +425,35 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
+    describe('renderPage()', () => {
+        const thread = {
+            threadID: '123abc',
+            location: { page: 1 },
+            show: () => {},
+            addListener: () => {}
+        };
+
+        beforeEach(() => {
+            stubs.threadMock = sandbox.mock(thread);
+        });
+
+        it('should do nothing if no threads exist or none are on the specified page', () => {
+            stubs.threadMock.expects('show').never();
+            controller.renderPage(1);
+
+            controller.threads = {};
+            controller.registerThread(thread);
+            controller.renderPage(2);
+        });
+
+        it('should render the annotations on every page', () => {
+            controller.threads = {};
+            controller.registerThread(thread);
+            stubs.threadMock.expects('show').once();
+            controller.renderPage(1);
+        });
+    });
+
     describe('removeSelection()', () => {
         it('should clean a selected thread boundary', () => {
             const thread = {
