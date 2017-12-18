@@ -44,7 +44,7 @@ const ANNOTATION_LAYER_CLASSES = [CLASS_ANNOTATION_LAYER_HIGHLIGHT, CLASS_ANNOTA
 /**
  * Check if a thread is in a hover state.
  *
- * @param {Object} thread - The thread to check the state of
+ * @param {Object} thread The thread to check the state of
  * @return {boolean} True if the thread is in a state of hover
  */
 function isThreadInHoverState(thread) {
@@ -125,7 +125,7 @@ class DocAnnotator extends Annotator {
     /**
      * Determines the annotated element in the viewer
      *
-     * @param {HTMLElement} containerEl - Container element for the viewer
+     * @param {HTMLElement} containerEl Container element for the viewer
      * @return {HTMLElement} Annotated element in the viewer
      */
     getAnnotatedEl(containerEl) {
@@ -141,8 +141,8 @@ class DocAnnotator extends Annotator {
      * as defined by the PDF spec and page the highlight is on.
      *
      * @override
-     * @param {Event} event - DOM event
-     * @param {string} annotationType - Type of annotation
+     * @param {Event} event DOM event
+     * @param {string} annotationType Type of annotation
      * @return {Object|null} Location object
      */
     getLocationFromEvent(event, annotationType) {
@@ -250,9 +250,9 @@ class DocAnnotator extends Annotator {
      * Creates the proper type of thread, adds it to in-memory map, and returns it.
      *
      * @override
-     * @param {Object} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} [type] - Optional annotation type
+     * @param {Object} annotations Annotations in thread
+     * @param {Object} location Location object
+     * @param {string} [type] Optional annotation type
      * @return {AnnotationThread} Created annotation thread
      */
     createAnnotationThread(annotations, location, type) {
@@ -264,7 +264,7 @@ class DocAnnotator extends Annotator {
         }
 
         if (util.isHighlightAnnotation(type)) {
-            thread = new DocHighlightThread(threadParams);
+            thread = new DocHighlightThread(threadParams, this.commentHighlightEnabled);
         } else if (type === TYPES.draw) {
             thread = new DocDrawingThread(threadParams);
         } else if (type === TYPES.point) {
@@ -282,7 +282,7 @@ class DocAnnotator extends Annotator {
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
      *
      * @override
-     * @param {number} pageNum - Page number
+     * @param {number} pageNum Page number
      * @return {void}
      */
     renderPage(pageNum) {
@@ -299,7 +299,7 @@ class DocAnnotator extends Annotator {
      * Scales all annotation canvases for a specified page.
      *
      * @override
-     * @param {number} pageNum - Page number
+     * @param {number} pageNum Page number
      * @return {void}
      */
     scaleAnnotationCanvases(pageNum) {
@@ -486,7 +486,7 @@ class DocAnnotator extends Annotator {
      * Creates an highlight annotation thread, adds it to in-memory map, and returns it.
      *
      * @private
-     * @param {string} [commentText] - If provided, this will save a highlight comment annotation, with commentText
+     * @param {string} [commentText] If provided, this will save a highlight comment annotation, with commentText
      * being the text as the first comment in the thread.
      * @return {DocHighlightThread} Created doc highlight annotation thread
      */
@@ -526,7 +526,7 @@ class DocAnnotator extends Annotator {
         }
 
         thread.state = STATES.hover;
-        thread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
+        thread.show();
         thread.dialog.postAnnotation(commentText);
 
         const controller = this.modeControllers[highlightType];
@@ -542,7 +542,7 @@ class DocAnnotator extends Annotator {
      * Handles changes in text selection. Used for mobile highlight creation.
      *
      * @private
-     * @param {Event} event - The DOM event coming from interacting with the element.
+     * @param {Event} event The DOM event coming from interacting with the element.
      * @return {void}
      */
     onSelectionChange(event) {
@@ -615,7 +615,7 @@ class DocAnnotator extends Annotator {
      * thread.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     highlightMousedownHandler(event) {
@@ -753,7 +753,7 @@ class DocAnnotator extends Annotator {
      * Mouse move handler. Paired with throttle mouse move handler to check for annotation highlights.
      *
      * @private
-     * @param {Event} event - DDOM event fired by mouse move event
+     * @param {Event} event DOM event fired by mouse move event
      * @return {void}
      */
     onHighlightMouseMove(event) {
@@ -778,7 +778,7 @@ class DocAnnotator extends Annotator {
      * Drawing selection handler. Delegates to the drawing controller
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     drawingSelectionHandler(event) {
@@ -813,7 +813,7 @@ class DocAnnotator extends Annotator {
      * mousedown.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     highlightMouseupHandler(event) {
@@ -853,7 +853,7 @@ class DocAnnotator extends Annotator {
      * ANNOTATION_TYPE_HIGHLIGHT_COMMENT.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     highlightCreateHandler(event) {
@@ -897,7 +897,7 @@ class DocAnnotator extends Annotator {
      * threads on the page.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     highlightClickHandler(event) {
@@ -917,7 +917,7 @@ class DocAnnotator extends Annotator {
 
         // Show active thread last
         if (this.activeThread) {
-            this.activeThread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
+            this.activeThread.show();
         }
     }
 
@@ -977,7 +977,7 @@ class DocAnnotator extends Annotator {
      * highlight annotations currently in memory for the specified page.
      *
      * @private
-     * @param {number} page - Page to draw annotations for
+     * @param {number} page Page to draw annotations for
      * @return {void}
      */
     showHighlightsOnPage(page) {
@@ -1005,7 +1005,7 @@ class DocAnnotator extends Annotator {
      * not be a true Rangy highlight object.
      *
      * @private
-     * @param {Object} highlight - Highlight to delete.
+     * @param {Object} highlight Highlight to delete.
      * @return {void}
      */
     removeRangyHighlight(highlight) {
@@ -1025,9 +1025,9 @@ class DocAnnotator extends Annotator {
      * Handle events emitted by the annotaiton service
      *
      * @private
-     * @param {Object} [data] - Annotation service event data
-     * @param {string} [data.event] - Annotation service event
-     * @param {string} [data.data] -
+     * @param {Object} [data] Annotation service event data
+     * @param {string} [data.event] Annotation service event
+     * @param {string} [data.data] Annotation event data
      * @return {void}
      */
     handleControllerEvents(data) {
@@ -1057,13 +1057,13 @@ class DocAnnotator extends Annotator {
      * For filtering out and only showing the first thread in a list of threads.
      *
      * @private
-     * @param {Object} thread - The annotation thread to either hide or show
-     * @param {number} index - The index of the annotation thread
+     * @param {Object} thread The annotation thread to either hide or show
+     * @param {number} index The index of the annotation thread
      * @return {void}
      */
     showFirstDialogFilter(thread, index) {
         if (index === 0) {
-            thread.show(this.plainHighlightEnabled, this.commentHighlightEnabled); // TODO(@jholdstock): remove flags on refactor.
+            thread.show();
         } else {
             thread.hideDialog();
         }
