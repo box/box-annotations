@@ -772,7 +772,7 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const annotationComment = document.querySelector('.comment-text');
+            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
             expect(annotationComment).to.contain.html('the preview sdk is awesome!');
         });
 
@@ -869,6 +869,39 @@ describe('AnnotationDialog', () => {
                 })
             );
             expect(stubs.locale).to.be.calledWith('en-GB');
+        });
+
+        it('should add a <br> for each newline', () => {
+            const withBreaks = `
+
+
+            yay, three breaks!`;
+
+            dialog.addAnnotationElement(
+                new Annotation({
+                    annotationID: 1,
+                    text: withBreaks,
+                    user: { id: 1, name: 'user' },
+                    permissions: { can_delete: true }
+                })
+            );
+            const breaks = document.querySelectorAll(`${constants.SELECTOR_ANNOTATION_COMMENT_TEXT} br`);
+            expect(breaks.length === 3).to.be.true;
+        });
+
+        it('should respect symbols added to the text', () => {
+            const text = 'I can add symbols &&&';
+            dialog.addAnnotationElement(
+                new Annotation({
+                    annotationID: 1,
+                    text,
+                    user: {},
+                    permissions: {}
+                })
+            );
+            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
+            expect(annotationComment.textContent).equals(text);
+            expect(annotationComment.textContent.includes('&amp;')).to.be.false;
         });
     });
 
