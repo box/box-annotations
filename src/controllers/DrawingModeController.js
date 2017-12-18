@@ -1,4 +1,3 @@
-import rbush from 'rbush';
 import AnnotationModeController from './AnnotationModeController';
 import shell from './../shell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
@@ -95,55 +94,6 @@ class DrawingModeController extends AnnotationModeController {
         this.emit(CONTROLLER_EVENT.enter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
-    }
-
-    /**
-     * Register a thread that has been assigned a location with the controller
-     *
-     * @inheritdoc
-     * @public
-     * @param {AnnotationThread} thread - The thread to register with the controller
-     * @return {void}
-     */
-    registerThread(thread) {
-        if (!thread || !thread.location) {
-            return;
-        }
-
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        if (!(page in this.threads)) {
-            /* eslint-disable new-cap */
-            this.threads[page] = new rbush();
-            /* eslint-enable new-cap */
-        }
-        this.threads[page].insert(thread);
-        this.emit(CONTROLLER_EVENT.register, thread);
-        thread.addListener('threadevent', (data) => {
-            this.handleThreadEvents(thread, data);
-        });
-    }
-
-    /**
-     * Unregister a previously registered thread that has been assigned a location
-     *
-     * @inheritdoc
-     * @public
-     * @param {AnnotationThread} thread - The thread to unregister with the controller
-     * @return {void}
-     */
-    unregisterThread(thread) {
-        if (!thread || !thread.location) {
-            return;
-        }
-
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        if (!this.threads[page]) {
-            return;
-        }
-
-        this.threads[page].remove(thread);
-        this.emit(CONTROLLER_EVENT.unregister, thread);
-        thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
     /**

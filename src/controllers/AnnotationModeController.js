@@ -1,3 +1,4 @@
+import rbush from 'rbush';
 import EventEmitter from 'events';
 import { insertTemplate, isPending } from '../util';
 import {
@@ -54,13 +55,9 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     destroy() {
-        Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.threads[page] || {};
-
-            Object.keys(pageThreads).forEach((threadID) => {
-                const thread = pageThreads[threadID];
-                this.unregisterThread(thread);
-            });
+        Object.keys(this.threads).forEach((pageNum) => {
+            const pageThreads = this.threads[pageNum].all() || [];
+            pageThreads.forEach(this.unregisterThread);
         });
 
         if (this.buttonEl) {
@@ -122,6 +119,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     exit() {
+        if (this.createDialog) {
+            this.createDialog.hide();
+        }
+
         this.destroyPendingThreads();
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
         if (this.buttonEl) {
@@ -200,12 +201,17 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     registerThread(thread) {
-        // Add thread to in-memory map
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        const pageThreads = this.threads[page] || {};
+        if (!thread || !thread.location) {
+            return;
+        }
 
-        pageThreads[thread.threadID] = thread;
-        this.threads[page] = pageThreads;
+        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+        if (!(page in this.threads)) {
+            /* eslint-disable new-cap */
+            this.threads[page] = new rbush();
+            /* eslint-enable new-cap */
+        }
+        this.threads[page].insert(thread);
 
         this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
@@ -219,36 +225,24 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     unregisterThread(thread) {
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        const pageThreads = this.threads[page] || {};
+        if (!thread || !thread.location) {
+            return;
+        }
 
-        delete pageThreads[thread.threadID];
-        this.threads[page] = pageThreads;
+        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+        this.threads[page].remove(thread);
 
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
-    /**
-     * Apply predicate method to every thread on either the specified page or
-     * the entire file
-     *
-     * @private
-     * @param {Function} func Predicate method to apply on threads
-     * @param {number} [pageNum] Optional page number
-     * @return {void}
-     */
-    applyActionToThreads(func, pageNum) {
-        if (pageNum) {
-            const pageThreads = this.threads[pageNum] || {};
-            Object.keys(pageThreads).forEach((threadID) => func(pageThreads[threadID]));
-            return;
-        }
+    applyActionToPageThreads(func, pageNum) {
+        const pageThreads = this.threads[pageNum].all() || [];
+        pageThreads.forEach(func);
+    }
 
-        Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.threads[page] || {};
-            Object.keys(pageThreads).forEach((threadID) => func(pageThreads[threadID]));
-        });
+    applyActionToThreads(func) {
+        Object.keys(this.threads).forEach((page) => this.applyActionToPageThreads(func, page));
     }
 
     /**
@@ -260,11 +254,12 @@ class AnnotationModeController extends EventEmitter {
      */
     getThreadByID(threadID) {
         let thread = null;
-        Object.keys(this.threads).some((page) => {
-            const pageThreads = this.threads[page] || {};
-            if (threadID in pageThreads) {
-                thread = pageThreads[threadID];
-            }
+        Object.keys(this.threads).some((pageNum) => {
+            const pageThreads = this.threads[pageNum].all() || [];
+            thread = pageThreads.filter((t) => {
+                return t.threadID === threadID;
+            })[0];
+
             return thread !== null;
         });
 
@@ -286,7 +281,6 @@ class AnnotationModeController extends EventEmitter {
      *                 the type of events to listen for, and the callback
      */
     setupHandlers() {}
-    /* eslint-enable no-unused-vars */
 
     /**
      * Handles annotation thread events and emits them to the viewer
@@ -388,17 +382,16 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum) {
-        if (!this.threads) {
+        if (!this.threads && !this.threads[pageNum]) {
             return;
         }
 
-        const pageThreads = this.threads[pageNum] || {};
-        Object.keys(pageThreads).forEach((threadID) => {
+        const pageThreads = this.threads[pageNum].all() || [];
+        pageThreads.forEach((thread, index) => {
             // Sets the annotatedElement if the thread was fetched before the
             // dependent document/viewer finished loading
-            const thread = pageThreads[threadID];
             if (!thread.annotatedElement) {
-                thread.annotatedElement = this.annotatedElement;
+                pageThreads[index].annotatedElement = this.annotatedElement;
             }
 
             thread.show();
@@ -415,11 +408,9 @@ class AnnotationModeController extends EventEmitter {
     destroyPendingThreads() {
         let hadPendingThreads = false;
 
-        Object.keys(this.threads).forEach((page) => {
-            const pageThreads = this.threads[page] || {};
-
-            Object.keys(pageThreads).forEach((threadID) => {
-                const thread = pageThreads[threadID];
+        Object.keys(this.threads).forEach((pageNum) => {
+            const pageThreads = this.threads[pageNum].all() || [];
+            pageThreads.forEach((thread) => {
                 if (isPending(thread.state)) {
                     hadPendingThreads = true;
 
