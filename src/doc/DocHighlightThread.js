@@ -28,6 +28,19 @@ class DocHighlightThread extends AnnotationThread {
     //--------------------------------------------------------------------------
 
     /**
+     * [constructor]
+     *
+     * @param {AnnotationDialogData} data Data for constructing thread
+     * @param {boolean} showComment Whether or not show comment highlight UI
+     * @return {AnnotationDialog} Annotation dialog instance
+     */
+    constructor(data, showComment) {
+        super(data);
+
+        this.showComment = showComment;
+    }
+
+    /**
      * Cancels the first comment on the thread
      *
      * @return {void}
@@ -93,8 +106,8 @@ class DocHighlightThread extends AnnotationThread {
      * Saves an annotation.
      *
      * @override
-     * @param {string} type - Type of annotation
-     * @param {string} text - Text of annotation to save
+     * @param {string} type Type of annotation
+     * @param {string} text Text of annotation to save
      * @return {void}
      */
     saveAnnotation(type, text) {
@@ -105,8 +118,8 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationID - ID of annotation to delete
-     * @param {boolean} [useServer] - Whether or not to delete on server, default true
+     * @param {string} annotationID ID of annotation to delete
+     * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
     deleteAnnotation(annotationID, useServer = true) {
@@ -148,8 +161,8 @@ class DocHighlightThread extends AnnotationThread {
      * in this method since we want to delay that drawing until all inactive
      * threads have been reset.
      *
-     * @param {Event} event - Mouse event
-     * @param {boolean} consumed - Whether event previously activated another
+     * @param {Event} event Mouse event
+     * @param {boolean} consumed Whether event previously activated another
      * highlight
      * @return {boolean} Whether click was in a non-pending highlight
      */
@@ -202,7 +215,7 @@ class DocHighlightThread extends AnnotationThread {
      * and reset. We don't draw hovered highlights in this method since we want
      * to delay that drawing until all inactive threads have been reset.
      *
-     * @param {Event} event - Mouse event
+     * @param {Event} event Mouse event
      * @return {boolean} Whether we should delay drawing highlight
      */
     onMousemove(event) {
@@ -247,14 +260,12 @@ class DocHighlightThread extends AnnotationThread {
      * the highlight in active state and show the 'delete' button.
      *
      * @override
-     * @param {boolean} [showPlain] - Whether or not plain highlight ui is shown (TEMPORARY UNTIL REFACTOR)
-     * @param {boolean} [showComment] - Whether or not comment highlight ui is shown (TEMPORARY UNTIL REFACTOR)
      * @return {void}
      */
-    show(showPlain, showComment) {
+    show() {
         switch (this.state) {
             case STATES.pending:
-                this.showDialog(showPlain, showComment);
+                this.showDialog();
                 break;
             case STATES.inactive:
                 this.hideDialog();
@@ -262,7 +273,7 @@ class DocHighlightThread extends AnnotationThread {
                 break;
             case STATES.hover:
             case STATES.pending_active:
-                this.showDialog(showPlain, showComment);
+                this.showDialog();
                 this.draw(HIGHLIGHT_FILL.active);
                 break;
             default:
@@ -275,17 +286,15 @@ class DocHighlightThread extends AnnotationThread {
      * and plain highlights.
      *
      * @override
-     * @param {boolean} [showPlain] - Whether or not plain highlight ui is shown
-     * @param {boolean} [showComment] - Whether or not comment highlight ui is shown
      * @return {void}
      */
-    showDialog(showPlain, showComment) {
+    showDialog() {
         // Prevents the annotations dialog from being created each mousemove
         if (!this.dialog.element) {
-            this.dialog.setup(this.annotations);
+            this.dialog.setup(this.annotations, this.showComment);
         }
 
-        this.dialog.show(showPlain, showComment);
+        this.dialog.show();
     }
 
     /**
@@ -452,7 +461,7 @@ class DocHighlightThread extends AnnotationThread {
      * Draws the highlight with the specified fill style.
      *
      * @private
-     * @param {string} fillStyle - RGBA fill style
+     * @param {string} fillStyle RGBA fill style
      * @return {void}
      */
     /* istanbul ignore next */
@@ -519,7 +528,7 @@ class DocHighlightThread extends AnnotationThread {
      * Checks whether mouse is inside the highlight represented by this thread.
      *
      * @private
-     * @param {Event} event - Mouse event
+     * @param {Event} event Mouse event
      * @return {boolean} Whether or not mouse is inside highlight
      */
     isInHighlight(event) {
@@ -538,9 +547,9 @@ class DocHighlightThread extends AnnotationThread {
         /**
          * Scale verticies according to dimension scale.
          *
-         * @param {number} val - Value to scale
-         * @param {number} index - Vertex index
-         * @return {number} - Scaled value
+         * @param {number} val Value to scale
+         * @param {number} index Vertex index
+         * @return {number} Scaled value
          */
         const scaleVertices = (val, index) => {
             return index % 2 ? val * dimensionScale.y : val * dimensionScale.x;

@@ -33,7 +33,7 @@ class DocHighlightDialog extends AnnotationDialog {
      * The annotation is still added to the thread on the server side.
      *
      * @override
-     * @param {Annotation} annotation - Annotation to add
+     * @param {Annotation} annotation Annotation to add
      * @return {void}
      */
     addAnnotation(annotation) {
@@ -58,7 +58,7 @@ class DocHighlightDialog extends AnnotationDialog {
     /**
      * Removes an annotation from the dialog.
      *
-     * @param {string} annotationID - ID of annotation to remove
+     * @param {string} annotationID ID of annotation to remove
      * @return {void}
      */
     removeAnnotation(annotationID) {
@@ -120,36 +120,6 @@ class DocHighlightDialog extends AnnotationDialog {
     drawAnnotation() {
         this.emit('annotationdraw');
         this.toggleHighlight();
-    }
-
-    /** TEMPORARY override to hide or show UI based on enabled annotation types.
-     *
-     * @param {boolean} [showPlain] - Whether or not show plain highlight UI
-     * @param {boolean} [showComment] - Whether or not show comment highlight UI
-     * @return {void}
-     */
-    show(showPlain = true, showComment = true) {
-        const plainButtonEl = this.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
-        if (plainButtonEl) {
-            if (showPlain) {
-                util.showElement(plainButtonEl);
-            } else {
-                util.hideElement(plainButtonEl);
-            }
-        }
-
-        const commentButtonEl = this.highlightDialogEl.querySelector(
-            `button.${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`
-        );
-        if (commentButtonEl) {
-            if (showComment) {
-                util.showElement(commentButtonEl);
-            } else {
-                util.hideElement(commentButtonEl);
-            }
-        }
-
-        super.show();
     }
 
     //--------------------------------------------------------------------------
@@ -281,10 +251,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * Sets up the dialog element.
      *
      * @override
+     * @param {Object} annotations Annotations to show in the dialog
+     * @param {boolean} showComment Whether or not show comment highlight UI
      * @return {void}
      * @protected
      */
-    setup(annotations) {
+    setup(annotations, showComment) {
         // Only create an dialog element, if one doesn't already exist
         if (!this.element) {
             this.element = document.createElement('div');
@@ -298,7 +270,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Generate HTML of highlight dialog
         const canDelete = firstAnnotation ? firstAnnotation.permissions.can_delete : this.canAnnotate;
-        this.highlightDialogEl = this.generateHighlightDialogEl(canDelete);
+        this.highlightDialogEl = this.generateHighlightDialogEl(canDelete, showComment);
         this.highlightDialogEl.classList.add(constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
 
         // Generate HTML of comments dialog
@@ -392,7 +364,7 @@ class DocHighlightDialog extends AnnotationDialog {
      * Toggles the highlight icon color to a darker yellow based on if the user
      * is hovering over the highlight to activate it
      *
-     * @param {string} fillStyle - RGBA fill style
+     * @param {string} fillStyle RGBA fill style
      * @return {void}
      */
     toggleHighlightIcon(fillStyle) {
@@ -432,7 +404,7 @@ class DocHighlightDialog extends AnnotationDialog {
      * Mousedown handler on dialog.
      *
      * @private
-     * @param {Event} event - DOM event
+     * @param {Event} event DOM event
      * @return {void}
      */
     mousedownHandler(event) {
@@ -563,7 +535,7 @@ class DocHighlightDialog extends AnnotationDialog {
      *
      * @override
      * @private
-     * @param {Annotation} annotation - Annotation to add
+     * @param {Annotation} annotation Annotation to add
      * @return {void}
      */
     addAnnotationElement(annotation) {
@@ -580,9 +552,10 @@ class DocHighlightDialog extends AnnotationDialog {
      *
      * @private
      * @param {booelan} canDeleteAnnotation  Whether or not the user can delete the highlight annotation
+     * @param {boolean} showComment Whether or not show comment highlight UI
      * @return {HTMLElement} Highlight annotation dialog DOM element
      */
-    generateHighlightDialogEl(canDeleteAnnotation) {
+    generateHighlightDialogEl(canDeleteAnnotation, showComment) {
         const highlightDialogEl = document.createElement('div');
 
         const highlightLabelEl = document.createElement('span');
@@ -608,13 +581,15 @@ class DocHighlightDialog extends AnnotationDialog {
             highlightButtons.appendChild(addHighlightBtn);
         }
 
-        const addCommentBtn = util.generateBtn(
-            [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
-            this.localized.highlightComment,
-            ICON_HIGHLIGHT_COMMENT,
-            constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT
-        );
-        highlightButtons.appendChild(addCommentBtn);
+        if (showComment) {
+            const addCommentBtn = util.generateBtn(
+                [constants.CLASS_BUTTON_PLAIN, constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
+                this.localized.highlightComment,
+                ICON_HIGHLIGHT_COMMENT,
+                constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT
+            );
+            highlightButtons.appendChild(addCommentBtn);
+        }
 
         return highlightDialogEl;
     }
