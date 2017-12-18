@@ -10,9 +10,7 @@ class PointModeController extends AnnotationModeController {
     postButtonEl;
 
     /**
-     * Set up the shared mobile dialog and associated listeners
-     *
-     * @protected
+     * @inheritdoc
      * @return {void}
      */
     setupSharedDialog() {
@@ -51,10 +49,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /**
-     * Set up and return the necessary handlers for the annotation mode
-     *
      * @inheritdoc
-     * @protected
      * @return {Array} An array where each element is an object containing
      * the object that will emit the event, the type of events to listen
      * for, and the callback

@@ -37,10 +37,7 @@ class DrawingModeController extends AnnotationModeController {
     redoButtonEl;
 
     /**
-     * Initializes mode controller.
-     *
      * @inheritdoc
-     * @param {Object} data - Options for constructing a controller
      * @return {void}
      */
     init(data) {
@@ -63,8 +60,6 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Disables the specified annotation mode
-     *
      * @inheritdoc
      * @return {void}
      */
@@ -81,8 +76,6 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Enables the specified annotation mode
-     *
      * @inheritdoc
      * @return {void}
      */
@@ -98,11 +91,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Register a thread that has been assigned a location with the controller
-     *
      * @inheritdoc
-     * @public
-     * @param {AnnotationThread} thread - The thread to register with the controller
      * @return {void}
      */
     registerThread(thread) {
@@ -124,11 +113,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Unregister a previously registered thread that has been assigned a location
-     *
      * @inheritdoc
-     * @public
-     * @param {AnnotationThread} thread - The thread to unregister with the controller
      * @return {void}
      */
     unregisterThread(thread) {
@@ -143,10 +128,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Bind the DOM listeners for this mode
-     *
      * @inheritdoc
-     * @public
      * @return {void}
      */
     bindDOMListeners() {
@@ -158,10 +140,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Unbind the DOM listeners for this mode
-     *
      * @inheritdoc
-     * @public
      * @return {void}
      */
     unbindDOMListeners() {
@@ -173,10 +152,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Bind the mode listeners and store each handler for future unbinding
-     *
      * @inheritdoc
-     * @public
      * @return {void}
      */
     bindListeners() {
@@ -185,10 +161,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Unbind drawing mode listeners. Resets the undo and redo buttons to be disabled if they exist
-     *
      * @inheritdoc
-     * @protected
      * @return {void}
      */
     unbindListeners() {
@@ -200,10 +173,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Set up and return the necessary handlers for the annotation mode
-     *
      * @inheritdoc
-     * @protected
      * @return {Array} An array where each element is an object containing
      * the object that will emit the event, the type of events to listen
      * for, and the callback
@@ -254,12 +224,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Handle an annotation event.
-     *
      * @inheritdoc
-     * @protected
-     * @param {AnnotationThread} thread - The thread that emitted the event
-     * @param {Object} data - Extra data related to the annotation event
      * @return {void}
      */
     handleThreadEvents(thread, data = {}) {
@@ -355,11 +320,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Renders annotations from memory for a specified page.
-     *
      * @inheritdoc
-     * @private
-     * @param {number} pageNum - Page number
      * @return {void}
      */
     renderPage(pageNum) {

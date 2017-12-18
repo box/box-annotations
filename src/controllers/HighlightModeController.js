@@ -4,9 +4,7 @@ import CreateHighlightDialog from './CreateHighlightDialog';
 
 class HighlightModeController extends AnnotationModeController {
     /**
-     * Set up the shared mobile dialog and associated listeners
-     *
-     * @protected
+     * @inheritdoc
      * @return {void}
      */
     setupSharedDialog() {
@@ -38,6 +36,10 @@ class HighlightModeController extends AnnotationModeController {
         }
     }
 
+    /**
+     * @inheritdoc
+     * @return {void}
+     */
     destroy() {
         super.destroy();
 
@@ -61,14 +63,7 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /**
-     * Handles annotation thread events and emits them to the viewer
-     *
      * @inheritdoc
-     * @private
-     * @param {AnnotationThread} thread - The thread that emitted the event
-     * @param {Object} [data] - Annotation thread event data
-     * @param {string} [data.event] - Annotation thread event
-     * @param {string} [data.data] - Annotation thread event data
      * @return {void}
      */
     handleThreadEvents(thread, data) {
@@ -85,8 +80,6 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /**
-     * Disables the specified annotation mode
-     *
      * @inheritdoc
      * @return {void}
      */
@@ -98,8 +91,6 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /**
-     * Enables the specified annotation mode
-     *
      * @inheritdoc
      * @return {void}
      */
@@ -109,8 +100,6 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /**
-     * Renders annotations from memory for a specified page.
-     *
      * @inheritdoc
      * @return {void}
      */

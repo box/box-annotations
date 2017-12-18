@@ -334,8 +334,9 @@ class AnnotationModeController extends EventEmitter {
      * Set up and return the necessary handlers for the annotation mode
      *
      * @protected
-     * @return {Array} An array where each element is an object containing the object that will emit the event,
-     *                 the type of events to listen for, and the callback
+     * @return {Array} An array where each element is an object containing the
+     * object that will emit the event, the type of events to listen for, and the
+     * callback
      */
     setupHandlers() {}
     /* eslint-enable no-unused-vars */
