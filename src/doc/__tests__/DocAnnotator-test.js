@@ -1318,7 +1318,7 @@ describe('doc/DocAnnotator', () => {
             stubs.highlightApply.callsFake(() => {
                 annotator.activeThread = stubs.thread;
             });
-            stubs.threadMock.expects('show').withArgs(annotator.plainHighlightEnabled, annotator.commentHighlightEnabled);
+            stubs.threadMock.expects('show');
             annotator.highlightClickHandler(stubs.event);
         });
     });
