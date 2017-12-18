@@ -34,14 +34,10 @@ import {
     prevDefAndStopProp,
     canLoadAnnotations,
     insertTemplate,
-<<<<<<< HEAD
     generateBtn,
     addThreadToMap,
     removeThreadFromMap,
     createCommentTextNode
-=======
-    generateBtn
->>>>>>> 55b25b3eea89474c4500562a956b352f604ef01f
 } from '../util';
 import {
     STATES,
@@ -747,7 +743,6 @@ describe('util', () => {
             expect(canLoadAnnotations(stubs.permissions)).to.be.true;
         });
     });
-<<<<<<< HEAD
 
     describe('addThreadToMap()', () => {
         it('should add thread to in-memory map', () => {
@@ -806,6 +801,4 @@ describe('util', () => {
             expect(textEl.classList.contains(CLASS_ANNOTATION_COMMENT_TEXT)).to.be.true;
         });
     });
-=======
->>>>>>> 55b25b3eea89474c4500562a956b352f604ef01f
 });
