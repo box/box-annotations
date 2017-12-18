@@ -73,8 +73,8 @@ class AnnotationModeController extends EventEmitter {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
 
-        if (this.createDialog && this.createDialog.isVisible) {
-            this.createDialog.hide();
+        if (this.createDialog) {
+            this.createDialog.destroy();
         }
     }
 

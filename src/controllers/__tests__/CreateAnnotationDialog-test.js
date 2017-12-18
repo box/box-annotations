@@ -8,9 +8,9 @@ import {
     CLASS_ANNOTATION_CARET,
     CLASS_HIDDEN,
     CREATE_EVENT
-} from '../constants';
+} from '../../constants';
 import CommentBox from '../CommentBox';
-import * as util from '../util';
+import * as util from '../../util';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
@@ -23,7 +23,7 @@ const localized = {
 };
 let stubs = {};
 
-describe('CreateAnnotationDialog', () => {
+describe('controllers/CreateAnnotationDialog', () => {
     beforeEach(() => {
         const parentEl = document.createElement('div');
         parentEl.classList.add('bp-create-dialog-container');

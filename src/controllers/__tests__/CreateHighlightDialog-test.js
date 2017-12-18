@@ -7,12 +7,12 @@ import {
     CLASS_HIDDEN,
     CREATE_EVENT
 } from '../../constants';
-import CommentBox from '../../CommentBox';
+import CommentBox from '../CommentBox';
 import * as util from '../../util';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
 
-describe('doc/CreateHighlightDialog', () => {
+describe('controllers/CreateHighlightDialog', () => {
     const sandbox = sinon.sandbox.create();
     let dialog;
     let parentEl;
@@ -26,7 +26,7 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     beforeEach(() => {
-        fixture.load('doc/__tests__/CreateHighlightDialog-test.html');
+        fixture.load('controllers/__tests__/CreateHighlightDialog-test.html');
 
         const parentEl = document.createElement('div');
         parentEl.classList.add('bp-create-dialog-container');

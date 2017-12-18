@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import PointModeController from '../PointModeController';
-import CreateAnnotationDialog from '../../CreateAnnotationDialog';
+import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import * as util from '../../util';
 import {
     CLASS_HIDDEN,
@@ -43,14 +43,17 @@ describe('controllers/PointModeController', () => {
     });
 
     describe('setupSharedDialog', () => {
-        it('should create a shared annotation dialog', () => {
-            const options = {
-                isMobile: true,
-                hasTouch: false,
-                localized: { cancelButton: 'cancel' }
-            };
+        it('should do nothing on mobile devices', () => {
+            controller.isMobile = false;
+            controller.localized = { cancelButton: 'cancel' };
+            controller.setupSharedDialog(document.createElement('div'));
+            expect(controller.createDialog).to.be.undefined;
+        });
 
-            controller.setupSharedDialog(document.createElement('div'), options);
+        it('should create a shared annotation dialog', () => {
+            controller.isMobile = true;
+            controller.localized = { cancelButton: 'cancel' };
+            controller.setupSharedDialog(document.createElement('div'));
             expect(controller.createDialog).to.not.be.undefined;
         });
     });
@@ -65,42 +68,6 @@ describe('controllers/PointModeController', () => {
             controller.onDialogCancel();
             expect(controller.unregisterThread).to.be.calledWith(stubs.thread);
             expect(controller.hideSharedDialog).to.be.called;
-        });
-    });
-
-    describe('onDialogPost()', () => {
-        it('should notify listeners of post event and clear the create dialog', () => {
-            sandbox.stub(controller, 'hideSharedDialog');
-            controller.lastPointEvent = {};
-            controller.pendingThreadID = '123abc';
-
-            controller.onDialogPost('text');
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.createThread, {
-                commentText: 'text',
-                lastPointEvent: {},
-                pendingThreadID: '123abc'
-            });
-            expect(controller.hideSharedDialog).to.be.called;
-        });
-    });
-
-    describe('hideSharedDialog', () => {
-        it('should not hide the shared annotation dialog if already hidden', () => {
-            controller.createDialog = { hide: () => {} };
-            const createMock = sandbox.mock(controller.createDialog);
-            controller.createDialog.isVisible = false;
-
-            createMock.expects('hide').never();
-            controller.hideSharedDialog();
-        });
-
-        it('should hide the shared annotation dialog', () => {
-            controller.createDialog = { hide: () => {} };
-            const createMock = sandbox.mock(controller.createDialog);
-            controller.createDialog.isVisible = true;
-
-            createMock.expects('hide');
-            controller.hideSharedDialog();
         });
     });
 

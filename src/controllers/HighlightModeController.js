@@ -41,14 +41,12 @@ class HighlightModeController extends AnnotationModeController {
      * @return {void}
      */
     destroy() {
-        super.destroy();
-
         this.createDialog.removeListener(CREATE_EVENT.comment, this.onDialogPendingComment);
         this.createDialog.removeListener(CREATE_EVENT.post, this.onDialogPost);
         this.createDialog.removeListener(CREATE_EVENT.plain, this.onDialogPost);
 
-        this.createDialog.destroy();
         this.createDialog = null;
+        super.destroy();
     }
 
     /**
@@ -69,7 +67,7 @@ class HighlightModeController extends AnnotationModeController {
     handleThreadEvents(thread, data) {
         switch (data.event) {
             case THREAD_EVENT.threadCleanup:
-                if (thread && !thread.location) {
+                if (thread && thread.location) {
                     this.renderPage(thread.location.page);
                 }
                 break;

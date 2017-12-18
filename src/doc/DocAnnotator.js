@@ -469,8 +469,11 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
+        const createDialog = this.plainHighlightEnabled
+            ? this.modeControllers[TYPES.highlight].createDialog
+            : this.modeControllers[TYPES.highlight_comment].createDialog;
+
         // Bail if mid highlight and tapping on the screen
-        const createDialog = util.isCreateDialogVisible(this.modeControllers);
         if (!docUtil.isValidSelection(selection)) {
             this.lastSelection = null;
             this.lastHighlightEvent = null;
@@ -479,7 +482,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (!createDialog) {
+        if (!createDialog.isVisible) {
             createDialog.show(this.container);
         }
 
@@ -744,8 +747,8 @@ class DocAnnotator extends Annotator {
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if (createDialog && (this.didMouseMove || event.type === 'dblclick')) {
-            this.highlightCreateHandler(event, createDialog);
+        if (this.didMouseMove || event.type === 'dblclick') {
+            this.highlightCreateHandler(event);
         } else {
             this.highlightClickHandler(event);
         }
@@ -762,7 +765,7 @@ class DocAnnotator extends Annotator {
      * @param {CreateHighlightDialog} createDialog Create highlight dialog object
      * @return {void}
      */
-    highlightCreateHandler(event, createDialog) {
+    highlightCreateHandler(event) {
         event.stopPropagation();
 
         const selection = window.getSelection();
@@ -788,6 +791,9 @@ class DocAnnotator extends Annotator {
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
 
+        const createDialog = this.plainHighlightEnabled
+            ? this.modeControllers[TYPES.highlight].createDialog
+            : this.modeControllers[TYPES.highlight_comment].createDialog;
         createDialog.show(dialogParentEl);
 
         if (!this.isMobile) {
