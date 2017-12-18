@@ -10,7 +10,7 @@ class DocDrawingDialog extends AnnotationDialog {
     /**
      * [constructor]
      *
-     * @param {AnnotationDialogData} data - Data for constructing drawing dialog
+     * @param {AnnotationDialogData} data Data for constructing drawing dialog
      * @return {DocDrawingDialog} Drawing dialog instance
      */
     constructor(data) {
@@ -56,9 +56,14 @@ class DocDrawingDialog extends AnnotationDialog {
      *
      * @override
      * @protected
+     * @param {Annotation} annotation Annotation to add
      * @return {void}
      */
-    addAnnotation() {}
+    addAnnotation(annotation) {
+        if (!this.element) {
+            this.setup([annotation]);
+        }
+    }
 
     /**
      * Empty stub to avoid unexpected behavior. Removing a drawing annotation can only be done by deleting the thread.
@@ -115,8 +120,8 @@ class DocDrawingDialog extends AnnotationDialog {
      * Sets up the drawing dialog element.
      *
      * @protected
-     * @param {Object} annotations - Annotations to show in the dialog
-     * @param {HTMLElement} threadEl - Annotation icon element
+     * @param {Object} annotations Annotations to show in the dialog
+     * @param {HTMLElement} threadEl Annotation icon element
      * @return {void}
      */
     setup(annotations) {
@@ -146,8 +151,8 @@ class DocDrawingDialog extends AnnotationDialog {
      * Position the drawing dialog with an x,y browser coordinate
      *
      * @protected
-     * @param {number} x - The x position to position the dialog with
-     * @param {number} y - The y position to position the dialog with
+     * @param {number} x The x position to position the dialog with
+     * @param {number} y The y position to position the dialog with
      * @return {void}
      */
     position(x, y) {
@@ -193,7 +198,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * Generate the dialog HTMLElement consisting of a label, save, and delete button
      *
      * @private
-     * @param {Array} annotations - Array of annotations. A non-empty array means there are saved drawings.
+     * @param {Array} annotations Array of annotations. A non-empty array means there are saved drawings.
      * @return {HTMLElement} The drawing dialog element
      */
     generateDialogEl(annotations) {
@@ -240,7 +245,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * the username does not exist.
      *
      * @private
-     * @param {Annotation} savedAnnotation - The annotation data to populate the label with.
+     * @param {Annotation} savedAnnotation The annotation data to populate the label with.
      * @return {void}
      */
     assignDrawingLabel(savedAnnotation) {
@@ -259,7 +264,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * Broadcasts message to save the drawing in progress
      *
      * @private
-     * @param {event} event - The event object from an event emitter
+     * @param {event} event The event object from an event emitter
      * @return {void}
      */
     postDrawing(event) {
@@ -272,7 +277,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * Broadcasts message to delete a drawing.
      *
      * @private
-     * @param {event} event - The event object from an event emitter
+     * @param {event} event The event object from an event emitter
      * @return {void}
      */
     deleteAnnotation(event) {
