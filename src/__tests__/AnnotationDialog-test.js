@@ -772,7 +772,7 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const annotationComment = document.querySelector('.comment-text p');
+            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
             expect(annotationComment).to.contain.html('the preview sdk is awesome!');
         });
 
@@ -885,7 +885,7 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: true }
                 })
             );
-            const breaks = document.querySelectorAll('.comment-text p br');
+            const breaks = document.querySelectorAll(`${constants.SELECTOR_ANNOTATION_COMMENT_TEXT} br`);
             expect(breaks.length === 3).to.be.true;
         });
 
@@ -899,7 +899,7 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const annotationComment = document.querySelector('.comment-text p');
+            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
             expect(annotationComment.textContent).equals(text);
             expect(annotationComment.textContent.includes('&amp;')).to.be.false;
         });

@@ -7,6 +7,7 @@ import {
     SELECTOR_ANNOTATION_CARET,
     PENDING_STATES,
     CLASS_ACTIVE,
+    CLASS_ANNOTATION_COMMENT_TEXT,
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED,
@@ -812,6 +813,7 @@ export function removeThreadFromMap(thread, threadMap) {
 export function createCommentTextNode(annotationText) {
     const newlineList = annotationText.replace(NEWLINE_REGEX, '\n').split('\n');
     const textEl = document.createElement('p');
+    textEl.classList.add(CLASS_ANNOTATION_COMMENT_TEXT);
 
     // If newlines are present...
     if (newlineList.length > 1) {
