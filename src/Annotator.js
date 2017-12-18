@@ -577,6 +577,13 @@ class Annotator extends EventEmitter {
         if (currentMode !== mode) {
             this.modeControllers[mode].enter();
         }
+
+        Object.keys(this.modeControllers).forEach((type) => {
+            const controller = this.modeControllers[type];
+            if (controller.createDialog) {
+                controller.createDialog.hide();
+            }
+        });
     }
 
     /**

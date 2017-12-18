@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT, TYPES } from '../constants';
+import { CLASS_ANNOTATION_LAYER_HIGHLIGHT, THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT, TYPES } from '../constants';
 import CreateHighlightDialog from './CreateHighlightDialog';
 
 class HighlightModeController extends AnnotationModeController {
@@ -74,7 +74,9 @@ class HighlightModeController extends AnnotationModeController {
     handleThreadEvents(thread, data) {
         switch (data.event) {
             case THREAD_EVENT.threadCleanup:
-                this.emit(CONTROLLER_EVENT.showHighlights, thread.location.page);
+                if (thread && !thread.location) {
+                    this.renderPage(thread.location.page);
+                }
                 break;
             default:
         }
@@ -104,6 +106,24 @@ class HighlightModeController extends AnnotationModeController {
     enter() {
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
+    }
+
+    /**
+     * Renders annotations from memory for a specified page.
+     *
+     * @inheritdoc
+     * @return {void}
+     */
+    renderPage(pageNum) {
+        // Clear context if needed
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const annotationLayerEl = pageEl.querySelector(`.${CLASS_ANNOTATION_LAYER_HIGHLIGHT}`);
+        if (annotationLayerEl) {
+            const context = annotationLayerEl.getContext('2d');
+            context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
+        }
+
+        super.renderPage(pageNum);
     }
 }
 

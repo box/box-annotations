@@ -6,6 +6,7 @@ import * as util from '../util';
 import {
     TYPES,
     STATES,
+    CLASS_ANNOTATION_LAYER_DRAW,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
@@ -364,6 +365,13 @@ class DrawingModeController extends AnnotationModeController {
     renderPage(pageNum) {
         if (!this.threads || !this.threads[pageNum]) {
             return;
+        }
+
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const annotationLayerEl = pageEl.querySelector(`.${CLASS_ANNOTATION_LAYER_DRAW}`);
+        if (annotationLayerEl) {
+            const context = annotationLayerEl.getContext('2d');
+            context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
         }
 
         const pageThreads = this.threads[pageNum].all() || [];

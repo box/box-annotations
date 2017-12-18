@@ -156,7 +156,6 @@ export const CONTROLLER_EVENT = {
     exit: 'annotationmodeexit',
     register: 'registerthread',
     unregister: 'unregisterthread',
-    showHighlights: 'showhighlights',
     bindDOMListeners: 'binddomlisteners',
     unbindDOMListeners: 'unbinddomlisteners',
     createThread: 'createannotationthread',

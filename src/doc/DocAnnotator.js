@@ -18,8 +18,6 @@ import {
     DATA_TYPE_ANNOTATION_INDICATOR,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
-    CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
@@ -36,8 +34,6 @@ const CLASS_DEFAULT_CURSOR = 'bp-use-default-cursor';
 
 // Required by rangy highlighter
 const ID_ANNOTATED_ELEMENT = 'bp-rangy-annotated-element';
-
-const ANNOTATION_LAYER_CLASSES = [CLASS_ANNOTATION_LAYER_HIGHLIGHT, CLASS_ANNOTATION_LAYER_DRAW];
 
 /**
  * Check if a thread is in a hover state.
@@ -257,31 +253,11 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     renderPage(pageNum) {
-        // Scale existing canvases on re-render
-        this.scaleAnnotationCanvases(pageNum);
         super.renderPage(pageNum);
 
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
         }
-    }
-
-    /**
-     * Scales all annotation canvases for a specified page.
-     *
-     * @override
-     * @param {number} pageNum Page number
-     * @return {void}
-     */
-    scaleAnnotationCanvases(pageNum) {
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-
-        ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
-            const annotationLayerEl = pageEl.querySelector(`.${annotationLayerClass}`);
-            if (annotationLayerEl) {
-                docUtil.scaleCanvas(pageEl, annotationLayerEl);
-            }
-        });
     }
 
     //--------------------------------------------------------------------------
@@ -442,11 +418,8 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const createDialog = this.plainHighlightEnabled
-            ? this.modeControllers[TYPES.highlight].createDialog
-            : this.modeControllers[TYPES.highlight_comment].createDialog;
-        const isCreateDialogVisible = createDialog && createDialog.isVisible;
-        if (isCreateDialogVisible) {
+        const createDialog = util.isCreateDialogVisible(this.modeControllers);
+        if (createDialog) {
             createDialog.hide();
         }
 
@@ -512,9 +485,7 @@ class DocAnnotator extends Annotator {
         }
 
         // Bail if mid highlight and tapping on the screen
-        const createDialog = this.plainHighlightEnabled
-            ? this.modeControllers[TYPES.highlight].createDialog
-            : this.modeControllers[TYPES.highlight_comment].createDialog;
+        const createDialog = util.isCreateDialogVisible(this.modeControllers);
         if (!docUtil.isValidSelection(selection)) {
             this.lastSelection = null;
             this.lastHighlightEvent = null;
@@ -523,8 +494,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        const isCreateDialogVisible = createDialog && createDialog.isVisible;
-        if (!isCreateDialogVisible) {
+        if (!createDialog) {
             createDialog.show(this.container);
         }
 
@@ -773,11 +743,8 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        const createDialog = this.plainHighlightEnabled
-            ? this.modeControllers[TYPES.highlight].createDialog
-            : this.modeControllers[TYPES.highlight_comment].createDialog;
-        const isCreateDialogVisible = createDialog && createDialog.isVisible;
-        if (isCreateDialogVisible) {
+        const createDialog = util.isCreateDialogVisible(this.modeControllers);
+        if (createDialog) {
             createDialog.hide();
             document.getSelection().removeAllRanges();
         }
@@ -927,32 +894,6 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Shows highlight annotations for the specified page by re-drawing all
-     * highlight annotations currently in memory for the specified page.
-     *
-     * @private
-     * @param {number} page Page to draw annotations for
-     * @return {void}
-     */
-    showHighlightsOnPage(page) {
-        // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
-        const annotationLayerEl = pageEl.querySelector(`.${CLASS_ANNOTATION_LAYER_HIGHLIGHT}`);
-        if (annotationLayerEl) {
-            const context = annotationLayerEl.getContext('2d');
-            context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].renderPage(page);
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].renderPage(page);
-        }
-    }
-
-    /**
      * Helper to remove a Rangy highlight by deleting the highlight in the
      * internal highlighter list that has a matching ID. We can't directly use
      * the highlighter's removeHighlights since the highlight could possibly
@@ -988,15 +929,6 @@ class DocAnnotator extends Annotator {
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
                 document.getSelection().removeAllRanges();
-                this.modeControllers[TYPES.highlight].createDialog.hide();
-                this.modeControllers[TYPES.highlight_comment].createDialog.hide();
-                break;
-            case CONTROLLER_EVENT.showHighlights:
-                this.showHighlightsOnPage(data.data);
-                break;
-            case CONTROLLER_EVENT.bindDOMListeners:
-                this.modeControllers[TYPES.highlight].createDialog.hide();
-                this.modeControllers[TYPES.highlight_comment].createDialog.hide();
                 break;
             case CONTROLLER_EVENT.createThread:
                 if (!util.isHighlightAnnotation(data.mode)) {

@@ -238,6 +238,27 @@ export function isInDialog(event, dialogEl) {
 }
 
 /**
+ * Checks whether a create annotation dialog is visible for any annotation mode
+ *
+ * @private
+ * @param {AnnotationModeController[]} controllers annotation mode controllers
+ * @return {CreateAnnotationDialog|null} Whether or not a create dialog is currently visible
+ */
+export function isCreateDialogVisible(controllers) {
+    let createDialog = null;
+    Object.keys(controllers).some((controller) => {
+        const isDialogVisible = controller.createDialog && controller.createDialog.isVisible;
+        if (isDialogVisible) {
+            /* eslint-disable prefer-destructuring */
+            createDialog = controller.createDialog;
+            /* eslint-enable prefer-destructuring */
+        }
+        return isDialogVisible;
+    });
+    return createDialog;
+}
+
+/**
  * Creates contextual fragment
  *
  * @public
