@@ -7,6 +7,7 @@ import {
     SELECTOR_ANNOTATION_CARET,
     PENDING_STATES,
     CLASS_ACTIVE,
+    CLASS_ANNOTATION_COMMENT_TEXT,
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED,
@@ -22,6 +23,7 @@ const CLIENT_VERSION = __VERSION__;
 
 const AVATAR_COLOR_COUNT = 9; // 9 colors defined in Box React UI avatar code
 const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
+const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
 //------------------------------------------------------------------------------
 // DOM Utils
@@ -790,4 +792,67 @@ export function canLoadAnnotations(permissions) {
     const canViewOwnAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
     return !!canAnnotate || !!canViewAllAnnotations || !!canViewOwnAnnotations;
+}
+
+/**
+ * Adds thread to in-memory map.
+ *
+ * @protected
+ * @param {AnnotationThread} thread - Thread to add
+ * @param {Object} threadMap - Thread map
+ * @return {void}
+ */
+export function addThreadToMap(thread, threadMap) {
+    // Add thread to in-memory map
+    const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+    const pageThreads = threadMap[page] || {};
+    pageThreads[thread.threadID] = thread;
+    return { page, pageThreads };
+}
+
+/**
+ * Removes thread to in-memory map.
+ *
+ * @protected
+ * @param {AnnotationThread} thread - Thread to bind events to
+ * @param {Object} threadMap - Thread map
+ * @return {void}
+ */
+export function removeThreadFromMap(thread, threadMap) {
+    const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+    const pageThreads = threadMap[page] || {};
+    delete pageThreads[thread.threadID];
+    return { page, pageThreads };
+}
+
+/**
+ * Creates a paragraph node that preserves newline characters.
+ *
+ * @param {string} annotationText - Text that belongs to an annotation.
+ * @return {HTMLElement} An HTML Element containing newline preserved text.
+ */
+export function createCommentTextNode(annotationText) {
+    const newlineList = annotationText.replace(NEWLINE_REGEX, '\n').split('\n');
+    const textEl = document.createElement('p');
+    textEl.classList.add(CLASS_ANNOTATION_COMMENT_TEXT);
+
+    // If newlines are present...
+    if (newlineList.length > 1) {
+        newlineList.forEach((text) => {
+            if (text === '') {
+                // ...Add in <br/> for each one...
+                textEl.appendChild(document.createElement('br'));
+            } else {
+                // ...Otherwise use the text that exists there.
+                const contentEl = document.createElement('p');
+                contentEl.textContent = text;
+                textEl.appendChild(contentEl);
+            }
+        });
+    } else {
+        // Otherwise just use the text
+        textEl.textContent = annotationText;
+    }
+
+    return textEl;
 }
