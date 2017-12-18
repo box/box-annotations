@@ -230,36 +230,6 @@ describe('doc/DocHighlightDialog', () => {
         });
     });
 
-    describe('show()', () => {
-        beforeEach(() => {
-            Object.defineProperty(AnnotationDialog.prototype, 'show', { value: sandbox.stub() });
-        });
-
-        it('should show the highlight button if it has been enabled', () => {
-            dialog.show(true, true);
-            const button = dialog.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
-            expect(button.classList.contains(constants.CLASS_HIDDEN)).to.be.false;
-        });
-
-        it('should hide the highlight button if it has been disabled', () => {
-            dialog.show(false, true);
-            const button = dialog.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
-            expect(button.classList.contains(constants.CLASS_HIDDEN)).to.be.true;
-        });
-
-        it('should show the comment button if it has been enabled', () => {
-            dialog.show(true, true);
-            const button = dialog.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`);
-            expect(button.classList.contains(constants.CLASS_HIDDEN)).to.be.false;
-        });
-
-        it('should hide the comment button if it has been disabled', () => {
-            dialog.show(true, false);
-            const button = dialog.highlightDialogEl.querySelector(`button.${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`);
-            expect(button.classList.contains(constants.CLASS_HIDDEN)).to.be.true;
-        });
-    });
-
     describe('position()', () => {
         beforeEach(() => {
             stubs.scaled = sandbox.stub(dialog, 'getScaledPDFCoordinates').returns([150, 2]);
@@ -399,7 +369,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should create a dialog element if it does not already exist', () => {
             dialog.element = null;
-            dialog.setup([]);
+            dialog.setup([], false);
             expect(dialog.element).is.not.null;
         });
 
@@ -410,7 +380,7 @@ describe('doc/DocHighlightDialog', () => {
 
             dialog.hasComments = null;
             stubs.annotation.text = '';
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(dialog.hasComments).to.be.false;
         });
 
@@ -431,7 +401,7 @@ describe('doc/DocHighlightDialog', () => {
                 threadNumber: 1
             });
 
-            dialog.setup([annotation]);
+            dialog.setup([annotation], false);
             expect(dialog.commentsDialogEl).to.have.class(constants.CLASS_HIDDEN);
         });
 
@@ -442,37 +412,37 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should not set the thread number when using a mobile browser', () => {
             dialog.isMobile = true;
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(dialog.element.dataset.threadNumber).to.be.undefined;
         });
 
         it('should add the text highlighted class if thread has multiple annotations', () => {
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(dialog.dialogEl).to.have.class(CLASS_TEXT_HIGHLIGHTED);
         });
 
         it('should setup and show plain highlight dialog', () => {
             sandbox.stub(util, 'isPlainHighlight').returns(true);
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(stubs.show).to.be.called;
         });
 
         it('should add annotation elements', () => {
             stubs.add = sandbox.stub(dialog, 'addAnnotationElement');
-            dialog.setup([stubs.annotation, stubs.annotation]);
+            dialog.setup([stubs.annotation, stubs.annotation], false);
             expect(stubs.add).to.be.calledTwice;
         });
 
         it('should bind DOM listeners', () => {
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(stubs.bind).to.be.called;
         });
 
         it('should not bind DOM listeners if using a mobile browser', () => {
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
             dialog.isMobile = true;
-            dialog.setup([stubs.annotation]);
+            dialog.setup([stubs.annotation], false);
             expect(stubs.bind).to.not.be.called;
         });
     });
@@ -696,23 +666,30 @@ describe('doc/DocHighlightDialog', () => {
 
     describe('generateHighlightDialogEl()', () => {
         it('should return a highlight annotation dialog DOM element', () => {
-            const highlightEl = dialog.generateHighlightDialogEl();
+            const highlightEl = dialog.generateHighlightDialogEl(true, true);
             const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
             expect(highlightBtnEl).to.not.be.null;
         });
 
         it('should not add any buttons if the user cannot annotate', () => {
             dialog.canAnnotate = false;
-            const highlightEl = dialog.generateHighlightDialogEl();
+            const highlightEl = dialog.generateHighlightDialogEl(true, true);
             const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
             expect(highlightBtnEl).to.be.null;
         });
 
         it('should not add the add highlight button if the user cannot delete annotations', () => {
             const canDeleteAnnotation = false;
-            const highlightEl = dialog.generateHighlightDialogEl(canDeleteAnnotation);
+            const highlightEl = dialog.generateHighlightDialogEl(canDeleteAnnotation, true);
             const addHighlightBtn = highlightEl.querySelector(`.${constants.CLASS_ADD_HIGHLIGHT_BTN}`);
             expect(addHighlightBtn).to.be.null;
+        });
+
+        it('should not add the comment button if the user does not have highlight comments enabled', () => {
+            const showComment = false;
+            const highlightEl = dialog.generateHighlightDialogEl(true, showComment);
+            const addCommentBtn = highlightEl.querySelector(`.${constants.CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`);
+            expect(addCommentBtn).to.be.null;
         });
     });
 });
