@@ -227,6 +227,10 @@ $tablet: 'max-width: 768px';
         &:last-child {
             border-bottom: 0;
         }
+
+        .bp-annotation-comment-text {
+            margin-bottom: 0;
+        }
     }
 
     .profile-image-container {
