@@ -576,13 +576,15 @@ class DocAnnotator extends Annotator {
             this.createHighlightDialog.show(this.container);
         }
 
-        // Set all annotations that are in the 'hover' state to 'inactive'
+        const { page } = util.getPageInfo(event.target);
+
+        // Set all annotations on current page that are in the 'hover' state to 'inactive'
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.reset());
+            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.reset(), page);
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset());
+            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
         this.lastSelection = selection;

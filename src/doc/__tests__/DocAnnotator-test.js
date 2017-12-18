@@ -1088,10 +1088,19 @@ describe('doc/DocAnnotator', () => {
 
             annotator.highlighter = { removeAllHighlights: sandbox.stub() };
             annotator.modeControllers = {
-                'point': {}
+                'point': {},
+                'highlight': {
+                    applyActionToThreads: () => {}
+                },
+                'highlight-comment': {
+                    applyActionToThreads: () => {}
+                }
             };
+            stubs.highlightMock = sandbox.mock(annotator.modeControllers['highlight']);
+            stubs.commentMock = sandbox.mock(annotator.modeControllers['highlight-comment']);
 
             stubs.getSelStub = sandbox.stub(window, 'getSelection');
+            stubs.getPageInfo.returns({ page: 1 });
         });
 
         it('should do nothing if focus is on a text input element', () => {
@@ -1169,18 +1178,12 @@ describe('doc/DocAnnotator', () => {
                 isCollapsed: false,
                 toString: () => 'asdf'
             };
-            const thread = {
-                location: { page: 1 },
-                state: STATES.hover,
-                removeAllListeners: () => {}
-            };
-            const threadMock = sandbox.mock(thread);
-            annotator.lastHighlightEvent = {};
-            annotator.modeControllers = {
-                'type': {
-                    threads: { 1: { '123abc': stubs.thread } }
-                }
-            };
+
+            annotator.plainHighlightEnabled = true;
+            stubs.highlightMock.expects('applyActionToThreads').withArgs(sinon.match.func, 1);
+
+            annotator.commentHighlightEnabled = false;
+            stubs.commentMock.expects('applyActionToThreads').withArgs(sinon.match.func, 1).never();
 
             stubs.getSelStub.returns(selection);
             sandbox.stub(annotator.createHighlightDialog, 'show');
