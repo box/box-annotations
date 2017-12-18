@@ -245,21 +245,6 @@ class DocAnnotator extends Annotator {
         return thread;
     }
 
-    /**
-     * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
-     *
-     * @override
-     * @param {number} pageNum Page number
-     * @return {void}
-     */
-    renderPage(pageNum) {
-        super.renderPage(pageNum);
-
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
-            this.createHighlightDialog.hide();
-        }
-    }
-
     //--------------------------------------------------------------------------
     // Protected
     //--------------------------------------------------------------------------

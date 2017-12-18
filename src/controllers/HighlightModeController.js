@@ -43,12 +43,12 @@ class HighlightModeController extends AnnotationModeController {
     destroy() {
         super.destroy();
 
-        this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.onDialogPendingComment);
-        this.createHighlightDialog.removeListener(CREATE_EVENT.post, this.onDialogPost);
-        this.createHighlightDialog.removeListener(CREATE_EVENT.plain, this.onDialogPost);
+        this.createDialog.removeListener(CREATE_EVENT.comment, this.onDialogPendingComment);
+        this.createDialog.removeListener(CREATE_EVENT.post, this.onDialogPost);
+        this.createDialog.removeListener(CREATE_EVENT.plain, this.onDialogPost);
 
-        this.createHighlightDialog.destroy();
-        this.createHighlightDialog = null;
+        this.createDialog.destroy();
+        this.createDialog = null;
     }
 
     /**
