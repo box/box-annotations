@@ -875,8 +875,9 @@ class DocAnnotator extends Annotator {
         const dummyEl = document.createElement('span');
         const parentEl = endContainer.parentNode;
 
+        // Insert a dummy element in the text content to place
+        // the dialog in the correct location
         if (endContainer.nodeName === '#text') {
-            // Insert dummy, maybe a span?
             const textSplit = endContainer.splitText(endOffset);
             parentEl.insertBefore(dummyEl, textSplit);
         } else {
