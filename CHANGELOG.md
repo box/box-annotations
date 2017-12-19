@@ -1,3 +1,15 @@
+<a name="0.7.1"></a>
+## 0.7.1 (2017-12-19)
+
+* Fix: Drawing buttons styling (#82) ([bda13b8](https://github.com/box/box-annotations/commit/bda13b8))
+* Fix: Ensure drawing dialog is setup on first save (#81) ([16d7c8d](https://github.com/box/box-annotations/commit/16d7c8d))
+* Fix: set textarea.placeholder when generating dialogs (#74) ([5f35ac6](https://github.com/box/box-annotations/commit/5f35ac6))
+* Fix: Show the appropriate buttons in mobile create highlight dialog (#75) ([05dba16](https://github.com/box/box-annotations/commit/05dba16))
+* Chore: Enforce Lato font for annotation dialogs (#76) ([1e92025](https://github.com/box/box-annotations/commit/1e92025))
+* Chore: Now respect newline and symbols (#73) ([41aad68](https://github.com/box/box-annotations/commit/41aad68))
+
+
+
 <a name="0.7.0"></a>
 # 0.7.0 (2017-12-12)
 
