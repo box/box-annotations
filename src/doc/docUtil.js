@@ -402,14 +402,14 @@ export function isDialogDataType(eventTarget) {
  */
 export function getDialogCoordsFromRange(range) {
     const { endContainer, endOffset } = range;
-    const dummyEl = document.createElement('span');
+    const positionEl = document.createElement('span');
     const parentEl = endContainer.parentNode;
 
     // Insert a dummy element in the text content to place
     // the dialog in the correct location
     if (endContainer.nodeName === '#text') {
         const textSplit = endContainer.splitText(endOffset);
-        parentEl.insertBefore(dummyEl, textSplit);
+        parentEl.insertBefore(positionEl, textSplit);
     } else {
         // There are certain cases where focusNode can be a node
         // "not" in the selection. Append to the start of that element.
@@ -417,21 +417,24 @@ export function getDialogCoordsFromRange(range) {
         if (previousElementSibling) {
             // To make sure we don't misalign, let's see of we can
             // append to the previous element in the selection
-            previousElementSibling.appendChild(dummyEl);
+            previousElementSibling.appendChild(positionEl);
         } else if (firstChild) {
             // See if we can insert into the first position of
             // the end container
-            endContainer.insertBefore(dummyEl, firstChild);
+            endContainer.insertBefore(positionEl, firstChild);
         } else {
-            endContainer.appendChild(dummyEl);
+            endContainer.appendChild(positionEl);
         }
     }
 
-    const rect = dummyEl.getBoundingClientRect();
+    const rect = positionEl.getBoundingClientRect();
     const x = rect.right;
     const y = rect.bottom;
 
-    dummyEl.parentNode.removeChild(dummyEl);
+    // Guarantees a PDFjs text layer change doesn't mess up removal
+    if (positionEl.parentNode) {
+        positionEl.parentNode.removeChild(positionEl);
+    }
 
     return {
         x,
