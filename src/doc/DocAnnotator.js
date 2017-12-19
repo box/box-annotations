@@ -871,38 +871,9 @@ class DocAnnotator extends Annotator {
         }
 
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
-        const { endContainer, endOffset } = lastRange;
-        const dummyEl = document.createElement('span');
-        const parentEl = endContainer.parentNode;
-
-        // Insert a dummy element in the text content to place
-        // the dialog in the correct location
-        if (endContainer.nodeName === '#text') {
-            const textSplit = endContainer.splitText(endOffset);
-            parentEl.insertBefore(dummyEl, textSplit);
-        } else {
-            // There are certain cases where focusNode can be a node
-            // "not" in the selection. Append to the start of that element.
-            const { firstChild, previousElementSibling } = endContainer;
-            if (previousElementSibling) {
-                // To make sure we don't misalign, let's see of we can
-                // append to the previous element in the selection
-                previousElementSibling.appendChild(dummyEl);
-            } else if (firstChild) {
-                // See if we can insert into the first position of
-                // the end container
-                endContainer.insertBefore(dummyEl, firstChild);
-            } else {
-                endContainer.appendChild(dummyEl);
-            }
-        }
+        const { x, y } = docUtil.getDialogCoordsFromRange(lastRange);
 
         const pageDimensions = pageEl.getBoundingClientRect();
-        const rect = dummyEl.getBoundingClientRect();
-        const x = rect.right;
-        const y = rect.bottom;
-
-        dummyEl.parentNode.removeChild(dummyEl);
 
         const pageLeft = pageDimensions.left;
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
