@@ -871,13 +871,38 @@ class DocAnnotator extends Annotator {
         }
 
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
-        const rects = lastRange.getClientRects();
-        if (rects.length === 0) {
-            return;
+        const { endContainer, endOffset } = lastRange;
+        const dummyEl = document.createElement('span');
+        const parentEl = endContainer.parentNode;
+
+        if (endContainer.nodeName === '#text') {
+            // Insert dummy, maybe a span?
+            const textSplit = endContainer.splitText(endOffset);
+            parentEl.insertBefore(dummyEl, textSplit);
+        } else {
+            // There are certain cases where focusNode can be a node
+            // "not" in the selection. Append to the start of that element.
+            const { firstChild, previousElementSibling } = endContainer;
+            if (previousElementSibling) {
+                // To make sure we don't misalign, let's see of we can
+                // append to the previous element in the selection
+                previousElementSibling.appendChild(dummyEl);
+            } else if (firstChild) {
+                // See if we can insert into the first position of
+                // the end container
+                endContainer.insertBefore(dummyEl, firstChild);
+            } else {
+                endContainer.appendChild(dummyEl);
+            }
         }
 
-        const { right, bottom } = rects[rects.length - 1];
         const pageDimensions = pageEl.getBoundingClientRect();
+        const rect = dummyEl.getBoundingClientRect();
+        const x = rect.right;
+        const y = rect.bottom;
+
+        dummyEl.parentNode.removeChild(dummyEl);
+
         const pageLeft = pageDimensions.left;
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
@@ -885,7 +910,7 @@ class DocAnnotator extends Annotator {
         this.createHighlightDialog.show(dialogParentEl);
 
         if (!this.isMobile) {
-            this.createHighlightDialog.setPosition(right - pageLeft, bottom - pageTop);
+            this.createHighlightDialog.setPosition(x - pageLeft, y - pageTop);
         }
 
         this.isCreatingHighlight = true;
