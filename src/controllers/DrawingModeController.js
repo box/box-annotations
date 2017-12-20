@@ -136,6 +136,10 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
+        if (!this.threads[page]) {
+            return;
+        }
+
         this.threads[page].remove(thread);
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);

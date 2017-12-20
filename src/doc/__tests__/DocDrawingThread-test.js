@@ -88,15 +88,23 @@ describe('doc/DocDrawingThread', () => {
 
 
     describe('handleStart()', () => {
-        it('should set the drawingFlag, pendingPath, and context if they do not exist', () => {
+        beforeEach(() => {
             const context = "I'm a real context";
 
             sandbox.stub(window, 'requestAnimationFrame');
             sandbox.stub(thread, 'checkAndHandleScaleUpdate');
-            sandbox.stub(thread, 'hasPageChanged').returns(false);
-            sandbox.stub(docUtil, 'getPageEl')
-                   .returns(context);
+            sandbox.stub(thread, 'onPageChange');
+            sandbox.stub(docUtil, 'getPageEl').returns(context);
+            stubs.pageChange = sandbox.stub(thread, 'hasPageChanged');
+        });
 
+        it('should do nothing if no location is provided', () => {
+            thread.handleStart();
+            expect(stubs.pageChange).to.not.be.called;
+        });
+
+        it('should set the drawingFlag, pendingPath, and context if they do not exist', () => {
+            stubs.pageChange.returns(false);
             thread.drawingFlag = DRAW_STATES.idle;
             thread.pendingPath = undefined;
             thread.handleStart(thread.location);
@@ -108,9 +116,7 @@ describe('doc/DocDrawingThread', () => {
         });
 
         it('should commit the thread when the page changes', () => {
-            sandbox.stub(thread, 'hasPageChanged').returns(true);
-            sandbox.stub(thread, 'checkAndHandleScaleUpdate');
-            sandbox.stub(thread, 'onPageChange');
+            stubs.pageChange.returns(true);
 
             thread.pendingPath = undefined;
             thread.location = {};
