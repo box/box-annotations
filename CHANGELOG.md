@@ -1,3 +1,11 @@
+<a name="0.7.3"></a>
+## 0.7.3 (2017-12-20)
+
+* Fix: Safety checks if no threads are registered in the draw controller (#88) ([368c092](https://github.com/box/box-annotations/commit/368c092))
+* Fix: Uncaught errors in drawingModeController.handleSelection() (#87) ([71926ed](https://github.com/box/box-annotations/commit/71926ed))
+
+
+
 <a name="0.7.2"></a>
 ## 0.7.2 (2017-12-20)
 
