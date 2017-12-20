@@ -160,6 +160,13 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
         });
 
+        it('should do nothing if no threads exist on the specified page', () => {
+            stubs.thread.location = { page: 1 };
+            controller.threads = {};
+            controller.unregisterThread(stubs.thread);
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
+        });
+
         it('should internally keep track of the registered thread', () => {
             const pageThreads = controller.threads[1];
             controller.unregisterThread(stubs.thread);
