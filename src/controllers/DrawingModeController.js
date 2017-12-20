@@ -324,7 +324,7 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
-        if (!location) {
+        if (!location || Object.keys(this.threads).length === 0) {
             return;
         }
 
