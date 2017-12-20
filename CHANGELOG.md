@@ -1,3 +1,10 @@
+<a name="0.7.2"></a>
+## 0.7.2 (2017-12-20)
+
+* Fix: Remove fixed position of mobile header (#85) ([eb02199](https://github.com/box/box-annotations/commit/eb02199)), closes [#85](https://github.com/box/box-annotations/issues/85)
+
+
+
 <a name="0.7.1"></a>
 ## 0.7.1 (2017-12-19)
 
