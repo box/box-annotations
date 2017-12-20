@@ -410,6 +410,18 @@ describe('controllers/DrawingModeController', () => {
             expect(stubs.clean).to.not.be.called;
         });
 
+        it('should do nothing if no drawing threads exist', () => {
+            stubs.clean = sandbox.stub(controller, 'removeSelection');
+            stubs.getLoc.returns({
+                x: 15,
+                y: 15,
+                page: 1
+            });
+            controller.threads = {};
+            controller.handleSelection('event');
+            expect(stubs.clean).to.not.be.called;
+        });
+
         it('should call select on an thread found in the data store', () => {
             stubs.select = sandbox.stub(controller, 'select');
             stubs.clean = sandbox.stub(controller, 'removeSelection');
