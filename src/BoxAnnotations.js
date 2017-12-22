@@ -49,12 +49,12 @@ class BoxAnnotations {
     /**
      * [constructor]
      *
-     * @param {Object} options - Viewer-specific annotator options
+     * @param {Object} viewerOptions - Viewer-specific annotator options
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(options = {}) {
+    constructor(viewerOptions = {}) {
         this.annotators = ANNOTATORS;
-        this.options = options;
+        this.viewerOptions = viewerOptions;
     }
 
     /**
@@ -108,19 +108,19 @@ class BoxAnnotations {
     }
 
     /**
-     * Determines the supported annotation types based on the viewer configurations or passed in options
-     * if provided, otherwise using the viewer defaults
+     * Determines the supported annotation types based on the viewer configurations
+     * or passed in options if provided, otherwise using the viewer defaults
      *
      * @private
      * @param {Object} annotatorConfig The config where annotation type controller instances should be attached
      * @return {void}
      */
     getAnnotatorTypes(annotatorConfig) {
-        if (this.options && this.options[annotatorConfig.NAME]) {
+        if (this.viewerOptions && this.viewerOptions[annotatorConfig.NAME]) {
             // Sets supported annotation types based on passed in options
-            const annotatorOptions = this.options[annotatorConfig.NAME];
-            if (annotatorOptions.enabledTypes) {
-                return annotatorOptions.enabledTypes;
+            const options = this.viewerOptions[annotatorConfig.NAME];
+            if (options.enabledTypes) {
+                return options.enabledTypes;
             }
         } else if (!this.viewerConfig) {
             // Sets supported annotation types to viewer-specific defaults
