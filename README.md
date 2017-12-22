@@ -26,20 +26,30 @@ Usage
 -----
 Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.com/package/box-annotations).
 
-Initialization
---------------
+### Instantiating Box Annotations inside Box Content Preview with default options
+```javascript
+var preview = new Box.Preview();
+preview.show('FILE_ID', 'ACCESS_TOKEN', {
+    container: '.preview-container',
+    showAnnotations: true
+});
+```
+Where the default enabled types are `point`, `highlight`, and `highlight-comment` for the Document Annotator and `point` for the Image Annotator.
+
+### Passing an instance of Box Annotations into Box Content Preview
 ```javascript
 import BoxAnnotations from 'box-annotations';
 
-const boxAnnotations = new BoxAnnotations();
-const annotatorConf = boxAnnotations.determineAnnotator(options, viewerConfig, disabledAnnotationTypes);
+/* global BoxAnnotations */
+const boxAnnotations = new BoxAnnotations(viewerOptions);
 
-// Construct and init annotator
-const annotator = new annotatorConf.CONSTRUCTOR(options);
-
-annotator.init(scale);
+var preview = new Box.Preview();
+preview.show(FILE_ID, ACCESS_TOKEN, {
+    container: '.preview-container',
+    boxAnnotations
+});
 ```
-Where `viewerConfig` is an optional object of viewer-specific annotations options and `disabledAnnotationTypes` is an optional string array of valid annotation types to disable. See [Enabling/Disabling Annotations and Annotation Types](#enablingdisabling-annotations-and-annotation-types) below for more details on viewer specific annotation configurations.
+Where `viewerOptions` is an optional object of viewer-specific annotator options and `disabledAnnotationTypes` is an optional string array of valid annotation types to disable. See [Enabling/Disabling Annotations and Annotation Types](#enablingdisabling-annotations-and-annotation-types) below for more details on viewer-specific annotation configurations.
 
 Parameters & Options
 -------
@@ -114,37 +124,74 @@ Below are a set of new Annotation-specific scopes to go alongside Token Exchange
 | Scenario| Scope Combinations |
 | --- | --- |
 | User wants basic preview functionality + ability to edit own annotations| base_preview + annotation_edit |
-| User wants basic preview functionality + ability to edit own annotations + ability to select text on documents| base_preview + annotation_edit + item_download |
+| User wants basic preview functionality + ability to edit own annotations + ability to highlight text| base_preview + annotation_edit + item_download |
 | User wants basic preview functionality + ability to view all annotations + ability to edit own annotations| base_preview + annotation_view_all + annotation_edit |
 | User wants basic preview functionality + ability to view only their own annotations| base_preview + annotation_view_self |
 
+**Note:** If the access token is not scoped to include `item_download`, the users will not be able to create highlight annotations even if `highlight` or `highlight-comment` is specified as an enabled annotation type.
 
 Enabling/Disabling Annotations and Annotation Types
 ------------
-Annotation types can be selectively disabled through preview options. Viewer options override global showAnnotations value, for that viewer. See [Box Content Preview](https://github.com/box/box-content-preview) for more details on how to set up the Preview instances that are used with Box Annotations here.
+Annotation types can be selectively disabled through preview options. The default enabled types are `point`, `highlight`, and `highlight-comment` for the Document Annotator and `point` for the Image Annotator. Viewer options override global showAnnotations value, for that viewer. See [Box Content Preview](https://github.com/box/box-content-preview) for more details on how to set up the Preview instances that are used with Box Annotations here.
 ```
 // Turn on/off annotations for all viewers
 preview.show(..., {
     showAnnotations: Boolean
 });
 ```
-Combined with the following:
+Combined with one of the following:
 ```
+// Enable all default annotation types for the specified viewer
 preview.show(..., {
     viewers: {
         VIEWER_NAME: {
             annotations: {
                 enabled: Boolean, // Enables/disables if set. Respects "showAnnotations" if empty
+            }
+        }
+    }
+});
+
+// Enable only certain annotation types are enabled for the specified viewer
+preview.show(..., {
+    viewers: {
+        VIEWER_NAME: {
+            annotations: {
                 enabledTypes: String[] | null // List of annotation types to enable for this viewer. If empty, will respect default types for that annotator.
             }
         }
     }
 });
 ```
-
-### Example
-Enable all annotations, turn off for Image Viewers, and enable only point annotations on Document viewer:
+If an instance of BoxAnnotations is being passed into Box Content Preview, annotations options can be specified by viewer.
 ```
+/* global BoxAnnotations */
+// Turn on/off all annotation types for each viewer
+new BoxAnnotations({
+    VIEWER_NAME: {
+        enabled: Boolean
+    }
+});
+
+// Enable/disable the default annotation types for each viewer
+new BoxAnnotations({
+    VIEWER_NAME: {
+        enabled: Boolean, // Enables/disables if set. Respects "showAnnotations" if empty
+    }
+});
+
+// Enable/disable annotation types for each viewer
+new BoxAnnotations({
+    VIEWER_NAME: {
+        enabledTypes: String[] | null // List of annotation types to enable for this viewer. If empty, will respect default types for that annotator.
+    }
+});
+```
+
+### Examples
+Enable all annotations, turn off for Image Viewer, and enable only point annotations on Document Viewer:
+```
+// Pass options into Preview
 preview.show(fileId, token, {
     showAnnotations: true,
     viewers: {
@@ -155,11 +202,27 @@ preview.show(fileId, token, {
         },
         Document: {
             annotations: {
-                enabled: true,
                 enabledTypes: ['point']
             }
         }
     }
+});
+```
+Enable the default annotation types for the Document and Image viewers, disable all annotations off for MultiImage Viewer, and enable only highlight comment and drawing annotations on Presentation Viewer:
+```
+// Instantiate BoxAnnotations with options
+const boxAnnotations = new BoxAnnotations({
+    MultiImage: {
+        enabled: false
+    },
+    Presentation: {
+        enabledTypes: ['highlight-comment', 'draw']
+    }
+});
+
+preview.show(FILE_ID, ACCESS_TOKEN, {
+    container: '.preview-container',
+    boxAnnotations
 });
 ```
 

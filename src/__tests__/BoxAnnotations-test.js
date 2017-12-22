@@ -112,7 +112,7 @@ describe('BoxAnnotations', () => {
         });
 
         it('should use the specified types from options', () => {
-            loader.options = {
+            loader.viewerOptions = {
                 'Document': { enabledTypes: ['draw'] }
             }
             expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['draw']);
