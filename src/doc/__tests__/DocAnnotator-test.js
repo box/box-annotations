@@ -1239,15 +1239,12 @@ describe('doc/DocAnnotator', () => {
                 top: 0,
                 left: 0
             };
-            const rect = {
-                right: 10,
-                bottom: 10
-            };
+
+            sandbox.stub(docUtil, 'getDialogCoordsFromRange').returns({ x: 10, y: 10 })
+
             pageInfo.pageEl.getBoundingClientRect = sandbox.stub().returns(pageRect);
             selection.rangeCount = 1;
-            selection.getRangeAt = sandbox.stub().returns({
-                getClientRects: sandbox.stub().returns([rect])
-            });
+            selection.getRangeAt = sandbox.stub().returns({});
 
             stubs.createDialogMock.expects('show').withArgs(pageInfo.pageEl);
             stubs.createDialogMock.expects('setPosition');
@@ -1256,23 +1253,19 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should position the create highlight dialog, if not on mobile', () => {
+            sandbox.stub(docUtil, 'getDialogCoordsFromRange').returns({ x: 50, y: 35 })
             const pageRect = {
                 top: 0,
                 left: 0
             };
-            const rect = {
-                right: 50,
-                bottom: 50
-            };
             pageInfo.pageEl.getBoundingClientRect = sandbox.stub().returns(pageRect);
+            selection.getRangeAt = sandbox.stub().returns({});
+
             selection.rangeCount = 1;
-            selection.getRangeAt = sandbox.stub().returns({
-                getClientRects: sandbox.stub().returns([rect])
-            });
             annotator.isMobile = false;
 
             stubs.createDialogMock.expects('show');
-            stubs.createDialogMock.expects('setPosition').withArgs(50, 35); // 35 with page padding
+            stubs.createDialogMock.expects('setPosition').withArgs(50, 20); // padding removed
 
             annotator.highlightCreateHandler(stubs.event);
         });

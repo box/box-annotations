@@ -337,4 +337,87 @@ describe('doc/docUtil', () => {
             expect(docUtil.isDialogDataType({})).to.be.false;
         });
     });
+
+    describe('getDialogCoordsFromRange()', () => {
+        let range, parentContainer;
+        const text = 'This is some text';
+        beforeEach(() => {
+            parentContainer = document.createElement('div');
+            parentContainer.innerHTML = text;
+            const endContainer = parentContainer.firstChild;
+            range = {
+                endContainer,
+                endOffset: 6 // split 'is' => "This i", "s some text"
+            };
+        });
+
+        it('should split the text node by the endOffset to add the position element to', () => {
+            let offset;
+            sandbox.stub(range.endContainer, 'splitText').callsFake((value) => {
+                offset = value;
+            });
+            docUtil.getDialogCoordsFromRange(range);
+
+            expect(offset).to.equal(6);
+        });
+        
+        describe('When end container is not a part of the text range', () => {
+            it('should calculate coords off of the end of the second last element in the range', () => {
+                const parent = document.createElement('div');
+                const first = document.createElement('span');
+                const appendStub = sandbox.stub(first, 'appendChild');
+                const second = document.createElement('p');
+                parent.appendChild(first);
+                parent.appendChild(second);
+
+                range.endContainer = second;
+                docUtil.getDialogCoordsFromRange(range);
+
+                expect(appendStub).to.be.called;
+            });
+            
+            it('should calculate coords from the last container if no second last element in the range', () => {
+                const parent = document.createElement('div');
+                const insertStub = sandbox.stub(parent, 'insertBefore');
+                const first = document.createElement('span');
+                parent.appendChild(first);
+
+                range.endContainer = parent;
+                docUtil.getDialogCoordsFromRange(range);
+
+                expect(insertStub).to.be.called;
+            });
+            
+            it('should calculate coords from the end of the end container, if no elements in the end of the range', () => {
+                const parent = document.createElement('div');
+                const appendStub = sandbox.stub(parent, 'appendChild');
+
+                range.endContainer = parent;
+                docUtil.getDialogCoordsFromRange(range);
+
+                expect(appendStub).to.be.called;
+            });
+        });
+        
+        it('should clean out the position element from the container it was added to', () => {
+            docUtil.getDialogCoordsFromRange(range);
+            const dummy = parentContainer.querySelector('span');
+            expect(dummy).to.not.exist;
+        });
+        
+        it('should use the position element\'s bounds for the x and y corrdinate', () => {
+            const fakeSpan = document.createElement('span');
+            sandbox.stub(fakeSpan, 'getBoundingClientRect').callsFake(() => {
+                return { right: 10, bottom: 11 }
+            });
+
+            const createStub = sandbox.stub(document, 'createElement');
+            createStub.withArgs('span').returns(fakeSpan);
+            createStub.callThrough();
+
+            const coords = docUtil.getDialogCoordsFromRange(range);
+            expect(coords.x).to.equal(10);
+            expect(coords.y).to.equal(11);
+        });
+    });
 });
