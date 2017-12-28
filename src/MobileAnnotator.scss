@@ -1,7 +1,3 @@
-@import 'boxuiVariables';
-
-$tablet: "(min-width: 768px)";
-
 @mixin border-top-bottom {
     border-color: $seesee;
     border-style: solid;
