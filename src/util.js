@@ -835,3 +835,22 @@ export function createCommentTextNode(annotationText) {
 
     return textEl;
 }
+
+/**
+ * Clears the specified canvas context
+ *
+ * @param {HTMLElement} pageEl The DOM element for the current page
+ * @param {HTMLElement} layerClass The annotation canvas layer CSS class
+ * @return {void}
+ */
+export function clearCanvas(pageEl, layerClass) {
+    const annotationLayerEl = pageEl.querySelector(`.${layerClass}`);
+    if (!annotationLayerEl) {
+        return;
+    }
+
+    const context = annotationLayerEl.getContext('2d');
+    if (context) {
+        context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
+    }
+}

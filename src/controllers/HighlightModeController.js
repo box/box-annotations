@@ -1,5 +1,6 @@
 import AnnotationModeController from './AnnotationModeController';
-import { THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
+import { clearCanvas } from '../util';
+import { THREAD_EVENT, CONTROLLER_EVENT, CLASS_ANNOTATION_LAYER_HIGHLIGHT } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
     /**
@@ -16,7 +17,7 @@ class HighlightModeController extends AnnotationModeController {
     handleThreadEvents(thread, data) {
         switch (data.event) {
             case THREAD_EVENT.threadCleanup:
-                this.emit(CONTROLLER_EVENT.showHighlights, thread.location.page);
+                this.renderPage(thread.location.page);
                 break;
             default:
         }
@@ -46,6 +47,26 @@ class HighlightModeController extends AnnotationModeController {
     enter() {
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
+    }
+
+    /**
+     * Renders annotations from memory for a specified page.
+     *
+     * @inheritdoc
+     * @private
+     * @param {number} pageNum - Page number
+     * @return {void}
+     */
+    renderPage(pageNum) {
+        // Clear context if needed
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+
+        if (!this.threads) {
+            return;
+        }
+
+        super.renderPage(pageNum);
     }
 }
 

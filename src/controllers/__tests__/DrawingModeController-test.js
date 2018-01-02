@@ -453,7 +453,11 @@ describe('controllers/DrawingModeController', () => {
         };
 
         beforeEach(() => {
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.setAttribute('data-page-number', 1);
+
             stubs.threadMock = sandbox.mock(thread);
+            sandbox.stub(util, 'clearCanvas');
         });
 
         it('should do nothing if no threads exist or none are on the specified page', () => {
@@ -463,6 +467,7 @@ describe('controllers/DrawingModeController', () => {
             controller.threads = {};
             controller.registerThread(thread);
             controller.renderPage(2);
+            expect(util.clearCanvas).to.be.calledTwice;
         });
 
         it('should render the annotations on every page', () => {
@@ -470,6 +475,7 @@ describe('controllers/DrawingModeController', () => {
             controller.registerThread(thread);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
+            expect(util.clearCanvas).to.be.called;
         });
     });
 

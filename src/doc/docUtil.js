@@ -360,11 +360,11 @@ export function getContext(pageEl, annotationLayerClass) {
     annotationLayerEl = scaleCanvas(pageEl, annotationLayerEl);
 
     const textLayerEl = pageEl.querySelector('.textLayer');
+    const canvasWrapperEl = pageEl.querySelector('.canvasWrapper');
     if (textLayerEl) {
         pageEl.insertBefore(annotationLayerEl, textLayerEl);
-    } else {
+    } else if (canvasWrapperEl) {
         // Ensure the annotation layer is added before the point annotations
-        const canvasWrapperEl = pageEl.querySelector('.canvasWrapper');
         canvasWrapperEl.appendChild(annotationLayerEl);
     }
     return annotationLayerEl.getContext('2d');

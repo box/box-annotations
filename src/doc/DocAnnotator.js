@@ -970,32 +970,6 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Shows highlight annotations for the specified page by re-drawing all
-     * highlight annotations currently in memory for the specified page.
-     *
-     * @private
-     * @param {number} page Page to draw annotations for
-     * @return {void}
-     */
-    showHighlightsOnPage(page) {
-        // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
-        const annotationLayerEl = pageEl.querySelector(`.${CLASS_ANNOTATION_LAYER_HIGHLIGHT}`);
-        if (annotationLayerEl) {
-            const context = annotationLayerEl.getContext('2d');
-            context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
-        }
-
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].renderPage(page);
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].renderPage(page);
-        }
-    }
-
-    /**
      * Helper to remove a Rangy highlight by deleting the highlight in the
      * internal highlighter list that has a matching ID. We can't directly use
      * the highlighter's removeHighlights since the highlight could possibly
@@ -1036,9 +1010,6 @@ class DocAnnotator extends Annotator {
                     document.getSelection().removeAllRanges();
                     this.createHighlightDialog.hide();
                 }
-                break;
-            case CONTROLLER_EVENT.showHighlights:
-                this.showHighlightsOnPage(data.data);
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
                 if (isCreateDialogVisible) {
