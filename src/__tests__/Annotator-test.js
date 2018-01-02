@@ -297,48 +297,6 @@ describe('Annotator', () => {
             });
         });
 
-        describe('rotateAnnotations()', () => {
-            beforeEach(() => {
-                annotator.permissions.canAnnotate = true;
-                stubs.hide = sandbox.stub(util, 'hideElement');
-                stubs.show = sandbox.stub(util, 'showElement');
-                stubs.render = sandbox.stub(annotator, 'render');
-                stubs.renderPage = sandbox.stub(annotator, 'renderPage');
-
-                annotator.modeButtons = {
-                    point: { selector: 'point_btn' },
-                    draw: { selector: 'draw_btn' }
-                };
-                annotator.modeControllers['point'] = stubs.controller;
-            });
-
-            afterEach(() => {
-                annotator.modeButtons = {};
-            });
-
-            it('should only render annotations if user cannot annotate', () => {
-                annotator.permissions.canAnnotate = false;
-                annotator.rotateAnnotations();
-                expect(stubs.hide).to.not.be.called;
-                expect(stubs.show).to.not.be.called;
-                expect(stubs.render).to.be.called;
-            });
-
-            it('should hide point annotation button if image is rotated', () => {
-                annotator.rotateAnnotations(90);
-                expect(stubs.hide).to.be.called;
-                expect(stubs.show).to.not.be.called;
-                expect(stubs.render).to.be.called;
-            });
-
-            it('should show point annotation button if image is rotated', () => {
-                annotator.rotateAnnotations();
-                expect(stubs.hide).to.not.be.called;
-                expect(stubs.show).to.be.called;
-                expect(stubs.render).to.be.called;
-            });
-        });
-
         describe('getAnnotationPermissions()', () => {
             it('should return the appropriate annotation permissions for the file', () => {
                 const file = {
@@ -723,7 +681,7 @@ describe('Annotator', () => {
         describe('scaleAnnotations()', () => {
             it('should set scale and rotate annotations based on the annotated element', () => {
                 sandbox.stub(annotator, 'setScale');
-                sandbox.stub(annotator, 'rotateAnnotations');
+                sandbox.stub(annotator, 'render');
 
                 const data = {
                     scale: 5,
@@ -732,7 +690,7 @@ describe('Annotator', () => {
                 };
                 annotator.scaleAnnotations(data);
                 expect(annotator.setScale).to.be.calledWith(data.scale);
-                expect(annotator.rotateAnnotations).to.be.calledWith(data.rotationAngle, data.pageNum);
+                expect(annotator.render).to.be.called;
             });
         });
 
