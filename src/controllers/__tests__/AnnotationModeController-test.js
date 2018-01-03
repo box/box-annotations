@@ -44,11 +44,13 @@ describe('controllers/AnnotationModeController', () => {
     describe('init()', () => {
         it('should init controller', () => {
             sandbox.stub(controller, 'showButton');
+            sandbox.stub(controller, 'setupSharedDialog');
             controller.init({
                 modeButton: {},
                 permissions: { canAnnotate: true }
             });
             expect(controller.showButton).to.be.called;
+            expect(controller.setupSharedDialog).to.be.called;
         });
 
         it('should not show modeButton if none provided', () => {
@@ -83,6 +85,57 @@ describe('controllers/AnnotationModeController', () => {
             };
             controller.destroy();
             expect(controller.buttonEl.removeEventListener).to.be.called;
+        });
+
+        it('should destroy the create annotation dialog', () => {
+            controller.createDialog = { destroy: () => {} };
+            const createMock = sandbox.mock(controller.createDialog);
+            createMock.expects('destroy');
+            controller.destroy();
+        });
+    });
+
+    describe('hideSharedDialog()', () => {
+        let createMock;
+
+        beforeEach(()=> {
+            controller.createDialog = {
+                isVisible: false,
+                hide: () => {}
+            };
+            createMock = sandbox.mock(controller.createDialog);
+        });
+
+        it('should do nothing if the annotations create dialog is not visible', () => {
+            createMock.expects('hide').never();
+            controller.hideSharedDialog();
+            expect(controller.lastEvent).to.be.null;
+            expect(controller.pendingThreadID).to.be.null;
+        });
+
+        it('should hide the annotations create dialog if visible', () => {
+            controller.createDialog.isVisible = true;
+            createMock.expects('hide');
+            controller.hideSharedDialog();
+            expect(controller.lastEvent).to.be.null;
+            expect(controller.pendingThreadID).to.be.null;
+        });
+    });
+
+    describe('onDialogPost()', () => {
+        it('should notify listeners of post event and clear the create dialog', () => {
+            sandbox.stub(controller, 'hideSharedDialog');
+            sandbox.stub(controller, 'emit');
+            controller.lastEvent = {};
+            controller.pendingThreadID = '123abc';
+
+            controller.onDialogPost('text');
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.createThread, {
+                commentText: 'text',
+                lastEvent: {},
+                pendingThreadID: '123abc'
+            });
+            expect(controller.hideSharedDialog).to.be.called;
         });
     });
 
@@ -453,6 +506,7 @@ describe('controllers/AnnotationModeController', () => {
         beforeEach(() => {
             stubs.threadMock = sandbox.mock(thread);
             controller.annotatedElement = 'el';
+            sandbox.stub(controller, 'destroyPendingThreads');
         });
 
         it('should do nothing if no threads exist', () => {
@@ -468,6 +522,7 @@ describe('controllers/AnnotationModeController', () => {
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(thread.annotatedElement).equals('el');
+            expect(controller.destroyPendingThreads).to.be.called;
         });
     });
 

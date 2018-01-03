@@ -5,9 +5,9 @@ import {
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_POST,
     CLASS_INVALID_INPUT
-} from '../constants';
+} from '../../constants';
 
-describe('CommentBox', () => {
+describe('controllers/CommentBox', () => {
     const sandbox = sinon.sandbox.create();
     let commentBox;
     let parentEl;

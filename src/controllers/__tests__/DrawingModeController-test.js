@@ -11,6 +11,7 @@ import {
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
+    CLASS_ANNOTATION_LAYER_DRAW,
     CONTROLLER_EVENT
 } from '../../constants';
 
@@ -454,6 +455,20 @@ describe('controllers/DrawingModeController', () => {
 
         beforeEach(() => {
             stubs.threadMock = sandbox.mock(thread);
+
+            // Add pageEl
+            controller.annotatedElement = document.createElement('div');
+            stubs.pageEl = document.createElement('div');
+            stubs.pageEl.setAttribute('data-page-number', 1);
+            controller.annotatedElement.appendChild(stubs.pageEl);
+
+            stubs.annotationLayerEl = document.createElement('canvas');
+            stubs.annotationLayerEl.classList.add(CLASS_ANNOTATION_LAYER_DRAW);
+            stubs.pageEl.appendChild(stubs.annotationLayerEl);
+
+            sandbox.stub(stubs.annotationLayerEl, 'getContext').returns({
+                clearRect: sandbox.stub()
+            });
         });
 
         it('should do nothing if no threads exist or none are on the specified page', () => {
@@ -470,6 +485,9 @@ describe('controllers/DrawingModeController', () => {
             controller.registerThread(thread);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
+
+            const context = stubs.annotationLayerEl.getContext();
+            expect(context.clearRect).to.be.called;
         });
     });
 

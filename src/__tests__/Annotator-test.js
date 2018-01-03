@@ -10,6 +10,7 @@ import {
     CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
     CLASS_HIDDEN,
+    SELECTOR_MOBILE_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
@@ -42,6 +43,10 @@ describe('Annotator', () => {
             exit: () => {}
         };
         stubs.controllerMock = sandbox.mock(stubs.controller);
+        stubs.controller.createDialog = {
+            hide: () => {},
+            isVisible: false
+        };
 
         const options = {
             annotator: {
@@ -52,7 +57,7 @@ describe('Annotator', () => {
         };
         annotator = new Annotator({
             canAnnotate: true,
-            container: document,
+            container: document.createElement('div'),
             annotationService: {},
             file: {
                 file_version: { id: 1 }
@@ -153,28 +158,10 @@ describe('Annotator', () => {
 
     describe('setupMobileDialog()', () => {
         it('should generate mobile annotations dialog and append to container', () => {
-            annotator.container = {
-                appendChild: sandbox.mock()
-            };
+            annotator.container = document.createElement('div');
             annotator.setupMobileDialog();
-            expect(annotator.container.appendChild).to.be.called;
-        });
-
-        it('should setup shared point dialog in the point controller', () => {
-            annotator.container = {
-                appendChild: sandbox.mock()
-            };
-            annotator.modeControllers = {
-                'point': { setupSharedDialog: sandbox.stub() }
-            };
-            const pointController = annotator.modeControllers['point'];
-
-            annotator.setupMobileDialog();
-            expect(pointController.setupSharedDialog).to.be.calledWith(annotator.container, {
-                isMobile: annotator.isMobile,
-                hasTouch: annotator.hasTouch,
-                localized: annotator.localized
-            });
+            const mobileDialog = annotator.container.querySelector(SELECTOR_MOBILE_ANNOTATION_DIALOG);
+            expect(mobileDialog).to.not.be.null;
         });
     });
 
@@ -263,21 +250,13 @@ describe('Annotator', () => {
         describe('render()', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
-                    'type': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
-                    },
-                    'type2': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
-                    }
+                    'type': { render: sandbox.stub() },
+                    'type2': { render: sandbox.stub() }
                 };
 
                 annotator.render();
                 expect(annotator.modeControllers['type'].render).to.be.called;
-                expect(annotator.modeControllers['type'].destroyPendingThreads).to.be.called;
                 expect(annotator.modeControllers['type2'].render).to.be.called;
-                expect(annotator.modeControllers['type2'].destroyPendingThreads).to.be.called;
             });
         });
 
@@ -524,11 +503,20 @@ describe('Annotator', () => {
                 expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
             });
 
-            it('should create a point annotation thread on createThread', () => {
+            it('should create a point annotation thread on createThread for new point annotations', () => {
                 sandbox.stub(annotator, 'createPointThread');
+                data.mode = TYPES.point;
                 data.event = CONTROLLER_EVENT.createThread;
                 annotator.handleControllerEvents(data);
                 expect(annotator.createPointThread).to.be.calledWith(data.data);
+            });
+
+            it('should not create a point annotation thread on createThread for new non-point annotations', () => {
+                sandbox.stub(annotator, 'createPointThread');
+                data.mode = TYPES.highlight;
+                data.event = CONTROLLER_EVENT.createThread;
+                annotator.handleControllerEvents(data);
+                expect(annotator.createPointThread).to.not.be.calledWith(data.data);
             });
         });
 
@@ -589,18 +577,18 @@ describe('Annotator', () => {
 
             it('should do nothing if the point data is invalid', () => {
                 annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     pendingThreadID: '123abc',
                     commentText: ' '
                 });
 
                 annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     pendingThreadID: '123abc'
                 });
 
                 annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     commentText: ' '
                 });
 
@@ -611,11 +599,11 @@ describe('Annotator', () => {
                 expect(annotator.emit).to.not.be.called;
             });
 
-            it('should do nothing if no location is returned fom the lastPointEvent', () => {
+            it('should do nothing if no location is returned fom the lastEvent', () => {
                 stubs.getLoc.returns(null);
 
                 const result = annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     pendingThreadID: '123abc',
                     commentText: 'text'
                 });
@@ -623,9 +611,9 @@ describe('Annotator', () => {
                 expect(result).to.be.null;
             });
 
-            it('should do nothing the thread does not exist in the page specified by lastPointEvent', () => {
+            it('should do nothing the thread does not exist in the page specified by lastEvent', () => {
                 const result = annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     pendingThreadID: '123abc',
                     commentText: 'text'
                 });
@@ -633,7 +621,7 @@ describe('Annotator', () => {
                 expect(result).to.be.null;
             });
 
-            it('should create a point annotation thread using lastPointEvent', () => {
+            it('should create a point annotation thread using lastEvent', () => {
                 stubs.threadMock.expects('showDialog');
                 stubs.threadMock.expects('getThreadEventData').returns({});
 
@@ -642,7 +630,7 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.createPointThread({
-                    lastPointEvent: {},
+                    lastEvent: {},
                     pendingThreadID: '123abc',
                     commentText: 'text'
                 });
@@ -697,6 +685,7 @@ describe('Annotator', () => {
         describe('toggleAnnotationMode()', () => {
             beforeEach(() => {
                 annotator.modeControllers['something'] = stubs.controller;
+                stubs.createMock = sandbox.mock(stubs.controller.createDialog);
             });
 
             it('should exit the current mode', () => {
@@ -708,6 +697,12 @@ describe('Annotator', () => {
             it('should enter the specified mode', () => {
                 sandbox.stub(annotator, 'getCurrentAnnotationMode');
                 stubs.controllerMock.expects('enter');
+                annotator.toggleAnnotationMode('something');
+            });
+
+            it('should hide the visible create dialog', () => {
+                sandbox.stub(util, 'isCreateDialogVisible').withArgs(annotator.modeControllers).returns(stubs.controller.createDialog);
+                stubs.createMock.expects('hide');
                 annotator.toggleAnnotationMode('something');
             });
         });

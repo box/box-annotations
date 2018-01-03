@@ -86,17 +86,18 @@ describe('doc/DocAnnotator', () => {
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
 
-        stubs.getPageInfo = sandbox.stub(util, 'getPageInfo');
-        annotator.createHighlightDialog = {
-            emit: () => {},
-            addListener: () => {},
-            removeListener: () => {},
+        stubs.createDialog = {
+            isVisible: false,
+            hide: () => {},
             destroy: () => {},
             show: () => {},
-            hide: () => {},
-            setPosition: () => {},
+            addListener: () => {},
+            setPosition: () => {}
         };
-        stubs.createDialogMock = sandbox.mock(annotator.createHighlightDialog);
+        stubs.createDialogMock = sandbox.mock(stubs.createDialog);
+        stubs.isCreateDialogVisible = sandbox.stub(util, 'isCreateDialogVisible');
+
+        stubs.getPageInfo = sandbox.stub(util, 'getPageInfo');
     });
 
     afterEach(() => {
@@ -114,7 +115,7 @@ describe('doc/DocAnnotator', () => {
     });
 
     describe('init()', () => {
-        it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
+        it('should add ID to annotatedElement', () => {
             annotator.init(1);
             expect(annotator.annotatedElement.id).to.not.be.undefined;
         });
@@ -425,13 +426,12 @@ describe('doc/DocAnnotator', () => {
 
         it('should do nothing and return null if empty string passed in', () => {
             annotator.lastHighlightEvent = {};
-            stubs.createDialogMock.expects('hide').never();
             annotator.createHighlightThread('');
         });
 
-        it('should hide the dialog if it exists and is visible', () => {
+        it('should hide the create dialog if it exists and is visible', () => {
             annotator.lastHighlightEvent = {};
-            annotator.createHighlightDialog.isVisible = true;
+            stubs.isCreateDialogVisible.returns(stubs.createDialog);
             stubs.createDialogMock.expects('hide').once();
             annotator.createHighlightThread('some text');
         });
@@ -537,59 +537,6 @@ describe('doc/DocAnnotator', () => {
 
             expect(annotator.createHighlightThread()).to.deep.equal(thread);
             expect(stubs.registerThread).to.be.called;
-        });
-    });
-
-    describe('renderPage()', () => {
-        beforeEach(() => {
-            sandbox.stub(annotator, 'scaleAnnotationCanvases');
-            annotator.modeControllers = {
-                'type': {
-                    renderPage: sandbox.stub()
-                },
-                'type2': {
-                    renderPage: sandbox.stub()
-                }
-            };
-        });
-
-        it('should clear and hide createHighlightDialog on page render', () => {
-            annotator.createHighlightDialog = {
-                isVisible: true,
-                hide: () => {},
-                destroy: () => {}
-            };
-            const createMock = sandbox.mock(annotator.createHighlightDialog);
-            createMock.expects('hide');
-            annotator.renderPage(1);
-            expect(annotator.scaleAnnotationCanvases).to.be.calledWith(1);
-            expect(annotator.modeControllers['type'].renderPage).to.be.calledWith(1);
-            expect(annotator.modeControllers['type2'].renderPage).to.be.calledWith(1);
-        });
-    });
-
-    describe('scaleAnnotationCanvases()', () => {
-        beforeEach(() => {
-            stubs.scaleCanvas = sandbox.stub(docUtil, 'scaleCanvas');
-
-            // Add pageEl
-            stubs.pageEl = document.createElement('div');
-            stubs.pageEl.setAttribute('data-page-number', 1);
-            annotator.annotatedElement.appendChild(stubs.pageEl);
-        });
-
-        it('should do nothing if annotation layer is not present', () => {
-            annotator.scaleAnnotationCanvases(1);
-            expect(stubs.scaleCanvas).to.not.be.called;
-        });
-
-        it('should scale canvas if annotation layer is present', () => {
-            const annotationLayerEl = document.createElement('canvas');
-            annotationLayerEl.classList.add(CLASS_ANNOTATION_LAYER_HIGHLIGHT);
-            stubs.pageEl.appendChild(annotationLayerEl);
-
-            annotator.scaleAnnotationCanvases(1);
-            expect(stubs.scaleCanvas).to.be.calledOnce;
         });
     });
 
@@ -1020,21 +967,18 @@ describe('doc/DocAnnotator', () => {
             annotator.highlightMouseupHandler({});
             expect(stubs.create).to.not.be.called;
             expect(stubs.click).to.not.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
         })
 
         it('should call highlightCreateHandler if not on mobile, and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(stubs.create).to.be.called;
             expect(stubs.click).to.not.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
         });
 
         it('should call highlightClickHandler if not on mobile, and the mouse did not move', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(stubs.create).to.not.be.called;
             expect(stubs.click).to.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
         });
 
         it('should call highlighter.removeAllHighlghts', () => {
@@ -1046,36 +990,21 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should not hide the highlight dialog and clear selection if the CreateHighlightDialog is not visible', () => {
-            annotator.createHighlightDialog = {
-                isVisible: false,
-                hide: sandbox.stub(),
-                removeListener: sandbox.stub(),
-                destroy: sandbox.stub()
-            }
-
             const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
                 removeAllRanges: sandbox.stub()
             });
 
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
-            expect(annotator.createHighlightDialog.hide).to.not.be.called;
             expect(getSelectionStub).to.not.be.called;
         });
 
         it('should hide the highlight dialog and clear selection if the CreateHighlightDialog is visible', () => {
-            annotator.createHighlightDialog = {
-                isVisible: true,
-                hide: sandbox.stub(),
-                removeListener: sandbox.stub(),
-                destroy: sandbox.stub()
-            }
-
             const getSelectionStub = sandbox.stub(document, 'getSelection').returns({
                 removeAllRanges: sandbox.stub()
             });
+            stubs.isCreateDialogVisible.returns(stubs.createDialog);
 
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
-            expect(annotator.createHighlightDialog.hide).to.be.called;
             expect(getSelectionStub).to.be.called;
         });
     });
@@ -1090,10 +1019,12 @@ describe('doc/DocAnnotator', () => {
             annotator.modeControllers = {
                 'point': {},
                 'highlight': {
-                    applyActionToThreads: () => {}
+                    applyActionToThreads: () => {},
+                    createDialog: stubs.createDialog
                 },
                 'highlight-comment': {
-                    applyActionToThreads: () => {}
+                    applyActionToThreads: () => {},
+                    createDialog: stubs.createDialog
                 }
             };
             stubs.highlightMock = sandbox.mock(annotator.modeControllers['highlight']);
@@ -1166,7 +1097,6 @@ describe('doc/DocAnnotator', () => {
             stubs.getSelStub.returns(selection);
             annotator.lastSelection = selection;
             annotator.lastHighlightEvent = {};
-            annotator.createHighlightDialog.isVisible = false;
 
             stubs.createDialogMock.expects('show').withArgs(annotator.container);
             annotator.onSelectionChange({});
@@ -1186,7 +1116,6 @@ describe('doc/DocAnnotator', () => {
             stubs.commentMock.expects('applyActionToThreads').withArgs(sinon.match.func, 1).never();
 
             stubs.getSelStub.returns(selection);
-            sandbox.stub(annotator.createHighlightDialog, 'show');
 
             annotator.onSelectionChange({});
         });
@@ -1212,6 +1141,17 @@ describe('doc/DocAnnotator', () => {
             stubs.event = new Event({ x: 1, y: 1 });
             stubs.stopEvent = sandbox.stub(stubs.event, 'stopPropagation');
             stubs.getSel.returns(selection);
+
+
+            annotator.modeControllers = {
+                'highlight': {
+                    createDialog: stubs.createDialog
+                },
+                'highlight-comment': {
+                    createDialog: stubs.createDialog
+                }
+            };
+            stubs.isCreateDialogVisible.returns(stubs.createDialog);
         });
 
         afterEach(() => {
@@ -1280,10 +1220,12 @@ describe('doc/DocAnnotator', () => {
 
             annotator.modeControllers = {
                 'highlight': {
-                    applyActionToThreads: sandbox.stub()
+                    applyActionToThreads: sandbox.stub(),
+                    createDialog: stubs.createDialog
                 },
                 'highlight-comment': {
-                    applyActionToThreads: sandbox.stub()
+                    applyActionToThreads: sandbox.stub(),
+                    createDialog: stubs.createDialog
                 }
             };
             stubs.highlightApply = annotator.modeControllers['highlight'].applyActionToThreads;
@@ -1386,83 +1328,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('showHighlightsOnPage()', () => {
-        beforeEach(() => {
-            stubs.getContext = sandbox.stub();
-            stubs.clearRect = sandbox.stub();
-
-            annotator.annotatedElement = {
-                querySelector: () => {},
-                getContext: () => {},
-                clearRect: () => {}
-            };
-            stubs.mock = sandbox.mock(annotator.annotatedElement);
-
-            annotator.modeControllers = {
-                'highlight': {
-                    renderPage: () => {}
-                },
-                'highlight-comment': {
-                    renderPage: () => {}
-                }
-            };
-            stubs.highlightMock = sandbox.mock(annotator.modeControllers['highlight']);
-            stubs.commentMock = sandbox.mock(annotator.modeControllers['highlight-comment']);
-        });
-
-        afterEach(() => {
-            annotator.annotatedElement = document.querySelector('.annotated-element');
-        });
-
-        it('should not call clearRect or getContext if there is already an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns({ querySelector: () => {} });
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('should not call clearRect or getContext if there is not an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(undefined);
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('should call clearRect or getContext if there is an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('show all plain highlights on the page after clearing', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.plainHighlightEnabled = true;
-            stubs.highlightMock.expects('renderPage').withArgs(0);
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('show all the highlight comments on the page after clearing', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.commentHighlightEnabled = true;
-            stubs.commentMock.expects('renderPage').withArgs(0);
-            annotator.showHighlightsOnPage(0);
-        });
-    });
-
     describe('removeRangyHighlight()', () => {
         it('should do nothing if there is not an array of highlights', () => {
             annotator.highlighter = {
@@ -1560,48 +1425,41 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             const selection = document.getSelection();
             stubs.removeSelection = sandbox.stub(selection, 'removeAllRanges');
-            sandbox.stub(annotator, 'showHighlightsOnPage');
             sandbox.stub(annotator, 'toggleAnnotationMode');
-            annotator.createHighlightDialog = {
-                isVisible: true,
-                hide: sandbox.stub(),
-            };
+            sandbox.stub(annotator, 'createPlainHighlight');
+            sandbox.stub(annotator, 'createHighlightThread');
+            sandbox.stub(annotator, 'highlightCurrentSelection');
         });
-
-        afterEach(() => {
-            annotator.createHighlightDialog = null;
-        })
 
         it('should clear selections and hide the createHighlightDialog on togglemode', () => {
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
             expect(stubs.removeSelection).to.be.called;
-            expect(annotator.createHighlightDialog.hide).to.be.called;
         });
 
-        it('should do nothing if createHighlightDialog is hidden or does not exist on togglemode', () => {
-            annotator.createHighlightDialog = undefined;
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
-            expect(stubs.removeSelection).to.not.be.called;
-
-            annotator.createHighlightDialog = { isVisible: false };
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
-            expect(stubs.removeSelection).to.not.be.called;
+        it('should create a plain comment if created annotation does not have text', () => {
+            annotator.handleControllerEvents({
+                event: CONTROLLER_EVENT.createThread,
+                mode: TYPES.highlight,
+                data: { commentText: '' }
+            });
+            expect(annotator.createPlainHighlight).to.be.called;
         });
 
-        it('should show highlights on page on showhighlights', () => {
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.showHighlights, data: 1 });
-            expect(annotator.showHighlightsOnPage).to.be.calledWith(1);
+        it('should create a highlight comment if created annotation has text', () => {
+            annotator.handleControllerEvents({
+                event: CONTROLLER_EVENT.createThread,
+                mode: TYPES.highlight_comment,
+                data: { commentText: 'text' }
+            });
+            expect(annotator.createHighlightThread).to.be.called;
         });
 
-        it('should hide the createHighlightDialog on binddomlisteners', () => {
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
-            expect(annotator.createHighlightDialog.hide).to.be.called;
-        });
-
-        it('should do nothing if createHighlightDialog is hidden or does not exist on binddomlisteners', () => {
-            annotator.createHighlightDialog.isVisible = false
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
-            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+        it('should clear selections and hide the createHighlightDialog on togglemode', () => {
+            annotator.handleControllerEvents({
+                event: CONTROLLER_EVENT.createPendingThread,
+                mode: TYPES.highlight
+            });
+            expect(annotator.highlightCurrentSelection).to.be.called;
         });
     });
 });

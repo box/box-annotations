@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import CommentBox from './CommentBox';
-import { hideElement, showElement } from './util';
-import { CLASS_MOBILE_CREATE_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, CREATE_EVENT } from './constants';
+import { hideElement, showElement } from '../util';
+import { CLASS_MOBILE_CREATE_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, CREATE_EVENT } from '../constants';
 
 class CreateAnnotationDialog extends EventEmitter {
     /** @property {HTMLElement} - Container element for the dialog. */
