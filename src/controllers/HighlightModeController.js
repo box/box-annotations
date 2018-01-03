@@ -35,7 +35,7 @@ class HighlightModeController extends AnnotationModeController {
                 }
                 break;
             case THREAD_EVENT.threadCleanup:
-                this.renderPage(thread.location.page);
+                this.emit(CONTROLLER_EVENT.renderPage, thread.location.page);
                 break;
             default:
         }

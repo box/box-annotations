@@ -1488,6 +1488,7 @@ describe('doc/DocAnnotator', () => {
                 isVisible: true,
                 hide: sandbox.stub(),
             };
+            sandbox.stub(annotator, 'renderPage');
         });
 
         afterEach(() => {
@@ -1519,6 +1520,11 @@ describe('doc/DocAnnotator', () => {
             annotator.createHighlightDialog.isVisible = false
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
+        });
+
+        it('should render the specified page on annotationsrenderpage', () => {
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.renderPage });
+            expect(annotator.renderPage).to.be.called;
         });
     });
 });
