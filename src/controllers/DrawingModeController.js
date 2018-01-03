@@ -13,6 +13,7 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
+    CLASS_ANNOTATION_LAYER_DRAW,
     DRAW_BORDER_OFFSET,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
@@ -328,7 +329,7 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
-        if (!location || Object.keys(this.threads).length === 0) {
+        if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
             return;
         }
 
@@ -366,6 +367,10 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     renderPage(pageNum) {
+        // Clear context if needed
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+
         if (!this.threads || !this.threads[pageNum]) {
             return;
         }

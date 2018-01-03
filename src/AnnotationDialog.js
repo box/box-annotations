@@ -553,8 +553,6 @@ class AnnotationDialog extends EventEmitter {
                     // Cancels + destroys the annotation thread
                     this.cancelAnnotation();
                 }
-
-                this.deactivateReply(true);
                 break;
             // Clicking inside reply text area
             case constants.DATA_TYPE_REPLY_TEXTAREA:

@@ -1386,83 +1386,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('showHighlightsOnPage()', () => {
-        beforeEach(() => {
-            stubs.getContext = sandbox.stub();
-            stubs.clearRect = sandbox.stub();
-
-            annotator.annotatedElement = {
-                querySelector: () => {},
-                getContext: () => {},
-                clearRect: () => {}
-            };
-            stubs.mock = sandbox.mock(annotator.annotatedElement);
-
-            annotator.modeControllers = {
-                'highlight': {
-                    renderPage: () => {}
-                },
-                'highlight-comment': {
-                    renderPage: () => {}
-                }
-            };
-            stubs.highlightMock = sandbox.mock(annotator.modeControllers['highlight']);
-            stubs.commentMock = sandbox.mock(annotator.modeControllers['highlight-comment']);
-        });
-
-        afterEach(() => {
-            annotator.annotatedElement = document.querySelector('.annotated-element');
-        });
-
-        it('should not call clearRect or getContext if there is already an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns({ querySelector: () => {} });
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('should not call clearRect or getContext if there is not an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(undefined);
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('should call clearRect or getContext if there is an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('show all plain highlights on the page after clearing', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.plainHighlightEnabled = true;
-            stubs.highlightMock.expects('renderPage').withArgs(0);
-            annotator.showHighlightsOnPage(0);
-        });
-
-        it('show all the highlight comments on the page after clearing', () => {
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
-
-            annotator.commentHighlightEnabled = true;
-            stubs.commentMock.expects('renderPage').withArgs(0);
-            annotator.showHighlightsOnPage(0);
-        });
-    });
-
     describe('removeRangyHighlight()', () => {
         it('should do nothing if there is not an array of highlights', () => {
             annotator.highlighter = {
@@ -1560,7 +1483,6 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             const selection = document.getSelection();
             stubs.removeSelection = sandbox.stub(selection, 'removeAllRanges');
-            sandbox.stub(annotator, 'showHighlightsOnPage');
             sandbox.stub(annotator, 'toggleAnnotationMode');
             annotator.createHighlightDialog = {
                 isVisible: true,
@@ -1586,11 +1508,6 @@ describe('doc/DocAnnotator', () => {
             annotator.createHighlightDialog = { isVisible: false };
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.toggleMode, mode });
             expect(stubs.removeSelection).to.not.be.called;
-        });
-
-        it('should show highlights on page on showhighlights', () => {
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.showHighlights, data: 1 });
-            expect(annotator.showHighlightsOnPage).to.be.calledWith(1);
         });
 
         it('should hide the createHighlightDialog on binddomlisteners', () => {

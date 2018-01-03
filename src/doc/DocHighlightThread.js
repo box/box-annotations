@@ -9,6 +9,7 @@ import {
     SELECTOR_ADD_HIGHLIGHT_BTN,
     HIGHLIGHT_FILL,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM
 } from '../constants';
@@ -467,7 +468,10 @@ class DocHighlightThread extends AnnotationThread {
     /* istanbul ignore next */
     draw(fillStyle) {
         const pageEl = this.getPageEl();
-        const context = docUtil.getContext(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+        const context =
+            this.type === TYPES.highlight
+                ? docUtil.getContext(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT)
+                : docUtil.getContext(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT);
         if (!context) {
             return;
         }
