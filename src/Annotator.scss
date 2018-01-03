@@ -422,7 +422,8 @@ $tablet: 'max-width: 768px';
 //------------------------------------------------------------------------------
 // CSS for highlights
 //------------------------------------------------------------------------------
-.bp-annotation-layer-highlight {
+.bp-annotation-layer-highlight,
+.bp-annotation-layer-highlight-comment {
     cursor: text;
     left: 0;
     mix-blend-mode: multiply;
@@ -588,6 +589,7 @@ $tablet: 'max-width: 768px';
 //------------------------------------------------------------------------------
 .bp-annotation-mode .page,
 .bp-annotation-mode .bp-annotation-layer-highlight,
+.bp-annotation-mode .bp-annotation-layer-highlight-comment,
 .bp-annotation-mode .textLayer > div,
 .bp-annotation-mode > img,
 .bp-annotation-mode img {

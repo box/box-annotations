@@ -1,5 +1,12 @@
 import AnnotationModeController from './AnnotationModeController';
-import { THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
+import { clearCanvas, getFirstAnnotation } from '../util';
+import {
+    THREAD_EVENT,
+    CONTROLLER_EVENT,
+    TYPES,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT
+} from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
     /**
@@ -14,9 +21,21 @@ class HighlightModeController extends AnnotationModeController {
      * @return {void}
      */
     handleThreadEvents(thread, data) {
+        let firstAnnotation;
         switch (data.event) {
+            case THREAD_EVENT.save:
+                // Re-render plain highlight canvas when a plain highlight is converted to a highlight comment
+                firstAnnotation = getFirstAnnotation(thread.annotations);
+                if (
+                    firstAnnotation &&
+                    firstAnnotation.type === TYPES.highlight &&
+                    Object.keys(thread.annotations).length === 2
+                ) {
+                    this.renderPage(thread.location.page);
+                }
+                break;
             case THREAD_EVENT.threadCleanup:
-                this.emit(CONTROLLER_EVENT.showHighlights, thread.location.page);
+                this.renderPage(thread.location.page);
                 break;
             default:
         }
@@ -46,6 +65,28 @@ class HighlightModeController extends AnnotationModeController {
     enter() {
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
+    }
+
+    /**
+     * Renders annotations from memory for a specified page.
+     *
+     * @inheritdoc
+     * @private
+     * @param {number} pageNum - Page number
+     * @return {void}
+     */
+    renderPage(pageNum) {
+        // Clear context if needed
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const layerClass =
+            this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
+        clearCanvas(pageEl, layerClass);
+
+        if (!this.threads) {
+            return;
+        }
+
+        super.renderPage(pageNum);
     }
 }
 

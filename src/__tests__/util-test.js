@@ -37,7 +37,8 @@ import {
     generateBtn,
     addThreadToMap,
     removeThreadFromMap,
-    createCommentTextNode
+    createCommentTextNode,
+    clearCanvas
 } from '../util';
 import {
     STATES,
@@ -799,6 +800,36 @@ describe('util', () => {
             const textEl = createCommentTextNode(text);
 
             expect(textEl.classList.contains(CLASS_ANNOTATION_COMMENT_TEXT)).to.be.true;
+        });
+    });
+
+    describe('clearCanvas()', () => {
+        beforeEach(() => {
+            stubs.layerEl = {
+                width: 500,
+                height: 500,
+                getContext: () => {}
+            };
+            stubs.layerMock = sandbox.mock(stubs.layerEl);
+
+            stubs.context = {
+                clearRect: () => {}
+            };
+            stubs.contextMock = sandbox.mock(stubs.context);
+        });
+
+        it('should do nothing if the annotation layer does not exist', () => {
+            stubs.contextMock.expects('clearRect').never();
+            clearCanvas(document.createElement('div'), 'anything');
+        });
+
+        it('should clear the specified annotation layer', () => {
+            const pageEl = {
+                querySelector: sandbox.stub().returns(stubs.layerEl)
+            };
+            stubs.layerMock.expects('getContext').returns(stubs.context);
+            stubs.contextMock.expects('clearRect').once();
+            clearCanvas(pageEl, 'anything');
         });
     });
 });

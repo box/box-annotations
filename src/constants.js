@@ -35,6 +35,7 @@ export const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'bp-highlight-comment-btn';
 export const CLASS_ANNOTATION_DRAW = 'bp-annotation-draw';
 export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
 export const CLASS_ANNOTATION_LAYER_HIGHLIGHT = 'bp-annotation-layer-highlight';
+export const CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT = 'bp-annotation-layer-highlight-comment';
 export const CLASS_ANNOTATION_LAYER_DRAW = 'bp-annotation-layer-draw';
 export const CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS = 'bp-annotation-layer-draw-in-progress';
 export const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
@@ -158,7 +159,6 @@ export const CONTROLLER_EVENT = {
     exit: 'annotationmodeexit',
     register: 'registerthread',
     unregister: 'unregisterthread',
-    showHighlights: 'showhighlights',
     bindDOMListeners: 'binddomlisteners',
     unbindDOMListeners: 'unbinddomlisteners'
 };

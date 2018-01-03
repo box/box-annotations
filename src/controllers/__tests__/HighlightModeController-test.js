@@ -7,7 +7,8 @@ import {
     CLASS_ANNOTATION_MODE,
     THREAD_EVENT,
     STATES,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT
 } from '../../constants';
 
 let controller;
@@ -18,7 +19,12 @@ describe('controllers/HighlightModeController', () => {
     beforeEach(() => {
         controller = new HighlightModeController();
         sandbox.stub(controller, 'emit');
-        stubs.thread = { location: { page: 1 } };
+        stubs.thread = {
+            annotations: {},
+            location: { page: 1 },
+            show: () => {}
+        };
+        stubs.threadMock = sandbox.mock(stubs.thread);
     });
 
     afterEach(() => {
@@ -28,11 +34,28 @@ describe('controllers/HighlightModeController', () => {
     });
 
     describe('handleThreadEvents()', () => {
-        it('should unregister thread on threadCleanup', () => {
+        it('should render page on save only if plain highlight was converted to a highlight comment', () => {
+            stubs.thread.annotations = {
+                1: { type: 'highlight' }
+            };
+            sandbox.stub(controller, 'renderPage');
+            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).to.not.be.called;
+
+            stubs.thread.annotations = {
+                1: { type: 'highlight' },
+                2: { type: 'highlight-comment' }
+            };
+            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).to.be.calledWith(1);
+        });
+
+        it('should render page on threadCleanup', () => {
             sandbox.stub(controller, 'unregisterThread');
+            sandbox.stub(controller, 'renderPage');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.showHighlights, 1);
+            expect(controller.renderPage).to.be.calledWith(1);
         });
     });
 
@@ -65,6 +88,30 @@ describe('controllers/HighlightModeController', () => {
             controller.enter();
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
             expect(controller.bindListeners).to.be.called;
+        });
+    });
+
+    describe('renderPage()', () => {
+        beforeEach(() => {
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.setAttribute('data-page-number', 1);
+
+            sandbox.stub(util, 'clearCanvas');
+        });
+
+        it('should do nothing if no threads exist', () => {
+            stubs.threadMock.expects('show').never();
+            controller.renderPage(1);
+            expect(util.clearCanvas).to.be.called;
+        });
+
+        it('should render the annotations on the specified page', () => {
+            controller.threads = {
+                1: { '123abc': stubs.thread }
+            };
+            stubs.threadMock.expects('show').once();
+            controller.renderPage(1);
+            expect(util.clearCanvas).to.be.called;
         });
     });
 });
