@@ -94,7 +94,7 @@ $tablet: "(min-width: 768px)";
         height: 100%;
         overflow-x: hidden;
         overflow-y: auto;
-        padding: 55px 15px 15px 15px;
+        padding: 15px;
         position: absolute;
         width: 100%;
     }
@@ -106,7 +106,6 @@ $tablet: "(min-width: 768px)";
         height: 48px;
         justify-content: space-between;
         padding: 0;
-        position: fixed;
         width: 100%;
         z-index: 160;
 

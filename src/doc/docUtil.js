@@ -393,3 +393,51 @@ export function isDialogDataType(eventTarget) {
     const dataType = util.findClosestDataType(eventTarget);
     return DIALOG_DATATYPES.indexOf(dataType) !== -1;
 }
+
+/**
+ * Get coordinates for dialog placement from a selection range.
+ *
+ * @param {Range} range - A text selection range to get end coordinates of.
+ * @return {Object} - x and y coordinate for dialog placement.
+ */
+export function getDialogCoordsFromRange(range) {
+    const { endContainer, endOffset } = range;
+    const positionEl = document.createElement('span');
+    const parentEl = endContainer.parentNode;
+
+    // Insert a dummy element in the text content to place
+    // the dialog in the correct location
+    if (endContainer.nodeName === '#text') {
+        const textSplit = endContainer.splitText(endOffset);
+        parentEl.insertBefore(positionEl, textSplit);
+    } else {
+        // There are certain cases where focusNode can be a node
+        // "not" in the selection. Append to the start of that element.
+        const { firstChild, previousElementSibling } = endContainer;
+        if (previousElementSibling) {
+            // To make sure we don't misalign, let's see of we can
+            // append to the previous element in the selection
+            previousElementSibling.appendChild(positionEl);
+        } else if (firstChild) {
+            // See if we can insert into the first position of
+            // the end container
+            endContainer.insertBefore(positionEl, firstChild);
+        } else {
+            endContainer.appendChild(positionEl);
+        }
+    }
+
+    const rect = positionEl.getBoundingClientRect();
+    const x = rect.right;
+    const y = rect.bottom;
+
+    // Guarantees a PDFjs text layer change doesn't mess up removal
+    if (positionEl.parentNode) {
+        positionEl.parentNode.removeChild(positionEl);
+    }
+
+    return {
+        x,
+        y
+    };
+}

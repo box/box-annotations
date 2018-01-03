@@ -62,6 +62,10 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     handleStart(location) {
+        if (!location) {
+            return;
+        }
+
         const pageChanged = this.hasPageChanged(location);
         if (pageChanged) {
             this.onPageChange(location);

@@ -780,13 +780,10 @@ class DocAnnotator extends Annotator {
         }
 
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
-        const rects = lastRange.getClientRects();
-        if (rects.length === 0) {
-            return;
-        }
+        const { x, y } = docUtil.getDialogCoordsFromRange(lastRange);
 
-        const { right, bottom } = rects[rects.length - 1];
         const pageDimensions = pageEl.getBoundingClientRect();
+
         const pageLeft = pageDimensions.left;
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
@@ -797,7 +794,7 @@ class DocAnnotator extends Annotator {
         createDialog.show(dialogParentEl);
 
         if (!this.isMobile) {
-            createDialog.setPosition(right - pageLeft, bottom - pageTop);
+            createDialog.setPosition(x - pageLeft, y - pageTop);
         }
 
         this.isCreatingHighlight = true;

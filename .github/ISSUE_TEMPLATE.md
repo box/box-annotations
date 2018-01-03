@@ -1,6 +1,7 @@
 Please fill out the following template so we can reproduce and fix your issue as quickly as possible!
 
 Environment:
+- Preview or Annotations version:
 - Browser name and version:
 - Operating system and version:
 
