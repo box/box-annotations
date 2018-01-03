@@ -160,7 +160,8 @@ export const CONTROLLER_EVENT = {
     register: 'registerthread',
     unregister: 'unregisterthread',
     bindDOMListeners: 'binddomlisteners',
-    unbindDOMListeners: 'unbinddomlisteners'
+    unbindDOMListeners: 'unbinddomlisteners',
+    renderPage: 'annotationsrenderpage'
 };
 
 export const CREATE_EVENT = {

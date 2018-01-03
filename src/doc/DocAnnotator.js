@@ -1021,6 +1021,9 @@ class DocAnnotator extends Annotator {
                     this.createHighlightDialog.hide();
                 }
                 break;
+            case CONTROLLER_EVENT.renderPage:
+                this.renderPage(data.data);
+                break;
             default:
         }
         super.handleControllerEvents(data);

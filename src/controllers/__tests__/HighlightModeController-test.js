@@ -50,12 +50,11 @@ describe('controllers/HighlightModeController', () => {
             expect(controller.renderPage).to.be.calledWith(1);
         });
 
-        it('should render page on threadCleanup', () => {
+        it('should emit annotationsrenderpage with page number on threadCleanup', () => {
             sandbox.stub(controller, 'unregisterThread');
-            sandbox.stub(controller, 'renderPage');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).to.be.called;
-            expect(controller.renderPage).to.be.calledWith(1);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.renderPage, stubs.thread.location.page);
         });
     });
 
