@@ -306,7 +306,7 @@ class DocAnnotator extends Annotator {
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
 
         ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
-            const annotationLayerEl = pageEl.querySelector(`.${annotationLayerClass}`);
+            const annotationLayerEl = pageEl.querySelector(`canvas.${annotationLayerClass}`);
             if (annotationLayerEl) {
                 docUtil.scaleCanvas(pageEl, annotationLayerEl);
             }

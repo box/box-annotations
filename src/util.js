@@ -844,7 +844,7 @@ export function createCommentTextNode(annotationText) {
  * @return {void}
  */
 export function clearCanvas(pageEl, layerClass) {
-    const annotationLayerEl = pageEl.querySelector(`.${layerClass}`);
+    const annotationLayerEl = pageEl.querySelector(`canvas.${layerClass}`);
     if (!annotationLayerEl) {
         return;
     }

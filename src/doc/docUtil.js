@@ -349,7 +349,7 @@ export function getContext(pageEl, annotationLayerClass) {
     }
 
     // Return existing annotation layer if it already exists
-    let annotationLayerEl = pageEl.querySelector(`.${annotationLayerClass}`);
+    let annotationLayerEl = pageEl.querySelector(`canvas.${annotationLayerClass}`);
     if (annotationLayerEl) {
         return annotationLayerEl.getContext('2d');
     }
