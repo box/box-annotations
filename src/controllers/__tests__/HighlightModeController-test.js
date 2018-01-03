@@ -20,6 +20,7 @@ describe('controllers/HighlightModeController', () => {
         controller = new HighlightModeController();
         sandbox.stub(controller, 'emit');
         stubs.thread = {
+            annotations: {},
             location: { page: 1 },
             show: () => {}
         };
@@ -33,7 +34,23 @@ describe('controllers/HighlightModeController', () => {
     });
 
     describe('handleThreadEvents()', () => {
-        it('should unregister thread on threadCleanup', () => {
+        it('should render page on save only if plain highlight was converted to a highlight comment', () => {
+            stubs.thread.annotations = {
+                1: { type: 'highlight' }
+            };
+            sandbox.stub(controller, 'renderPage');
+            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).to.not.be.called;
+
+            stubs.thread.annotations = {
+                1: { type: 'highlight' },
+                2: { type: 'highlight-comment' }
+            };
+            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).to.be.calledWith(1);
+        });
+
+        it('should render page on threadCleanup', () => {
             sandbox.stub(controller, 'unregisterThread');
             sandbox.stub(controller, 'renderPage');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });

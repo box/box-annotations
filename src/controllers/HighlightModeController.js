@@ -1,6 +1,12 @@
 import AnnotationModeController from './AnnotationModeController';
-import { clearCanvas } from '../util';
-import { THREAD_EVENT, CONTROLLER_EVENT, CLASS_ANNOTATION_LAYER_HIGHLIGHT } from '../constants';
+import { clearCanvas, getFirstAnnotation } from '../util';
+import {
+    THREAD_EVENT,
+    CONTROLLER_EVENT,
+    TYPES,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT
+} from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
     /**
@@ -15,7 +21,19 @@ class HighlightModeController extends AnnotationModeController {
      * @return {void}
      */
     handleThreadEvents(thread, data) {
+        let firstAnnotation;
         switch (data.event) {
+            case THREAD_EVENT.save:
+                // Re-render plain highlight canvas when a plain highlight is converted to a highlight comment
+                firstAnnotation = getFirstAnnotation(thread.annotations);
+                if (
+                    firstAnnotation &&
+                    firstAnnotation.type === TYPES.highlight &&
+                    Object.keys(thread.annotations).length === 2
+                ) {
+                    this.renderPage(thread.location.page);
+                }
+                break;
             case THREAD_EVENT.threadCleanup:
                 this.renderPage(thread.location.page);
                 break;
@@ -60,7 +78,9 @@ class HighlightModeController extends AnnotationModeController {
     renderPage(pageNum) {
         // Clear context if needed
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+        const layerClass =
+            this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
+        clearCanvas(pageEl, layerClass);
 
         if (!this.threads) {
             return;
