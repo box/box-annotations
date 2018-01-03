@@ -259,7 +259,7 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('setupHandlers()', () => {
-        beforeEach(() => {
+        it('should successfully contain draw mode handlers if undo and redo buttons exist', () => {
             controller.annotator = {
                 getThreadParams: sandbox.stub(),
                 getLocationFromEvent: sandbox.stub()
@@ -267,14 +267,11 @@ describe('controllers/DrawingModeController', () => {
             controller.annotatedElement = {};
             stubs.getParams = controller.annotator.getThreadParams.returns({});
             stubs.getLocation = controller.annotator.getLocationFromEvent;
-        });
 
-        it('should successfully contain draw mode handlers if undo and redo buttons exist', () => {
             controller.postButtonEl = 'not undefined';
             controller.undoButtonEl = 'also not undefined';
             controller.redoButtonEl = 'additionally not undefined';
             controller.cancelButtonEl = 'definitely not undefined';
-
 
             controller.setupHandlers();
             expect(stubs.getParams).to.be.called;
@@ -285,20 +282,22 @@ describe('controllers/DrawingModeController', () => {
     describe('handleThreadEvents()', () => {
         beforeEach(() => {
             stubs.thread.dialog = {};
+
+            sandbox.stub(controller, 'unbindListeners');
+            stubs.bind = sandbox.stub(controller, 'bindListeners');
+            sandbox.stub(controller, 'saveCurrentThread');
+            sandbox.stub(controller, 'registerThread');
+            sandbox.stub(controller, 'updateUndoRedoButtonEls');
         });
 
-        it('should restart mode listeners from the thread on softcommit', () => {
-            sandbox.stub(controller, 'unbindListeners');
-            sandbox.stub(controller, 'bindListeners');
-            sandbox.stub(controller, 'registerThread');
+        it('should save thread on softcommit', () => {
             controller.handleThreadEvents(stubs.thread, {
                 event: 'softcommit'
             });
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.bindListeners).to.be.called;
-            expect(stubs.thread.saveAnnotation).to.be.called;
-            expect(controller.registerThread).to.be.called;
+            expect(controller.unbindListeners).to.not.be.called;
+            expect(controller.bindListeners).to.not.be.called;
             expect(stubs.thread.handleStart).to.not.be.called;
+            expect(controller.saveCurrentThread).to.be.called;
         });
 
         it('should start a new thread on pagechanged', () => {
@@ -330,22 +329,18 @@ describe('controllers/DrawingModeController', () => {
                     location: 'not empty'
                 }
             };
-            sandbox.stub(controller, 'registerThread');
-            sandbox.stub(controller, 'unbindListeners');
-            sandbox.stub(controller, 'bindListeners').callsFake(() => {
+            stubs.bind.callsFake(() => {
                 controller.currentThread = thread2;
             });
 
             controller.handleThreadEvents(thread1, data);
-            expect(thread1.saveAnnotation).to.be.called;
+            expect(controller.saveCurrentThread).to.be.called;
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(thread2.handleStart).to.be.calledWith(data.eventData.location);
         });
 
         it('should update undo and redo buttons on availableactions', () => {
-            sandbox.stub(controller, 'updateUndoRedoButtonEls');
-
             controller.handleThreadEvents(stubs.thread, {
                 event: 'availableactions',
                 eventData: {
@@ -358,9 +353,6 @@ describe('controllers/DrawingModeController', () => {
 
         it('should soft delete a pending thread and restart mode listeners', () => {
             stubs.thread.state = 'pending';
-
-            sandbox.stub(controller, 'unbindListeners');
-            sandbox.stub(controller, 'bindListeners');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
             });
@@ -403,6 +395,10 @@ describe('controllers/DrawingModeController', () => {
                 getLocationFromEvent: sandbox.stub().returns({ page: 1 })
             }
             stubs.getLoc = controller.annotator.getLocationFromEvent;
+
+            stubs.event = {
+                stopPropagation: sandbox.stub()
+            };
         });
 
         it('should do nothing with an empty event', () => {
@@ -413,8 +409,9 @@ describe('controllers/DrawingModeController', () => {
         it('should do nothing if no location exists', () => {
             stubs.clean = sandbox.stub(controller, 'removeSelection');
             stubs.getLoc.returns(null);
-            controller.handleSelection('event');
+            controller.handleSelection(stubs.event);
             expect(stubs.clean).to.not.be.called;
+            expect(stubs.event.stopPropagation).to.be.called;
         });
 
         it('should do nothing if no drawing threads exist', () => {
@@ -425,8 +422,9 @@ describe('controllers/DrawingModeController', () => {
                 page: 1
             });
             controller.threads = {};
-            controller.handleSelection('event');
+            controller.handleSelection(stubs.event);
             expect(stubs.clean).to.not.be.called;
+            expect(stubs.event.stopPropagation).to.be.called;
         });
 
         it('should call select on an thread found in the data store', () => {
@@ -438,9 +436,10 @@ describe('controllers/DrawingModeController', () => {
                 page: 1
             });
 
-            controller.handleSelection('event');
+            controller.handleSelection(stubs.event);
             expect(stubs.clean).to.be.called;
             expect(stubs.select).to.be.calledWith(stubs.thread);
+            expect(stubs.event.stopPropagation).to.be.called;
         });
     });
 
