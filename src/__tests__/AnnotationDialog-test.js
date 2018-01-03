@@ -688,7 +688,6 @@ describe('AnnotationDialog', () => {
             dialog.clickHandler(stubs.event);
             expect(stubs.cancel).to.be.called;
             expect(stubs.hideMobile).to.not.be.called;
-            expect(stubs.deactivate).to.be.calledWith(true);
         });
 
         it('should only hide the mobile dialog when the cancel annotation button is clicked on mobile', () => {
@@ -698,7 +697,6 @@ describe('AnnotationDialog', () => {
             dialog.clickHandler(stubs.event);
             expect(stubs.cancel).to.not.be.called;
             expect(stubs.hideMobile).to.be.called;
-            expect(stubs.deactivate).to.be.calledWith(true);
         });
 
         it('should activate reply area when textarea is clicked', () => {

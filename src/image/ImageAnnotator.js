@@ -121,6 +121,52 @@ class ImageAnnotator extends Annotator {
 
         return thread;
     }
+
+    /**
+     * Orient annotations to the correct scale and orientation of the annotated document.
+     *
+     * @private
+     * @param {Object} data - Scale and orientation values needed to orient annotations.
+     * @return {void}
+     */
+    scaleAnnotations(data) {
+        this.setScale(data.scale);
+        this.rotateAnnotations(data.rotationAngle, data.pageNum);
+    }
+
+    /**
+     * Rotates annotations. Hides point annotation mode button if rotated
+     *
+     * @private
+     * @param {number} [rotationAngle] - current angle image is rotated
+     * @param {number} [pageNum] - Page number
+     * @return {void}
+     */
+    rotateAnnotations(rotationAngle = 0, pageNum = 0) {
+        // Only render a specific page's annotations unless no page number
+        // is specified
+        if (pageNum) {
+            this.renderPage(pageNum);
+        } else {
+            this.render();
+        }
+
+        // Only show/hide point annotation button if user has the
+        // appropriate permissions
+        const controller = this.modeControllers[TYPES.point];
+        if (!this.permissions.canAnnotate || !controller) {
+            return;
+        }
+
+        // Hide create annotations button if image is rotated
+        const pointButtonSelector = this.modeButtons[TYPES.point].selector;
+        const pointAnnotateButton = controller.getButton(pointButtonSelector);
+        if (rotationAngle !== 0) {
+            util.hideElement(pointAnnotateButton);
+        } else {
+            util.showElement(pointAnnotateButton);
+        }
+    }
 }
 
 export default ImageAnnotator;

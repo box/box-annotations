@@ -230,6 +230,10 @@ $tablet: 'max-width: 768px';
 
         .bp-annotation-comment-text {
             margin-bottom: 0;
+
+            & p {
+                margin: 0;
+            }
         }
     }
 

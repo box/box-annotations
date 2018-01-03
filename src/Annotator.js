@@ -513,40 +513,6 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Rotates annotations. Hides point annotation mode button if rotated
-     *
-     * @private
-     * @param {number} [rotationAngle] - current angle image is rotated
-     * @param {number} [pageNum] - Page number
-     * @return {void}
-     */
-    rotateAnnotations(rotationAngle = 0, pageNum = 0) {
-        // Only render a specific page's annotations unless no page number
-        // is specified
-        if (pageNum) {
-            this.renderPage(pageNum);
-        } else {
-            this.render();
-        }
-
-        // Only show/hide point annotation button if user has the
-        // appropriate permissions
-        const controller = this.modeControllers[TYPES.point];
-        if (!this.permissions.canAnnotate || !controller) {
-            return;
-        }
-
-        // Hide create annotations button if image is rotated
-        const pointButtonSelector = this.modeButtons[TYPES.point].selector;
-        const pointAnnotateButton = controller.getButton(pointButtonSelector);
-        if (rotationAngle !== 0) {
-            util.hideElement(pointAnnotateButton);
-        } else {
-            util.showElement(pointAnnotateButton);
-        }
-    }
-
-    /**
      * Returns annotation permissions
      *
      * @private
@@ -571,7 +537,7 @@ class Annotator extends EventEmitter {
      */
     scaleAnnotations(data) {
         this.setScale(data.scale);
-        this.rotateAnnotations(data.rotationAngle, data.pageNum);
+        this.render();
     }
 
     /**

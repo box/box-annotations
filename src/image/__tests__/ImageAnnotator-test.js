@@ -7,6 +7,7 @@ import { TYPES, ANNOTATOR_EVENT, SELECTOR_ANNOTATION_POINT_BUTTON } from '../../
 
 let annotator;
 const sandbox = sinon.sandbox.create();
+let stubs = {};
 
 describe('image/ImageAnnotator', () => {
     before(() => {
@@ -51,7 +52,7 @@ describe('image/ImageAnnotator', () => {
 
     afterEach(() => {
         sandbox.verifyAndRestore();
-
+        stubs = {};
         annotator = null;
     });
 
@@ -191,6 +192,52 @@ describe('image/ImageAnnotator', () => {
             expect(annotator.handleValidationError).to.not.be.called;
             expect(thread.location.page).equals(1);
             expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+        });
+    });
+
+    describe('rotateAnnotations()', () => {
+        beforeEach(() => {
+            annotator.permissions.canAnnotate = true;
+            stubs.hide = sandbox.stub(util, 'hideElement');
+            stubs.show = sandbox.stub(util, 'showElement');
+            stubs.render = sandbox.stub(annotator, 'render');
+            stubs.renderPage = sandbox.stub(annotator, 'renderPage');
+
+            annotator.modeButtons = {
+                point: { selector: 'point_btn' }
+            };
+
+            stubs.controller = {
+                getButton: () => {}
+            };
+            stubs.controllerMock = sandbox.mock(stubs.controller);
+            annotator.modeControllers['point'] = stubs.controller;
+        });
+
+        afterEach(() => {
+            annotator.modeButtons = {};
+        });
+
+        it('should only render annotations if user cannot annotate', () => {
+            annotator.permissions.canAnnotate = false;
+            annotator.rotateAnnotations();
+            expect(stubs.hide).to.not.be.called;
+            expect(stubs.show).to.not.be.called;
+            expect(stubs.render).to.be.called;
+        });
+
+        it('should hide point annotation button if image is rotated', () => {
+            annotator.rotateAnnotations(90);
+            expect(stubs.hide).to.be.called;
+            expect(stubs.show).to.not.be.called;
+            expect(stubs.render).to.be.called;
+        });
+
+        it('should show point annotation button if image is rotated', () => {
+            annotator.rotateAnnotations();
+            expect(stubs.hide).to.not.be.called;
+            expect(stubs.show).to.be.called;
+            expect(stubs.render).to.be.called;
         });
     });
 });
