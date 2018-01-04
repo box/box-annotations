@@ -250,7 +250,7 @@ class DrawingModeController extends AnnotationModeController {
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
-            this.saveCurrentThread(this.currentThread);
+            this.saveThread(this.currentThread);
             this.toggleMode();
         });
 
@@ -272,7 +272,7 @@ class DrawingModeController extends AnnotationModeController {
         switch (data.event) {
             case 'softcommit':
                 this.currentThread = undefined;
-                this.saveCurrentThread(thread);
+                this.saveThread(thread);
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
@@ -439,7 +439,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {AnnotationThread} thread The thread that emitted the event
      * @return {void}
      */
-    saveCurrentThread(thread) {
+    saveThread(thread) {
         if (!thread) {
             return;
         }

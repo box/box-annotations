@@ -285,7 +285,7 @@ describe('controllers/DrawingModeController', () => {
 
             sandbox.stub(controller, 'unbindListeners');
             stubs.bind = sandbox.stub(controller, 'bindListeners');
-            sandbox.stub(controller, 'saveCurrentThread');
+            sandbox.stub(controller, 'saveThread');
             sandbox.stub(controller, 'registerThread');
             sandbox.stub(controller, 'updateUndoRedoButtonEls');
         });
@@ -297,7 +297,7 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).to.not.be.called;
             expect(controller.bindListeners).to.not.be.called;
             expect(stubs.thread.handleStart).to.not.be.called;
-            expect(controller.saveCurrentThread).to.be.called;
+            expect(controller.saveThread).to.be.called;
         });
 
         it('should start a new thread on pagechanged', () => {
@@ -334,7 +334,7 @@ describe('controllers/DrawingModeController', () => {
             });
 
             controller.handleThreadEvents(thread1, data);
-            expect(controller.saveCurrentThread).to.be.called;
+            expect(controller.saveThread).to.be.called;
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(thread2.handleStart).to.be.calledWith(data.eventData.location);
