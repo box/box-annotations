@@ -150,7 +150,7 @@ class Annotator extends EventEmitter {
         this.fetchPromise
             .then(() => {
                 this.generateThreadMap(this.threadMap);
-                this.render();
+                this.renderAnnotations();
             })
             .catch((error) => {
                 this.emit(ANNOTATOR_EVENT.loadError, error);
@@ -218,6 +218,7 @@ class Annotator extends EventEmitter {
      */
     setupAnnotations() {
         // Map of page => {threads on page}
+        this.threads = {};
         this.bindDOMListeners();
         this.bindCustomListenersOnService(this.annotationService);
         this.addListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
@@ -294,10 +295,12 @@ class Annotator extends EventEmitter {
      * @return {Promise} Promise for fetching saved annotations
      */
     fetchAnnotations() {
+        this.threads = {};
+
         // Do not load any pre-existing annotations if the user does not have
         // the correct permissions
         if (!this.permissions.canViewAllAnnotations && !this.permissions.canViewOwnAnnotations) {
-            return Promise.resolve({});
+            return Promise.resolve(this.threads);
         }
 
         return this.annotationService
@@ -467,13 +470,12 @@ class Annotator extends EventEmitter {
             return null;
         }
 
-        const controller = this.modeControllers[TYPES.point];
-        const pageThreads = controller.threads[location.page] || {};
-        if (!controller || !pageThreads[pendingThreadID]) {
+        const pageThreads = this.threads[location.page] || {};
+        const thread = pageThreads[pendingThreadID];
+        if (!thread) {
             return null;
         }
 
-        const thread = pageThreads[pendingThreadID];
         thread.dialog.hasComments = true;
         thread.state = STATES.hover;
         thread.showDialog();
@@ -493,11 +495,9 @@ class Annotator extends EventEmitter {
      * @private
      * @return {void}
      */
-    render() {
-        Object.keys(this.modeControllers).forEach((mode) => {
-            const controller = this.modeControllers[mode];
-            controller.render();
-            controller.destroyPendingThreads();
+    renderAnnotations() {
+        Object.keys(this.threads).forEach((pageNum) => {
+            this.renderAnnotationsOnPage(pageNum);
         });
     }
 
@@ -508,8 +508,22 @@ class Annotator extends EventEmitter {
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderPage(pageNum) {
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
+    renderAnnotationsOnPage(pageNum) {
+        if (!this.threads) {
+            return;
+        }
+
+        const pageThreads = this.threads[pageNum] || {};
+        Object.keys(pageThreads).forEach((threadID) => {
+            // Sets the annotatedElement if the thread was fetched before the
+            // dependent document/viewer finished loading
+            const thread = pageThreads[threadID];
+            if (!thread.annotatedElement) {
+                thread.annotatedElement = this.annotatedElement;
+            }
+
+            thread.show();
+        });
     }
 
     /**
@@ -537,7 +551,7 @@ class Annotator extends EventEmitter {
      */
     scaleAnnotations(data) {
         this.setScale(data.scale);
-        this.render();
+        this.renderAnnotations();
     }
 
     /**
@@ -569,9 +583,9 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        Object.keys(this.modeControllers).forEach((mode) => {
-            const thread = this.modeControllers[mode].getThreadByID(threadID);
-            if (thread) {
+        Object.values(this.threads).forEach((pageThreads) => {
+            if (threadID in pageThreads) {
+                const thread = pageThreads[threadID];
                 thread.scrollIntoView();
             }
         });
@@ -646,6 +660,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     handleControllerEvents(data) {
+        let opt = { page: 1, pageThreads: {} };
         const headerSelector = data.data ? data.data.headerSelector : '';
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
@@ -658,6 +673,16 @@ class Annotator extends EventEmitter {
             case CONTROLLER_EVENT.exit:
                 this.emit(data.event, { mode: data.mode, headerSelector });
                 this.bindDOMListeners();
+                break;
+            case CONTROLLER_EVENT.register:
+                opt = util.addThreadToMap(data.data, this.threads);
+                this.threads[opt.page] = opt.pageThreads;
+                this.emit(data.event, data.data);
+                break;
+            case CONTROLLER_EVENT.unregister:
+                opt = util.removeThreadFromMap(data.data, this.threads);
+                this.threads[opt.page] = opt.pageThreads;
+                this.emit(data.event, data.data);
                 break;
             case CONTROLLER_EVENT.createThread:
                 this.createPointThread(data.data);

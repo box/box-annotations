@@ -146,9 +146,9 @@ class ImageAnnotator extends Annotator {
         // Only render a specific page's annotations unless no page number
         // is specified
         if (pageNum) {
-            this.renderPage(pageNum);
+            this.renderAnnotationsOnPage(pageNum);
         } else {
-            this.render();
+            this.renderAnnotations();
         }
 
         // Only show/hide point annotation button if user has the

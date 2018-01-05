@@ -284,16 +284,44 @@ class DocAnnotator extends Annotator {
     }
 
     /**
+
+    /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
      *
      * @override
      * @param {number} pageNum Page number
      * @return {void}
      */
-    renderPage(pageNum) {
+    renderAnnotationsOnPage(pageNum) {
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
-        super.renderPage(pageNum);
+
+        if (!this.threads) {
+            return;
+        }
+
+        // TODO (@jholdstock|@spramod) remove this if statement, and make super call, upon refactor.
+        const pageThreads = this.threads[pageNum] || {};
+        Object.keys(pageThreads).forEach((threadID) => {
+            const thread = pageThreads[threadID];
+            const controller = this.modeControllers[thread.type];
+            if (!controller) {
+                return;
+            }
+
+            thread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
+        });
+
+        // Destroy current pending highlight annotation
+        const highlightThreads = this.getHighlightThreadsOnPage(pageNum);
+        highlightThreads.forEach((thread) => {
+            if (util.isPending(thread.state)) {
+                /* eslint-disable no-console */
+                console.error('Pending annotation thread destroyed', thread.threadNumber);
+                /* eslint-enable no-console */
+                thread.destroy();
+            }
+        });
 
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
             this.createHighlightDialog.hide();
@@ -350,9 +378,6 @@ class DocAnnotator extends Annotator {
         this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
         this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
         this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
-
-        this.checkThread = this.checkThread.bind(this);
-        this.clickThread = this.clickThread.bind(this);
 
         if (this.isMobile && this.hasTouch) {
             this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -581,16 +606,14 @@ class DocAnnotator extends Annotator {
             this.createHighlightDialog.show(this.container);
         }
 
-        const { page } = util.getPageInfo(event.target);
-
-        // Set all annotations on current page that are in the 'hover' state to 'inactive'
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.reset(), page);
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
-        }
+        // Set all annotations that are in the 'hover' state to 'inactive'
+        Object.keys(this.threads).forEach((page) => {
+            const pageThreads = this.threads[page] || {};
+            const highlightThreads = this.getHighlightThreadsOnPage(pageThreads);
+            highlightThreads.filter(isThreadInHoverState).forEach((thread) => {
+                thread.reset();
+            });
+        });
 
         this.lastSelection = selection;
         this.lastHighlightEvent = event;
@@ -629,13 +652,13 @@ class DocAnnotator extends Annotator {
         this.mouseX = event.clientX;
         this.mouseY = event.clientY;
 
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.onMousedown());
-        }
+        Object.keys(this.threads).forEach((page) => {
+            const pageThreads = this.threads[page] || {};
+            const highlightThreads = this.getHighlightThreadsOnPage(pageThreads);
+            highlightThreads.forEach((thread) => {
+                thread.onMousedown();
+            });
+        });
     }
 
     /**
@@ -690,27 +713,41 @@ class DocAnnotator extends Annotator {
 
         // Determine if mouse is over any highlight dialog
         // and ignore hover events of any highlights below
-        if (docUtil.isDialogDataType(this.mouseMoveEvent.target)) {
+        const event = this.mouseMoveEvent;
+        if (docUtil.isDialogDataType(event.target)) {
             return;
-        }
-        this.throttleTimer = performance.now();
-        // Only filter through highlight threads on the current page
-        const { page } = util.getPageInfo(this.mouseMoveEvent.target);
-        this.delayThreads = [];
-        this.hoverActive = false;
-
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads(this.checkThread, page);
-        }
-
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads(this.checkThread, page);
         }
 
         this.mouseMoveEvent = null;
+        this.throttleTimer = performance.now();
+        // Only filter through highlight threads on the current page
+        const { page } = util.getPageInfo(event.target);
+        const delayThreads = [];
+        let hoverActive = false;
+
+        const pageThreads = this.threads[page] || {};
+        Object.keys(pageThreads).forEach((threadID) => {
+            const thread = pageThreads[threadID];
+
+            // Determine if any highlight threads on page are pending or active
+            // and ignore hover events of any highlights below
+            if (!util.isHighlightAnnotation(thread.type) || thread.state === STATES.pending) {
+                return;
+            }
+
+            // Determine if the mouse is hovering over any highlight threads
+            const shouldDelay = thread.onMousemove(event);
+            if (shouldDelay) {
+                delayThreads.push(thread);
+
+                if (!hoverActive) {
+                    hoverActive = isThreadInHoverState(thread);
+                }
+            }
+        });
 
         // If we are hovering over a highlight, we should use a hand cursor
-        if (this.hoverActive) {
+        if (hoverActive) {
             this.useDefaultCursor();
             clearTimeout(this.cursorTimeout);
         } else {
@@ -726,32 +763,7 @@ class DocAnnotator extends Annotator {
         // hovered over at the same time, only the top-most highlight
         // dialog will be displayed and the others will be hidden
         // without delay
-        this.delayThreads.forEach((threadID, index) => this.showFirstDialogFilter(threadID, index));
-    }
-
-    /**
-     * Determines if the specified therad is being hovered over
-     *
-     * @private
-     * @param {AnnotationThread} thread highlight thread to check
-     * @return {void}
-     */
-    checkThread(thread) {
-        // Determine if any highlight threads on page are pending or active
-        // and ignore hover events of any highlights below
-        if (!this.mouseMoveEvent || thread.state === STATES.pending) {
-            return;
-        }
-
-        // Determine if the mouse is hovering over any highlight threads
-        const shouldDelay = thread.onMousemove(this.mouseMoveEvent);
-        if (shouldDelay) {
-            this.delayThreads.push(thread);
-
-            if (!this.hoverActive) {
-                this.hoverActive = isThreadInHoverState(thread);
-            }
-        }
+        delayThreads.forEach((threadID, index) => this.showFirstDialogFilter(threadID, index));
     }
 
     /**
@@ -903,54 +915,41 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightClickHandler(event) {
-        this.activeThread = null;
-        this.mouseEvent = event;
-        this.consumed = false;
+        let consumed = false;
+        let activeThread = null;
 
-        const { page } = util.getPageInfo(this.mouseEvent.target);
+        const { page } = util.getPageInfo(event.target);
+        const pageThreads = this.threads[page] || {};
 
-        if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads(this.clickThread, page);
-        }
+        Object.keys(pageThreads).forEach((threadID) => {
+            const thread = pageThreads[threadID];
 
-        if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads(this.clickThread, page);
-        }
+            if (util.isPending(thread.state)) {
+                // Destroy any pending highlights on click outside the highlight
+                if (thread.type === TYPES.point) {
+                    thread.destroy();
+                } else {
+                    thread.cancelFirstComment();
+                }
+            } else if (util.isHighlightAnnotation(thread.type)) {
+                // We use this to prevent a mousedown from activating two different
+                // highlights at the same time - this tracks whether a delegated
+                // mousedown activated some highlight, and then informs the other
+                // keydown handlers to not activate
+                const threadActive = thread.onClick(event, consumed);
+                if (threadActive) {
+                    activeThread = thread;
+                }
+
+                consumed = consumed || threadActive;
+            } else if (this.isMobile) {
+                thread.hideDialog();
+            }
+        });
 
         // Show active thread last
-        if (this.activeThread) {
-            this.activeThread.show();
-        }
-    }
-
-    /**
-     * Delegates click event to click handlers for threads on the page.
-     *
-     * @private
-     * @param {AnnotationThread} thread Highlight thread to check
-     * @return {void}
-     */
-    clickThread(thread) {
-        if (util.isPending(thread.state)) {
-            // Destroy any pending highlights on click outside the highlight
-            if (thread.type === TYPES.point) {
-                thread.destroy();
-            } else {
-                thread.cancelFirstComment();
-            }
-        } else if (util.isHighlightAnnotation(thread.type)) {
-            // We use this to prevent a mousedown from activating two different
-            // highlights at the same time - this tracks whether a delegated
-            // mousedown activated some highlight, and then informs the other
-            // keydown handlers to not activate
-            const threadActive = thread.onClick(this.mouseEvent, this.consumed);
-            if (threadActive) {
-                this.activeThread = thread;
-            }
-
-            this.consumed = this.consumed || threadActive;
-        } else if (this.isMobile) {
-            thread.hideDialog();
+        if (activeThread) {
+            activeThread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
         }
     }
 
@@ -972,6 +971,56 @@ class DocAnnotator extends Annotator {
      */
     removeDefaultCursor() {
         this.annotatedElement.classList.remove(CLASS_DEFAULT_CURSOR);
+    }
+
+    /**
+     * Returns the highlight threads on the specified page.
+     *
+     * @private
+     * @param {number} page - Page to get highlight threads for
+     * @return {DocHighlightThread[]} Highlight annotation threads
+     */
+    getHighlightThreadsOnPage(page) {
+        const threads = [];
+        const pageThreads = this.threads[page] || {};
+
+        Object.keys(pageThreads).forEach((threadID) => {
+            const thread = pageThreads[threadID];
+            if (util.isHighlightAnnotation(thread.type)) {
+                threads.push(thread);
+            }
+        });
+
+        return threads;
+    }
+
+    /**
+     * Shows highlight annotations for the specified page by re-drawing all
+     * highlight annotations currently in memory for the specified page.
+     *
+     * @private
+     * @param {number} page Page to draw annotations for
+     * @param {string} mode annotatiion layer mode to redraw
+     * @return {void}
+     */
+    showHighlightsOnPage(page, mode) {
+        // Clear context if needed
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
+        let layerClass;
+
+        if (mode) {
+            layerClass =
+                mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
+            util.clearCanvas(pageEl, layerClass);
+        } else {
+            // Clear both highlight canvases if none are specified
+            util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+            util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT);
+        }
+
+        this.getHighlightThreadsOnPage(page).forEach((thread) => {
+            thread.show(this.plainHighlightEnabled, this.commentHighlightEnabled);
+        });
     }
 
     /**
@@ -1021,8 +1070,8 @@ class DocAnnotator extends Annotator {
                     this.createHighlightDialog.hide();
                 }
                 break;
-            case CONTROLLER_EVENT.renderPage:
-                this.renderPage(data.data);
+            case CONTROLLER_EVENT.showHighlights:
+                this.showHighlightsOnPage(data.data);
                 break;
             default:
         }
