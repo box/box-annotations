@@ -221,7 +221,8 @@ class DrawingModeController extends AnnotationModeController {
         const threadParams = this.annotator.getThreadParams([], {}, TYPES.draw);
         this.currentThread = new DocDrawingThread(threadParams);
         this.currentThread.addListener('threadevent', (data) => {
-            this.handleThreadEvents(this.currentThread, data);
+            const thread = this.currentThread || this.selectedThread;
+            this.handleThreadEvents(thread, data);
         });
 
         // Get handlers
@@ -249,7 +250,7 @@ class DrawingModeController extends AnnotationModeController {
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
-            this.currentThread.saveAnnotation(TYPES.draw);
+            this.saveThread(this.currentThread);
             this.toggleMode();
         });
 
@@ -262,31 +263,28 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @inheritdoc
      * @protected
-     * @param {AnnotationThread} thread - The thread that emitted the event
-     * @param {Object} data - Extra data related to the annotation event
+     * @param {AnnotationThread} thread The thread that emitted the event
+     * @param {Object} data Extra data related to the annotation event
      * @return {void}
      */
     handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
             case 'softcommit':
-                // Save the original thread, create a new thread and
-                // start drawing at the location indicating the page change
                 this.currentThread = undefined;
-                thread.saveAnnotation(TYPES.draw);
-                this.registerThread(thread);
-
-                this.unbindListeners();
-                this.bindListeners();
+                this.saveThread(thread);
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
+                    this.unbindListeners();
+                    this.bindListeners();
+
                     this.currentThread.handleStart(eventData.location);
                 }
 
                 break;
             case 'dialogdelete':
-                if (!thread.dialog) {
+                if (!thread || !thread.dialog) {
                     return;
                 }
 
@@ -327,6 +325,8 @@ class DrawingModeController extends AnnotationModeController {
         if (!event || (event.target && event.target.nodeName === 'BUTTON')) {
             return;
         }
+
+        event.stopPropagation();
 
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
         if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
@@ -430,6 +430,22 @@ class DrawingModeController extends AnnotationModeController {
                 util.disableElement(this.redoButtonEl);
             }
         }
+    }
+
+    /**
+     * Save the original thread and create a new thread
+     *
+     * @private
+     * @param {AnnotationThread} thread The thread that emitted the event
+     * @return {void}
+     */
+    saveThread(thread) {
+        if (!thread) {
+            return;
+        }
+
+        thread.saveAnnotation(TYPES.draw);
+        this.registerThread(thread);
     }
 }
 
