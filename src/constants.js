@@ -157,6 +157,7 @@ export const CONTROLLER_EVENT = {
     toggleMode: 'togglemode',
     enter: 'annotationmodeenter',
     exit: 'annotationmodeexit',
+    createThread: 'createannotationthread',
     register: 'registerthread',
     unregister: 'unregisterthread',
     bindDOMListeners: 'binddomlisteners',

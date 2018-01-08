@@ -264,20 +264,16 @@ describe('Annotator', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
                     'type': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
+                        render: sandbox.stub()
                     },
                     'type2': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
+                        render: sandbox.stub()
                     }
                 };
 
                 annotator.render();
                 expect(annotator.modeControllers['type'].render).to.be.called;
-                expect(annotator.modeControllers['type'].destroyPendingThreads).to.be.called;
                 expect(annotator.modeControllers['type2'].render).to.be.called;
-                expect(annotator.modeControllers['type2'].destroyPendingThreads).to.be.called;
             });
         });
 

@@ -204,7 +204,7 @@ class DocHighlightThread extends AnnotationThread {
 
         // Setup the dialog element if it has not already been created
         if (!this.dialog.element) {
-            this.dialog.setup(this.annotations);
+            this.dialog.setup(this.annotations, this.showComment);
         }
         this.dialog.mouseenterHandler();
         clearTimeout(this.hoverTimeoutHandler);
