@@ -90,6 +90,26 @@ describe('controllers/HighlightModeController', () => {
         });
     });
 
+    describe('render()', () => {
+        beforeEach(() => {
+            sandbox.stub(controller, 'renderPage');
+            sandbox.stub(controller, 'destroyPendingThreads');
+        });
+
+        it('should do nothing if no threads exist', () => {
+            controller.render();
+            expect(controller.renderPage).to.not.be.called;
+            expect(controller.destroyPendingThreads).to.be.called;
+        });
+
+        it('should render the annotations on every page', () => {
+            controller.threads = { 1: {}, 2: {} };
+            controller.render();
+            expect(controller.renderPage).to.be.calledTwice;
+            expect(controller.destroyPendingThreads).to.be.called;
+        });
+    });
+
     describe('renderPage()', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');

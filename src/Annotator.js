@@ -497,7 +497,6 @@ class Annotator extends EventEmitter {
         Object.keys(this.modeControllers).forEach((mode) => {
             const controller = this.modeControllers[mode];
             controller.render();
-            controller.destroyPendingThreads();
         });
     }
 
