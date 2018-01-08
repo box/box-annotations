@@ -294,34 +294,6 @@ describe('controllers/AnnotationModeController', () => {
         });
     });
 
-    describe('applyActionToThreads()', () => {
-        const func = (thread) => {
-            thread.doSomething();
-        };
-
-        beforeEach(() => {
-            const thread = {
-                threadID: '123abc',
-                doSomething: () => {}
-            };
-            stubs.threadMock = sandbox.mock(thread);
-            controller.threads = {
-                1: { '123abc': thread }
-            };
-        });
-
-        it('should apply the predicate function to all of the controller\'s threads', () => {
-            stubs.threadMock.expects('doSomething').once();
-            controller.applyActionToThreads(func);
-        });
-
-        it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
-            stubs.threadMock.expects('doSomething').once();
-            controller.applyActionToThreads(func, 2); // func not called
-            controller.applyActionToThreads(func, 1);
-        });
-    });
-
     describe('getThreadByID()', () => {
         it('should find and return annotation thread specified by threadID', () => {
             controller.threads = { 1: { '123abc': stubs.thread } };
@@ -424,50 +396,6 @@ describe('controllers/AnnotationModeController', () => {
             controller.setupHeader(container, header);
 
             expect(stubs.insertTemplate).to.be.calledWith(container, header);
-        });
-    });
-
-    describe('render()', () => {
-        beforeEach(() => {
-            stubs.renderPage = sandbox.stub(controller, 'renderPage');
-        });
-
-        it('should do nothing if no threads exist', () => {
-            controller.render();
-            expect(stubs.renderPage).to.not.be.called;
-        });
-
-        it('should render the annotations on every page', () => {
-            controller.threads = { 1: {}, 2: {} };
-            controller.render();
-            expect(stubs.renderPage).to.be.calledTwice;
-        });
-    });
-
-    describe('renderPage()', () => {
-        const thread = {
-            annotatedElement: undefined,
-            show: () => {}
-        };
-
-        beforeEach(() => {
-            stubs.threadMock = sandbox.mock(thread);
-            controller.annotatedElement = 'el';
-        });
-
-        it('should do nothing if no threads exist', () => {
-            stubs.threadMock.expects('show').never();
-            controller.renderPage(1);
-        });
-
-        it('should render the annotations on every page', () => {
-            controller.threads = {
-                1: { '123abc': thread },
-                2: { '456def': thread } // wrong page
-            };
-            stubs.threadMock.expects('show').once();
-            controller.renderPage(1);
-            expect(thread.annotatedElement).equals('el');
         });
     });
 

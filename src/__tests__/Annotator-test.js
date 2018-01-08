@@ -68,6 +68,7 @@ describe('Annotator', () => {
                 authError: 'auth error',
             }
         });
+        annotator.threads = {};
 
         stubs.thread = {
             threadID: '123abc',
@@ -180,7 +181,7 @@ describe('Annotator', () => {
 
     describe('loadAnnotations()', () => {
         beforeEach(() => {
-            sandbox.stub(annotator, 'render');
+            sandbox.stub(annotator, 'renderAnnotations');
             sandbox.stub(annotator, 'emit');
         });
 
@@ -188,7 +189,7 @@ describe('Annotator', () => {
             annotator.fetchPromise = Promise.resolve();
             annotator.loadAnnotations();
             return annotator.fetchPromise.then(() => {
-                expect(annotator.render).to.be.called;
+                expect(annotator.renderAnnotations).to.be.called;
                 expect(annotator.emit).to.not.be.called;
             }).catch((err) => {
                 sinon.assert.failException;
@@ -201,7 +202,7 @@ describe('Annotator', () => {
             return annotator.fetchPromise.then(() => {
                 sinon.assert.failException;
             }).catch((err) => {
-                expect(annotator.render).to.not.be.called;
+                expect(annotator.renderAnnotations).to.not.be.called;
                 expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
             });
         });
@@ -216,6 +217,7 @@ describe('Annotator', () => {
 
             annotator.setupAnnotations();
 
+            expect(annotator.threads).to.not.be.undefined;
             expect(annotator.bindDOMListeners).to.be.called;
             expect(annotator.bindCustomListenersOnService).to.be.called;
             expect(annotator.setupControllers).to.be.called;
@@ -243,8 +245,19 @@ describe('Annotator', () => {
             sandbox.stub(annotator, 'loadAnnotations');
             annotator.init();
             annotator.setupControllers();
+
+            annotator.threads = {
+                1: { '123abc': stubs.thread },
+                2: {
+                    '456def': stubs.thread2,
+                    '789ghi': stubs.thread3
+                }
+            }
         });
 
+        afterEach(() => {
+            annotator.threads = {};
+        });
 
         describe('destroy()', () => {
             it('should unbind custom listeners on thread and unbind DOM listeners', () => {
@@ -260,40 +273,28 @@ describe('Annotator', () => {
             });
         });
 
-        describe('render()', () => {
-            it('should call hide on each thread in map', () => {
-                annotator.modeControllers = {
-                    'type': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
-                    },
-                    'type2': {
-                        render: sandbox.stub(),
-                        destroyPendingThreads: sandbox.stub()
-                    }
-                };
-
-                annotator.render();
-                expect(annotator.modeControllers['type'].render).to.be.called;
-                expect(annotator.modeControllers['type'].destroyPendingThreads).to.be.called;
-                expect(annotator.modeControllers['type2'].render).to.be.called;
-                expect(annotator.modeControllers['type2'].destroyPendingThreads).to.be.called;
+        describe('renderAnnotations()', () => {
+            it('should call show on each thread', () => {
+                sandbox.stub(annotator, 'renderAnnotationsOnPage');
+                annotator.renderAnnotations();
+                expect(annotator.renderAnnotationsOnPage).to.be.calledTwice;
             });
         });
 
-        describe('renderPage()', () => {
-            it('should call hide on each thread in map on page 1', () => {
-                annotator.modeControllers = {
-                    'type': {
-                        renderPage: sandbox.stub()
-                    },
-                    'type2': {
-                        renderPage: sandbox.stub()
-                    }
-                };
-                annotator.renderPage(1);
-                expect(annotator.modeControllers['type'].renderPage).to.be.calledWith(1);
-                expect(annotator.modeControllers['type2'].renderPage).to.be.called;
+        describe('renderAnnotationsOnPage()', () => {
+            it('should call show on each thread', () => {
+                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+                stubs.threadMock.expects('show');
+                stubs.threadMock2.expects('show').never();
+                stubs.threadMock3.expects('show').never();
+                annotator.renderAnnotationsOnPage(1);
+            });
+
+            it('should set annotatedElement if thread was fetched before it was set', () => {
+                stubs.thread2.annotatedElement = undefined;
+                stubs.threadMock2.expects('show').once();
+                sandbox.stub(annotator, 'isModeAnnotatable').returns(true);
+                annotator.renderAnnotationsOnPage('2');
             });
         });
 
@@ -524,6 +525,22 @@ describe('Annotator', () => {
                 expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
             });
 
+            it('should bind dom listeners and emit message on mode exit', () => {
+                sandbox.stub(util, 'addThreadToMap').returns(annotator.threads[1]);
+                data.event = CONTROLLER_EVENT.register;
+                annotator.handleControllerEvents(data);
+                expect(util.addThreadToMap).to.be.called;
+                expect(annotator.emit).to.be.calledWith(data.event, data.data);
+            });
+
+            it('should bind dom listeners and emit message on mode exit', () => {
+                sandbox.stub(util, 'removeThreadFromMap').returns(annotator.threads[1]);
+                data.event = CONTROLLER_EVENT.unregister;
+                annotator.handleControllerEvents(data);
+                expect(util.removeThreadFromMap).to.be.called;
+                expect(annotator.emit).to.be.calledWith(data.event, data.data);
+            });
+
             it('should create a point annotation thread on createThread', () => {
                 sandbox.stub(annotator, 'createPointThread');
                 data.event = CONTROLLER_EVENT.createThread;
@@ -581,54 +598,26 @@ describe('Annotator', () => {
                 stubs.getLoc = sandbox.stub(annotator, 'getLocationFromEvent').returns({ page: 1 });
                 sandbox.stub(annotator, 'emit');
                 stubs.thread.dialog = { postAnnotation: sandbox.stub() };
-
-                annotator.modeControllers = {
-                    'point': { threads: {} }
-                };
             });
 
             it('should do nothing if the point data is invalid', () => {
-                annotator.createPointThread({
-                    lastPointEvent: {},
-                    pendingThreadID: '123abc',
-                    commentText: ' '
-                });
-
-                annotator.createPointThread({
-                    lastPointEvent: {},
-                    pendingThreadID: '123abc'
-                });
-
-                annotator.createPointThread({
-                    lastPointEvent: {},
-                    commentText: ' '
-                });
-
-                annotator.createPointThread({
-                    pendingThreadID: '123abc',
-                    commentText: ' '
-                });
+                annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: ' ' });
+                annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc' });
+                annotator.createPointThread({ lastPointEvent: {}, commentText: ' ' });
+                annotator.createPointThread({ pendingThreadID: '123abc', commentText: ' ' });
                 expect(annotator.emit).to.not.be.called;
             });
 
             it('should do nothing if no location is returned fom the lastPointEvent', () => {
                 stubs.getLoc.returns(null);
-
-                const result = annotator.createPointThread({
-                    lastPointEvent: {},
-                    pendingThreadID: '123abc',
-                    commentText: 'text'
-                });
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
                 expect(annotator.emit).to.not.be.called;
                 expect(result).to.be.null;
             });
 
             it('should do nothing the thread does not exist in the page specified by lastPointEvent', () => {
-                const result = annotator.createPointThread({
-                    lastPointEvent: {},
-                    pendingThreadID: '123abc',
-                    commentText: 'text'
-                });
+                annotator.threads = {};
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
                 expect(annotator.emit).to.not.be.called;
                 expect(result).to.be.null;
             });
@@ -636,17 +625,7 @@ describe('Annotator', () => {
             it('should create a point annotation thread using lastPointEvent', () => {
                 stubs.threadMock.expects('showDialog');
                 stubs.threadMock.expects('getThreadEventData').returns({});
-
-                annotator.modeControllers['point'].threads = {
-                    1: { '123abc': stubs.thread }
-                };
-
-                const result = annotator.createPointThread({
-                    lastPointEvent: {},
-                    pendingThreadID: '123abc',
-                    commentText: 'text'
-                });
-
+                const result = annotator.createPointThread({ lastPointEvent: {}, pendingThreadID: '123abc', commentText: 'text' });
                 expect(stubs.thread.dialog.hasComments).to.be.truthy;
                 expect(stubs.thread.state).equals(STATES.hover);
                 expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
@@ -667,12 +646,7 @@ describe('Annotator', () => {
             });
 
             it('should scroll to annotation if threadID exists on page', () => {
-                annotator.modeControllers = {
-                    'type': {
-                        getThreadByID: sandbox.stub().returns(stubs.thread),
-                        threads: { 1: { '123abc': stubs.thread } }
-                    }
-                };
+                annotator.threads = { 1: { '123abc': stubs.thread } };
                 stubs.threadMock.expects('scrollIntoView');
                 annotator.scrollToAnnotation(stubs.thread.threadID);
             });
@@ -681,7 +655,7 @@ describe('Annotator', () => {
         describe('scaleAnnotations()', () => {
             it('should set scale and rotate annotations based on the annotated element', () => {
                 sandbox.stub(annotator, 'setScale');
-                sandbox.stub(annotator, 'render');
+                sandbox.stub(annotator, 'renderAnnotations');
 
                 const data = {
                     scale: 5,
@@ -690,7 +664,7 @@ describe('Annotator', () => {
                 };
                 annotator.scaleAnnotations(data);
                 expect(annotator.setScale).to.be.calledWith(data.scale);
-                expect(annotator.render).to.be.called;
+                expect(annotator.renderAnnotations).to.be.called;
             });
         });
 

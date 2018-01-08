@@ -13,7 +13,6 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
-    CLASS_ANNOTATION_LAYER_DRAW,
     DRAW_BORDER_OFFSET,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
@@ -356,27 +355,6 @@ class DrawingModeController extends AnnotationModeController {
         const index = Math.floor(Math.random() * intersectingThreads.length);
         const selected = intersectingThreads[index];
         this.select(selected);
-    }
-
-    /**
-     * Renders annotations from memory for a specified page.
-     *
-     * @inheritdoc
-     * @private
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
-    renderPage(pageNum) {
-        // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
-
-        if (!this.threads || !this.threads[pageNum]) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum].all() || [];
-        pageThreads.forEach((thread) => thread.show());
     }
 
     /**

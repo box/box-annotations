@@ -38,23 +38,22 @@ describe('controllers/HighlightModeController', () => {
             stubs.thread.annotations = {
                 1: { type: 'highlight' }
             };
-            sandbox.stub(controller, 'renderPage');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
-            expect(controller.renderPage).to.not.be.called;
+            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.showHighlights, 1);
 
             stubs.thread.annotations = {
                 1: { type: 'highlight' },
                 2: { type: 'highlight-comment' }
             };
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
-            expect(controller.renderPage).to.be.calledWith(1);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.showHighlights, 1);
         });
 
         it('should emit annotationsrenderpage with page number on threadCleanup', () => {
             sandbox.stub(controller, 'unregisterThread');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.renderPage, stubs.thread.location.page);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.showHighlights, 1);
         });
     });
 
@@ -87,30 +86,6 @@ describe('controllers/HighlightModeController', () => {
             controller.enter();
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
             expect(controller.bindListeners).to.be.called;
-        });
-    });
-
-    describe('renderPage()', () => {
-        beforeEach(() => {
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
-
-            sandbox.stub(util, 'clearCanvas');
-        });
-
-        it('should do nothing if no threads exist', () => {
-            stubs.threadMock.expects('show').never();
-            controller.renderPage(1);
-            expect(util.clearCanvas).to.be.called;
-        });
-
-        it('should render the annotations on the specified page', () => {
-            controller.threads = {
-                1: { '123abc': stubs.thread }
-            };
-            stubs.threadMock.expects('show').once();
-            controller.renderPage(1);
-            expect(util.clearCanvas).to.be.called;
         });
     });
 });

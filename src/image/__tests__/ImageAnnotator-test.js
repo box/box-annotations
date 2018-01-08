@@ -200,8 +200,8 @@ describe('image/ImageAnnotator', () => {
             annotator.permissions.canAnnotate = true;
             stubs.hide = sandbox.stub(util, 'hideElement');
             stubs.show = sandbox.stub(util, 'showElement');
-            stubs.render = sandbox.stub(annotator, 'render');
-            stubs.renderPage = sandbox.stub(annotator, 'renderPage');
+            stubs.render = sandbox.stub(annotator, 'renderAnnotations');
+            stubs.renderPage = sandbox.stub(annotator, 'renderAnnotationsOnPage');
 
             annotator.modeButtons = {
                 point: { selector: 'point_btn' }
