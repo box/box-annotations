@@ -1,3 +1,10 @@
+<a name="0.8.1"></a>
+## 0.8.1 (2018-01-08)
+
+* Fix: Do not destroy pending point threads on mobile re-render (#99) ([8a903af](https://github.com/box/box-annotations/commit/8a903af))
+
+
+
 <a name="0.8.0"></a>
 # 0.8.0 (2018-01-03)
 
