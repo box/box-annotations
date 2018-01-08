@@ -68,6 +68,18 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /**
+     * Renders annotations from memory.
+     *
+     * @inheritdoc
+     * @private
+     * @return {void}
+     */
+    render() {
+        super.render();
+        this.destroyPendingThreads();
+    }
+
+    /**
      * Renders annotations from memory for a specified page.
      *
      * @inheritdoc
