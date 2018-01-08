@@ -274,23 +274,6 @@ describe('AnnotationThread', () => {
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.dialog.element.dataset.threadNumber).to.not.be.undefined;
         });
-
-        it('should only show dialog immediately on mobile devices', () => {
-            const serverAnnotation = { threadNumber: 1 };
-            const tempAnnotation = serverAnnotation;
-            sandbox.stub(thread, 'showDialog');
-
-            // Don't show dialog on web browsers
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.showDialog).to.not.be.called;
-            expect(thread.state).not.equals(STATES.hover);
-
-            // Only show dialog on mobile browsers
-            thread.isMobile = true;
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.showDialog).to.be.called;
-            expect(thread.state).equals(STATES.hover);
-        });
     });
 
     describe('deleteAnnotation()', () => {

@@ -16,6 +16,7 @@ import {
     TYPES,
     CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     DATA_TYPE_ANNOTATION_DIALOG,
     THREAD_EVENT,
     CONTROLLER_EVENT,
@@ -1411,14 +1412,8 @@ describe('doc/DocAnnotator', () => {
 
     describe('showHighlightsOnPage()', () => {
         beforeEach(() => {
-            stubs.getContext = sandbox.stub();
-            stubs.clearRect = sandbox.stub();
-
-            annotator.annotatedElement = {
-                querySelector: () => {},
-                getContext: () => {},
-                clearRect: () => {}
-            };
+            sandbox.stub(util, 'clearCanvas');
+            annotator.annotatedElement = { querySelector: () => {} };
             stubs.mock = sandbox.mock(annotator.annotatedElement);
         });
 
@@ -1426,43 +1421,34 @@ describe('doc/DocAnnotator', () => {
             annotator.annotatedElement = document.querySelector('.annotated-element');
         });
 
-        it('should not call clearRect or getContext if there is already an annotationLayerEl', () => {
-            stubs.mock.expects('querySelector').returns({ querySelector: () => {} });
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
-            stubs.pageThreads = sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([]);
-
+        it('should not clear context if page does not exist', () => {
+            stubs.mock.expects('querySelector');
             annotator.showHighlightsOnPage(0);
-            expect(stubs.pageThreads).to.be.called;
+            expect(util.clearCanvas).to.not.be.called;
         });
 
-        it('should not call clearRect or getContext if there is not an annotationLayerEl', () => {
+        it('should clear only the specified annotation layer if specified', () => {
             stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(undefined);
-            stubs.mock.expects('clearRect').never();
-            stubs.mock.expects('getContext').never();
             const threadsOnPageStub = sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([]);
 
-            annotator.showHighlightsOnPage(0);
+            annotator.showHighlightsOnPage(1, TYPES.highlight);
+            expect(util.clearCanvas).to.be.calledWith(annotator.annotatedElement, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+            expect(util.clearCanvas).to.not.be.calledWith(annotator.annotatedElement, CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT);
             expect(threadsOnPageStub).to.be.called;
         });
 
-        it('should call clearRect or getContext if there is an annotationLayerEl', () => {
+        it('should clear both highlight layers if neither are specified', () => {
             stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
             const threadsOnPageStub = sandbox.stub(annotator, 'getHighlightThreadsOnPage').returns([]);
 
-            annotator.showHighlightsOnPage(0);
+            annotator.showHighlightsOnPage(1);
+            expect(util.clearCanvas).to.be.calledWith(annotator.annotatedElement, CLASS_ANNOTATION_LAYER_HIGHLIGHT);
+            expect(util.clearCanvas).to.be.calledWith(annotator.annotatedElement, CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT);
             expect(threadsOnPageStub).to.be.called;
         });
 
         it('show all the highlights on the page after clearing', () => {
             stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('querySelector').returns(annotator.annotatedElement);
-            stubs.mock.expects('getContext').returns(annotator.annotatedElement);
-            stubs.mock.expects('clearRect');
 
             const thread = { show: () => {} };
             stubs.threadMock = sandbox.mock(thread);
@@ -1578,7 +1564,7 @@ describe('doc/DocAnnotator', () => {
                 isVisible: true,
                 hide: sandbox.stub(),
             };
-            sandbox.stub(annotator, 'renderPage');
+            sandbox.stub(annotator, 'showHighlightsOnPage');
         });
 
         afterEach(() => {
@@ -1612,9 +1598,9 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
         });
 
-        it('should render the specified page on annotationsrenderpage', () => {
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.renderPage });
-            expect(annotator.renderPage).to.be.called;
+        it('should render the specified page on showhighlights', () => {
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.showHighlights });
+            expect(annotator.showHighlightsOnPage).to.be.called;
         });
     });
 });

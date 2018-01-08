@@ -1006,8 +1006,11 @@ class DocAnnotator extends Annotator {
     showHighlightsOnPage(page, mode) {
         // Clear context if needed
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
-        let layerClass;
+        if (!pageEl) {
+            return;
+        }
 
+        let layerClass;
         if (mode) {
             layerClass =
                 mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;

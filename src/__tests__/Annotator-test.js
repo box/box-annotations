@@ -655,7 +655,7 @@ describe('Annotator', () => {
         describe('scaleAnnotations()', () => {
             it('should set scale and rotate annotations based on the annotated element', () => {
                 sandbox.stub(annotator, 'setScale');
-                sandbox.stub(annotator, 'render');
+                sandbox.stub(annotator, 'renderAnnotations');
 
                 const data = {
                     scale: 5,
@@ -664,7 +664,7 @@ describe('Annotator', () => {
                 };
                 annotator.scaleAnnotations(data);
                 expect(annotator.setScale).to.be.calledWith(data.scale);
-                expect(annotator.render).to.be.called;
+                expect(annotator.renderAnnotations).to.be.called;
             });
         });
 
