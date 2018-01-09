@@ -13,7 +13,7 @@ import {
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
     CLASS_ANNOTATION_LAYER_DRAW,
-    DRAW_BORDER_OFFSET,
+    BORDER_OFFSET,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
@@ -284,10 +284,10 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         const eventBoundary = {
-            minX: +location.x - DRAW_BORDER_OFFSET,
-            minY: +location.y - DRAW_BORDER_OFFSET,
-            maxX: +location.x + DRAW_BORDER_OFFSET,
-            maxY: +location.y + DRAW_BORDER_OFFSET
+            minX: +location.x - BORDER_OFFSET,
+            minY: +location.y - BORDER_OFFSET,
+            maxX: +location.x + BORDER_OFFSET,
+            maxY: +location.y + BORDER_OFFSET
         };
 
         // Get the threads that correspond to the point that was clicked on

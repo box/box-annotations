@@ -7,7 +7,7 @@ import {
     DRAW_STATES,
     DRAW_RENDER_THRESHOLD,
     DRAW_BASE_LINE_WIDTH,
-    DRAW_BORDER_OFFSET,
+    BORDER_OFFSET,
     DRAW_DASHED_SPACING,
     THREAD_EVENT
 } from '../constants';
@@ -155,10 +155,10 @@ class DrawingThread extends AnnotationThread {
         // Clear the drawn thread and its boundary
         if (this.concreteContext) {
             this.concreteContext.clearRect(
-                x - DRAW_BORDER_OFFSET,
-                y + DRAW_BORDER_OFFSET,
-                width + DRAW_BORDER_OFFSET * 2,
-                height - DRAW_BORDER_OFFSET * 2
+                x - BORDER_OFFSET,
+                y + BORDER_OFFSET,
+                width + BORDER_OFFSET * 2,
+                height - BORDER_OFFSET * 2
             );
         }
 
