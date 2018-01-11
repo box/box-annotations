@@ -1,3 +1,11 @@
+<a name="0.9.0"></a>
+# 0.9.0 (2018-01-11)
+
+* Fix: Do not destroy pending point threads on mobile re-render (#99) ([3d6f0ef](https://github.com/box/box-annotations/commit/3d6f0ef))
+* Fix: Stop propagating drawing selection event after first click (#97) ([d8c134b](https://github.com/box/box-annotations/commit/d8c134b))
+
+
+
 <a name="0.8.0"></a>
 # 0.8.0 (2018-01-03)
 
