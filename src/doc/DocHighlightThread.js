@@ -612,7 +612,14 @@ class DocHighlightThread extends AnnotationThread {
         return this.pageEl;
     }
 
-    setThreadBoundary() {
+    /**
+     * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
+     *
+     * @inheritdoc
+     * @private
+     * @return {void}
+     */
+    regenerateBoundary() {
         if (!this.location || !this.location.quadPoints) {
             return;
         }
@@ -624,22 +631,10 @@ class DocHighlightThread extends AnnotationThread {
 
         this.location.quadPoints.forEach((quadPoint) => {
             const [x1, y1, x2, y2, x3, y3, x4, y4] = quadPoint;
-
-            if (Math.min(x1, x2, x3, x4) < this.minX) {
-                this.minX = Math.min(x1, x2, x3, x4);
-            }
-
-            if (Math.max(x1, x2, x3, x4) > this.maxX) {
-                this.maxX = Math.max(x1, x2, x3, x4);
-            }
-
-            if (Math.min(y1, y2, y3, y4) < this.minY) {
-                this.minY = Math.min(y1, y2, y3, y4);
-            }
-
-            if (Math.max(y1, y2, y3, y4) > this.maxY) {
-                this.maxY = Math.max(y1, y2, y3, y4);
-            }
+            this.minX = Math.min(x1, x2, x3, x4, this.minX);
+            this.maxX = Math.max(x1, x2, x3, x4, this.maxX);
+            this.minY = Math.min(y1, y2, y3, y4, this.minY);
+            this.maxY = Math.max(y1, y2, y3, y4, this.maxY);
         });
     }
 }

@@ -68,7 +68,11 @@ class DrawingThread extends AnnotationThread {
 
         // Recreate stored paths
         if (this.location && this.location.paths) {
-            this.setBoundary();
+            this.regenerateBoundary();
+
+            if (this.dialog && this.pathContainer.isEmpty()) {
+                this.dialog.hide();
+            }
 
             this.location.paths.forEach((drawingPathData) => {
                 const pathInstance = new DrawingPath(drawingPathData);
@@ -205,7 +209,12 @@ class DrawingThread extends AnnotationThread {
         if (executedUndo) {
             this.draw(this.drawingContext, true);
             this.updateBoundary();
-            this.setBoundary();
+            this.regenerateBoundary();
+
+            if (this.dialog && this.pathContainer.isEmpty()) {
+                this.dialog.hide();
+            }
+
             this.drawBoundary();
             this.emitAvailableActions();
         }
@@ -224,7 +233,12 @@ class DrawingThread extends AnnotationThread {
         if (executedRedo) {
             this.draw(this.drawingContext, true);
             this.updateBoundary();
-            this.setBoundary();
+            this.regenerateBoundary();
+
+            if (this.dialog && this.pathContainer.isEmpty()) {
+                this.dialog.hide();
+            }
+
             this.drawBoundary();
             this.emitAvailableActions();
         }
@@ -371,7 +385,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     updateBoundary(item) {
-        // Recompute the entire AABB when no item is provided, check a new item if it is provided
+        // Recompute the entire AABB when no item is provided, check a new item if provided
         const boundaryData = !item
             ? this.pathContainer.getAxisAlignedBoundingBox()
             : DrawingPath.extractDrawingInfo(item, this.location);
@@ -382,11 +396,12 @@ class DrawingThread extends AnnotationThread {
     /**
      * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
+     * @inheritdoc
      * @private
      * @return {void}
      */
-    setBoundary() {
-        if (!this.location) {
+    regenerateBoundary() {
+        if (!this.location || this.location.boundaryData) {
             return;
         }
 
@@ -395,14 +410,11 @@ class DrawingThread extends AnnotationThread {
         this.maxX = boundaryData.maxX;
         this.minY = boundaryData.minY;
         this.maxY = boundaryData.maxY;
-
-        if (this.dialog && this.pathContainer.isEmpty()) {
-            this.dialog.hide();
-        }
     }
 
     /**
-     * Get the rectangular boundary in the form of [x, y, width, height] where the coordinate indicates the upper left
+     * Get the rectangular boundary in the form of [x, y, width, height] where the
+     * coordinate indicates the upper left
      * point of the rectangular boundary in browser space
      *
      * @private
