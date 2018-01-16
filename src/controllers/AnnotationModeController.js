@@ -225,13 +225,11 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     unregisterThread(thread) {
-        if (!thread || !thread.location) {
+        if (!thread || !thread.location || !thread.location.page) {
             return;
         }
 
-        const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
-        this.threads[page].remove(thread);
-
+        this.threads[thread.location.page].remove(thread);
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
