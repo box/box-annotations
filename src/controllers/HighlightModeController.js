@@ -4,7 +4,6 @@ import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
     TYPES,
-    BORDER_OFFSET,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT
 } from '../constants';
@@ -100,28 +99,6 @@ class HighlightModeController extends AnnotationModeController {
         }
 
         super.renderPage(pageNum);
-    }
-
-    getIntersectingThreads(event) {
-        if (!event || !this.threads) {
-            return [];
-        }
-
-        // NEED TO DO SOMETHING HERE FOR WHEN THE EVENT TARGET IS THE PDFVIEWER AND NOT A SPECIFIC PAGE
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
-        if (!location || !this.threads[location.page]) {
-            return [];
-        }
-
-        const eventBoundary = {
-            minX: +location.x - BORDER_OFFSET,
-            minY: +location.y - BORDER_OFFSET,
-            maxX: +location.x + BORDER_OFFSET,
-            maxY: +location.y + BORDER_OFFSET
-        };
-
-        // Get the threads that correspond to the point that was clicked on
-        return this.threads[location.page].search(eventBoundary);
     }
 }
 

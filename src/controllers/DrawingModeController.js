@@ -13,7 +13,6 @@ import {
     SELECTOR_ANNOTATION_DRAWING_HEADER,
     CLASS_ANNNOTATION_DRAWING_BACKGROUND,
     CLASS_ANNOTATION_LAYER_DRAW,
-    BORDER_OFFSET,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
@@ -264,7 +263,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Find the selected drawing threads given a pointer event. Randomly picks one if multiple drawings overlap
+     * Selects a drawing thread given a pointer event. Randomly picks one if multiple drawings overlap
      *
      * @protected
      * @param {Event} event - The event object containing the pointer information
@@ -278,20 +277,8 @@ class DrawingModeController extends AnnotationModeController {
 
         event.stopPropagation();
 
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
-        if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
-            return;
-        }
-
-        const eventBoundary = {
-            minX: +location.x - BORDER_OFFSET,
-            minY: +location.y - BORDER_OFFSET,
-            maxX: +location.x + BORDER_OFFSET,
-            maxY: +location.y + BORDER_OFFSET
-        };
-
         // Get the threads that correspond to the point that was clicked on
-        const intersectingThreads = this.threads[location.page].search(eventBoundary);
+        const intersectingThreads = this.getIntersectingThreads(event);
 
         // Clear boundary on previously selected thread
         this.removeSelection();

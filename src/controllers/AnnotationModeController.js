@@ -7,7 +7,9 @@ import {
     CLASS_ANNOTATION_MODE,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
+    TYPES,
+    BORDER_OFFSET
 } from '../constants';
 
 class AnnotationModeController extends EventEmitter {
@@ -234,11 +236,26 @@ class AnnotationModeController extends EventEmitter {
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
 
+    /**
+     * Apply predicate method to every thread on the specified page
+     *
+     * @private
+     * @param {Function} func Predicate method to apply on threads
+     * @param {number} pageNum Page number
+     * @return {void}
+     */
     applyActionToPageThreads(func, pageNum) {
         const pageThreads = this.threads[pageNum].all() || [];
         pageThreads.forEach(func);
     }
 
+    /**
+     * Apply predicate method to every thread on the entire file
+     *
+     * @private
+     * @param {Function} func Predicate method to apply on threads
+     * @return {void}
+     */
     applyActionToThreads(func) {
         Object.keys(this.threads).forEach((page) => this.applyActionToPageThreads(func, page));
     }
@@ -421,6 +438,34 @@ class AnnotationModeController extends EventEmitter {
             });
         });
         return hadPendingThreads;
+    }
+
+    /**
+     * Find the intersecting threads given a pointer event
+     *
+     * @protected
+     * @param {Event} event The event object containing the pointer information
+     * @return {AnnotationThread[]} Array of intersecting annotation threads
+     */
+    getIntersectingThreads(event) {
+        if (!event || !this.threads || !this.annotator) {
+            return [];
+        }
+
+        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
+            return [];
+        }
+
+        const eventBoundary = {
+            minX: +location.x - BORDER_OFFSET,
+            minY: +location.y - BORDER_OFFSET,
+            maxX: +location.x + BORDER_OFFSET,
+            maxY: +location.y + BORDER_OFFSET
+        };
+
+        // Get the threads that correspond to the point that was clicked on
+        return this.threads[location.page].search(eventBoundary);
     }
 
     /**
