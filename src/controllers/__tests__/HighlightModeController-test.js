@@ -22,7 +22,8 @@ describe('controllers/HighlightModeController', () => {
         stubs.thread = {
             annotations: {},
             location: { page: 1 },
-            show: () => {}
+            show: () => {},
+            addListener: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
     });
@@ -125,9 +126,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.threads = {
-                1: { '123abc': stubs.thread }
-            };
+            controller.registerThread(stubs.thread);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(util.clearCanvas).to.be.called;
