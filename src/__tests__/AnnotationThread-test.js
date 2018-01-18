@@ -873,6 +873,34 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('regenerateBoundary()', () => {
+        it('should do nothing if a valid location does not exist', () => {
+            thread.location = undefined;
+            thread.regenerateBoundary();
+
+            thread.location = {};
+            thread.regenerateBoundary();
+
+            thread.location = { x: 'something' };
+            thread.regenerateBoundary();
+
+            thread.location = { y: 'something' };
+            thread.regenerateBoundary();
+
+            expect(thread.minX).to.be.undefined;
+            expect(thread.minY).to.be.undefined;
+        });
+
+        it('should set the min/max x/y values to the thread location', () => {
+            thread.location = { x: 1, y: 2 };
+            thread.regenerateBoundary();
+            expect(thread.minX).equals(1);
+            expect(thread.minY).equals(2);
+            expect(thread.maxX).equals(1);
+            expect(thread.maxY).equals(2);
+        });
+    });
+
     describe('handleThreadSaveError()', () => {
         it('should delete temp annotation and emit event', () => {
             sandbox.stub(thread, 'deleteAnnotation');

@@ -267,10 +267,6 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     show() {
-        if (!this.dialog) {
-            return;
-        }
-
         switch (this.state) {
             case STATES.pending:
                 this.showDialog();
@@ -297,6 +293,10 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     showDialog() {
+        if (!this.dialog) {
+            return;
+        }
+
         // Prevents the annotations dialog from being created each mousemove
         if (!this.dialog.element) {
             this.dialog.setup(this.annotations, this.showComment);
@@ -613,7 +613,7 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /**
-     * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
+     * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
      * @inheritdoc
      * @private

@@ -1,3 +1,4 @@
+import rbush from 'rbush';
 import EventEmitter from 'events';
 import AnnotationModeController from '../AnnotationModeController';
 import DocDrawingThread from '../../doc/DocDrawingThread';
@@ -30,7 +31,11 @@ describe('controllers/AnnotationModeController', () => {
             handleStart: () => {},
             destroy: () => {},
             deleteThread: () => {},
-            show: () => {}
+            show: () => {},
+            minX: 1,
+            minY: 2,
+            maxX: 1,
+            maxY: 2
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
     });
@@ -69,9 +74,8 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('destroy()', () => {
         it('should destroy all the threads in controller', () => {
-            controller.threads = { 1: {
-                '123abc': stubs.thread
-            }};
+            controller.threads = { 1: new rbush() };
+            controller.registerThread(stubs.thread);
 
             controller.destroy();
             expect(controller.buttonEl).to.be.undefined;
@@ -167,6 +171,15 @@ describe('controllers/AnnotationModeController', () => {
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
         });
 
+        it('should hide the createDialog if it exists', () => {
+            controller.createDialog = {
+                hide: () => {}
+            };
+            const createMock = sandbox.mock(controller.createDialog);
+            createMock.expects('hide');
+            controller.exit();
+        });
+
         it('should exit annotation mode', () => {
             controller.exit();
             expect(controller.destroyPendingThreads).to.be.called;
@@ -255,84 +268,108 @@ describe('controllers/AnnotationModeController', () => {
     });
 
     describe('registerThread()', () => {
-        it('should internally keep track of the registered thread', () => {
-            sandbox.stub(controller, 'emit');
-            controller.threads = { 1: {} };
-            const pageThreads = controller.threads[1];
-            const thread = {
-                threadID: '123abc',
-                location: { page: 1 },
-                addListener: sandbox.stub()
-            };
-            expect(thread.threadID in pageThreads).to.be.falsy;
+        const boundingBox = {
+            minX: 1,
+            maxX: 1,
+            minY: 2,
+            maxY: 2
+        };
 
-            controller.registerThread(thread);
-            expect(pageThreads[thread.threadID]).equals(thread);
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, thread);
-            expect(thread.addListener).to.be.calledWith('threadevent', sinon.match.func);
+        beforeEach(() => {
+            sandbox.stub(controller, 'emit');
+            controller.threads = {};
+        });
+
+        it('should do nothing if thread does not have location', () => {
+            controller.registerThread();
+            controller.registerThread({ type: 'someType' });
+            expect(controller.emit).to.not.be.called;
+        });
+
+        it('should create a new rbush for the thread\'s page location', () => {
+            stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
+
+            controller.registerThread(stubs.thread);
+
+            const pageThreads = controller.threads[1];
+            expect(pageThreads.search(boundingBox)).includes(stubs.thread);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, stubs.thread);
+        });
+
+        it('should internally keep track of the registered thread', () => {
+            controller.threads = { 1: new rbush() };
+            const pageThreads = controller.threads[1];
+            expect(pageThreads.collides(boundingBox)).to.be.falsy;
+
+            stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
+            controller.registerThread(stubs.thread);
+            expect(pageThreads.search(boundingBox)).includes(stubs.thread);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, stubs.thread);
         });
     });
 
     describe('unregisterThread()', () => {
-        it('should internally keep track of the registered thread', () => {
-            sandbox.stub(controller, 'emit');
-            controller.threads = { 1: {} };
-            const pageThreads = controller.threads[1];
-            const thread = {
-                threadID: '123abc',
-                location: { page: 1 },
-                addListener: sandbox.stub(),
-                removeListener: sandbox.stub()
-            };
-            controller.registerThread(thread);
-            expect(thread.threadID in pageThreads).to.be.truthy;
+        const boundingBox = {
+            minX: 1,
+            maxX: 1,
+            minY: 2,
+            maxY: 2
+        };
 
-            controller.unregisterThread(thread);
-            expect(thread.threadID in pageThreads).to.be.falsy;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, thread);
-            expect(thread.removeListener).to.be.calledWith('threadevent', sinon.match.func);
+        beforeEach(() => {
+            sandbox.stub(controller, 'emit');
+            controller.threads = {};
+        });
+
+        it('should do nothing if thread does not have location', () => {
+            controller.unregisterThread();
+            controller.unregisterThread({ type: 'someType' });
+            controller.unregisterThread({ location: 'noPage' });
+            expect(controller.emit).to.not.be.called;
+        });
+
+        it('should internally keep track of the registered thread', () => {
+            controller.threads = { 1: new rbush() };
+            const pageThreads = controller.threads[1];
+
+            controller.registerThread(stubs.thread);
+            expect(pageThreads.collides(boundingBox)).to.be.truthy;
+
+            stubs.threadMock.expects('removeListener').withArgs('threadevent', sinon.match.func);
+            controller.unregisterThread(stubs.thread);
+            expect(pageThreads.collides(boundingBox)).to.be.falsy;
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, stubs.thread);
+        });
+    });
+
+    describe('applyActionToPageThreads()', () => {
+        it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
+            controller.registerThread(stubs.thread);
+            stubs.threadMock.expects('addListener').once();
+            controller.applyActionToPageThreads(stubs.thread.addListener, 2); // func not called
+            controller.applyActionToPageThreads(stubs.thread.addListener, 1);
         });
     });
 
     describe('applyActionToThreads()', () => {
-        const func = (thread) => {
-            thread.doSomething();
-        };
-
-        beforeEach(() => {
-            const thread = {
-                threadID: '123abc',
-                doSomething: () => {}
-            };
-            stubs.threadMock = sandbox.mock(thread);
-            controller.threads = {
-                1: { '123abc': thread }
-            };
-        });
-
         it('should apply the predicate function to all of the controller\'s threads', () => {
-            stubs.threadMock.expects('doSomething').once();
-            controller.applyActionToThreads(func);
-        });
-
-        it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
-            stubs.threadMock.expects('doSomething').once();
-            controller.applyActionToThreads(func, 2); // func not called
-            controller.applyActionToThreads(func, 1);
+            controller.registerThread(stubs.thread);
+            stubs.threadMock.expects('addListener').once();
+            controller.applyActionToThreads(stubs.thread.addListener);
         });
     });
 
     describe('getThreadByID()', () => {
         it('should find and return annotation thread specified by threadID', () => {
-            controller.threads = { 1: { '123abc': stubs.thread } };
+            controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID(stubs.thread.threadID);
             expect(thread).to.deep.equals(stubs.thread);
         });
 
-        it('should return null if specified annotation thread is invalid', () => {
-            controller.threads = { 1: { '123abc': stubs.thread } };
+        it('should return undefined if specified annotation thread is invalid', () => {
+            controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID('random');
-            expect(thread).to.deep.equals(null);
+            expect(thread).to.be.undefined;
         });
     });
 
@@ -445,13 +482,7 @@ describe('controllers/AnnotationModeController', () => {
     });
 
     describe('renderPage()', () => {
-        const thread = {
-            annotatedElement: undefined,
-            show: () => {}
-        };
-
         beforeEach(() => {
-            stubs.threadMock = sandbox.mock(thread);
             controller.annotatedElement = 'el';
         });
 
@@ -462,12 +493,15 @@ describe('controllers/AnnotationModeController', () => {
 
         it('should render the annotations on every page', () => {
             controller.threads = {
-                1: { '123abc': thread },
-                2: { '456def': thread } // wrong page
+                1: new rbush(),
+                2: new rbush()
             };
+            controller.threads[1].insert(stubs.thread);
+            controller.threads[2].insert(stubs.thread);
+
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
-            expect(thread.annotatedElement).equals('el');
+            expect(stubs.thread.annotatedElement).equals('el');
         });
     });
 
@@ -520,6 +554,46 @@ describe('controllers/AnnotationModeController', () => {
             const destroyed = controller.destroyPendingThreads();
 
             expect(destroyed).to.equal(true);
+        });
+    });
+
+    describe('getIntersectingThreads()', () => {
+        let annotatorMock;
+
+        beforeEach(() => {
+            controller.annotator = {
+                getLocationFromEvent: () => {}
+            };
+            annotatorMock = sandbox.mock(controller.annotator);
+            controller.threads = {};
+            controller.registerThread(stubs.thread);
+        });
+
+        it('should return an empty array if event or threads do not exist', () => {
+            annotatorMock.expects('getLocationFromEvent').never();
+            expect(controller.getIntersectingThreads()).to.be.empty;
+
+            controller.threads = null;
+            expect(controller.getIntersectingThreads({})).to.be.empty;
+        });
+
+        it('should return an empty array if no location is found for the mouse event', () => {
+            annotatorMock.expects('getLocationFromEvent');
+            expect(controller.getIntersectingThreads({})).to.be.empty;
+        });
+
+        it('should return an empty array if the mouse location is on a page without threads', () => {
+            annotatorMock.expects('getLocationFromEvent').returns({ page: 2 });
+            expect(controller.getIntersectingThreads({})).to.be.empty;
+        });
+
+        it('should return an array with the intersecting thread', () => {
+            annotatorMock.expects('getLocationFromEvent').returns({
+                page: 1,
+                x: 1,
+                y: 2
+            });
+            expect(controller.getIntersectingThreads({})).includes(stubs.thread);
         });
     });
 

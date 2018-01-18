@@ -104,78 +104,6 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
-    describe('registerThread()', () => {
-        beforeEach(() => {
-            controller.threads = { 1: new rbush() };
-        });
-
-        it('should do nothing if thread does not exist', () => {
-            stubs.thread = undefined;
-            controller.registerThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
-        });
-
-        it('should do nothing if thread location does not exist', () => {
-            stubs.thread.location = undefined;
-            controller.registerThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
-        });
-
-        it('should create new rbush for page if it does not already exist', () => {
-            stubs.thread.location.page = 2;
-
-            controller.registerThread(stubs.thread);
-
-            const thread = controller.threads[2].search(stubs.thread);
-            expect(thread.includes(stubs.thread)).to.be.truthy;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
-        });
-
-        it('should internally keep track of the registered thread', () => {
-            const pageThreads = controller.threads[1];
-            expect(pageThreads.search(stubs.thread)).to.deep.equal([]);
-
-            controller.registerThread(stubs.thread);
-            const thread = pageThreads.search(stubs.thread);
-            expect(thread.includes(stubs.thread)).to.be.truthy;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, sinon.match.object);
-        });
-    });
-
-    describe('unregisterThread()', () => {
-        beforeEach(() => {
-            controller.threads = { 1: new rbush() };
-            controller.registerThread(stubs.thread);
-        });
-
-        it('should do nothing if thread does not exist', () => {
-            stubs.thread = undefined;
-            controller.unregisterThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
-        });
-
-        it('should do nothing if thread location does not exist', () => {
-            stubs.thread.location = undefined;
-            controller.unregisterThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
-        });
-
-        it('should do nothing if no threads exist on the specified page', () => {
-            stubs.thread.location = { page: 1 };
-            controller.threads = {};
-            controller.unregisterThread(stubs.thread);
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
-        });
-
-        it('should internally keep track of the registered thread', () => {
-            const pageThreads = controller.threads[1];
-            controller.unregisterThread(stubs.thread);
-            const thread = pageThreads.search(stubs.thread);
-            expect(thread.includes(stubs.thread)).to.be.falsy;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, sinon.match.object);
-        });
-    });
-
     describe('bindDOMListeners()', () => {
         beforeEach(() => {
             controller.annotatedElement = {
@@ -391,10 +319,9 @@ describe('controllers/DrawingModeController', () => {
         beforeEach(() => {
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
-            controller.annotator = {
-                getLocationFromEvent: sandbox.stub().returns({ page: 1 })
-            }
-            stubs.getLoc = controller.annotator.getLocationFromEvent;
+            stubs.intersecting = sandbox.stub(controller, 'getIntersectingThreads').returns([ stubs.thread ]);
+            stubs.select = sandbox.stub(controller, 'select');
+            stubs.clean = sandbox.stub(controller, 'removeSelection');
 
             stubs.event = {
                 stopPropagation: sandbox.stub()
@@ -403,39 +330,18 @@ describe('controllers/DrawingModeController', () => {
 
         it('should do nothing with an empty event', () => {
             controller.handleSelection();
-            expect(stubs.getLoc).to.not.be.called;
+            expect(stubs.intersecting).to.not.be.called;
         })
 
-        it('should do nothing if no location exists', () => {
-            stubs.clean = sandbox.stub(controller, 'removeSelection');
-            stubs.getLoc.returns(null);
+        it('should do nothing no intersecting threads are found', () => {
+            stubs.intersecting.returns([]);
             controller.handleSelection(stubs.event);
-            expect(stubs.clean).to.not.be.called;
-            expect(stubs.event.stopPropagation).to.be.called;
-        });
-
-        it('should do nothing if no drawing threads exist', () => {
-            stubs.clean = sandbox.stub(controller, 'removeSelection');
-            stubs.getLoc.returns({
-                x: 15,
-                y: 15,
-                page: 1
-            });
-            controller.threads = {};
-            controller.handleSelection(stubs.event);
-            expect(stubs.clean).to.not.be.called;
+            expect(stubs.clean).to.be.called;
+            expect(stubs.select).to.not.be.called;
             expect(stubs.event.stopPropagation).to.be.called;
         });
 
         it('should call select on an thread found in the data store', () => {
-            stubs.select = sandbox.stub(controller, 'select');
-            stubs.clean = sandbox.stub(controller, 'removeSelection');
-            stubs.getLoc.returns({
-                x: 15,
-                y: 15,
-                page: 1
-            });
-
             controller.handleSelection(stubs.event);
             expect(stubs.clean).to.be.called;
             expect(stubs.select).to.be.calledWith(stubs.thread);

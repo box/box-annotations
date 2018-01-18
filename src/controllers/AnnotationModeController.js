@@ -59,7 +59,7 @@ class AnnotationModeController extends EventEmitter {
     destroy() {
         Object.keys(this.threads).forEach((pageNum) => {
             const pageThreads = this.threads[pageNum].all() || [];
-            pageThreads.forEach(this.unregisterThread);
+            pageThreads.forEach(this.unregisterThread.bind(this));
         });
 
         if (this.buttonEl) {
@@ -245,6 +245,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     applyActionToPageThreads(func, pageNum) {
+        if (!this.threads[pageNum]) {
+            return;
+        }
+
         const pageThreads = this.threads[pageNum].all() || [];
         pageThreads.forEach(func);
     }
@@ -397,7 +401,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum) {
-        if (!this.threads && !this.threads[pageNum]) {
+        if (!this.threads || !this.threads[pageNum]) {
             return;
         }
 

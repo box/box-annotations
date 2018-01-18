@@ -619,7 +619,7 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
+     * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
      * @private
      * @return {void}

@@ -141,9 +141,11 @@ describe('doc/DocDrawingThread', () => {
                 isEmpty: () => false
             };
             thread.pathContainer = {
-                insert: sandbox.stub()
+                insert: sandbox.stub(),
+                isEmpty: sandbox.stub().returns(false)
             };
-        })
+        });
+
         it("should set the state to 'idle' and clear the pendingPath", () => {
             thread.handleStop();
 
