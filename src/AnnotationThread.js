@@ -59,6 +59,8 @@ class AnnotationThread extends EventEmitter {
         this.localized = data.localized;
         this.state = STATES.inactive;
 
+        this.regenerateBoundary();
+
         // Explicitly bind listeners
         this.showDialog = this.showDialog.bind(this);
 
@@ -614,6 +616,23 @@ class AnnotationThread extends EventEmitter {
      */
     deleteAnnotationWithID(data) {
         this.deleteAnnotation(data.annotationID);
+    }
+
+    /**
+     * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
+     *
+     * @private
+     * @return {void}
+     */
+    regenerateBoundary() {
+        if (!this.location || !this.location.x || !this.location.y) {
+            return;
+        }
+
+        this.minX = this.location.x;
+        this.maxX = this.location.x;
+        this.minY = this.location.y;
+        this.maxY = this.location.y;
     }
 
     /**

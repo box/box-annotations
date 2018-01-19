@@ -133,7 +133,7 @@ describe('doc/DocDrawingThread', () => {
         beforeEach(() => {
             stubs.emitAvailableActions = sandbox.stub(thread, 'emitAvailableActions');
             stubs.updateBoundary = sandbox.stub(thread, 'updateBoundary');
-            stubs.setBoundary = sandbox.stub(thread, 'setBoundary');
+            stubs.regenerateBoundary = sandbox.stub(thread, 'regenerateBoundary');
             stubs.drawBoundary = sandbox.stub(thread, 'drawBoundary');
             stubs.createDialog = sandbox.stub(thread, 'createDialog');
             thread.drawingFlag = DRAW_STATES.drawing;
@@ -141,15 +141,17 @@ describe('doc/DocDrawingThread', () => {
                 isEmpty: () => false
             };
             thread.pathContainer = {
-                insert: sandbox.stub()
+                insert: sandbox.stub(),
+                isEmpty: sandbox.stub().returns(false)
             };
-        })
+        });
+
         it("should set the state to 'idle' and clear the pendingPath", () => {
             thread.handleStop();
 
             expect(stubs.emitAvailableActions).to.be.called;
             expect(stubs.updateBoundary).to.be.called;
-            expect(stubs.setBoundary).to.be.called;
+            expect(stubs.regenerateBoundary).to.be.called;
             expect(stubs.drawBoundary).to.be.called;
             expect(stubs.createDialog).to.be.called;
             expect(thread.pathContainer.insert).to.be.called;
@@ -236,7 +238,7 @@ describe('doc/DocDrawingThread', () => {
         const resetValue = AnnotationThread.prototype.saveAnnotation;
 
         beforeEach(() => {
-            stubs.setBoundary = sandbox.stub(thread, 'setBoundary');
+            stubs.regenerateBoundary = sandbox.stub(thread, 'regenerateBoundary');
             stubs.show = sandbox.stub(thread, 'show');
             stubs.createDialog = sandbox.stub(thread, 'createDialog');
             Object.defineProperty(AnnotationThread.prototype, 'saveAnnotation', { value: sandbox.stub() });
@@ -278,7 +280,7 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.drawingContext.clearRect).to.be.called;
             expect(AnnotationThread.prototype.saveAnnotation).to.be.called;
             expect(stubs.show).to.be.called;
-            expect(stubs.setBoundary).to.be.called;
+            expect(stubs.regenerateBoundary).to.be.called;
             expect(stubs.createDialog).to.be.called;
         });
     });

@@ -167,7 +167,7 @@ describe('drawing/DrawingThread', () => {
         beforeEach(() => {
             stubs.draw = sandbox.stub(thread, 'draw');
             stubs.updateBoundary = sandbox.stub(thread, 'updateBoundary');
-            stubs.setBoundary = sandbox.stub(thread, 'setBoundary');
+            stubs.regenerateBoundary = sandbox.stub(thread, 'regenerateBoundary');
             stubs.drawBoundary = sandbox.stub(thread, 'drawBoundary');
             stubs.emitAvailableActions = sandbox.stub(thread, 'emitAvailableActions');
             stubs.containerUndo = sandbox.stub(thread.pathContainer, 'undo');
@@ -180,7 +180,7 @@ describe('drawing/DrawingThread', () => {
             expect(stubs.draw).to.not.be.called;
             expect(stubs.emitAvailableActions).to.not.be.called;
             expect(stubs.updateBoundary).to.not.be.called;
-            expect(stubs.setBoundary).to.not.be.called;
+            expect(stubs.regenerateBoundary).to.not.be.called;
             expect(stubs.drawBoundary).to.not.be.called;
         });
 
@@ -191,7 +191,7 @@ describe('drawing/DrawingThread', () => {
             expect(stubs.draw).to.be.called;
             expect(stubs.emitAvailableActions).to.be.called;
             expect(stubs.updateBoundary).to.be.called;
-            expect(stubs.setBoundary).to.be.called;
+            expect(stubs.regenerateBoundary).to.be.called;
             expect(stubs.drawBoundary).to.be.called;
         });
     });
@@ -331,11 +331,11 @@ describe('drawing/DrawingThread', () => {
         })
     });
 
-    describe('setBoundary()', () => {
+    describe('regenerateBoundary()', () => {
         it('should do nothing when no drawingPaths have been saved', () => {
             thread.location = {};
 
-            thread.setBoundary();
+            thread.regenerateBoundary();
             expect(thread.minX).to.be.undefined;
             expect(thread.maxX).to.be.undefined;
             expect(thread.minY).to.be.undefined;
@@ -350,7 +350,7 @@ describe('drawing/DrawingThread', () => {
                 maxY: 8
             };
 
-            thread.setBoundary();
+            thread.regenerateBoundary();
             expect(thread.minX).to.equal(thread.location.minX);
             expect(thread.maxX).to.equal(thread.location.maxX);
             expect(thread.minY).to.equal(thread.location.minY);
