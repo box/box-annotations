@@ -127,6 +127,10 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     scrollToLastComment() {
+        if (!this.element) {
+            return;
+        }
+
         const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
         if (annotationsEl) {
             const isDialogFlipped = this.dialogEl.classList.contains(CLASS_FLIPPED_DIALOG);

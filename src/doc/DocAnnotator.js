@@ -29,7 +29,7 @@ import {
     CREATE_EVENT
 } from '../constants';
 
-const MOUSEMOVE_THROTTLE_MS = 50;
+const MOUSEMOVE_THROTTLE_MS = 25;
 const HOVER_TIMEOUT_MS = 75;
 const MOUSE_MOVE_MIN_DISTANCE = 5;
 const CLASS_RANGY_HIGHLIGHT = 'rangy-highlight';
@@ -45,16 +45,6 @@ const ANNOTATION_LAYER_CLASSES = [
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW
 ];
-
-/**
- * Check if a thread is in a hover state.
- *
- * @param {Object} thread The thread to check the state of
- * @return {boolean} True if the thread is in a state of hover
- */
-function isThreadInHoverState(thread) {
-    return thread.state === STATES.hover;
-}
 
 class DocAnnotator extends Annotator {
     /** @property {Event} - For tracking the most recent event fired by mouse move event. */
@@ -165,8 +155,8 @@ class DocAnnotator extends Annotator {
 
             // If click isn't on a page, ignore
             const eventTarget = clientEvent.target;
-            const { pageEl, page } = util.getPageInfo(eventTarget);
-            if (!pageEl) {
+            const pageInfo = util.getPageInfo(eventTarget);
+            if (!pageInfo.pageEl) {
                 return location;
             }
 
@@ -182,7 +172,7 @@ class DocAnnotator extends Annotator {
             }
 
             // Store coordinates at 100% scale in PDF space in PDF units
-            const pageDimensions = pageEl.getBoundingClientRect();
+            const pageDimensions = pageInfo.pageEl.getBoundingClientRect();
             const pageWidth = pageDimensions.width;
             const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
             const browserCoordinates = [
@@ -208,7 +198,7 @@ class DocAnnotator extends Annotator {
                 y: pageHeight / zoomScale
             };
 
-            location = { x, y, page, dimensions };
+            location = { x, y, page: pageInfo.page, dimensions };
         } else if (util.isHighlightAnnotation(annotationType)) {
             if (!this.highlighter || !this.highlighter.highlights.length) {
                 return location;
@@ -351,7 +341,6 @@ class DocAnnotator extends Annotator {
         this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
         this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
 
-        this.checkThread = this.checkThread.bind(this);
         this.clickThread = this.clickThread.bind(this);
 
         if (this.isMobile && this.hasTouch) {
@@ -676,8 +665,8 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     onHighlightCheck() {
-        const dt = performance.now() - this.throttleTimer;
         // Bail if no mouse events have occurred OR the throttle delay has not been met.
+        const dt = performance.now() - this.throttleTimer;
         if (!this.mouseMoveEvent || dt < MOUSEMOVE_THROTTLE_MS) {
             return;
         }
@@ -694,23 +683,26 @@ class DocAnnotator extends Annotator {
             return;
         }
         this.throttleTimer = performance.now();
+
         // Only filter through highlight threads on the current page
-        const { page } = util.getPageInfo(this.mouseMoveEvent.target);
-        this.delayThreads = [];
+        const prevThreads = this.hoverThreads || [];
+        this.hoverThreads = [];
         this.hoverActive = false;
 
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads(this.checkThread, page);
+            const plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseMoveEvent);
+            this.hoverThreads = this.hoverThreads.concat(plainThreads);
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads(this.checkThread, page);
+            const commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(
+                this.mouseMoveEvent
+            );
+            this.hoverThreads = this.hoverThreads.concat(commentThreads);
         }
 
-        this.mouseMoveEvent = null;
-
         // If we are hovering over a highlight, we should use a hand cursor
-        if (this.hoverActive) {
+        if (this.hoverThreads.length > 0) {
             this.useDefaultCursor();
             clearTimeout(this.cursorTimeout);
         } else {
@@ -721,37 +713,29 @@ class DocAnnotator extends Annotator {
             }, HOVER_TIMEOUT_MS);
         }
 
+        // Ensure previously hovered over threads are also hidden
+        const delayThreads = this.hoverThreads.concat(
+            prevThreads.filter((item) => {
+                return this.hoverThreads.indexOf(item) < 0;
+            })
+        );
+
         // Delayed threads (threads that should be in active or hover
         // state) should be drawn last. If multiple highlights are
         // hovered over at the same time, only the top-most highlight
         // dialog will be displayed and the others will be hidden
         // without delay
-        this.delayThreads.forEach((threadID, index) => this.showFirstDialogFilter(threadID, index));
-    }
-
-    /**
-     * Determines if the specified therad is being hovered over
-     *
-     * @private
-     * @param {AnnotationThread} thread highlight thread to check
-     * @return {void}
-     */
-    checkThread(thread) {
-        // Determine if any highlight threads on page are pending or active
-        // and ignore hover events of any highlights below
-        if (!this.mouseMoveEvent || thread.state === STATES.pending) {
-            return;
-        }
-
-        // Determine if the mouse is hovering over any highlight threads
-        const shouldDelay = thread.onMousemove(this.mouseMoveEvent);
-        if (shouldDelay) {
-            this.delayThreads.push(thread);
-
-            if (!this.hoverActive) {
-                this.hoverActive = isThreadInHoverState(thread);
+        const firstThread = delayThreads[0];
+        delayThreads.forEach((thread) => {
+            thread.onMousemove(this.mouseMoveEvent);
+            if (firstThread && firstThread.threadNumber === thread.threadNumber) {
+                thread.show();
+            } else {
+                thread.reset();
             }
-        }
+        });
+
+        this.mouseMoveEvent = null;
     }
 
     /**
@@ -907,15 +891,19 @@ class DocAnnotator extends Annotator {
         this.mouseEvent = event;
         this.consumed = false;
 
-        const { page } = util.getPageInfo(this.mouseEvent.target);
+        let plainThreads = [];
+        let commentThreads = [];
 
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads(this.clickThread, page);
+            plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseEvent);
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads(this.clickThread, page);
+            commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(this.mouseEvent);
         }
+
+        const intersectingThreads = [].concat(plainThreads, commentThreads);
+        intersectingThreads.forEach(this.clickThread);
 
         // Show active thread last
         if (this.activeThread) {
@@ -1020,6 +1008,9 @@ class DocAnnotator extends Annotator {
                 if (isCreateDialogVisible) {
                     this.createHighlightDialog.hide();
                 }
+                break;
+            case CONTROLLER_EVENT.renderPage:
+                this.renderPage(data.data);
                 break;
             default:
         }

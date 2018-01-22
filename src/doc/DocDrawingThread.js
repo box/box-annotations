@@ -117,7 +117,12 @@ class DocDrawingThread extends DrawingThread {
 
         this.pathContainer.insert(this.pendingPath);
         this.updateBoundary(this.pendingPath);
-        this.setBoundary();
+        this.regenerateBoundary();
+
+        if (this.dialog && this.pathContainer.isEmpty()) {
+            this.dialog.hide();
+        }
+
         this.drawBoundary();
         this.emitAvailableActions();
         this.pendingPath = null;
@@ -150,7 +155,12 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
-        this.setBoundary();
+        this.regenerateBoundary();
+
+        if (this.dialog && this.pathContainer.isEmpty()) {
+            this.dialog.hide();
+        }
+
         super.saveAnnotation(type, text);
 
         // Move the in-progress drawing to the concrete context

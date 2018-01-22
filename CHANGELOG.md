@@ -1,3 +1,39 @@
+<a name="0.9.0"></a>
+# 0.9.0 (2018-01-11)
+
+* Fix: Do not destroy pending point threads on mobile re-render (#99) ([3d6f0ef](https://github.com/box/box-annotations/commit/3d6f0ef))
+* Fix: Stop propagating drawing selection event after first click (#97) ([d8c134b](https://github.com/box/box-annotations/commit/d8c134b))
+
+
+
+<a name="0.8.0"></a>
+# 0.8.0 (2018-01-03)
+
+* Fix: Clear both highlight canvases when deleting highlights (#96) ([cabcba1](https://github.com/box/box-annotations/commit/cabcba1))
+* Fix: Don't deactivate dialog when canceling new annotation (#91) ([788d1de](https://github.com/box/box-annotations/commit/788d1de))
+* Fix: Drawing buttons styling (#82) ([400c6ff](https://github.com/box/box-annotations/commit/400c6ff))
+* Fix: Ensure drawing dialog is setup on first save (#81) ([9da70ab](https://github.com/box/box-annotations/commit/9da70ab))
+* Fix: Extra padding on escaped comment newlines (#95) ([0e62bce](https://github.com/box/box-annotations/commit/0e62bce))
+* Fix: More accurate dialog placement for highlights (#83) ([8b768a9](https://github.com/box/box-annotations/commit/8b768a9))
+* Fix: Only reset current page highlights on selection change (#79) ([662f2ea](https://github.com/box/box-annotations/commit/662f2ea))
+* Fix: Remove fixed position of mobile header (#85) ([6ca5c01](https://github.com/box/box-annotations/commit/6ca5c01)), closes [#85](https://github.com/box/box-annotations/issues/85)
+* Fix: Render highlight comments on their own canvas (#93) ([9eeeace](https://github.com/box/box-annotations/commit/9eeeace))
+* Fix: Safety checks if no threads are registered in the draw controller (#88) ([3e54845](https://github.com/box/box-annotations/commit/3e54845))
+* Fix: set textarea.placeholder when generating dialogs (#74) ([496a545](https://github.com/box/box-annotations/commit/496a545))
+* Fix: Show the appropriate buttons in mobile create highlight dialog (#75) ([8114d0c](https://github.com/box/box-annotations/commit/8114d0c))
+* Fix: Uncaught errors in drawingModeController.handleSelection() (#87) ([e0240f6](https://github.com/box/box-annotations/commit/e0240f6))
+* Chore: Enforce Lato font for annotation dialogs (#76) ([55b25b3](https://github.com/box/box-annotations/commit/55b25b3))
+* Chore: Move threadmap entirely to mode controllers  (#71) ([00989ac](https://github.com/box/box-annotations/commit/00989ac))
+* Chore: Moving rotateAnnotations() into ImageAnnotator (#94) ([b9dd7b1](https://github.com/box/box-annotations/commit/b9dd7b1))
+* Chore: Now respect newline and symbols (#73) ([b7f52d2](https://github.com/box/box-annotations/commit/b7f52d2))
+* Update: README.md & variable names in BoxAnnotations.js (#89) ([ab62d18](https://github.com/box/box-annotations/commit/ab62d18))
+* Update: THIRD_PARTY_LICENSES (#90) ([4b0d97f](https://github.com/box/box-annotations/commit/4b0d97f))
+* Update ISSUE_TEMPLATE.md ([8806f91](https://github.com/box/box-annotations/commit/8806f91))
+* Update package.json ([418d368](https://github.com/box/box-annotations/commit/418d368))
+* Update package.json ([5ffb68d](https://github.com/box/box-annotations/commit/5ffb68d))
+
+
+
 <a name="0.7.0"></a>
 # 0.7.0 (2017-12-12)
 

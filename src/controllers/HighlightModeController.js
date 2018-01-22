@@ -35,7 +35,7 @@ class HighlightModeController extends AnnotationModeController {
                 }
                 break;
             case THREAD_EVENT.threadCleanup:
-                this.renderPage(thread.location.page);
+                this.emit(CONTROLLER_EVENT.renderPage, thread.location.page);
                 break;
             default:
         }
@@ -65,6 +65,18 @@ class HighlightModeController extends AnnotationModeController {
     enter() {
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
+    }
+
+    /**
+     * Renders annotations from memory.
+     *
+     * @inheritdoc
+     * @private
+     * @return {void}
+     */
+    render() {
+        super.render();
+        this.destroyPendingThreads();
     }
 
     /**

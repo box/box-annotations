@@ -204,7 +204,7 @@ class DocHighlightThread extends AnnotationThread {
 
         // Setup the dialog element if it has not already been created
         if (!this.dialog.element) {
-            this.dialog.setup(this.annotations);
+            this.dialog.setup(this.annotations, this.showComment);
         }
         this.dialog.mouseenterHandler();
         clearTimeout(this.hoverTimeoutHandler);
@@ -220,8 +220,11 @@ class DocHighlightThread extends AnnotationThread {
      * @return {boolean} Whether we should delay drawing highlight
      */
     onMousemove(event) {
-        // If mouse is in dialog, change state to hover or active-hover
-        if (util.isInDialog(event, this.dialog.element)) {
+        if (!this.dialog) {
+            return false;
+
+            // If mouse is in dialog, change state to hover or active-hover
+        } else if (util.isInDialog(event, this.dialog.element)) {
             // Keeps dialog open if comment is pending
             if (this.state === STATES.pending_active) {
                 return false;
@@ -290,6 +293,10 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     showDialog() {
+        if (!this.dialog) {
+            return;
+        }
+
         // Prevents the annotations dialog from being created each mousemove
         if (!this.dialog.element) {
             this.dialog.setup(this.annotations, this.showComment);
@@ -603,6 +610,32 @@ class DocHighlightThread extends AnnotationThread {
             this.pageEl = docUtil.getPageEl(this.annotatedElement, this.location.page);
         }
         return this.pageEl;
+    }
+
+    /**
+     * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
+     *
+     * @inheritdoc
+     * @private
+     * @return {void}
+     */
+    regenerateBoundary() {
+        if (!this.location || !this.location.quadPoints) {
+            return;
+        }
+
+        this.minX = Infinity;
+        this.minY = Infinity;
+        this.maxX = 0;
+        this.maxY = 0;
+
+        this.location.quadPoints.forEach((quadPoint) => {
+            const [x1, y1, x2, y2, x3, y3, x4, y4] = quadPoint;
+            this.minX = Math.min(x1, x2, x3, x4, this.minX);
+            this.maxX = Math.max(x1, x2, x3, x4, this.maxX);
+            this.minY = Math.min(y1, y2, y3, y4, this.minY);
+            this.maxY = Math.max(y1, y2, y3, y4, this.maxY);
+        });
     }
 }
 

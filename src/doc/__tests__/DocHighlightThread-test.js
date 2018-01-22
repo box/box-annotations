@@ -39,7 +39,11 @@ describe('doc/DocHighlightThread', () => {
             permissions: {
                 canAnnotate: true,
                 canViewAllAnnotations: true
-            }
+            },
+            minX: 1,
+            maxX: 10,
+            minY: 1,
+            maxY: 10
         });
         thread.dialog.localized = {
             highlightToggle: 'highlight toggle'
@@ -244,7 +248,7 @@ describe('doc/DocHighlightThread', () => {
 
             const isHighlightPending = thread.onClick({}, true);
 
-            expect(isHighlightPending).to.be.false;
+            expect(isHighlightPending).to.be.falsy;
             expect(thread.state).to.equal(STATES.inactive);
         });
 
@@ -256,7 +260,7 @@ describe('doc/DocHighlightThread', () => {
 
             const isHighlightPending = thread.onClick({}, false);
 
-            expect(isHighlightPending).to.be.true;
+            expect(isHighlightPending).to.be.truthy;
             expect(thread.reset).to.not.be.called;
             expect(thread.state).to.equal(STATES.hover);
         });
@@ -268,7 +272,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.true;
+            expect(result).to.be.truthy;
         });
 
         it('should return true if mouse event is over highlight dialog', () => {
@@ -277,7 +281,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.true;
+            expect(result).to.be.truthy;
         });
 
         it('should return false if mouse event is neither over the highlight or the dialog', () => {
@@ -286,7 +290,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.false;
+            expect(result).to.be.falsy;
         });
     });
 
@@ -314,6 +318,15 @@ describe('doc/DocHighlightThread', () => {
     });
 
     describe('onMousemove()', () => {
+        it('should return false if no dialog exists', () => {
+            thread.dialog = undefined;
+            sandbox.stub(util, 'isInDialog');
+
+            const result = thread.onMousemove({});
+            expect(result).to.be.falsy;
+            expect(util.isInDialog).to.not.be.called;
+        });
+
         it('should delay drawing highlight if mouse is hovering over a highlight dialog and not pending comment', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
             sandbox.stub(util, 'isInDialog').returns(true);
@@ -321,7 +334,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.onMousemove({});
 
-            expect(result).to.be.true;
+            expect(result).to.be.truthy;
             expect(thread.state).to.equal(STATES.hover);
         });
 
@@ -334,7 +347,7 @@ describe('doc/DocHighlightThread', () => {
             const result = thread.onMousemove({});
 
             expect(thread.activateDialog).to.not.be.called;
-            expect(result).to.be.false;
+            expect(result).to.be.falsy;
         });
 
         it('should delay drawing highlight if mouse is hovering over a highlight', () => {
@@ -347,7 +360,7 @@ describe('doc/DocHighlightThread', () => {
             const result = thread.onMousemove({});
 
             expect(thread.activateDialog).to.be.called;
-            expect(result).to.be.true;
+            expect(result).to.be.truthy;
         });
 
         it('should not delay drawing highlight if mouse is not in highlight and the state is not already inactive', () => {
@@ -359,7 +372,7 @@ describe('doc/DocHighlightThread', () => {
             const result = thread.onMousemove({});
 
             expect(thread.hoverTimeoutHandler).to.not.be.undefined;
-            expect(result).to.be.false;
+            expect(result).to.be.falsy;
         });
 
         it('should not delay drawing highlight if the state is already inactive', () => {
@@ -371,7 +384,7 @@ describe('doc/DocHighlightThread', () => {
             const result = thread.onMousemove({});
 
             assert.equal(thread.state, STATES.inactive);
-            expect(result).to.be.false;
+            expect(result).to.be.falsy;
         });
     });
 
@@ -419,10 +432,24 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
+    describe('showDialog()', () => {
+        it('should set up the dialog if it does not exist', () => {
+            thread.dialog = {
+                setup: () => {},
+                show: () => {}
+            };
+            const dialogMock = sandbox.mock(thread.dialog);
+
+            dialogMock.expects('setup').withArgs(thread.annotations, thread.showComment);
+            dialogMock.expects('show');
+            thread.showDialog();
+        });
+    });
+
     describe('createDialog()', () => {
         it('should initialize an appropriate dialog', () => {
             thread.createDialog();
-            expect(thread.dialog instanceof DocHighlightDialog).to.be.true;
+            expect(thread.dialog instanceof DocHighlightDialog).to.be.truthy;
         });
     });
 
@@ -592,6 +619,33 @@ describe('doc/DocHighlightThread', () => {
             expect(dimensionScaleStub).to.be.called;
             expect(convertStub).to.be.called;
             expect(pointInPolyStub).to.be.called;
+        });
+    });
+
+    describe('regenerateBoundary()', () => {
+        it('should do nothing if a valid location does not exist', () => {
+            thread.location = undefined;
+            thread.regenerateBoundary();
+
+            thread.location = {};
+            thread.regenerateBoundary();
+
+            expect(thread.minX).to.be.undefined;
+            expect(thread.minY).to.be.undefined;
+        });
+
+        it('should set the min/max x/y values for thread location', () => {
+            thread.location = {
+                quadPoints: [
+                    [1, 1, 1, 1, 1, 1, 1, 1],
+                    [10, 10, 10, 10, 10, 10, 10, 10]
+                ]
+            };
+            thread.regenerateBoundary();
+            expect(thread.minX).equals(1);
+            expect(thread.minY).equals(1);
+            expect(thread.maxX).equals(10);
+            expect(thread.maxY).equals(10);
         });
     });
 });

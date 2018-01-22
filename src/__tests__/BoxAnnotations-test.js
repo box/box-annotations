@@ -126,6 +126,13 @@ describe('BoxAnnotations', () => {
         it('should filter and only keep allowed types of annotations', () => {
             loader.viewerConfig = { enabledTypes: ['point', 'timestamp'] };
             expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['point']);
+
+            loader.viewerOptions = {
+                Document: {
+                    enabledTypes: ['point', 'timestamp']
+                }
+            };
+            expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['point']);
         });
 
         it('should respect default annotators if none provided', () => {

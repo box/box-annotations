@@ -975,38 +975,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('checkThread()', () => {
-        beforeEach(() => {
-            stubs.thread = { onMousemove: () => {} };
-            stubs.threadMock = sandbox.mock(stubs.thread);
-            annotator.hoverActive = false;
-            annotator.delayThreads = [];
-            annotator.mouseMoveEvent = {};
-        });
-
-        it('should do nothing if mouseMoveEvent does not exist, or thread is pending ', () => {
-            stubs.threadMock.expects('onMousemove').never();
-
-            annotator.mouseMoveEvent = undefined;
-            annotator.checkThread(stubs.thread);
-
-            annotator.mouseMoveEvent = {};
-            stubs.thread.state = 'pending';
-            annotator.checkThread(stubs.thread);
-
-            expect(annotator.hoverActive).to.be.falsy;
-            expect(annotator.delayThreads.length).equals(0);
-        });
-
-        it('should determine if mouse is hovering over a highlightType', () => {
-            stubs.threadMock.expects('onMousemove').returns(true);
-            annotator.checkThread(stubs.thread);
-
-            expect(annotator.hoverActive).to.be.truthy;
-            expect(annotator.delayThreads.length).equals(1);
-        });
-    });
-
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             stubs.create = sandbox.stub(annotator, 'highlightCreateHandler');
@@ -1277,17 +1245,18 @@ describe('doc/DocAnnotator', () => {
             stubs.thread = { show: () => {} };
             stubs.threadMock = sandbox.mock(stubs.thread);
             stubs.getPageInfo = stubs.getPageInfo.returns({ pageEl: {}, page: 1 });
+            sandbox.stub(annotator, 'clickThread');
 
             annotator.modeControllers = {
                 'highlight': {
-                    applyActionToThreads: sandbox.stub()
+                    getIntersectingThreads: sandbox.stub()
                 },
                 'highlight-comment': {
-                    applyActionToThreads: sandbox.stub()
+                    getIntersectingThreads: sandbox.stub()
                 }
             };
-            stubs.highlightApply = annotator.modeControllers['highlight'].applyActionToThreads;
-            stubs.commentApply = annotator.modeControllers['highlight-comment'].applyActionToThreads;
+            stubs.highlightApply = annotator.modeControllers['highlight'].getIntersectingThreads;
+            stubs.commentApply = annotator.modeControllers['highlight-comment'].getIntersectingThreads;
         });
 
         it('should find the active plain highlight', () => {
@@ -1488,6 +1457,7 @@ describe('doc/DocAnnotator', () => {
                 isVisible: true,
                 hide: sandbox.stub(),
             };
+            sandbox.stub(annotator, 'renderPage');
         });
 
         afterEach(() => {
@@ -1519,6 +1489,11 @@ describe('doc/DocAnnotator', () => {
             annotator.createHighlightDialog.isVisible = false
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
+        });
+
+        it('should render the specified page on annotationsrenderpage', () => {
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.renderPage });
+            expect(annotator.renderPage).to.be.called;
         });
     });
 });

@@ -22,7 +22,8 @@ describe('controllers/HighlightModeController', () => {
         stubs.thread = {
             annotations: {},
             location: { page: 1 },
-            show: () => {}
+            show: () => {},
+            addListener: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
     });
@@ -50,12 +51,11 @@ describe('controllers/HighlightModeController', () => {
             expect(controller.renderPage).to.be.calledWith(1);
         });
 
-        it('should render page on threadCleanup', () => {
+        it('should emit annotationsrenderpage with page number on threadCleanup', () => {
             sandbox.stub(controller, 'unregisterThread');
-            sandbox.stub(controller, 'renderPage');
             controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).to.be.called;
-            expect(controller.renderPage).to.be.calledWith(1);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.renderPage, stubs.thread.location.page);
         });
     });
 
@@ -91,6 +91,26 @@ describe('controllers/HighlightModeController', () => {
         });
     });
 
+    describe('render()', () => {
+        beforeEach(() => {
+            sandbox.stub(controller, 'renderPage');
+            sandbox.stub(controller, 'destroyPendingThreads');
+        });
+
+        it('should do nothing if no threads exist', () => {
+            controller.render();
+            expect(controller.renderPage).to.not.be.called;
+            expect(controller.destroyPendingThreads).to.be.called;
+        });
+
+        it('should render the annotations on every page', () => {
+            controller.threads = { 1: {}, 2: {} };
+            controller.render();
+            expect(controller.renderPage).to.be.calledTwice;
+            expect(controller.destroyPendingThreads).to.be.called;
+        });
+    });
+
     describe('renderPage()', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
@@ -106,9 +126,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.threads = {
-                1: { '123abc': stubs.thread }
-            };
+            controller.registerThread(stubs.thread);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(util.clearCanvas).to.be.called;
