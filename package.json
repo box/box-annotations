@@ -9,6 +9,7 @@
     "url": "git@github.com:box/box-annotations.git"
   },
   "dependencies": {
+    "box-react-ui": "^21.0.3",
     "rangy": "^1.3.0",
     "rbush": "^2.0.1"
   },
