@@ -120,7 +120,9 @@ class BoxAnnotations {
             // Sets supported annotation types based on passed in options
             const options = this.viewerOptions[annotatorConfig.NAME];
             if (options.enabledTypes) {
-                return options.enabledTypes;
+                return options.enabledTypes.filter((type) => {
+                    return annotatorConfig.TYPE.some((allowed) => allowed === type);
+                });
             }
         } else if (!this.viewerConfig) {
             // Sets supported annotation types to viewer-specific defaults
