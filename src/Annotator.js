@@ -18,6 +18,8 @@ import {
     CONTROLLER_EVENT
 } from './constants';
 
+const MOBILE_DIALOG_CLOSE = 'mobile-dialog-close';
+
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -277,13 +279,14 @@ class Annotator extends EventEmitter {
         this.mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_HIDDEN);
         this.mobileDialogEl.id = ID_MOBILE_ANNOTATION_DIALOG;
-
-        this.mobileDialogEl.innerHTML = `
-            <div class="${CLASS_MOBILE_DIALOG_HEADER}">
-                <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
-            </div>`.trim();
-
         this.container.appendChild(this.mobileDialogEl);
+
+        const mobileHeader = document.createElement('div');
+        mobileHeader.classList.add(CLASS_MOBILE_DIALOG_HEADER);
+        this.mobileDialogEl.appendChild(mobileHeader);
+
+        const closeBtn = util.generateBtn([CLASS_DIALOG_CLOSE], MOBILE_DIALOG_CLOSE, ICON_CLOSE, MOBILE_DIALOG_CLOSE);
+        mobileHeader.appendChild(closeBtn);
     }
 
     /**
@@ -296,12 +299,9 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        // Reset the mobile dialog
+        // Resets the mobile dialog
         util.hideElement(this.mobileDialogEl);
-        this.mobileDialogEl.innerHTML = `
-            <div class="${CLASS_MOBILE_DIALOG_HEADER}">
-                <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
-            </div>`.trim();
+        this.mobileDialogEl.removeChild(this.mobileDialogEl.lastChild);
     }
 
     /**
