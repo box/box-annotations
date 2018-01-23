@@ -146,10 +146,7 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            if (this.isMobile) {
-                if (!event.targetTouches || event.targetTouches.length === 0) {
-                    return location;
-                }
+            if (this.isMobile && event.targetTouches && event.targetTouches.length > 0) {
                 clientEvent = event.targetTouches[0];
             }
 
@@ -908,6 +905,8 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
+        } else {
+            this.resetMobileDialog();
         }
     }
 

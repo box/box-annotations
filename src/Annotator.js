@@ -252,6 +252,15 @@ class Annotator extends EventEmitter {
 
             controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
         });
+
+        const pointController = this.modeControllers[TYPES.point];
+        if (pointController && this.isMobile) {
+            pointController.setupSharedDialog(this.container, {
+                isMobile: this.isMobile,
+                hasTouch: this.hasTouch,
+                localized: this.localized
+            });
+        }
     }
 
     /**
@@ -274,16 +283,24 @@ class Annotator extends EventEmitter {
                 <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
             </div>`.trim();
 
-        this.container.appendChild(this.mobileDialogEl);
-
-        const pointController = this.modeControllers[TYPES.point];
-        if (pointController) {
-            pointController.setupSharedDialog(this.container, {
-                isMobile: this.isMobile,
-                hasTouch: this.hasTouch,
-                localized: this.localized
-            });
+        // Only append the mobile dialog once
+        if (!this.container.querySelector(`.${CLASS_MOBILE_ANNOTATION_DIALOG}`)) {
+            this.container.appendChild(this.mobileDialogEl);
         }
+    }
+
+    /**
+     * Hides and resets the shared mobile dialog.
+     *
+     * @return {void}
+     */
+    resetMobileDialog() {
+        if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
+            return;
+        }
+
+        // Set up new mobile dialog
+        this.setupMobileDialog();
     }
 
     /**
