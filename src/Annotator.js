@@ -283,10 +283,7 @@ class Annotator extends EventEmitter {
                 <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
             </div>`.trim();
 
-        // Only append the mobile dialog once
-        if (!this.container.querySelector(`.${CLASS_MOBILE_ANNOTATION_DIALOG}`)) {
-            this.container.appendChild(this.mobileDialogEl);
-        }
+        this.container.appendChild(this.mobileDialogEl);
     }
 
     /**
@@ -299,8 +296,12 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        // Set up new mobile dialog
-        this.setupMobileDialog();
+        // Reset the mobile dialog
+        util.hideElement(this.mobileDialogEl);
+        this.mobileDialogEl.innerHTML = `
+            <div class="${CLASS_MOBILE_DIALOG_HEADER}">
+                <button class="${CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
+            </div>`.trim();
     }
 
     /**

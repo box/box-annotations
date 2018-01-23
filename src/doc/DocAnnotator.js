@@ -396,7 +396,7 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
         }
 
-        if (this.hasTouch && this.isMobile && this.drawEnabled) {
+        if (this.hasTouch && this.drawEnabled) {
             this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
         } else {
             if (this.drawEnabled) {
@@ -404,7 +404,7 @@ class DocAnnotator extends Annotator {
             }
 
             // Desktop-only highlight listeners
-            if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
+            if (!this.isMobile && (this.plainHighlightEnabled || this.commentHighlightEnabled)) {
                 this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
             }
         }
