@@ -41,7 +41,6 @@ class ImageAnnotator extends Annotator {
             if (!event.targetTouches || event.targetTouches.length === 0) {
                 return location;
             }
-
             clientEvent = event.targetTouches[0];
         }
 

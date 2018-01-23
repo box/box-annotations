@@ -465,12 +465,12 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     resetMobileDialog() {
-        if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
+        if (!this.mobileDialogEl) {
             return;
         }
 
-        super.resetMobileDialog();
         this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
+        super.resetMobileDialog();
     }
 
     //--------------------------------------------------------------------------
@@ -920,7 +920,7 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
-        } else {
+        } else if (this.isMobile) {
             this.resetMobileDialog();
         }
     }

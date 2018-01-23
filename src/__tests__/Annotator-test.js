@@ -39,7 +39,8 @@ describe('Annotator', () => {
             isEnabled: () => {},
             getButton: () => {},
             enter: () => {},
-            exit: () => {}
+            exit: () => {},
+            setupSharedDialog: () => {}
         };
         stubs.controllerMock = sandbox.mock(stubs.controller);
 
@@ -158,23 +159,39 @@ describe('Annotator', () => {
             };
             annotator.setupMobileDialog();
             expect(annotator.container.appendChild).to.be.called;
+            expect(annotator.mobileDialogEl.children.length).equals(1);
+        });
+    });
+
+    describe('resetMobileDialog()', () => {
+        beforeEach(() => {
+            sandbox.stub(util, 'hideElement');
+            sandbox.stub(util, 'showElement');
         });
 
-        it('should setup shared point dialog in the point controller', () => {
-            annotator.container = {
-                appendChild: sandbox.mock()
-            };
-            annotator.modeControllers = {
-                'point': { setupSharedDialog: sandbox.stub() }
-            };
-            const pointController = annotator.modeControllers['point'];
+        it('should do nothing if the mobile dialog does not exist or is hidden', () => {
+            annotator.resetMobileDialog();
+            expect(util.hideElement).to.not.be.called;
 
-            annotator.setupMobileDialog();
-            expect(pointController.setupSharedDialog).to.be.calledWith(annotator.container, {
-                isMobile: annotator.isMobile,
-                hasTouch: annotator.hasTouch,
-                localized: annotator.localized
-            });
+            annotator.mobileDialogEl = {
+                classList: {
+                    contains: sandbox.stub().returns(true)
+                },
+                removeChild: sandbox.stub(),
+                lastChild: {}
+            };
+            annotator.resetMobileDialog();
+            expect(util.hideElement).to.not.be.called;
+        });
+
+        it('should generate mobile annotations dialog and append to container', () => {
+            annotator.mobileDialogEl = document.createElement('div');
+            annotator.mobileDialogEl.appendChild(document.createElement('div'));
+
+            annotator.resetMobileDialog();
+            expect(util.hideElement).to.be.called;
+            expect(util.showElement).to.be.called;
+            expect(annotator.mobileDialogEl.children.length).equals(0);
         });
     });
 
@@ -230,6 +247,19 @@ describe('Annotator', () => {
 
             stubs.controllerMock.expects('init');
             stubs.controllerMock.expects('addListener').withArgs('annotationcontrollerevent', sinon.match.func);
+            annotator.setupControllers();
+        });
+
+        it('should setup shared point dialog in the point controller', () => {
+            annotator.modeControllers = { 'point': stubs.controller };
+            annotator.isMobile = true;
+
+            stubs.controllerMock.expects('init');
+            stubs.controllerMock.expects('setupSharedDialog').withArgs(annotator.container, {
+                isMobile: annotator.isMobile,
+                hasTouch: annotator.hasTouch,
+                localized: annotator.localized
+            });
             annotator.setupControllers();
         });
     });
