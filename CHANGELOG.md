@@ -1,3 +1,13 @@
+<a name="0.10.0"></a>
+# 0.10.0 (2018-01-23)
+
+* Fix: Filter out illegal types from viewer options (#101) ([ad66486](https://github.com/box/box-annotations/commit/ad66486))
+* Fix: Mobile cleanup (#102) ([c599aea](https://github.com/box/box-annotations/commit/c599aea))
+* Chore: Use box-react-ui for base CSS styles (#92) ([1644d5b](https://github.com/box/box-annotations/commit/1644d5b))
+* New: Store all page highlight threads as an rbush tree (#100) ([86d0468](https://github.com/box/box-annotations/commit/86d0468))
+
+
+
 <a name="0.9.0"></a>
 # 0.9.0 (2018-01-11)
 
