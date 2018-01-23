@@ -22,6 +22,7 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW,
+    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
@@ -146,10 +147,7 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            if (this.isMobile) {
-                if (!event.targetTouches || event.targetTouches.length === 0) {
-                    return location;
-                }
+            if (this.hasTouch && event.targetTouches && event.targetTouches.length > 0) {
                 clientEvent = event.targetTouches[0];
             }
 
@@ -399,7 +397,7 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
         }
 
-        if (this.hasTouch && this.isMobile && this.drawEnabled) {
+        if (this.hasTouch && this.drawEnabled) {
             this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
         } else {
             if (this.drawEnabled) {
@@ -407,7 +405,7 @@ class DocAnnotator extends Annotator {
             }
 
             // Desktop-only highlight listeners
-            if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
+            if (!this.isMobile && (this.plainHighlightEnabled || this.commentHighlightEnabled)) {
                 this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
             }
         }
@@ -459,6 +457,20 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.removeEventListener('mousemove', this.highlightMousemoveHandler);
             this.highlightMousemoveHandler = null;
         }
+    }
+
+    /**
+     * Hides and resets the shared mobile dialog.
+     *
+     * @return {void}
+     */
+    resetMobileDialog() {
+        if (!this.mobileDialogEl) {
+            return;
+        }
+
+        this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
+        super.resetMobileDialog();
     }
 
     //--------------------------------------------------------------------------
@@ -908,6 +920,8 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
+        } else if (this.isMobile) {
+            this.resetMobileDialog();
         }
     }
 

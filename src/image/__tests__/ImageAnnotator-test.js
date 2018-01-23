@@ -73,7 +73,7 @@ describe('image/ImageAnnotator', () => {
         };
 
         beforeEach(() => {
-            annotator.isMobile = false;
+            annotator.hasTouch = false;
             imageEl = annotator.annotatedElement.querySelector('img');
             event = {
                 targetTouches: [{
@@ -95,17 +95,17 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should not return a location if no touch event is available and user is on a mobile device', () => {
-            annotator.isMobile = true;
+            annotator.hasTouch = true;
             expect(annotator.getLocationFromEvent({ targetTouches: [] })).to.be.null;
         });
 
         it('should replace event with mobile touch event if user is on a mobile device', () => {
-            annotator.isMobile = true;
+            annotator.hasTouch = true;
             annotator.getLocationFromEvent(event);
         });
 
         it('should not return a location if there are no touch event and the user is on a mobile device', () => {
-            annotator.isMobile = true;
+            annotator.hasTouch = true;
             const location = annotator.getLocationFromEvent({
                 target: {
                     nodeName: 'not-annotated'

@@ -37,7 +37,7 @@ class ImageAnnotator extends Annotator {
         let location = null;
 
         let clientEvent = event;
-        if (this.isMobile) {
+        if (this.hasTouch) {
             if (!event.targetTouches || event.targetTouches.length === 0) {
                 return location;
             }

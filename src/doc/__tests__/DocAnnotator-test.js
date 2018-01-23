@@ -16,6 +16,7 @@ import {
     TYPES,
     CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
+    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     THREAD_EVENT,
     CONTROLLER_EVENT,
@@ -168,13 +169,8 @@ describe('doc/DocAnnotator', () => {
             stubs.restoreSel = sandbox.stub(rangy, 'restoreSelection');
         });
 
-        it('should not return a location if no touch event is available and user is on a mobile device', () => {
-            annotator.isMobile = true;
-            expect(annotator.getLocationFromEvent({ targetTouches: [] }, TYPES.point)).to.be.null;
-        });
-
-        it('should replace event with mobile touch event if user is on a mobile device', () => {
-            annotator.isMobile = true;
+        it('should replace event with mobile touch event if user is on a touch enabled device', () => {
+            annotator.hasTouch = true;
             stubs.event = {
                 targetTouches: [{
                     clientX: x,
@@ -185,8 +181,8 @@ describe('doc/DocAnnotator', () => {
             annotator.getLocationFromEvent(stubs.event, TYPES.point);
         });
 
-        it('should not return a location if there are no touch event and the user is on a mobile device', () => {
-            annotator.isMobile = true;
+        it('should not return a location if there are no touch event and the user is on a touch enabled device', () => {
+            annotator.hasTouch = true;
             expect(annotator.getLocationFromEvent(stubs.event, TYPES.point)).to.be.null;
 
             stubs.event = {
@@ -789,6 +785,32 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
+    describe('resetMobileDialog()', () => {
+        beforeEach(() => {
+            sandbox.stub(util, 'hideElement');
+            sandbox.stub(util, 'showElement');
+        });
+
+        it('should do nothing if the mobile dialog does not exist', () => {
+            annotator.resetMobileDialog();
+            expect(util.hideElement).to.not.be.called;
+        });
+
+        it('should remove the plain highlight dialog class on reset', () => {
+            annotator.mobileDialogEl = {
+                classList: {
+                    contains: sandbox.stub().returns(true),
+                    remove: sandbox.stub()
+                },
+                removeChild: sandbox.stub(),
+                lastChild: {}
+            };
+            annotator.resetMobileDialog();
+            expect(util.hideElement).to.not.be.called;
+            expect(annotator.mobileDialogEl.classList.remove).to.be.calledWith(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
+        });
+    });
+
     describe('highlightCurrentSelection()', () => {
         beforeEach(() => {
             annotator.highlighter = {
@@ -1246,6 +1268,7 @@ describe('doc/DocAnnotator', () => {
             stubs.threadMock = sandbox.mock(stubs.thread);
             stubs.getPageInfo = stubs.getPageInfo.returns({ pageEl: {}, page: 1 });
             sandbox.stub(annotator, 'clickThread');
+            sandbox.stub(annotator, 'resetMobileDialog');
 
             annotator.modeControllers = {
                 'highlight': {
@@ -1282,6 +1305,21 @@ describe('doc/DocAnnotator', () => {
             });
             stubs.threadMock.expects('show');
             annotator.highlightClickHandler(stubs.event);
+        });
+
+        it('should reset the mobile dialog if no active thread exists', () => {
+            annotator.plainHighlightEnabled = false;
+            annotator.commentHighlightEnabled = false;
+            stubs.threadMock.expects('show').never();
+
+            annotator.isMobile = false;
+            annotator.highlightClickHandler(stubs.event);
+            expect(annotator.resetMobileDialog).to.not.be.called;
+
+            annotator.plainHighlightEnabled = false;
+            annotator.isMobile = true;
+            annotator.highlightClickHandler(stubs.event);
+            expect(annotator.resetMobileDialog).to.be.called;
         });
     });
 
