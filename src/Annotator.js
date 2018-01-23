@@ -301,6 +301,7 @@ class Annotator extends EventEmitter {
 
         // Resets the mobile dialog
         util.hideElement(this.mobileDialogEl);
+        util.showElement(`.${CLASS_MOBILE_DIALOG_HEADER}`);
         this.mobileDialogEl.removeChild(this.mobileDialogEl.lastChild);
     }
 

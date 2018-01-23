@@ -22,6 +22,7 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW,
+    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
@@ -146,7 +147,7 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            if (this.isMobile && event.targetTouches && event.targetTouches.length > 0) {
+            if (this.hasTouch && event.targetTouches && event.targetTouches.length > 0) {
                 clientEvent = event.targetTouches[0];
             }
 
@@ -456,6 +457,20 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.removeEventListener('mousemove', this.highlightMousemoveHandler);
             this.highlightMousemoveHandler = null;
         }
+    }
+
+    /**
+     * Hides and resets the shared mobile dialog.
+     *
+     * @return {void}
+     */
+    resetMobileDialog() {
+        if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
+            return;
+        }
+
+        super.resetMobileDialog();
+        this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
     }
 
     //--------------------------------------------------------------------------
