@@ -527,7 +527,7 @@ class DocHighlightThread extends AnnotationThread {
                 context.fill();
 
                 // Update highlight icon hover to appropriate color
-                if (this.dialog.element) {
+                if (this.dialog && this.dialog.element) {
                     this.dialog.toggleHighlightIcon(fillStyle);
                 }
             }

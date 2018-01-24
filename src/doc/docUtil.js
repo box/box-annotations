@@ -67,6 +67,24 @@ export function hasActiveDialog(annotatedEl) {
     return !!(commentsDialogEl || highlightDialogEl);
 }
 
+/**
+ * Checks the current selection has changed
+ *
+ * @private
+ * @param {Selection} selection current selection rnage
+ * @param {Selection} prevSelection previous selection change
+ * @return {boolean} Whether or not the selection has changed
+ */
+export function hasSelectionChanged(selection, prevSelection) {
+    if (!selection || selection.rangeCount < 1 || !prevSelection) {
+        return false;
+    }
+
+    const currentRange = selection.getRangeAt(selection.rangeCount - 1);
+    const prevRange = prevSelection.getRangeAt(selection.rangeCount - 1);
+    return currentRange.compareBoundaryPoints(Range.START_TO_END, prevRange);
+}
+
 //------------------------------------------------------------------------------
 // Highlight Utils
 //------------------------------------------------------------------------------

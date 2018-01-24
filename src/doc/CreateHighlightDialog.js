@@ -1,6 +1,7 @@
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
-import { generateBtn, repositionCaret } from '../util';
+import { generateBtn, repositionCaret, getPageInfo } from '../util';
+import { getDialogCoordsFromRange } from '../doc/docUtil';
 import {
     CREATE_EVENT,
     CLASS_ANNOTATION_CARET,
@@ -14,7 +15,8 @@ import {
     SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
     CLASS_MOBILE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_BUTTON_PLAIN
+    CLASS_BUTTON_PLAIN,
+    PAGE_PADDING_TOP
 } from '../constants';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
@@ -100,16 +102,48 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
      * Show the dialog. Adds to the parent container if it isn't already there.
      *
      * @public
-     * @param {HTMLElement} [newParentEl] - The new parent container to nest this in.
+     * @param {HTMLElement} newParentEl The new parent container to nest this in.
+     * @param {HTMLElement} selection Current text selection
      * @return {void}
      */
-    show(newParentEl) {
-        super.show(newParentEl);
+    show(newParentEl, selection) {
+        if (!selection) {
+            return;
+        }
+
+        // Select page of first node selected
+        const pageInfo = getPageInfo(selection.anchorNode);
+        if (!pageInfo.pageEl) {
+            return;
+        }
+
+        const dialogParentEl = this.isMobile ? newParentEl : pageInfo.pageEl;
+        super.show(dialogParentEl);
+
+        if (!this.isMobile) {
+            this.setPosition(selection);
+        }
 
         // Add to parent if it hasn't been added already
         if (!this.parentEl.querySelector(`.${CLASS_CREATE_DIALOG}`)) {
             this.parentEl.appendChild(this.containerEl);
         }
+    }
+
+    setPosition(selection) {
+        const lastRange = selection.getRangeAt(selection.rangeCount - 1);
+        const coords = getDialogCoordsFromRange(lastRange);
+
+        // Select page of first node selected
+        const pageInfo = getPageInfo(selection.anchorNode);
+        if (!pageInfo.pageEl) {
+            return;
+        }
+
+        const pageDimensions = pageInfo.pageEl.getBoundingClientRect();
+        const pageLeft = pageDimensions.left;
+        const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
+        super.setPosition(coords.x - pageLeft, coords.y - pageTop);
     }
 
     /**

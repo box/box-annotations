@@ -279,15 +279,15 @@ class CommentBox extends EventEmitter {
 
         // Add event listeners
         if (this.hasTouch) {
-            this.textAreaEl.addEventListener('focus', this.focus);
             containerEl.addEventListener('touchend', this.preventDefaultAndPropagation.bind(this));
             this.cancelEl.addEventListener('touchend', this.onCancel);
             this.postEl.addEventListener('touchend', this.onPost);
-        } else {
-            this.textAreaEl.addEventListener('focus', this.focus);
-            this.cancelEl.addEventListener('click', this.onCancel);
-            this.postEl.addEventListener('click', this.onPost);
         }
+
+        this.textAreaEl.addEventListener('focus', this.focus);
+        containerEl.addEventListener('click', this.preventDefaultAndPropagation.bind(this));
+        this.cancelEl.addEventListener('click', this.onCancel);
+        this.postEl.addEventListener('click', this.onPost);
 
         return containerEl;
     }
