@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import shell from './../shell.html';
+import shell from './drawingShell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
 import * as util from '../util';
 import {
@@ -9,13 +9,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    SELECTOR_ANNOTATION_DRAWING_HEADER,
-    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
-    CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ACTIVE,
-    CLASS_ANNOTATION_MODE,
-    CONTROLLER_EVENT
+    CLASS_ANNOTATION_LAYER_DRAW
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -58,41 +52,6 @@ class DrawingModeController extends AnnotationModeController {
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
 
         this.handleSelection = this.handleSelection.bind(this);
-    }
-
-    /**
-     * Disables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    exit() {
-        this.emit(CONTROLLER_EVENT.exit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
-
-        this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
-        this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-
-        this.buttonEl.classList.remove(CLASS_ACTIVE);
-
-        this.unbindListeners(); // Disable mode
-        this.emit(CONTROLLER_EVENT.bindDOMListeners);
-    }
-
-    /**
-     * Enables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    enter() {
-        this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        this.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-
-        this.buttonEl.classList.add(CLASS_ACTIVE);
-
-        this.emit(CONTROLLER_EVENT.enter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
-        this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
-        this.bindListeners(); // Enable mode
     }
 
     /**

@@ -11,7 +11,9 @@ import {
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED,
-    CLASS_INVALID_INPUT
+    CLASS_INVALID_INPUT,
+    CLASS_ANNOTATION_DIALOG,
+    CLASS_BOX_PREVIEW_HEADER
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -28,6 +30,26 @@ const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 //------------------------------------------------------------------------------
 // DOM Utils
 //------------------------------------------------------------------------------
+
+/**
+ * Replaces the currently active header with a specified header
+ *
+ * @public
+ * @param {HTMLElement} containerEl Preview container
+ * @param {string} replacementHeader Class name of new header
+ * @return {void}
+ */
+export function replaceHeader(containerEl, replacementHeader) {
+    // First hide all possible headers
+    const headers = containerEl.querySelectorAll(`.${CLASS_BOX_PREVIEW_HEADER}`);
+    [].forEach.call(headers, (header) => {
+        header.classList.add(CLASS_HIDDEN);
+    });
+
+    // Show the specified header
+    const headerToShow = containerEl.querySelector(replacementHeader);
+    headerToShow.classList.remove(CLASS_HIDDEN);
+}
 
 /**
  * Finds the closest ancestor DOM element with the specified class.
@@ -218,7 +240,7 @@ export function resetTextarea(element, clearText) {
  */
 export function isInDialog(event, dialogEl) {
     if (!dialogEl) {
-        return false;
+        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
     }
 
     // DOM coordinates with respect to the page

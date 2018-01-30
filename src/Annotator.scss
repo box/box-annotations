@@ -1,16 +1,17 @@
 @import 'common';
 
-.bp-annotate-draw-background {
+.bp-annotate-mode-background {
     background-color: $fours;
 }
 
-.bp-annotate-draw-header,
-.bp-header.bp-annotate-draw-header {
+.bp-annotate-mode-header,
+.bp-header.bp-annotate-mode-header {
     background-color: $twos;
     border: none;
     position: relative;
 }
 
+.bp-header button.bp-btn-annotate-point-exit,
 .bp-header button.bp-btn-annotate-draw-cancel {
     background-color: $twos;
     border: solid $off-white 1px;
@@ -30,6 +31,7 @@
     }
 }
 
+.bp-container .bp-annotate-point-post-cancel-container,
 .bp-container .bp-annotate-draw-post-cancel-container {
     margin-right: 20px;
     position: absolute;

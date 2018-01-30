@@ -8,7 +8,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
+    CLASS_ANNNOTATION_MODE_BACKGROUND,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
@@ -77,7 +77,7 @@ describe('controllers/DrawingModeController', () => {
             // Set up draw annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-            controller.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+            controller.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
 
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
