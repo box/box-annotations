@@ -40,6 +40,11 @@ const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
  * @return {void}
  */
 export function replaceHeader(containerEl, replacementHeader) {
+    const headerToShow = containerEl.querySelector(replacementHeader);
+    if (!headerToShow) {
+        return;
+    }
+
     // First hide all possible headers
     const headers = containerEl.querySelectorAll(`.${CLASS_BOX_PREVIEW_HEADER}`);
     [].forEach.call(headers, (header) => {
@@ -47,7 +52,6 @@ export function replaceHeader(containerEl, replacementHeader) {
     });
 
     // Show the specified header
-    const headerToShow = containerEl.querySelector(replacementHeader);
     headerToShow.classList.remove(CLASS_HIDDEN);
 }
 
