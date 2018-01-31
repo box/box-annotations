@@ -209,7 +209,7 @@ push_new_release() {
         echo "----------------------------------------------------"
         echo "Error in update_changelog!"
         echo "----------------------------------------------------"
-        exit 1
+        return 1
     fi
 
     # Update readme
@@ -217,7 +217,7 @@ push_new_release() {
         echo "----------------------------------------------------"
         echo "Error in update_readme!"
         echo "----------------------------------------------------"
-        exit 1
+        return 1
     fi
 
     # Push to github
@@ -225,7 +225,7 @@ push_new_release() {
         echo "----------------------------------------------------"
         echo "Error in push_to_github!"
         echo "----------------------------------------------------"
-        exit 1
+        return 1
     fi
 
     # Push GitHub release
