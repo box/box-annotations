@@ -1026,6 +1026,13 @@ class DocAnnotator extends Annotator {
             case CONTROLLER_EVENT.renderPage:
                 this.renderPage(data.data);
                 break;
+            case CONTROLLER_EVENT.unregister:
+                // Removes recently deleted thread from threads requiring a redraw
+                this.hoverThreads =
+                    this.hoverThreads.filter((thread) => {
+                        return thread.threadID !== data.data.threadID;
+                    }) || [];
+                break;
             default:
         }
         super.handleControllerEvents(data);
