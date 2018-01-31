@@ -1,3 +1,10 @@
+<a name="0.11.1"></a>
+## 0.11.1 (2018-01-31)
+
+* Fix: Do not redraw deleted highlight threads (#107) ([aa08cd1](https://github.com/box/box-annotations/commit/aa08cd1))
+
+
+
 <a name="0.11.0"></a>
 # 0.11.0 (2018-01-31)
 
