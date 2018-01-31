@@ -668,11 +668,11 @@ class Annotator extends EventEmitter {
                 this.toggleAnnotationMode(data.mode);
                 break;
             case CONTROLLER_EVENT.enter:
-                this.emit(data.event, data.data);
+                this.emit(data.event, { mode: data.mode });
                 this.unbindDOMListeners();
                 break;
             case CONTROLLER_EVENT.exit:
-                this.emit(data.event, data.data);
+                this.emit(data.event, { mode: data.mode });
                 this.bindDOMListeners();
                 break;
             case CONTROLLER_EVENT.createThread:

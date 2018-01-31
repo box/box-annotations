@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import PointModeController from '../PointModeController';
+import AnnotationModeController from '../AnnotationModeController';
 import CreateAnnotationDialog from '../../CreateAnnotationDialog';
 import * as util from '../../util';
 import {
@@ -10,7 +11,8 @@ import {
     THREAD_EVENT,
     STATES,
     CONTROLLER_EVENT,
-    CREATE_EVENT
+    CREATE_EVENT,
+    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
 } from '../../constants';
 
 let controller;
@@ -20,6 +22,7 @@ const sandbox = sinon.sandbox.create();
 describe('controllers/PointModeController', () => {
     beforeEach(() => {
         controller = new PointModeController();
+        controller.container = document;
         stubs.thread = {
             show: () => {},
             getThreadEventData: () => {},
@@ -42,7 +45,26 @@ describe('controllers/PointModeController', () => {
         controller = null;
     });
 
-    describe('setupSharedDialog', () => {
+    describe('init()', () => {
+        beforeEach(() => {
+            Object.defineProperty(AnnotationModeController.prototype, 'init', { value: sandbox.stub() });
+            sandbox.stub(controller, 'getButton');
+            sandbox.stub(controller, 'setupHeader');
+        });
+
+        it('should get the mode exit button and initialize the controller', () => {
+            controller.init({ options: { header: 'none' } });
+            expect(controller.setupHeader).to.not.be.called;
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+        });
+
+        it('should set up the point annotations header if using the preview header', () => {
+            controller.init({ options: { header: 'light' } });
+            expect(controller.setupHeader).to.be.called;
+        });
+    });
+
+    describe('setupSharedDialog()', () => {
         it('should create a shared annotation dialog', () => {
             const options = {
                 isMobile: true,
@@ -108,9 +130,72 @@ describe('controllers/PointModeController', () => {
         it('should successfully contain mode handlers', () => {
             controller.postButtonEl = 'not undefined';
             controller.cancelButtonEl = 'definitely not undefined';
+            controller.exitButtonEl = 'also definitely not undefined';
 
             controller.setupHandlers();
-            expect(controller.handlers.length).to.equal(3);
+            expect(controller.handlers.length).to.equal(4);
+        });
+    });
+
+    describe('exit()', () => {
+        beforeEach(() => {
+            sandbox.stub(controller, 'destroyPendingThreads');
+            sandbox.stub(controller, 'unbindListeners');
+
+            // Set up annotation mode
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+
+            controller.buttonEl = document.createElement('button');
+            controller.buttonEl.classList.add(CLASS_ACTIVE);
+        });
+
+        it('should hide the createDialog if it exists', () => {
+            controller.createDialog = {
+                hide: () => {}
+            };
+            const createMock = sandbox.mock(controller.createDialog);
+            createMock.expects('hide');
+            controller.exit();
+        });
+
+        it('should exit annotation mode', () => {
+            controller.exit();
+            expect(controller.destroyPendingThreads).to.be.called;
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
+            expect(controller.unbindListeners).to.be.called;
+            expect(controller.hadPendingThreads).to.be.falsy;
+        });
+
+        it('should deactive mode button if available', () => {
+            controller.buttonEl = document.createElement('button');
+            controller.buttonEl.classList.add(CLASS_ACTIVE);
+            controller.exit();
+            expect(controller.buttonEl).to.not.have.class(CLASS_ACTIVE);
+        });
+    });
+
+    describe('enter()', () => {
+        beforeEach(() => {
+            sandbox.stub(controller, 'bindListeners');
+
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+
+            controller.buttonEl = document.createElement('button');
+            controller.buttonEl.classList.add(CLASS_ACTIVE);
+        });
+
+        it('should enter annotation mode', () => {
+            controller.enter();
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter);
+            expect(controller.bindListeners).to.be.called;
+        });
+
+        it('should activate mode button if available', () => {
+            controller.buttonEl = document.createElement('button');
+            controller.enter();
+            expect(controller.buttonEl).to.have.class(CLASS_ACTIVE);
         });
     });
 
@@ -127,6 +212,7 @@ describe('controllers/PointModeController', () => {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
             };
+            stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
         });
 
         afterEach(() => {
@@ -134,15 +220,10 @@ describe('controllers/PointModeController', () => {
             controller.container = document;
         });
 
-        it('should not do anything if there are pending threads', () => {
-            stubs.destroy.returns(true);
-            stubs.annotatorMock.expects('createAnnotationThread').never();
-            stubs.annotatorMock.expects('getLocationFromEvent').never();
-            stubs.threadMock.expects('show').never();
-
+        it('should not destroy the pending thread if click was in the dialog', () => {
+            stubs.isInDialog.returns(true);
             controller.pointClickHandler(event);
-            expect(controller.registerThread).to.not.be.called;
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.toggleMode);
+            expect(stubs.destroy).to.not.be.called;
         });
 
         it('should not do anything if thread is invalid', () => {
@@ -151,7 +232,6 @@ describe('controllers/PointModeController', () => {
             stubs.threadMock.expects('show').never();
 
             controller.pointClickHandler(event);
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.registerThread).to.not.be.called;
         });
 
@@ -163,7 +243,6 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.not.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
         });
 
         it('should create, show, and bind listeners to a thread', () => {
@@ -175,9 +254,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
-            expect(controller.hadPendingThreads).to.be.truthy;
             expect(controller.registerThread).to.be.calledWith(stubs.thread);
         });
 

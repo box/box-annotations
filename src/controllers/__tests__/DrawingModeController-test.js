@@ -8,9 +8,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    CLASS_ANNNOTATION_MODE_BACKGROUND,
     CLASS_ACTIVE,
-    CLASS_ANNOTATION_MODE,
     CONTROLLER_EVENT
 } from '../../constants';
 
@@ -67,40 +65,6 @@ describe('controllers/DrawingModeController', () => {
         it('should replace the draw annotations header if using the preview header', () => {
             controller.init({ options: { header: 'light' } });
             expect(controller.setupHeader).to.be.called;
-        });
-    });
-
-    describe('exit()', () => {
-        it('should exit draw annotation mode', () => {
-            sandbox.stub(controller, 'unbindListeners');
-
-            // Set up draw annotation mode
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-            controller.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
-
-            controller.buttonEl = document.createElement('button');
-            controller.buttonEl.classList.add(CLASS_ACTIVE);
-
-            controller.exit();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith('binddomlisteners');
-        });
-    });
-
-    describe('enter()', () => {
-        it('should exit draw annotation mode', () => {
-            sandbox.stub(controller, 'bindListeners');
-
-            // Set up draw annotation mode
-            controller.annotatedElement = document.createElement('div');
-            controller.buttonEl = document.createElement('button');
-
-            controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter, sinon.match.object);
-            expect(controller.bindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
         });
     });
 

@@ -188,9 +188,11 @@ class PointModeController extends AnnotationModeController {
     pointClickHandler(event) {
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        if (!isInDialog(event)) {
-            this.hadPendingThreads = this.destroyPendingThreads();
+        if (isInDialog(event)) {
+            return;
         }
+
+        this.hadPendingThreads = this.destroyPendingThreads();
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
