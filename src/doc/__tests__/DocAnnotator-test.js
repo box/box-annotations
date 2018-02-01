@@ -118,6 +118,7 @@ describe('doc/DocAnnotator', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
             annotator.init(1);
             expect(annotator.annotatedElement.id).to.not.be.undefined;
+            expect(annotator.hoverThreads).to.not.be.undefined;
         });
     });
 
@@ -1534,7 +1535,15 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.renderPage).to.be.called;
         });
 
-        it('should remove the recently deleted thread from the hoverThreads array', () => {
+        it('should do nothing if deleted thread is not a highlight on unregisterthread', () => {
+            stubs.thread.type = 'point';
+            annotator.hoverThreads = [ stubs.thread ];
+
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.unregister, data: stubs.thread });
+            expect(annotator.hoverThreads).to.contain(stubs.thread);
+        });
+
+        it('should remove the recently deleted thread from the hoverThreads array on unregisterthread', () => {
             annotator.hoverThreads = [ stubs.thread ];
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.unregister, data: stubs.thread });
             expect(annotator.hoverThreads).to.not.contain(stubs.thread);
