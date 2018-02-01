@@ -110,6 +110,8 @@ class DocAnnotator extends Annotator {
     init(initialScale) {
         super.init(initialScale);
 
+        this.hoverThreads = [];
+
         // Allow rangy to highlight this
         this.annotatedElement.id = ID_ANNOTATED_ELEMENT;
     }
@@ -1027,7 +1029,11 @@ class DocAnnotator extends Annotator {
                 this.renderPage(data.data);
                 break;
             case CONTROLLER_EVENT.unregister:
-                // Removes recently deleted thread from threads requiring a redraw
+                if (!data.data || !util.isHighlightAnnotation(data.data.type)) {
+                    break;
+                }
+
+                // Removes recently deleted highlight thread from threads requiring a redraw
                 this.hoverThreads =
                     this.hoverThreads.filter((thread) => {
                         return thread.threadID !== data.data.threadID;
