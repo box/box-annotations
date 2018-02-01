@@ -11,7 +11,8 @@ import {
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED,
-    CLASS_INVALID_INPUT
+    CLASS_INVALID_INPUT,
+    CLASS_ANNOTATION_DIALOG
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -218,7 +219,7 @@ export function resetTextarea(element, clearText) {
  */
 export function isInDialog(event, dialogEl) {
     if (!dialogEl) {
-        return false;
+        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
     }
 
     // DOM coordinates with respect to the page

@@ -279,10 +279,9 @@ class AnnotationModeController extends EventEmitter {
                 return !!thread;
             }
 
-            thread =
-                pageThreads.all().filter((t) => {
-                    return t.threadID === threadID;
-                })[0] || null;
+            thread = pageThreads.all().filter((t) => {
+                return t.threadID === threadID;
+            })[0];
 
             return !!thread;
         });

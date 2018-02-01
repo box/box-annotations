@@ -375,7 +375,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should return null if specified annotation thread is not found', () => {
             controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID('random');
-            expect(thread).to.be.null;
+            expect(thread).to.be.undefined;
         });
     });
 
