@@ -40,7 +40,8 @@ describe('Annotator', () => {
             getButton: () => {},
             enter: () => {},
             exit: () => {},
-            setupSharedDialog: () => {}
+            setupSharedDialog: () => {},
+            getThreadByID: () => {}
         };
         stubs.controllerMock = sandbox.mock(stubs.controller);
 
@@ -609,7 +610,7 @@ describe('Annotator', () => {
                 stubs.thread.dialog = { postAnnotation: sandbox.stub() };
 
                 annotator.modeControllers = {
-                    'point': { threads: {} }
+                    'point': stubs.controller
                 };
             });
 
@@ -650,6 +651,7 @@ describe('Annotator', () => {
             });
 
             it('should do nothing the thread does not exist in the page specified by lastPointEvent', () => {
+                stubs.controllerMock.expects('getThreadByID').returns(null);
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
@@ -662,10 +664,7 @@ describe('Annotator', () => {
             it('should create a point annotation thread using lastPointEvent', () => {
                 stubs.threadMock.expects('showDialog');
                 stubs.threadMock.expects('getThreadEventData').returns({});
-
-                annotator.modeControllers['point'].threads = {
-                    1: { '123abc': stubs.thread }
-                };
+                stubs.controllerMock.expects('getThreadByID').returns(stubs.thread);
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},

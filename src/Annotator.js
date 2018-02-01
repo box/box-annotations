@@ -491,12 +491,11 @@ class Annotator extends EventEmitter {
         }
 
         const controller = this.modeControllers[TYPES.point];
-        const pageThreads = controller.threads[location.page] || {};
-        if (!controller || !pageThreads[pendingThreadID]) {
+        const thread = controller.getThreadByID(pendingThreadID);
+        if (!controller || !thread) {
             return null;
         }
 
-        const thread = pageThreads[pendingThreadID];
         thread.dialog.hasComments = true;
         thread.state = STATES.hover;
         thread.showDialog();
