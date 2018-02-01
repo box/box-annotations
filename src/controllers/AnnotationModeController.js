@@ -43,6 +43,7 @@ class AnnotationModeController extends EventEmitter {
         this.mode = data.mode;
         this.annotator = data.annotator;
         this.permissions = data.permissions || {};
+        this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
 

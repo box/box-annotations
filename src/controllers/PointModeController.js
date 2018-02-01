@@ -38,8 +38,18 @@ class PointModeController extends AnnotationModeController {
         if (data.options.header !== 'none') {
             this.setupHeader(this.container, shell);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    setupHeader(container, header) {
+        super.setupHeader(container, header);
 
         this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+
+        // TODO(@spramod): Remove '||' string, once closeButton is properly localized within Preview
+        this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
     }
 
     /**

@@ -46,12 +46,25 @@ class DrawingModeController extends AnnotationModeController {
             this.setupHeader(this.container, shell);
         }
 
+        this.handleSelection = this.handleSelection.bind(this);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    setupHeader(container, header) {
+        super.setupHeader(container, header);
+
         this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+        this.cancelButtonEl.textContent = this.localized.cancelButton;
+
         this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
+
+        // TODO(@spramod): Remove '||' string, once doneButton is properly localized within Preview
+        this.postButtonEl.textContent = this.localized.doneButton || 'Done';
+
         this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
-
-        this.handleSelection = this.handleSelection.bind(this);
     }
 
     /**

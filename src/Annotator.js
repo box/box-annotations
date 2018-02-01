@@ -249,6 +249,7 @@ class Annotator extends EventEmitter {
                 modeButton: this.modeButtons[type],
                 permissions: this.permissions,
                 annotator: this,
+                localized: this.localized,
                 options
             });
 
