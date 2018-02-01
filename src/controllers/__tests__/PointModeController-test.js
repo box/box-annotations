@@ -48,19 +48,24 @@ describe('controllers/PointModeController', () => {
     describe('init()', () => {
         beforeEach(() => {
             Object.defineProperty(AnnotationModeController.prototype, 'init', { value: sandbox.stub() });
-            sandbox.stub(controller, 'getButton');
             sandbox.stub(controller, 'setupHeader');
-        });
-
-        it('should get the mode exit button and initialize the controller', () => {
-            controller.init({ options: { header: 'none' } });
-            expect(controller.setupHeader).to.not.be.called;
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
         });
 
         it('should set up the point annotations header if using the preview header', () => {
             controller.init({ options: { header: 'light' } });
             expect(controller.setupHeader).to.be.called;
+        });
+    });
+
+    describe('setupHeader', () => {
+        it('should setup header and get all the mode buttons', () => {
+            const blankDiv = document.createElement('div');
+            stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
+            sandbox.stub(controller, 'getButton').returns(blankDiv);
+            controller['localized'] = { closeButton: 'Close' };
+
+            controller.setupHeader(blankDiv, blankDiv);
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
         });
     });
 
