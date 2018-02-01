@@ -1535,5 +1535,11 @@ describe('doc/DocAnnotator', () => {
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.renderPage });
             expect(annotator.renderPage).to.be.called;
         });
+
+        it('should remove the recently deleted thread from the hoverThreads array', () => {
+            annotator.hoverThreads = [ stubs.thread ];
+            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.unregister, data: stubs.thread });
+            expect(annotator.hoverThreads).to.not.contain(stubs.thread);
+        });
     });
 });

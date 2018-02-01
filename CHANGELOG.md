@@ -1,3 +1,10 @@
+<a name="0.11.0"></a>
+# 0.11.0 (2018-01-31)
+
+* Fix: Cleanup page thread access methods (#103) ([3922c96](https://github.com/box/box-annotations/commit/3922c96))
+
+
+
 <a name="0.10.0"></a>
 # 0.10.0 (2018-01-23)
 
