@@ -360,16 +360,22 @@ describe('controllers/AnnotationModeController', () => {
     });
 
     describe('getThreadByID()', () => {
+        it('should return null if no page threads exist', () => {
+            controller.threads = {};
+            const thread = controller.getThreadByID(stubs.thread.threadID);
+            expect(thread).to.be.null;
+        });
+
         it('should find and return annotation thread specified by threadID', () => {
             controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID(stubs.thread.threadID);
             expect(thread).to.deep.equals(stubs.thread);
         });
 
-        it('should return undefined if specified annotation thread is invalid', () => {
+        it('should return null if specified annotation thread is not found', () => {
             controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID('random');
-            expect(thread).to.be.undefined;
+            expect(thread).to.be.null;
         });
     });
 

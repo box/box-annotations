@@ -274,12 +274,17 @@ class AnnotationModeController extends EventEmitter {
     getThreadByID(threadID) {
         let thread = null;
         Object.keys(this.threads).some((pageNum) => {
-            const pageThreads = this.threads[pageNum].all() || [];
-            thread = pageThreads.filter((t) => {
-                return t.threadID === threadID;
-            })[0];
+            const pageThreads = this.threads[pageNum];
+            if (!pageThreads) {
+                return !!thread;
+            }
 
-            return thread !== null;
+            thread =
+                pageThreads.all().filter((t) => {
+                    return t.threadID === threadID;
+                })[0] || null;
+
+            return !!thread;
         });
 
         return thread;
