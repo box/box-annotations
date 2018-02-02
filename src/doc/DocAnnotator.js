@@ -582,6 +582,7 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
             return;
         }
+
         this.selectionEndTimeout = setTimeout(
             () => this.createHighlightDialog.show(this.container, selection),
             SELECTION_TIMEOUT
