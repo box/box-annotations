@@ -356,10 +356,14 @@ class Annotator extends EventEmitter {
                 return;
             }
 
-            // Bind events on valid annotation thread
-            const firstAnnotation = util.getLastAnnotation(annotations);
-            const thread = this.createAnnotationThread(annotations, firstAnnotation.location, firstAnnotation.type);
-            const controller = this.modeControllers[firstAnnotation.type];
+            // Register a valid annotation thread
+            // NOTE: The first annotation in the thread is used to determine the
+            // annotation (which shouldn't change regardless of what is specified
+            // in later annotations in that specific thread) whereas the last
+            // annotation is used to determine the type as specified above
+            const firstAnnotation = util.getFirstAnnotation(annotations);
+            const thread = this.createAnnotationThread(annotations, firstAnnotation.location, lastAnnotation.type);
+            const controller = this.modeControllers[lastAnnotation.type];
             if (controller) {
                 controller.registerThread(thread);
             }
