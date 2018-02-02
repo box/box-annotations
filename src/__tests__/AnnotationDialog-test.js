@@ -583,26 +583,31 @@ describe('AnnotationDialog', () => {
     });
 
     describe('mouseleaveHandler()', () => {
-        it('should not do anything if there are no annotations in the dialog', () => {
+        beforeEach(() => {
             stubs.hide = sandbox.stub(dialog, 'hide');
+            stubs.annotation = new Annotation({
+                annotationID: 'someID',
+                text: 'blah',
+                user: {},
+                permissions: {}
+            });
+        });
 
-            dialog.mouseleaveHandler();
+        it('should not do anything if there are no annotations in the dialog', () => {
+            dialog.mouseleaveHandler({});
+            expect(stubs.hide).to.not.be.called;
+        });
+
+        it('should not do anything if the mouse is still in the dialog', () => {
+            dialog.addAnnotation(stubs.annotation);
+            sandbox.stub(util, 'isInDialog').returns(true);
+            dialog.mouseleaveHandler({});
             expect(stubs.hide).to.not.be.called;
         });
 
         it('should hide dialog if there are annotations in the dialog', () => {
-            stubs.hide = sandbox.stub(dialog, 'hide');
-
-            dialog.addAnnotation(
-                new Annotation({
-                    annotationID: 'someID',
-                    text: 'blah',
-                    user: {},
-                    permissions: {}
-                })
-            );
-
-            dialog.mouseleaveHandler();
+            dialog.addAnnotation(stubs.annotation);
+            dialog.mouseleaveHandler({});
             expect(stubs.hide).to.be.called;
         });
     });

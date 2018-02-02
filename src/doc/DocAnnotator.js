@@ -558,6 +558,7 @@ class DocAnnotator extends Annotator {
 
         if (this.selectionEndTimeout) {
             clearTimeout(this.selectionEndTimeout);
+            this.selectionEndTimeout = null;
         }
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open

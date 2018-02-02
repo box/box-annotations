@@ -132,6 +132,10 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
 
     /** @inheritdoc */
     setPosition(selection) {
+        if (!selection || !selection.rangeCount) {
+            return;
+        }
+
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 

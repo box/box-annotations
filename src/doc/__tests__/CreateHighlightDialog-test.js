@@ -9,8 +9,10 @@ import {
 } from '../../constants';
 import CommentBox from '../../CommentBox';
 import * as util from '../../util';
+import * as docUtil from '../docUtil';
 
 const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
+let stubs = {};
 
 describe('doc/CreateHighlightDialog', () => {
     const sandbox = sinon.sandbox.create();
@@ -38,9 +40,14 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     afterEach(() => {
-        dialog.destroy();
-        dialog = null;
+        sandbox.verifyAndRestore();
+        if (typeof dialog.destroy === 'function') {
+            dialog.destroy();
+            dialog = null;
+        }
+
         parentEl = null;
+        stubs = {};
     });
 
     describe('contructor()', () => {
@@ -63,19 +70,72 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     describe('show()', () => {
+        beforeEach(() => {
+            stubs.pageInfo = sandbox.stub(util, 'getPageInfo');
+            stubs.setPosition = sandbox.stub(dialog, 'setPosition');
+            dialog.parentEl = {
+                querySelector: () => {},
+                appendChild: () => {}
+            };
+            stubs.parentMock = sandbox.mock(dialog.parentEl);
+        });
+
+        it('should do nothing if no selection is passed in', () => {
+            stubs.parentMock.expects('appendChild').never();
+            dialog.show({});
+            expect(util.getPageInfo).to.not.be.called;
+        });
+
+        it('should do nothing if no page element is calculated from the selection', () => {
+            stubs.pageInfo.returns({});
+            stubs.parentMock.expects('appendChild').never();
+            dialog.show({}, {});
+            expect(stubs.pageInfo).to.be.called;
+        })
+
         it('should set the parentEl to a new reference, via setParentEl(), if a new one is supplied', () => {
-            const set = sandbox.stub(dialog, 'setParentEl');
             const newParent = document.createElement('span');
-            dialog.show(newParent);
-            expect(set).to.be.calledWith(newParent);
+            stubs.pageInfo.returns({ pageEl: dialog.parentEl });
+
+            stubs.parentMock.expects('querySelector');
+            stubs.parentMock.expects('appendChild');
+            dialog.show(newParent, {});
+        });
+    });
+
+    describe('setPosition()', () => {
+        beforeEach(() => {
+            stubs.selection = {
+                getRangeAt: () => {},
+                rangeCount: 1
+            };
+            stubs.selectionMock = sandbox.mock(stubs.selection);
+            stubs.pageInfo = sandbox.stub(util, 'getPageInfo');
+            stubs.update = sandbox.stub(dialog, 'updatePosition');
+            stubs.getCoords = sandbox.stub(docUtil, 'getDialogCoordsFromRange');
+        });
+
+        it('should do nothing if the selection is invalid', () => {
+            stubs.selection.rangeCount = undefined;
+            stubs.selectionMock.expects('getRangeAt').never();
+            dialog.setPosition(stubs.selection);
+        });
+
+        it('should do nothing if no page element is calculated from the selection', () => {
+            stubs.pageInfo.returns({});
+            dialog.setPosition(stubs.selection);
+            expect(stubs.update).to.not.be.called;
+        });
+
+        it('should position the dialog according to the bottom right corner of the selection', () => {
+            stubs.pageInfo.returns({ pageEl: document.createElement('div') });
+            stubs.getCoords.returns({x: 1, y: 2});
+            dialog.setPosition(stubs.selection);
+            expect(stubs.update).to.be.called;
         });
     });
 
     describe('destroy()', () => {
-        beforeEach(() => {
-            dialog.show();
-        });
-
         it('should remove click event listener from the highlight button', () => {
             const remove = sandbox.stub(dialog.highlightCreateEl, 'removeEventListener');
             dialog.destroy();
@@ -89,11 +149,8 @@ describe('doc/CreateHighlightDialog', () => {
         });
 
         it('should remove out all touch events, if touch enabled', () => {
-            dialog.destroy();
-
             dialog.hasTouch = true;
             dialog.isMobile = true;
-            dialog.show(document.createElement('div'));
             const highlightCreateStub = sandbox.stub(dialog.highlightCreateEl, 'removeEventListener');
             const commentCreateStub = sandbox.stub(dialog.commentCreateEl, 'removeEventListener');
 
