@@ -584,10 +584,11 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.selectionEndTimeout = setTimeout(
-            () => this.createHighlightDialog.show(this.container, selection),
-            SELECTION_TIMEOUT
-        );
+        this.selectionEndTimeout = setTimeout(() => {
+            if (this.createHighlightDialog) {
+                this.createHighlightDialog.show(this.container, selection);
+            }
+        }, SELECTION_TIMEOUT);
 
         const { page } = util.getPageInfo(event.target);
 
