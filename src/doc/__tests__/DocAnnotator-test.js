@@ -682,22 +682,25 @@ describe('doc/DocAnnotator', () => {
             annotator.bindDOMListeners();
         });
 
-        it('should bind selectionchange event on the document, if on mobile and can annotate', () => {
+        it('should bind selectionchange event on the document, if on mobile OR a touch-enabled device and can annotate', () => {
             annotator.isMobile = true;
-            annotator.hasTouch = true;
+            annotator.hasTouch = false;
             annotator.drawEnabled = true;
 
             const docListen = sandbox.spy(document, 'addEventListener');
             const annotatedElementListen = sandbox.spy(annotator.annotatedElement, 'addEventListener');
 
             annotator.bindDOMListeners();
+            expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
 
+            annotator.isMobile = false;
+            annotator.hasTouch = true;
+            annotator.bindDOMListeners();
             expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch and mobile enabled', () => {
+        it('should not bind selection change event if both annotation types are disabled, and touch OR mobile enabled', () => {
             annotator.isMobile = true;
-            annotator.hasTouch = true;
             annotator.plainHighlightEnabled = false;
             annotator.commentHighlightEnabled = false;
             annotator.drawEnabled = true;
@@ -706,11 +709,10 @@ describe('doc/DocAnnotator', () => {
             const annotatedElementListen = sandbox.spy(annotator.annotatedElement, 'addEventListener');
 
             annotator.bindDOMListeners();
-
             expect(docListen).to.not.be.calledWith('selectionchange', sinon.match.func);
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch and mobile disabled', () => {
+        it('should not bind selection change event if both annotation types are disabled, and touch OR mobile disabled', () => {
             annotator.isMobile = false;
             annotator.hasTouch = false;
             annotator.plainHighlightEnabled = false;
@@ -735,6 +737,8 @@ describe('doc/DocAnnotator', () => {
             };
             stubs.elMock = sandbox.mock(annotator.annotatedElement);
             annotator.highlightMousemoveHandler = () => {};
+            annotator.isMobile = false;
+            annotator.hasTouch = false;
         });
 
         it('should unbind DOM listeners if user can annotate', () => {
@@ -762,17 +766,20 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.highlightThrottleHandle).to.not.exist;
         });
 
-        it('should unbind selectionchange event, on the document, if on mobile, has touch and can annotate', () => {
+        it('should unbind selectionchange event, on the document, if on a mobile OR touch-enabled device and can annotate', () => {
             annotator.permissions.canAnnotate = true;
             annotator.isMobile = true;
-            annotator.hasTouch = true;
+            annotator.hasTouch = false;
             const docStopListen = sandbox.spy(document, 'removeEventListener');
             const annotatedElementStopListen = sandbox.spy(annotator.annotatedElement, 'removeEventListener');
 
             annotator.unbindDOMListeners();
-
             expect(docStopListen).to.be.calledWith('selectionchange', sinon.match.func);
-            expect(annotatedElementStopListen).to.be.calledWith('touchstart', sinon.match.func);
+
+            annotator.isMobile = false;
+            annotator.hasTouch = true;
+            annotator.unbindDOMListeners();
+            expect(docStopListen).to.be.calledWith('selectionchange', sinon.match.func);
         });
 
         it('should tell controllers to clean up selections', () => {
@@ -1074,7 +1081,20 @@ describe('doc/DocAnnotator', () => {
     });
 
     describe('onSelectionChange()', () => {
+        const event = {
+            nodeName: 'textarea',
+            preventDefault: () => {},
+            stopPropagation: () => {}
+        };
+
         beforeEach(() => {
+            stubs.eventMock = sandbox.mock(event);
+            stubs.eventMock.expects('preventDefault');
+            stubs.eventMock.expects('stopPropagation');
+
+            stubs.isValidSelection = sandbox.stub(docUtil, 'isValidSelection').returns(true);
+            annotator.lastSelection = {};
+
             annotator.setupAnnotations();
             annotator.mobileDialogEl = document.createElement('div');
             annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
@@ -1096,42 +1116,37 @@ describe('doc/DocAnnotator', () => {
             stubs.getPageInfo.returns({ page: 1 });
         });
 
+        it('should reset the selectionEndTimeout', () => {
+            annotator.selectionEndTimeout = 1;
+            stubs.isValidSelection.returns(false);
+            annotator.onSelectionChange(event);
+            expect(annotator.selectionEndTimeout).is.null;
+        });
+
         it('should do nothing if focus is on a text input element', () => {
             const textAreaEl = document.createElement('textarea');
             annotator.annotatedElement.appendChild(textAreaEl);
             textAreaEl.focus();
 
-            annotator.onSelectionChange({
-                nodeName: 'textarea'
-            });
-            expect(stubs.getSelStub).to.not.be.called;
-        });
-
-        it('should do nothing the shared mobile dialog is visible', () => {
-            annotator.mobileDialogEl.classList.remove(CLASS_HIDDEN);
-
-            annotator.onSelectionChange({});
+            annotator.onSelectionChange(event);
             expect(stubs.getSelStub).to.not.be.called;
         });
 
         it('should do nothing the the user is currently creating a point annotation', () => {
             annotator.modeControllers['point'].pendingThreadID = 'something';
-            annotator.onSelectionChange({});
+            annotator.onSelectionChange(event);
             expect(stubs.getSelStub).to.not.be.called;
         });
 
-        it('should clear out previous highlights if a new highlight range is being created', () => {
+        it('should clear selection if the highlight has not changed', () => {
             const selection = {
                 anchorNode: 'derp',
                 toString: () => '' // Causes invalid selection
             };
-            const lastSelection = {
-                anchorNode: 'not_derp'
-            };
-            annotator.lastSelection = lastSelection;
+            sandbox.stub(docUtil, 'hasSelectionChanged').returns(false);
             stubs.getSelStub.returns(selection);
 
-            annotator.onSelectionChange({});
+            annotator.onSelectionChange(event);
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
         });
 
@@ -1140,29 +1155,29 @@ describe('doc/DocAnnotator', () => {
                 toString: () => '' // Causes invalid selection
             };
             stubs.getSelStub.returns(selection);
-            annotator.lastSelection = selection;
-            annotator.lastHighlightEvent = {};
+            annotator.lastHighlightEvent = event;
+            sandbox.stub(docUtil, 'hasSelectionChanged').returns(true);
+            stubs.isValidSelection.returns(false);
 
             stubs.createDialogMock.expects('hide');
-            annotator.onSelectionChange({});
-            expect(annotator.lastSelection).to.be.null;
+            annotator.onSelectionChange(event);
             expect(annotator.lastHighlightEvent).to.be.null;
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
         });
 
-        it('should show the createHighlightDialog if it isn\'t already shown', () => {
+        it('should show the createHighlightDialog', () => {
             const selection = {
                 rangeCount: 10,
                 isCollapsed: false,
                 toString: () => 'asdf'
             };
             stubs.getSelStub.returns(selection);
-            annotator.lastSelection = selection;
-            annotator.lastHighlightEvent = {};
+            sandbox.stub(docUtil, 'hasSelectionChanged').returns(true);
+            annotator.lastHighlightEvent = event;
             annotator.createHighlightDialog.isVisible = false;
 
-            stubs.createDialogMock.expects('show').withArgs(annotator.container);
-            annotator.onSelectionChange({});
+            annotator.onSelectionChange(event);
+            expect(annotator.selectionEndTimeout).to.not.be.null;
         });
 
         it('should set all of the highlight annotations on the page to "inactive" state', () => {
@@ -1171,6 +1186,7 @@ describe('doc/DocAnnotator', () => {
                 isCollapsed: false,
                 toString: () => 'asdf'
             };
+            sandbox.stub(docUtil, 'hasSelectionChanged').returns(true);
 
             annotator.plainHighlightEnabled = true;
             stubs.highlightMock.expects('applyActionToThreads').withArgs(sinon.match.func, 1);
@@ -1181,7 +1197,7 @@ describe('doc/DocAnnotator', () => {
             stubs.getSelStub.returns(selection);
             sandbox.stub(annotator.createHighlightDialog, 'show');
 
-            annotator.onSelectionChange({});
+            annotator.onSelectionChange(event);
         });
     });
 
@@ -1240,8 +1256,6 @@ describe('doc/DocAnnotator', () => {
             selection.getRangeAt = sandbox.stub().returns({});
 
             stubs.createDialogMock.expects('show').withArgs(pageInfo.pageEl);
-            stubs.createDialogMock.expects('setPosition');
-
             annotator.highlightCreateHandler(stubs.event);
         });
 
@@ -1258,8 +1272,6 @@ describe('doc/DocAnnotator', () => {
             annotator.isMobile = false;
 
             stubs.createDialogMock.expects('show');
-            stubs.createDialogMock.expects('setPosition').withArgs(50, 20); // padding removed
-
             annotator.highlightCreateHandler(stubs.event);
         });
     });

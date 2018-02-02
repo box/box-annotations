@@ -41,25 +41,6 @@ describe('doc/docUtil', () => {
         });
     });
 
-    describe('isInDialog()', () => {
-        it('should return false if no dialog element exists', () => {
-            const result = util.isInDialog({ clientX: 8, clientY: 8 });
-            expect(result).to.be.false;
-        });
-
-        it('should return true if the event is in the given dialog', () => {
-            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            const result = util.isInDialog({ clientX: 8, clientY: 8 }, dialogEl);
-            expect(result).to.be.true;
-        });
-
-        it('should return false if the event is in the given dialog', () => {
-            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            const result = util.isInDialog({ clientX: 100, clientY: 100 }, dialogEl);
-            expect(result).to.be.false;
-        });
-    });
-
     describe('hasActiveDialog()', () => {
         it('should return false if no annotation dialog is open', () => {
             const currDialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
@@ -79,6 +60,25 @@ describe('doc/docUtil', () => {
 
             const result = docUtil.hasActiveDialog(document);
             expect(result).to.be.true;
+        });
+    });
+
+    describe('hasSelectionChanged()', () => {
+        it('should return false if the selection is invalid or no previous selection exists', () => {
+            expect(docUtil.hasSelectionChanged()).to.be.falsy;
+            expect(docUtil.hasSelectionChanged({})).to.be.falsy;
+            expect(docUtil.hasSelectionChanged({ rangeCount: 1 })).to.be.falsy;
+        });
+
+        it('should return true if the previous and current selection match', () => {
+            const selection = {
+                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(true)} )
+            };
+            const diffSelection = {
+                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(false)} )
+            };
+            expect(docUtil.hasSelectionChanged(selection, diffSelection)).to.be.falsy;
+            expect(docUtil.hasSelectionChanged(selection, selection)).to.be.truthy;
         });
     });
 
@@ -360,7 +360,7 @@ describe('doc/docUtil', () => {
 
             expect(offset).to.equal(6);
         });
-        
+
         describe('When end container is not a part of the text range', () => {
             it('should calculate coords off of the end of the second last element in the range', () => {
                 const parent = document.createElement('div');
@@ -375,7 +375,7 @@ describe('doc/docUtil', () => {
 
                 expect(appendStub).to.be.called;
             });
-            
+
             it('should calculate coords from the last container if no second last element in the range', () => {
                 const parent = document.createElement('div');
                 const insertStub = sandbox.stub(parent, 'insertBefore');
@@ -387,7 +387,7 @@ describe('doc/docUtil', () => {
 
                 expect(insertStub).to.be.called;
             });
-            
+
             it('should calculate coords from the end of the end container, if no elements in the end of the range', () => {
                 const parent = document.createElement('div');
                 const appendStub = sandbox.stub(parent, 'appendChild');
@@ -398,13 +398,13 @@ describe('doc/docUtil', () => {
                 expect(appendStub).to.be.called;
             });
         });
-        
+
         it('should clean out the position element from the container it was added to', () => {
             docUtil.getDialogCoordsFromRange(range);
             const dummy = parentContainer.querySelector('span');
             expect(dummy).to.not.exist;
         });
-        
+
         it('should use the position element\'s bounds for the x and y corrdinate', () => {
             const fakeSpan = document.createElement('span');
             sandbox.stub(fakeSpan, 'getBoundingClientRect').callsFake(() => {

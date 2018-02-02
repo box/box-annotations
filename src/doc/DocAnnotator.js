@@ -22,7 +22,6 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
-    CLASS_HIDDEN,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
@@ -31,6 +30,7 @@ import {
 
 const MOUSEMOVE_THROTTLE_MS = 25;
 const HOVER_TIMEOUT_MS = 75;
+const SELECTION_TIMEOUT = 500;
 const MOUSE_MOVE_MIN_DISTANCE = 5;
 const CLASS_RANGY_HIGHLIGHT = 'rangy-highlight';
 
@@ -342,7 +342,7 @@ class DocAnnotator extends Annotator {
 
         this.clickThread = this.clickThread.bind(this);
 
-        if (this.isMobile && this.hasTouch) {
+        if (this.isMobile || this.hasTouch) {
             this.onSelectionChange = this.onSelectionChange.bind(this);
         }
 
@@ -416,7 +416,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (this.hasTouch && this.isMobile) {
+        if (this.hasTouch || this.isMobile) {
             document.addEventListener('selectionchange', this.onSelectionChange);
         } else {
             this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
@@ -447,9 +447,8 @@ class DocAnnotator extends Annotator {
             controller.removeSelection();
         });
 
-        if (this.hasTouch && this.isMobile) {
+        if (this.hasTouch || this.isMobile) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
-            this.annotatedElement.removeEventListener('touchstart', this.drawingSelectionHandler);
         } else {
             this.annotatedElement.removeEventListener('click', this.drawingSelectionHandler);
             this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
@@ -553,11 +552,18 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     onSelectionChange(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (this.selectionEndTimeout) {
+            clearTimeout(this.selectionEndTimeout);
+            this.selectionEndTimeout = null;
+        }
+
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
-        const isHidden = this.mobileDialogEl && this.mobileDialogEl.classList.contains(CLASS_HIDDEN);
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
-        if (isCreatingPoint || !isHidden || document.activeElement.nodeName.toLowerCase() === 'textarea') {
+        if (isCreatingPoint || document.activeElement.nodeName.toLowerCase() === 'textarea') {
             return;
         }
 
@@ -565,23 +571,23 @@ class DocAnnotator extends Annotator {
 
         // If we're creating a new selection, make sure to clear out to avoid
         // incorrect text being selected
-        if (!this.lastSelection || (this.lastSelection && selection.anchorNode !== this.lastSelection.anchorNode)) {
+        if (!this.lastSelection || !selection || !docUtil.hasSelectionChanged(selection, this.lastSelection)) {
             this.highlighter.removeAllHighlights();
         }
 
         // Bail if mid highlight and tapping on the screen
         if (!docUtil.isValidSelection(selection)) {
-            this.lastSelection = null;
             this.lastHighlightEvent = null;
             this.createHighlightDialog.hide();
             this.highlighter.removeAllHighlights();
             return;
         }
 
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (!isCreateDialogVisible) {
-            this.createHighlightDialog.show(this.container);
-        }
+        this.selectionEndTimeout = setTimeout(() => {
+            if (this.createHighlightDialog) {
+                this.createHighlightDialog.show(this.container, selection);
+            }
+        }, SELECTION_TIMEOUT);
 
         const { page } = util.getPageInfo(event.target);
 
@@ -872,20 +878,8 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        const lastRange = selection.getRangeAt(selection.rangeCount - 1);
-        const { x, y } = docUtil.getDialogCoordsFromRange(lastRange);
-
-        const pageDimensions = pageEl.getBoundingClientRect();
-
-        const pageLeft = pageDimensions.left;
-        const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const dialogParentEl = this.isMobile ? this.container : pageEl;
-
-        this.createHighlightDialog.show(dialogParentEl);
-
-        if (!this.isMobile) {
-            this.createHighlightDialog.setPosition(x - pageLeft, y - pageTop);
-        }
+        this.createHighlightDialog.show(dialogParentEl, selection);
 
         this.isCreatingHighlight = true;
         this.lastHighlightEvent = event;

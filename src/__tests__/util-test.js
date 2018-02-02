@@ -219,6 +219,17 @@ describe('util', () => {
         });
     });
 
+    describe('isInDialog()', () => {
+        it('should return false if no dialog element exists', () => {
+            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.falsy;
+        });
+
+        it('should return true if the event is in the given dialog', () => {
+            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.truthy;
+        });
+    });
+
     describe('insertTemplate()', () => {
         it('should insert template into node', () => {
             const node = document.createElement('div');
