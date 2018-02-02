@@ -448,10 +448,12 @@ class AnnotationDialog extends EventEmitter {
      * Mouseleave handler. Hides dialog if we aren't creating the first one.
      *
      * @protected
+     * @param {Event} event DOM event
      * @return {void}
      */
-    mouseleaveHandler() {
-        if (this.hasAnnotations) {
+    mouseleaveHandler(event) {
+        const isStillInDialog = util.isInDialog(event, event.toElement);
+        if (!isStillInDialog && this.hasAnnotations) {
             this.hide();
         }
     }
