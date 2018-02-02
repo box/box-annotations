@@ -551,7 +551,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const mouseInDialog = util.isInDialog(event, this.dialog.element);
+        const mouseInDialog = util.isInDialog(event, event.toElement);
 
         const firstAnnotation = util.getFirstAnnotation(this.annotations);
         if (firstAnnotation && !mouseInDialog) {

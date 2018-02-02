@@ -218,26 +218,7 @@ export function resetTextarea(element, clearText) {
  * @return {boolean} Whether or not mouse is inside dialog
  */
 export function isInDialog(event, dialogEl) {
-    if (!dialogEl) {
-        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
-    }
-
-    // DOM coordinates with respect to the page
-    const x = event.clientX;
-    const y = event.clientY;
-
-    // Get dialog dimensions
-    const dialogDimensions = dialogEl.getBoundingClientRect();
-
-    if (
-        y >= dialogDimensions.top &&
-        y <= dialogDimensions.bottom &&
-        x >= dialogDimensions.left &&
-        x <= dialogDimensions.right
-    ) {
-        return true;
-    }
-    return false;
+    return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
 }
 
 /**
