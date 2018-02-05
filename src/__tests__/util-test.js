@@ -36,7 +36,8 @@ import {
     insertTemplate,
     generateBtn,
     createCommentTextNode,
-    clearCanvas
+    clearCanvas,
+    isInDialog
 } from '../util';
 import {
     STATES,
@@ -214,6 +215,17 @@ describe('util', () => {
             expect(textAreaEl.value).equals('test');
             expect(textAreaEl.style.width).equals('');
             expect(textAreaEl.style.height).equals('');
+        });
+    });
+
+    describe('isInDialog()', () => {
+        it('should return false if no dialog element exists', () => {
+            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.falsy;
+        });
+
+        it('should return true if the event is in the given dialog', () => {
+            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.truthy;
         });
     });
 

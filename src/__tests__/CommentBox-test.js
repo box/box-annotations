@@ -288,7 +288,7 @@ describe('CommentBox', () => {
             expect(uiElement.addEventListener).to.be.calledWith('focus', commentBox.focus);
         });
 
-        it('should add an event listener on the textarea, cancel and post buttons if the user is on a touch-enabled mobile device', () => {
+        it('should add an event listener on the textarea, cancel and post buttons if the user is on a touch-enabled device', () => {
             const uiElement = {
                 addEventListener: sandbox.stub(),
                 removeEventListener: sandbox.stub()
@@ -303,6 +303,10 @@ describe('CommentBox', () => {
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
+
+            expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onCancel);
+            expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onPost);
+            expect(uiElement.addEventListener).to.be.calledWith('focus', commentBox.focus);
 
             commentBox.containerEl = null;
         });

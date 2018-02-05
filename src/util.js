@@ -11,7 +11,8 @@ import {
     CLASS_HIDDEN,
     CLASS_INVISIBLE,
     CLASS_DISABLED,
-    CLASS_INVALID_INPUT
+    CLASS_INVALID_INPUT,
+    CLASS_ANNOTATION_DIALOG
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -217,26 +218,7 @@ export function resetTextarea(element, clearText) {
  * @return {boolean} Whether or not mouse is inside dialog
  */
 export function isInDialog(event, dialogEl) {
-    if (!dialogEl) {
-        return false;
-    }
-
-    // DOM coordinates with respect to the page
-    const x = event.clientX;
-    const y = event.clientY;
-
-    // Get dialog dimensions
-    const dialogDimensions = dialogEl.getBoundingClientRect();
-
-    if (
-        y >= dialogDimensions.top &&
-        y <= dialogDimensions.bottom &&
-        x >= dialogDimensions.left &&
-        x <= dialogDimensions.right
-    ) {
-        return true;
-    }
-    return false;
+    return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
 }
 
 /**
