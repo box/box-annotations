@@ -5,15 +5,15 @@ import AnnotationService from '../AnnotationService';
 import * as util from '../util';
 import * as constants from '../constants';
 
-const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
+const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_REPLY_CONTAINER = 'reply-container';
-const CLASS_ANIMATE_DIALOG = 'bp-animate-show-dialog';
+const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 const SELECTOR_DELETE_CONFIRMATION = '.delete-confirmation';
-const CLASS_INVALID_INPUT = 'bp-invalid-input';
+const CLASS_INVALID_INPUT = 'ba-invalid-input';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -174,7 +174,7 @@ describe('AnnotationDialog', () => {
                 clientHeight: 500,
                 scrollTop: 0
             };
-            dialog.dialogEl.classList.add('bp-annotation-dialog-flipped');
+            dialog.dialogEl.classList.add('ba-annotation-dialog-flipped');
             sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
 
             dialog.scrollToLastComment();

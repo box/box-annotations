@@ -19,7 +19,7 @@ import {
     PAGE_PADDING_TOP
 } from '../constants';
 
-const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
+const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 const DATA_TYPE_HIGHLIGHT = 'add-highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const HIGHLIGHT_BTNS_WIDTH = 78;

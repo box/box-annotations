@@ -5,7 +5,7 @@ import { ICON_CLOSE, ICON_DELETE } from './icons/icons';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
-const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
+const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
 
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_COMMENT = 'annotation-comment';

@@ -135,7 +135,7 @@ describe('doc/DocDrawingDialog', () => {
         let drawingDialogEl;
 
         beforeEach(() => {
-            drawingDialogEl = document.querySelector('.bp-annotation-drawing-dialog');
+            drawingDialogEl = document.querySelector('.ba-annotation-drawing-dialog');
 
             sandbox.stub(dialog, 'generateDialogEl').returns(drawingDialogEl);
             sandbox.stub(dialog, 'bindDOMListeners');
@@ -252,7 +252,7 @@ describe('doc/DocDrawingDialog', () => {
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
-            expect(dialogEl.querySelector('.bp-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
         });
 
         it('should generate without a save button', () => {
@@ -260,7 +260,7 @@ describe('doc/DocDrawingDialog', () => {
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
-            expect(dialogEl.querySelector('.bp-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
         });
 
         it('should generate a save and delete button', () => {
@@ -269,7 +269,7 @@ describe('doc/DocDrawingDialog', () => {
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.not.be.null;
-            expect(dialogEl.querySelector('.bp-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
         });
     });
 

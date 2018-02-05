@@ -12,7 +12,7 @@ import {
 import CommentBox from '../CommentBox';
 import * as util from '../util';
 
-const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
+const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 
 const sandbox = sinon.sandbox.create();
 let dialog;
