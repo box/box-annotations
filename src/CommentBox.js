@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import * as constants from './constants';
-import { hideElement, showElement } from './util';
+import { hideElement, showElement, focusTextArea } from './util';
 
 class CommentBox extends EventEmitter {
     /**
@@ -146,6 +146,9 @@ class CommentBox extends EventEmitter {
         }
 
         showElement(this.containerEl);
+
+        // Activate and move cursor in the appropriate text area if not in read-only mode
+        focusTextArea(this.textAreaEl);
     }
 
     /**

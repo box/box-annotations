@@ -289,6 +289,7 @@ class DocHighlightDialog extends AnnotationDialog {
         if (!this.isMobile) {
             this.element.setAttribute('data-type', constants.DATA_TYPE_ANNOTATION_DIALOG);
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
+            this.element.classList.add(constants.CLASS_HIDDEN);
             this.element.innerHTML = `<div class="${constants.CLASS_ANNOTATION_CARET}"></div>`;
             this.element.appendChild(this.dialogEl);
 
