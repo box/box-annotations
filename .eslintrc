@@ -23,7 +23,10 @@
         "assert": false,
         "fixture": false,
         "__": false,
-        "Assert": false
+        "Assert": false,
+        "Feature": false,
+        "Before": false,
+        "Scenario": false
     },
     "rules": {
         "quotes": [

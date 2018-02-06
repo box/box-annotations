@@ -1,13 +1,63 @@
+# @chrome @firefox @edge @safari @ie @android @ios
 language: node_js
 node_js:
-    - "8"
-script: yarn run ci
-cache: yarn
+- '8'
 notifications:
-  email: false
-
-# safelist
-branches:
-  only:
-  - master
-  - /^greenkeeper/.*$/
+    email: false
+        # recipients:
+        #     - spramod@box.com
+aliases:
+    - &sauce-labs
+        before_script:
+        - yarn run setup-travis &
+        - sleep 5
+        addons:
+          sauce_connect: true
+        script: yarn run functional-tests-ci
+        cache: yarn
+    - &sauce-labs-mobile
+      <<: *sauce-labs
+      script: yarn run functional-tests-ci --grep @mobile
+    - &sauce-labs-desktop
+      <<: *sauce-labs
+      script: yarn run functional-tests-ci --grep @desktop
+stages:
+# - ci
+- name: sauce-labs - osx
+- name: sauce-labs - windows 10
+- name: sauce-labs - mobile
+jobs:
+  include:
+  # - stage: ci
+  #   script: yarn run ci
+  #   cache: yarn
+  - <<: *sauce-labs-desktop
+    stage: sauce-labs - osx
+    env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="chrome" FILE_ID="285567874839" FILE_VERSION_ID="300496591287"
+  - <<: *sauce-labs-desktop
+    stage: sauce-labs - osx
+    env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="safari" FILE_ID="285569765346" FILE_VERSION_ID="300498497346"
+    script: yarn run functional-tests-ci
+  - <<: *sauce-labs-desktop
+    stage: sauce-labs - osx
+    env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="firefox" FILE_ID="285568802145" FILE_VERSION_ID="300497533713"
+  - <<: *sauce-labs-desktop
+    stage: sauce-labs - windows 10
+    env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="MicrosoftEdge" FILE_ID="285567976309" FILE_VERSION_ID="300496707445"
+    script: yarn run functional-tests-ci
+  - <<: *sauce-labs-desktop
+    stage: sauce-labs - windows 10
+    env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="internet explorer" FILE_ID="285568624824" FILE_VERSION_ID="300497342136"
+    script: yarn run functional-tests-ci
+  - <<: *sauce-labs-mobile
+    stage: sauce-labs - mobile
+    env: BROWSER_PLATFORM="iOS" DEVICE_NAME="iPhone 6 Simulator" PLATFORM_VERSION="11.2" BROWSER_NAME="Safari" FILE_ID="285569765346" FILE_VERSION_ID="300498497346"
+  - <<: *sauce-labs-mobile
+    # Uses firefox file id
+    stage: sauce-labs - mobile
+    env: BROWSER_PLATFORM="iOS" DEVICE_NAME="iPad Simulator" PLATFORM_VERSION="11.2" BROWSER_NAME="Safari" FILE_ID="285568802145" FILE_VERSION_ID="300497533713"
+  - <<: *sauce-labs-mobile
+    # Uses chrome file id
+    stage: sauce-labs - mobile
+    env: BROWSER_PLATFORM="Android" DEVICE_NAME="Android GoogleAPI Emulator" PLATFORM_VERSION="7.1" BROWSER_NAME="Chrome" FILE_ID="285567874839" FILE_VERSION_ID="300496591287"
+    script: yarn run functional-tests-ci

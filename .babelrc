@@ -27,7 +27,7 @@
                         "**/*-test.js",
                         "build/**",
                         "docs/**",
-                        "lib'**",
+                        "lib'**"
                     ]
                 }],
                 ["babel-plugin-transform-require-ignore", { "extensions": [".scss"] }]
