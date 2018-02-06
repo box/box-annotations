@@ -505,8 +505,20 @@ describe('AnnotationDialog', () => {
     });
 
     describe('keydownHandler()', () => {
-        it('should hide the dialog when user presses Esc', () => {
+        it('should cancel any unsaved annotations when user presses Esc on pending dialog', () => {
+            stubs.cancelAnnotation = sandbox.stub(dialog, 'cancelAnnotation');
+            dialog.hasAnnotations = false;
+
+            dialog.keydownHandler({
+                key: 'U+001B', // esc key
+                stopPropagation: () => {}
+            });
+            expect(stubs.cancelAnnotation).to.be.called;
+        });
+
+        it('should hide the dialog when user presses Esc if not creating a new annotation', () => {
             stubs.hide = sandbox.stub(dialog, 'hide');
+            dialog.hasAnnotations = true;
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
