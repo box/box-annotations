@@ -771,13 +771,6 @@ class AnnotationDialog extends EventEmitter {
         const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
         util.resetTextarea(replyTextEl, clearText);
         util.hideElement(replyButtonEls);
-
-        // Only focus on textarea if dialog is visible
-        if (util.isElementInViewport(replyTextEl)) {
-            replyTextEl.focus();
-        }
-
-        this.scrollToLastComment();
     }
 
     /**
