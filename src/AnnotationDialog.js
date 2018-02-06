@@ -526,7 +526,11 @@ class AnnotationDialog extends EventEmitter {
 
         const key = util.decodeKeydown(event);
         if (key === 'Escape') {
-            this.hide();
+            if (this.hasAnnotations) {
+                this.hide();
+            } else {
+                this.cancelAnnotation();
+            }
         } else {
             const dataType = util.findClosestDataType(event.target);
             if (dataType === CLASS_REPLY_TEXTAREA) {
