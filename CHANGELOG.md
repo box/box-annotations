@@ -1,3 +1,16 @@
+<a name="0.12.0"></a>
+# 0.12.0 (2018-02-06)
+
+* Chore: add flags to bash scripts to bail on errors (#106) ([d8ac7a5](https://github.com/box/box-annotations/commit/d8ac7a5))
+* Chore: Position based on first annotation in thread (#104) ([4035853](https://github.com/box/box-annotations/commit/4035853))
+* Fix: ability to create highlight annotations on a Microsoft Surface (#108) ([a8c613a](https://github.com/box/box-annotations/commit/a8c613a))
+* Fix: Cancel button while creating new point annotation (#109) ([77c26d7](https://github.com/box/box-annotations/commit/77c26d7))
+* Fix: Create point dialog doesn't stop propogating click event on mobile (#111) ([0ce0153](https://github.com/box/box-annotations/commit/0ce0153))
+* Fix: Do not redraw deleted highlight threads (#107) ([0d970d0](https://github.com/box/box-annotations/commit/0d970d0))
+* Fix: Escape key properly destroys pending point annotation (#114) ([5a2985c](https://github.com/box/box-annotations/commit/5a2985c))
+
+
+
 <a name="0.11.0"></a>
 # 0.11.0 (2018-01-31)
 
