@@ -371,6 +371,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.element = null;
             dialog.setup([], false);
             expect(dialog.element).is.not.null;
+            expect(dialog.element).to.have.class(constants.CLASS_HIDDEN);
         });
 
         it('should set hasComments according to the number of annotations in the thread', () => {

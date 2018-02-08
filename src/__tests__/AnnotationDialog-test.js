@@ -73,12 +73,27 @@ describe('AnnotationDialog', () => {
     describe('show()', () => {
         beforeEach(() => {
             stubs.position = sandbox.stub(dialog, 'position');
-            stubs.focus = sandbox.stub(dialog, 'focusTextArea');
+            stubs.focus = sandbox.stub(util, 'focusTextArea');
             stubs.scroll = sandbox.stub(dialog, 'scrollToLastComment');
+            sandbox.stub(dialog, 'showMobileDialog');
             dialog.canAnnotate = true;
         });
 
-        it('should not re-show dialog if already shown on page', () => {
+        it('should show the mobile dialog if on a mobile device', () => {
+            dialog.isMobile = true;
+            dialog.show();
+            expect(dialog.showMobileDialog).to.be.called;
+            expect(stubs.scroll).to.be.called;
+        });
+
+        it('should do nothing if the dialog is already visible ', () => {
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
+            dialog.show();
+            expect(dialog.showMobileDialog).to.not.be.called;
+            expect(stubs.scroll).to.not.be.called;
+        });
+
+        it('should not reposition the dialog if the reply textarea is already active', () => {
             dialog.hasAnnotations = true;
             dialog.activateReply();
 
@@ -87,31 +102,7 @@ describe('AnnotationDialog', () => {
             expect(stubs.position).to.not.be.called;
         });
 
-        it('should not check if textarea is active in readonly mode', () => {
-            dialog.canAnnotate = false;
-            dialog.show();
-            expect(stubs.focus).to.not.be.called;
-        });
-
-        it('should not re-position dialog if already shown on page', () => {
-            dialog.hasAnnotations = true;
-
-            // Deactivates dialog textarea
-            dialog.deactivateReply();
-            const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            commentsTextArea.classList.remove('bp-is-active');
-
-            // Removes dialog from page
-            dialog.element.parentNode.removeChild(dialog.element);
-            dialog.activateReply();
-
-            dialog.show();
-            expect(stubs.position).to.be.called;
-            expect(stubs.focus).to.be.called;
-            expect(stubs.scroll).to.be.called;
-        });
-
-        it('should position the dialog', () => {
+        it('should position the dialog if not on a mobile device', () => {
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
@@ -119,43 +110,24 @@ describe('AnnotationDialog', () => {
 
             dialog.show();
             expect(stubs.position).to.be.called;
-            expect(stubs.focus).to.be.called;
             expect(stubs.scroll).to.be.called;
-        });
-    });
-
-    describe('focusTextArea()', () => {
-        it('should focus textarea if in viewport', () => {
-            dialog.hasAnnotations = true;
-            dialog.deactivateReply();
-            sandbox.stub(util, 'isElementInViewport').returns(true);
-
-            const textArea = dialog.focusTextArea();
-            expect(document.activeElement).to.have.class(CLASS_REPLY_TEXTAREA);
-        });
-
-        it('should activate reply textarea if dialog has annotations', () => {
-            dialog.hasAnnotations = true;
-            dialog.deactivateReply();
-            sandbox.stub(dialog, 'activateReply');
-
-            const textArea = dialog.focusTextArea();
-            expect(textArea).to.not.have.class(constants.CLASS_ACTIVE);
-            expect(dialog.activateReply).to.be.called;
-        });
-
-        it('should activate textarea if dialog does not have annotations', () => {
-            dialog.hasAnnotations = false;
-            dialog.deactivateReply();
-            sandbox.stub(dialog, 'activateReply');
-
-            const textArea = dialog.focusTextArea();
-            expect(textArea).to.have.class(constants.CLASS_ACTIVE);
-            expect(dialog.activateReply).to.not.be.called;
         });
     });
 
     describe('scrollToLastComment()', () => {
+        beforeEach(() => {
+            sandbox.stub(util, 'focusTextArea');
+        });
+
+        it('should activate the reply text area if the dialog has multiple annotations', () => {
+            dialog.hasAnnotations = true;
+            sandbox.stub(dialog, 'activateReply');
+
+            dialog.scrollToLastComment();
+            expect(dialog.activateReply);
+            expect(util.focusTextArea);
+        });
+
         it('should set the dialog scroll height to the bottom of the comments container', () => {
             const annotationEl = {
                 scrollHeight: 500,
@@ -183,10 +155,22 @@ describe('AnnotationDialog', () => {
     });
 
     describe('showMobileDialog()', () => {
-        it('should populate the mobile dialog if using a mobile browser', () => {
-            dialog.highlightDialogEl = null;
+        beforeEach(() => {
             stubs.show = sandbox.stub(util, 'showElement');
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
+
+            dialog.container = {
+                querySelector: sandbox.stub().returns(dialog.element)
+            };
+
+            dialog.element.classList.add(constants.CLASS_MOBILE_ANNOTATION_DIALOG);
+            dialog.element.classList.add(constants.CLASS_HIDDEN);
+
+            sandbox.stub(dialog.element, 'querySelector').returns(document.createElement('div'));
+        });
+
+        it('should populate the mobile dialog if using a mobile browser', () => {
+            dialog.highlightDialogEl = null;
 
             dialog.showMobileDialog();
             expect(stubs.show).to.be.calledWith(dialog.element);
@@ -201,11 +185,15 @@ describe('AnnotationDialog', () => {
                 .stub(dialog.element, 'querySelectorAll')
                 .withArgs('.annotation-comment')
                 .returns([]);
-            stubs.show = sandbox.stub(util, 'showElement');
-            stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
             dialog.showMobileDialog();
 
             expect(dialog.element.classList.contains(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT)).to.be.true;
+        });
+
+        it('should not re-show the dialog if it is already visible', () => {
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
+            dialog.showMobileDialog();
+            expect(stubs.show).to.not.be.called;
         });
     });
 
@@ -248,6 +236,10 @@ describe('AnnotationDialog', () => {
     });
 
     describe('hide()', () => {
+        beforeEach(() => {
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
+        });
+
         it('should do nothing if element is already hidden', () => {
             dialog.element.classList.add(constants.CLASS_HIDDEN);
             sandbox.stub(util, 'hideElement');
@@ -265,8 +257,10 @@ describe('AnnotationDialog', () => {
         it('should hide the mobile dialog if using a mobile browser', () => {
             dialog.isMobile = true;
             sandbox.stub(dialog, 'hideMobileDialog');
+            sandbox.stub(dialog, 'toggleFlippedThreadEl');
             dialog.hide();
             expect(dialog.hideMobileDialog).to.be.called;
+            expect(dialog.toggleFlippedThreadEl).to.be.called;
         });
     });
 
@@ -555,6 +549,7 @@ describe('AnnotationDialog', () => {
         beforeEach(() => {
             stubs.show = sandbox.stub(util, 'showElement');
             stubs.activate = sandbox.stub(dialog, 'activateReply');
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
         });
 
         it('should show the element only if the element is currently hidden', () => {
@@ -689,6 +684,8 @@ describe('AnnotationDialog', () => {
             stubs.delete = sandbox.stub(dialog, 'deleteAnnotation');
             stubs.reply = sandbox.stub(dialog, 'postReply');
             stubs.hideMobile = sandbox.stub(dialog, 'hideMobileDialog');
+
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
         });
 
         it('should post annotation when post annotation button is clicked', () => {
@@ -938,11 +935,9 @@ describe('AnnotationDialog', () => {
         it('should clear the annotation text element after posting', () => {
             const annotationTextEl = document.querySelector('textarea');
             annotationTextEl.innerHTML += 'the preview SDK is great!';
-            sandbox.stub(annotationTextEl, 'focus');
 
             dialog.postAnnotation();
             expect(annotationTextEl).to.have.value('');
-            expect(annotationTextEl.focus).to.be.called;
         });
     });
 
@@ -1200,6 +1195,7 @@ describe('AnnotationDialog', () => {
 
     describe('toggleFlippedThreadEl()', () => {
         beforeEach(() => {
+            dialog.element.classList.remove(constants.CLASS_HIDDEN);
             dialog.threadEl = document.createElement('div');
         });
 

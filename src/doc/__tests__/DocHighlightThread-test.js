@@ -294,29 +294,6 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
-    describe('activateDialog()', () => {
-        it('should set to hover and trigger dialog mouseenter event if thread is not in the active or active-hover state', () => {
-            sandbox.stub(util, 'isInDialog').returns(true);
-            sandbox.stub(thread.dialog, 'mouseenterHandler');
-            thread.state = STATES.inactive;
-
-            thread.activateDialog();
-
-            assert.equal(thread.state, STATES.hover);
-            expect(thread.dialog.mouseenterHandler).to.be.called;
-        });
-
-        it('should ensure element is set up before calling mouse events', () => {
-            thread.dialog.element = null;
-            sandbox.stub(util, 'isInDialog').returns(true);
-            sandbox.stub(thread.dialog, 'setup');
-            sandbox.stub(thread.dialog, 'mouseenterHandler');
-
-            thread.activateDialog();
-            expect(thread.dialog.setup).to.be.called;
-        });
-    });
-
     describe('onMousemove()', () => {
         it('should return false if no dialog exists', () => {
             thread.dialog = undefined;
@@ -341,12 +318,10 @@ describe('doc/DocHighlightThread', () => {
         it('should do nothing if mouse is hovering over a highlight dialog and pending comment', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
             sandbox.stub(util, 'isInDialog').returns(true);
-            sandbox.stub(thread, 'activateDialog');
             thread.state = STATES.pending_active;
 
             const result = thread.onMousemove({});
 
-            expect(thread.activateDialog).to.not.be.called;
             expect(result).to.be.falsy;
         });
 
@@ -354,12 +329,10 @@ describe('doc/DocHighlightThread', () => {
             sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
             sandbox.stub(util, 'isInDialog').returns(false);
             sandbox.stub(thread, 'isInHighlight').returns(true);
-            sandbox.stub(thread, 'activateDialog');
             thread.state = STATES.hover;
 
             const result = thread.onMousemove({});
 
-            expect(thread.activateDialog).to.be.called;
             expect(result).to.be.truthy;
         });
 

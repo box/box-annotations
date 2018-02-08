@@ -37,7 +37,8 @@ import {
     generateBtn,
     createCommentTextNode,
     clearCanvas,
-    isInDialog
+    isInDialog,
+    focusTextArea
 } from '../util';
 import {
     STATES,
@@ -45,7 +46,8 @@ import {
     CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CARET
+    SELECTOR_ANNOTATION_CARET,
+    CLASS_ACTIVE
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -822,6 +824,13 @@ describe('util', () => {
             stubs.layerMock.expects('getContext').returns(stubs.context);
             stubs.contextMock.expects('clearRect').once();
             clearCanvas(pageEl, 'anything');
+        });
+    });
+
+    describe('focusTextArea()', () => {
+        it('should activate the textarea', () => {
+            const el = document.createElement('div');
+            expect(focusTextArea(el)).to.have.class(CLASS_ACTIVE);
         });
     });
 });
