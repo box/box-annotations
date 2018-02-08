@@ -1,17 +1,17 @@
 @import 'common';
 
-.bp-annotate-draw-background {
+.ba-annotate-draw-background {
     background-color: $fours;
 }
 
-.bp-annotate-draw-header,
-.bp-header.bp-annotate-draw-header {
+.ba-annotate-draw-header,
+.bp-header.ba-annotate-draw-header {
     background-color: $twos;
     border: none;
     position: relative;
 }
 
-.bp-header button.bp-btn-annotate-draw-cancel {
+.bp-header button.ba-btn-annotate-draw-cancel {
     background-color: $twos;
     border: solid $off-white 1px;
     color: $off-white;
@@ -21,7 +21,7 @@
     }
 }
 
-.bp-header button.bp-btn-annotate-draw-post {
+.bp-header button.ba-btn-annotate-draw-post {
     background-color: $off-white;
     color: $twos;
 
@@ -45,12 +45,12 @@
 .bp-container .bp-annotate-draw-undo-redo-container {
     margin: 0 auto;
 
-    .is-disabled.bp-btn-annotate-draw-undo,
-    .is-disabled.bp-btn-annotate-draw-redo,
-    .bp-btn-annotate-draw-undo,
-    .bp-btn-annotate-draw-redo,
-    button.bp-btn-annotate-draw-undo,
-    button.bp-btn-annotate-draw-redo {
+    .is-disabled.ba-btn-annotate-draw-undo,
+    .is-disabled.ba-btn-annotate-draw-redo,
+    .ba-btn-annotate-draw-undo,
+    .ba-btn-annotate-draw-redo,
+    button.ba-btn-annotate-draw-undo,
+    button.ba-btn-annotate-draw-redo {
         background: none;
         border: none;
         margin: 5px;
@@ -62,7 +62,7 @@
     }
 }
 
-.bp-annotation-caret {
+.ba-annotation-caret {
     left: 50%;
     position: absolute;
 
@@ -104,9 +104,9 @@
     }
 }
 
-.bp-annotation-drawing-dialog,
-.bp-annotation-highlight-dialog .bp-btn-plain,
-.bp-annotation-highlight-dialog .bp-btn-plain:hover {
+.ba-annotation-drawing-dialog,
+.ba-annotation-highlight-dialog .bp-btn-plain,
+.ba-annotation-highlight-dialog .bp-btn-plain:hover {
     padding-left: 5px;
     padding-right: 5px;
 
@@ -121,15 +121,15 @@
     }
 }
 
-.bp-highlight-comment-btn:hover .icon {
+.ba-highlight-comment-btn:hover .icon {
     fill: $white;
 }
 
-.bp-add-highlight-btn:hover svg {
+.ba-add-highlight-btn:hover svg {
     fill: $highlight-yellow;
 }
 
-.bp-is-text-highlighted .bp-annotation-highlight-dialog .bp-btn-plain {
+.bp-is-text-highlighted .ba-annotation-highlight-dialog .bp-btn-plain {
     svg {
         fill: $highlight-yellow;
     }
@@ -151,8 +151,8 @@
 // CSS for points and dialogs
 //------------------------------------------------------------------------------
 
-.bp-annotation-dialog,
-.bp-create-annotation-dialog {
+.ba-annotation-dialog,
+.ba-create-annotation-dialog {
     border-top: 20px solid transparent; // Transparent border for hover detection
     cursor: default; // Overrides cursor: none from annotation mode
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -174,7 +174,7 @@
         padding: 15px;
     }
 
-    .bp-textarea {
+    .ba-textarea {
         display: block;
         font-size: 13px;
         height: 34px;
@@ -191,7 +191,7 @@
             min-height: 68px;
         }
 
-        &.bp-invalid-input {
+        &.ba-invalid-input {
             border-color: fade-out($great-balls-of-fire, .5);
         }
     }
@@ -210,7 +210,7 @@
             border-bottom: 0;
         }
 
-        .bp-annotation-comment-text {
+        .ba-annotation-comment-text {
             margin-bottom: 0;
 
             & p {
@@ -310,7 +310,7 @@
     }
 }
 
-.bp-create-annotation-dialog .bp-create-comment {
+.ba-create-annotation-dialog .bp-create-comment {
     background-color: $white;
     overflow-x: hidden;
     overflow-y: auto;
@@ -319,7 +319,7 @@
     width: 267px; // Hard-coded width to solve layout issues
 }
 
-.bp-point-annotation-marker {
+.ba-point-annotation-marker {
     background-color: transparent;
     border-style: none;
     cursor: pointer;
@@ -341,15 +341,15 @@
     }
 }
 
-.bp-point-annotation-marker.bp-annotation-dialog-flipped {
+.ba-point-annotation-marker.ba-annotation-dialog-flipped {
     path,
     rect {
         display: none;
     }
 }
 
-.bp-annotation-dialog-flipped {
-    .bp-annotation-caret {
+.ba-annotation-dialog-flipped {
+    .ba-annotation-caret {
         transform: rotate(180deg);
     }
 }
@@ -404,8 +404,8 @@
 //------------------------------------------------------------------------------
 // CSS for highlights
 //------------------------------------------------------------------------------
-.bp-annotation-layer-highlight,
-.bp-annotation-layer-highlight-comment {
+.ba-annotation-layer-highlight,
+.ba-annotation-layer-highlight-comment {
     cursor: text;
     left: 0;
     mix-blend-mode: multiply;
@@ -422,9 +422,9 @@
     z-index: 130;
 }
 
-.bp-annotation-drawing-dialog,
-.bp-annotation-highlight-dialog,
-.bp-annotation-highlight-dialog:hover {
+.ba-annotation-drawing-dialog,
+.ba-annotation-highlight-dialog,
+.ba-annotation-highlight-dialog:hover {
     background-color: $white;
     border: 1px solid $seesee;
     border-radius: 3px;
@@ -432,16 +432,16 @@
     padding: 5px 6px;
 
     // Center buttons
-    .bp-add-highlight-btn {
+    .ba-add-highlight-btn {
         padding-top: 1px;
     }
 
-    .bp-highlight-comment-btn {
+    .ba-highlight-comment-btn {
         padding-top: 3px;
     }
 
-    .bp-btn-annotate-draw-add,
-    .bp-btn-annotate-draw-delete {
+    .ba-btn-annotate-draw-add,
+    .ba-btn-annotate-draw-delete {
         color: lighten($better-black, 10%);
         padding: 8px;
 
@@ -452,12 +452,12 @@
         }
     }
 
-    .bp-btn-annotate-draw-delete,
-    .bp-btn-annotate-draw-delete:active,
-    .bp-btn-annotate-draw-delete:hover,
-    .bp-btn-annotate-draw-add,
-    .bp-btn-annotate-draw-add:active,
-    .bp-btn-annotate-draw-add:hover {
+    .ba-btn-annotate-draw-delete,
+    .ba-btn-annotate-draw-delete:active,
+    .ba-btn-annotate-draw-delete:hover,
+    .ba-btn-annotate-draw-add,
+    .ba-btn-annotate-draw-add:active,
+    .ba-btn-annotate-draw-add:hover {
         font-size: 13px;
         margin-top: -3px;
         padding: 4px;
@@ -523,7 +523,7 @@
     }
 }
 
-.bp-annotation-drawing-label,
+.ba-annotation-drawing-label,
 .bp-annotation-highlight-label {
     padding: 8px 4px;
     width: 100%;
@@ -532,7 +532,7 @@
 //------------------------------------------------------------------------------
 // Draw annotation mode
 //------------------------------------------------------------------------------
-.bp-annotation-draw-boundary {
+.ba-annotation-draw-boundary {
     animation: dash 1s linear infinite;
     fill: none;
     stroke: rgb(0, 0, 0);
@@ -550,7 +550,7 @@
     }
 }
 
-.bp-annotation-draw .textLayer {
+.ba-annotation-draw .textLayer {
     pointer-events: none;
 
     > div {
@@ -558,8 +558,8 @@
     }
 }
 
-.bp-annotation-layer-draw,
-.bp-annotation-layer-draw-in-progress {
+.ba-annotation-layer-draw,
+.ba-annotation-layer-draw-in-progress {
     left: 0;
     mix-blend-mode: multiply;
     position: absolute;
@@ -569,20 +569,20 @@
 //------------------------------------------------------------------------------
 // Annotation mode
 //------------------------------------------------------------------------------
-.bp-annotation-mode .page,
-.bp-annotation-mode .bp-annotation-layer-highlight,
-.bp-annotation-mode .bp-annotation-layer-highlight-comment,
-.bp-annotation-mode .textLayer > div,
-.bp-annotation-mode > img,
-.bp-annotation-mode img {
+.ba-annotation-mode .page,
+.ba-annotation-mode .ba-annotation-layer-highlight,
+.ba-annotation-mode .ba-annotation-layer-highlight-comment,
+.ba-annotation-mode .textLayer > div,
+.ba-annotation-mode > img,
+.ba-annotation-mode img {
     cursor: crosshair;
 }
 
 // Needed to allow point annotations since PDF.js adds a funky mousedown handler
 // that helps with text selection - we need to disable this since it interacts
 // badly with point annotations on non-text divs in non-Chrome browsers
-.bp-annotation-mode .textLayer > div,
-.bp-annotation-mode .textLayer .endOfContent {
+.ba-annotation-mode .textLayer > div,
+.ba-annotation-mode .textLayer .endOfContent {
     pointer-events: none;
 }
 

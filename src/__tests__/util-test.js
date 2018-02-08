@@ -211,7 +211,7 @@ describe('util', () => {
             resetTextarea(textAreaEl);
 
             expect(textAreaEl).to.not.have.class('bp-is-active');
-            expect(textAreaEl).to.not.have.class('bp-invalid-input');
+            expect(textAreaEl).to.not.have.class('ba-invalid-input');
             expect(textAreaEl.value).equals('test');
             expect(textAreaEl.style.width).equals('');
             expect(textAreaEl.style.height).equals('');
