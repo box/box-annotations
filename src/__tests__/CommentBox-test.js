@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import CommentBox from '../CommentBox';
+import * as util from '../util';
 import {
     CLASS_HIDDEN,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
@@ -128,6 +129,7 @@ describe('CommentBox', () => {
 
             const create = sandbox.stub(commentBox, 'createCommentBox').returns(containerEl);
             const append = sandbox.stub(parentEl, 'appendChild');
+            sandbox.stub(util, 'focusTextArea');
 
             commentBox.show();
             expect(create).to.be.called;
@@ -140,6 +142,7 @@ describe('CommentBox', () => {
         it('should remove the hidden class from the container', () => {
             commentBox.show();
             expect(commentBox.containerEl.classList.contains(CLASS_HIDDEN)).to.be.false;
+            expect(util.focusTextArea).to.be.calledWith(commentBox.textAreaEl);
         });
     });
 
