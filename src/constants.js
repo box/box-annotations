@@ -10,6 +10,7 @@ export const CLASS_BUTTON_PLAIN = 'bp-btn-plain';
 export const CLASS_BUTTON_PRIMARY = 'bp-btn-primary';
 export const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
 export const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
+export const CLASS_ANNOTATION_BUTTON_DRAW = 'bp-btn-annotate-draw';
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 
 // Annotations CSS constants
