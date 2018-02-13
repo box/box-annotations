@@ -1,3 +1,12 @@
+<a name="0.13.0"></a>
+# 0.13.0 (2018-02-13)
+
+* Fix: Focus dialog textareas on show() (#113) ([f8bfd66](https://github.com/box/box-annotations/commit/f8bfd66))
+* Fix: Maintain bp prefix for preview classes (#116) ([1d1a393](https://github.com/box/box-annotations/commit/1d1a393)), closes [#116](https://github.com/box/box-annotations/issues/116)
+* Chore: Prepending CSS classes with ba instead of bp (#112) ([2a39741](https://github.com/box/box-annotations/commit/2a39741))
+
+
+
 <a name="0.12.0"></a>
 # 0.12.0 (2018-02-06)
 
