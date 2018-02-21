@@ -5,3 +5,9 @@ script: yarn run ci
 cache: yarn
 notifications:
   email: false
+
+# safelist
+branches:
+  only:
+  - master
+  - greenkeeper/initial
