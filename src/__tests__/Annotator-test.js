@@ -521,11 +521,10 @@ describe('Annotator', () => {
 
         describe('handleControllerEvents()', () => {
             const mode = 'something';
-            let data = {};
+            let data = { mode };
 
             beforeEach(() => {
                 sandbox.stub(annotator, 'emit');
-                data = { mode, data: { headerSelector: 'selector' } };
             });
 
             it('should toggle annotation mode on togglemode', () => {
