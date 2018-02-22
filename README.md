@@ -3,12 +3,11 @@
 [![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
 [![version](https://img.shields.io/badge/version-v0.13.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
+[![Greenkeeper badge](https://badges.greenkeeper.io/box/box-annotations.svg)](https://greenkeeper.io/)
 
 
 [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
 ====================================================================
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/box/box-annotations.svg)](https://greenkeeper.io/)
 Box Annotations allow developers to provide collaboration capabilities right from within the embedded Box preview in their application. Box Annotations fit a wide range of use cases and can be used to draw the previewer's attention and/or provide feedback on specific parts of a document or images. To learn more about Box Content Preview and for further documentation on how to use it, please go to our page on [Box Content Preview](https://developer.box.com/docs/box-content-preview).
 
 Box Content Preview currently supports four annotation types - highlight comment, highlight only, draw, and point annotation. Box Annotations are today supported on documents and image previews only. You can find the full list of supported file types for Box Content Preview at https://community.box.com/t5/Managing-Your-Content/What-file-types-and-fonts-are-supported-by-Box-s-Content-Preview/ta-p/327#FileTypesSupported.
