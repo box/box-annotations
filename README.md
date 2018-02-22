@@ -3,6 +3,7 @@
 [![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
 [![version](https://img.shields.io/badge/version-v0.13.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
+[![Greenkeeper badge](https://badges.greenkeeper.io/box/box-annotations.svg)](https://greenkeeper.io/)
 
 
 [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
