@@ -746,8 +746,8 @@ class DocAnnotator extends Annotator {
         // without delay
         const firstThread = delayThreads[0];
         delayThreads.forEach((thread) => {
-            thread.onMousemove(this.mouseMoveEvent);
-            if (firstThread && firstThread.threadNumber === thread.threadNumber) {
+            const shouldDelay = thread.onMousemove(this.mouseMoveEvent);
+            if (shouldDelay && firstThread && firstThread.threadNumber === thread.threadNumber) {
                 thread.show();
             } else {
                 thread.reset();

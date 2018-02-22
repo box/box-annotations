@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import CommentBox from '../CommentBox';
+import * as util from '../util';
 import {
     CLASS_HIDDEN,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
@@ -128,6 +129,7 @@ describe('CommentBox', () => {
 
             const create = sandbox.stub(commentBox, 'createCommentBox').returns(containerEl);
             const append = sandbox.stub(parentEl, 'appendChild');
+            sandbox.stub(util, 'focusTextArea');
 
             commentBox.show();
             expect(create).to.be.called;
@@ -140,6 +142,7 @@ describe('CommentBox', () => {
         it('should remove the hidden class from the container', () => {
             commentBox.show();
             expect(commentBox.containerEl.classList.contains(CLASS_HIDDEN)).to.be.false;
+            expect(util.focusTextArea).to.be.calledWith(commentBox.textAreaEl);
         });
     });
 
@@ -273,7 +276,7 @@ describe('CommentBox', () => {
             expect(commentBox.postEl).to.exist;
         });
 
-        it('should add an event listener on the textarea, cancel and post buttons', () => {
+        it('should add an event listener on the textarea, cancel and post buttons for desktop devices', () => {
             const uiElement = {
                 addEventListener: sandbox.stub(),
                 removeEventListener: sandbox.stub()
@@ -286,9 +289,14 @@ describe('CommentBox', () => {
             expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onCancel);
             expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onPost);
             expect(uiElement.addEventListener).to.be.calledWith('focus', commentBox.focus);
+            expect(uiElement.addEventListener).to.be.calledWith('focus', sinon.match.func);
+
+            expect(uiElement.addEventListener).to.not.be.calledWith('touchend', sinon.match.func);
+            expect(uiElement.addEventListener).to.not.be.calledWith('touchend', sinon.match.func);
+            expect(uiElement.addEventListener).to.not.be.calledWith('touchend', sinon.match.func);
         });
 
-        it('should add an event listener on the textarea, cancel and post buttons if the user is on a touch-enabled device', () => {
+        it('should add an event listener on the textarea, cancel and post buttons if the user is on a touch-enabled non-mobile device', () => {
             const uiElement = {
                 addEventListener: sandbox.stub(),
                 removeEventListener: sandbox.stub()
@@ -299,14 +307,38 @@ describe('CommentBox', () => {
             commentBox.hasTouch = true;
 
             commentBox.createCommentBox();
-            expect(uiElement.addEventListener).to.be.calledWith('focus', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
 
+            expect(uiElement.addEventListener).to.be.calledWith('focus', sinon.match.func);
             expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onCancel);
             expect(uiElement.addEventListener).to.be.calledWith('click', commentBox.onPost);
             expect(uiElement.addEventListener).to.be.calledWith('focus', commentBox.focus);
+
+            commentBox.containerEl = null;
+        });
+
+        it('should add an event listener on the textarea, cancel and post buttons if the user is on a touch-enabled mobile device', () => {
+            const uiElement = {
+                addEventListener: sandbox.stub(),
+                removeEventListener: sandbox.stub()
+            };
+            const el = document.createElement('section');
+            sandbox.stub(el, 'querySelector').returns(uiElement);
+            sandbox.stub(commentBox, 'createHTML').returns(el);
+            commentBox.hasTouch = true;
+            commentBox.isMobile = true;
+
+            commentBox.createCommentBox();
+            expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
+            expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
+            expect(uiElement.addEventListener).to.be.calledWith('touchend', sinon.match.func);
+
+            expect(uiElement.addEventListener).to.not.be.calledWith('focus', sinon.match.func);
+            expect(uiElement.addEventListener).to.not.be.calledWith('click', commentBox.onCancel);
+            expect(uiElement.addEventListener).to.not.be.calledWith('click', commentBox.onPost);
+            expect(uiElement.addEventListener).to.not.be.calledWith('focus', commentBox.focus);
 
             commentBox.containerEl = null;
         });

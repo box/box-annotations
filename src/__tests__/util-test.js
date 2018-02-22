@@ -38,7 +38,8 @@ import {
     createCommentTextNode,
     clearCanvas,
     replaceHeader,
-    isInDialog
+    isInDialog,
+    focusTextArea
 } from '../util';
 import {
     STATES,
@@ -46,7 +47,8 @@ import {
     CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CARET
+    SELECTOR_ANNOTATION_CARET,
+    CLASS_ACTIVE
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -212,7 +214,7 @@ describe('util', () => {
             resetTextarea(textAreaEl);
 
             expect(textAreaEl).to.not.have.class('bp-is-active');
-            expect(textAreaEl).to.not.have.class('bp-invalid-input');
+            expect(textAreaEl).to.not.have.class('ba-invalid-input');
             expect(textAreaEl.value).equals('test');
             expect(textAreaEl.style.width).equals('');
             expect(textAreaEl.style.height).equals('');
@@ -871,7 +873,13 @@ describe('util', () => {
             replaceHeader(containerEl, '.bp-mode-header');
             expect(baseHeader).to.have.class('bp-is-hidden');
             expect(newHeader).to.not.have.class('bp-is-hidden');
+        });
+    });
 
+    describe('focusTextArea()', () => {
+        it('should activate the textarea', () => {
+            const el = document.createElement('div');
+            expect(focusTextArea(el)).to.have.class(CLASS_ACTIVE);
         });
     });
 });

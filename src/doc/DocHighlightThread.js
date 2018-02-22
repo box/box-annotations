@@ -194,23 +194,6 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /**
-     * Sets thread state to hover or active-hover accordingly and triggers
-     * dialog to remain open
-     *
-     * @return {void}
-     */
-    activateDialog() {
-        this.state = STATES.hover;
-
-        // Setup the dialog element if it has not already been created
-        if (!this.dialog.element) {
-            this.dialog.setup(this.annotations, this.showComment);
-        }
-        this.dialog.mouseenterHandler();
-        clearTimeout(this.hoverTimeoutHandler);
-    }
-
-    /**
      * Mousemove handler for thread. If mouse is inside this highlight, set
      * state to be hover and return true. If not, set state to be inactive,
      * and reset. We don't draw hovered highlights in this method since we want
@@ -233,7 +216,8 @@ class DocHighlightThread extends AnnotationThread {
 
             // If mouse is in highlight, change state to hover or active-hover
         } else if (this.isInHighlight(event)) {
-            this.activateDialog();
+            this.state = STATES.hover;
+            clearTimeout(this.hoverTimeoutHandler);
 
             // No-op
             // If mouse is not in highlight and state is not already inactive, reset

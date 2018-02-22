@@ -44,7 +44,8 @@ describe('AnnotationThread', () => {
             setup: () => {},
             removeAllListeners: () => {},
             show: () => {},
-            hide: () => {}
+            hide: () => {},
+            scrollToLastComment: () => {}
         };
         stubs.dialogMock = sandbox.mock(thread.dialog);
 
@@ -262,6 +263,7 @@ describe('AnnotationThread', () => {
                 addAnnotation: () => {},
                 removeAnnotation: () => {},
                 enable: () => {},
+                scrollToLastComment: () => {},
                 element: {
                     dataset: { threadNumber: undefined }
                 }
@@ -271,6 +273,7 @@ describe('AnnotationThread', () => {
             dialogMock.expects('enable').withArgs(serverAnnotation.annotationID);
             dialogMock.expects('addAnnotation').withArgs(serverAnnotation);
             dialogMock.expects('removeAnnotation').withArgs(tempAnnotation.annotationID);
+            dialogMock.expects('scrollToLastComment');
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.dialog.element.dataset.threadNumber).to.not.be.undefined;
         });

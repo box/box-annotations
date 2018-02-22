@@ -5,7 +5,7 @@ import { ICON_CLOSE, ICON_DELETE } from './icons/icons';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
-const CLASS_FLIPPED_DIALOG = 'bp-annotation-dialog-flipped';
+const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
 
 const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_COMMENT = 'annotation-comment';
@@ -88,13 +88,15 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     show() {
-        // Populate mobile annotations dialog with annotations
-        // information
+        // Populate mobile annotations dialog with annotations information
         if (this.isMobile) {
             this.showMobileDialog();
+        } else if (this.element && !this.element.classList.contains(constants.CLASS_HIDDEN)) {
+            // Do not re-show dialog if it is already visible
+            return;
         }
 
-        let textAreaEl = this.hasAnnotations
+        const textAreaEl = this.hasAnnotations
             ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
             : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
 
@@ -102,6 +104,7 @@ class AnnotationDialog extends EventEmitter {
             // Don't re-position if reply textarea is already active
             const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
             if (textareaIsActive && this.element.parentNode) {
+                util.showElement(this.element);
                 this.scrollToLastComment();
                 return;
             }
@@ -111,11 +114,6 @@ class AnnotationDialog extends EventEmitter {
         // the DOM could have changed from zooming
         if (!this.isMobile) {
             this.position();
-        }
-
-        // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.canAnnotate) {
-            textAreaEl = this.focusTextArea();
         }
 
         this.scrollToLastComment();
@@ -130,6 +128,16 @@ class AnnotationDialog extends EventEmitter {
         if (!this.element) {
             return;
         }
+
+        // Activate and move cursor in the appropriate text area if not in read-only mode
+        if (this.hasAnnotations) {
+            this.activateReply();
+        }
+
+        const textAreaEl = this.hasAnnotations
+            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        util.focusTextArea(textAreaEl);
 
         const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
         if (annotationsEl) {
@@ -146,6 +154,12 @@ class AnnotationDialog extends EventEmitter {
      */
     showMobileDialog() {
         this.element = this.container.querySelector(`.${constants.CLASS_MOBILE_ANNOTATION_DIALOG}`);
+
+        // Do not re-show dialog if it is already visible
+        if (!this.element.classList.contains(constants.CLASS_HIDDEN)) {
+            return;
+        }
+
         util.showElement(this.element);
         this.element.appendChild(this.dialogEl);
 
@@ -274,7 +288,6 @@ class AnnotationDialog extends EventEmitter {
 
         this.emit('annotationcreate', { text });
         annotationTextEl.value = '';
-        annotationTextEl.focus();
     }
 
     //--------------------------------------------------------------------------
@@ -312,6 +325,7 @@ class AnnotationDialog extends EventEmitter {
             this.element = document.createElement('div');
             this.element.setAttribute('data-type', constants.DATA_TYPE_ANNOTATION_DIALOG);
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
+            this.element.classList.add(constants.CLASS_HIDDEN);
             this.element.innerHTML = `<div class="${constants.CLASS_ANNOTATION_CARET}"></div>`;
             this.element.appendChild(this.dialogEl);
 
@@ -512,7 +526,11 @@ class AnnotationDialog extends EventEmitter {
 
         const key = util.decodeKeydown(event);
         if (key === 'Escape') {
-            this.hide();
+            if (this.hasAnnotations) {
+                this.hide();
+            } else {
+                this.cancelAnnotation();
+            }
         } else {
             const dataType = util.findClosestDataType(event.target);
             if (dataType === CLASS_REPLY_TEXTAREA) {
@@ -709,38 +727,6 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Activates appropriate textarea and adjusts the cursor position on focus
-     *
-     * @private
-     * @return {HTMLElement} textAreaEl
-     */
-    focusTextArea() {
-        const textAreaEl = this.hasAnnotations
-            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-
-        // Activate appropriate textarea
-        if (this.hasAnnotations) {
-            this.activateReply();
-        } else {
-            textAreaEl.classList.add(constants.CLASS_ACTIVE);
-        }
-
-        // Move cursor to end of text area
-        if (textAreaEl.selectionStart) {
-            textAreaEl.selectionEnd = textAreaEl.value.length;
-            textAreaEl.selectionStart = textAreaEl.selectionEnd;
-        }
-
-        // Focus the textarea if visible
-        if (util.isElementInViewport(textAreaEl)) {
-            textAreaEl.focus();
-        }
-
-        return textAreaEl;
-    }
-
-    /**
      * Activates reply textarea.
      *
      * @private
@@ -766,8 +752,6 @@ class AnnotationDialog extends EventEmitter {
         const replyButtonEls = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
         replyTextEl.classList.add(constants.CLASS_ACTIVE);
         util.showElement(replyButtonEls);
-
-        this.scrollToLastComment();
     }
 
     /**
@@ -791,13 +775,6 @@ class AnnotationDialog extends EventEmitter {
         const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
         util.resetTextarea(replyTextEl, clearText);
         util.hideElement(replyButtonEls);
-
-        // Only focus on textarea if dialog is visible
-        if (util.isElementInViewport(replyTextEl)) {
-            replyTextEl.focus();
-        }
-
-        this.scrollToLastComment();
     }
 
     /**

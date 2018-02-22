@@ -4,8 +4,8 @@
     border-width: 1px 0;
 }
 
-.bp-mobile-annotation-dialog,
-.bp-mobile-create-annotation-dialog {
+.ba-mobile-annotation-dialog,
+.ba-mobile-create-annotation-dialog {
     background: white;
     border-top: 0;
     height: 100%;
@@ -14,8 +14,8 @@
     width: 100%;
     z-index: 130;
 
-    &.bp-animate-show-dialog {
-        &:not(.bp-plain-highlight) {
+    &.ba-animate-show-dialog {
+        &:not(.ba-plain-highlight) {
             animation: show-dialog-small;
             animation-duration: .2s;
             animation-fill-mode: forwards;
@@ -29,7 +29,7 @@
             }
         }
 
-        &.bp-plain-highlight {
+        &.ba-plain-highlight {
             animation: show-highlight-dialog;
             animation-duration: .2s;
             animation-fill-mode: forwards;
@@ -37,16 +37,16 @@
     }
 }
 
-.bp-mobile-create-annotation-dialog {
+.ba-mobile-create-annotation-dialog {
     bottom: 0;
     height: auto;
     top: auto;
 }
 
-.bp-create-annotation-dialog.bp-mobile-annotation-dialog {
+.ba-create-annotation-dialog.ba-mobile-annotation-dialog {
     height: auto;
 
-    .bp-annotation-highlight-dialog {
+    .ba-annotation-highlight-dialog {
         bottom: 0;
     }
 }
@@ -81,8 +81,8 @@
     }
 }
 
-.bp-mobile-create-annotation-dialog,
-.bp-mobile-annotation-dialog.bp-annotation-dialog {
+.ba-mobile-create-annotation-dialog,
+.ba-mobile-annotation-dialog.ba-annotation-dialog {
     .annotation-container {
         background-color: $white;
         border: 0;
@@ -95,7 +95,7 @@
         width: 100%;
     }
 
-    .bp-annotation-mobile-header {
+    .ba-annotation-mobile-header {
         align-items: center;
         background-color: $white;
         display: flex;
@@ -108,7 +108,7 @@
         @include border-top-bottom;
     }
 
-    .bp-annotation-dialog-close {
+    .ba-annotation-dialog-close {
         background: none;
         border: 0;
         display: inline-block;
@@ -128,7 +128,7 @@
         }
     }
 
-    .bp-textarea {
+    .ba-textarea {
         font-size: 16px;
         line-height: 16px;
         min-width: 100%;
@@ -179,17 +179,17 @@
 }
 
 /* Highlight dialog */
-.bp-mobile-annotation-dialog.bp-plain-highlight {
+.ba-mobile-annotation-dialog.ba-plain-highlight {
     height: 47px; // includes mobile header & highlight dialog
     top: auto;
 
     @include border-top-bottom;
 }
 
-.bp-mobile-annotation-dialog .bp-annotation-highlight-btns,
-.bp-mobile-annotation-dialog .bp-create-comment,
-.bp-mobile-annotation-dialog .annotation-container section[data-section="create"],
-.bp-mobile-create-annotation-dialog {
+.ba-mobile-annotation-dialog .ba-annotation-highlight-btns,
+.ba-mobile-annotation-dialog .bp-create-comment,
+.ba-mobile-annotation-dialog .annotation-container section[data-section="create"],
+.ba-mobile-create-annotation-dialog {
     background: white;
     bottom: 0;
     left: 0;
@@ -200,7 +200,7 @@
     @include border-top-bottom;
 }
 
-.bp-mobile-annotation-dialog .annotation-container {
+.ba-mobile-annotation-dialog .annotation-container {
     @media #{$tablet} {
         left: auto;
         padding: 15px 0;
@@ -208,7 +208,7 @@
     }
 }
 
-.bp-mobile-annotation-dialog .bp-annotation-highlight-dialog {
+.ba-mobile-annotation-dialog .ba-annotation-highlight-dialog {
     border: none;
     color: $fours;
     font-size: 16px;
@@ -219,7 +219,7 @@
     text-align: center;
     z-index: 9999;
 
-    .bp-annotation-highlight-btns {
+    .ba-annotation-highlight-btns {
         display: flex;
         justify-content: flex-start;
         padding: 0;
@@ -240,8 +240,8 @@
     }
 
     &.cannot-annotate {
-        .bp-add-highlight-btn,
-        .bp-highlight-comment-btn {
+        .ba-add-highlight-btn,
+        .ba-highlight-comment-btn {
             display: none;
         }
     }

@@ -830,3 +830,32 @@ export function clearCanvas(pageEl, layerClass) {
         context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
     }
 }
+
+/**
+ * Activates appropriate textarea and adjusts the cursor position on focus
+ *
+ * @param {HTMLElement} element The DOM element for the current page
+ * @return {HTMLElement} textAreaEl
+ */
+export function focusTextArea(element) {
+    const textAreaEl = element;
+    if (!textAreaEl) {
+        return textAreaEl;
+    }
+
+    // Activate textarea
+    textAreaEl.classList.add(CLASS_ACTIVE);
+
+    // Move cursor to end of text area
+    if (textAreaEl.selectionStart) {
+        textAreaEl.selectionEnd = textAreaEl.value.length;
+        textAreaEl.selectionStart = textAreaEl.selectionEnd;
+    }
+
+    // Focus the textarea if visible
+    if (isElementInViewport(textAreaEl)) {
+        textAreaEl.focus();
+    }
+
+    return textAreaEl;
+}
