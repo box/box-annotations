@@ -1,17 +1,17 @@
 @import 'common';
 
-.ba-annotate-draw-background {
+.ba-annotate-mode-background {
     background-color: $fours;
 }
 
-.bp-annotate-draw-header,
-.bp-header.bp-annotate-draw-header {
+.ba-mode-header,
+.bp-header.ba-mode-header {
     background-color: $twos;
     border: none;
     position: relative;
 }
 
-.bp-header button.bp-btn-annotate-point,
+.bp-header button.ba-btn-annotate-point-exit,
 .bp-header button.ba-btn-annotate-draw-cancel {
     background-color: $twos;
     border: solid $off-white 1px;
@@ -31,8 +31,8 @@
     }
 }
 
-.bp-container .ba-annotate-point-post-cancel-container,
-.bp-container .ba-annotate-draw-post-cancel-container {
+.bp-container .ba-point-post-cancel-container,
+.bp-container .ba-draw-post-cancel-container {
     margin-right: 20px;
     position: absolute;
     right: 0;
@@ -44,7 +44,7 @@
     }
 }
 
-.bp-container .ba-annotate-draw-undo-redo-container {
+.bp-container .ba-draw-undo-redo-container {
     margin: 0 auto;
 
     .is-disabled.ba-btn-annotate-draw-undo,

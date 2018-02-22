@@ -1,7 +1,7 @@
 import AnnotationModeController from './AnnotationModeController';
 import shell from './drawingShell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import * as util from '../util';
+import { replaceHeader, enableElement, disableElement, eventToLocationHandler, clearCanvas } from '../util';
 import {
     TYPES,
     STATES,
@@ -9,6 +9,7 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
+    SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_LAYER_DRAW
 } from '../constants';
 
@@ -120,8 +121,8 @@ class DrawingModeController extends AnnotationModeController {
         super.unbindListeners();
         this.bindDOMListeners();
 
-        util.disableElement(this.undoButtonEl);
-        util.disableElement(this.redoButtonEl);
+        disableElement(this.undoButtonEl);
+        disableElement(this.redoButtonEl);
     }
 
     /**
@@ -150,19 +151,19 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(
             this.annotatedElement,
             ['mousemove', 'touchmove'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleMove)
+            eventToLocationHandler(locationFunction, this.currentThread.handleMove)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mousedown', 'touchstart'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleStart)
+            eventToLocationHandler(locationFunction, this.currentThread.handleStart)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mouseup', 'touchcancel', 'touchend'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleStop)
+            eventToLocationHandler(locationFunction, this.currentThread.handleStop)
         );
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
@@ -177,6 +178,16 @@ class DrawingModeController extends AnnotationModeController {
 
         this.pushElementHandler(this.undoButtonEl, 'click', this.currentThread.undo);
         this.pushElementHandler(this.redoButtonEl, 'click', this.currentThread.redo);
+    }
+
+    /**
+     * Enables the specified annotation mode
+     *
+     * @return {void}
+     */
+    enter() {
+        super.enter();
+        replaceHeader(this.container, SELECTOR_DRAW_MODE_HEADER);
     }
 
     /**
@@ -278,7 +289,7 @@ class DrawingModeController extends AnnotationModeController {
     renderPage(pageNum) {
         // Clear context if needed
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {
             return;
@@ -326,17 +337,17 @@ class DrawingModeController extends AnnotationModeController {
     updateUndoRedoButtonEls(undoCount, redoCount) {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
-                util.enableElement(this.undoButtonEl);
+                enableElement(this.undoButtonEl);
             } else if (undoCount === 0) {
-                util.disableElement(this.undoButtonEl);
+                disableElement(this.undoButtonEl);
             }
         }
 
         if (this.redoButtonEl) {
             if (redoCount === 1) {
-                util.enableElement(this.redoButtonEl);
+                enableElement(this.redoButtonEl);
             } else if (redoCount === 0) {
-                util.disableElement(this.redoButtonEl);
+                disableElement(this.redoButtonEl);
             }
         }
     }

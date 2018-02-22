@@ -6,10 +6,11 @@ import {
     CONTROLLER_EVENT,
     CREATE_EVENT,
     CLASS_ACTIVE,
+    SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { isInDialog } from '../util';
+import { isInDialog, replaceHeader } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
@@ -182,6 +183,8 @@ class PointModeController extends AnnotationModeController {
      */
     enter() {
         super.enter();
+        replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
+
         if (this.buttonEl) {
             this.buttonEl.classList.add(CLASS_ACTIVE);
         }

@@ -7,7 +7,6 @@ import {
     CLASS_ANNOTATION_MODE,
     CLASS_ANNNOTATION_MODE_BACKGROUND,
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    SELECTOR_ANNOTATION_MODE_HEADER,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT,
@@ -150,7 +149,6 @@ class AnnotationModeController extends EventEmitter {
         this.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
 
         this.buttonEl.classList.add(CLASS_ACTIVE);
-        replaceHeader(this.container, SELECTOR_ANNOTATION_MODE_HEADER);
 
         this.emit(CONTROLLER_EVENT.enter, { mode: this.mode });
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
