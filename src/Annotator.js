@@ -249,6 +249,7 @@ class Annotator extends EventEmitter {
                 modeButton: this.modeButtons[type],
                 permissions: this.permissions,
                 annotator: this,
+                localized: this.localized,
                 options
             });
 
@@ -667,17 +668,16 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     handleControllerEvents(data) {
-        const headerSelector = data.data ? data.data.headerSelector : '';
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);
                 break;
             case CONTROLLER_EVENT.enter:
-                this.emit(data.event, { mode: data.mode, headerSelector });
+                this.emit(data.event, { mode: data.mode });
                 this.unbindDOMListeners();
                 break;
             case CONTROLLER_EVENT.exit:
-                this.emit(data.event, { mode: data.mode, headerSelector });
+                this.emit(data.event, { mode: data.mode });
                 this.bindDOMListeners();
                 break;
             case CONTROLLER_EVENT.createThread:

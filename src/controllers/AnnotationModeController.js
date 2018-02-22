@@ -1,10 +1,12 @@
 import rbush from 'rbush';
 import EventEmitter from 'events';
-import { insertTemplate, isPending } from '../util';
+import { insertTemplate, isPending, replaceHeader } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
+    CLASS_ANNNOTATION_MODE_BACKGROUND,
+    SELECTOR_BOX_PREVIEW_BASE_HEADER,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT,
@@ -40,6 +42,7 @@ class AnnotationModeController extends EventEmitter {
         this.mode = data.mode;
         this.annotator = data.annotator;
         this.permissions = data.permissions || {};
+        this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
 
@@ -121,18 +124,18 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     exit() {
-        if (this.createDialog) {
-            this.createDialog.hide();
-        }
+        this.emit(CONTROLLER_EVENT.exit, { mode: this.mode });
+        replaceHeader(this.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
 
         this.destroyPendingThreads();
+
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
-        if (this.buttonEl) {
-            this.buttonEl.classList.remove(CLASS_ACTIVE);
-        }
+        this.annotatedElement.classList.remove(CLASS_ANNNOTATION_MODE_BACKGROUND);
+
+        this.buttonEl.classList.remove(CLASS_ACTIVE);
 
         this.unbindListeners(); // Disable mode
-        this.emit(CONTROLLER_EVENT.exit);
+        this.emit(CONTROLLER_EVENT.bindDOMListeners);
         this.hadPendingThreads = false;
     }
 
@@ -143,11 +146,12 @@ class AnnotationModeController extends EventEmitter {
      */
     enter() {
         this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        if (this.buttonEl) {
-            this.buttonEl.classList.add(CLASS_ACTIVE);
-        }
+        this.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
 
-        this.emit(CONTROLLER_EVENT.enter); // Disable other annotations
+        this.buttonEl.classList.add(CLASS_ACTIVE);
+
+        this.emit(CONTROLLER_EVENT.enter, { mode: this.mode });
+        this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 

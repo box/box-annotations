@@ -8,9 +8,9 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
-    CLASS_ACTIVE,
+    SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
+    CLASS_ACTIVE,
     CONTROLLER_EVENT
 } from '../../constants';
 
@@ -51,17 +51,7 @@ describe('controllers/DrawingModeController', () => {
     describe('init()', () => {
         beforeEach(() => {
             Object.defineProperty(AnnotationModeController.prototype, 'init', { value: sandbox.stub() });
-            sandbox.stub(controller, 'getButton');
             sandbox.stub(controller, 'setupHeader');
-        });
-
-        it('should get all the mode buttons and initialize the controller', () => {
-            controller.init({ options: { header: 'none' } });
-            expect(controller.setupHeader).to.not.be.called;
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
         });
 
         it('should replace the draw annotations header if using the preview header', () => {
@@ -70,37 +60,21 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
-    describe('exit()', () => {
-        it('should exit draw annotation mode', () => {
-            sandbox.stub(controller, 'unbindListeners');
+    describe('setupHeader', () => {
+        it('should setup header and get all the mode buttons', () => {
+            const blankDiv = document.createElement('div');
+            stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
+            sandbox.stub(controller, 'getButton').returns(blankDiv);
+            controller['localized'] = {
+                cancelButton: 'cancel',
+                doneButton: 'done'
+            };
 
-            // Set up draw annotation mode
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-            controller.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-
-            controller.buttonEl = document.createElement('button');
-            controller.buttonEl.classList.add(CLASS_ACTIVE);
-
-            controller.exit();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith('binddomlisteners');
-        });
-    });
-
-    describe('enter()', () => {
-        it('should exit draw annotation mode', () => {
-            sandbox.stub(controller, 'bindListeners');
-
-            // Set up draw annotation mode
-            controller.annotatedElement = document.createElement('div');
-            controller.buttonEl = document.createElement('button');
-
-            controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter, sinon.match.object);
-            expect(controller.bindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
+            controller.setupHeader(blankDiv, blankDiv);
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
+            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
         });
     });
 
@@ -204,6 +178,22 @@ describe('controllers/DrawingModeController', () => {
             controller.setupHandlers();
             expect(stubs.getParams).to.be.called;
             expect(controller.handlers.length).to.equal(7);
+        });
+    });
+
+    describe('enter()', () => {
+        it('should enter annotation mode', () => {
+            sandbox.stub(controller, 'bindListeners');
+            sandbox.stub(util, 'replaceHeader');
+
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+
+            controller.buttonEl = document.createElement('button');
+            controller.buttonEl.classList.add(CLASS_ACTIVE);
+
+            controller.enter();
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_DRAW_MODE_HEADER);
         });
     });
 

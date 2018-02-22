@@ -1,13 +1,49 @@
 import AnnotationModeController from './AnnotationModeController';
-import { TYPES, THREAD_EVENT, CONTROLLER_EVENT, CREATE_EVENT } from '../constants';
+import shell from './pointShell.html';
+import {
+    TYPES,
+    THREAD_EVENT,
+    CONTROLLER_EVENT,
+    CREATE_EVENT,
+    CLASS_ACTIVE,
+    SELECTOR_POINT_MODE_HEADER,
+    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
+} from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
+import { isInDialog, replaceHeader } from '../util';
 
 class PointModeController extends AnnotationModeController {
+    /** @property {HTMLElement} - The button to exit point annotation mode */
+    exitButtonEl;
+
     /** @property {HTMLElement} - The button to cancel the pending thread */
     cancelButtonEl;
 
     /** @property {HTMLElement} - The button to commit the pending thread */
     postButtonEl;
+
+    /** @inheritdoc */
+    init(data) {
+        super.init(data);
+
+        // If the header coming from the preview options is not none (e.g.
+        // light, dark, or no value given), then we want to use our draw
+        // header. Otherwise we expect header UI to be handled by Preview’s
+        // consumer
+        if (data.options.header !== 'none') {
+            this.setupHeader(this.container, shell);
+        }
+    }
+
+    /** @inheritdoc */
+    setupHeader(container, header) {
+        super.setupHeader(container, header);
+
+        this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+
+        // TODO(@spramod): Remove '||' string, once closeButton is properly localized within Preview
+        this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
+    }
 
     /**
      * Set up the shared mobile dialog and associated listeners
@@ -80,19 +116,19 @@ class PointModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * Set up and return the necessary handlers for the annotation mode
-     *
-     * @inheritdoc
-     * @protected
-     * @return {Array} An array where each element is an object containing
-     * the object that will emit the event, the type of events to listen
-     * for, and the callback
-     */
+    /** @inheritdoc */
     setupHandlers() {
         this.pointClickHandler = this.pointClickHandler.bind(this);
         // Get handlers
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.pointClickHandler);
+
+        this.pushElementHandler(this.exitButtonEl, 'click', () => {
+            if (this.currentThread) {
+                this.currentThread.cancelUnsavedAnnotation();
+            }
+
+            this.toggleMode();
+        });
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             this.currentThread.cancelUnsavedAnnotation();
@@ -105,6 +141,29 @@ class PointModeController extends AnnotationModeController {
         });
     }
 
+    /** @inheritdoc */
+    exit() {
+        if (this.createDialog) {
+            this.createDialog.hide();
+        }
+
+        if (this.buttonEl) {
+            this.buttonEl.classList.remove(CLASS_ACTIVE);
+        }
+
+        super.exit();
+    }
+
+    /** @inheritdoc */
+    enter() {
+        super.enter();
+        replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
+
+        if (this.buttonEl) {
+            this.buttonEl.classList.add(CLASS_ACTIVE);
+        }
+    }
+
     /**
      * Event handler for adding a point annotation. Creates a point annotation
      * thread at the clicked location.
@@ -114,19 +173,13 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        event.stopPropagation();
-        event.preventDefault();
-
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        this.hadPendingThreads = this.destroyPendingThreads();
-        if (this.hadPendingThreads) {
+        if (isInDialog(event)) {
             return;
         }
 
-        // Exits point annotation mode on first click
-        this.emit(CONTROLLER_EVENT.toggleMode);
-        this.hadPendingThreads = true;
+        this.hadPendingThreads = this.destroyPendingThreads();
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
