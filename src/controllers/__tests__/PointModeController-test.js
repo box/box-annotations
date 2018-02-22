@@ -12,7 +12,8 @@ import {
     STATES,
     CONTROLLER_EVENT,
     CREATE_EVENT,
-    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
+    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
+    SELECTOR_POINT_MODE_HEADER
 } from '../../constants';
 
 let controller;
@@ -183,6 +184,7 @@ describe('controllers/PointModeController', () => {
     describe('enter()', () => {
         beforeEach(() => {
             sandbox.stub(controller, 'bindListeners');
+            sandbox.stub(util, 'replaceHeader');
 
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
@@ -195,12 +197,14 @@ describe('controllers/PointModeController', () => {
             controller.enter();
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter);
             expect(controller.bindListeners).to.be.called;
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
         });
 
         it('should activate mode button if available', () => {
             controller.buttonEl = document.createElement('button');
             controller.enter();
             expect(controller.buttonEl).to.have.class(CLASS_ACTIVE);
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
         });
     });
 

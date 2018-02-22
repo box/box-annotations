@@ -8,6 +8,7 @@ import {
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CLASS_ANNNOTATION_MODE_BACKGROUND,
+    SELECTOR_BOX_PREVIEW_BASE_HEADER,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     STATES,
@@ -167,6 +168,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should exit annotation mode', () => {
             sandbox.stub(controller, 'unbindListeners');
             sandbox.stub(controller, 'emit');
+            sandbox.stub(util, 'replaceHeader');
 
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
@@ -180,6 +182,7 @@ describe('controllers/AnnotationModeController', () => {
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
             expect(controller.unbindListeners).to.be.called;
             expect(controller.emit).to.be.calledWith('binddomlisteners');
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
         });
     });
 

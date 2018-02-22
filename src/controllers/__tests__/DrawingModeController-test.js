@@ -8,6 +8,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
+    SELECTOR_DRAW_MODE_HEADER,
+    CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
     CONTROLLER_EVENT
 } from '../../constants';
@@ -176,6 +178,22 @@ describe('controllers/DrawingModeController', () => {
             controller.setupHandlers();
             expect(stubs.getParams).to.be.called;
             expect(controller.handlers.length).to.equal(7);
+        });
+    });
+
+    describe('enter()', () => {
+        it('should enter annotation mode', () => {
+            sandbox.stub(controller, 'bindListeners');
+            sandbox.stub(util, 'replaceHeader');
+
+            controller.annotatedElement = document.createElement('div');
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+
+            controller.buttonEl = document.createElement('button');
+            controller.buttonEl.classList.add(CLASS_ACTIVE);
+
+            controller.enter();
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_DRAW_MODE_HEADER);
         });
     });
 

@@ -22,13 +22,7 @@ class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to commit the pending thread */
     postButtonEl;
 
-    /**
-     * Initializes mode controller.
-     *
-     * @inheritdoc
-     * @param {Object} data - Options for constructing a controller
-     * @return {void}
-     */
+    /** @inheritdoc */
     init(data) {
         super.init(data);
 
@@ -41,9 +35,7 @@ class PointModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     setupHeader(container, header) {
         super.setupHeader(container, header);
 
@@ -124,15 +116,7 @@ class PointModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * Set up and return the necessary handlers for the annotation mode
-     *
-     * @inheritdoc
-     * @protected
-     * @return {Array} An array where each element is an object containing
-     * the object that will emit the event, the type of events to listen
-     * for, and the callback
-     */
+    /** @inheritdoc */
     setupHandlers() {
         this.pointClickHandler = this.pointClickHandler.bind(this);
         // Get handlers
@@ -157,12 +141,7 @@ class PointModeController extends AnnotationModeController {
         });
     }
 
-    /**
-     * Disables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
+    /** @inheritdoc */
     exit() {
         if (this.createDialog) {
             this.createDialog.hide();
@@ -175,12 +154,7 @@ class PointModeController extends AnnotationModeController {
         super.exit();
     }
 
-    /**
-     * Enables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
+    /** @inheritdoc */
     enter() {
         super.enter();
         replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
