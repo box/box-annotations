@@ -11,7 +11,7 @@ import CommentBox from '../../CommentBox';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
 
-const CLASS_CREATE_DIALOG = 'bp-create-annotation-dialog';
+const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 let stubs = {};
 
 describe('doc/CreateHighlightDialog', () => {

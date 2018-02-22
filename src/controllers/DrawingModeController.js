@@ -1,7 +1,7 @@
 import AnnotationModeController from './AnnotationModeController';
-import shell from './../shell.html';
+import shell from './drawingShell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import * as util from '../util';
+import { replaceHeader, enableElement, disableElement, eventToLocationHandler, clearCanvas } from '../util';
 import {
     TYPES,
     STATES,
@@ -9,13 +9,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    SELECTOR_ANNOTATION_DRAWING_HEADER,
-    CLASS_ANNNOTATION_DRAWING_BACKGROUND,
-    CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ACTIVE,
-    CLASS_ANNOTATION_MODE,
-    CONTROLLER_EVENT
+    SELECTOR_DRAW_MODE_HEADER,
+    CLASS_ANNOTATION_LAYER_DRAW
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -34,13 +29,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to redo a stroke on the pending drawing thread */
     redoButtonEl;
 
-    /**
-     * Initializes mode controller.
-     *
-     * @inheritdoc
-     * @param {Object} data - Options for constructing a controller
-     * @return {void}
-     */
+    /** @inheritdoc */
     init(data) {
         super.init(data);
 
@@ -52,56 +41,26 @@ class DrawingModeController extends AnnotationModeController {
             this.setupHeader(this.container, shell);
         }
 
-        this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-        this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-        this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
-
         this.handleSelection = this.handleSelection.bind(this);
     }
 
-    /**
-     * Disables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    exit() {
-        this.emit(CONTROLLER_EVENT.exit, { headerSelector: SELECTOR_BOX_PREVIEW_BASE_HEADER });
+    /** @inheritdoc */
+    setupHeader(container, header) {
+        super.setupHeader(container, header);
 
-        this.annotatedElement.classList.remove(CLASS_ANNOTATION_MODE);
-        this.annotatedElement.classList.remove(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
+        this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+        this.cancelButtonEl.textContent = this.localized.cancelButton;
 
-        this.buttonEl.classList.remove(CLASS_ACTIVE);
+        this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
 
-        this.unbindListeners(); // Disable mode
-        this.emit(CONTROLLER_EVENT.bindDOMListeners);
+        // TODO(@spramod): Remove '||' string, once doneButton is properly localized within Preview
+        this.postButtonEl.textContent = this.localized.doneButton || 'Done';
+
+        this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
+        this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
     }
 
-    /**
-     * Enables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    enter() {
-        this.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        this.annotatedElement.classList.add(CLASS_ANNNOTATION_DRAWING_BACKGROUND);
-
-        this.buttonEl.classList.add(CLASS_ACTIVE);
-
-        this.emit(CONTROLLER_EVENT.enter, { headerSelector: SELECTOR_ANNOTATION_DRAWING_HEADER });
-        this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
-        this.bindListeners(); // Enable mode
-    }
-
-    /**
-     * Bind the DOM listeners for this mode
-     *
-     * @inheritdoc
-     * @public
-     * @return {void}
-     */
+    /** @inheritdoc */
     bindDOMListeners() {
         if (this.isMobile && this.hasTouch) {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
@@ -110,13 +69,7 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * Unbind the DOM listeners for this mode
-     *
-     * @inheritdoc
-     * @public
-     * @return {void}
-     */
+    /** @inheritdoc */
     unbindDOMListeners() {
         if (this.isMobile && this.hasTouch) {
             this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
@@ -125,42 +78,22 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * Bind the mode listeners and store each handler for future unbinding
-     *
-     * @inheritdoc
-     * @public
-     * @return {void}
-     */
+    /** @inheritdoc */
     bindListeners() {
         super.bindListeners();
         this.unbindDOMListeners();
     }
 
-    /**
-     * Unbind drawing mode listeners. Resets the undo and redo buttons to be disabled if they exist
-     *
-     * @inheritdoc
-     * @protected
-     * @return {void}
-     */
+    /** @inheritdoc */
     unbindListeners() {
         super.unbindListeners();
         this.bindDOMListeners();
 
-        util.disableElement(this.undoButtonEl);
-        util.disableElement(this.redoButtonEl);
+        disableElement(this.undoButtonEl);
+        disableElement(this.redoButtonEl);
     }
 
-    /**
-     * Set up and return the necessary handlers for the annotation mode
-     *
-     * @inheritdoc
-     * @protected
-     * @return {Array} An array where each element is an object containing
-     * the object that will emit the event, the type of events to listen
-     * for, and the callback
-     */
+    /** @inheritdoc */
     setupHandlers() {
         /* eslint-disable require-jsdoc */
         const locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
@@ -178,19 +111,19 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(
             this.annotatedElement,
             ['mousemove', 'touchmove'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleMove)
+            eventToLocationHandler(locationFunction, this.currentThread.handleMove)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mousedown', 'touchstart'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleStart)
+            eventToLocationHandler(locationFunction, this.currentThread.handleStart)
         );
 
         this.pushElementHandler(
             this.annotatedElement,
             ['mouseup', 'touchcancel', 'touchend'],
-            util.eventToLocationHandler(locationFunction, this.currentThread.handleStop)
+            eventToLocationHandler(locationFunction, this.currentThread.handleStop)
         );
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
@@ -208,14 +141,16 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Handle an annotation event.
+     * Enables the specified annotation mode
      *
-     * @inheritdoc
-     * @protected
-     * @param {AnnotationThread} thread The thread that emitted the event
-     * @param {Object} data Extra data related to the annotation event
      * @return {void}
      */
+    enter() {
+        super.enter();
+        replaceHeader(this.container, SELECTOR_DRAW_MODE_HEADER);
+    }
+
+    /** @inheritdoc */
     handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
@@ -295,18 +230,11 @@ class DrawingModeController extends AnnotationModeController {
         this.select(selected);
     }
 
-    /**
-     * Renders annotations from memory for a specified page.
-     *
-     * @inheritdoc
-     * @private
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
+    /** @inheritdoc */
     renderPage(pageNum) {
         // Clear context if needed
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        util.clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {
             return;
@@ -354,17 +282,17 @@ class DrawingModeController extends AnnotationModeController {
     updateUndoRedoButtonEls(undoCount, redoCount) {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
-                util.enableElement(this.undoButtonEl);
+                enableElement(this.undoButtonEl);
             } else if (undoCount === 0) {
-                util.disableElement(this.undoButtonEl);
+                disableElement(this.undoButtonEl);
             }
         }
 
         if (this.redoButtonEl) {
             if (redoCount === 1) {
-                util.enableElement(this.redoButtonEl);
+                enableElement(this.redoButtonEl);
             } else if (redoCount === 0) {
-                util.disableElement(this.redoButtonEl);
+                disableElement(this.redoButtonEl);
             }
         }
     }

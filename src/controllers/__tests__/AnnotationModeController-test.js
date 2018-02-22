@@ -7,6 +7,8 @@ import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
+    CLASS_ANNNOTATION_MODE_BACKGROUND,
+    SELECTOR_BOX_PREVIEW_BASE_HEADER,
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     STATES,
@@ -20,6 +22,7 @@ const sandbox = sinon.sandbox.create();
 describe('controllers/AnnotationModeController', () => {
     beforeEach(() => {
         controller = new AnnotationModeController();
+        controller.container = document;
         stubs.thread = {
             threadID: '123abc',
             location: { page: 1 },
@@ -162,59 +165,40 @@ describe('controllers/AnnotationModeController', () => {
     });
 
     describe('exit()', () => {
-        beforeEach(() => {
-            sandbox.stub(controller, 'destroyPendingThreads');
+        it('should exit annotation mode', () => {
             sandbox.stub(controller, 'unbindListeners');
             sandbox.stub(controller, 'emit');
+            sandbox.stub(util, 'replaceHeader');
 
+            // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        });
+            controller.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
 
-        it('should hide the createDialog if it exists', () => {
-            controller.createDialog = {
-                hide: () => {}
-            };
-            const createMock = sandbox.mock(controller.createDialog);
-            createMock.expects('hide');
-            controller.exit();
-        });
-
-        it('should exit annotation mode', () => {
-            controller.exit();
-            expect(controller.destroyPendingThreads).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.hadPendingThreads).to.be.falsy;
-        });
-
-        it('should deactive mode button if available', () => {
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
+
             controller.exit();
-            expect(controller.buttonEl).to.not.have.class(CLASS_ACTIVE);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
+            expect(controller.unbindListeners).to.be.called;
+            expect(controller.emit).to.be.calledWith('binddomlisteners');
+            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
         });
     });
 
     describe('enter()', () => {
-        beforeEach(() => {
+        it('should exit annotation mode', () => {
             sandbox.stub(controller, 'bindListeners');
             sandbox.stub(controller, 'emit');
 
+            // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
-        });
-
-        it('should enter annotation mode', () => {
-            controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter);
-            expect(controller.bindListeners).to.be.called;
-        });
-
-        it('should activate mode button if available', () => {
             controller.buttonEl = document.createElement('button');
+
             controller.enter();
-            expect(controller.buttonEl).to.have.class(CLASS_ACTIVE);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter, sinon.match.object);
+            expect(controller.bindListeners).to.be.called;
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
         });
     });
 

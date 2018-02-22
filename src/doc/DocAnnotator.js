@@ -15,7 +15,6 @@ import * as docUtil from './docUtil';
 import {
     STATES,
     TYPES,
-    DATA_TYPE_ANNOTATION_DIALOG,
     DATA_TYPE_ANNOTATION_INDICATOR,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
@@ -167,7 +166,7 @@ class DocAnnotator extends Annotator {
 
             // If click is inside an annotation dialog, ignore
             const dataType = util.findClosestDataType(eventTarget);
-            if (dataType === DATA_TYPE_ANNOTATION_DIALOG || dataType === DATA_TYPE_ANNOTATION_INDICATOR) {
+            if (util.isInDialog(event) || dataType === DATA_TYPE_ANNOTATION_INDICATOR) {
                 return location;
             }
 
@@ -747,8 +746,8 @@ class DocAnnotator extends Annotator {
         // without delay
         const firstThread = delayThreads[0];
         delayThreads.forEach((thread) => {
-            thread.onMousemove(this.mouseMoveEvent);
-            if (firstThread && firstThread.threadNumber === thread.threadNumber) {
+            const shouldDelay = thread.onMousemove(this.mouseMoveEvent);
+            if (shouldDelay && firstThread && firstThread.threadNumber === thread.threadNumber) {
                 thread.show();
             } else {
                 thread.reset();

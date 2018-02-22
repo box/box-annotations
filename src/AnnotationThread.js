@@ -515,6 +515,7 @@ class AnnotationThread extends EventEmitter {
             this.dialog.addAnnotation(savedAnnotation);
             this.dialog.removeAnnotation(tempAnnotation.annotationID);
             this.dialog.enable(savedAnnotation.annotationID);
+            this.dialog.scrollToLastComment();
         }
 
         if (this.isMobile) {

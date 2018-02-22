@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/bash -xe
 
 # Temp version
 VERSION="XXX"

@@ -127,14 +127,14 @@ describe('doc/DocHighlightDialog', () => {
             Object.defineProperty(AnnotationDialog.prototype, 'postAnnotation', { value: stubs.postFunc });
         });
         it('should do nothing if not text is present', () => {
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.bp-annotation-mobile-header');
+            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
             dialog.postAnnotation(' ');
 
             expect(headerQuery).to.not.be.called;
         });
 
         it('should not modify mobile ui there is no mobile header present', () => {
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.bp-annotation-mobile-header').returns(null);
+            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header').returns(null);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('This is the water and this is the well.');
 
@@ -148,7 +148,7 @@ describe('doc/DocHighlightDialog', () => {
                     remove: sandbox.stub()
                 }
             };
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.bp-annotation-mobile-header');
+            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
             dialog.postAnnotation('Drink full and descend.');
         });
 
@@ -160,7 +160,7 @@ describe('doc/DocHighlightDialog', () => {
                 }
             };
             const headerQuery = sandbox.stub(dialog.element, 'querySelector')
-                .withArgs('.bp-annotation-mobile-header').returns(headerEl);
+                .withArgs('.ba-annotation-mobile-header').returns(headerEl);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('The horse is the white of the eyes, dark within.');
 
@@ -371,6 +371,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.element = null;
             dialog.setup([], false);
             expect(dialog.element).is.not.null;
+            expect(dialog.element).to.have.class(constants.CLASS_HIDDEN);
         });
 
         it('should set hasComments according to the number of annotations in the thread', () => {

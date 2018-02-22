@@ -160,6 +160,7 @@ describe('doc/DocAnnotator', () => {
             });
 
             stubs.findClosest = sandbox.stub(util, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
+            stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
             stubs.scale = sandbox.stub(util, 'getScale').returns(1);
 
             // stub highlight methods
@@ -212,6 +213,7 @@ describe('doc/DocAnnotator', () => {
                     pageEl: document.querySelector('.annotated-element'),
                     page: 1
                 });
+                stubs.isInDialog.returns(true);
                 expect(annotator.getLocationFromEvent(stubs.event, TYPES.point)).to.be.null;
             });
 

@@ -12,7 +12,8 @@ import {
     CLASS_INVISIBLE,
     CLASS_DISABLED,
     CLASS_INVALID_INPUT,
-    CLASS_ANNOTATION_DIALOG
+    CLASS_ANNOTATION_DIALOG,
+    CLASS_BOX_PREVIEW_HEADER
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -29,6 +30,30 @@ const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 //------------------------------------------------------------------------------
 // DOM Utils
 //------------------------------------------------------------------------------
+
+/**
+ * Replaces the currently active header with a specified header
+ *
+ * @public
+ * @param {HTMLElement} containerEl Preview container
+ * @param {string} replacementHeader Class name of new header
+ * @return {void}
+ */
+export function replaceHeader(containerEl, replacementHeader) {
+    const headerToShow = containerEl.querySelector(replacementHeader);
+    if (!headerToShow) {
+        return;
+    }
+
+    // First hide all possible headers
+    const headers = containerEl.querySelectorAll(`.${CLASS_BOX_PREVIEW_HEADER}`);
+    [].forEach.call(headers, (header) => {
+        header.classList.add(CLASS_HIDDEN);
+    });
+
+    // Show the specified header
+    headerToShow.classList.remove(CLASS_HIDDEN);
+}
 
 /**
  * Finds the closest ancestor DOM element with the specified class.
@@ -804,4 +829,33 @@ export function clearCanvas(pageEl, layerClass) {
     if (context) {
         context.clearRect(0, 0, annotationLayerEl.width, annotationLayerEl.height);
     }
+}
+
+/**
+ * Activates appropriate textarea and adjusts the cursor position on focus
+ *
+ * @param {HTMLElement} element The DOM element for the current page
+ * @return {HTMLElement} textAreaEl
+ */
+export function focusTextArea(element) {
+    const textAreaEl = element;
+    if (!textAreaEl) {
+        return textAreaEl;
+    }
+
+    // Activate textarea
+    textAreaEl.classList.add(CLASS_ACTIVE);
+
+    // Move cursor to end of text area
+    if (textAreaEl.selectionStart) {
+        textAreaEl.selectionEnd = textAreaEl.value.length;
+        textAreaEl.selectionStart = textAreaEl.selectionEnd;
+    }
+
+    // Focus the textarea if visible
+    if (isElementInViewport(textAreaEl)) {
+        textAreaEl.focus();
+    }
+
+    return textAreaEl;
 }

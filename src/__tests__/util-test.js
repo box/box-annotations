@@ -37,7 +37,9 @@ import {
     generateBtn,
     createCommentTextNode,
     clearCanvas,
-    isInDialog
+    replaceHeader,
+    isInDialog,
+    focusTextArea
 } from '../util';
 import {
     STATES,
@@ -45,7 +47,8 @@ import {
     CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CARET
+    SELECTOR_ANNOTATION_CARET,
+    CLASS_ACTIVE
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -211,7 +214,7 @@ describe('util', () => {
             resetTextarea(textAreaEl);
 
             expect(textAreaEl).to.not.have.class('bp-is-active');
-            expect(textAreaEl).to.not.have.class('bp-invalid-input');
+            expect(textAreaEl).to.not.have.class('ba-invalid-input');
             expect(textAreaEl.value).equals('test');
             expect(textAreaEl.style.width).equals('');
             expect(textAreaEl.style.height).equals('');
@@ -822,6 +825,61 @@ describe('util', () => {
             stubs.layerMock.expects('getContext').returns(stubs.context);
             stubs.contextMock.expects('clearRect').once();
             clearCanvas(pageEl, 'anything');
+        });
+    });
+
+    describe('isInDialog()', () => {
+        it('should return true if the closest element is an annotation dialog', () => {
+            expect(isInDialog({})).to.be.falsy;
+        });
+
+        it('should check if event location falls inside dialog boundary', () => {
+            const dialogEl = {
+                getBoundingClientRect: sandbox.stub()
+            };
+            stubs.getDimensions = dialogEl.getBoundingClientRect;
+
+            stubs.getDimensions.returns({
+                top: 1,
+                bottom: 3,
+                left: 1,
+                right: 3,
+            });
+            expect(isInDialog({ clientX: 2, clientY: 2 }, dialogEl)).to.be.truthy;
+            expect(isInDialog({ clientX: 100, clientY: 100 }, dialogEl)).to.be.falsy;
+        });
+    });
+
+    describe('replaceHeader()', () => {
+        const newHeader = document.createElement('div');
+        const containerEl = document.createElement('div');
+        const baseHeader = document.createElement('div');
+
+        beforeEach(() => {
+            baseHeader.className = 'bp-header';
+            containerEl.appendChild(baseHeader);
+
+            newHeader.className = 'bp-header bp-mode-header bp-is-hidden';
+            containerEl.appendChild(newHeader);
+        });
+
+        it('should do nothing if no valid header is specified', () => {
+            replaceHeader(containerEl, '.bp-invalid-header');
+            expect(baseHeader).to.not.have.class('bp-is-hidden');
+            expect(newHeader).to.have.class('bp-is-hidden');
+        });
+
+        it('should hide all headers and then show the specified header', () => {
+            replaceHeader(containerEl, '.bp-mode-header');
+            expect(baseHeader).to.have.class('bp-is-hidden');
+            expect(newHeader).to.not.have.class('bp-is-hidden');
+        });
+    });
+
+    describe('focusTextArea()', () => {
+        it('should activate the textarea', () => {
+            const el = document.createElement('div');
+            expect(focusTextArea(el)).to.have.class(CLASS_ACTIVE);
         });
     });
 });
