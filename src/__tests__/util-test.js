@@ -223,12 +223,12 @@ describe('util', () => {
 
     describe('isInDialog()', () => {
         it('should return false if no dialog element exists', () => {
-            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.falsy;
+            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.false;
         });
 
         it('should return true if the event is in the given dialog', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.truthy;
+            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.true;
         });
     });
 
@@ -830,7 +830,7 @@ describe('util', () => {
 
     describe('isInDialog()', () => {
         it('should return true if the closest element is an annotation dialog', () => {
-            expect(isInDialog({})).to.be.falsy;
+            expect(isInDialog({})).to.be.false;
         });
 
         it('should check if event location falls inside dialog boundary', () => {
@@ -845,8 +845,8 @@ describe('util', () => {
                 left: 1,
                 right: 3,
             });
-            expect(isInDialog({ clientX: 2, clientY: 2 }, dialogEl)).to.be.truthy;
-            expect(isInDialog({ clientX: 100, clientY: 100 }, dialogEl)).to.be.falsy;
+            expect(isInDialog({ clientX: 2, clientY: 2 }, dialogEl)).to.be.true;
+            expect(isInDialog({ clientX: 100, clientY: 100 }, dialogEl)).to.be.false;
         });
     });
 

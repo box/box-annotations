@@ -333,9 +333,9 @@ describe('Annotator', () => {
                     }
                 };
                 annotator.getAnnotationPermissions(file);
-                expect(annotator.permissions.canAnnotate).to.be.truthy;
-                expect(annotator.permissions.canViewOwnAnnotations).to.be.falsy;
-                expect(annotator.permissions.canViewAllAnnotations).to.be.falsy;
+                expect(annotator.permissions.canAnnotate).to.be.true;
+                expect(annotator.permissions.canViewOwnAnnotations).to.be.false;
+                expect(annotator.permissions.canViewAllAnnotations).to.be.false;
             });
         });
 
@@ -376,7 +376,7 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
+                    expect(result).to.be.true;
                     done();
                 }).catch(() => {
                     sinon.assert.failException;
@@ -392,7 +392,7 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
+                    expect(result).to.be.true;
                     expect(annotator.threadMap).to.not.be.undefined;
                     expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
                     done();
@@ -410,7 +410,7 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
+                    expect(result).to.be.true;
                     stubs.threadPromise.then(() => {
                         expect(annotator.threadMap).to.not.be.undefined;
                         expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
@@ -671,7 +671,7 @@ describe('Annotator', () => {
                     commentText: 'text'
                 });
 
-                expect(stubs.thread.dialog.hasComments).to.be.truthy;
+                expect(stubs.thread.dialog.hasComments).to.be.true;
                 expect(stubs.thread.state).equals(STATES.hover);
                 expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
                 expect(annotator.emit).to.be.calledWith(THREAD_EVENT.threadSave, sinon.match.object);
@@ -810,15 +810,15 @@ describe('Annotator', () => {
 
             it('should return false if annotations are not allowed on the current viewer', () => {
                 annotator.options.annotator = undefined;
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.equal(false);
+                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.false;
             })
 
             it('should return true if the type is supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.equal(true);
+                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.true;
             });
 
             it('should return false if the type is not supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable('drawing')).to.equal(false);
+                expect(annotator.isModeAnnotatable('drawing')).to.be.false;
             });
         });
     });

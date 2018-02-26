@@ -65,9 +65,9 @@ describe('doc/docUtil', () => {
 
     describe('hasSelectionChanged()', () => {
         it('should return false if the selection is invalid or no previous selection exists', () => {
-            expect(docUtil.hasSelectionChanged()).to.be.falsy;
-            expect(docUtil.hasSelectionChanged({})).to.be.falsy;
-            expect(docUtil.hasSelectionChanged({ rangeCount: 1 })).to.be.falsy;
+            expect(docUtil.hasSelectionChanged()).to.be.false;
+            expect(docUtil.hasSelectionChanged({})).to.be.false;
+            expect(docUtil.hasSelectionChanged({ rangeCount: 1 })).to.be.false;
         });
 
         it('should return true if the previous and current selection match', () => {
@@ -77,8 +77,8 @@ describe('doc/docUtil', () => {
             const diffSelection = {
                 getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(false)} )
             };
-            expect(docUtil.hasSelectionChanged(selection, diffSelection)).to.be.falsy;
-            expect(docUtil.hasSelectionChanged(selection, selection)).to.be.truthy;
+            expect(docUtil.hasSelectionChanged(selection, diffSelection)).to.be.false;
+            expect(docUtil.hasSelectionChanged(selection, selection)).to.be.true;
         });
     });
 

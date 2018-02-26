@@ -35,12 +35,12 @@ describe('doc/DocDrawingDialog', () => {
     describe('isVisible()', () => {
         it('should return true if the dialog is visible', () => {
             dialog.visible = true;
-            expect(dialog.isVisible()).to.be.truthy;
+            expect(dialog.isVisible()).to.be.true;
         });
 
         it('should return false if the dialog is not visible', () => {
             dialog.visible = false;
-            expect(dialog.isVisible()).to.be.falsy;
+            expect(dialog.isVisible()).to.be.false;
         });
     });
 
@@ -208,11 +208,11 @@ describe('doc/DocDrawingDialog', () => {
 
             sandbox.stub(util, 'hideElement');
             dialog.element = element;
-            expect(dialog.visible).to.be.truthy;
+            expect(dialog.visible).to.be.true;
 
             dialog.hide();
             expect(util.hideElement).to.be.calledWith(element);
-            expect(dialog.visible).to.be.falsy;
+            expect(dialog.visible).to.be.false;
         });
     });
 
@@ -222,11 +222,11 @@ describe('doc/DocDrawingDialog', () => {
 
             sandbox.stub(util, 'showElement');
             dialog.element = element;
-            expect(dialog.visible).to.be.falsy;
+            expect(dialog.visible).to.be.false;
 
             dialog.show();
             expect(util.showElement).to.be.calledWith(element);
-            expect(dialog.visible).to.be.truthy;
+            expect(dialog.visible).to.be.true;
         });
     });
 
@@ -249,7 +249,7 @@ describe('doc/DocDrawingDialog', () => {
             annotation.permissions.can_delete = false;
 
             const dialogEl = dialog.generateDialogEl([annotation]);
-            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
+            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
             expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
@@ -257,7 +257,7 @@ describe('doc/DocDrawingDialog', () => {
 
         it('should generate without a save button', () => {
             const dialogEl = dialog.generateDialogEl([annotation]);
-            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
+            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
             expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
@@ -266,7 +266,7 @@ describe('doc/DocDrawingDialog', () => {
         it('should generate a save and delete button', () => {
             stubs.getFirstAnnotation.returns(null);
             const dialogEl = dialog.generateDialogEl([]);
-            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.truthy;
+            expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
             expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
             expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.not.be.null;
             expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;

@@ -894,7 +894,7 @@ describe('doc/DocAnnotator', () => {
 
             annotator.onHighlightMouseMove({ clientX: 10, clientY: 10 });
 
-            expect(annotator.didMouseMove).to.equal(true);
+            expect(annotator.didMouseMove).to.be.true;
         });
 
         it('should not set didMouseMove to true if the mouse was not moved enough', () => {
@@ -1373,7 +1373,7 @@ describe('doc/DocAnnotator', () => {
             stubs.threadMock.expects('onClick').returns(false);
             annotator.clickThread(stubs.thread);
             expect(annotator.activeThread).to.be.undefined;
-            expect(annotator.consumed).to.be.falsy;
+            expect(annotator.consumed).to.be.false;
 
             stubs.thread2 = {
                 type: 'something',
@@ -1384,7 +1384,7 @@ describe('doc/DocAnnotator', () => {
 
             annotator.clickThread(stubs.thread2);
             expect(annotator.activeThread).equals(stubs.thread2);
-            expect(annotator.consumed).to.be.truthy;
+            expect(annotator.consumed).to.be.true;
         });
 
         it('should hide all non-pending mobile dialogs', () => {
@@ -1487,7 +1487,7 @@ describe('doc/DocAnnotator', () => {
                 [TYPES.draw]: { hasPendingThread: false },
                 [TYPES.point]: { hasPendingThread: true }
             };
-            expect(annotator.isCreatingAnnotation()).to.be.truthy;
+            expect(annotator.isCreatingAnnotation()).to.be.true;
         });
 
         it('should return false if all modes are NOT creating annotations', () => {
@@ -1495,7 +1495,7 @@ describe('doc/DocAnnotator', () => {
                 [TYPES.draw]: { hasPendingThread: false },
                 [TYPES.point]: { hasPendingThread: false }
             };
-            expect(annotator.isCreatingAnnotation()).to.be.falsy;
+            expect(annotator.isCreatingAnnotation()).to.be.false;
         });
     });
 

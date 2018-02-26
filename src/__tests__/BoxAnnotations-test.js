@@ -95,7 +95,7 @@ describe('BoxAnnotations', () => {
 
             loader.instantiateControllers(config);
             expect(config.CONTROLLERS).to.not.equal(undefined);
-            expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).to.be.truthy;
+            expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).to.be.true;
             const assignedControllers = Object.keys(config.CONTROLLERS);
             expect(assignedControllers.length).to.equal(1);
         });

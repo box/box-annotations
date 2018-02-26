@@ -288,7 +288,7 @@ describe('doc/DocDrawingThread', () => {
     describe('hasPageChanged()', () => {
         it('should return false when there is no location', () => {
             const value = thread.hasPageChanged(undefined);
-            expect(value).to.be.falsy;
+            expect(value).to.be.false;
         });
 
         it('should return false when there is a location but no page', () => {
@@ -296,7 +296,7 @@ describe('doc/DocDrawingThread', () => {
                 page: undefined
             };
             const value = thread.hasPageChanged(location);
-            expect(value).to.be.falsy;
+            expect(value).to.be.false;
         });
 
         it('should return false when the given location page is the same as the thread location', () => {
@@ -307,7 +307,7 @@ describe('doc/DocDrawingThread', () => {
                 page: thread.location.page
             };
             const value = thread.hasPageChanged(location);
-            expect(value).to.be.falsy;
+            expect(value).to.be.false;
         });
 
         it('should return true when the given location page is different from the thread location', () => {
@@ -455,7 +455,7 @@ describe('doc/DocDrawingThread', () => {
             thread.createDialog();
 
             expect(existingDialog.destroy).to.be.called;
-            expect(thread.dialog instanceof DocDrawingDialog).to.be.truthy;
+            expect(thread.dialog instanceof DocDrawingDialog).to.be.true;
             expect(thread.bindCustomListenersOnDialog).to.be.called;
         });
     });
