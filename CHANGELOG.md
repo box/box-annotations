@@ -1,3 +1,14 @@
+<a name="0.14.0"></a>
+# 0.14.0 (2018-02-27)
+
+* Chore: Adding yarn install before common package.json scripts (#122) ([ee5fd57](https://github.com/box/box-annotations/commit/ee5fd57))
+* Update dependencies to enable Greenkeeper 🌴 (#120) ([13ee8ff](https://github.com/box/box-annotations/commit/13ee8ff))
+* New: Continuous Point Annotation Mode (#105) ([496f651](https://github.com/box/box-annotations/commit/496f651))
+* New: Enable draw annotations by default (#115) ([4994699](https://github.com/box/box-annotations/commit/4994699))
+* New: enable travis CI on greenkeeper branches (#118) ([4e0cd67](https://github.com/box/box-annotations/commit/4e0cd67))
+
+
+
 <a name="0.13.0"></a>
 # 0.13.0 (2018-02-13)
 
