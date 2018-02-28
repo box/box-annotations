@@ -339,6 +339,7 @@ class DocAnnotator extends Annotator {
         this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
         this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
         this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
+        this.resetHighlightSelection = this.resetHighlightSelection.bind(this);
 
         this.clickThread = this.clickThread.bind(this);
 
@@ -396,6 +397,7 @@ class DocAnnotator extends Annotator {
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
+            this.annotatedElement.addEventListener('wheel', this.resetHighlightSelection);
         }
 
         if (this.hasTouch && this.drawEnabled) {
@@ -436,6 +438,7 @@ class DocAnnotator extends Annotator {
         super.unbindDOMListeners();
 
         this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
+        this.annotatedElement.removeEventListener('wheel', this.resetHighlightSelection);
 
         if (this.highlightThrottleHandle) {
             cancelAnimationFrame(this.highlightThrottleHandle);
@@ -471,6 +474,19 @@ class DocAnnotator extends Annotator {
 
         this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         super.resetMobileDialog();
+    }
+
+    /**
+     * Clears the text selection and hides the create highlight dialog
+     *
+     * @return {void}
+     */
+    resetHighlightSelection() {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        if (isCreateDialogVisible) {
+            this.createHighlightDialog.hide();
+            document.getSelection().removeAllRanges();
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -829,12 +845,7 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (isCreateDialogVisible) {
-            this.createHighlightDialog.hide();
-            document.getSelection().removeAllRanges();
-        }
-
+        this.resetHighlightSelection();
         this.isCreatingHighlight = false;
 
         // Prevent the creation of highlights if the user is currently creating a point annotation
@@ -1008,10 +1019,7 @@ class DocAnnotator extends Annotator {
 
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
-                if (isCreateDialogVisible) {
-                    document.getSelection().removeAllRanges();
-                    this.createHighlightDialog.hide();
-                }
+                this.resetHighlightSelection();
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
                 if (isCreateDialogVisible) {
