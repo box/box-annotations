@@ -483,10 +483,12 @@ class DocAnnotator extends Annotator {
      */
     resetHighlightSelection() {
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (isCreateDialogVisible) {
-            this.createHighlightDialog.hide();
-            document.getSelection().removeAllRanges();
+        if (!isCreateDialogVisible) {
+            return;
         }
+
+        this.createHighlightDialog.hide();
+        document.getSelection().removeAllRanges();
     }
 
     //--------------------------------------------------------------------------
