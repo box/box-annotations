@@ -160,7 +160,7 @@ describe('Annotator', () => {
             };
             annotator.setupMobileDialog();
             expect(annotator.container.appendChild).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).equals(1);
+            expect(annotator.mobileDialogEl.children.length).to.equal(1);
         });
     });
 
@@ -192,7 +192,7 @@ describe('Annotator', () => {
             annotator.resetMobileDialog();
             expect(util.hideElement).to.be.called;
             expect(util.showElement).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).equals(0);
+            expect(annotator.mobileDialogEl.children.length).to.equal(0);
         });
     });
 
@@ -593,7 +593,7 @@ describe('Annotator', () => {
             it('should return the current annotation mode', () => {
                 annotator.modeControllers['something'] = stubs.controller;
                 stubs.controllerMock.expects('isEnabled').returns(true);
-                expect(annotator.getCurrentAnnotationMode()).equals('something');
+                expect(annotator.getCurrentAnnotationMode()).to.equal('something');
             });
 
             it('should null if no controllers exist', () => {
@@ -672,7 +672,7 @@ describe('Annotator', () => {
                 });
 
                 expect(stubs.thread.dialog.hasComments).to.be.true;
-                expect(stubs.thread.state).equals(STATES.hover);
+                expect(stubs.thread.state).to.equal(STATES.hover);
                 expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
                 expect(annotator.emit).to.be.calledWith(THREAD_EVENT.threadSave, sinon.match.object);
                 expect(result).to.not.be.null;

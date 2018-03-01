@@ -1383,7 +1383,7 @@ describe('doc/DocAnnotator', () => {
             stubs.thread2Mock.expects('onClick').returns(true);
 
             annotator.clickThread(stubs.thread2);
-            expect(annotator.activeThread).equals(stubs.thread2);
+            expect(annotator.activeThread).to.equal(stubs.thread2);
             expect(annotator.consumed).to.be.true;
         });
 

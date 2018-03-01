@@ -137,7 +137,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
 
             dialog.scrollToLastComment();
-            expect(annotationEl.scrollTop).equals(200);
+            expect(annotationEl.scrollTop).to.equal(200);
         });
 
         it('should set the flipped dialog scroll height to the bottom of the comments container', () => {
@@ -150,7 +150,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
 
             dialog.scrollToLastComment();
-            expect(annotationEl.scrollTop).equals(500);
+            expect(annotationEl.scrollTop).to.equal(500);
         });
     });
 
@@ -912,7 +912,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
-            expect(annotationComment.textContent).equals(text);
+            expect(annotationComment.textContent).to.equal(text);
             expect(annotationComment.textContent.includes('&amp;')).to.be.false;
         });
     });
@@ -1179,8 +1179,8 @@ describe('AnnotationDialog', () => {
         it('should keep the dialog below the annotation icon if the annotation is in the top half of the viewport', () => {
             const { top, bottom } = dialog.flipDialog(2, containerHeight);
             expect(dialog.element).to.not.have.class(CLASS_FLIPPED_DIALOG);
-            expect(top).not.equals('');
-            expect(bottom).equals('');
+            expect(top).notto.equal('');
+            expect(bottom).to.equal('');
             expect(dialog.fitDialogHeightInPage).to.be.called;
             expect(dialog.toggleFlippedThreadEl).to.be.called;
         });
@@ -1188,8 +1188,8 @@ describe('AnnotationDialog', () => {
         it('should flip the dialog above the annotation icon if the annotation is in the lower half of the viewport', () => {
             const { top, bottom } = dialog.flipDialog(4, containerHeight);
             expect(dialog.element).to.have.class(CLASS_FLIPPED_DIALOG);
-            expect(top).equals('');
-            expect(bottom).not.equals('');
+            expect(top).to.equal('');
+            expect(bottom).notto.equal('');
         });
     });
 
@@ -1235,7 +1235,7 @@ describe('AnnotationDialog', () => {
             };
             dialog.container = { clientHeight: 100 };
             dialog.fitDialogHeightInPage();
-            expect(dialog.dialogEl.style.maxHeight).equals('20px');
+            expect(dialog.dialogEl.style.maxHeight).to.equal('20px');
         });
 
         it('should allow scrolling on annotations dialog if file is a powerpoint', () => {
@@ -1246,8 +1246,8 @@ describe('AnnotationDialog', () => {
             };
             dialog.container = { clientHeight: 100 };
             dialog.fitDialogHeightInPage();
-            expect(dialog.dialogEl.style.maxHeight).equals('20px');
-            expect(commentsEl.style.maxHeight).equals('20px');
+            expect(dialog.dialogEl.style.maxHeight).to.equal('20px');
+            expect(commentsEl.style.maxHeight).to.equal('20px');
         });
     });
 });

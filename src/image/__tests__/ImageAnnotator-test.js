@@ -160,7 +160,7 @@ describe('image/ImageAnnotator', () => {
 
             expect(thread instanceof ImagePointThread).to.be.true;
             expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).equals(2);
+            expect(thread.location.page).to.equal(2);
             expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
 
@@ -179,7 +179,7 @@ describe('image/ImageAnnotator', () => {
 
             expect(thread instanceof ImagePointThread).to.be.true;
             expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).equals(1);
+            expect(thread.location.page).to.equal(1);
             expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
 
@@ -190,7 +190,7 @@ describe('image/ImageAnnotator', () => {
 
             expect(thread instanceof ImagePointThread).to.be.true;
             expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).equals(1);
+            expect(thread.location.page).to.equal(1);
             expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
     });

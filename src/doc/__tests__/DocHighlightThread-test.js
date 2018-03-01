@@ -85,7 +85,7 @@ describe('doc/DocHighlightThread', () => {
             thread.cancelFirstComment();
 
             expect(thread.destroy).to.be.called;
-            assert.equal(thread.element, null);
+            expect(thread.element).to.be.null;
         });
 
         it('should reset the thread if on mobile and a comment-highlight', () => {
@@ -112,8 +112,7 @@ describe('doc/DocHighlightThread', () => {
             });
 
             thread.destroy();
-
-            assert.equal(thread.element, null);
+            expect(thread.element).to.be.null;
             expect(thread.emit).to.be.calledWith('annotationthreadcleanup');
         });
     });
@@ -135,7 +134,7 @@ describe('doc/DocHighlightThread', () => {
             thread.reset();
 
             expect(thread.show).to.be.called;
-            assert.equal(thread.state, STATES.inactive);
+            expect(thread.state).to.equal(STATES.inactive);
         });
     });
 
@@ -355,8 +354,7 @@ describe('doc/DocHighlightThread', () => {
             thread.state = STATES.inactive;
 
             const result = thread.onMousemove({});
-
-            assert.equal(thread.state, STATES.inactive);
+            expects(thread.state).to.equal(STATES.inactive);
             expect(result).to.be.false;
         });
     });
@@ -615,10 +613,10 @@ describe('doc/DocHighlightThread', () => {
                 ]
             };
             thread.regenerateBoundary();
-            expect(thread.minX).equals(1);
-            expect(thread.minY).equals(1);
-            expect(thread.maxX).equals(10);
-            expect(thread.maxY).equals(10);
+            expect(thread.minX).to.equal(1);
+            expect(thread.minY).to.equal(1);
+            expect(thread.maxX).to.equal(10);
+            expect(thread.maxY).to.equal(10);
         });
     });
 });

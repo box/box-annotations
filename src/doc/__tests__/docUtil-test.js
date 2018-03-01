@@ -115,7 +115,7 @@ describe('doc/docUtil', () => {
 
             // 300 * 4/3 * 0.5, 1000 - 300 * 4/3 * 0.5
             const expected = [200, 800];
-            expect(docUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
+            expect(docUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).to.deepto.equal(expected);
         });
     });
 
@@ -125,7 +125,7 @@ describe('doc/docUtil', () => {
 
             // 400 * 3/4 / 0.5 to fixed 4, (1000 - 400) * 3/4 / 0.5 to fixed 4
             const expected = [Number(600).toFixed(4), Number(900).toFixed(4)];
-            expect(docUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).to.deep.equals(expected);
+            expect(docUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).to.deepto.equal(expected);
         });
     });
 
@@ -144,20 +144,20 @@ describe('doc/docUtil', () => {
             annotatedEl.style.height = '1030px';
             annotatedEl.style.width = '600px';
 
-            expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).to.deep.equals([400, 600]);
+            expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).to.deepto.equal([400, 600]);
         });
     });
 
     describe('getLowerRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
 
-        expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([10, 0]);
+        expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).to.deepto.equal([10, 0]);
     });
 
     describe('getTopRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
 
-        expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).to.deep.equals([0, 0]);
+        expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).to.deepto.equal([0, 0]);
     });
 
     describe('isValidSelection', () => {
@@ -224,10 +224,10 @@ describe('doc/docUtil', () => {
 
         it('should adjust canvas height and width and return the scaled canvas', () => {
             const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
-            expect(scaledCanvas.width).equals(width);
-            expect(scaledCanvas.height).equals(stubs.canvasHeight);
-            expect(scaledCanvas.style.width).not.equals(`${width}px`);
-            expect(scaledCanvas.style.height).not.equals(`${height}px`);
+            expect(scaledCanvas.width).to.equal(width);
+            expect(scaledCanvas.height).to.equal(stubs.canvasHeight);
+            expect(scaledCanvas.style.width).notto.equal(`${width}px`);
+            expect(scaledCanvas.style.height).notto.equal(`${height}px`);
         });
 
         it('should add style height & width if device pixel ratio is not 1', () => {
@@ -236,10 +236,10 @@ describe('doc/docUtil', () => {
 
             const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
 
-            expect(scaledCanvas.width).equals(width * pxRatio);
-            expect(scaledCanvas.height).equals(stubs.canvasHeight * pxRatio);
-            expect(scaledCanvas.style.width).equals(`${width}px`);
-            expect(scaledCanvas.style.height).equals(`${stubs.canvasHeight}px`);
+            expect(scaledCanvas.width).to.equal(width * pxRatio);
+            expect(scaledCanvas.height).to.equal(stubs.canvasHeight * pxRatio);
+            expect(scaledCanvas.style.width).to.equal(`${width}px`);
+            expect(scaledCanvas.style.height).to.equal(`${stubs.canvasHeight}px`);
             expect(stubs.annotationLayer.getContext).to.be.called;
         });
     });
@@ -322,7 +322,7 @@ describe('doc/docUtil', () => {
             docEl.appendChild(truePageEl);
 
             const pageEl = docUtil.getPageEl(docEl, page);
-            expect(pageEl).equals(truePageEl);
+            expect(pageEl).to.equal(truePageEl);
         });
     });
 

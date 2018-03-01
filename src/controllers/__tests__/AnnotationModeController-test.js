@@ -353,7 +353,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should find and return annotation thread specified by threadID', () => {
             controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID(stubs.thread.threadID);
-            expect(thread).to.deep.equals(stubs.thread);
+            expect(thread).to.deepto.equal(stubs.thread);
         });
 
         it('should return null if specified annotation thread is not found', () => {
@@ -491,7 +491,7 @@ describe('controllers/AnnotationModeController', () => {
 
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
-            expect(stubs.thread.annotatedElement).equals('el');
+            expect(stubs.thread.annotatedElement).to.equal('el');
         });
     });
 
