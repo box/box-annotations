@@ -287,7 +287,7 @@ describe('doc/DocDrawingThread', () => {
 
     describe('hasPageChanged()', () => {
         it('should return false when there is no location', () => {
-            const value = thread.hasPageChanged(undefined);
+            const value = thread.hasPageChanged();
             expect(value).to.be.false;
         });
 

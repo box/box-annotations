@@ -879,11 +879,11 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should do nothing if the highlightMousemoveHandler already exists', () => {
-            annotator.highlightMousemoveHandler = true;
+            annotator.highlightMousemoveHandler = () => {};
             const result = annotator.getHighlightMouseMoveHandler();
 
             expect(stubs.RAF).to.not.be.called;
-            expect(result).to.be.true;
+            expect(result).to.not.be.null;
         });
     });
 
@@ -1484,16 +1484,16 @@ describe('doc/DocAnnotator', () => {
     describe('isCreatingAnnotation()', () => {
         it('should return true if a mode is creating an annotation', () => {
             annotator.modeControllers = {
-                [TYPES.draw]: { hasPendingThread: false },
-                [TYPES.point]: { hasPendingThread: true }
+                [TYPES.draw]: { hadPendingThreads: false },
+                [TYPES.point]: { hadPendingThreads: true }
             };
             expect(annotator.isCreatingAnnotation()).to.be.true;
         });
 
         it('should return false if all modes are NOT creating annotations', () => {
             annotator.modeControllers = {
-                [TYPES.draw]: { hasPendingThread: false },
-                [TYPES.point]: { hasPendingThread: false }
+                [TYPES.draw]: { hadPendingThreads: false },
+                [TYPES.point]: { hadPendingThreads: false }
             };
             expect(annotator.isCreatingAnnotation()).to.be.false;
         });

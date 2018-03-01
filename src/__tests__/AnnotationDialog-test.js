@@ -1179,7 +1179,7 @@ describe('AnnotationDialog', () => {
         it('should keep the dialog below the annotation icon if the annotation is in the top half of the viewport', () => {
             const { top, bottom } = dialog.flipDialog(2, containerHeight);
             expect(dialog.element).to.not.have.class(CLASS_FLIPPED_DIALOG);
-            expect(top).notto.equal('');
+            expect(top).to.not.equal('');
             expect(bottom).to.equal('');
             expect(dialog.fitDialogHeightInPage).to.be.called;
             expect(dialog.toggleFlippedThreadEl).to.be.called;
@@ -1189,7 +1189,7 @@ describe('AnnotationDialog', () => {
             const { top, bottom } = dialog.flipDialog(4, containerHeight);
             expect(dialog.element).to.have.class(CLASS_FLIPPED_DIALOG);
             expect(top).to.equal('');
-            expect(bottom).notto.equal('');
+            expect(bottom).to.not.equal('');
         });
     });
 

@@ -204,14 +204,12 @@ describe('doc/DocDrawingDialog', () => {
 
     describe('hide()', () => {
         it('should hide the element with css', () => {
-            const element = 'e';
-
+            dialog.element = {};
+            dialog.visible = true;
             sandbox.stub(util, 'hideElement');
-            dialog.element = element;
-            expect(dialog.visible).to.be.true;
 
             dialog.hide();
-            expect(util.hideElement).to.be.calledWith(element);
+            expect(util.hideElement).to.be.calledWith(dialog.element);
             expect(dialog.visible).to.be.false;
         });
     });

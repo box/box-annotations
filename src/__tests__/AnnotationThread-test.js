@@ -240,7 +240,7 @@ describe('AnnotationThread', () => {
             expect(thread.annotations[123]).to.be.undefined;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(stubs.saveAnnotationToThread).to.not.be.called;
-            expect(thread.annotations[123]).to.deepto.equal(serverAnnotation);
+            expect(thread.annotations[123]).to.deep.equal(serverAnnotation);
         });
 
         it('should emit an annotationsaved event on success', (done) => {
@@ -286,7 +286,7 @@ describe('AnnotationThread', () => {
             // Don't show dialog on web browsers
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).to.not.be.called;
-            expect(thread.state).notto.equal(STATES.hover);
+            expect(thread.state).to.not.equal(STATES.hover);
 
             // Only show dialog on mobile browsers
             thread.isMobile = true;

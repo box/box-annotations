@@ -88,15 +88,15 @@ describe('util', () => {
 
     describe('findClosestDataType()', () => {
         it('should return the data type of the closest ancestor with a data type when no attributeName is provided', () => {
-            expect(findClosestElWithClass(childEl, 'someType')).to.equal('sometype');
+            expect(findClosestDataType(childEl)).to.equal('someType');
         });
 
         it('should return the attribute name of the closest ancestor with the specified attributeName', () => {
-            expect(findClosestElWithClass(childEl, 'data-name')).to.equal('someName');
+            expect(findClosestDataType(childEl, 'data-name')).to.equal('someName');
         });
 
         it('should return empty string if no matching ancestor is found', () => {
-            expect(findClosestElWithClass(childEl, 'data-foo')).to.equal('');
+            expect(findClosestDataType(childEl, 'data-foo')).to.equal('');
         });
     });
 
@@ -113,7 +113,7 @@ describe('util', () => {
             const barEl = document.querySelector('.bar');
             const result = getPageInfo(barEl);
             expect(result.pageEl).to.be.null;
-            expect(result.pageEl).to.equal(1);
+            expect(result.page).to.equal(1);
         });
     });
 
@@ -146,14 +146,14 @@ describe('util', () => {
     });
 
     describe('enableElement()', () => {
-        it('should remove disabled class from element with matching selector', () => {
+        it('should remove disabled class from matching element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
             enableElement('.child');
             expect(childEl).to.not.have.class('is-disabled');
         });
 
-        it('should remove hidden class from provided element', () => {
+        it('should remove disabled class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
             enableElement(childEl);
@@ -162,14 +162,14 @@ describe('util', () => {
     });
 
     describe('disableElement()', () => {
-        it('should add hidden class to matching element', () => {
+        it('should add disabled class to matching element', () => {
             disableElement('.child');
             expect(childEl).to.have.class('is-disabled');
         });
 
-        it('should add hidden class to provided element', () => {
+        it('should add disabled class to provided element', () => {
             disableElement(childEl);
-            expect(childEl).tnot.have.class('is-disabled');
+            expect(childEl).to.have.class('is-disabled');
         });
     });
 
@@ -270,12 +270,12 @@ describe('util', () => {
     describe('getAvatarHtml()', () => {
         it('should return avatar HTML with img if avatarUrl is provided', () => {
             const expectedHtml = '<img src="https://example.com" alt="Avatar">';
-            expect(getAvatarHtml('https://example.com', '1', 'Some Name', 'Avatar')).to.have.html(expectedHtml);
+            expect(getAvatarHtml('https://example.com', '1', 'Some Name', 'Avatar')).to.equal(expectedHtml);
         });
 
         it('should return avatar HTML initials if no avatarUrl is provided', () => {
             const expectedHtml = '<div class="bp-annotation-profile avatar-color-1">SN</div>'.trim();
-            expect(getAvatarHtml('', '1', 'Some Name')).to.have.html(expectedHtml);
+            expect(getAvatarHtml('', '1', 'Some Name')).to.equal(expectedHtml);
         });
     });
 
@@ -381,7 +381,7 @@ describe('util', () => {
         it('should return HTML-escaped text', () => {
             expect(htmlEscape('test&file=what')).to.equal('test&amp;file=what');
             expect(htmlEscape('<script>')).to.equal('&lt;script&gt;');
-            expect(htmlEscape('"string"')).to.equal('&quot;string&quot');
+            expect(htmlEscape('"string"')).to.equal('&quot;string&quot;');
             expect(htmlEscape('\'string\'')).to.equal('&#39;string&#39;');
             expect(htmlEscape('`string`')).to.equal('&#96;string&#96;');
         });
@@ -576,47 +576,47 @@ describe('util', () => {
         });
 
         it('should return empty when modifier and key are same', () => {
-            expects( decodeKeydown({ key: 'Control', ctrlKey: true })).to.equal('');
+            expect( decodeKeydown({ key: 'Control', ctrlKey: true })).to.equal('');
         });
 
         it('should return correct with ctrl modifier', () => {
-            expects( decodeKeydown({ key: '1', ctrlKey: true })).to.equal('Control+1');
+            expect( decodeKeydown({ key: '1', ctrlKey: true })).to.equal('Control+1');
         });
 
         it('should return correct with shift modifier', () => {
-            expects( decodeKeydown({ key: '1', shiftKey: true })).to.equal('Shift+1');
+            expect( decodeKeydown({ key: '1', shiftKey: true })).to.equal('Shift+1');
         });
 
         it('should return correct with meta modifier', () => {
-            expects( decodeKeydown({ key: '1', metaKey: true })).to.equal('Meta+1');
+            expect( decodeKeydown({ key: '1', metaKey: true })).to.equal('Meta+1');
         });
 
         it('should return space key', () => {
-            expects( decodeKeydown({ key: ' ' })).to.equal('Space');
+            expect( decodeKeydown({ key: ' ' })).to.equal('Space');
         });
 
         it('should return right arrow key', () => {
-            expects( decodeKeydown({ key: 'Right' })).to.equal('ArrowRight');
+            expect( decodeKeydown({ key: 'Right' })).to.equal('ArrowRight');
         });
 
         it('should return left arrow key', () => {
-            expects( decodeKeydown({ key: 'Left' })).to.equal('ArrowLeft');
+            expect( decodeKeydown({ key: 'Left' })).to.equal('ArrowLeft');
         });
 
         it('should return up arrow key', () => {
-            expects( decodeKeydown({ key: 'Up' })).to.equal('ArrowUp');
+            expect( decodeKeydown({ key: 'Up' })).to.equal('ArrowUp');
         });
 
         it('should return down arrow key', () => {
-            expects( decodeKeydown({ key: 'Down' })).to.equal('ArrowDown');
+            expect( decodeKeydown({ key: 'Down' })).to.equal('ArrowDown');
         });
 
         it('should return esc key', () => {
-            expects( decodeKeydown({ key: 'U+001B' })).to.equal('Escape');
+            expect( decodeKeydown({ key: 'U+001B' })).to.equal('Escape');
         });
 
         it('should decode correct UTF8 key', () => {
-            expects( decodeKeydown({ key: 'U+0041' })).to.equal('A');
+            expect( decodeKeydown({ key: 'U+0041' })).to.equal('A');
         });
     });
 
@@ -772,28 +772,6 @@ describe('util', () => {
             stubs.layerMock.expects('getContext').returns(stubs.context);
             stubs.contextMock.expects('clearRect').once();
             clearCanvas(pageEl, 'anything');
-        });
-    });
-
-    describe('isInDialog()', () => {
-        it('should return true if the closest element is an annotation dialog', () => {
-            expect(isInDialog({})).to.be.false;
-        });
-
-        it('should check if event location falls inside dialog boundary', () => {
-            const dialogEl = {
-                getBoundingClientRect: sandbox.stub()
-            };
-            stubs.getDimensions = dialogEl.getBoundingClientRect;
-
-            stubs.getDimensions.returns({
-                top: 1,
-                bottom: 3,
-                left: 1,
-                right: 3,
-            });
-            expect(isInDialog({ clientX: 2, clientY: 2 }, dialogEl)).to.be.true;
-            expect(isInDialog({ clientX: 100, clientY: 100 }, dialogEl)).to.be.false;
         });
     });
 

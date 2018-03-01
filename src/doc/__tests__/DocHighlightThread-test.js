@@ -85,7 +85,7 @@ describe('doc/DocHighlightThread', () => {
             thread.cancelFirstComment();
 
             expect(thread.destroy).to.be.called;
-            expect(thread.element).to.be.null;
+            expect(thread.element).to.be.undefined;
         });
 
         it('should reset the thread if on mobile and a comment-highlight', () => {
@@ -112,7 +112,7 @@ describe('doc/DocHighlightThread', () => {
             });
 
             thread.destroy();
-            expect(thread.element).to.be.null;
+            expect(thread.element).to.be.undefined;
             expect(thread.emit).to.be.calledWith('annotationthreadcleanup');
         });
     });
@@ -354,7 +354,7 @@ describe('doc/DocHighlightThread', () => {
             thread.state = STATES.inactive;
 
             const result = thread.onMousemove({});
-            expects(thread.state).to.equal(STATES.inactive);
+            expect(thread.state).to.equal(STATES.inactive);
             expect(result).to.be.false;
         });
     });

@@ -329,13 +329,14 @@ describe('Annotator', () => {
                 const file = {
                     permissions: {
                         can_annotate: false,
-                        can_view_annotations_self: true
+                        can_view_annotations_self: true,
+                        can_view_annotations_all: false
                     }
                 };
-                annotator.getAnnotationPermissions(file);
-                expect(annotator.permissions.canAnnotate).to.be.true;
-                expect(annotator.permissions.canViewOwnAnnotations).to.be.false;
-                expect(annotator.permissions.canViewAllAnnotations).to.be.false;
+                const permissions = annotator.getAnnotationPermissions(file);
+                expect(permissions.canAnnotate).to.be.false;
+                expect(permissions.canViewOwnAnnotations).to.be.true;
+                expect(permissions.canViewAllAnnotations).to.be.false;
             });
         });
 
@@ -367,7 +368,7 @@ describe('Annotator', () => {
                 sandbox.stub(annotator, 'emit');
             });
 
-            it('should not fetch existing annotations if the user does not have correct permissions', (done) => {
+            it('should not fetch existing annotations if the user does not have correct permissions', () => {
                 stubs.serviceMock.expects('getThreadMap').never();
                 annotator.permissions = {
                     canViewAllAnnotations: false,
@@ -377,13 +378,12 @@ describe('Annotator', () => {
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
                     expect(result).to.be.true;
-                    done();
                 }).catch(() => {
                     sinon.assert.failException;
                 });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', (done) => {
+            it('should fetch existing annotations if the user can view all annotations', () => {
                 stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: false,
@@ -395,13 +395,12 @@ describe('Annotator', () => {
                     expect(result).to.be.true;
                     expect(annotator.threadMap).to.not.be.undefined;
                     expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                    done();
                 }).catch(() => {
                     sinon.assert.failException;
                 });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', (done) => {
+            it('should fetch existing annotations if the user can view all annotations', () => {
                 stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: true,
@@ -414,7 +413,6 @@ describe('Annotator', () => {
                     stubs.threadPromise.then(() => {
                         expect(annotator.threadMap).to.not.be.undefined;
                         expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                        done();
                     });
                 }).catch(() => {
                     sinon.assert.failException;

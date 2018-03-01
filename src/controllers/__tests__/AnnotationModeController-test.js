@@ -353,7 +353,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should find and return annotation thread specified by threadID', () => {
             controller.registerThread(stubs.thread);
             const thread = controller.getThreadByID(stubs.thread.threadID);
-            expect(thread).to.deepto.equal(stubs.thread);
+            expect(thread).to.deep.equal(stubs.thread);
         });
 
         it('should return null if specified annotation thread is not found', () => {
