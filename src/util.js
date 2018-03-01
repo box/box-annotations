@@ -239,7 +239,7 @@ export function resetTextarea(element, clearText) {
  *
  * @private
  * @param {Event} event Mouse event
- * @param {HTMLElement} dialogEl Dialog element
+ * @param {HTMLElement} [dialogEl] Optional annotation dialog element
  * @return {boolean} Whether or not mouse is inside dialog
  */
 export function isInDialog(event, dialogEl) {

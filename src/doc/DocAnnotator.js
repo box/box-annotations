@@ -479,11 +479,12 @@ class DocAnnotator extends Annotator {
     /**
      * Clears the text selection and hides the create highlight dialog
      *
+     * @param {Event} event - Mouse wheel event
      * @return {void}
      */
-    resetHighlightSelection() {
+    resetHighlightSelection(event) {
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (!isCreateDialogVisible) {
+        if (!isCreateDialogVisible || util.isInDialog(event)) {
             return;
         }
 

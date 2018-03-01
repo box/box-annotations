@@ -831,10 +831,17 @@ describe('doc/DocAnnotator', () => {
                 hide: sandbox.stub(),
                 destroy: sandbox.stub()
             };
+            stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
         });
 
         it('should do nothing if the createHighlightDialog is hidden', () => {
             annotator.resetHighlightSelection();
+            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+        });
+
+        it('should do nothing if the mouse event was triggered in an annotation dialog', () => {
+            stubs.isInDialog.returns(true);
+            annotatator.resetHighlightSelection({});
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
         });
 
