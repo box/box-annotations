@@ -398,6 +398,10 @@ class DocAnnotator extends Annotator {
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('wheel', this.resetHighlightSelection);
+
+            if (this.hasTouch) {
+                this.annotatedElement.addEventListener('touchend', this.resetHighlightSelection);
+            }
         }
 
         if (this.hasTouch && this.drawEnabled) {
