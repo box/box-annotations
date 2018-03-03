@@ -78,25 +78,25 @@ describe('util', () => {
 
     describe('findClosestElWithClass()', () => {
         it('should return closest ancestor element with the specified class', () => {
-            assert.equal(findClosestElWithClass(childEl, 'parent'), parentEl);
+            expect(findClosestElWithClass(childEl, 'parent')).to.equal(parentEl);
         });
 
         it('should return null if no matching ancestor is found', () => {
-            assert.equal(findClosestElWithClass(childEl, 'otherParent'), null);
+            expect(findClosestElWithClass(childEl, 'otherParent')).to.be.null;
         });
     });
 
     describe('findClosestDataType()', () => {
         it('should return the data type of the closest ancestor with a data type when no attributeName is provided', () => {
-            assert.equal(findClosestDataType(childEl), 'someType');
+            expect(findClosestDataType(childEl)).to.equal('someType');
         });
 
         it('should return the attribute name of the closest ancestor with the specified attributeName', () => {
-            assert.equal(findClosestDataType(childEl, 'data-name'), 'someName');
+            expect(findClosestDataType(childEl, 'data-name')).to.equal('someName');
         });
 
         it('should return empty string if no matching ancestor is found', () => {
-            assert.equal(findClosestDataType(childEl, 'data-foo'), '');
+            expect(findClosestDataType(childEl, 'data-foo')).to.equal('');
         });
     });
 
@@ -105,15 +105,15 @@ describe('util', () => {
             const fooEl = document.querySelector('.foo');
             const pageEl = document.querySelector('.page');
             const result = getPageInfo(fooEl);
-            assert.equal(result.pageEl, pageEl, 'Page element should be equal');
-            assert.equal(result.page, 2, 'Page number should be equal');
+            expect(result.pageEl).to.equal(pageEl);
+            expect(result.page).to.equal(2);
         });
 
         it('should return no page element and -1 page number if no page is found', () => {
             const barEl = document.querySelector('.bar');
             const result = getPageInfo(barEl);
-            assert.equal(result.pageEl, null, 'Page element should be null');
-            assert.equal(result.page, 1, 'Page number should be 1');
+            expect(result.pageEl).to.be.null;
+            expect(result.page).to.equal(1);
         });
     });
 
@@ -122,54 +122,54 @@ describe('util', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-hidden');
             showElement('.child');
-            assert.ok(!childEl.classList.contains('bp-is-hidden'));
+            expect(childEl).to.not.have.class('bp-is-hidden');
         });
 
         it('should remove hidden class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-hidden');
             showElement(childEl);
-            assert.ok(!childEl.classList.contains('bp-is-hidden'));
+            expect(childEl).to.not.have.class('bp-is-hidden');
         });
     });
 
     describe('hideElement()', () => {
         it('should add hidden class to matching element', () => {
             hideElement('.child');
-            assert.ok(childEl.classList.contains('bp-is-hidden'));
+            expect(childEl).to.have.class('bp-is-hidden');
         });
 
         it('should add hidden class to provided element', () => {
             hideElement(childEl);
-            assert.ok(childEl.classList.contains('bp-is-hidden'));
+            expect(childEl).to.have.class('bp-is-hidden');
         });
     });
 
     describe('enableElement()', () => {
-        it('should remove disabled class from element with matching selector', () => {
+        it('should remove disabled class from matching element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
             enableElement('.child');
-            assert.ok(!childEl.classList.contains('is-disabled'));
+            expect(childEl).to.not.have.class('is-disabled');
         });
 
-        it('should remove hidden class from provided element', () => {
+        it('should remove disabled class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
             enableElement(childEl);
-            assert.ok(!childEl.classList.contains('is-disabled'));
+            expect(childEl).to.not.have.class('is-disabled');
         });
     });
 
     describe('disableElement()', () => {
-        it('should add hidden class to matching element', () => {
+        it('should add disabled class to matching element', () => {
             disableElement('.child');
-            assert.ok(childEl.classList.contains('is-disabled'));
+            expect(childEl).to.have.class('is-disabled');
         });
 
-        it('should add hidden class to provided element', () => {
+        it('should add disabled class to provided element', () => {
             disableElement(childEl);
-            assert.ok(childEl.classList.contains('is-disabled'));
+            expect(childEl).to.have.class('is-disabled');
         });
     });
 
@@ -178,26 +178,26 @@ describe('util', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-invisible');
             showInvisibleElement('.child');
-            expect(childEl.classList.contains('bp-is-invisible')).to.be.false;
+            expect(childEl).to.not.have.class('bp-is-invisible');
         });
 
         it('should remove invisible class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-invisible');
             showInvisibleElement(childEl);
-            expect(childEl.classList.contains('bp-is-invisible')).to.be.false;
+            expect(childEl).to.not.have.class('bp-is-invisible');
         });
     });
 
     describe('hideElementVisibility()', () => {
         it('should add invisible class to matching element', () => {
             hideElementVisibility('.child');
-            expect(childEl.classList.contains('bp-is-invisible')).to.be.true;
+            expect(childEl).to.have.class('bp-is-invisible');
         });
 
         it('should add invisible class to provided element', () => {
             hideElementVisibility(childEl);
-            expect(childEl.classList.contains('bp-is-invisible')).to.be.true;
+            expect(childEl).to.have.class('bp-is-invisible');
         });
     });
 
@@ -215,20 +215,20 @@ describe('util', () => {
 
             expect(textAreaEl).to.not.have.class('bp-is-active');
             expect(textAreaEl).to.not.have.class('ba-invalid-input');
-            expect(textAreaEl.value).equals('test');
-            expect(textAreaEl.style.width).equals('');
-            expect(textAreaEl.style.height).equals('');
+            expect(textAreaEl.value).to.equal('test');
+            expect(textAreaEl.style.width).to.equal('');
+            expect(textAreaEl.style.height).to.equal('');
         });
     });
 
     describe('isInDialog()', () => {
         it('should return false if no dialog element exists', () => {
-            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.falsy;
+            expect(isInDialog({ clientX: 8, clientY: 8 })).to.be.false;
         });
 
         it('should return true if the event is in the given dialog', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.truthy;
+            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.true;
         });
     });
 
@@ -238,7 +238,7 @@ describe('util', () => {
             document.querySelector('.container').appendChild(node);
 
             insertTemplate(node, '<div class="foo"></div>');
-            assert.equal(node.firstElementChild.className, 'foo');
+            expect(node.firstElementChild).to.have.class('foo');
         });
     });
 
@@ -256,37 +256,37 @@ describe('util', () => {
 
     describe('isElementInViewport()', () => {
         it('should return true for an element fully in the viewport', () => {
-            assert.ok(isElementInViewport(childEl));
+            expect(isElementInViewport(childEl)).to.be.true;
         });
 
         it('should return false for an element not fully in the viewport', () => {
             // Fake child element not being in viewport
             childEl.style.position = 'absolute';
             childEl.style.left = '-10px';
-            assert.ok(!isElementInViewport(childEl));
+            expect(isElementInViewport(childEl)).to.be.false;
         });
     });
 
     describe('getAvatarHtml()', () => {
         it('should return avatar HTML with img if avatarUrl is provided', () => {
             const expectedHtml = '<img src="https://example.com" alt="Avatar">';
-            assert.equal(getAvatarHtml('https://example.com', '1', 'Some Name', 'Avatar'), expectedHtml);
+            expect(getAvatarHtml('https://example.com', '1', 'Some Name', 'Avatar')).to.equal(expectedHtml);
         });
 
         it('should return avatar HTML initials if no avatarUrl is provided', () => {
             const expectedHtml = '<div class="bp-annotation-profile avatar-color-1">SN</div>'.trim();
-            assert.equal(getAvatarHtml('', '1', 'Some Name'), expectedHtml);
+            expect(getAvatarHtml('', '1', 'Some Name')).to.equal(expectedHtml);
         });
     });
 
     describe('getScale()', () => {
         it('should return the zoom scale stored in the data-zoom attribute for the element', () => {
             childEl.setAttribute('data-scale', 3);
-            assert.equal(getScale(childEl), 3);
+            expect(getScale(childEl)).to.equal(3);
         });
 
         it('should return a zoom scale of 1 if no stored zoom is found on the element', () => {
-            assert.equal(getScale(childEl), 1);
+            expect(getScale(childEl)).to.equal(1);
         });
     });
 
@@ -332,15 +332,15 @@ describe('util', () => {
 
     describe('isHighlightAnnotation()', () => {
         it('should return true if annotation is a plain highlight annotation', () => {
-            assert.ok(isHighlightAnnotation(TYPES.highlight));
+            expect(isHighlightAnnotation(TYPES.highlight)).to.be.true;
         });
 
         it('should return true if annotation is a highlight comment annotation', () => {
-            assert.ok(isHighlightAnnotation(TYPES.highlight_comment));
+            expect(isHighlightAnnotation(TYPES.highlight_comment)).to.be.true;
         });
 
         it('should return false if annotation is a point annotation', () => {
-            assert.ok(!isHighlightAnnotation(TYPES.point));
+            expect(isHighlightAnnotation(TYPES.point)).to.be.false;
         });
     });
 
@@ -379,11 +379,11 @@ describe('util', () => {
 
     describe('htmlEscape()', () => {
         it('should return HTML-escaped text', () => {
-            assert.equal(htmlEscape('test&file=what'), 'test&amp;file=what', 'Should escape and symbol');
-            assert.equal(htmlEscape('<script>'), '&lt;script&gt;', 'Should escape brackets');
-            assert.equal(htmlEscape('"string"'), '&quot;string&quot;', 'Should escape double quote');
-            assert.equal(htmlEscape('\'string\''), '&#39;string&#39;', 'Should escape single quote');
-            assert.equal(htmlEscape('`string`'), '&#96;string&#96;', 'Should escape back tick');
+            expect(htmlEscape('test&file=what')).to.equal('test&amp;file=what');
+            expect(htmlEscape('<script>')).to.equal('&lt;script&gt;');
+            expect(htmlEscape('"string"')).to.equal('&quot;string&quot;');
+            expect(htmlEscape('\'string\'')).to.equal('&#39;string&#39;');
+            expect(htmlEscape('`string`')).to.equal('&#96;string&#96;');
         });
     });
 
@@ -572,104 +572,51 @@ describe('util', () => {
 
     describe('decodeKeydown()', () => {
         it('should return empty when no key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: ''
-                }),
-                ''
-            );
+            expect(decodeKeydown({ key: '' })).to.equal('');
         });
+
         it('should return empty when modifier and key are same', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'Control',
-                    ctrlKey: true
-                }),
-                ''
-            );
+            expect( decodeKeydown({ key: 'Control', ctrlKey: true })).to.equal('');
         });
+
         it('should return correct with ctrl modifier', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: '1',
-                    ctrlKey: true
-                }),
-                'Control+1'
-            );
+            expect( decodeKeydown({ key: '1', ctrlKey: true })).to.equal('Control+1');
         });
+
         it('should return correct with shift modifier', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: '1',
-                    shiftKey: true
-                }),
-                'Shift+1'
-            );
+            expect( decodeKeydown({ key: '1', shiftKey: true })).to.equal('Shift+1');
         });
+
         it('should return correct with meta modifier', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: '1',
-                    metaKey: true
-                }),
-                'Meta+1'
-            );
+            expect( decodeKeydown({ key: '1', metaKey: true })).to.equal('Meta+1');
         });
+
         it('should return space key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: ' '
-                }),
-                'Space'
-            );
+            expect( decodeKeydown({ key: ' ' })).to.equal('Space');
         });
+
         it('should return right arrow key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'Right'
-                }),
-                'ArrowRight'
-            );
+            expect( decodeKeydown({ key: 'Right' })).to.equal('ArrowRight');
         });
+
         it('should return left arrow key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'Left'
-                }),
-                'ArrowLeft'
-            );
+            expect( decodeKeydown({ key: 'Left' })).to.equal('ArrowLeft');
         });
+
         it('should return up arrow key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'Up'
-                }),
-                'ArrowUp'
-            );
+            expect( decodeKeydown({ key: 'Up' })).to.equal('ArrowUp');
         });
+
         it('should return down arrow key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'Down'
-                }),
-                'ArrowDown'
-            );
+            expect( decodeKeydown({ key: 'Down' })).to.equal('ArrowDown');
         });
+
         it('should return esc key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'U+001B'
-                }),
-                'Escape'
-            );
+            expect( decodeKeydown({ key: 'U+001B' })).to.equal('Escape');
         });
+
         it('should decode correct UTF8 key', () => {
-            assert.equal(
-                decodeKeydown({
-                    key: 'U+0041'
-                }),
-                'A'
-            );
+            expect( decodeKeydown({ key: 'U+0041' })).to.equal('A');
         });
     });
 
@@ -689,11 +636,11 @@ describe('util', () => {
 
         it('should return correct headers with password', () => {
             const headers = getHeaders({ foo: 'bar' }, 'token', 'https://sharename', 'password');
-            assert.equal(headers.foo, 'bar');
-            assert.equal(headers.Authorization, 'Bearer token');
-            assert.equal(headers.BoxApi, 'shared_link=https://sharename&shared_link_password=password');
-            assert.equal(headers['X-Box-Client-Name'], __NAME__);
-            assert.equal(headers['X-Box-Client-Version'], __VERSION__);
+            expect(headers.foo).to.equal('bar');
+            expect(headers.Authorization).to.equal('Bearer token');
+            expect(headers.BoxApi).to.equal('shared_link=https://sharename&shared_link_password=password');
+            expect(headers['X-Box-Client-Name']).to.equal(__NAME__);
+            expect(headers['X-Box-Client-Version']).to.equal(__VERSION__);
         });
     });
 
@@ -825,28 +772,6 @@ describe('util', () => {
             stubs.layerMock.expects('getContext').returns(stubs.context);
             stubs.contextMock.expects('clearRect').once();
             clearCanvas(pageEl, 'anything');
-        });
-    });
-
-    describe('isInDialog()', () => {
-        it('should return true if the closest element is an annotation dialog', () => {
-            expect(isInDialog({})).to.be.falsy;
-        });
-
-        it('should check if event location falls inside dialog boundary', () => {
-            const dialogEl = {
-                getBoundingClientRect: sandbox.stub()
-            };
-            stubs.getDimensions = dialogEl.getBoundingClientRect;
-
-            stubs.getDimensions.returns({
-                top: 1,
-                bottom: 3,
-                left: 1,
-                right: 3,
-            });
-            expect(isInDialog({ clientX: 2, clientY: 2 }, dialogEl)).to.be.truthy;
-            expect(isInDialog({ clientX: 100, clientY: 100 }, dialogEl)).to.be.falsy;
         });
     });
 

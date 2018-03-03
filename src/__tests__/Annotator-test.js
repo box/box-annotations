@@ -160,7 +160,7 @@ describe('Annotator', () => {
             };
             annotator.setupMobileDialog();
             expect(annotator.container.appendChild).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).equals(1);
+            expect(annotator.mobileDialogEl.children.length).to.equal(1);
         });
     });
 
@@ -192,7 +192,7 @@ describe('Annotator', () => {
             annotator.resetMobileDialog();
             expect(util.hideElement).to.be.called;
             expect(util.showElement).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).equals(0);
+            expect(annotator.mobileDialogEl.children.length).to.equal(0);
         });
     });
 
@@ -329,13 +329,14 @@ describe('Annotator', () => {
                 const file = {
                     permissions: {
                         can_annotate: false,
-                        can_view_annotations_self: true
+                        can_view_annotations_self: true,
+                        can_view_annotations_all: false
                     }
                 };
-                annotator.getAnnotationPermissions(file);
-                expect(annotator.permissions.canAnnotate).to.be.truthy;
-                expect(annotator.permissions.canViewOwnAnnotations).to.be.falsy;
-                expect(annotator.permissions.canViewAllAnnotations).to.be.falsy;
+                const permissions = annotator.getAnnotationPermissions(file);
+                expect(permissions.canAnnotate).to.be.false;
+                expect(permissions.canViewOwnAnnotations).to.be.true;
+                expect(permissions.canViewAllAnnotations).to.be.false;
             });
         });
 
@@ -367,7 +368,7 @@ describe('Annotator', () => {
                 sandbox.stub(annotator, 'emit');
             });
 
-            it('should not fetch existing annotations if the user does not have correct permissions', (done) => {
+            it('should not fetch existing annotations if the user does not have correct permissions', () => {
                 stubs.serviceMock.expects('getThreadMap').never();
                 annotator.permissions = {
                     canViewAllAnnotations: false,
@@ -376,14 +377,13 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
-                    done();
+                    expect(result).to.be.true;
                 }).catch(() => {
                     sinon.assert.failException;
                 });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', (done) => {
+            it('should fetch existing annotations if the user can view all annotations', () => {
                 stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: false,
@@ -392,16 +392,15 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
+                    expect(result).to.be.true;
                     expect(annotator.threadMap).to.not.be.undefined;
                     expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                    done();
                 }).catch(() => {
                     sinon.assert.failException;
                 });
             });
 
-            it('should fetch existing annotations if the user can view all annotations', (done) => {
+            it('should fetch existing annotations if the user can view all annotations', () => {
                 stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: true,
@@ -410,11 +409,10 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).to.be.truthy;
+                    expect(result).to.be.true;
                     stubs.threadPromise.then(() => {
                         expect(annotator.threadMap).to.not.be.undefined;
                         expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                        done();
                     });
                 }).catch(() => {
                     sinon.assert.failException;
@@ -593,7 +591,7 @@ describe('Annotator', () => {
             it('should return the current annotation mode', () => {
                 annotator.modeControllers['something'] = stubs.controller;
                 stubs.controllerMock.expects('isEnabled').returns(true);
-                expect(annotator.getCurrentAnnotationMode()).equals('something');
+                expect(annotator.getCurrentAnnotationMode()).to.equal('something');
             });
 
             it('should null if no controllers exist', () => {
@@ -671,8 +669,8 @@ describe('Annotator', () => {
                     commentText: 'text'
                 });
 
-                expect(stubs.thread.dialog.hasComments).to.be.truthy;
-                expect(stubs.thread.state).equals(STATES.hover);
+                expect(stubs.thread.dialog.hasComments).to.be.true;
+                expect(stubs.thread.state).to.equal(STATES.hover);
                 expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
                 expect(annotator.emit).to.be.calledWith(THREAD_EVENT.threadSave, sinon.match.object);
                 expect(result).to.not.be.null;
@@ -810,15 +808,15 @@ describe('Annotator', () => {
 
             it('should return false if annotations are not allowed on the current viewer', () => {
                 annotator.options.annotator = undefined;
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.equal(false);
+                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.false;
             })
 
             it('should return true if the type is supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.equal(true);
+                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.true;
             });
 
             it('should return false if the type is not supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable('drawing')).to.equal(false);
+                expect(annotator.isModeAnnotatable('drawing')).to.be.false;
             });
         });
     });

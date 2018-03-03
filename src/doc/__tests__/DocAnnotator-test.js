@@ -879,11 +879,11 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should do nothing if the highlightMousemoveHandler already exists', () => {
-            annotator.highlightMousemoveHandler = true;
+            annotator.highlightMousemoveHandler = () => {};
             const result = annotator.getHighlightMouseMoveHandler();
 
             expect(stubs.RAF).to.not.be.called;
-            expect(result).to.be.true;
+            expect(result).to.not.be.null;
         });
     });
 
@@ -894,7 +894,7 @@ describe('doc/DocAnnotator', () => {
 
             annotator.onHighlightMouseMove({ clientX: 10, clientY: 10 });
 
-            expect(annotator.didMouseMove).to.equal(true);
+            expect(annotator.didMouseMove).to.be.true;
         });
 
         it('should not set didMouseMove to true if the mouse was not moved enough', () => {
@@ -1373,7 +1373,7 @@ describe('doc/DocAnnotator', () => {
             stubs.threadMock.expects('onClick').returns(false);
             annotator.clickThread(stubs.thread);
             expect(annotator.activeThread).to.be.undefined;
-            expect(annotator.consumed).to.be.falsy;
+            expect(annotator.consumed).to.be.false;
 
             stubs.thread2 = {
                 type: 'something',
@@ -1383,8 +1383,8 @@ describe('doc/DocAnnotator', () => {
             stubs.thread2Mock.expects('onClick').returns(true);
 
             annotator.clickThread(stubs.thread2);
-            expect(annotator.activeThread).equals(stubs.thread2);
-            expect(annotator.consumed).to.be.truthy;
+            expect(annotator.activeThread).to.equal(stubs.thread2);
+            expect(annotator.consumed).to.be.true;
         });
 
         it('should hide all non-pending mobile dialogs', () => {
@@ -1484,18 +1484,18 @@ describe('doc/DocAnnotator', () => {
     describe('isCreatingAnnotation()', () => {
         it('should return true if a mode is creating an annotation', () => {
             annotator.modeControllers = {
-                [TYPES.draw]: { hasPendingThread: false },
-                [TYPES.point]: { hasPendingThread: true }
+                [TYPES.draw]: { hadPendingThreads: false },
+                [TYPES.point]: { hadPendingThreads: true }
             };
-            expect(annotator.isCreatingAnnotation()).to.be.truthy;
+            expect(annotator.isCreatingAnnotation()).to.be.true;
         });
 
         it('should return false if all modes are NOT creating annotations', () => {
             annotator.modeControllers = {
-                [TYPES.draw]: { hasPendingThread: false },
-                [TYPES.point]: { hasPendingThread: false }
+                [TYPES.draw]: { hadPendingThreads: false },
+                [TYPES.point]: { hadPendingThreads: false }
             };
-            expect(annotator.isCreatingAnnotation()).to.be.falsy;
+            expect(annotator.isCreatingAnnotation()).to.be.false;
         });
     });
 

@@ -250,7 +250,7 @@ describe('doc/DocHighlightDialog', () => {
             expect(stubs.width).to.be.called;
             expect(stubs.caret).to.be.called;
             expect(stubs.show).to.be.called;
-            expect(dialog.element.style.left).equals('10px');
+            expect(dialog.element.style.left).to.equal('10px');
         });
 
         it('should position the highlight comments dialog at the right place and show it', () => {
@@ -263,7 +263,7 @@ describe('doc/DocHighlightDialog', () => {
             expect(stubs.width).to.be.called;
             expect(stubs.caret).to.be.called;
             expect(stubs.show).to.be.called;
-            expect(dialog.element.style.left).equals('10px');
+            expect(dialog.element.style.left).to.equal('10px');
         });
 
         it('should adjust the dialog if the mouse location is above the page', () => {
@@ -273,7 +273,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.position();
 
             expect(stubs.scaled).to.be.called;
-            expect(dialog.element.style.top).equals(`${PAGE_PADDING_TOP}px`);
+            expect(dialog.element.style.top).to.equal(`${PAGE_PADDING_TOP}px`);
         });
 
         it('should adjust the dialog if the dialog will run below the page', () => {
@@ -282,7 +282,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.position();
 
             expect(stubs.scaled).to.be.called;
-            expect(dialog.element.style.top).equals(`${PAGE_PADDING_TOP}px`);
+            expect(dialog.element.style.top).to.equal(`${PAGE_PADDING_TOP}px`);
         });
     });
 
@@ -408,7 +408,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should setup the dialog element and add thread number to the dialog', () => {
             dialog.setup([stubs.annotation]);
-            expect(dialog.element.dataset.threadNumber).equals('1');
+            expect(dialog.element.dataset.threadNumber).to.equal('1');
         });
 
         it('should not set the thread number when using a mobile browser', () => {
@@ -622,14 +622,14 @@ describe('doc/DocHighlightDialog', () => {
             dialog.element.style.left = '30px';
 
             const width = dialog.getDialogWidth();
-            expect(width).equals(100);
-            expect(dialog.element.style.left).equals('30px');
+            expect(width).to.equal(100);
+            expect(dialog.element.style.left).to.equal('30px');
         });
 
         it('should return previously set dialog width if already calculated', () => {
             dialog.element.style.width = '252px';
             const width = dialog.getDialogWidth();
-            expect(width).equals(252); // Default comments dialog width
+            expect(width).to.equal(252); // Default comments dialog width
         });
     });
 
@@ -661,7 +661,7 @@ describe('doc/DocHighlightDialog', () => {
             const comment = document.querySelector('.annotation-comment');
 
             expect(comment).to.be.null;
-            expect(highlight.dataset.annotationId).equals('1');
+            expect(highlight.dataset.annotationId).to.equal('1');
         });
     });
 

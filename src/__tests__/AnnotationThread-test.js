@@ -123,7 +123,7 @@ describe('AnnotationThread', () => {
         it('should hide the thread dialog', () => {
             stubs.dialogMock.expects('hide');
             thread.hideDialog();
-            expect(thread.state).equals(STATES.inactive);
+            expect(thread.state).to.equal(STATES.inactive);
         });
     });
 
@@ -240,7 +240,7 @@ describe('AnnotationThread', () => {
             expect(thread.annotations[123]).to.be.undefined;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(stubs.saveAnnotationToThread).to.not.be.called;
-            expect(thread.annotations[123]).to.deep.equals(serverAnnotation);
+            expect(thread.annotations[123]).to.deep.equal(serverAnnotation);
         });
 
         it('should emit an annotationsaved event on success', (done) => {
@@ -286,13 +286,13 @@ describe('AnnotationThread', () => {
             // Don't show dialog on web browsers
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).to.not.be.called;
-            expect(thread.state).not.equals(STATES.hover);
+            expect(thread.state).to.not.equal(STATES.hover);
 
             // Only show dialog on mobile browsers
             thread.isMobile = true;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).to.be.called;
-            expect(thread.state).equals(STATES.hover);
+            expect(thread.state).to.equal(STATES.hover);
         });
     });
 
@@ -537,12 +537,12 @@ describe('AnnotationThread', () => {
 
         it('should scroll so annotation is vertically centered in viewport', () => {
             thread.centerAnnotation(50);
-            expect(thread.annotatedElement.scrollTop).equals(50);
+            expect(thread.annotatedElement.scrollTop).to.equal(50);
         });
 
         it('should scroll so annotation is vertically centered in viewport', () => {
             thread.centerAnnotation(150);
-            expect(thread.annotatedElement.scrollTop).equals(200);
+            expect(thread.annotatedElement.scrollTop).to.equal(200);
         });
     });
 
@@ -897,10 +897,10 @@ describe('AnnotationThread', () => {
         it('should set the min/max x/y values to the thread location', () => {
             thread.location = { x: 1, y: 2 };
             thread.regenerateBoundary();
-            expect(thread.minX).equals(1);
-            expect(thread.minY).equals(2);
-            expect(thread.maxX).equals(1);
-            expect(thread.maxY).equals(2);
+            expect(thread.minX).to.equal(1);
+            expect(thread.minY).to.equal(2);
+            expect(thread.maxX).to.equal(1);
+            expect(thread.maxY).to.equal(2);
         });
     });
 

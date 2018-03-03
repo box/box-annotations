@@ -85,7 +85,7 @@ describe('doc/DocHighlightThread', () => {
             thread.cancelFirstComment();
 
             expect(thread.destroy).to.be.called;
-            assert.equal(thread.element, null);
+            expect(thread.element).to.be.undefined;
         });
 
         it('should reset the thread if on mobile and a comment-highlight', () => {
@@ -112,8 +112,7 @@ describe('doc/DocHighlightThread', () => {
             });
 
             thread.destroy();
-
-            assert.equal(thread.element, null);
+            expect(thread.element).to.be.undefined;
             expect(thread.emit).to.be.calledWith('annotationthreadcleanup');
         });
     });
@@ -135,7 +134,7 @@ describe('doc/DocHighlightThread', () => {
             thread.reset();
 
             expect(thread.show).to.be.called;
-            assert.equal(thread.state, STATES.inactive);
+            expect(thread.state).to.equal(STATES.inactive);
         });
     });
 
@@ -248,7 +247,7 @@ describe('doc/DocHighlightThread', () => {
 
             const isHighlightPending = thread.onClick({}, true);
 
-            expect(isHighlightPending).to.be.falsy;
+            expect(isHighlightPending).to.be.false;
             expect(thread.state).to.equal(STATES.inactive);
         });
 
@@ -260,7 +259,7 @@ describe('doc/DocHighlightThread', () => {
 
             const isHighlightPending = thread.onClick({}, false);
 
-            expect(isHighlightPending).to.be.truthy;
+            expect(isHighlightPending).to.be.true;
             expect(thread.reset).to.not.be.called;
             expect(thread.state).to.equal(STATES.hover);
         });
@@ -272,7 +271,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.truthy;
+            expect(result).to.be.true;
         });
 
         it('should return true if mouse event is over highlight dialog', () => {
@@ -281,7 +280,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.truthy;
+            expect(result).to.be.true;
         });
 
         it('should return false if mouse event is neither over the highlight or the dialog', () => {
@@ -290,7 +289,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.falsy;
+            expect(result).to.be.false;
         });
     });
 
@@ -300,7 +299,7 @@ describe('doc/DocHighlightThread', () => {
             sandbox.stub(util, 'isInDialog');
 
             const result = thread.onMousemove({});
-            expect(result).to.be.falsy;
+            expect(result).to.be.false;
             expect(util.isInDialog).to.not.be.called;
         });
 
@@ -311,7 +310,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.onMousemove({});
 
-            expect(result).to.be.truthy;
+            expect(result).to.be.true;
             expect(thread.state).to.equal(STATES.hover);
         });
 
@@ -322,7 +321,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.onMousemove({});
 
-            expect(result).to.be.falsy;
+            expect(result).to.be.false;
         });
 
         it('should delay drawing highlight if mouse is hovering over a highlight', () => {
@@ -333,7 +332,7 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.onMousemove({});
 
-            expect(result).to.be.truthy;
+            expect(result).to.be.true;
         });
 
         it('should not delay drawing highlight if mouse is not in highlight and the state is not already inactive', () => {
@@ -345,7 +344,7 @@ describe('doc/DocHighlightThread', () => {
             const result = thread.onMousemove({});
 
             expect(thread.hoverTimeoutHandler).to.not.be.undefined;
-            expect(result).to.be.falsy;
+            expect(result).to.be.false;
         });
 
         it('should not delay drawing highlight if the state is already inactive', () => {
@@ -355,9 +354,8 @@ describe('doc/DocHighlightThread', () => {
             thread.state = STATES.inactive;
 
             const result = thread.onMousemove({});
-
-            assert.equal(thread.state, STATES.inactive);
-            expect(result).to.be.falsy;
+            expect(thread.state).to.equal(STATES.inactive);
+            expect(result).to.be.false;
         });
     });
 
@@ -422,7 +420,7 @@ describe('doc/DocHighlightThread', () => {
     describe('createDialog()', () => {
         it('should initialize an appropriate dialog', () => {
             thread.createDialog();
-            expect(thread.dialog instanceof DocHighlightDialog).to.be.truthy;
+            expect(thread.dialog instanceof DocHighlightDialog).to.be.true;
         });
     });
 
@@ -615,10 +613,10 @@ describe('doc/DocHighlightThread', () => {
                 ]
             };
             thread.regenerateBoundary();
-            expect(thread.minX).equals(1);
-            expect(thread.minY).equals(1);
-            expect(thread.maxX).equals(10);
-            expect(thread.maxY).equals(10);
+            expect(thread.minX).to.equal(1);
+            expect(thread.minY).to.equal(1);
+            expect(thread.maxX).to.equal(10);
+            expect(thread.maxY).to.equal(10);
         });
     });
 });

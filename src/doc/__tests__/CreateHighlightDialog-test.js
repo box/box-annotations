@@ -64,8 +64,8 @@ describe('doc/CreateHighlightDialog', () => {
                 localized
             };
             const instance = new CreateHighlightDialog(document.createElement('div'), config);
-            expect(instance.allowHighlight).to.be.truthy;
-            expect(instance.allowComment).to.be.falsy;
+            expect(instance.allowHighlight).to.be.true;
+            expect(instance.allowComment).to.be.false;
         });
     });
 
