@@ -43,7 +43,7 @@ describe('drawing/DrawingContainer', () => {
         it('should not undo when the undo stack is empty', () => {
             expect(drawingContainer.undoStack.length).to.equal(0);
             const val = drawingContainer.undo();
-            expect(val).to.be.falsy;
+            expect(val).to.be.false;
         });
 
         it('should move an item from the top of the undo stack to the top of the redo stack', () => {
@@ -53,7 +53,7 @@ describe('drawing/DrawingContainer', () => {
             const topUndo = drawingContainer.undoStack[lengthBefore - 1];
             const val = drawingContainer.undo();
 
-            expect(val).to.be.truthy;
+            expect(val).to.be.true;
             expect(drawingContainer.undoStack.length).to.equal(lengthBefore - 1);
             expect(drawingContainer.redoStack.length).to.equal(lengthBefore + 1);
             expect(drawingContainer.redoStack[lengthBefore]).to.equal(topUndo);
@@ -64,7 +64,7 @@ describe('drawing/DrawingContainer', () => {
         it('should not redo when the redo stack is empty', () => {
             expect(drawingContainer.redoStack.length).to.equal(0);
             const val = drawingContainer.redo();
-            expect(val).to.be.falsy;
+            expect(val).to.be.false;
         });
 
         it('should move an item from the top of the redo stack to the top of the undo stack', () => {
@@ -74,7 +74,7 @@ describe('drawing/DrawingContainer', () => {
             const topRedo = drawingContainer.redoStack[lengthBefore - 1];
             const val = drawingContainer.redo();
 
-            expect(val).to.be.truthy;
+            expect(val).to.be.true;
             expect(drawingContainer.redoStack.length).to.equal(lengthBefore - 1);
             expect(drawingContainer.undoStack.length).to.equal(lengthBefore + 1);
             expect(drawingContainer.undoStack[lengthBefore]).to.equal(topRedo);
@@ -183,12 +183,12 @@ describe('drawing/DrawingContainer', () => {
     describe('isEmpty()', () => {
         it('should return true when no items are in the undoStack', () => {
             drawingContainer.undoStack = [];
-            expect(drawingContainer.isEmpty()).to.be.truthy;
+            expect(drawingContainer.isEmpty()).to.be.true;
         });
 
         it('should return false when there are items are in the undoStack', () => {
             drawingContainer.undoStack = ['one'];
-            expect(drawingContainer.isEmpty()).to.be.falsy;
+            expect(drawingContainer.isEmpty()).to.be.false;
         });
     });
 });

@@ -136,7 +136,7 @@ class DocDrawingThread extends DrawingThread {
      * @return {boolean} Whether or not the thread page has changed
      */
     hasPageChanged(location) {
-        return location && !!this.location && !!this.location.page && this.location.page !== location.page;
+        return !!(location && !!this.location && !!this.location.page && this.location.page !== location.page);
     }
 
     /**

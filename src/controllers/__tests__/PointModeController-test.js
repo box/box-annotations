@@ -170,7 +170,7 @@ describe('controllers/PointModeController', () => {
             expect(controller.destroyPendingThreads).to.be.called;
             expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
             expect(controller.unbindListeners).to.be.called;
-            expect(controller.hadPendingThreads).to.be.falsy;
+            expect(controller.hadPendingThreads).to.be.false;
         });
 
         it('should deactive mode button if available', () => {

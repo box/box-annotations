@@ -53,10 +53,10 @@ describe('CreateAnnotationDialog', () => {
     describe('contructor()', () => {
         it('should take config falsey value to disable highlights and comments, when passed in', () => {
             expect(dialog.parentEl).to.not.be.undefined;
-            expect(dialog.isMobile).to.be.truthy;
-            expect(dialog.hasTouch).to.be.falsy;
+            expect(dialog.isMobile).to.be.true;
+            expect(dialog.hasTouch).to.be.false;
             expect(dialog.localized).to.equal(localized);
-            expect(dialog.isVisible).to.be.falsy;
+            expect(dialog.isVisible).to.be.false;
         });
     });
 

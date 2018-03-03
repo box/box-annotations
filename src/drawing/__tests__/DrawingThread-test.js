@@ -112,15 +112,13 @@ describe('drawing/DrawingThread', () => {
             };
 
             thread.setContextStyles(config);
-
-            assert.deepEqual(thread.drawingContext, {
+            expect(thread.drawingContext).to.deep.equal({
                 lineCap: 'round',
                 lineJoin: 'round',
                 strokeStyle: 'blue',
                 lineWidth: thread.drawingContext.lineWidth
             });
-
-            assert.ok(thread.drawingContext.lineWidth % config.scale == 0);
+            expect(thread.drawingContext.lineWidth % config.scale).to.equal(0);
         })
     });
 
