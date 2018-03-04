@@ -71,7 +71,7 @@
     "mocha": "^5.0.1",
     "node-noop": "^1.0.0",
     "node-sass": "^4.7.2",
-    "optimize-css-assets-webpack-plugin": "^3.2.0",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
     "postcss-loader": "^2.0.9",
     "prettier": "^1.8.2",
     "prettier-eslint-cli": "^4.4.2",
