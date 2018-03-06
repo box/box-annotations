@@ -194,7 +194,7 @@ class CommentBox extends EventEmitter {
      */
     createHTML() {
         const containerEl = document.createElement('section');
-        containerEl.classList.add('bp-create-comment');
+        containerEl.classList.add('ba-create-comment');
         containerEl.innerHTML = `
             <textarea class="${constants.CLASS_TEXTAREA} ${constants.CLASS_ANNOTATION_TEXTAREA} ${
     constants.CLASS_ACTIVE

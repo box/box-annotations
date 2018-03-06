@@ -192,7 +192,7 @@ describe('CommentBox', () => {
 
         it('should create and return a section element with bp-create-highlight-comment class on it', () => {
             expect(el.nodeName).to.equal('SECTION');
-            expect(el.classList.contains('bp-create-comment')).to.be.true;
+            expect(el.classList.contains('ba-create-comment')).to.be.true;
         });
 
         it('should create a text area with the provided placeholder text', () => {
