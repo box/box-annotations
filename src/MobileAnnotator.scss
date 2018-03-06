@@ -187,7 +187,7 @@
 }
 
 .ba-mobile-annotation-dialog .ba-annotation-highlight-btns,
-.ba-mobile-annotation-dialog .bp-create-comment,
+.ba-mobile-annotation-dialog .ba-create-comment,
 .ba-mobile-annotation-dialog .annotation-container section[data-section="create"],
 .ba-mobile-create-annotation-dialog {
     background: white;
@@ -247,7 +247,7 @@
     }
 }
 
-.bp-container .bp-annotate-draw-undo-redo-container {
+.bp-container .ba-draw-undo-redo-container {
     margin: 0;
 
     @media #{$tablet} {
