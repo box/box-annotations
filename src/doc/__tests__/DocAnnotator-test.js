@@ -836,7 +836,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should do nothing if the createHighlightDialog is hidden', () => {
-            annotator.resetHighlightSelection();
+            annotator.resetHighlightSelection({});
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
         });
 
@@ -848,7 +848,7 @@ describe('doc/DocAnnotator', () => {
 
         it('hide the visible createHighlightDialog and clear the text selection', () => {
             annotator.createHighlightDialog.isVisible = true;
-            annotator.resetHighlightSelection();
+            annotator.resetHighlightSelection({});
             expect(annotator.createHighlightDialog.hide).to.be.called;
         });
     });
