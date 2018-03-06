@@ -488,7 +488,7 @@ class DocAnnotator extends Annotator {
      */
     resetHighlightSelection(event) {
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (!isCreateDialogVisible || util.isInDialog(event)) {
+        if (!isCreateDialogVisible || !event || util.isInDialog(event)) {
             return;
         }
 
@@ -852,7 +852,7 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        this.resetHighlightSelection();
+        this.resetHighlightSelection(event);
         this.isCreatingHighlight = false;
 
         // Prevent the creation of highlights if the user is currently creating a point annotation
@@ -1026,7 +1026,7 @@ class DocAnnotator extends Annotator {
 
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
-                this.resetHighlightSelection();
+                this.resetHighlightSelection(data.event);
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
                 if (isCreateDialogVisible) {
