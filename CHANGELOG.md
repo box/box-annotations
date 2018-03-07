@@ -1,3 +1,13 @@
+<a name="0.15.0"></a>
+## 0.15.0 (2018-03-07)
+
+* Fix: Pass event to resetHighlightSelection to reset dialog (#129) ([89c84d8](https://github.com/box/box-annotations/commit/89c84d8)), closes [#129](https://github.com/box/box-annotations/issues/129)
+* Fix: Pending highlight is not cleared on powerpoint page scroll (#125) ([777678a](https://github.com/box/box-annotations/commit/777678a)), closes [#125](https://github.com/box/box-annotations/issues/125)
+* Fix: Prevent default behavior during mobile point annotation mode (#130) ([ad3d0b2](https://github.com/box/box-annotations/commit/ad3d0b2)), closes [#130](https://github.com/box/box-annotations/issues/130)
+* Chore: Clean up all tests (#124) ([01d5650](https://github.com/box/box-annotations/commit/01d5650)), closes [#124](https://github.com/box/box-annotations/issues/124)
+
+
+
 <a name="0.14.0"></a>
 # 0.14.0 (2018-02-27)
 
