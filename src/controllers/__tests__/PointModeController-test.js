@@ -222,6 +222,10 @@ describe('controllers/PointModeController', () => {
                 selector: '.bp-btn-annotate'
             };
             stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
+
+            const eventMock = sandbox.mock(event);
+            eventMock.expects('stopPropagation');
+            eventMock.expects('preventDefault');
         });
 
         afterEach(() => {
@@ -233,6 +237,16 @@ describe('controllers/PointModeController', () => {
             stubs.isInDialog.returns(true);
             controller.pointClickHandler(event);
             expect(stubs.destroy).to.not.be.called;
+        });
+
+        it('should reset the mobile annotations dialog if the user is on a mobile device', () => {
+            stubs.destroy.returns(false);
+            stubs.annotatorMock.expects('getLocationFromEvent');
+            stubs.threadMock.expects('show').never();
+            controller.isMobile = true;
+
+            controller.pointClickHandler(event);
+            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.resetMobileDialog);
         });
 
         it('should not do anything if thread is invalid', () => {
