@@ -183,6 +183,11 @@ class PointModeController extends AnnotationModeController {
             return;
         }
 
+        // Clears and hides the mobile annotation dialog if visible
+        if (this.isMobile) {
+            this.emit(CONTROLLER_EVENT.resetMobileDialog);
+        }
+
         this.hadPendingThreads = this.destroyPendingThreads();
 
         // Get annotation location from click event, ignore click if location is invalid

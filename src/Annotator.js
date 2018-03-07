@@ -669,6 +669,9 @@ class Annotator extends EventEmitter {
      */
     handleControllerEvents(data) {
         switch (data.event) {
+            case CONTROLLER_EVENT.resetMobileDialog:
+                this.resetMobileDialog();
+                break;
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);
                 break;
