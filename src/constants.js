@@ -172,7 +172,8 @@ export const CONTROLLER_EVENT = {
     unregister: 'unregisterthread',
     bindDOMListeners: 'binddomlisteners',
     unbindDOMListeners: 'unbinddomlisteners',
-    renderPage: 'annotationsrenderpage'
+    renderPage: 'annotationsrenderpage',
+    resetMobileDialog: 'annotationsmobiledialogreset'
 };
 
 export const CREATE_EVENT = {

@@ -119,6 +119,7 @@ class PointModeController extends AnnotationModeController {
     /** @inheritdoc */
     setupHandlers() {
         this.pointClickHandler = this.pointClickHandler.bind(this);
+
         // Get handlers
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.pointClickHandler);
 
@@ -173,10 +174,18 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
         if (isInDialog(event)) {
             return;
+        }
+
+        // Clears and hides the mobile annotation dialog if visible
+        if (this.isMobile) {
+            this.emit(CONTROLLER_EVENT.resetMobileDialog);
         }
 
         this.hadPendingThreads = this.destroyPendingThreads();

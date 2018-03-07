@@ -525,6 +525,13 @@ describe('Annotator', () => {
                 sandbox.stub(annotator, 'emit');
             });
 
+            it('should reset mobile annotation dialog on resetMobileDialog', () => {
+                sandbox.stub(annotator, 'resetMobileDialog');
+                data.event = CONTROLLER_EVENT.resetMobileDialog;
+                annotator.handleControllerEvents(data);
+                expect(annotator.resetMobileDialog).to.be.called;
+            });
+
             it('should toggle annotation mode on togglemode', () => {
                 sandbox.stub(annotator, 'toggleAnnotationMode');
                 data.event = CONTROLLER_EVENT.toggleMode;
