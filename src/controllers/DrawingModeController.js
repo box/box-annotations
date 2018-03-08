@@ -127,7 +127,9 @@ class DrawingModeController extends AnnotationModeController {
         );
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
-            this.currentThread.cancelUnsavedAnnotation();
+            if (this.currentThread) {
+                this.currentThread.cancelUnsavedAnnotation();
+            }
             this.toggleMode();
         });
 
@@ -157,12 +159,11 @@ class DrawingModeController extends AnnotationModeController {
             case 'softcommit':
                 this.currentThread = undefined;
                 this.saveThread(thread);
+                this.unbindListeners();
+                this.bindListeners();
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
-                    this.unbindListeners();
-                    this.bindListeners();
-
                     this.currentThread.handleStart(eventData.location);
                 }
 
