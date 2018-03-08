@@ -148,7 +148,10 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            if (this.hasTouch && event.targetTouches && event.targetTouches.length > 0) {
+            if (this.hasTouch && event.targetTouches) {
+                if (event.targetTouches.length <= 0) {
+                    return location;
+                }
                 clientEvent = event.targetTouches[0];
             }
 

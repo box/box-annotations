@@ -99,8 +99,12 @@ class DrawingThread extends AnnotationThread {
         }
 
         super.destroy();
+
+        if (this.state !== STATES.pending) {
+            this.emit(THREAD_EVENT.threadCleanup);
+        }
+
         this.reset();
-        this.emit(THREAD_EVENT.threadCleanup);
     }
 
     /**

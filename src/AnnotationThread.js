@@ -93,7 +93,9 @@ class AnnotationThread extends EventEmitter {
             this.element = null;
         }
 
-        this.emit(THREAD_EVENT.threadDelete);
+        if (this.state !== STATES.pending) {
+            this.emit(THREAD_EVENT.threadDelete);
+        }
     }
 
     /**
