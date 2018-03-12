@@ -52,54 +52,6 @@ preview.show(FILE_ID, ACCESS_TOKEN, {
 ```
 Where `viewerOptions` is an optional object of viewer-specific annotator options and `disabledAnnotationTypes` is an optional string array of valid annotation types to disable. See [Enabling/Disabling Annotations and Annotation Types](#enablingdisabling-annotations-and-annotation-types) below for more details on viewer-specific annotation configurations.
 
-Parameters & Options
--------
-```javascript
-const annotator = new annotatorConf.CONSTRUCTOR({
-    annotator,
-    apiHost,
-    token,
-    container,
-    file: {
-        id,
-        file_version: {
-            id
-        },
-        permissions
-    },
-    isMobile,
-    hasTouch,
-    locale,
-    modeButtons: { // Annotation mode buttons, i.e. point, draw, etc
-        point: {
-            // Accessibilty message for the point annotation mode button
-            title: 'Point annotation mode',
-            // CSS selector for the point annotation mode button
-            selector: '.bp-btn-annotate-point'
-        },
-    }
-});
-```
-
-| Parameter | Default | Description |
-| --- | --- | --- |
-| annotator |  | Viewer-specific annotator configurations object |
-| apiHost |  | Host for Box API calls e.g. 'https://app.box.com/api' |
-| fileId |  | Box file ID |
-| token |  | A string auth token, see below for details on how to generate annotator tokens with appropriate scopes |
-| container |  | DOM node or selector where Preview should be placed |
-| file |  | File metadata object |
-| file.id |  | String `Box_File` id |
-| file.file_version.id |  | String `Box_File_Version` id |
-| file.permissions |  | File permissions object, see below on how to scope permissions  |
-
-| Option | Default | Description |
-| --- | --- | --- |
-| modeButtons |  | Object containing a CSS selector and accessibility message for the annotation mode button, see parameters and options example above |
-| isMobile | false | Whether the user's browser is on a mobile device |
-| hasTouch | false | Whether the mobile browser has touch enabled |
-| locale | en-US | Shared link URL |
-
 Access Token
 ------------
 Box Annotations needs an access token to make Box API calls. You can either get an access token from the token endpoint (https://developer.box.com/reference#token) or generate a developer token on your application management page (https://blog.box.com/blog/introducing-developer-tokens/).
