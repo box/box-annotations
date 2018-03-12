@@ -123,7 +123,7 @@ class DocDrawingThread extends DrawingThread {
             this.dialog.hide();
         }
 
-        this.drawBoundary();
+        this.render();
         this.emitAvailableActions();
         this.pendingPath = null;
     }
