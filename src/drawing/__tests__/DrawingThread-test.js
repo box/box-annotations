@@ -60,7 +60,6 @@ describe('drawing/DrawingThread', () => {
 
             expect(window.cancelAnimationFrame).to.be.calledWith(1);
             expect(thread.reset).to.be.called;
-            expect(thread.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
         })
     });
 

@@ -212,8 +212,8 @@ describe('controllers/DrawingModeController', () => {
             controller.handleThreadEvents(stubs.thread, {
                 event: 'softcommit'
             });
-            expect(controller.unbindListeners).to.not.be.called;
-            expect(controller.bindListeners).to.not.be.called;
+            expect(controller.unbindListeners).to.be.called;
+            expect(controller.bindListeners).to.be.called;
             expect(stubs.thread.handleStart).to.not.be.called;
             expect(controller.saveThread).to.be.called;
         });
