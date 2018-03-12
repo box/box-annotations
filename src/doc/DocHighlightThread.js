@@ -503,12 +503,12 @@ class DocHighlightThread extends AnnotationThread {
             context.save();
             context.globalCompositeOperation = 'destination-out';
             context.fillStyle = HIGHLIGHT_FILL.erase;
-            context.fill();
+            context.fillRect(x1, y3, x2 - x1, y2 - y3);
             context.restore();
 
             // Draw actual highlight rectangle if needed
             if (fillStyle !== HIGHLIGHT_FILL.erase) {
-                context.fill();
+                context.fillRect(x1, y3, x2 - x1, y2 - y3);
 
                 // Update highlight icon hover to appropriate color
                 if (this.dialog && this.dialog.element) {

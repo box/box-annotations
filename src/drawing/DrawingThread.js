@@ -284,14 +284,9 @@ class DrawingThread extends AnnotationThread {
             return;
         }
 
-        /* OPTIMIZE (@minhnguyen): Render only what has been obstructed by the new drawing
-         *           rather than every single line in the thread. If we do end
-         *           up splitting saves into multiple requests, we can buffer
-         *           the amount of re-renders onto a temporary memory canvas.
-         */
         if (clearCanvas) {
-            const { canvas } = context;
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            const [x, y, width, height] = this.getBrowserRectangularBoundary();
+            context.clearRect(x, y, width, height);
         }
 
         context.beginPath();
