@@ -67,9 +67,22 @@ describe('AnnotationThread', () => {
     });
 
     describe('destroy()', () => {
-        it('should unbind listeners and remove thread element and broadcast that the thread was deleted', () => {
+        beforeEach(() => {
+            thread.state = STATES.pending;
             stubs.unbindCustom = sandbox.stub(thread, 'unbindCustomListenersOnDialog');
             stubs.unbindDOM = sandbox.stub(thread, 'unbindDOMListeners');
+            stubs.destroyDialog = sandbox.stub(thread.dialog, 'destroy');
+        });
+
+        it('should unbind listeners and remove thread element and broadcast that the thread was deleted', () => {
+            thread.destroy();
+            expect(stubs.unbindCustom).to.be.called;
+            expect(stubs.unbindDOM).to.be.called;
+            expect(stubs.emit).to.not.be.calledWith(THREAD_EVENT.threadDelete);
+        });
+
+        it('should emit annotationthreaddeleted only if thread is not in a pending state', () => {
+            thread.state = STATES.inactive;
 
             thread.destroy();
             expect(stubs.unbindCustom).to.be.called;
@@ -78,8 +91,6 @@ describe('AnnotationThread', () => {
         });
 
         it('should not destroy the dialog on mobile', () => {
-            stubs.unbindCustom = sandbox.stub(thread, 'unbindCustomListenersOnDialog');
-            stubs.destroyDialog = sandbox.stub(thread.dialog, 'destroy');
             thread.element = null;
             thread.isMobile = true;
 
