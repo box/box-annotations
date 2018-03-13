@@ -62,6 +62,9 @@ class CommentBox extends EventEmitter {
     /** Whether or not we should use touch events */
     hasTouch;
 
+    /** Whether or not user is on a mobile device */
+    isMobile;
+
     /* Events that the comment box can emit. */
     static CommentEvents = {
         cancel: 'comment_cancel',
@@ -79,7 +82,8 @@ class CommentBox extends EventEmitter {
         super();
 
         this.parentEl = parentEl;
-        this.hasTouch = config.hasTouch;
+        this.hasTouch = config.hasTouch || false;
+        this.isMobile = config.isMobile || false;
 
         this.localized = config.localized;
         this.cancelText = config.localized.cancelButton;

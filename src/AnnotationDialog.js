@@ -51,7 +51,8 @@ class AnnotationDialog extends EventEmitter {
         this.hasAnnotations = Object.keys(data.annotations).length > 0;
         this.canAnnotate = data.canAnnotate;
         this.locale = data.locale;
-        this.isMobile = data.isMobile;
+        this.isMobile = data.isMobile || false;
+        this.hasTouch = data.hasTouch || false;
 
         // Explicitly bind listeners
         this.keydownHandler = this.keydownHandler.bind(this);
@@ -320,7 +321,7 @@ class AnnotationDialog extends EventEmitter {
         this.dialogEl = this.generateDialogEl(Object.keys(annotations).length);
         this.dialogEl.classList.add(constants.CLASS_ANNOTATION_CONTAINER);
 
-        // Setup shared mobile annotations dialog
+        // Setup annotations dialog if not on a mobile device
         if (!this.isMobile) {
             this.element = document.createElement('div');
             this.element.setAttribute('data-type', constants.DATA_TYPE_ANNOTATION_DIALOG);
@@ -370,9 +371,14 @@ class AnnotationDialog extends EventEmitter {
      */
     bindDOMListeners() {
         this.element.addEventListener('keydown', this.keydownHandler);
+        this.element.addEventListener('wheel', this.stopPropagation);
         this.element.addEventListener('click', this.clickHandler);
         this.element.addEventListener('mouseup', this.stopPropagation);
-        this.element.addEventListener('wheel', this.stopPropagation);
+
+        if (this.hasTouch) {
+            this.element.addEventListener('touchstart', this.clickHandler);
+            this.element.addEventListener('touchstart', this.stopPropagation);
+        }
 
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
@@ -417,6 +423,11 @@ class AnnotationDialog extends EventEmitter {
         this.element.removeEventListener('click', this.clickHandler);
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
+
+        if (this.hasTouch) {
+            this.element.removeEventListener('touchstart', this.clickHandler);
+            this.element.removeEventListener('touchstart', this.stopPropagation);
+        }
 
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
@@ -559,6 +570,7 @@ class AnnotationDialog extends EventEmitter {
      */
     clickHandler(event) {
         event.stopPropagation();
+        event.preventDefault();
 
         const eventTarget = event.target;
         const dataType = util.findClosestDataType(eventTarget);

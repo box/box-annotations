@@ -8,7 +8,8 @@ import {
     TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CLASS_HIDDEN
 } from './constants';
 
 class AnnotationThread extends EventEmitter {
@@ -53,8 +54,8 @@ class AnnotationThread extends EventEmitter {
         this.threadNumber = data.threadNumber || '';
         this.type = data.type;
         this.locale = data.locale;
-        this.isMobile = data.isMobile;
-        this.hasTouch = data.hasTouch;
+        this.isMobile = data.isMobile || false;
+        this.hasTouch = data.hasTouch || false;
         this.permissions = data.permissions;
         this.localized = data.localized;
         this.state = STATES.inactive;
@@ -114,6 +115,15 @@ class AnnotationThread extends EventEmitter {
      */
     reset() {
         this.state = STATES.inactive;
+    }
+
+    /**
+     * Whether or not thread dialog is visible
+     *
+     * @return {void}
+     */
+    isDialogVisible() {
+        return !!(this.dialog && this.dialog.element && !this.dialog.element.classList.contains(CLASS_HIDDEN));
     }
 
     /**

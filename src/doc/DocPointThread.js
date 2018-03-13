@@ -75,6 +75,8 @@ class DocPointThread extends AnnotationThread {
             annotations: this.annotations,
             locale: this.locale,
             location: this.location,
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch,
             canAnnotate: this.permissions.canAnnotate
         });
     }
