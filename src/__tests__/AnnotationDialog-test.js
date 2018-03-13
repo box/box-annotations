@@ -414,6 +414,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(replyTextEl, 'addEventListener');
             const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             sandbox.stub(annotationTextEl, 'addEventListener');
+            dialog.hasTouch = true;
 
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
@@ -422,8 +423,23 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.add).to.be.calledWith('touchstart', dialog.stopPropagation);
             expect(replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
             expect(annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+        });
+
+        it('should not bind touch events if not on a touch enabled devices', () => {
+            stubs.add = sandbox.stub(dialog.element, 'addEventListener');
+
+            dialog.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -472,6 +488,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(replyTextEl, 'removeEventListener');
             const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             sandbox.stub(annotationTextEl, 'removeEventListener');
+            dialog.hasTouch = true;
 
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
@@ -479,9 +496,24 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.remove).to.be.calledWith('touchstart', dialog.stopPropagation);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
             expect(replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
             expect(annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+        });
+
+        it('should not bind touch events if not on a touch enabled devices', () => {
+            stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
+
+            dialog.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
+            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
@@ -672,6 +704,7 @@ describe('AnnotationDialog', () => {
         beforeEach(() => {
             stubs.event = {
                 stopPropagation: () => {},
+                preventDefault: () => {},
                 target: document.createElement('div')
             };
             stubs.post = sandbox.stub(dialog, 'postAnnotation');
