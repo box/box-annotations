@@ -51,7 +51,8 @@ class AnnotationDialog extends EventEmitter {
         this.hasAnnotations = Object.keys(data.annotations).length > 0;
         this.canAnnotate = data.canAnnotate;
         this.locale = data.locale;
-        this.isMobile = data.isMobile;
+        this.isMobile = data.isMobile || false;
+        this.hasTouch = data.hasTouch || false;
 
         // Explicitly bind listeners
         this.keydownHandler = this.keydownHandler.bind(this);
@@ -62,6 +63,8 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.mouseenterHandler = this.mouseenterHandler.bind(this);
             this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
+        } else {
+            this.hideMobileDialog = this.hideMobileDialog.bind(this);
         }
     }
 
@@ -171,11 +174,6 @@ class AnnotationDialog extends EventEmitter {
             headerEl.classList.add(constants.CLASS_HIDDEN);
         }
 
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-
-        this.hideMobileDialog = this.hideMobileDialog.bind(this);
-        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
-
         this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
 
         this.bindDOMListeners();
@@ -203,9 +201,6 @@ class AnnotationDialog extends EventEmitter {
                 <button class="${constants.CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
             </div>`.trim();
         this.element.classList.remove(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-        dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
 
         util.hideElement(this.element);
         this.unbindDOMListeners();
@@ -320,7 +315,7 @@ class AnnotationDialog extends EventEmitter {
         this.dialogEl = this.generateDialogEl(Object.keys(annotations).length);
         this.dialogEl.classList.add(constants.CLASS_ANNOTATION_CONTAINER);
 
-        // Setup shared mobile annotations dialog
+        // Setup annotations dialog if not on a mobile device
         if (!this.isMobile) {
             this.element = document.createElement('div');
             this.element.setAttribute('data-type', constants.DATA_TYPE_ANNOTATION_DIALOG);
@@ -370,9 +365,14 @@ class AnnotationDialog extends EventEmitter {
      */
     bindDOMListeners() {
         this.element.addEventListener('keydown', this.keydownHandler);
+        this.element.addEventListener('wheel', this.stopPropagation);
         this.element.addEventListener('click', this.clickHandler);
         this.element.addEventListener('mouseup', this.stopPropagation);
-        this.element.addEventListener('wheel', this.stopPropagation);
+
+        if (this.hasTouch) {
+            this.element.addEventListener('touchstart', this.clickHandler);
+            this.element.addEventListener('touchstart', this.stopPropagation);
+        }
 
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
@@ -387,6 +387,14 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
+            return;
+        }
+
+        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
+
+        if (this.hasTouch) {
+            dialogCloseButtonEl.addEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
@@ -418,6 +426,11 @@ class AnnotationDialog extends EventEmitter {
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
 
+        if (this.hasTouch) {
+            this.element.removeEventListener('touchstart', this.clickHandler);
+            this.element.removeEventListener('touchstart', this.stopPropagation);
+        }
+
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         if (replyTextEl) {
             replyTextEl.removeEventListener('focus', this.validateTextArea);
@@ -431,6 +444,14 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
             this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
+            return;
+        }
+
+        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+        dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
+
+        if (this.hasTouch) {
+            dialogCloseButtonEl.removeEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
@@ -559,6 +580,7 @@ class AnnotationDialog extends EventEmitter {
      */
     clickHandler(event) {
         event.stopPropagation();
+        event.preventDefault();
 
         const eventTarget = event.target;
         const dataType = util.findClosestDataType(eventTarget);

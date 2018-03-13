@@ -51,6 +51,8 @@ describe('AnnotationDialog', () => {
             dialogEl.parentNode.removeChild(dialogEl);
         }
 
+        dialog.element = null;
+
         sandbox.verifyAndRestore();
         if (typeof dialog.destroy === 'function') {
             dialog.destroy();
@@ -77,6 +79,7 @@ describe('AnnotationDialog', () => {
             stubs.scroll = sandbox.stub(dialog, 'scrollToLastComment');
             sandbox.stub(dialog, 'showMobileDialog');
             dialog.canAnnotate = true;
+            dialog.element.classList.add(constants.CLASS_HIDDEN);
         });
 
         it('should show the mobile dialog if on a mobile device', () => {
@@ -238,6 +241,7 @@ describe('AnnotationDialog', () => {
     describe('hide()', () => {
         beforeEach(() => {
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
+            stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
         });
 
         it('should do nothing if element is already hidden', () => {
@@ -261,6 +265,7 @@ describe('AnnotationDialog', () => {
             dialog.hide();
             expect(dialog.hideMobileDialog).to.be.called;
             expect(dialog.toggleFlippedThreadEl).to.be.called;
+            dialog.element = null;
         });
     });
 
@@ -322,6 +327,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(dialog, 'generateDialogEl').returns(dialogEl);
             stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
             stubs.addSorted = sandbox.stub(dialog, 'addSortedAnnotations');
+            stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
 
             stubs.annotation = new Annotation({
                 annotationID: 'someID',
@@ -352,6 +358,7 @@ describe('AnnotationDialog', () => {
             dialog.setup([stubs.annotation, stubs.annotation], {});
             expect(stubs.bind).to.not.be.called;
             expect(stubs.addSorted).to.be.called;
+            dialog.element = null;
         });
     });
 
@@ -408,12 +415,16 @@ describe('AnnotationDialog', () => {
     });
 
     describe('bindDOMListeners()', () => {
-        it('should bind DOM listeners', () => {
+        beforeEach(() => {
+            stubs.replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            stubs.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             stubs.add = sandbox.stub(dialog.element, 'addEventListener');
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            sandbox.stub(replyTextEl, 'addEventListener');
-            const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            sandbox.stub(annotationTextEl, 'addEventListener');
+            sandbox.stub(stubs.replyTextEl, 'addEventListener');
+            sandbox.stub(stubs.annotationTextEl, 'addEventListener');
+        });
+
+        it('should bind DOM listeners', () => {
+            dialog.hasTouch = true;
 
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
@@ -422,13 +433,27 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
-            expect(annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.add).to.be.calledWith('touchstart', dialog.stopPropagation);
+            expect(stubs.replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+            expect(stubs.annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+        });
+
+        it('should not bind touch events if not on a touch enabled devices', () => {
+            dialog.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
-            stubs.add = sandbox.stub(dialog.element, 'addEventListener');
             dialog.isMobile = true;
+            dialog.showMobileDialog();
+            stubs.add = sandbox.stub(dialog.element, 'addEventListener');
 
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
@@ -466,12 +491,16 @@ describe('AnnotationDialog', () => {
     });
 
     describe('unbindDOMListeners()', () => {
-        it('should unbind DOM listeners', () => {
+        beforeEach(() => {
+            stubs.replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            stubs.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            sandbox.stub(replyTextEl, 'removeEventListener');
-            const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            sandbox.stub(annotationTextEl, 'removeEventListener');
+            sandbox.stub(stubs.replyTextEl, 'removeEventListener');
+            sandbox.stub(stubs.annotationTextEl, 'removeEventListener');
+        });
+
+        it('should unbind DOM listeners', () => {
+            dialog.hasTouch = true;
 
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
@@ -479,14 +508,28 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.remove).to.be.calledWith('touchstart', dialog.stopPropagation);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
-            expect(annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+            expect(stubs.replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+            expect(stubs.annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+        });
+
+        it('should not bind touch events if not on a touch enabled devices', () => {
+            dialog.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
+            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.clickHandler);
+            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
-            stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
             dialog.isMobile = true;
+            dialog.showMobileDialog();
+            stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
 
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
@@ -672,6 +715,7 @@ describe('AnnotationDialog', () => {
         beforeEach(() => {
             stubs.event = {
                 stopPropagation: () => {},
+                preventDefault: () => {},
                 target: document.createElement('div')
             };
             stubs.post = sandbox.stub(dialog, 'postAnnotation');

@@ -114,6 +114,23 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('isDialogVisible()', () => {
+        beforeEach(() => {
+            thread.dialog = {
+                element: document.createElement('div')
+            };
+        });
+
+        it('returns true if thread\'s dialog is visible', () => {
+            expect(thread.isDialogVisible()).to.be.true;
+        });
+
+        it('returns false if thread\'s dialog is hidden', () => {
+            thread.dialog.element.classList.add(CLASS_HIDDEN);
+            expect(thread.isDialogVisible()).to.be.false;
+        });
+    });
+
     describe('showDialog()', () => {
         it('should setup the thread dialog if the dialog element does not already exist', () => {
             thread.dialog.element = null;

@@ -446,6 +446,8 @@ class AnnotationModeController extends EventEmitter {
                     /* eslint-enable no-console */
 
                     thread.destroy();
+                } else if (thread.isDialogVisible()) {
+                    thread.hideDialog();
                 }
             });
         });

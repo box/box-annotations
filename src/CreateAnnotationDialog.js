@@ -250,6 +250,7 @@ class CreateAnnotationDialog extends EventEmitter {
         // Create comment boxt
         const commentBox = new CommentBox(containerEl, {
             hasTouch: this.hasTouch,
+            isMobile: this.isMobile,
             localized: this.localized
         });
         containerEl.appendChild(commentBox.containerEl);

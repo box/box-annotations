@@ -34,6 +34,8 @@ describe('controllers/AnnotationModeController', () => {
             handleStart: () => {},
             destroy: () => {},
             deleteThread: () => {},
+            hideDialog: () => {},
+            isDialogVisible: () => {},
             show: () => {},
             minX: 1,
             minY: 2,
@@ -519,7 +521,18 @@ describe('controllers/AnnotationModeController', () => {
 
         it('should not destroy and return false if the threads are not pending', () => {
             stubs.thread.state = 'NOT_PENDING';
+            stubs.threadMock.expects('isDialogVisible').returns(false);
             stubs.threadMock.expects('destroy').never();
+            stubs.threadMock.expects('hideDialog').never();
+            const destroyed = controller.destroyPendingThreads();
+            expect(destroyed).to.be.false;
+        });
+
+        it('should hide non-pending thread dialogs that are visible', () => {
+            stubs.thread.state = 'NOT_PENDING';
+            stubs.threadMock.expects('isDialogVisible').returns(true);
+            stubs.threadMock.expects('destroy').never();
+            stubs.threadMock.expects('hideDialog');
             const destroyed = controller.destroyPendingThreads();
             expect(destroyed).to.be.false;
         });
