@@ -124,12 +124,14 @@ describe('drawing/DrawingThread', () => {
     describe('render()', () => {
         beforeEach(() => {
             sandbox.stub(thread, 'draw');
+            sandbox.stub(thread, 'drawBoundary');
         });
 
         it('should draw the pending path when the context is not empty', () => {
             const timeStamp = 20000;
             thread.render(timeStamp);
             expect(thread.draw).to.be.called;
+            expect(thread.drawBoundary).to.be.called;
         });
 
         it('should do nothing when the timeElapsed is less than the refresh rate', () => {
@@ -137,6 +139,7 @@ describe('drawing/DrawingThread', () => {
             thread.lastRenderTimestamp = 100;
             thread.render(timeStamp);
             expect(thread.draw).to.not.be.called;
+            expect(thread.drawBoundary).to.not.be.called;
         });
     });
 
