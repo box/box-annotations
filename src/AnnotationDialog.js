@@ -172,15 +172,6 @@ class AnnotationDialog extends EventEmitter {
             headerEl.classList.add(constants.CLASS_HIDDEN);
         }
 
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-
-        this.hideMobileDialog = this.hideMobileDialog.bind(this);
-        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
-
-        if (this.hasTouch) {
-            dialogCloseButtonEl.addEventListener('touchstart', this.hideMobileDialog);
-        }
-
         this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
 
         this.bindDOMListeners();
@@ -208,9 +199,6 @@ class AnnotationDialog extends EventEmitter {
                 <button class="${constants.CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
             </div>`.trim();
         this.element.classList.remove(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-        dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
 
         util.hideElement(this.element);
         this.unbindDOMListeners();
@@ -397,6 +385,16 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
+            return;
+        }
+
+        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+
+        this.hideMobileDialog = this.hideMobileDialog.bind(this);
+        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
+
+        if (this.hasTouch) {
+            dialogCloseButtonEl.addEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
@@ -446,6 +444,16 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
             this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
+            return;
+        }
+
+        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
+
+        this.hideMobileDialog = this.hideMobileDialog.bind(this);
+        dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
+
+        if (this.hasTouch) {
+            dialogCloseButtonEl.removeEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
