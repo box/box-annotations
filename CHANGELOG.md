@@ -1,3 +1,15 @@
+<a name="0.16.0"></a>
+# 0.16.0 (2018-03-13)
+
+* Fix: Draw annotation mode bugs (#131) ([7430e54](https://github.com/box/box-annotations/commit/7430e54))
+* Fix: Ensure isMobile and hasTouch gets passed on to all dialogs (#136) ([b3f7ec3](https://github.com/box/box-annotations/commit/b3f7ec3))
+* Fix: Move dependencies to dev dependencies (#133) ([bffe5c1](https://github.com/box/box-annotations/commit/bffe5c1))
+* Fix: Re-draw drawing thread boundary on path change (#135) ([d4f44ea](https://github.com/box/box-annotations/commit/d4f44ea))
+* Revert "New: Enable draw annotations by default (#115)" (#134) ([93f92af](https://github.com/box/box-annotations/commit/93f92af))
+* Chore: Cleanup instantiation documentation in README (#132) ([f5ff695](https://github.com/box/box-annotations/commit/f5ff695))
+
+
+
 <a name="0.15.0"></a>
 ## 0.15.0 (2018-03-07)
 
