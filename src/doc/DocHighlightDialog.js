@@ -336,10 +336,10 @@ class DocHighlightDialog extends AnnotationDialog {
         this.element.addEventListener('mouseup', this.stopPropagation);
         this.element.addEventListener('wheel', this.stopPropagation);
 
-        if (!this.isMobile) {
-            this.element.addEventListener('mouseenter', this.mouseenterHandler);
-            this.element.addEventListener('mouseleave', this.mouseleaveHandler);
-        }
+        // if (!this.isMobile) {
+        //     this.element.addEventListener('mouseenter', this.mouseenterHandler);
+        //     this.element.addEventListener('mouseleave', this.mouseleaveHandler);
+        // }
     }
 
     /**
@@ -355,10 +355,10 @@ class DocHighlightDialog extends AnnotationDialog {
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
 
-        if (!this.isMobile) {
-            this.element.removeEventListener('mouseenter', this.mouseenterHandler);
-            this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
-        }
+        // if (!this.isMobile) {
+        //     this.element.removeEventListener('mouseenter', this.mouseenterHandler);
+        //     this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
+        // }
     }
 
     /**

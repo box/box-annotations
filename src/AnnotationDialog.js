@@ -59,10 +59,10 @@ class AnnotationDialog extends EventEmitter {
         this.stopPropagation = this.stopPropagation.bind(this);
         this.validateTextArea = this.validateTextArea.bind(this);
 
-        if (!this.isMobile) {
-            this.mouseenterHandler = this.mouseenterHandler.bind(this);
-            this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
-        }
+        // if (!this.isMobile) {
+        //     this.mouseenterHandler = this.mouseenterHandler.bind(this);
+        //     this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
+        // }
     }
 
     /**
@@ -384,10 +384,10 @@ class AnnotationDialog extends EventEmitter {
             annotationTextEl.addEventListener('focus', this.validateTextArea);
         }
 
-        if (!this.isMobile) {
-            this.element.addEventListener('mouseenter', this.mouseenterHandler);
-            this.element.addEventListener('mouseleave', this.mouseleaveHandler);
-        }
+        // if (!this.isMobile) {
+        //     this.element.addEventListener('mouseenter', this.mouseenterHandler);
+        //     this.element.addEventListener('mouseleave', this.mouseleaveHandler);
+        // }
     }
 
     /**
@@ -428,10 +428,10 @@ class AnnotationDialog extends EventEmitter {
             annotationTextEl.removeEventListener('focus', this.validateTextArea);
         }
 
-        if (!this.isMobile) {
-            this.element.removeEventListener('mouseenter', this.mouseenterHandler);
-            this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
-        }
+        // if (!this.isMobile) {
+        //     this.element.removeEventListener('mouseenter', this.mouseenterHandler);
+        //     this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
+        // }
     }
 
     /**
@@ -571,9 +571,9 @@ class AnnotationDialog extends EventEmitter {
                 break;
             // Clicking 'Cancel' button to cancel the annotation
             case constants.DATA_TYPE_CANCEL:
-                if (this.isMobile) {
-                    this.hide();
-                } else {
+                this.hide();
+
+                if (!this.isMobile) {
                     // Cancels + destroys the annotation thread
                     this.cancelAnnotation();
                 }
@@ -584,7 +584,8 @@ class AnnotationDialog extends EventEmitter {
                 break;
             // Canceling a reply
             case constants.DATA_TYPE_CANCEL_REPLY:
-                this.deactivateReply(true);
+                // this.deactivateReply(true);
+                this.hide();
                 break;
             // Clicking 'Post' button to create a reply annotation
             case constants.DATA_TYPE_POST_REPLY:

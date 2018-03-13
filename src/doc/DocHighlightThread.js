@@ -172,6 +172,7 @@ class DocHighlightThread extends AnnotationThread {
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
             this.state = STATES.hover;
+            this.show();
             return true;
         }
 
