@@ -134,7 +134,7 @@ describe('doc/DocDrawingThread', () => {
             stubs.emitAvailableActions = sandbox.stub(thread, 'emitAvailableActions');
             stubs.updateBoundary = sandbox.stub(thread, 'updateBoundary');
             stubs.regenerateBoundary = sandbox.stub(thread, 'regenerateBoundary');
-            stubs.drawBoundary = sandbox.stub(thread, 'drawBoundary');
+            stubs.render = sandbox.stub(thread, 'render');
             stubs.createDialog = sandbox.stub(thread, 'createDialog');
             thread.drawingFlag = DRAW_STATES.drawing;
             thread.pendingPath = {
@@ -152,7 +152,7 @@ describe('doc/DocDrawingThread', () => {
             expect(stubs.emitAvailableActions).to.be.called;
             expect(stubs.updateBoundary).to.be.called;
             expect(stubs.regenerateBoundary).to.be.called;
-            expect(stubs.drawBoundary).to.be.called;
+            expect(stubs.render).to.be.called;
             expect(stubs.createDialog).to.be.called;
             expect(thread.pathContainer.insert).to.be.called;
             expect(thread.drawingFlag).to.equal(DRAW_STATES.idle);
