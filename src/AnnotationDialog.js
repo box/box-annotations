@@ -177,6 +177,10 @@ class AnnotationDialog extends EventEmitter {
         this.hideMobileDialog = this.hideMobileDialog.bind(this);
         dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
 
+        if (this.hasTouch) {
+            dialogCloseButtonEl.addEventListener('touchstart', this.hideMobileDialog);
+        }
+
         this.element.classList.add(constants.CLASS_ANIMATE_DIALOG);
 
         this.bindDOMListeners();
