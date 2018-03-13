@@ -63,6 +63,8 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.mouseenterHandler = this.mouseenterHandler.bind(this);
             this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
+        } else {
+            this.hideMobileDialog = this.hideMobileDialog.bind(this);
         }
     }
 
@@ -389,8 +391,6 @@ class AnnotationDialog extends EventEmitter {
         }
 
         const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-
-        this.hideMobileDialog = this.hideMobileDialog.bind(this);
         dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
 
         if (this.hasTouch) {
