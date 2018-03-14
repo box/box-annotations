@@ -6,6 +6,7 @@ import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
 import {
     DRAW_STATES,
+    THREAD_EVENT,
     STATES
 } from '../../constants';
 
@@ -96,11 +97,13 @@ describe('doc/DocDrawingThread', () => {
             sandbox.stub(thread, 'onPageChange');
             sandbox.stub(docUtil, 'getPageEl').returns(context);
             stubs.pageChange = sandbox.stub(thread, 'hasPageChanged');
+            sandbox.stub(thread, 'emit');
         });
 
         it('should do nothing if no location is provided', () => {
             thread.handleStart();
             expect(stubs.pageChange).to.not.be.called;
+            expect(thread.emit).to.not.be.calledWith(THREAD_EVENT.pending);
         });
 
         it('should set the drawingFlag, pendingPath, and context if they do not exist', () => {
@@ -113,6 +116,7 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.drawingFlag).to.equal(DRAW_STATES.drawing);
             expect(thread.hasPageChanged).to.be.called;
             expect(thread.pendingPath).to.be.an.instanceof(DrawingPath);
+            expect(thread.emit).to.be.calledWith(THREAD_EVENT.pending);
         });
 
         it('should commit the thread when the page changes', () => {
@@ -125,6 +129,7 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.hasPageChanged).to.be.called;
             expect(thread.onPageChange).to.be.called;
             expect(thread.checkAndHandleScaleUpdate).to.not.be.called;
+            expect(thread.emit).to.not.be.calledWith(THREAD_EVENT.pending);
         });
 
     });
