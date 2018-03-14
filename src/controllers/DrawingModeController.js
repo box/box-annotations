@@ -1,7 +1,14 @@
 import AnnotationModeController from './AnnotationModeController';
 import shell from './drawingShell.html';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import { replaceHeader, enableElement, disableElement, eventToLocationHandler, clearCanvas } from '../util';
+import {
+    replaceHeader,
+    enableElement,
+    disableElement,
+    eventToLocationHandler,
+    clearCanvas,
+    hasValidBoundaryCoordinates
+} from '../util';
 import {
     TYPES,
     STATES,
@@ -306,7 +313,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     saveThread(thread) {
-        if (!thread) {
+        if (!thread || !hasValidBoundaryCoordinates(thread)) {
             return;
         }
 

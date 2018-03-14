@@ -1,6 +1,6 @@
 import rbush from 'rbush';
 import EventEmitter from 'events';
-import { insertTemplate, isPending, replaceHeader } from '../util';
+import { insertTemplate, isPending, replaceHeader, hasValidBoundaryCoordinates } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -207,7 +207,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     registerThread(thread) {
-        if (!thread || !thread.location) {
+        if (!thread || !thread.location || !hasValidBoundaryCoordinates(thread)) {
             return;
         }
 
