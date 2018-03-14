@@ -17,7 +17,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
-    CLASS_ANNOTATION_LAYER_DRAW
+    CLASS_ANNOTATION_LAYER_DRAW,
+    THREAD_EVENT
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -107,6 +108,7 @@ class DrawingModeController extends AnnotationModeController {
         /* eslint-enable require-jsdoc */
 
         // Setup
+        this.hasPendingDrawing = false;
         const threadParams = this.annotator.getThreadParams([], {}, TYPES.draw);
         this.currentThread = new DocDrawingThread(threadParams);
         this.currentThread.addListener('threadevent', (data) => {
@@ -141,7 +143,10 @@ class DrawingModeController extends AnnotationModeController {
         });
 
         this.pushElementHandler(this.postButtonEl, 'click', () => {
-            this.saveThread(this.currentThread);
+            if (this.hasPendingDrawing) {
+                this.saveThread(this.currentThread);
+            }
+
             this.toggleMode();
         });
 
@@ -163,8 +168,12 @@ class DrawingModeController extends AnnotationModeController {
     handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
+            case THREAD_EVENT.pending:
+                this.hasPendingDrawing = true;
+                break;
             case 'softcommit':
                 this.currentThread = undefined;
+                this.hasPendingDrawing = false;
                 this.saveThread(thread);
                 this.unbindListeners();
                 this.bindListeners();
@@ -183,6 +192,7 @@ class DrawingModeController extends AnnotationModeController {
                 if (thread.state === STATES.pending) {
                     // Soft delete, in-progress thread doesn't require a redraw or a delete on the server
                     // Clear in-progress thread and restart drawing
+                    this.hasPendingDrawing = false;
                     thread.destroy();
                     this.unbindListeners();
                     this.bindListeners();
