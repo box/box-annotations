@@ -3,6 +3,7 @@ import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
 import * as util from '../../util';
 import {
+    TYPES,
     THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
@@ -30,14 +31,17 @@ describe('controllers/DrawingModeController', () => {
                 page: 1
             },
             info: 'I am a thread',
-            addListener: sandbox.stub(),
-            removeListener: sandbox.stub(),
-            saveAnnotation: sandbox.stub(),
-            handleStart: sandbox.stub(),
-            destroy: sandbox.stub(),
-            deleteThread: sandbox.stub(),
-            show: sandbox.stub()
+            addListener: () => {},
+            removeListener: () => {},
+            saveAnnotation: () => {},
+            handleStart: () => {},
+            destroy: () => {},
+            deleteThread: () => {},
+            clearBoundary: () => {},
+            drawBoundary: () => {},
+            show: () => {}
         };
+        stubs.threadMock = sandbox.mock(stubs.thread);
 
         sandbox.stub(controller, 'emit');
     });
@@ -209,12 +213,12 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should save thread on softcommit', () => {
+            stubs.threadMock.expects('handleStart').never();
             controller.handleThreadEvents(stubs.thread, {
                 event: 'softcommit'
             });
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
-            expect(stubs.thread.handleStart).to.not.be.called;
             expect(controller.saveThread).to.be.called;
         });
 
@@ -271,10 +275,10 @@ describe('controllers/DrawingModeController', () => {
 
         it('should soft delete a pending thread and restart mode listeners', () => {
             stubs.thread.state = 'pending';
+            stubs.threadMock.expects('destroy');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
             });
-            expect(stubs.thread.destroy).to.be.called;
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
         });
@@ -285,10 +289,10 @@ describe('controllers/DrawingModeController', () => {
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
 
+            stubs.threadMock.expects('deleteThread');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
             });
-            expect(stubs.thread.deleteThread).to.be.called;
             expect(unregisterThreadStub).to.be.called;
         });
 
@@ -340,18 +344,9 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('renderPage()', () => {
-        const thread = {
-            threadID: '123abc',
-            location: { page: 1 },
-            show: () => {},
-            addListener: () => {}
-        };
-
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.setAttribute('data-page-number', 1);
-
-            stubs.threadMock = sandbox.mock(thread);
             sandbox.stub(util, 'clearCanvas');
         });
 
@@ -360,14 +355,14 @@ describe('controllers/DrawingModeController', () => {
             controller.renderPage(1);
 
             controller.threads = {};
-            controller.registerThread(thread);
+            controller.registerThread(stubs.thread);
             controller.renderPage(2);
             expect(util.clearCanvas).to.be.calledTwice;
         });
 
         it('should render the annotations on every page', () => {
             controller.threads = {};
-            controller.registerThread(thread);
+            controller.registerThread(stubs.thread);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(util.clearCanvas).to.be.called;
@@ -376,27 +371,19 @@ describe('controllers/DrawingModeController', () => {
 
     describe('removeSelection()', () => {
         it('should clean a selected thread boundary', () => {
-            const thread = {
-                clearBoundary: sandbox.stub()
-            };
-            controller.selectedThread = thread;
-
+            controller.selectedThread = stubs.thread;
+            stubs.threadMock.expects('clearBoundary');
             controller.removeSelection();
-            expect(thread.clearBoundary).to.be.called;
             expect(controller.selectedThread).to.be.undefined;
         });
     });
 
     describe('select()', () => {
         it('should draw the boundary', () => {
-            const thread = {
-                drawBoundary: sandbox.stub()
-            }
-
-            expect(controller.selectedThread).to.not.deep.equal(thread);
-            controller.select(thread);
-            expect(thread.drawBoundary).to.be.called;
-            expect(controller.selectedThread).to.deep.equal(thread);
+            stubs.threadMock.expects('drawBoundary');
+            expect(controller.selectedThread).to.not.deep.equal(stubs.thread);
+            controller.select(stubs.thread);
+            expect(controller.selectedThread).to.deep.equal(stubs.thread);
         });
     });
 
@@ -426,6 +413,25 @@ describe('controllers/DrawingModeController', () => {
             controller.updateUndoRedoButtonEls(1, 2);
             expect(stubs.enable).be.calledWith(controller.undoButtonEl).once;
             expect(stubs.disable).to.not.be.called;
+        });
+    });
+
+    describe('saveThread()', () => {
+        beforeEach(() => {
+            sandbox.stub(controller, 'registerThread');
+        });
+
+        it('should do nothing if thread has invalid boundary', () => {
+            stubs.threadMock.expects('saveAnnotation').withArgs(TYPES.draw).never();
+            controller.saveThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
+            controller.saveThread({ type: TYPES.draw });
+            expect(controller.registerThread).to.not.be.called;
+        });
+
+        it('should save and register the annotation thread', () => {
+            stubs.threadMock.expects('saveAnnotation').withArgs(TYPES.draw);
+            controller.saveThread(stubs.thread);
+            expect(controller.registerThread).to.be.called;
         });
     });
 });

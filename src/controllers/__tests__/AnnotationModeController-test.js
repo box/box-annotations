@@ -272,6 +272,12 @@ describe('controllers/AnnotationModeController', () => {
             expect(controller.emit).to.not.be.called;
         });
 
+        it('should do nothing if thread has invalid boundary', () => {
+            controller.registerThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
+            controller.registerThread({ type: 'someType' });
+            expect(controller.emit).to.not.be.called;
+        });
+
         it('should create a new rbush for the thread\'s page location', () => {
             stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
 
@@ -550,7 +556,7 @@ describe('controllers/AnnotationModeController', () => {
                 removeAllListeners: () => {}
             };
             stubs.pendingMock = sandbox.mock(pendingThread);
-            controller.registerThread(pendingThread);
+            controller.threads[1].insert(pendingThread);
 
             stubs.threadMock.expects('destroy').never();
             stubs.pendingMock.expects('destroy');
