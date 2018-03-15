@@ -92,6 +92,7 @@ class DocDrawingThread extends DrawingThread {
 
         // Start drawing rendering
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
+        this.state = STATES.pending;
     }
 
     /**

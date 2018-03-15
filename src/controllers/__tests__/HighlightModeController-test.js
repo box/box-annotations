@@ -7,6 +7,7 @@ import {
     CLASS_ANNOTATION_MODE,
     THREAD_EVENT,
     STATES,
+    TYPES,
     CONTROLLER_EVENT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT
 } from '../../constants';
@@ -22,6 +23,7 @@ describe('controllers/HighlightModeController', () => {
         stubs.thread = {
             annotations: {},
             location: { page: 1 },
+            type: TYPES.highlight,
             show: () => {},
             addListener: () => {}
         };
@@ -115,7 +117,6 @@ describe('controllers/HighlightModeController', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.setAttribute('data-page-number', 1);
-
             sandbox.stub(util, 'clearCanvas');
         });
 
@@ -127,7 +128,7 @@ describe('controllers/HighlightModeController', () => {
 
         it('should render the annotations on the specified page', () => {
             controller.registerThread(stubs.thread);
-            stubs.threadMock.expects('show').once();
+            stubs.threadMock.expects('show');
             controller.renderPage(1);
             expect(util.clearCanvas).to.be.called;
         });

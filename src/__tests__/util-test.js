@@ -39,7 +39,8 @@ import {
     clearCanvas,
     replaceHeader,
     isInDialog,
-    focusTextArea
+    focusTextArea,
+    hasValidBoundaryCoordinates
 } from '../util';
 import {
     STATES,
@@ -806,5 +807,27 @@ describe('util', () => {
             const el = document.createElement('div');
             expect(focusTextArea(el)).to.have.class(CLASS_ACTIVE);
         });
+    });
+
+    describe('hasValidBoundaryCoordinates()', () => {
+        it('return true only if boundary coordinates are valid', () => {
+            expect(hasValidBoundaryCoordinates({})).to.be.false;
+            expect(hasValidBoundaryCoordinates({
+                minX: NaN,
+                minY: 1,
+                maxX: 1,
+                maxY: 1
+            })).to.be.false;
+            expect(hasValidBoundaryCoordinates({
+                minX: 1,
+                minY: 1,
+                maxX: 1,
+                maxY: 1
+            })).to.be.true;
+        });
+
+        it('should return true for highlight annotations', () => {
+            expect(hasValidBoundaryCoordinates({ type: TYPES.highlight })).to.be.true;
+        })
     });
 });

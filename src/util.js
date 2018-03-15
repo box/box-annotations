@@ -505,6 +505,16 @@ export function isPending(threadState) {
 }
 
 /**
+ * Checks whether an annotation thread has valid min/max boundary coordinates
+ *
+ * @param {AnnotationThread} thread Annotation thread location object
+ * @return {boolean} Whether or not the annotation has valid boundary coordinates
+ */
+export function hasValidBoundaryCoordinates(thread) {
+    return !!(isHighlightAnnotation(thread.type) || (thread.minX && thread.minY && thread.maxX && thread.maxY));
+}
+
+/**
  * Checks whether a point annotation thread has the correct location params
  *
  * @param {Object} location Point annotation thread location object

@@ -6,6 +6,7 @@ import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
 import {
     DRAW_STATES,
+    THREAD_EVENT,
     STATES
 } from '../../constants';
 
@@ -101,18 +102,21 @@ describe('doc/DocDrawingThread', () => {
         it('should do nothing if no location is provided', () => {
             thread.handleStart();
             expect(stubs.pageChange).to.not.be.called;
+            expect(thread.state).to.equal(STATES.inactive);
         });
 
         it('should set the drawingFlag, pendingPath, and context if they do not exist', () => {
             stubs.pageChange.returns(false);
             thread.drawingFlag = DRAW_STATES.idle;
             thread.pendingPath = undefined;
+            expect(thread.state).to.equal(STATES.inactive);
             thread.handleStart(thread.location);
 
             expect(window.requestAnimationFrame).to.be.called;
             expect(thread.drawingFlag).to.equal(DRAW_STATES.drawing);
             expect(thread.hasPageChanged).to.be.called;
             expect(thread.pendingPath).to.be.an.instanceof(DrawingPath);
+            expect(thread.state).to.equal(STATES.pending);
         });
 
         it('should commit the thread when the page changes', () => {
@@ -125,6 +129,7 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.hasPageChanged).to.be.called;
             expect(thread.onPageChange).to.be.called;
             expect(thread.checkAndHandleScaleUpdate).to.not.be.called;
+            expect(thread.state).to.equal(STATES.inactive);
         });
 
     });
