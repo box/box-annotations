@@ -31,6 +31,7 @@ describe('drawing/DrawingThread', () => {
             threadID: 2,
             type: 'draw'
         });
+        expect(thread.state).to.equal(STATES.inactive);
     });
 
     afterEach(() => {

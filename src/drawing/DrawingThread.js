@@ -59,6 +59,9 @@ class DrawingThread extends AnnotationThread {
     constructor(data) {
         super(data);
 
+        // Default drawing thread state to inactive until user begins drawing
+        this.state = STATES.inactive;
+
         this.render = this.render.bind(this);
         this.handleStart = this.handleStart.bind(this);
         this.handleMove = this.handleMove.bind(this);

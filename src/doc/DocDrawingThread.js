@@ -5,8 +5,7 @@ import {
     STATES,
     DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
-    THREAD_EVENT
+    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
 import { createLocation, getScale } from '../util';
@@ -93,7 +92,7 @@ class DocDrawingThread extends DrawingThread {
 
         // Start drawing rendering
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
-        this.emit(THREAD_EVENT.pending);
+        this.state = STATES.pending;
     }
 
     /**

@@ -212,13 +212,6 @@ describe('controllers/DrawingModeController', () => {
             sandbox.stub(controller, 'updateUndoRedoButtonEls');
         });
 
-        it('should set hasPendingDrawing to true when the user begins drawing', () => {
-            controller.handleThreadEvents(stubs.thread, {
-                event: THREAD_EVENT.pending
-            });
-            expect(controller.hasPendingDrawing).to.be.true;
-        });
-
         it('should save thread on softcommit', () => {
             stubs.threadMock.expects('handleStart').never();
             controller.handleThreadEvents(stubs.thread, {
@@ -227,7 +220,6 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(controller.saveThread).to.be.called;
-            expect(controller.hasPendingDrawing).to.be.false;
         });
 
         it('should start a new thread on pagechanged', () => {
@@ -267,7 +259,6 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.saveThread).to.be.called;
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
-            expect(controller.hasPendingDrawing).to.be.false;
             expect(thread2.handleStart).to.be.calledWith(data.eventData.location);
         });
 
