@@ -511,17 +511,7 @@ export function isPending(threadState) {
  * @return {boolean} Whether or not the annotation has valid boundary coordinates
  */
 export function hasValidBoundaryCoordinates(thread) {
-    return !!(
-        isHighlightAnnotation(thread.type) ||
-        (thread.minX &&
-            !Number.isNaN(thread.minX) &&
-            thread.minY &&
-            !Number.isNaN(thread.minY) &&
-            thread.maxX &&
-            !Number.isNaN(thread.maxX) &&
-            thread.maxY &&
-            !Number.isNaN(thread.maxY))
-    );
+    return !!(isHighlightAnnotation(thread.type) || (thread.minX && thread.minY && thread.maxX && thread.maxY));
 }
 
 /**
