@@ -512,14 +512,15 @@ export function isPending(threadState) {
  */
 export function hasValidBoundaryCoordinates(thread) {
     return !!(
-        thread.minX &&
-        !Number.isNaN(thread.minX) &&
-        thread.minY &&
-        !Number.isNaN(thread.minY) &&
-        thread.maxX &&
-        !Number.isNaN(thread.maxX) &&
-        thread.maxY &&
-        !Number.isNaN(thread.maxY)
+        isHighlightAnnotation(thread.type) ||
+        (thread.minX &&
+            !Number.isNaN(thread.minX) &&
+            thread.minY &&
+            !Number.isNaN(thread.minY) &&
+            thread.maxX &&
+            !Number.isNaN(thread.maxX) &&
+            thread.maxY &&
+            !Number.isNaN(thread.maxY))
     );
 }
 

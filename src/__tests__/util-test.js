@@ -825,5 +825,9 @@ describe('util', () => {
                 maxY: 1
             })).to.be.true;
         });
+
+        it('should return true for highlight annotations', () => {
+            expect(hasValidBoundaryCoordinates({ type: TYPES.highlight })).to.be.true;
+        })
     });
 });
