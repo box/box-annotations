@@ -69,18 +69,22 @@ class DrawingModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     bindDOMListeners() {
-        if (this.isMobile && this.hasTouch) {
+        if (this.hasTouch) {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
-        } else {
+        }
+
+        if (!this.isMobile) {
             this.annotatedElement.addEventListener('click', this.handleSelection);
         }
     }
 
     /** @inheritdoc */
     unbindDOMListeners() {
-        if (this.isMobile && this.hasTouch) {
+        if (this.hasTouch) {
             this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
-        } else {
+        }
+
+        if (!this.isMobile) {
             this.annotatedElement.removeEventListener('click', this.handleSelection);
         }
     }

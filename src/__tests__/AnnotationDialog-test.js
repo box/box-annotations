@@ -423,7 +423,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(stubs.annotationTextEl, 'addEventListener');
         });
 
-        it('should bind DOM listeners', () => {
+        it('should bind ALL DOM listeners for touch enabled laptops', () => {
             dialog.hasTouch = true;
 
             dialog.bindDOMListeners();
@@ -457,8 +457,8 @@ describe('AnnotationDialog', () => {
 
             dialog.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('click', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
@@ -499,7 +499,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(stubs.annotationTextEl, 'removeEventListener');
         });
 
-        it('should unbind DOM listeners', () => {
+        it('should unbind ALL DOM listeners for touch enabled laptops', () => {
             dialog.hasTouch = true;
 
             dialog.unbindDOMListeners();
@@ -533,8 +533,8 @@ describe('AnnotationDialog', () => {
 
             dialog.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.not.be.calledWith('click', sinon.match.func);
             expect(stubs.remove).to.not.be.calledWith('mouseenter', sinon.match.func);
             expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
