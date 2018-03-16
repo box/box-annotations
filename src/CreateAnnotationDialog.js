@@ -143,10 +143,12 @@ class CreateAnnotationDialog extends EventEmitter {
 
         this.hide();
 
-        // Stop interacting with this element from triggering outside actions
-        this.containerEl.removeEventListener('click', this.stopPropagation);
-        this.containerEl.removeEventListener('mouseup', this.stopPropagation);
-        this.containerEl.removeEventListener('dblclick', this.stopPropagation);
+        if (!this.isMobile) {
+            // Stop interacting with this element from triggering outside actions
+            this.containerEl.removeEventListener('click', this.stopPropagation);
+            this.containerEl.removeEventListener('mouseup', this.stopPropagation);
+            this.containerEl.removeEventListener('dblclick', this.stopPropagation);
+        }
 
         // Event listeners
         if (this.hasTouch) {
@@ -276,10 +278,12 @@ class CreateAnnotationDialog extends EventEmitter {
         this.containerEl.classList.add(CLASS_MOBILE_CREATE_ANNOTATION_DIALOG);
         this.containerEl.classList.add(CLASS_ANNOTATION_DIALOG);
 
-        // Stop interacting with this element from triggering outside actions
-        this.containerEl.addEventListener('click', this.stopPropagation);
-        this.containerEl.addEventListener('mouseup', this.stopPropagation);
-        this.containerEl.addEventListener('dblclick', this.stopPropagation);
+        if (!this.isMobile) {
+            // Stop interacting with this element from triggering outside actions
+            this.containerEl.addEventListener('click', this.stopPropagation);
+            this.containerEl.addEventListener('mouseup', this.stopPropagation);
+            this.containerEl.addEventListener('dblclick', this.stopPropagation);
+        }
 
         // touch events
         if (this.hasTouch) {
