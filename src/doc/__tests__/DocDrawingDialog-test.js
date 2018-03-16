@@ -60,39 +60,45 @@ describe('doc/DocDrawingDialog', () => {
     });
 
     describe('bindDOMListeners()', () => {
-        it('should bind listeners to a commit button element', () => {
-            dialog.hasTouch = true;
+        beforeEach(() => {
             dialog.commitButtonEl = {
                 addEventListener: sandbox.stub()
             };
+            stubs.commitAdd = dialog.commitButtonEl.addEventListener;
 
-            dialog.bindDOMListeners();
-            expect(dialog.commitButtonEl.addEventListener).to.be.calledWith(
-                'click',
-                dialog.postDrawing
-            );
-            expect(dialog.commitButtonEl.addEventListener).to.be.calledWith(
-                'touchend',
-                dialog.postDrawing
-            );
-        });
-
-        it('should bind listeners to a delete button element', () => {
-            dialog.hasTouch = true;
             dialog.deleteButtonEl = {
                 addEventListener: sandbox.stub()
             };
+            stubs.deleteAdd = dialog.deleteButtonEl.addEventListener;
+        });
 
+        it('should bind touch listeners to buttons', () => {
+            dialog.isMobile = true;
+            dialog.hasTouch = true;
             dialog.bindDOMListeners();
-            expect(dialog.deleteButtonEl.addEventListener).to.be.calledWith(
-                'click',
-                dialog.deleteAnnotation
-            );
-            expect(dialog.deleteButtonEl.addEventListener).to.be.calledWith(
-                'touchend',
-                dialog.deleteAnnotation
-            );
-        })
+            expect(stubs.commitAdd).to.not.be.calledWith('click', dialog.postDrawing);
+            expect(stubs.commitAdd).to.be.calledWith('touchend', dialog.postDrawing);
+            expect(stubs.deleteAdd).to.not.be.calledWith('click', dialog.deleteAnnotation);
+            expect(stubs.deleteAdd).to.be.calledWith('touchend', dialog.deleteAnnotation);
+        });
+        it('should bind touch-enabled desktop listeners to buttons', () => {
+            dialog.isMobile = false;
+            dialog.hasTouch = true;
+            dialog.bindDOMListeners();
+            expect(stubs.commitAdd).to.be.calledWith('click', dialog.postDrawing);
+            expect(stubs.commitAdd).to.be.calledWith('touchend', dialog.postDrawing);
+            expect(stubs.deleteAdd).to.be.calledWith('click', dialog.deleteAnnotation);
+            expect(stubs.deleteAdd).to.be.calledWith('touchend', dialog.deleteAnnotation);
+        });
+        it('should bind desktop listeners to buttons', () => {
+            dialog.isMobile = false;
+            dialog.hasTouch = false;
+            dialog.bindDOMListeners();
+            expect(stubs.commitAdd).to.be.calledWith('click', dialog.postDrawing);
+            expect(stubs.commitAdd).to.not.be.calledWith('touchend', dialog.postDrawing);
+            expect(stubs.deleteAdd).to.be.calledWith('click', dialog.deleteAnnotation);
+            expect(stubs.deleteAdd).to.not.be.calledWith('touchend', dialog.deleteAnnotation);
+        });
     });
 
     describe('unbindDOMListeners()', () => {

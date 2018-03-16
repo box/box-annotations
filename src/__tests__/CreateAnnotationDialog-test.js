@@ -176,6 +176,7 @@ describe('CreateAnnotationDialog', () => {
         });
 
         it('should remove events that are bound to stopPropagation()', () => {
+            dialog.isMobile = false;
             const remove = sandbox.stub(dialog.containerEl, 'removeEventListener');
             dialog.destroy();
             expect(remove).to.be.calledWith('click');

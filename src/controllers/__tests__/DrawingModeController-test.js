@@ -90,17 +90,27 @@ describe('controllers/DrawingModeController', () => {
             stubs.add = controller.annotatedElement.addEventListener;
         });
 
-        it('should unbind the mobileDOM listeners', () => {
+        it('should bind DOM listeners for desktop devices', () => {
+            controller.isMobile = false;
+            controller.hasTouch = false;
+            controller.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchstart', sinon.match.func);
+        });
+
+        it('should bind DOM listeners for touch enabled mobile devices', () => {
             controller.isMobile = true;
             controller.hasTouch = true;
             controller.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('touchstart', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('click', sinon.match.func);
         });
 
-        it('should unbind the DOM listeners', () => {
-            controller.isMobile = true;
-            controller.hasTouch = false;
+        it('should bind ALL DOM listeners for touch enabled desktop devices', () => {
+            controller.isMobile = false;
+            controller.hasTouch = true;
             controller.bindDOMListeners();
+            expect(stubs.add).to.be.calledWith('touchstart', sinon.match.func);
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
         });
     });
@@ -113,17 +123,27 @@ describe('controllers/DrawingModeController', () => {
             stubs.remove = controller.annotatedElement.removeEventListener;
         });
 
-        it('should unbind the mobileDOM listeners', () => {
+        it('should unbind DOM listeners for desktop devices', () => {
+            controller.isMobile = false;
+            controller.hasTouch = false;
+            controller.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
+            expect(stubs.remove).to.not.be.calledWith('touchstart', sinon.match.func);
+        });
+
+        it('should unbind DOM listeners for touch enabled mobile devices', () => {
             controller.isMobile = true;
             controller.hasTouch = true;
             controller.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('touchstart', sinon.match.func);
+            expect(stubs.remove).to.not.be.calledWith('click', sinon.match.func);
         });
 
-        it('should unbind the DOM listeners', () => {
-            controller.isMobile = true;
-            controller.hasTouch = false;
+        it('should unbind ALL DOM listeners for touch enabled desktop devices', () => {
+            controller.isMobile = false;
+            controller.hasTouch = true;
             controller.unbindDOMListeners();
+            expect(stubs.remove).to.be.calledWith('touchstart', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
         });
     });
