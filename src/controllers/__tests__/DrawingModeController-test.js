@@ -4,6 +4,7 @@ import DrawingModeController from '../DrawingModeController';
 import * as util from '../../util';
 import {
     TYPES,
+    STATES,
     THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
@@ -354,6 +355,12 @@ describe('controllers/DrawingModeController', () => {
             expect(stubs.select).to.not.be.called;
             expect(stubs.event.stopPropagation).to.be.called;
         });
+
+        it('should do nothing with while drawing a new annotation event', () => {
+            controller.currentThread = { state: STATES.pending };
+            controller.handleSelection(stubs.event);
+            expect(stubs.intersecting).to.not.be.called;
+        })
 
         it('should call select on an thread found in the data store', () => {
             controller.handleSelection(stubs.event);
