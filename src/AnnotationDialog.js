@@ -178,7 +178,7 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Hides and resets the shared mobile dialog.
+     * Hides the shared mobile dialog.
      *
      * @return {void}
      */
