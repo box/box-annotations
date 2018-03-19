@@ -193,6 +193,7 @@ class AnnotationDialog extends EventEmitter {
 
         // Clear annotations from dialog
         util.hideElement(this.element);
+        this.element = util.regenerateMobileDialog();
         this.unbindDOMListeners();
 
         // Cancel any unsaved annotations
