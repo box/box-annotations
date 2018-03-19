@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import * as util from './util';
 import * as constants from './constants';
-import { ICON_CLOSE, ICON_DELETE } from './icons/icons';
+import { ICON_DELETE } from './icons/icons';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
@@ -63,8 +63,6 @@ class AnnotationDialog extends EventEmitter {
         if (!this.isMobile) {
             this.mouseenterHandler = this.mouseenterHandler.bind(this);
             this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
-        } else {
-            this.hideMobileDialog = this.hideMobileDialog.bind(this);
         }
     }
 
@@ -193,15 +191,7 @@ class AnnotationDialog extends EventEmitter {
             this.dialogEl.parentNode.removeChild(this.dialogEl);
         }
 
-        this.element.classList.remove(constants.CLASS_ANIMATE_DIALOG);
-
         // Clear annotations from dialog
-        this.element.innerHTML = `
-            <div class="${constants.CLASS_MOBILE_DIALOG_HEADER}">
-                <button class="${constants.CLASS_DIALOG_CLOSE}">${ICON_CLOSE}</button>
-            </div>`.trim();
-        this.element.classList.remove(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-
         util.hideElement(this.element);
         this.unbindDOMListeners();
 
@@ -387,14 +377,6 @@ class AnnotationDialog extends EventEmitter {
             this.element.addEventListener('click', this.clickHandler);
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
-            return;
-        }
-
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-        dialogCloseButtonEl.addEventListener('click', this.hideMobileDialog);
-
-        if (this.hasTouch) {
-            dialogCloseButtonEl.addEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
@@ -444,14 +426,6 @@ class AnnotationDialog extends EventEmitter {
             this.element.removeEventListener('click', this.clickHandler);
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
             this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
-            return;
-        }
-
-        const dialogCloseButtonEl = this.element.querySelector(constants.SELECTOR_DIALOG_CLOSE);
-        dialogCloseButtonEl.removeEventListener('click', this.hideMobileDialog);
-
-        if (this.hasTouch) {
-            dialogCloseButtonEl.removeEventListener('touchstart', this.hideMobileDialog);
         }
     }
 
@@ -590,14 +564,11 @@ class AnnotationDialog extends EventEmitter {
             case constants.DATA_TYPE_POST:
                 this.postAnnotation();
                 break;
-            // Clicking 'Cancel' button to cancel the annotation
+            // Clicking 'Cancel' button to cancel the annotation OR
+            // Clicking 'X' button on mobile dialog to close
             case constants.DATA_TYPE_CANCEL:
-                if (this.isMobile) {
-                    this.hide();
-                } else {
-                    // Cancels + destroys the annotation thread
-                    this.cancelAnnotation();
-                }
+            case constants.DATA_TYPE_MOBILE_CLOSE:
+                this.cancelAnnotation();
                 break;
             // Clicking inside reply text area
             case constants.DATA_TYPE_REPLY_TEXTAREA:
@@ -620,10 +591,9 @@ class AnnotationDialog extends EventEmitter {
                 this.hideDeleteConfirmation(annotationID);
                 break;
             // Clicking 'Delete' button to confirm deletion
-            case constants.DATA_TYPE_CONFIRM_DELETE: {
+            case constants.DATA_TYPE_CONFIRM_DELETE:
                 this.deleteAnnotation(annotationID);
                 break;
-            }
 
             default:
                 break;

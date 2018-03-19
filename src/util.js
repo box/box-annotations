@@ -13,8 +13,15 @@ import {
     CLASS_DISABLED,
     CLASS_INVALID_INPUT,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_BOX_PREVIEW_HEADER
+    CLASS_BOX_PREVIEW_HEADER,
+    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
+    CLASS_ANIMATE_DIALOG,
+    CLASS_DIALOG_CLOSE,
+    CLASS_MOBILE_DIALOG_HEADER,
+    DATA_TYPE_MOBILE_CLOSE
 } from './constants';
+
+import { ICON_CLOSE } from './icons/icons';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
 const HEADER_CLIENT_VERSION = 'X-Box-Client-Version';
@@ -868,4 +875,24 @@ export function focusTextArea(element) {
     }
 
     return textAreaEl;
+}
+
+/**
+ * Generates a blank mobile annotation dialog
+ *
+ * @return {HTMLElement} Blank mobile annotation dialog
+ */
+export function regenerateMobileDialog() {
+    const el = document.createElement('div');
+    el.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
+    el.classList.remove(CLASS_ANIMATE_DIALOG);
+
+    const headerEl = document.createElement('div');
+    headerEl.classList.add(CLASS_MOBILE_DIALOG_HEADER);
+    el.appendChild(headerEl);
+
+    const closeButtonEl = generateBtn([CLASS_DIALOG_CLOSE], DATA_TYPE_MOBILE_CLOSE, ICON_CLOSE, DATA_TYPE_MOBILE_CLOSE);
+    headerEl.appendChild(closeButtonEl);
+
+    return el;
 }
