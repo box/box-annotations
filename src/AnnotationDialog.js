@@ -366,7 +366,6 @@ class AnnotationDialog extends EventEmitter {
     bindDOMListeners() {
         this.element.addEventListener('keydown', this.keydownHandler);
         this.element.addEventListener('wheel', this.stopPropagation);
-        this.element.addEventListener('click', this.clickHandler);
         this.element.addEventListener('mouseup', this.stopPropagation);
 
         if (this.hasTouch) {
@@ -385,6 +384,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         if (!this.isMobile) {
+            this.element.addEventListener('click', this.clickHandler);
             this.element.addEventListener('mouseenter', this.mouseenterHandler);
             this.element.addEventListener('mouseleave', this.mouseleaveHandler);
             return;
@@ -422,7 +422,6 @@ class AnnotationDialog extends EventEmitter {
      */
     unbindDOMListeners() {
         this.element.removeEventListener('keydown', this.keydownHandler);
-        this.element.removeEventListener('click', this.clickHandler);
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
 
@@ -442,6 +441,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         if (!this.isMobile) {
+            this.element.removeEventListener('click', this.clickHandler);
             this.element.removeEventListener('mouseenter', this.mouseenterHandler);
             this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
             return;
@@ -580,7 +580,6 @@ class AnnotationDialog extends EventEmitter {
      */
     clickHandler(event) {
         event.stopPropagation();
-        event.preventDefault();
 
         const eventTarget = event.target;
         const dataType = util.findClosestDataType(eventTarget);

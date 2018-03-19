@@ -82,7 +82,9 @@ class DocDrawingDialog extends AnnotationDialog {
      */
     bindDOMListeners() {
         if (this.commitButtonEl) {
-            this.commitButtonEl.addEventListener('click', this.postDrawing);
+            if (!this.isMobile) {
+                this.commitButtonEl.addEventListener('click', this.postDrawing);
+            }
 
             if (this.hasTouch) {
                 this.commitButtonEl.addEventListener('touchend', this.postDrawing);
@@ -90,7 +92,9 @@ class DocDrawingDialog extends AnnotationDialog {
         }
 
         if (this.deleteButtonEl) {
-            this.deleteButtonEl.addEventListener('click', this.deleteAnnotation);
+            if (!this.isMobile) {
+                this.deleteButtonEl.addEventListener('click', this.deleteAnnotation);
+            }
 
             if (this.hasTouch) {
                 this.deleteButtonEl.addEventListener('touchend', this.deleteAnnotation);
