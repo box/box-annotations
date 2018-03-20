@@ -1,3 +1,14 @@
+<a name="1.0.0"></a>
+# 1.0.0 (2018-03-20)
+
+* Breaking: Enable draw annotations by default for document filetypes (#143) ([727d085](https://github.com/box/box-annotations/commit/727d085))
+* Fix: Binds handlers appropriately for desktop/touch/mobile devices (#139) ([cf69943](https://github.com/box/box-annotations/commit/cf69943))
+* Fix: Cleanup hiding/closing of the mobile dialog (#141) ([99ccc22](https://github.com/box/box-annotations/commit/99ccc22))
+* Fix: Don't save empty drawing threads (#138) ([a15a7ec](https://github.com/box/box-annotations/commit/a15a7ec))
+* Chore: Don't allow selection of saved thread in draw mode (#140) ([b0afeb4](https://github.com/box/box-annotations/commit/b0afeb4))
+
+
+
 <a name="0.16.0"></a>
 # 0.16.0 (2018-03-13)
 
