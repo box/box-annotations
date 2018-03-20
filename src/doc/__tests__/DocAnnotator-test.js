@@ -799,14 +799,14 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('resetMobileDialog()', () => {
+    describe('removeThreadFromSharedDialog()', () => {
         beforeEach(() => {
             sandbox.stub(util, 'hideElement');
             sandbox.stub(util, 'showElement');
         });
 
         it('should do nothing if the mobile dialog does not exist', () => {
-            annotator.resetMobileDialog();
+            annotator.removeThreadFromSharedDialog();
             expect(util.hideElement).to.not.be.called;
         });
 
@@ -819,7 +819,7 @@ describe('doc/DocAnnotator', () => {
                 removeChild: sandbox.stub(),
                 lastChild: {}
             };
-            annotator.resetMobileDialog();
+            annotator.removeThreadFromSharedDialog();
             expect(util.hideElement).to.not.be.called;
             expect(annotator.mobileDialogEl.classList.remove).to.be.calledWith(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         });
@@ -1286,7 +1286,7 @@ describe('doc/DocAnnotator', () => {
             stubs.threadMock = sandbox.mock(stubs.thread);
             stubs.getPageInfo = stubs.getPageInfo.returns({ pageEl: {}, page: 1 });
             sandbox.stub(annotator, 'clickThread');
-            sandbox.stub(annotator, 'resetMobileDialog');
+            sandbox.stub(annotator, 'removeThreadFromSharedDialog');
 
             annotator.modeControllers = {
                 'highlight': {
@@ -1332,12 +1332,12 @@ describe('doc/DocAnnotator', () => {
 
             annotator.isMobile = false;
             annotator.highlightClickHandler(stubs.event);
-            expect(annotator.resetMobileDialog).to.not.be.called;
+            expect(annotator.removeThreadFromSharedDialog).to.not.be.called;
 
             annotator.plainHighlightEnabled = false;
             annotator.isMobile = true;
             annotator.highlightClickHandler(stubs.event);
-            expect(annotator.resetMobileDialog).to.be.called;
+            expect(annotator.removeThreadFromSharedDialog).to.be.called;
         });
     });
 

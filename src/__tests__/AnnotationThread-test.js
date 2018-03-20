@@ -743,27 +743,26 @@ describe('AnnotationThread', () => {
     });
 
     describe('cancelUnsavedAnnotation()', () => {
-        it('should only destroy thread if on a mobile browser or in a pending/pending-active state', () => {
+        it('should destroy thread if in a pending/pending-active state', () => {
             sandbox.stub(thread, 'destroy');
+            sandbox.stub(thread, 'hideDialog');
+            stubs.isPending = sandbox.stub(util, 'isPending').returns(true);
 
-            // mobile
-            thread.isMobile = true;
             thread.cancelUnsavedAnnotation();
             expect(thread.destroy).to.be.called;
             expect(thread.emit).to.be.calledWith(THREAD_EVENT.cancel);
+            expect(thread.hideDialog).to.not.be.called;
+        });
 
-            // 'pending' state
-            thread.isMobile = false;
-            thread.state = STATES.pending;
-            thread.cancelUnsavedAnnotation();
-            expect(thread.destroy).to.be.called;
-            expect(thread.emit).to.be.calledWith(THREAD_EVENT.cancel);
+        it('should not destroy thread if not in a pending/pending-active state', () => {
+            sandbox.stub(thread, 'destroy');
+            sandbox.stub(thread, 'hideDialog');
+            stubs.isPending = sandbox.stub(util, 'isPending').returns(false);
 
-            // 'pending-active' state
-            thread.state = STATES.pending_active;
             thread.cancelUnsavedAnnotation();
-            expect(thread.destroy).to.be.called;
-            expect(thread.emit).to.be.calledWith(THREAD_EVENT.cancel);
+            expect(thread.destroy).to.not.be.called;
+            expect(thread.emit).to.not.be.calledWith(THREAD_EVENT.cancel);
+            expect(thread.hideDialog).to.be.called;
         });
     });
 

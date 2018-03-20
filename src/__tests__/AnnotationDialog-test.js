@@ -208,7 +208,7 @@ describe('AnnotationDialog', () => {
             expect(stubs.hide).to.not.be.called;
         });
 
-        it('should hide and reset the mobile annotations dialog', () => {
+        it('should hide the mobile annotations dialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
             stubs.hide = sandbox.stub(util, 'hideElement');
             stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
@@ -219,13 +219,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.hide).to.be.called;
             expect(stubs.unbind).to.be.called;
             expect(stubs.cancel).to.be.called;
-            expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).to.be.false;
-        });
-
-        it('should remove the animation class', () => {
-            dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
-            dialog.hideMobileDialog();
-            expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).to.be.false;
         });
 
         it('should cancel unsaved annotations only if the dialog does not have annotations', () => {
@@ -733,53 +726,47 @@ describe('AnnotationDialog', () => {
         });
 
         it('should post annotation when post annotation button is clicked', () => {
-            stubs.findClosest.returns(constants.CLASS_ANNOTATION_BUTTON_POST);
+            stubs.findClosest.returns(constants.DATA_TYPE_POST);
 
             dialog.clickHandler(stubs.event);
             expect(stubs.post).to.be.called;
         });
 
         it('should cancel annotation when cancel annotation button is clicked', () => {
-            stubs.findClosest.returns(constants.CLASS_ANNOTATION_BUTTON_CANCEL);
-            dialog.isMobile = false;
-
+            stubs.findClosest.returns(constants.DATA_TYPE_CANCEL);
             dialog.clickHandler(stubs.event);
             expect(stubs.cancel).to.be.called;
-            expect(stubs.hideMobile).to.not.be.called;
         });
 
-        it('should only hide the mobile dialog when the cancel annotation button is clicked on mobile', () => {
-            stubs.findClosest.returns(constants.CLASS_ANNOTATION_BUTTON_CANCEL);
-            dialog.isMobile = true;
-
+        it('should cancel annotation when mobile dialog close button is clicked', () => {
+            stubs.findClosest.returns(constants.DATA_TYPE_MOBILE_CLOSE);
             dialog.clickHandler(stubs.event);
-            expect(stubs.cancel).to.not.be.called;
-            expect(stubs.hideMobile).to.be.called;
+            expect(stubs.cancel).to.be.called;
         });
 
         it('should activate reply area when textarea is clicked', () => {
-            stubs.findClosest.returns(CLASS_REPLY_TEXTAREA);
+            stubs.findClosest.returns(constants.DATA_TYPE_REPLY_TEXTAREA);
 
             dialog.clickHandler(stubs.event);
             expect(stubs.activate).to.be.called;
         });
 
         it('should deactivate reply area when cancel reply button is clicked', () => {
-            stubs.findClosest.returns('cancel-reply-btn');
+            stubs.findClosest.returns(constants.DATA_TYPE_CANCEL_REPLY);
 
             dialog.clickHandler(stubs.event);
             expect(stubs.deactivate).to.be.calledWith(true);
         });
 
         it('should post reply when post reply button is clicked', () => {
-            stubs.findClosest.returns('post-reply-btn');
+            stubs.findClosest.returns(constants.DATA_TYPE_POST_REPLY);
 
             dialog.clickHandler(stubs.event);
             expect(stubs.reply).to.be.called;
         });
 
         it('should show delete confirmation when delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns('delete-btn');
+            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_DELETE);
             stubs.findClosest.onSecondCall().returns('someID');
 
             dialog.clickHandler(stubs.event);
@@ -787,7 +774,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should cancel deletion when cancel delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns(CLASS_CANCEL_DELETE);
+            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_CANCEL_DELETE);
             stubs.findClosest.onSecondCall().returns('someID');
 
             dialog.clickHandler(stubs.event);
@@ -795,7 +782,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should confirm deletion when confirm delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns('confirm-delete-btn');
+            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_CONFIRM_DELETE);
             stubs.findClosest.onSecondCall().returns('someID');
 
             dialog.clickHandler(stubs.event);

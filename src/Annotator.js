@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
 import AnnotationService from './AnnotationService';
 import * as util from './util';
-import { ICON_CLOSE } from './icons/icons';
 import './Annotator.scss';
 import {
     CLASS_HIDDEN,
@@ -9,7 +8,6 @@ import {
     CLASS_MOBILE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
     CLASS_MOBILE_DIALOG_HEADER,
-    CLASS_DIALOG_CLOSE,
     ID_MOBILE_ANNOTATION_DIALOG,
     TYPES,
     STATES,
@@ -17,8 +15,6 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT
 } from './constants';
-
-const MOBILE_DIALOG_CLOSE = 'mobile-dialog-close';
 
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -273,21 +269,13 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     setupMobileDialog() {
-        // Generate HTML of dialog
-        this.mobileDialogEl = document.createElement('div');
+        this.mobileDialogEl = util.generateMobileDialogEl();
         this.mobileDialogEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_HIDDEN);
         this.mobileDialogEl.id = ID_MOBILE_ANNOTATION_DIALOG;
         this.container.appendChild(this.mobileDialogEl);
-
-        const mobileHeader = document.createElement('div');
-        mobileHeader.classList.add(CLASS_MOBILE_DIALOG_HEADER);
-        this.mobileDialogEl.appendChild(mobileHeader);
-
-        const closeBtn = util.generateBtn([CLASS_DIALOG_CLOSE], MOBILE_DIALOG_CLOSE, ICON_CLOSE, MOBILE_DIALOG_CLOSE);
-        mobileHeader.appendChild(closeBtn);
     }
 
     /**
@@ -295,7 +283,7 @@ class Annotator extends EventEmitter {
      *
      * @return {void}
      */
-    resetMobileDialog() {
+    removeThreadFromSharedDialog() {
         if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
             return;
         }
@@ -670,7 +658,7 @@ class Annotator extends EventEmitter {
     handleControllerEvents(data) {
         switch (data.event) {
             case CONTROLLER_EVENT.resetMobileDialog:
-                this.resetMobileDialog();
+                this.removeThreadFromSharedDialog();
                 break;
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);
