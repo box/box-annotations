@@ -14,8 +14,6 @@ import {
     CLASS_INVALID_INPUT,
     CLASS_ANNOTATION_DIALOG,
     CLASS_BOX_PREVIEW_HEADER,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
-    CLASS_ANIMATE_DIALOG,
     CLASS_DIALOG_CLOSE,
     CLASS_MOBILE_DIALOG_HEADER,
     DATA_TYPE_MOBILE_CLOSE
@@ -884,8 +882,6 @@ export function focusTextArea(element) {
  */
 export function generateMobileDialogEl() {
     const el = document.createElement('div');
-    el.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-    el.classList.remove(CLASS_ANIMATE_DIALOG);
 
     const headerEl = document.createElement('div');
     headerEl.classList.add(CLASS_MOBILE_DIALOG_HEADER);

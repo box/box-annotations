@@ -41,7 +41,7 @@ import {
     isInDialog,
     focusTextArea,
     hasValidBoundaryCoordinates,
-    regenerateMobileDialog
+    generateMobileDialogEl
 } from '../util';
 import {
     STATES,
