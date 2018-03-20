@@ -73,6 +73,7 @@ export const DATA_TYPE_POST_REPLY = 'post-reply-btn';
 export const DATA_TYPE_DELETE = 'delete-btn';
 export const DATA_TYPE_CANCEL_DELETE = 'cancel-delete-btn';
 export const DATA_TYPE_CONFIRM_DELETE = 'confirm-delete-btn';
+export const DATA_TYPE_MOBILE_CLOSE = 'mobile-dialog-close-btn';
 
 export const SECTION_CREATE = '[data-section="create"]';
 export const SECTION_SHOW = '[data-section="show"]';

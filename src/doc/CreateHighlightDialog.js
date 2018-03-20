@@ -280,9 +280,11 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         this.buttonsEl = highlightDialogEl.querySelector(SELECTOR_HIGHLIGHT_BTNS);
 
         // Stop interacting with this element from triggering outside actions
-        this.containerEl.addEventListener('click', this.stopPropagation);
-        this.containerEl.addEventListener('mouseup', this.stopPropagation);
-        this.containerEl.addEventListener('dblclick', this.stopPropagation);
+        if (!this.isMobile) {
+            this.containerEl.addEventListener('click', this.stopPropagation);
+            this.containerEl.addEventListener('mouseup', this.stopPropagation);
+            this.containerEl.addEventListener('dblclick', this.stopPropagation);
+        }
 
         // Events for highlight button
         if (this.allowHighlight) {

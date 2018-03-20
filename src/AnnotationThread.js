@@ -438,6 +438,7 @@ class AnnotationThread extends EventEmitter {
      */
     cancelUnsavedAnnotation() {
         if (!util.isPending(this.state)) {
+            this.hideDialog();
             return;
         }
 

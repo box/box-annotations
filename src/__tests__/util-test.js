@@ -40,7 +40,8 @@ import {
     replaceHeader,
     isInDialog,
     focusTextArea,
-    hasValidBoundaryCoordinates
+    hasValidBoundaryCoordinates,
+    generateMobileDialogEl
 } from '../util';
 import {
     STATES,
@@ -49,7 +50,11 @@ import {
     SELECTOR_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_CARET,
-    CLASS_ACTIVE
+    CLASS_ACTIVE,
+    CLASS_MOBILE_DIALOG_HEADER,
+    CLASS_DIALOG_CLOSE,
+    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
+    CLASS_ANIMATE_DIALOG
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -829,5 +834,15 @@ describe('util', () => {
         it('should return true for highlight annotations', () => {
             expect(hasValidBoundaryCoordinates({ type: TYPES.highlight })).to.be.true;
         })
+    });
+
+    describe('generateMobileDialogEl()', () => {
+        it('should return a blank mobile dialog', () => {
+            const el = generateMobileDialogEl();
+            expect(el).to.have.descendant(`.${CLASS_MOBILE_DIALOG_HEADER}`);
+            expect(el).to.have.descendant(`.${CLASS_DIALOG_CLOSE}`);
+            expect(el).to.not.have.class(`.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`);
+            expect(el).to.not.have.class(`.${CLASS_ANIMATE_DIALOG}`);
+        });
     });
 });
