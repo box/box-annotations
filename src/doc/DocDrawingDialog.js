@@ -164,6 +164,10 @@ class DocDrawingDialog extends AnnotationDialog {
             this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         }
 
+        if (!this.element) {
+            this.setup([]);
+        }
+
         // Reinsert when the dialog is removed from the page
         if (!this.pageEl.contains(this.element)) {
             this.pageEl.appendChild(this.element);

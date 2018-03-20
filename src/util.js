@@ -17,7 +17,8 @@ import {
     CLASS_BOX_PREVIEW_HEADER,
     CLASS_DIALOG_CLOSE,
     CLASS_MOBILE_DIALOG_HEADER,
-    DATA_TYPE_MOBILE_CLOSE
+    DATA_TYPE_MOBILE_CLOSE,
+    SELECTOR_ANNOTATION_MODE
 } from './constants';
 
 import { ICON_CLOSE } from './icons/icons';
@@ -834,4 +835,16 @@ export function generateMobileDialogEl() {
     headerEl.appendChild(closeButtonEl);
 
     return el;
+}
+
+/**
+ * Whether or not the user is currently in an annotation mode other than the
+ * specified annotation mode
+ *
+ * @param {HTMLElement} element The DOM element for the annotated element
+ * @param {string} [mode] The specified annotation mode to check
+ * @return {boolean} Whether or not the user is currently in the specified annotation mode
+ */
+export function isInAnnotationMode(element) {
+    return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
 }

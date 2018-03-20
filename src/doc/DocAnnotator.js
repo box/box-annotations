@@ -28,10 +28,7 @@ import {
     CREATE_EVENT
 } from '../constants';
 
-const MOUSEMOVE_THROTTLE_MS = 25;
-const HOVER_TIMEOUT_MS = 75;
 const SELECTION_TIMEOUT = 500;
-const MOUSE_MOVE_MIN_DISTANCE = 5;
 const CLASS_RANGY_HIGHLIGHT = 'rangy-highlight';
 
 const SELECTOR_PREVIEW_DOC = '.bp-doc';
@@ -47,18 +44,6 @@ const ANNOTATION_LAYER_CLASSES = [
 ];
 
 class DocAnnotator extends Annotator {
-    /** @property {Event} - For tracking the most recent event fired by mouse move event. */
-    mouseMoveEvent;
-
-    /** @property {Function} - Event callback for mouse move events with for highlight annotations. */
-    highlightMousemoveHandler;
-
-    /** @property {Function} - Handle to RAF used to throttle highlight collision checks. */
-    highlightThrottleHandle;
-
-    /** @property {number} - Timer used to throttle highlight event process. */
-    throttleTimer = 0;
-
     /** @property {CreateHighlightDialog} - UI used to create new highlight annotations. */
     createHighlightDialog;
 
@@ -108,8 +93,6 @@ class DocAnnotator extends Annotator {
     /** @inheritdoc */
     init(initialScale) {
         super.init(initialScale);
-
-        this.hoverThreads = [];
 
         // Allow rangy to highlight this
         this.annotatedElement.id = ID_ANNOTATED_ELEMENT;
@@ -409,16 +392,28 @@ class DocAnnotator extends Annotator {
 
         if (this.hasTouch && this.drawEnabled) {
             this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
-        } else {
-            if (this.drawEnabled) {
-                this.annotatedElement.addEventListener('click', this.drawingSelectionHandler);
-            }
-
-            // Desktop-only highlight listeners
-            if (!this.isMobile && (this.plainHighlightEnabled || this.commentHighlightEnabled)) {
-                this.annotatedElement.addEventListener('mousemove', this.getHighlightMouseMoveHandler());
-            }
+        } else if (this.drawEnabled) {
+            this.annotatedElement.addEventListener('click', this.drawingSelectionHandler);
         }
+
+        // Hide open threads when clicking on document
+        this.annotatedElement.addEventListener(
+            'mouseup',
+            (event) => {
+                if (util.isInDialog(event)) {
+                    return;
+                }
+
+                Object.keys(this.modeControllers).forEach((mode) => {
+                    this.modeControllers[mode].applyActionToThreads((thread) => {
+                        if (!util.isPending(thread.state)) {
+                            thread.hideDialog();
+                        }
+                    });
+                });
+            },
+            true /* Use Capture so this executes first */
+        );
 
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
         if (!this.permissions.canAnnotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
@@ -464,8 +459,6 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
-            this.annotatedElement.removeEventListener('mousemove', this.highlightMousemoveHandler);
-            this.highlightMousemoveHandler = null;
         }
     }
 
@@ -650,18 +643,14 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Mousedown handler on annotated element. Initializes didDrag to false -
-     * this way, on the mouseup handler, we can check if didDrag was set to
-     * true by the mousemove handler, and if not, delegate to click handlers
-     * for highlight threads. Also delegates to mousedown handler for each
-     * thread.
+     * Mousedown handler on annotated element. Also delegates to mousedown
+     * handler for each thread.
      *
      * @private
      * @param {Event} event DOM event
      * @return {void}
      */
     highlightMousedownHandler(event) {
-        this.didMouseMove = false;
         this.isCreatingHighlight = true;
         this.mouseX = event.clientX;
         this.mouseY = event.clientY;
@@ -673,142 +662,6 @@ class DocAnnotator extends Annotator {
         if (this.commentHighlightEnabled) {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.onMousedown());
         }
-    }
-
-    /**
-     * Throttled mousemove handler over annotated element. Delegates to
-     * mousemove handler of highlight threads on the page.
-     *
-     * @private
-     * @return {Function} mousemove handler
-     */
-    getHighlightMouseMoveHandler() {
-        if (this.highlightMousemoveHandler) {
-            return this.highlightMousemoveHandler;
-        }
-
-        this.highlightMousemoveHandler = this.onHighlightMouseMove.bind(this);
-
-        /**
-         * Highlight event loop
-         *
-         * @private
-         * @return {void}
-         */
-        const highlightLoop = () => {
-            this.highlightThrottleHandle = requestAnimationFrame(highlightLoop);
-            this.onHighlightCheck();
-        };
-
-        // Kickstart event process loop.
-        highlightLoop();
-
-        return this.highlightMousemoveHandler;
-    }
-
-    /**
-     * Throttled processing of the most recent mouse move event.
-     *
-     * @private
-     * @return {void}
-     */
-    onHighlightCheck() {
-        // Bail if no mouse events have occurred OR the throttle delay has not been met.
-        const dt = performance.now() - this.throttleTimer;
-        if (!this.mouseMoveEvent || dt < MOUSEMOVE_THROTTLE_MS) {
-            return;
-        }
-
-        // Determine if user is in the middle of creating a highlight
-        // annotation and ignore hover events of any highlights below
-        if (this.isCreatingHighlight) {
-            return;
-        }
-
-        // Determine if mouse is over any highlight dialog
-        // and ignore hover events of any highlights below
-        if (docUtil.isDialogDataType(this.mouseMoveEvent.target)) {
-            return;
-        }
-        this.throttleTimer = performance.now();
-
-        // Only filter through highlight threads on the current page
-        const prevThreads = this.hoverThreads || [];
-        this.hoverThreads = [];
-        this.hoverActive = false;
-
-        if (this.plainHighlightEnabled) {
-            const plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseMoveEvent);
-            this.hoverThreads = this.hoverThreads.concat(plainThreads);
-        }
-
-        if (this.commentHighlightEnabled) {
-            const commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(
-                this.mouseMoveEvent
-            );
-            this.hoverThreads = this.hoverThreads.concat(commentThreads);
-        }
-
-        // If we are hovering over a highlight, we should use a hand cursor
-        if (this.hoverThreads.length > 0) {
-            this.useDefaultCursor();
-            clearTimeout(this.cursorTimeout);
-        } else {
-            // Setting timeout on cursor change so cursor doesn't
-            // flicker when hovering on line spacing
-            this.cursorTimeout = setTimeout(() => {
-                this.removeDefaultCursor();
-            }, HOVER_TIMEOUT_MS);
-        }
-
-        // Ensure previously hovered over threads are also hidden
-        const delayThreads = this.hoverThreads.concat(
-            prevThreads.filter((item) => {
-                return this.hoverThreads.indexOf(item) < 0;
-            })
-        );
-
-        // Delayed threads (threads that should be in active or hover
-        // state) should be drawn last. If multiple highlights are
-        // hovered over at the same time, only the top-most highlight
-        // dialog will be displayed and the others will be hidden
-        // without delay
-        const firstThread = delayThreads[0];
-        delayThreads.forEach((thread) => {
-            const shouldDelay = thread.onMousemove(this.mouseMoveEvent);
-            if (shouldDelay && firstThread && firstThread.threadNumber === thread.threadNumber) {
-                thread.show();
-            } else {
-                thread.reset();
-            }
-        });
-
-        this.mouseMoveEvent = null;
-    }
-
-    /**
-     * Mouse move handler. Paired with throttle mouse move handler to check for annotation highlights.
-     *
-     * @private
-     * @param {Event} event DOM event fired by mouse move event
-     * @return {void}
-     */
-    onHighlightMouseMove(event) {
-        if (
-            !this.didMouseMove &&
-            (Math.abs(event.clientX - this.mouseX) > MOUSE_MOVE_MIN_DISTANCE ||
-                Math.abs(event.clientY - this.mouseY) > MOUSE_MOVE_MIN_DISTANCE)
-        ) {
-            this.didMouseMove = true;
-        }
-
-        // Determine if the user is creating a new overlapping highlight
-        // and ignore hover events of any highlights below
-        if (this.isCreatingHighlight) {
-            return;
-        }
-
-        this.mouseMoveEvent = event;
     }
 
     /**
@@ -871,7 +724,7 @@ class DocAnnotator extends Annotator {
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if (this.createHighlightDialog && (this.didMouseMove || event.type === 'dblclick')) {
+        if (this.createHighlightDialog || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
         } else {
             this.highlightClickHandler(event);
@@ -1041,17 +894,6 @@ class DocAnnotator extends Annotator {
                 break;
             case CONTROLLER_EVENT.renderPage:
                 this.renderPage(data.data);
-                break;
-            case CONTROLLER_EVENT.unregister:
-                if (!data.data || !util.isHighlightAnnotation(data.data.type)) {
-                    break;
-                }
-
-                // Removes recently deleted highlight thread from threads requiring a redraw
-                this.hoverThreads =
-                    this.hoverThreads.filter((thread) => {
-                        return thread.threadID !== data.data.threadID;
-                    }) || [];
                 break;
             default:
         }

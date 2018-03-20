@@ -7,7 +7,8 @@ import {
     CREATE_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
-    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
+    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
+    CLASS_ANNOTATION_POINT_MODE
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { isInDialog, replaceHeader } from '../util';
@@ -151,6 +152,7 @@ class PointModeController extends AnnotationModeController {
         if (this.buttonEl) {
             this.buttonEl.classList.remove(CLASS_ACTIVE);
         }
+        this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
         super.exit();
     }
@@ -159,6 +161,7 @@ class PointModeController extends AnnotationModeController {
     enter() {
         super.enter();
         replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
+        this.annotatedElement.classList.add(CLASS_ANNOTATION_POINT_MODE);
 
         if (this.buttonEl) {
             this.buttonEl.classList.add(CLASS_ACTIVE);

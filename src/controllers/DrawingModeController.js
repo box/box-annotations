@@ -17,7 +17,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
-    CLASS_ANNOTATION_LAYER_DRAW
+    CLASS_ANNOTATION_LAYER_DRAW,
+    CLASS_ANNOTATION_DRAW_MODE
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -156,6 +157,12 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(this.redoButtonEl, 'click', this.currentThread.redo);
     }
 
+    /** @inheritdoc */
+    exit() {
+        this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
+        super.exit();
+    }
+
     /**
      * Enables the specified annotation mode
      *
@@ -164,6 +171,7 @@ class DrawingModeController extends AnnotationModeController {
     enter() {
         super.enter();
         replaceHeader(this.container, SELECTOR_DRAW_MODE_HEADER);
+        this.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
     }
 
     /** @inheritdoc */

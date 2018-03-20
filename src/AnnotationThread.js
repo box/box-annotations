@@ -132,7 +132,11 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     showDialog() {
-        // Prevents the annotations dialog from being created each mousemove
+        if (this.state !== STATES.pending && util.isInAnnotationMode(this.container, TYPES.point)) {
+            return;
+        }
+
+        // Prevents the annotations dialog from being every call
         if (!this.dialog.element) {
             this.dialog.setup(this.annotations, this.element);
         }
@@ -367,11 +371,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.addEventListener('click', this.showDialog);
-        this.element.addEventListener('mouseenter', this.showDialog);
-
-        if (!this.isMobile) {
-            this.element.addEventListener('mouseleave', this.mouseoutHandler);
-        }
     }
 
     /**
@@ -386,11 +385,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.removeEventListener('click', this.showDialog);
-        this.element.removeEventListener('mouseenter', this.showDialog);
-
-        if (!this.isMobile) {
-            this.element.removeEventListener('mouseleave', this.mouseoutHandler);
-        }
     }
 
     /**
