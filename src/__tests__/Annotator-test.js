@@ -164,14 +164,14 @@ describe('Annotator', () => {
         });
     });
 
-    describe('resetMobileDialog()', () => {
+    describe('removeThreadFromSharedDialog()', () => {
         beforeEach(() => {
             sandbox.stub(util, 'hideElement');
             sandbox.stub(util, 'showElement');
         });
 
         it('should do nothing if the mobile dialog does not exist or is hidden', () => {
-            annotator.resetMobileDialog();
+            annotator.removeThreadFromSharedDialog();
             expect(util.hideElement).to.not.be.called;
 
             annotator.mobileDialogEl = {
@@ -181,7 +181,7 @@ describe('Annotator', () => {
                 removeChild: sandbox.stub(),
                 lastChild: {}
             };
-            annotator.resetMobileDialog();
+            annotator.removeThreadFromSharedDialog();
             expect(util.hideElement).to.not.be.called;
         });
 
@@ -189,7 +189,7 @@ describe('Annotator', () => {
             annotator.mobileDialogEl = document.createElement('div');
             annotator.mobileDialogEl.appendChild(document.createElement('div'));
 
-            annotator.resetMobileDialog();
+            annotator.removeThreadFromSharedDialog();
             expect(util.hideElement).to.be.called;
             expect(util.showElement).to.be.called;
             expect(annotator.mobileDialogEl.children.length).to.equal(0);
@@ -526,10 +526,10 @@ describe('Annotator', () => {
             });
 
             it('should reset mobile annotation dialog on resetMobileDialog', () => {
-                sandbox.stub(annotator, 'resetMobileDialog');
+                sandbox.stub(annotator, 'removeThreadFromSharedDialog');
                 data.event = CONTROLLER_EVENT.resetMobileDialog;
                 annotator.handleControllerEvents(data);
-                expect(annotator.resetMobileDialog).to.be.called;
+                expect(annotator.removeThreadFromSharedDialog).to.be.called;
             });
 
             it('should toggle annotation mode on togglemode', () => {

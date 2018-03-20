@@ -882,7 +882,7 @@ export function focusTextArea(element) {
  *
  * @return {HTMLElement} Blank mobile annotation dialog
  */
-export function regenerateMobileDialog() {
+export function generateMobileDialogEl() {
     const el = document.createElement('div');
     el.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
     el.classList.remove(CLASS_ANIMATE_DIALOG);

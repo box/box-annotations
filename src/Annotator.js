@@ -269,7 +269,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     setupMobileDialog() {
-        this.mobileDialogEl = util.regenerateMobileDialog();
+        this.mobileDialogEl = util.generateMobileDialogEl();
         this.mobileDialogEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
         this.mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
@@ -283,7 +283,7 @@ class Annotator extends EventEmitter {
      *
      * @return {void}
      */
-    resetMobileDialog() {
+    removeThreadFromSharedDialog() {
         if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
             return;
         }
@@ -658,7 +658,7 @@ class Annotator extends EventEmitter {
     handleControllerEvents(data) {
         switch (data.event) {
             case CONTROLLER_EVENT.resetMobileDialog:
-                this.resetMobileDialog();
+                this.removeThreadFromSharedDialog();
                 break;
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);

@@ -836,9 +836,9 @@ describe('util', () => {
         })
     });
 
-    describe('regenerateMobileDialog()', () => {
+    describe('generateMobileDialogEl()', () => {
         it('should return a blank mobile dialog', () => {
-            const el = regenerateMobileDialog();
+            const el = generateMobileDialogEl();
             expect(el).to.have.descendant(`.${CLASS_MOBILE_DIALOG_HEADER}`);
             expect(el).to.have.descendant(`.${CLASS_DIALOG_CLOSE}`);
             expect(el).to.not.have.class(`.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`);

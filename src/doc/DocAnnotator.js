@@ -474,13 +474,13 @@ class DocAnnotator extends Annotator {
      *
      * @return {void}
      */
-    resetMobileDialog() {
+    removeThreadFromSharedDialog() {
         if (!this.mobileDialogEl) {
             return;
         }
 
         this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-        super.resetMobileDialog();
+        super.removeThreadFromSharedDialog();
     }
 
     /**
@@ -937,7 +937,7 @@ class DocAnnotator extends Annotator {
         if (this.activeThread) {
             this.activeThread.show();
         } else if (this.isMobile) {
-            this.resetMobileDialog();
+            this.removeThreadFromSharedDialog();
         }
     }
 
