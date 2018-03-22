@@ -39,3 +39,4 @@ browserslist
 commitlint.config.js
 package.json
 *.log
+docs
