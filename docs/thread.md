@@ -1,6 +1,7 @@
 Annotation Thread
 --------------------
 
+Annotation threads can include multiple [annotations](https://github.com/box/box-annotations/blob/master/src/Annotation.js) linked by a unique threadID.
 ### Methods
 The following methods are available for the annotation threads.
 

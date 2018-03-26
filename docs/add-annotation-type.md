@@ -2,9 +2,9 @@
 To see a basic implementation of an annotation type, look at [Image Point Annotations](https://github.com/box/box-annotations/tree/master/src/image).
 
 ### The following files/abstract methods need to be implemented:
-* controllers/{**TYPE**}Controller.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)): This class is the communicator between the Annotator and the Annotation threads. Each controller maintains an object of pages which contains a red/black tree
+* controllers/{**TYPE**}Controller.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)): This class is the communicator between the Annotator and the Annotation threads. Each controller maintains an object of pages which contains a [red/black tree](https://github.com/mourner/rbush)
     * Abstract methods that should be implemented by subclasses:
-        * **handleThreadEvents()** - Handles annotation thread events and emits them to the viewer
+        * **handleThreadEvents()** - Handles annotation [thread events](thread.md#events) and emits them to the viewer
         * **enter()** - Enables the specified annotation mode
         * **exit()** - Disables the specified annotation mode
 
