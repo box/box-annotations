@@ -846,10 +846,26 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.createHighlightDialog.hide).to.not.be.called;
         });
 
-        it('hide the visible createHighlightDialog and clear the text selection', () => {
+        it('should hide the visible createHighlightDialog and clear the text selection', () => {
             annotator.createHighlightDialog.isVisible = true;
             annotator.resetHighlightSelection({});
             expect(annotator.createHighlightDialog.hide).to.be.called;
+        });
+
+        it('should only clear the selected text if the user is creating a new highlight', () => {
+            const selection = {
+                removeAllRanges: sandbox.stub()
+            };
+            sandbox.stub(document, 'getSelection').returns(selection);
+            annotator.createHighlightDialog.isVisible = true;
+
+            annotator.isCreatingHighlight = true;
+            annotator.resetHighlightSelection({});
+            expect(selection.removeAllRanges).to.not.be.called;
+
+            annotator.isCreatingHighlight = false;
+            annotator.resetHighlightSelection({});
+            expect(selection.removeAllRanges).to.be.called;
         });
     });
 
