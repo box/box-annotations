@@ -1,6 +1,7 @@
 Annotation Dialog
 --------------------
 
+Annotation dialogs maintain the dialog UI corresponding with an [annotation thread](thread.md), displaying the metadata of annotations and buttons to create/update/delete
 ### Methods
 The following methods are available for the annotation dialogs.
 

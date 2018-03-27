@@ -1,6 +1,7 @@
 Annotators
 -------
-The name of an annotator can be one of the following `DocAnnotator` or `ImageAnnotator`. Call `boxAnnotations.getAnnotators()` to get the list of possible annotators.
+
+Annotators are the communicators between the file itself and the [controller](controller.md). The name of an annotator can be one of the following `DocAnnotator` or `ImageAnnotator`. Call `boxAnnotations.getAnnotators()` to get the list of possible annotators.
 
 Additional Methods
 ------------------
@@ -8,27 +9,15 @@ Additional Methods
 
 `annotator.isModeAnnotatable(/* String */ type)` returns whether or not the current annotation mode is enabled for the current viewer/annotator.
 
-`annotator.showModeAnnotateButton(/* String */ currentMode)` shows the annotate button for the specified annotation mode.
-
-`annotator.getAnnotateButton(/* String */ annotatorSelector)` gets the annotation button element.
-
-`annotator.showAnnotations()` fetches and shows saved annotations.
-
-`annotator.hideAnnotations()` hides annotations.
-
-`annotator.hideAnnotationsOnPage(/* number */ pageNum)` hides annotations on a specified page.
+`annotator.loadAnnotations()` shows saved annotations.
 
 `annotator.setScale()` sets the zoom scale.
 
-`annotator.toggleAnnotationHandler()` toggles annotation modes on and off. When an annotation mode is on, annotation threads will be created at that location.
-
-`annotator.disableAnnotationMode(/* String */ mode, /* HTMLElement */ buttonEl)` disables the specified annotation mode.
-
-`annotator.enableAnnotationMode(/* String */ mode, /* HTMLElement */ buttonEl)` enables the specified annotation mode.
-
-`annotator.getAnnotatedEl(/* HTMLElement */ containerEl)` determines the annotated element in the viewer.
+`annotator.getLocationFromEvent(/* Event */ event, /* String */ annotationType)` determines the annotation location object from a DOM event.
 
 `annotator.createAnnotationThread(/* Annotation[] */ annotations, /* Object */ location, /* String */ [annotation type])` creates the proper type of annotation thread, adds it to the in-memory map, and returns it.
+
+`annotator.getAnnotatedEl(/* HTMLElement */ containerEl)` determines the annotated element in the viewer.
 
 Events
 ------
@@ -58,126 +47,14 @@ annotator.removeListener(EVENTNAME, listener);
 
 EVENTNAME can be one of the following
 
-* `annotator` event will be fired when we have the annotator instance first available. Box Annotations fires this event before `load` so that clients can attach their listeners before the `load` event is fired from Box Content Preview.
+* `annotator` event will be fired when we have the annotator instance first available. Box Annotations fires this event before `annotationsfetched` so that clients can attach their listeners before the `annotationsfetched` event is fired from Box Annotations.
 
 * `annotationsfetched` event will be fired when annotations have been fetched from the Box API.
-
-* `annotationmodeenter` event will be fired on when an annotation mode is entered. The event data will contain:
-```javascript
-  {
-      mode: 'point', // Annotation mode that was entered
-      headerSelector: '.bp-preview-header', // Optional CSS selector for the container's header
-  }
-```
-
-* `annotationmodeexit` event will be fired on when an annotation mode is exited. The event data will contain:
-```javascript
-  {
-      mode: 'point', // Annotation mode that was exited
-      headerSelector: '.bp-preview-header', // Optional CSS selector for the container's header
-  }
-```
 
 * `annotationerror` event will be fired when an annotation error has occured. The event data will contain:
 ```javascript
   {
       message: 'message', // Error message to show
-  }
-```
-
-* `annotationpending` event will be fired when an annotation thread was created but has not yet been saved on the server. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationthreadsaved` event will be fired when an annotation thread was saved on the server. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationthreaddeleted` event will be fired when an annotation thread was deleted on the server. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationsaved` event will be fired when an annotation is added and saved to an existing annotation thread on the server. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationdeleted` event will be fired when an annotation is deleted from an existing thread on the server. The entire annotation thread is not deleted. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationcanceled` event will be fired when an annotation is cancelled from posting on either a new or existing thread. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationdeleteerror` event will be fired when an error occurs while deleting an annotation on either a new or existing thread. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
-  }
-```
-
-* `annotationcreateerror` event will be fired when an error occurs while posting an annotation on either a new or existing thread. The event data will contain:
-```javascript
-  {
-      data: {
-          type: 'point', // Annotation type
-          threadID: '123abc',
-          userId: '456def',
-          threadNumber: '1' // Thread number from Annotations API
-      }
   }
 ```
 
@@ -194,7 +71,7 @@ EVENTNAME can be one of the following
 
 ### Example event usage
 ```javascript
-preview.addListener('annotator', (viewer) => {
+preview.addListener('annotator', (annotator) => {
     annotator.addListener('annotationsfetched', () => {
         // Do something when annotations are fetched on a preview
     });
