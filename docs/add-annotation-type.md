@@ -7,6 +7,8 @@ See [Image Point Annotations](https://github.com/box/box-annotations/tree/master
 - Annotation Thread: This class maintains a 'thread' of annotations associated by a unique thread ID, ie a group of annotations at the same location
 - Annotation Dialog: This class maintains the dialog UI corresponding with an [annotation thread](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js), displaying the metadata of annotations and buttons to create/update/delete
 
+** {**VIEWER**} refers to a viewer in [Box Content Preview](https://github.com/box/box-content-preview#viewers)
+
 ### The following files/abstract methods need to be implemented:
 * controllers/{**TYPE**}Controller.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)):
     * Abstract methods that should be implemented by subclasses:
