@@ -42,8 +42,6 @@ class Annotator extends EventEmitter {
     constructor(options) {
         super();
 
-        this.emit('annotator');
-
         this.options = options;
         this.locale = options.location.locale || 'en-US';
         this.validationErrorEmitted = false;

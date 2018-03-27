@@ -85,14 +85,6 @@ preview.addListener('load', (data) => {
     });
 });
 
-// Event listeners can be attached to annotators
-preview.addListener('load', (data) => {
-    var annotator = data.viewer.annotator;
-    annotator.addListener('annotationsfetched', () => {
-        // Do something when annotations are fetched on a preview
-    });
-});
-
 preview.addListener('annotatorevent', (data) => {
     if (data.event === 'annotationsfetched') {
         // Do something when annotations are fetched on a preview
