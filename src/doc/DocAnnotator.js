@@ -496,7 +496,10 @@ class DocAnnotator extends Annotator {
         }
 
         this.createHighlightDialog.hide();
-        document.getSelection().removeAllRanges();
+
+        if (!this.isCreatingHighlight) {
+            document.getSelection().removeAllRanges();
+        }
     }
 
     //--------------------------------------------------------------------------
