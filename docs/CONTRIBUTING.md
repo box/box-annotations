@@ -39,7 +39,7 @@ The upstream source is the project under the Box organization on GitHub. To add 
 git remote add upstream git@github.com:box/box-annotations.git
 ```
 
-This will come in useful later.
+This will be useful later.
 
 ### Step 4: Create a feature branch
 

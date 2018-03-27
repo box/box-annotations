@@ -295,7 +295,7 @@ class AnnotationModeController extends EventEmitter {
 
     /**
      * Clean up any selected annotations
-     *
+     * @protected
      * @return {void}
      */
     removeSelection() {}

@@ -145,8 +145,6 @@ export const HIGHLIGHT_FILL = {
 };
 
 export const ANNOTATOR_EVENT = {
-    modeEnter: 'annotationmodeenter',
-    modeExit: 'annotationmodeexit',
     fetch: 'annotationsfetched',
     error: 'annotationerror',
     scale: 'scaleannotations'
