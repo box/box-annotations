@@ -1,3 +1,11 @@
+<a name="1.1.0"></a>
+# 1.1.0 (2018-03-27)
+
+* New: More detailed documentation (#146) ([dea85de](https://github.com/box/box-annotations/commit/dea85de))
+* Fix: Highlighting and highlighting again clears highlight (#147) ([499bc5f](https://github.com/box/box-annotations/commit/499bc5f))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2018-03-20)
 
