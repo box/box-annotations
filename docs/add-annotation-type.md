@@ -1,5 +1,5 @@
 # Adding support for new Annotation types
-To see a basic implementation of an annotation type, look at [Image Point Annotations](https://github.com/box/box-annotations/tree/master/src/image).
+See [Image Point Annotations](https://github.com/box/box-annotations/tree/master/src/image) for a basic implementation of an annotation type.
 
 ### The following files/abstract methods need to be implemented:
 * controllers/{**TYPE**}Controller.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)): This class is the communicator between the Annotator and the Annotation threads. Each controller maintains an object of pages which contains a [red/black tree](https://github.com/mourner/rbush)
