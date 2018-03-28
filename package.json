@@ -67,6 +67,7 @@
     "mocha": "^5.0.1",
     "node-noop": "^1.0.0",
     "node-sass": "^4.7.2",
+    "nsp": "^3.2.1",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "postcss-loader": "^2.0.9",
     "prettier": "^1.8.2",
@@ -97,13 +98,14 @@
     "commitmsg": "commitlint -e",
     "prepush": "yarn run lint",
     "prettier": "prettier-eslint \"src/**/*.js\" --print-width 120 --single-quote --tab-width 4 --write",
-    "ci": "yarn run clean && yarn run lint && yarn install && yarn run test",
+    "ci": "yarn install && yarn nsp && yarn run clean && yarn run lint && yarn install && yarn run test",
     "clean": "rm -rf lib && rm -rf reports/coverage",
     "github-release": "./node_modules/.bin/conventional-github-releaser",
     "changelog": "./node_modules/.bin/conventional-changelog -i CHANGELOG.md --same-file",
     "minor": "./build/release.sh -n && ./build/publish.sh",
     "major": "./build/release.sh -m && ./build/publish.sh",
-    "patch": "./build/release.sh -p && ./build/publish.sh"
+    "patch": "./build/release.sh -p && ./build/publish.sh",
+    "nsp": "nsp check --reporter summary"
   },
   "lint-staged": {
     "src/**/*.js": [
