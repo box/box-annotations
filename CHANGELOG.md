@@ -1,3 +1,10 @@
+<a name="1.1.1"></a>
+## 1.1.1 (2018-03-28)
+
+* Fix: Mobile dialog doesn't properly close on delete cancel/confirm (#148) ([523217a](https://github.com/box/box-annotations/commit/523217a)), closes [#148](https://github.com/box/box-annotations/issues/148)
+
+
+
 <a name="1.1.0"></a>
 # 1.1.0 (2018-03-27)
 
