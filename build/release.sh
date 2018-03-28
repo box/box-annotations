@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 export NODE_PATH=$NODE_PATH:./node_modules
 
