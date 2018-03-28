@@ -212,22 +212,11 @@ describe('AnnotationDialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
             stubs.hide = sandbox.stub(util, 'hideElement');
             stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
-            stubs.cancel = sandbox.stub(dialog, 'cancelAnnotation');
             dialog.hasAnnotations = true;
 
             dialog.hideMobileDialog();
             expect(stubs.hide).to.be.called;
             expect(stubs.unbind).to.be.called;
-            expect(stubs.cancel).to.be.called;
-        });
-
-        it('should cancel unsaved annotations only if the dialog does not have annotations', () => {
-            dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
-            stubs.cancel = sandbox.stub(dialog, 'cancelAnnotation');
-            dialog.hasAnnotations = false;
-
-            dialog.hideMobileDialog();
-            expect(stubs.cancel).to.be.called;
         });
     });
 
@@ -707,8 +696,8 @@ describe('AnnotationDialog', () => {
     describe('clickHandler()', () => {
         beforeEach(() => {
             stubs.event = {
-                stopPropagation: () => {},
-                preventDefault: () => {},
+                stopPropagation: sandbox.stub(),
+                preventDefault: sandbox.stub(),
                 target: document.createElement('div')
             };
             stubs.post = sandbox.stub(dialog, 'postAnnotation');
@@ -721,8 +710,22 @@ describe('AnnotationDialog', () => {
             stubs.delete = sandbox.stub(dialog, 'deleteAnnotation');
             stubs.reply = sandbox.stub(dialog, 'postReply');
             stubs.hideMobile = sandbox.stub(dialog, 'hideMobileDialog');
+            dialog.isMobile = false;
 
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
+        });
+
+        it('should only stop propogation on a desktop device', () => {
+            dialog.clickHandler(stubs.event);
+            expect(stubs.event.stopPropagation).to.be.called;
+            expect(stubs.event.preventDefault).to.not.be.called;
+        });
+
+        it('should stop propogation AND prevent default on a mobile device', () => {
+            dialog.isMobile = true;
+            dialog.clickHandler(stubs.event);
+            expect(stubs.event.stopPropagation).to.be.called;
+            expect(stubs.event.preventDefault).to.be.called;
         });
 
         it('should post annotation when post annotation button is clicked', () => {
