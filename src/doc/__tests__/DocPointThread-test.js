@@ -9,6 +9,8 @@ import { STATES } from '../../constants';
 let thread;
 const sandbox = sinon.sandbox.create();
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 describe('doc/DocPointThread', () => {
     before(() => {
         fixture.setBase('src');
@@ -18,7 +20,7 @@ describe('doc/DocPointThread', () => {
         fixture.load('doc/__tests__/DocPointThread-test.html');
 
         thread = new DocPointThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: {},
             fileVersionId: 1,

@@ -5,6 +5,8 @@ import {
     THREAD_EVENT
 } from '../../constants'
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 let thread;
 let stubs;
 const sandbox = sinon.sandbox.create();
@@ -17,7 +19,7 @@ describe('drawing/DrawingThread', () => {
     beforeEach(() => {
         stubs = {};
         thread = new DrawingThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: new AnnotationService({
                 apiHost: 'https://app.box.com/api',

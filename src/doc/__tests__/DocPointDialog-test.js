@@ -6,6 +6,8 @@ import * as docUtil from '../docUtil';
 let dialog;
 const sandbox = sinon.sandbox.create();
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 describe('doc/DocPointDialog', () => {
     before(() => {
         fixture.setBase('src');
@@ -15,7 +17,7 @@ describe('doc/DocPointDialog', () => {
         fixture.load('doc/__tests__/DocPointDialog-test.html');
 
         dialog = new DocPointDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {},
             annotations: [],
             canAnnotate: true

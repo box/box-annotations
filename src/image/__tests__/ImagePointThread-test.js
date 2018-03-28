@@ -5,6 +5,8 @@ import * as util from '../../util';
 import { STATES } from '../../constants';
 import * as imageUtil from '../imageUtil';
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 let thread;
 const sandbox = sinon.sandbox.create();
 
@@ -17,7 +19,7 @@ describe('image/ImagePointThread', () => {
         fixture.load('image/__tests__/ImagePointThread-test.html');
 
         thread = new ImagePointThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: {},
             fileVersionId: 1,
@@ -71,7 +73,7 @@ describe('image/ImagePointThread', () => {
 
             expect(thread.showDialog).to.not.be.called;
         });
-      
+
         it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
             thread.isMobile = true;
             thread.annotations = {};

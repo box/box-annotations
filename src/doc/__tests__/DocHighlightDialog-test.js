@@ -17,6 +17,8 @@ const DATA_TYPE_HIGHLIGHT_BTN = 'highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 describe('doc/DocHighlightDialog', () => {
     before(() => {
         fixture.setBase('src');
@@ -26,7 +28,7 @@ describe('doc/DocHighlightDialog', () => {
         fixture.load('doc/__tests__/DocHighlightDialog-test.html');
 
         dialog = new DocHighlightDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {
                 page: 1
             },
@@ -38,13 +40,13 @@ describe('doc/DocHighlightDialog', () => {
             whoHighlighted: '{1} highlighted'
         };
         dialog.setup([]);
-        document.querySelector('.annotated-element').appendChild(dialog.element);
+        document.querySelector(SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
         stubs.emit = sandbox.stub(dialog, 'emit');
     });
 
     afterEach(() => {
-        const dialogEl = document.querySelector('.annotated-element');
+        const dialogEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
         dialogEl.parentNode.removeChild(dialogEl);
         sandbox.verifyAndRestore();
         if (typeof dialog.destroy === 'function') {

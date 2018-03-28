@@ -12,6 +12,8 @@ import {
     SELECTOR_ANNOTATION_DIALOG
 } from '../../constants';
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 let thread;
 const sandbox = sinon.sandbox.create();
 
@@ -24,7 +26,7 @@ describe('doc/DocHighlightThread', () => {
         fixture.load('doc/__tests__/DocHighlightThread-test.html');
 
         thread = new DocHighlightThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: new AnnotationService({
                 apiHost: 'https://app.box.com/api',
@@ -165,7 +167,7 @@ describe('doc/DocHighlightThread', () => {
     describe('deleteAnnotation()', () => {
         it('should hide the add highlight button if the user does not have permissions', () => {
             const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{ permissions: { can_delete: false } }],
                 annotationService: new AnnotationService({
                     apiHost: 'https://app.box.com/api',
@@ -199,7 +201,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should display the add highlight button if the user has permissions', () => {
             const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{ permissions: { can_delete: true } }],
                 annotationService: new AnnotationService({
                     apiHost: 'https://app.box.com/api',

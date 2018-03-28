@@ -2,6 +2,8 @@ import * as util from '../../util';
 import * as constants from '../../constants';
 import DocDrawingDialog from '../DocDrawingDialog';
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 let dialog;
 let stubs;
 const sandbox = sinon.sandbox.create();
@@ -14,7 +16,7 @@ describe('doc/DocDrawingDialog', () => {
     beforeEach(() => {
         fixture.load('doc/__tests__/DocDrawingDialog-test.html');
         dialog = new DocDrawingDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {},
             annotations: [],
             canAnnotate: true

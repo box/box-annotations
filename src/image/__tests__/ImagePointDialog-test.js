@@ -6,6 +6,8 @@ import * as imageUtil from '../imageUtil';
 let dialog;
 const sandbox = sinon.sandbox.create();
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 describe('image/ImagePointDialog', () => {
     before(() => {
         fixture.setBase('src');
@@ -15,7 +17,7 @@ describe('image/ImagePointDialog', () => {
         fixture.load('image/__tests__/ImagePointDialog-test.html');
 
         dialog = new ImagePointDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {
                 page: 1
             },

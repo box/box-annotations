@@ -5,6 +5,8 @@ import {
     getBrowserCoordinatesFromLocation
 } from '../imageUtil';
 
+const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
@@ -33,7 +35,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -45,7 +47,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -57,7 +59,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -78,7 +80,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -90,7 +92,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -102,7 +104,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
@@ -114,7 +116,7 @@ describe('image/imageUtil', () => {
 
     describe('getRotatedPadding()', () => {
         it('should return top padding if image is not rotated', () => {
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageEl = annotatedEl.querySelector('img');
             imageEl.style.margin = '50px';
 
@@ -125,7 +127,7 @@ describe('image/imageUtil', () => {
         });
 
         it('should return top padding if image is rotated', () => {
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const imageEl = annotatedEl.querySelector('img');
             imageEl.style.margin = '50px';
 
@@ -147,7 +149,7 @@ describe('image/imageUtil', () => {
                 },
                 page: 1
             };
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const coordinates = getBrowserCoordinatesFromLocation(location, annotatedEl);
 
             expect(coordinates[0]).to.equal(20);
