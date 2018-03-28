@@ -193,11 +193,8 @@ class AnnotationDialog extends EventEmitter {
 
         // Clear annotations from dialog
         util.hideElement(this.element);
-        this.element = util.generateMobileDialogEl();
         this.unbindDOMListeners();
-
-        // Cancel any unsaved annotations
-        this.cancelAnnotation();
+        this.element = util.generateMobileDialogEl();
     }
 
     /**
@@ -555,6 +552,10 @@ class AnnotationDialog extends EventEmitter {
      */
     clickHandler(event) {
         event.stopPropagation();
+
+        if (this.isMobile) {
+            event.preventDefault();
+        }
 
         const eventTarget = event.target;
         const dataType = util.findClosestDataType(eventTarget);
