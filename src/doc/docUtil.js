@@ -1,42 +1,24 @@
 import * as util from '../util';
-import {
-    CLASS_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_HIGHLIGHT_DIALOG,
-    PAGE_PADDING_TOP,
-    PAGE_PADDING_BOTTOM,
-    DATA_TYPE_ANNOTATION_DIALOG,
-    DATA_TYPE_ANNOTATION_INDICATOR,
-    DATA_TYPE_HIGHLIGHT,
-    DATA_TYPE_ADD_HIGHLIGHT_COMMENT,
-    DATA_TYPE_POST,
-    DATA_TYPE_CANCEL,
-    DATA_TYPE_REPLY_TEXTAREA,
-    DATA_TYPE_CANCEL_REPLY,
-    DATA_TYPE_POST_REPLY,
-    DATA_TYPE_DELETE,
-    DATA_TYPE_CANCEL_DELETE,
-    DATA_TYPE_CONFIRM_DELETE
-} from '../constants';
+import * as constants from '../constants';
 
-const PREVIEW_PRESENTATION_CLASS = 'bp-doc-presentation';
 const HEIGHT_PADDING = 30;
 // PDF unit = 1/72 inch, CSS pixel = 1/92 inch
 const PDF_UNIT_TO_CSS_PIXEL = 4 / 3;
 const CSS_PIXEL_TO_PDF_UNIT = 3 / 4;
 
 const DIALOG_DATATYPES = [
-    DATA_TYPE_ANNOTATION_DIALOG,
-    DATA_TYPE_ANNOTATION_INDICATOR,
-    DATA_TYPE_HIGHLIGHT,
-    DATA_TYPE_ADD_HIGHLIGHT_COMMENT,
-    DATA_TYPE_POST,
-    DATA_TYPE_CANCEL,
-    DATA_TYPE_REPLY_TEXTAREA,
-    DATA_TYPE_CANCEL_REPLY,
-    DATA_TYPE_POST_REPLY,
-    DATA_TYPE_DELETE,
-    DATA_TYPE_CANCEL_DELETE,
-    DATA_TYPE_CONFIRM_DELETE
+    constants.DATA_TYPE_ANNOTATION_DIALOG,
+    constants.DATA_TYPE_ANNOTATION_INDICATOR,
+    constants.DATA_TYPE_HIGHLIGHT,
+    constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT,
+    constants.DATA_TYPE_POST,
+    constants.DATA_TYPE_CANCEL,
+    constants.DATA_TYPE_REPLY_TEXTAREA,
+    constants.DATA_TYPE_CANCEL_REPLY,
+    constants.DATA_TYPE_POST_REPLY,
+    constants.DATA_TYPE_DELETE,
+    constants.DATA_TYPE_CANCEL_DELETE,
+    constants.DATA_TYPE_CONFIRM_DELETE
 ];
 
 /**
@@ -46,7 +28,7 @@ const DIALOG_DATATYPES = [
  * @return {boolean} Whether annotations are on presentation or not
  */
 export function isPresentation(annotatedElement) {
-    return annotatedElement.classList.contains(PREVIEW_PRESENTATION_CLASS);
+    return annotatedElement.classList.contains(constants.CLASS_PREVIEW_PRESENTATION);
 }
 
 //------------------------------------------------------------------------------
@@ -61,8 +43,10 @@ export function isPresentation(annotatedElement) {
  * @return {boolean} Whether or not a dialog is active
  */
 export function hasActiveDialog(annotatedEl) {
-    const commentsDialogEl = annotatedEl.querySelector(`.${CLASS_ANNOTATION_DIALOG}:not(.bp-is-hidden)`);
-    const highlightDialogEl = annotatedEl.querySelector(`.${CLASS_ANNOTATION_HIGHLIGHT_DIALOG}:not(.bp-is-hidden)`);
+    const commentsDialogEl = annotatedEl.querySelector(`.${constants.CLASS_ANNOTATION_DIALOG}:not(.bp-is-hidden)`);
+    const highlightDialogEl = annotatedEl.querySelector(
+        `.${constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG}:not(.bp-is-hidden)`
+    );
 
     return !!(commentsDialogEl || highlightDialogEl);
 }
@@ -205,7 +189,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
 export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
     const pageEl = annotatedElement.querySelector(`[data-page-number="${location.page}"]`) || annotatedElement;
     const pageDimensions = pageEl.getBoundingClientRect();
-    const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+    const pageHeight = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
     const zoomScale = util.getScale(annotatedElement);
     let { x, y } = location;
 
@@ -239,16 +223,16 @@ export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
  */
 export function getQuadPoints(element, pageEl, scale) {
     const quadCornerContainerEl = document.createElement('div');
-    quadCornerContainerEl.classList.add('bp-quad-corner-container');
+    quadCornerContainerEl.classList.add(constants.CLASS_HIGHLIGHT_QUAD_CORNER);
 
     // Create zero-size elements that can be styled to the 4 corners of
     // quadrilateral around element - using 4 divs is faster than using
     // one div and moving it around
     quadCornerContainerEl.innerHTML = `
-        <div class="bp-quad-corner corner1"></div>
-        <div class="bp-quad-corner corner2"></div>
-        <div class="bp-quad-corner corner3"></div>
-        <div class="bp-quad-corner corner4"></div>`.trim();
+        <div class="${constants.CLASS_HIGHLIGHT_QUAD_CORNER} corner1"></div>
+        <div class="${constants.CLASS_HIGHLIGHT_QUAD_CORNER} corner2"></div>
+        <div class="${constants.CLASS_HIGHLIGHT_QUAD_CORNER} corner3"></div>
+        <div class="${constants.CLASS_HIGHLIGHT_QUAD_CORNER} corner4"></div>`.trim();
 
     // Insert helper container into element
     element.appendChild(quadCornerContainerEl);
@@ -261,9 +245,9 @@ export function getQuadPoints(element, pageEl, scale) {
     const corner3Dimensions = quadCorner3El.getBoundingClientRect();
     const corner4Dimensions = quadCorner4El.getBoundingClientRect();
     const pageDimensions = pageEl.getBoundingClientRect();
-    const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+    const pageHeight = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
     const pageLeft = pageDimensions.left;
-    const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
+    const pageTop = pageDimensions.top + constants.PAGE_PADDING_TOP;
 
     // Cleanup helper container
     element.removeChild(quadCornerContainerEl);
@@ -335,7 +319,7 @@ export function scaleCanvas(pageEl, annotationLayerEl) {
     const pageDimensions = pageEl.getBoundingClientRect();
     const pxRatio = window.devicePixelRatio || 1;
     const { width } = pageDimensions;
-    const height = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+    const height = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
 
     const scaledCanvas = annotationLayerEl;
     scaledCanvas.width = pxRatio * width;

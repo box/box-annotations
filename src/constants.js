@@ -26,11 +26,16 @@ export const SELECTOR_ANNOTATION_BUTTON_POINT = `.${CLASS_ANNOTATION_BUTTON_POIN
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = `.${CLASS_ANNOTATION_BUTTON_DRAW_ENTER}`;
 
+export const CLASS_PREVIEW_PRESENTATION = 'bp-doc-presentation';
+export const SELECTOR_PREVIEW_PRESENTATION = `.${CLASS_PREVIEW_PRESENTATION}`;
+
 // Annotation CSS constants
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
 export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
 export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
 export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
+export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner-container';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Dialog CSS constants
 export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
@@ -53,11 +58,24 @@ export const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
 export const SELECTOR_ANNOTATION_BUTTON_POST = `.${CLASS_ANNOTATION_BUTTON_POST}`;
 export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
 export const SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
+export const CLASS_DELETE_CONFIRM_MESSAGE = 'delete-confirmation-message';
+export const SELECTOR_DELETE_CONFIRM_MESSAGE = `.${CLASS_DELETE_CONFIRM_MESSAGE}`;
 
 export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 export const SELECTOR_ANNOTATION_CONTAINER = `.${CLASS_ANNOTATION_CONTAINER}`;
 export const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
 export const SELECTOR_ANNOTATION_COMMENT_TEXT = `.${CLASS_ANNOTATION_COMMENT_TEXT}`;
+export const CLASS_PROFILE_CONTAINER = 'profile-container';
+export const SELECTOR_PROFILE_CONTAINER = `.${CLASS_PROFILE_CONTAINER}`;
+export const CLASS_PROFILE_IMG_CONTAINER = 'profile-image-container';
+export const SELECTOR_PROFILE_IMG_CONTAINER = `.${CLASS_PROFILE_IMG_CONTAINER}`;
+export const CLASS_USER_NAME = 'user-name';
+export const SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
+export const CLASS_COMMENT_DATE = 'comment-date';
+export const SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
+
+export const CLASS_CREATE_COMMENT = 'ba-create-comment';
+export const SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
 
 // Highlight dialog CSS constants
 export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';

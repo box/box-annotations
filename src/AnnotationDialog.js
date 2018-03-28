@@ -639,28 +639,27 @@ class AnnotationDialog extends EventEmitter {
 
         // Avatar
         const avatarEl = document.createElement('div');
-        avatarEl.classList.add('profile-image-container');
+        avatarEl.classList.add(constants.CLASS_PROFILE_IMG_CONTAINER);
         avatarEl.innerHTML = avatarHtml;
         annotationEl.appendChild(avatarEl);
 
         // Creator namate & date
         const profileContainerEl = document.createElement('div');
-        profileContainerEl.classList.add('profile-container');
+        profileContainerEl.classList.add(constants.CLASS_PROFILE_CONTAINER);
         annotationEl.appendChild(profileContainerEl);
 
         const userNameEl = document.createElement('div');
-        userNameEl.classList.add('user-name');
+        userNameEl.classList.add(constants.CLASS_USER_NAME);
         userNameEl.textContent = userName;
         profileContainerEl.appendChild(userNameEl);
 
         const createdEl = document.createElement('div');
-        createdEl.classList.add('comment-date');
+        createdEl.classList.add(constants.CLASS_COMMENT_DATE);
         createdEl.textContent = created;
         profileContainerEl.appendChild(createdEl);
 
         // Comment
         const commentTextEl = document.createElement('div');
-        commentTextEl.classList.add('comment-text');
         commentTextEl.appendChild(textEl);
         annotationEl.appendChild(commentTextEl);
 
@@ -683,7 +682,7 @@ class AnnotationDialog extends EventEmitter {
         annotationEl.appendChild(deleteConfirmEl);
 
         const confirmMsgEl = document.createElement('div');
-        confirmMsgEl.classList.add('delete-confirmation-message');
+        confirmMsgEl.classList.add(constants.CLASS_DELETE_CONFIRM_MESSAGE);
         confirmMsgEl.textContent = this.localized.deleteConfirmation;
         deleteConfirmEl.appendChild(confirmMsgEl);
 
