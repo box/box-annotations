@@ -13,19 +13,38 @@ export const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
 export const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 
-// Annotations CSS constants
-export const CLASS_ANNOTATION_BUTTON_CANCEL = 'cancel-annotation-btn';
-export const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
-export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
-export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
-export const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
-export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
+// Annotation CSS constants
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
-export const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
+// export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
+
+// Dialog CSS constants
+export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
 export const CLASS_ANNOTATION_CARET = 'ba-annotation-caret';
+export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 export const CLASS_ANNOTATION_TEXTAREA = 'annotation-textarea';
 export const CLASS_BUTTON_CONTAINER = 'button-container';
-export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
+export const CLASS_ANNOTATION_BUTTON_CANCEL = 'cancel-annotation-btn';
+export const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
+export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
+export const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
+export const CLASS_TEXTAREA = 'ba-textarea';
+export const CLASS_INVALID_INPUT = 'ba-invalid-input';
+
+// Highlight dialog CSS constants
+export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
+export const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
+export const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
+export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
+export const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
+
+// Drawing dialog CSS constants
+export const CLASS_ANNOTATION_DRAWING_LABEL = 'ba-annotation-drawing-label';
+export const CLASS_ANNOTATION_DRAWING_DIALOG = 'ba-annotation-drawing-dialog';
+export const CLASS_ANNOTATION_DRAWING_BTNS = 'ba-annotation-drawing-btns';
+export const CLASS_ADD_DRAWING_BTN = 'ba-btn-annotate-draw-add';
+export const CLASS_DELETE_DRAWING_BTN = 'ba-btn-annotate-draw-delete';
+
+// Mobile dialog CSS constants
 export const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
 export const CLASS_MOBILE_ANNOTATION_DIALOG = 'ba-mobile-annotation-dialog';
 export const CLASS_MOBILE_CREATE_ANNOTATION_DIALOG = 'ba-mobile-create-annotation-dialog';
@@ -33,34 +52,30 @@ export const CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG = 'ba-mobile-create-highlight-
 export const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 export const CLASS_MOBILE_DIALOG_HEADER = 'ba-annotation-mobile-header';
 export const CLASS_DIALOG_CLOSE = 'ba-annotation-dialog-close';
-export const CLASS_TEXTAREA = 'ba-textarea';
-export const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
-export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
-export const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
-export const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';
-export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
+
+// Annotation mode CSS constants
+export const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
+export const CLASS_ANNNOTATION_MODE_BACKGROUND = 'ba-annotate-mode-background';
+export const CLASS_ANNOTATION_BUTTON_POINT_EXIT = 'ba-btn-annotate-point-exit';
+
+export const CLASS_ANNOTATION_MODE_HEADER = 'ba-mode-header';
+export const CLASS_POINT_MODE_HEADER = 'ba-point-mode-header';
+export const CLASS_DRAW_MODE_HEADER = 'ba-draw-mode-header';
+
 export const CLASS_ANNOTATION_LAYER_HIGHLIGHT = 'ba-annotation-layer-highlight';
 export const CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT = 'ba-annotation-layer-highlight-comment';
 export const CLASS_ANNOTATION_LAYER_DRAW = 'ba-annotation-layer-draw';
 export const CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS = 'ba-annotation-layer-draw-in-progress';
-export const CLASS_ANNOTATION_BUTTON_POINT_EXIT = 'ba-btn-annotate-point-exit';
+
+// Drawing CSS constants
+export const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';
 export const CLASS_ANNOTATION_BUTTON_DRAW = 'ba-btn-annotate-draw';
 export const CLASS_ANNOTATION_BUTTON_DRAW_UNDO = 'ba-btn-annotate-draw-undo';
 export const CLASS_ANNOTATION_BUTTON_DRAW_REDO = 'ba-btn-annotate-draw-redo';
 export const CLASS_ANNOTATION_BUTTON_DRAW_POST = 'ba-btn-annotate-draw-post';
 export const CLASS_ANNOTATION_BUTTON_DRAW_CANCEL = 'ba-btn-annotate-draw-cancel';
-export const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
-export const CLASS_ANNOTATION_DRAWING_LABEL = 'ba-annotation-drawing-label';
-export const CLASS_ANNOTATION_DRAWING_DIALOG = 'ba-annotation-drawing-dialog';
-export const CLASS_ANNOTATION_DRAWING_BTNS = 'ba-annotation-drawing-btns';
-export const CLASS_ANNOTATION_MODE_HEADER = 'ba-mode-header';
-export const CLASS_POINT_MODE_HEADER = 'ba-point-mode-header';
-export const CLASS_DRAW_MODE_HEADER = 'ba-draw-mode-header';
-export const CLASS_ANNNOTATION_MODE_BACKGROUND = 'ba-annotate-mode-background';
-export const CLASS_ADD_DRAWING_BTN = 'ba-btn-annotate-draw-add';
-export const CLASS_DELETE_DRAWING_BTN = 'ba-btn-annotate-draw-delete';
-export const CLASS_INVALID_INPUT = 'ba-invalid-input';
 
+// Data types
 export const DATA_TYPE_ANNOTATION_DIALOG = 'annotation-dialog';
 export const DATA_TYPE_ANNOTATION_INDICATOR = 'annotation-indicator';
 export const DATA_TYPE_HIGHLIGHT = 'highlight-btn';
