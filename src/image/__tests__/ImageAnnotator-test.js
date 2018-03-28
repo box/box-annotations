@@ -3,7 +3,7 @@ import ImageAnnotator from '../ImageAnnotator';
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
 import * as imageUtil from '../imageUtil';
-import { TYPES, ANNOTATOR_EVENT, SELECTOR_ANNOTATION_POINT_BUTTON } from '../../constants';
+import { TYPES, ANNOTATOR_EVENT } from '../../constants';
 
 let annotator;
 const sandbox = sinon.sandbox.create();

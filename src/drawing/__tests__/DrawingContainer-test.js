@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import DrawingContainer from '../DrawingContainer';
 
 let drawingContainer;
@@ -111,7 +112,8 @@ describe('drawing/DrawingContainer', () => {
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter];
-            drawingContainer.applyToItems((item) => (item.count += 1));
+            // eslint-disable-next-line
+            drawingContainer.applyToItems(item => (item.count += 1));
 
             expect(counter.count).to.equal(drawingContainer.undoStack.length);
         });
@@ -122,7 +124,8 @@ describe('drawing/DrawingContainer', () => {
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter, counter];
-            drawingContainer.applyToItems((item) => (item.count += 1), true);
+            // eslint-disable-next-line
+            drawingContainer.applyToItems(item => (item.count += 1), true);
 
             expect(counter.count).to.equal(drawingContainer.undoStack.length + drawingContainer.redoStack.length);
         });

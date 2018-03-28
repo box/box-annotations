@@ -33,6 +33,7 @@ describe('AnnotationService', () => {
         });
 
         it('should (almost always) return unique GUIDs', () => {
+            // eslint-disable-next-line no-self-compare
             expect(AnnotationService.generateID() === AnnotationService.generateID()).to.be.false;
         });
     });
@@ -268,7 +269,7 @@ describe('AnnotationService', () => {
             sandbox.stub(annotationService, 'read').returns(Promise.resolve(threads));
             sandbox.stub(annotationService, 'createThreadMap').returns(threads);
 
-            return annotationService.getThreadMap(2).then((threadMap) => {
+            return annotationService.getThreadMap(2).then(() => {
                 expect(annotationService.createThreadMap).to.be.called;
             });
         });

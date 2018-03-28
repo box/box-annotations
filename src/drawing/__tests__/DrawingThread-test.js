@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
 import AnnotationService from '../../AnnotationService';
-import { STATES, THREAD_EVENT } from '../../constants';
+import { STATES } from '../../constants';
 
 let thread;
 let stubs;

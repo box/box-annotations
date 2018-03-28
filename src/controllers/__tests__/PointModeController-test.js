@@ -1,17 +1,12 @@
-import EventEmitter from 'events';
+/* eslint-disable no-unused-expressions */
 import PointModeController from '../PointModeController';
 import AnnotationModeController from '../AnnotationModeController';
-import CreateAnnotationDialog from '../../CreateAnnotationDialog';
 import * as util from '../../util';
 import {
-    CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
-    ANNOTATOR_EVENT,
     THREAD_EVENT,
-    STATES,
     CONTROLLER_EVENT,
-    CREATE_EVENT,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     SELECTOR_POINT_MODE_HEADER
 } from '../../constants';

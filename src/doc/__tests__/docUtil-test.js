@@ -1,11 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
-import {
-    SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CONTAINER,
-    CLASS_ANNOTATION_DIALOG,
-    DATA_TYPE_ANNOTATION_DIALOG
-} from '../../constants';
+import { SELECTOR_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, DATA_TYPE_ANNOTATION_DIALOG } from '../../constants';
 import * as util from '../../util';
 
 const sandbox = sinon.sandbox.create();
@@ -339,8 +334,10 @@ describe('doc/docUtil', () => {
     });
 
     describe('getDialogCoordsFromRange()', () => {
-        let range, parentContainer;
+        let range;
+        let parentContainer;
         const text = 'This is some text';
+
         beforeEach(() => {
             parentContainer = document.createElement('div');
             parentContainer.innerHTML = text;

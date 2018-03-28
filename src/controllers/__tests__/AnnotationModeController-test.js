@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-expressions */
 import rbush from 'rbush';
 import EventEmitter from 'events';
 import AnnotationModeController from '../AnnotationModeController';
-import DocDrawingThread from '../../doc/DocDrawingThread';
 import * as util from '../../util';
 import {
     CLASS_HIDDEN,
@@ -53,12 +53,12 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('init()', () => {
         it('should init controller', () => {
-            sandbox.stub(controller, 'showButton');
+            stubs.showButton = sandbox.stub(controller, 'showButton');
             controller.init({
                 modeButton: {},
                 permissions: { canAnnotate: true }
             });
-            expect(controller.showButton).to.be.called;
+            expect(stubs.showButton).to.be.called;
         });
 
         it('should not show modeButton if none provided', () => {
@@ -79,6 +79,7 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('destroy()', () => {
         it('should destroy all the threads in controller', () => {
+            // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
             controller.registerThread(stubs.thread);
 
@@ -289,6 +290,7 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         it('should internally keep track of the registered thread', () => {
+            // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
             const pageThreads = controller.threads[1];
             expect(pageThreads.collides(boundingBox)).to.be.false;
@@ -321,6 +323,7 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         it('should internally keep track of the registered thread', () => {
+            // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
             const pageThreads = controller.threads[1];
 
@@ -437,7 +440,7 @@ describe('controllers/AnnotationModeController', () => {
             const fn = 'fn';
 
             controller.pushElementHandler(element, type, fn);
-            const handlers = controller.handlers;
+            const { handlers } = controller;
             const lengthAfter = handlers.length;
             expect(lengthAfter).to.equal(lengthBefore + 1);
             expect(handlers[handlers.length - 1]).to.deep.equal({
@@ -491,7 +494,9 @@ describe('controllers/AnnotationModeController', () => {
 
         it('should render the annotations on every page', () => {
             controller.threads = {
+                // eslint-disable-next-line new-cap
                 1: new rbush(),
+                // eslint-disable-next-line new-cap
                 2: new rbush()
             };
             controller.threads[1].insert(stubs.thread);

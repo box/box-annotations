@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
 import * as util from '../../util';
 import DocDrawingThread from '../DocDrawingThread';
 import DocDrawingDialog from '../DocDrawingDialog';
 import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
-import { DRAW_STATES, THREAD_EVENT, STATES } from '../../constants';
+import { DRAW_STATES, STATES } from '../../constants';
 
 let thread;
 let stubs;
@@ -48,6 +49,7 @@ describe('doc/DocDrawingThread', () => {
                 addCoordinate: sandbox.stub(),
                 isEmpty: sandbox.stub()
             };
+            const { location } = thread;
 
             sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([location.x, location.y]);
         });
@@ -175,7 +177,7 @@ describe('doc/DocDrawingThread', () => {
         it('should emit an annotationevent of type pagechanged and stop a pending drawing', (done) => {
             sandbox.stub(thread, 'handleStop');
             const location = 'location';
-            thread.addListener('threadevent', (data) => {
+            thread.addListener('threadevent', () => {
                 done();
             });
 

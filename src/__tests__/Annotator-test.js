@@ -3,22 +3,7 @@ import EventEmitter from 'events';
 import Annotator from '../Annotator';
 import * as util from '../util';
 import AnnotationService from '../AnnotationService';
-import {
-    STATES,
-    TYPES,
-    CLASS_ANNOTATION_DRAW_MODE,
-    CLASS_ANNOTATION_MODE,
-    CLASS_ACTIVE,
-    CLASS_HIDDEN,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    SELECTOR_ANNOTATION_DRAWING_HEADER,
-    SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    ANNOTATOR_EVENT,
-    THREAD_EVENT,
-    CONTROLLER_EVENT
-} from '../constants';
+import { STATES, TYPES, ANNOTATOR_EVENT, THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
 
 let annotator;
 let stubs = {};
@@ -210,7 +195,7 @@ describe('Annotator', () => {
                     expect(annotator.render).to.be.called;
                     expect(annotator.emit).to.not.be.called;
                 })
-                .catch((err) => {
+                .catch(() => {
                     sinon.assert.failException;
                 });
         });

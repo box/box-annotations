@@ -134,7 +134,7 @@ describe('doc/DocHighlightDialog', () => {
         });
 
         it('should not modify mobile ui there is no mobile header present', () => {
-            const headerQuery = sandbox
+            sandbox
                 .stub(dialog.element, 'querySelector')
                 .withArgs('.ba-annotation-mobile-header')
                 .returns(null);
@@ -146,12 +146,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should show the mobile header', () => {
             dialog.isMobile = true;
-            const headerEl = {
-                classList: {
-                    remove: sandbox.stub()
-                }
-            };
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
+            sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
             dialog.postAnnotation('Drink full and descend.');
         });
 
@@ -162,7 +157,7 @@ describe('doc/DocHighlightDialog', () => {
                     remove: sandbox.stub()
                 }
             };
-            const headerQuery = sandbox
+            sandbox
                 .stub(dialog.element, 'querySelector')
                 .withArgs('.ba-annotation-mobile-header')
                 .returns(headerEl);

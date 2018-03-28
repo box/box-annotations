@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import rbush from 'rbush';
 import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
@@ -5,15 +6,13 @@ import * as util from '../../util';
 import {
     TYPES,
     STATES,
-    THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
-    CLASS_ACTIVE,
-    CONTROLLER_EVENT
+    CLASS_ACTIVE
 } from '../../constants';
 
 let controller;
@@ -306,6 +305,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should delete a non-pending thread', () => {
             stubs.thread.state = 'idle';
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
@@ -319,6 +319,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should not delete a thread if the dialog no longer exists', () => {
             stubs.thread.dialog = null;
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
@@ -332,6 +333,7 @@ describe('controllers/DrawingModeController', () => {
 
     describe('handleSelection()', () => {
         beforeEach(() => {
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             stubs.intersecting = sandbox.stub(controller, 'getIntersectingThreads').returns([stubs.thread]);

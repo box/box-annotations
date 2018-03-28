@@ -4,13 +4,7 @@ import DocHighlightThread from '../DocHighlightThread';
 import AnnotationService from '../../AnnotationService';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import {
-    STATES,
-    TYPES,
-    HIGHLIGHT_FILL,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_ANNOTATION_DIALOG
-} from '../../constants';
+import { STATES, TYPES, HIGHLIGHT_FILL } from '../../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();

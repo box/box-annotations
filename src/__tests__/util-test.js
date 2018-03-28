@@ -47,7 +47,6 @@ import {
     STATES,
     TYPES,
     CLASS_ANNOTATION_COMMENT_TEXT,
-    SELECTOR_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_CARET,
     CLASS_ACTIVE,
@@ -509,13 +508,12 @@ describe('util', () => {
 
     describe('eventToLocationHandler()', () => {
         let getLocation;
-        let annotator;
         let callback;
         let locationHandler;
         let event;
 
         beforeEach(() => {
-            getLocation = (event) => 'location';
+            getLocation = () => 'location';
             callback = sandbox.stub();
             locationHandler = eventToLocationHandler(getLocation, callback);
             event = {

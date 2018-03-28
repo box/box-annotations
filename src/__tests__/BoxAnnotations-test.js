@@ -3,8 +3,6 @@ import BoxAnnotations from '../BoxAnnotations';
 import { TYPES } from '../constants';
 import * as util from '../util';
 import DrawingModeController from '../controllers/DrawingModeController';
-import PointModeController from '../controllers/PointModeController';
-import HighlightModeController from '../controllers/HighlightModeController';
 
 let loader;
 let stubs;

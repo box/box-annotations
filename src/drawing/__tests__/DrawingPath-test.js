@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import DrawingPath from '../DrawingPath';
 
 let drawingPath;
@@ -156,6 +157,8 @@ describe('drawing/DrawingPath', () => {
     describe('generateBrowserPath()', () => {
         it('should generate the browser path', () => {
             const lengthBefore = drawingPath.browserPath.length;
+
+            // eslint-disable-next-line require-jsdoc
             const transform = (coord) => {
                 return {
                     x: coord.x + 1,
@@ -171,6 +174,8 @@ describe('drawing/DrawingPath', () => {
             drawingPath.generateBrowserPath(transform);
 
             const lengthAfter = drawingPath.browserPath.length;
+
+            // eslint-disable-next-line require-jsdoc
             const isBrowserCoord = (item) => item.x === documentCoord.x + 1 && item.y === documentCoord.y + 1;
             expect(lengthBefore).to.be.lessThan(lengthAfter);
             expect(drawingPath.browserPath.find(isBrowserCoord)).to.not.be.undefined;

@@ -3,7 +3,6 @@ import rangy from 'rangy';
 import Annotator from '../../Annotator';
 import Annotation from '../../Annotation';
 import AnnotationThread from '../../AnnotationThread';
-import HighlightModeController from '../../controllers/HighlightModeController';
 import DocAnnotator from '../DocAnnotator';
 import DocHighlightThread from '../DocHighlightThread';
 import DocDrawingThread from '../DocDrawingThread';
@@ -18,10 +17,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
-    THREAD_EVENT,
     CONTROLLER_EVENT,
-    CREATE_EVENT,
-    ANNOTATOR_TYPE
+    CREATE_EVENT
 } from '../../constants';
 
 let annotator;
@@ -704,7 +701,6 @@ describe('doc/DocAnnotator', () => {
             annotator.drawEnabled = true;
 
             const docListen = sandbox.spy(document, 'addEventListener');
-            const annotatedElementListen = sandbox.spy(annotator.annotatedElement, 'addEventListener');
 
             annotator.bindDOMListeners();
             expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
@@ -722,7 +718,6 @@ describe('doc/DocAnnotator', () => {
             annotator.drawEnabled = true;
 
             const docListen = sandbox.spy(document, 'addEventListener');
-            const annotatedElementListen = sandbox.spy(annotator.annotatedElement, 'addEventListener');
 
             annotator.bindDOMListeners();
             expect(docListen).to.not.be.calledWith('selectionchange', sinon.match.func);
@@ -799,7 +794,6 @@ describe('doc/DocAnnotator', () => {
             annotator.isMobile = true;
             annotator.hasTouch = false;
             const docStopListen = sandbox.spy(document, 'removeEventListener');
-            const annotatedElementStopListen = sandbox.spy(annotator.annotatedElement, 'removeEventListener');
 
             annotator.unbindDOMListeners();
             expect(docStopListen).to.be.calledWith('selectionchange', sinon.match.func);
@@ -1017,6 +1011,7 @@ describe('doc/DocAnnotator', () => {
             let timer = 0;
             window.performance = window.performance || { now: () => {} };
             sandbox.stub(window.performance, 'now').callsFake(() => {
+                // eslint-disable-next-line no-return-assign
                 return (timer += 500);
             });
 
@@ -1251,7 +1246,6 @@ describe('doc/DocAnnotator', () => {
 
     describe('highlightCreateHandler()', () => {
         let selection;
-        let createDialog;
         let pageInfo;
 
         beforeEach(() => {
@@ -1551,7 +1545,6 @@ describe('doc/DocAnnotator', () => {
         const mode = 'something';
 
         beforeEach(() => {
-            const selection = document.getSelection();
             sandbox.stub(annotator, 'toggleAnnotationMode');
             annotator.createHighlightDialog = {
                 isVisible: true,

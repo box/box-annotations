@@ -1,18 +1,13 @@
 /* eslint-disable no-unused-expressions */
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import {
-    CLASS_ADD_HIGHLIGHT_BTN,
-    CLASS_ADD_HIGHLIGHT_COMMENT_BTN,
     CLASS_MOBILE_CREATE_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_CARET,
     CLASS_HIDDEN,
     CREATE_EVENT
 } from '../constants';
 import CommentBox from '../CommentBox';
 import * as util from '../util';
-
-const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 
 const sandbox = sinon.sandbox.create();
 let dialog;
@@ -25,7 +20,7 @@ const stubs = {};
 
 describe('CreateAnnotationDialog', () => {
     beforeEach(() => {
-        const parentEl = document.createElement('div');
+        parentEl = document.createElement('div');
         parentEl.classList.add('bp-create-dialog-container');
         dialog = new CreateAnnotationDialog(parentEl, {
             isMobile: true,
@@ -215,7 +210,7 @@ describe('CreateAnnotationDialog', () => {
             dialog.isMobile = true;
             dialog.show(document.createElement('div'));
 
-            const stubs = [
+            const eventStub = [
                 {
                     stub: sandbox.stub(dialog.containerEl, 'removeEventListener'),
                     args: ['touchend', dialog.stopPropagation]
@@ -224,7 +219,7 @@ describe('CreateAnnotationDialog', () => {
 
             dialog.destroy();
 
-            stubs.forEach((stub) => {
+            eventStub.forEach((stub) => {
                 expect(stub.stub).to.be.calledWith(...stub.args);
             });
         });
