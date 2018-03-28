@@ -1,9 +1,6 @@
 import DrawingThread from '../DrawingThread';
 import AnnotationService from '../../AnnotationService';
-import {
-    STATES,
-    THREAD_EVENT
-} from '../../constants'
+import { STATES, THREAD_EVENT } from '../../constants';
 
 let thread;
 let stubs;
@@ -24,7 +21,7 @@ describe('drawing/DrawingThread', () => {
                 fileId: 1,
                 token: 'someToken',
                 canAnnotate: true,
-                user: 'completelyRealUser',
+                user: 'completelyRealUser'
             }),
             fileVersionId: 1,
             location: {},
@@ -61,7 +58,7 @@ describe('drawing/DrawingThread', () => {
 
             expect(window.cancelAnimationFrame).to.be.calledWith(1);
             expect(thread.reset).to.be.called;
-        })
+        });
     });
 
     describe('reset()', () => {
@@ -70,7 +67,7 @@ describe('drawing/DrawingThread', () => {
             thread.reset();
             expect(thread.clearBoundary).to.be.called;
         });
-    })
+    });
 
     describe('deleteThread()', () => {
         it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
@@ -86,7 +83,6 @@ describe('drawing/DrawingThread', () => {
             };
 
             thread.annotations = { '123abc': {} };
-
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).to.be.called;
@@ -119,7 +115,7 @@ describe('drawing/DrawingThread', () => {
                 lineWidth: thread.drawingContext.lineWidth
             });
             expect(thread.drawingContext.lineWidth % config.scale).to.equal(0);
-        })
+        });
     });
 
     describe('render()', () => {
@@ -318,7 +314,7 @@ describe('drawing/DrawingThread', () => {
                 stroke: sandbox.stub(),
                 restore: sandbox.stub()
             };
-            stubs.getBrowserRectangularBoundary.returns([1,2,5,6]);
+            stubs.getBrowserRectangularBoundary.returns([1, 2, 5, 6]);
             thread.location = { page: 1 };
 
             thread.drawBoundary();
@@ -329,7 +325,7 @@ describe('drawing/DrawingThread', () => {
             expect(thread.drawingContext.rect).to.be.called;
             expect(thread.drawingContext.stroke).to.be.called;
             expect(thread.drawingContext.restore).to.be.called;
-        })
+        });
     });
 
     describe('regenerateBoundary()', () => {

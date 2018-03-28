@@ -19,19 +19,19 @@ describe('drawing/DrawingContainer', () => {
 
     describe('destroy()', () => {
         it('should clear the undo and redo stack', () => {
-            drawingContainer.redoStack = [1,2,3];
-            drawingContainer.undoStack = [1,2,3];
+            drawingContainer.redoStack = [1, 2, 3];
+            drawingContainer.undoStack = [1, 2, 3];
 
             drawingContainer.destroy();
 
-            expect(drawingContainer.undoStack.length).to.equal(0)
-            expect(drawingContainer.redoStack.length).to.equal(0)
+            expect(drawingContainer.undoStack.length).to.equal(0);
+            expect(drawingContainer.redoStack.length).to.equal(0);
         });
     });
 
     describe('insert()', () => {
         it('should insert an item into the undoStack and clear the redo stack', () => {
-            drawingContainer.redoStack = [1,2,3];
+            drawingContainer.redoStack = [1, 2, 3];
             expect(drawingContainer.undoStack.length).to.equal(0);
             drawingContainer.insert(4);
             expect(drawingContainer.undoStack.length).to.equal(1);
@@ -47,8 +47,8 @@ describe('drawing/DrawingContainer', () => {
         });
 
         it('should move an item from the top of the undo stack to the top of the redo stack', () => {
-            drawingContainer.undoStack = [1,2,3];
-            drawingContainer.redoStack = [4,5,6];
+            drawingContainer.undoStack = [1, 2, 3];
+            drawingContainer.redoStack = [4, 5, 6];
             const lengthBefore = drawingContainer.undoStack.length;
             const topUndo = drawingContainer.undoStack[lengthBefore - 1];
             const val = drawingContainer.undo();
@@ -68,8 +68,8 @@ describe('drawing/DrawingContainer', () => {
         });
 
         it('should move an item from the top of the redo stack to the top of the undo stack', () => {
-            drawingContainer.undoStack = [1,2,3];
-            drawingContainer.redoStack = [4,5,6];
+            drawingContainer.undoStack = [1, 2, 3];
+            drawingContainer.redoStack = [4, 5, 6];
             const lengthBefore = drawingContainer.redoStack.length;
             const topRedo = drawingContainer.redoStack[lengthBefore - 1];
             const val = drawingContainer.redo();
@@ -83,8 +83,8 @@ describe('drawing/DrawingContainer', () => {
 
     describe('getNumberOfItems()', () => {
         it('should return the number of items on the undo stack and redo stack', () => {
-            drawingContainer.undoStack = [1,2,3,4];
-            drawingContainer.redoStack = [1,2];
+            drawingContainer.undoStack = [1, 2, 3, 4];
+            drawingContainer.redoStack = [1, 2];
             const val = drawingContainer.getNumberOfItems();
 
             expect(val.undoCount).to.equal(drawingContainer.undoStack.length);
@@ -94,8 +94,8 @@ describe('drawing/DrawingContainer', () => {
 
     describe('getItems()', () => {
         it('should get the items on the undoStack', () => {
-            drawingContainer.undoStack = [1,2,3,4];
-            drawingContainer.redoStack = [1,2];
+            drawingContainer.undoStack = [1, 2, 3, 4];
+            drawingContainer.redoStack = [1, 2];
             const val = drawingContainer.getItems();
 
             expect(val).to.not.deep.equal(drawingContainer.redoStack);
@@ -111,7 +111,7 @@ describe('drawing/DrawingContainer', () => {
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter];
-            drawingContainer.applyToItems((item) => item.count = item.count + 1);
+            drawingContainer.applyToItems((item) => (item.count += 1));
 
             expect(counter.count).to.equal(drawingContainer.undoStack.length);
         });
@@ -122,7 +122,7 @@ describe('drawing/DrawingContainer', () => {
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter, counter];
-            drawingContainer.applyToItems((item) => item.count = item.count + 1, true);
+            drawingContainer.applyToItems((item) => (item.count += 1), true);
 
             expect(counter.count).to.equal(drawingContainer.undoStack.length + drawingContainer.redoStack.length);
         });
@@ -154,14 +154,14 @@ describe('drawing/DrawingContainer', () => {
                 minY: 6,
                 maxX: 8,
                 maxY: 9,
-                path: [1,2,3,4]
+                path: [1, 2, 3, 4]
             };
             const path2 = {
                 minX: 3,
                 minY: 7,
                 maxX: 14,
                 maxY: 8,
-                path: [1,2,3]
+                path: [1, 2, 3]
             };
             getItems.returns([path1, path2]);
 
@@ -172,10 +172,7 @@ describe('drawing/DrawingContainer', () => {
                 maxX: path2.maxX,
                 minY: path1.minY,
                 maxY: path1.maxY,
-                paths: [
-                    { path: path1.path },
-                    { path: path2.path }
-                ]
+                paths: [{ path: path1.path }, { path: path2.path }]
             });
         });
     });

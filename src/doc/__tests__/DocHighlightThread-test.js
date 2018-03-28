@@ -539,9 +539,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
             expect(pageElStub).to.be.called;
@@ -559,9 +557,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(true);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
             expect(pageElStub).to.be.called;
@@ -579,9 +575,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
             const pointInPolyStub = sandbox.stub(docUtil, 'isPointInPolyOpt');
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
@@ -607,10 +601,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should set the min/max x/y values for thread location', () => {
             thread.location = {
-                quadPoints: [
-                    [1, 1, 1, 1, 1, 1, 1, 1],
-                    [10, 10, 10, 10, 10, 10, 10, 10]
-                ]
+                quadPoints: [[1, 1, 1, 1, 1, 1, 1, 1], [10, 10, 10, 10, 10, 10, 10, 10]]
             };
             thread.regenerateBoundary();
             expect(thread.minX).to.equal(1);

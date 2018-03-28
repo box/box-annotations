@@ -60,7 +60,7 @@ import {
 const DIALOG_WIDTH = 81;
 
 const sandbox = sinon.sandbox.create();
-let stubs = {};
+const stubs = {};
 
 describe('util', () => {
     let childEl;
@@ -515,7 +515,7 @@ describe('util', () => {
         let event;
 
         beforeEach(() => {
-            getLocation = ((event) => 'location');
+            getLocation = (event) => 'location';
             callback = sandbox.stub();
             locationHandler = eventToLocationHandler(getLocation, callback);
             event = {
@@ -553,12 +553,12 @@ describe('util', () => {
             prevDefAndStopProp(event);
             expect(event.preventDefault).to.be.called;
             expect(event.stopPropagation).to.be.called;
-        })
+        });
     });
 
     describe('createLocation()', () => {
         it('should create a location object without dimensions', () => {
-            const location = createLocation(1,2, undefined);
+            const location = createLocation(1, 2, undefined);
             expect(location).to.deep.equal({
                 x: 1,
                 y: 2
@@ -567,7 +567,7 @@ describe('util', () => {
 
         it('should create a location object with dimensions', () => {
             const dimensionalObj = 'dimensional object';
-            const location = createLocation(1,2, dimensionalObj);
+            const location = createLocation(1, 2, dimensionalObj);
             expect(location).to.deep.equal({
                 x: 1,
                 y: 2,
@@ -582,47 +582,47 @@ describe('util', () => {
         });
 
         it('should return empty when modifier and key are same', () => {
-            expect( decodeKeydown({ key: 'Control', ctrlKey: true })).to.equal('');
+            expect(decodeKeydown({ key: 'Control', ctrlKey: true })).to.equal('');
         });
 
         it('should return correct with ctrl modifier', () => {
-            expect( decodeKeydown({ key: '1', ctrlKey: true })).to.equal('Control+1');
+            expect(decodeKeydown({ key: '1', ctrlKey: true })).to.equal('Control+1');
         });
 
         it('should return correct with shift modifier', () => {
-            expect( decodeKeydown({ key: '1', shiftKey: true })).to.equal('Shift+1');
+            expect(decodeKeydown({ key: '1', shiftKey: true })).to.equal('Shift+1');
         });
 
         it('should return correct with meta modifier', () => {
-            expect( decodeKeydown({ key: '1', metaKey: true })).to.equal('Meta+1');
+            expect(decodeKeydown({ key: '1', metaKey: true })).to.equal('Meta+1');
         });
 
         it('should return space key', () => {
-            expect( decodeKeydown({ key: ' ' })).to.equal('Space');
+            expect(decodeKeydown({ key: ' ' })).to.equal('Space');
         });
 
         it('should return right arrow key', () => {
-            expect( decodeKeydown({ key: 'Right' })).to.equal('ArrowRight');
+            expect(decodeKeydown({ key: 'Right' })).to.equal('ArrowRight');
         });
 
         it('should return left arrow key', () => {
-            expect( decodeKeydown({ key: 'Left' })).to.equal('ArrowLeft');
+            expect(decodeKeydown({ key: 'Left' })).to.equal('ArrowLeft');
         });
 
         it('should return up arrow key', () => {
-            expect( decodeKeydown({ key: 'Up' })).to.equal('ArrowUp');
+            expect(decodeKeydown({ key: 'Up' })).to.equal('ArrowUp');
         });
 
         it('should return down arrow key', () => {
-            expect( decodeKeydown({ key: 'Down' })).to.equal('ArrowDown');
+            expect(decodeKeydown({ key: 'Down' })).to.equal('ArrowDown');
         });
 
         it('should return esc key', () => {
-            expect( decodeKeydown({ key: 'U+001B' })).to.equal('Escape');
+            expect(decodeKeydown({ key: 'U+001B' })).to.equal('Escape');
         });
 
         it('should decode correct UTF8 key', () => {
-            expect( decodeKeydown({ key: 'U+0041' })).to.equal('A');
+            expect(decodeKeydown({ key: 'U+0041' })).to.equal('A');
         });
     });
 
@@ -712,7 +712,6 @@ describe('util', () => {
     });
 
     describe('createCommentTextNode()', () => {
-
         it('should add a <br> for each newline', () => {
             const text = `
 
@@ -726,13 +725,12 @@ describe('util', () => {
         });
 
         it('should add a <p> containing text for mixed newline/text', () => {
-            const text = `some breaks \n and \n text`;
+            const text = 'some breaks \n and \n text';
             const textEl = createCommentTextNode(text);
 
             const paras = textEl.querySelectorAll('p');
             expect(paras.length === 3).to.be.true;
         });
-
 
         it('should use the text as textContent if no newlines', () => {
             const text = 'no breaks and some text';
@@ -817,23 +815,27 @@ describe('util', () => {
     describe('hasValidBoundaryCoordinates()', () => {
         it('return true only if boundary coordinates are valid', () => {
             expect(hasValidBoundaryCoordinates({})).to.be.false;
-            expect(hasValidBoundaryCoordinates({
-                minX: NaN,
-                minY: 1,
-                maxX: 1,
-                maxY: 1
-            })).to.be.false;
-            expect(hasValidBoundaryCoordinates({
-                minX: 1,
-                minY: 1,
-                maxX: 1,
-                maxY: 1
-            })).to.be.true;
+            expect(
+                hasValidBoundaryCoordinates({
+                    minX: NaN,
+                    minY: 1,
+                    maxX: 1,
+                    maxY: 1
+                })
+            ).to.be.false;
+            expect(
+                hasValidBoundaryCoordinates({
+                    minX: 1,
+                    minY: 1,
+                    maxX: 1,
+                    maxY: 1
+                })
+            ).to.be.true;
         });
 
         it('should return true for highlight annotations', () => {
             expect(hasValidBoundaryCoordinates({ type: TYPES.highlight })).to.be.true;
-        })
+        });
     });
 
     describe('generateMobileDialogEl()', () => {

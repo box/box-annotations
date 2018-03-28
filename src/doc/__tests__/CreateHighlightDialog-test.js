@@ -91,7 +91,7 @@ describe('doc/CreateHighlightDialog', () => {
             stubs.parentMock.expects('appendChild').never();
             dialog.show({}, {});
             expect(stubs.pageInfo).to.be.called;
-        })
+        });
 
         it('should set the parentEl to a new reference, via setParentEl(), if a new one is supplied', () => {
             const newParent = document.createElement('span');
@@ -129,7 +129,7 @@ describe('doc/CreateHighlightDialog', () => {
 
         it('should position the dialog according to the bottom right corner of the selection', () => {
             stubs.pageInfo.returns({ pageEl: document.createElement('div') });
-            stubs.getCoords.returns({x: 1, y: 2});
+            stubs.getCoords.returns({ x: 1, y: 2 });
             dialog.setPosition(stubs.selection);
             expect(stubs.update).to.be.called;
         });

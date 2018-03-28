@@ -76,11 +76,13 @@ describe('image/ImageAnnotator', () => {
             annotator.hasTouch = false;
             imageEl = annotator.annotatedElement.querySelector('img');
             event = {
-                targetTouches: [{
-                    clientX: x,
-                    clientY: y,
-                    target: imageEl
-                }]
+                targetTouches: [
+                    {
+                        clientX: x,
+                        clientY: y,
+                        target: imageEl
+                    }
+                ]
             };
         });
 
@@ -114,9 +116,11 @@ describe('image/ImageAnnotator', () => {
             expect(location).to.be.null;
 
             event = {
-                targetTouches: [{
-                    target: imageEl
-                }]
+                targetTouches: [
+                    {
+                        target: imageEl
+                    }
+                ]
             };
             expect(annotator.getLocationFromEvent(event)).to.be.null;
         });
@@ -211,7 +215,7 @@ describe('image/ImageAnnotator', () => {
                 getButton: () => {}
             };
             stubs.controllerMock = sandbox.mock(stubs.controller);
-            annotator.modeControllers['point'] = stubs.controller;
+            annotator.modeControllers.point = stubs.controller;
         });
 
         afterEach(() => {

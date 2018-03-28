@@ -104,7 +104,7 @@ describe('controllers/AnnotationModeController', () => {
 
             expect(controller.getButton('.class')).to.not.be.null;
         });
-    })
+    });
 
     describe('showButton()', () => {
         beforeEach(() => {
@@ -212,7 +212,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.buttonEl.classList.add(CLASS_ACTIVE);
             expect(controller.isEnabled()).to.be.true;
         });
-    })
+    });
 
     describe('bindListeners()', () => {
         it('should bind mode listeners', () => {
@@ -378,7 +378,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.localized = {
                 deleteError: 'delete error',
                 createError: 'create error'
-            }
+            };
         });
 
         it('should mark hadPendingThreads as false and emit event on thread save or cancel', () => {
@@ -439,7 +439,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.pushElementHandler(element, type, fn);
             const handlers = controller.handlers;
             const lengthAfter = handlers.length;
-            expect(lengthAfter).to.equal(lengthBefore+1);
+            expect(lengthAfter).to.equal(lengthBefore + 1);
             expect(handlers[handlers.length - 1]).to.deep.equal({
                 eventObj: element,
                 func: fn,

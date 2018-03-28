@@ -63,7 +63,7 @@ describe('controllers/PointModeController', () => {
             const blankDiv = document.createElement('div');
             stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
             sandbox.stub(controller, 'getButton').returns(blankDiv);
-            controller['localized'] = { closeButton: 'Close' };
+            controller.localized = { closeButton: 'Close' };
 
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);

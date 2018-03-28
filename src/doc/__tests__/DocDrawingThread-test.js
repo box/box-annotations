@@ -4,11 +4,7 @@ import DocDrawingThread from '../DocDrawingThread';
 import DocDrawingDialog from '../DocDrawingDialog';
 import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
-import {
-    DRAW_STATES,
-    THREAD_EVENT,
-    STATES
-} from '../../constants';
+import { DRAW_STATES, THREAD_EVENT, STATES } from '../../constants';
 
 let thread;
 let stubs;
@@ -56,14 +52,14 @@ describe('doc/DocDrawingThread', () => {
             sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([location.x, location.y]);
         });
 
-        it("should not add a coordinate when the state is not 'draw'", () => {
+        it('should not add a coordinate when the state is not \'draw\'', () => {
             thread.drawingFlag = DRAW_STATES.idle;
             thread.handleMove(thread.location);
 
             expect(thread.pendingPath.addCoordinate).to.not.be.called;
         });
 
-        it("should add a coordinate frame when the state is 'draw'", () => {
+        it('should add a coordinate frame when the state is \'draw\'', () => {
             sandbox.stub(thread, 'hasPageChanged').returns(false);
             thread.handleMove(thread.location);
 
@@ -82,15 +78,14 @@ describe('doc/DocDrawingThread', () => {
             sandbox.stub(thread, 'hasPageChanged').returns(true);
             sandbox.stub(thread, 'onPageChange');
 
-            thread.handleMove({page: 1});
+            thread.handleMove({ page: 1 });
             expect(thread.onPageChange).to.be.called;
-        })
+        });
     });
-
 
     describe('handleStart()', () => {
         beforeEach(() => {
-            const context = "I'm a real context";
+            const context = 'I\'m a real context';
 
             sandbox.stub(window, 'requestAnimationFrame');
             sandbox.stub(thread, 'checkAndHandleScaleUpdate');
@@ -131,7 +126,6 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.checkAndHandleScaleUpdate).to.not.be.called;
             expect(thread.state).to.equal(STATES.inactive);
         });
-
     });
 
     describe('handleStop()', () => {
@@ -151,7 +145,7 @@ describe('doc/DocDrawingThread', () => {
             };
         });
 
-        it("should set the state to 'idle' and clear the pendingPath", () => {
+        it('should set the state to \'idle\' and clear the pendingPath', () => {
             thread.handleStop();
 
             expect(stubs.emitAvailableActions).to.be.called;
@@ -170,7 +164,7 @@ describe('doc/DocDrawingThread', () => {
                 removeAllListeners: () => {},
                 destroy: () => {},
                 isVisible: () => false
-            }
+            };
 
             thread.handleStop();
             expect(stubs.createDialog).to.not.be.called;
@@ -178,7 +172,7 @@ describe('doc/DocDrawingThread', () => {
     });
 
     describe('onPageChange()', () => {
-        it('should emit an annotationevent of type pagechanged and stop a pending drawing', (done) =>{
+        it('should emit an annotationevent of type pagechanged and stop a pending drawing', (done) => {
             sandbox.stub(thread, 'handleStop');
             const location = 'location';
             thread.addListener('threadevent', (data) => {
@@ -229,14 +223,14 @@ describe('doc/DocDrawingThread', () => {
                 y: 2
             };
 
-            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([3,4]);
+            sandbox.stub(docUtil, 'getBrowserCoordinatesFromLocation').returns([3, 4]);
             const returnValue = thread.reconstructBrowserCoordFromLocation(documentLocation);
 
             expect(returnValue).to.deep.equal({
                 x: 3,
                 y: 4
             });
-        })
+        });
     });
 
     describe('saveAnnotation()', () => {
@@ -320,7 +314,7 @@ describe('doc/DocDrawingThread', () => {
                 page: 2
             };
             const location = {
-                page: (thread.location.page + 1)
+                page: thread.location.page + 1
             };
             const value = thread.hasPageChanged(location);
             expect(value).to.be.true;
@@ -366,13 +360,13 @@ describe('doc/DocDrawingThread', () => {
                 removeAllListeners: () => {},
                 hide: () => {},
                 show: sandbox.stub()
-            }
+            };
 
             thread.show();
             expect(thread.dialog.isVisible).to.be.called;
             expect(thread.drawBoundary).to.be.called;
             expect(thread.dialog.show).to.be.called;
-        })
+        });
     });
 
     describe('selectContext()', () => {

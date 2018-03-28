@@ -21,7 +21,7 @@ const localized = {
     highlightToggle: 'highlight toggle',
     highlightComment: 'highlight comment'
 };
-let stubs = {};
+const stubs = {};
 
 describe('CreateAnnotationDialog', () => {
     beforeEach(() => {

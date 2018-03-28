@@ -49,7 +49,7 @@ describe('doc/DocDrawingDialog', () => {
             const event = {
                 stopPropagation: sandbox.stub(),
                 preventDefault: sandbox.stub()
-            }
+            };
             sandbox.stub(dialog, 'emit');
 
             dialog.postDrawing(event);
@@ -109,14 +109,8 @@ describe('doc/DocDrawingDialog', () => {
             };
 
             dialog.unbindDOMListeners();
-            expect(dialog.commitButtonEl.removeEventListener).to.be.calledWith(
-                'click',
-                dialog.postDrawing
-            );
-            expect(dialog.commitButtonEl.removeEventListener).to.be.calledWith(
-                'touchend',
-                dialog.postDrawing
-            );
+            expect(dialog.commitButtonEl.removeEventListener).to.be.calledWith('click', dialog.postDrawing);
+            expect(dialog.commitButtonEl.removeEventListener).to.be.calledWith('touchend', dialog.postDrawing);
         });
 
         it('should unbind listeners on a delete button element', () => {
@@ -126,15 +120,9 @@ describe('doc/DocDrawingDialog', () => {
             };
 
             dialog.unbindDOMListeners();
-            expect(dialog.deleteButtonEl.removeEventListener).to.be.calledWith(
-                'click',
-                dialog.deleteAnnotation
-            );
-            expect(dialog.deleteButtonEl.removeEventListener).to.be.calledWith(
-                'touchend',
-                dialog.deleteAnnotation
-            );
-        })
+            expect(dialog.deleteButtonEl.removeEventListener).to.be.calledWith('click', dialog.deleteAnnotation);
+            expect(dialog.deleteButtonEl.removeEventListener).to.be.calledWith('touchend', dialog.deleteAnnotation);
+        });
     });
 
     describe('setup()', () => {
@@ -197,14 +185,14 @@ describe('doc/DocDrawingDialog', () => {
                     top: 0
                 },
                 getBoundingClientRect: sandbox.stub().returns(rect)
-            }
+            };
 
             dialog.position(5, 10);
             expect(dialog.element.getBoundingClientRect).to.be.called;
             expect(pageEl.contains).to.be.called;
             expect(pageEl.appendChild).to.be.calledWith(dialog.element);
             expect(dialog.annotatedElement.querySelector).to.be.called;
-            expect(dialog.element.style.left).to.equal(`4px`, `10px`);
+            expect(dialog.element.style.left).to.equal('4px', '10px');
         });
     });
 
@@ -245,7 +233,7 @@ describe('doc/DocDrawingDialog', () => {
                 permissions: {
                     can_delete: true
                 }
-            }
+            };
             stubs.getFirstAnnotation = sandbox.stub(util, 'getFirstAnnotation').returns(annotation);
         });
 

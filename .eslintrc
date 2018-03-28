@@ -22,7 +22,8 @@
         "sinon": false,
         "assert": false,
         "fixture": false,
-        "__": false
+        "__": false,
+        "Assert": false
     },
     "rules": {
         "quotes": [
