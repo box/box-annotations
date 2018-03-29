@@ -1,16 +1,7 @@
-import EventEmitter from 'events';
+/* eslint-disable no-unused-expressions */
 import HighlightModeController from '../HighlightModeController';
 import * as util from '../../util';
-import {
-    CLASS_HIDDEN,
-    CLASS_ACTIVE,
-    CLASS_ANNOTATION_MODE,
-    THREAD_EVENT,
-    STATES,
-    TYPES,
-    CONTROLLER_EVENT,
-    CLASS_ANNOTATION_LAYER_HIGHLIGHT
-} from '../../constants';
+import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '../../constants';
 
 let controller;
 let stubs = {};

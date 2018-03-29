@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import DrawingPath from '../DrawingPath';
 
 let drawingPath;
@@ -34,20 +35,26 @@ describe('drawing/DrawingPath', () => {
             expect(lengthAfter).to.equal(lengthBefore);
 
             lengthBefore = drawingPath.browserPath.length;
-            drawingPath.addCoordinate({
-                x: 1,
-                y: 1
-            }, {
-                x: null,
-                y: 1
-            });
-            drawingPath.addCoordinate({
-                x: 1,
-                y: 1
-            }, {
-                x: 1,
-                y: null
-            });
+            drawingPath.addCoordinate(
+                {
+                    x: 1,
+                    y: 1
+                },
+                {
+                    x: null,
+                    y: 1
+                }
+            );
+            drawingPath.addCoordinate(
+                {
+                    x: 1,
+                    y: 1
+                },
+                {
+                    x: 1,
+                    y: null
+                }
+            );
             lengthAfter = drawingPath.browserPath.length;
             expect(lengthAfter).to.equal(lengthBefore);
         });
@@ -96,16 +103,14 @@ describe('drawing/DrawingPath', () => {
             expect(drawingPath.isEmpty()).to.be.true;
         });
 
-
         it('should return false when a coordinate has been inserted', () => {
             const coord = {
                 x: 1,
                 y: 1
-            }
+            };
             drawingPath.addCoordinate(coord);
             expect(drawingPath.isEmpty()).to.be.false;
         });
-
     });
 
     describe('drawPath()', () => {
@@ -117,11 +122,11 @@ describe('drawing/DrawingPath', () => {
             const docCoord = {
                 x: 1,
                 y: 1
-            }
+            };
             const browserCoord = {
                 x: 1,
                 y: 1
-            }
+            };
 
             drawingPath.addCoordinate(docCoord, browserCoord);
             drawingPath.drawPath(context);
@@ -152,6 +157,8 @@ describe('drawing/DrawingPath', () => {
     describe('generateBrowserPath()', () => {
         it('should generate the browser path', () => {
             const lengthBefore = drawingPath.browserPath.length;
+
+            // eslint-disable-next-line require-jsdoc
             const transform = (coord) => {
                 return {
                     x: coord.x + 1,
@@ -167,7 +174,9 @@ describe('drawing/DrawingPath', () => {
             drawingPath.generateBrowserPath(transform);
 
             const lengthAfter = drawingPath.browserPath.length;
-            const isBrowserCoord = (item => (item.x === documentCoord.x+1 && item.y === documentCoord.y+1));
+
+            // eslint-disable-next-line require-jsdoc
+            const isBrowserCoord = (item) => item.x === documentCoord.x + 1 && item.y === documentCoord.y + 1;
             expect(lengthBefore).to.be.lessThan(lengthAfter);
             expect(drawingPath.browserPath.find(isBrowserCoord)).to.not.be.undefined;
         });
@@ -180,7 +189,7 @@ describe('drawing/DrawingPath', () => {
                 minX: 5,
                 maxX: 6,
                 minY: 7,
-                maxY: 8,
+                maxY: 8
             };
 
             const result = DrawingPath.extractDrawingInfo(drawingObjA, {});
@@ -188,17 +197,12 @@ describe('drawing/DrawingPath', () => {
             expect(result.minY).to.equal(drawingObjA.minY);
             expect(result.maxX).to.equal(drawingObjA.maxX);
             expect(result.maxY).to.equal(drawingObjA.maxY);
-            expect(result.paths).to.deep.equal([
-                { path: drawingObjA.path }
-            ]);
+            expect(result.paths).to.deep.equal([{ path: drawingObjA.path }]);
         });
 
         it('should add a path to the accumulator', () => {
             const acc = {
-                paths: [
-                    { path: 'pathA' },
-                    { path: 'pathB' }
-                ],
+                paths: [{ path: 'pathA' }, { path: 'pathB' }],
                 minX: 5,
                 maxX: 11,
                 minY: 6,
@@ -217,11 +221,7 @@ describe('drawing/DrawingPath', () => {
             expect(result.minY).to.equal(drawingObjC.minY);
             expect(result.maxX).to.equal(acc.maxX);
             expect(result.maxY).to.equal(acc.maxY);
-            expect(result.paths).to.deep.equal([
-                { path: 'pathA' },
-                { path: 'pathB' },
-                { path: 'pathC' }
-            ]);
+            expect(result.paths).to.deep.equal([{ path: 'pathA' }, { path: 'pathB' }, { path: 'pathC' }]);
         });
     });
 });

@@ -3,22 +3,7 @@ import EventEmitter from 'events';
 import Annotator from '../Annotator';
 import * as util from '../util';
 import AnnotationService from '../AnnotationService';
-import {
-    STATES,
-    TYPES,
-    CLASS_ANNOTATION_DRAW_MODE,
-    CLASS_ANNOTATION_MODE,
-    CLASS_ACTIVE,
-    CLASS_HIDDEN,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
-    SELECTOR_ANNOTATION_DRAWING_HEADER,
-    SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    ANNOTATOR_EVENT,
-    THREAD_EVENT,
-    CONTROLLER_EVENT
-} from '../constants';
+import { STATES, TYPES, ANNOTATOR_EVENT, THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
 
 const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
@@ -50,9 +35,9 @@ describe('Annotator', () => {
         const options = {
             annotator: {
                 NAME: 'name',
-                CONTROLLERS: { 'something': stubs.controller }
+                CONTROLLERS: { something: stubs.controller }
             },
-            modeButtons: { 'something': {} }
+            modeButtons: { something: {} }
         };
         annotator = new Annotator({
             canAnnotate: true,
@@ -69,7 +54,7 @@ describe('Annotator', () => {
                 loadError: 'load error',
                 createError: 'create error',
                 deleteError: 'delete error',
-                authError: 'auth error',
+                authError: 'auth error'
             }
         });
 
@@ -207,23 +192,27 @@ describe('Annotator', () => {
         it('should fetch and then render annotations', () => {
             annotator.fetchPromise = Promise.resolve();
             annotator.loadAnnotations();
-            return annotator.fetchPromise.then(() => {
-                expect(annotator.render).to.be.called;
-                expect(annotator.emit).to.not.be.called;
-            }).catch((err) => {
-                sinon.assert.failException;
-            });
+            return annotator.fetchPromise
+                .then(() => {
+                    expect(annotator.render).to.be.called;
+                    expect(annotator.emit).to.not.be.called;
+                })
+                .catch(() => {
+                    sinon.assert.failException;
+                });
         });
 
         it('should emit an error if the annotator fails to fetch and render annotations', () => {
             annotator.fetchPromise = Promise.reject();
             annotator.loadAnnotations();
-            return annotator.fetchPromise.then(() => {
-                sinon.assert.failException;
-            }).catch((err) => {
-                expect(annotator.render).to.not.be.called;
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
-            });
+            return annotator.fetchPromise
+                .then(() => {
+                    sinon.assert.failException;
+                })
+                .catch((err) => {
+                    expect(annotator.render).to.not.be.called;
+                    expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
+                });
         });
     });
 
@@ -245,8 +234,8 @@ describe('Annotator', () => {
 
     describe('setupControllers()', () => {
         it('should instantiate controllers for enabled types', () => {
-            annotator.modeControllers = { 'something': stubs.controller };
-            annotator.options = { modeButtons: { 'something': {} } }
+            annotator.modeControllers = { something: stubs.controller };
+            annotator.options = { modeButtons: { something: {} } };
 
             stubs.controllerMock.expects('init');
             stubs.controllerMock.expects('addListener').withArgs('annotationcontrollerevent', sinon.match.func);
@@ -254,7 +243,7 @@ describe('Annotator', () => {
         });
 
         it('should setup shared point dialog in the point controller', () => {
-            annotator.modeControllers = { 'point': stubs.controller };
+            annotator.modeControllers = { point: stubs.controller };
             annotator.isMobile = true;
 
             stubs.controllerMock.expects('init');
@@ -278,7 +267,6 @@ describe('Annotator', () => {
             annotator.setupControllers();
         });
 
-
         describe('destroy()', () => {
             it('should unbind custom listeners on thread and unbind DOM listeners', () => {
                 const unbindDOMStub = sandbox.stub(annotator, 'unbindDOMListeners');
@@ -296,33 +284,33 @@ describe('Annotator', () => {
         describe('render()', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
-                    'type': {
+                    type: {
                         render: sandbox.stub()
                     },
-                    'type2': {
+                    type2: {
                         render: sandbox.stub()
                     }
                 };
 
                 annotator.render();
-                expect(annotator.modeControllers['type'].render).to.be.called;
-                expect(annotator.modeControllers['type2'].render).to.be.called;
+                expect(annotator.modeControllers.type.render).to.be.called;
+                expect(annotator.modeControllers.type2.render).to.be.called;
             });
         });
 
         describe('renderPage()', () => {
             it('should call hide on each thread in map on page 1', () => {
                 annotator.modeControllers = {
-                    'type': {
+                    type: {
                         renderPage: sandbox.stub()
                     },
-                    'type2': {
+                    type2: {
                         renderPage: sandbox.stub()
                     }
                 };
                 annotator.renderPage(1);
-                expect(annotator.modeControllers['type'].renderPage).to.be.calledWith(1);
-                expect(annotator.modeControllers['type2'].renderPage).to.be.called;
+                expect(annotator.modeControllers.type.renderPage).to.be.calledWith(1);
+                expect(annotator.modeControllers.type2.renderPage).to.be.called;
             });
         });
 
@@ -378,11 +366,13 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.then(() => {
-                    expect(result).to.be.true;
-                }).catch(() => {
-                    sinon.assert.failException;
-                });
+                result
+                    .then(() => {
+                        expect(result).to.be.true;
+                    })
+                    .catch(() => {
+                        sinon.assert.failException;
+                    });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
@@ -393,13 +383,15 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.then(() => {
-                    expect(result).to.be.true;
-                    expect(annotator.threadMap).to.not.be.undefined;
-                    expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                }).catch(() => {
-                    sinon.assert.failException;
-                });
+                result
+                    .then(() => {
+                        expect(result).to.be.true;
+                        expect(annotator.threadMap).to.not.be.undefined;
+                        expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
+                    })
+                    .catch(() => {
+                        sinon.assert.failException;
+                    });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
@@ -410,15 +402,17 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result.then(() => {
-                    expect(result).to.be.true;
-                    stubs.threadPromise.then(() => {
-                        expect(annotator.threadMap).to.not.be.undefined;
-                        expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
+                result
+                    .then(() => {
+                        expect(result).to.be.true;
+                        stubs.threadPromise.then(() => {
+                            expect(annotator.threadMap).to.not.be.undefined;
+                            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
+                        });
+                    })
+                    .catch(() => {
+                        sinon.assert.failException;
                     });
-                }).catch(() => {
-                    sinon.assert.failException;
-                });
             });
         });
 
@@ -521,7 +515,7 @@ describe('Annotator', () => {
 
         describe('handleControllerEvents()', () => {
             const mode = 'something';
-            let data = { mode };
+            const data = { mode };
 
             beforeEach(() => {
                 sandbox.stub(annotator, 'emit');
@@ -592,13 +586,13 @@ describe('Annotator', () => {
 
         describe('getCurrentAnnotationMode()', () => {
             it('should return null if no mode is enabled', () => {
-                annotator.modeControllers['something'] = stubs.controller;
+                annotator.modeControllers.something = stubs.controller;
                 stubs.controllerMock.expects('isEnabled').returns(false);
                 expect(annotator.getCurrentAnnotationMode()).to.be.null;
             });
 
             it('should return the current annotation mode', () => {
-                annotator.modeControllers['something'] = stubs.controller;
+                annotator.modeControllers.something = stubs.controller;
                 stubs.controllerMock.expects('isEnabled').returns(true);
                 expect(annotator.getCurrentAnnotationMode()).to.equal('something');
             });
@@ -616,7 +610,7 @@ describe('Annotator', () => {
                 stubs.thread.dialog = { postAnnotation: sandbox.stub() };
 
                 annotator.modeControllers = {
-                    'point': stubs.controller
+                    point: stubs.controller
                 };
             });
 
@@ -699,7 +693,7 @@ describe('Annotator', () => {
 
             it('should scroll to annotation if threadID exists on page', () => {
                 annotator.modeControllers = {
-                    'type': {
+                    type: {
                         getThreadByID: sandbox.stub().returns(stubs.thread),
                         threads: { 1: { '123abc': stubs.thread } }
                     }
@@ -727,7 +721,7 @@ describe('Annotator', () => {
 
         describe('toggleAnnotationMode()', () => {
             beforeEach(() => {
-                annotator.modeControllers['something'] = stubs.controller;
+                annotator.modeControllers.something = stubs.controller;
             });
 
             it('should exit the current mode', () => {
@@ -818,7 +812,7 @@ describe('Annotator', () => {
             it('should return false if annotations are not allowed on the current viewer', () => {
                 annotator.options.annotator = undefined;
                 expect(annotator.isModeAnnotatable(TYPES.point)).to.be.false;
-            })
+            });
 
             it('should return true if the type is supported by the viewer', () => {
                 expect(annotator.isModeAnnotatable(TYPES.point)).to.be.true;

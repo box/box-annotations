@@ -136,7 +136,10 @@ describe('doc/DocHighlightDialog', () => {
         });
 
         it('should not modify mobile ui there is no mobile header present', () => {
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header').returns(null);
+            sandbox
+                .stub(dialog.element, 'querySelector')
+                .withArgs('.ba-annotation-mobile-header')
+                .returns(null);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('This is the water and this is the well.');
 
@@ -145,12 +148,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should show the mobile header', () => {
             dialog.isMobile = true;
-            const headerEl = {
-                classList: {
-                    remove: sandbox.stub()
-                }
-            };
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
+            sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
             dialog.postAnnotation('Drink full and descend.');
         });
 
@@ -161,8 +159,10 @@ describe('doc/DocHighlightDialog', () => {
                     remove: sandbox.stub()
                 }
             };
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector')
-                .withArgs('.ba-annotation-mobile-header').returns(headerEl);
+            sandbox
+                .stub(dialog.element, 'querySelector')
+                .withArgs('.ba-annotation-mobile-header')
+                .returns(headerEl);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('The horse is the white of the eyes, dark within.');
 
@@ -190,7 +190,10 @@ describe('doc/DocHighlightDialog', () => {
         it('should do nothing if the comment dialog is already hidden', () => {
             const classAdd = sandbox.stub(dialog.element.classList, 'add');
             dialog.highlightDialogEl = {};
-            sandbox.stub(dialog.commentsDialogEl.classList, 'contains').withArgs(constants.CLASS_HIDDEN).returns(true);
+            sandbox
+                .stub(dialog.commentsDialogEl.classList, 'contains')
+                .withArgs(constants.CLASS_HIDDEN)
+                .returns(true);
             dialog.hideCommentsDialog();
 
             expect(classAdd).to.not.be.called;

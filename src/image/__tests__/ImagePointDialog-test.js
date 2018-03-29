@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
 import * as util from '../../util';
-import * as imageUtil from '../imageUtil';
 
 let dialog;
 const sandbox = sinon.sandbox.create();

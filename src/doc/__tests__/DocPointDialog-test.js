@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import DocPointDialog from '../DocPointDialog';
 import * as util from '../../util';
-import * as docUtil from '../docUtil';
 
 let dialog;
 const sandbox = sinon.sandbox.create();

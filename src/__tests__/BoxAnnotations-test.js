@@ -3,8 +3,6 @@ import BoxAnnotations from '../BoxAnnotations';
 import { TYPES } from '../constants';
 import * as util from '../util';
 import DrawingModeController from '../controllers/DrawingModeController';
-import PointModeController from '../controllers/PointModeController';
-import HighlightModeController from '../controllers/HighlightModeController';
 
 let loader;
 let stubs;
@@ -113,8 +111,8 @@ describe('BoxAnnotations', () => {
 
         it('should use the specified types from options', () => {
             loader.viewerOptions = {
-                'Document': { enabledTypes: ['draw'] }
-            }
+                Document: { enabledTypes: ['draw'] }
+            };
             expect(loader.getAnnotatorTypes(stubs.config)).to.deep.equal(['draw']);
         });
 
@@ -159,7 +157,7 @@ describe('BoxAnnotations', () => {
                 viewer: {
                     NAME: 'Document'
                 }
-            }
+            };
             sandbox.stub(loader, 'getAnnotatorTypes').returns(['point']);
         });
 

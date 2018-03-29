@@ -6,7 +6,6 @@ import * as util from '../util';
 import * as constants from '../constants';
 
 const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
-const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_REPLY_CONTAINER = 'reply-container';
 const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';

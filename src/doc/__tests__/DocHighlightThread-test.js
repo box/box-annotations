@@ -4,13 +4,7 @@ import DocHighlightThread from '../DocHighlightThread';
 import AnnotationService from '../../AnnotationService';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import {
-    STATES,
-    TYPES,
-    HIGHLIGHT_FILL,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_ANNOTATION_DIALOG
-} from '../../constants';
+import { STATES, TYPES, HIGHLIGHT_FILL } from '../../constants';
 
 const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
@@ -541,9 +535,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
             expect(pageElStub).to.be.called;
@@ -561,9 +553,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(true);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
             expect(pageElStub).to.be.called;
@@ -581,9 +571,7 @@ describe('doc/DocHighlightThread', () => {
             const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
             const quadPoint = {};
             thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox
-                .stub(docUtil, 'convertPDFSpaceToDOMSpace')
-                .returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
             const pointInPolyStub = sandbox.stub(docUtil, 'isPointInPolyOpt');
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
@@ -609,10 +597,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should set the min/max x/y values for thread location', () => {
             thread.location = {
-                quadPoints: [
-                    [1, 1, 1, 1, 1, 1, 1, 1],
-                    [10, 10, 10, 10, 10, 10, 10, 10]
-                ]
+                quadPoints: [[1, 1, 1, 1, 1, 1, 1, 1], [10, 10, 10, 10, 10, 10, 10, 10]]
             };
             thread.regenerateBoundary();
             expect(thread.minX).to.equal(1);
