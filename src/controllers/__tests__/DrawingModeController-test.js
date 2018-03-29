@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import rbush from 'rbush';
 import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
@@ -5,15 +6,13 @@ import * as util from '../../util';
 import {
     TYPES,
     STATES,
-    THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
-    CLASS_ACTIVE,
-    CONTROLLER_EVENT
+    CLASS_ACTIVE
 } from '../../constants';
 
 let controller;
@@ -70,7 +69,7 @@ describe('controllers/DrawingModeController', () => {
             const blankDiv = document.createElement('div');
             stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
             sandbox.stub(controller, 'getButton').returns(blankDiv);
-            controller['localized'] = {
+            controller.localized = {
                 cancelButton: 'cancel',
                 doneButton: 'done'
             };
@@ -306,6 +305,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should delete a non-pending thread', () => {
             stubs.thread.state = 'idle';
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
@@ -319,6 +319,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should not delete a thread if the dialog no longer exists', () => {
             stubs.thread.dialog = null;
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
@@ -332,9 +333,10 @@ describe('controllers/DrawingModeController', () => {
 
     describe('handleSelection()', () => {
         beforeEach(() => {
+            // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
-            stubs.intersecting = sandbox.stub(controller, 'getIntersectingThreads').returns([ stubs.thread ]);
+            stubs.intersecting = sandbox.stub(controller, 'getIntersectingThreads').returns([stubs.thread]);
             stubs.select = sandbox.stub(controller, 'select');
             stubs.clean = sandbox.stub(controller, 'removeSelection');
 
@@ -346,7 +348,7 @@ describe('controllers/DrawingModeController', () => {
         it('should do nothing with an empty event', () => {
             controller.handleSelection();
             expect(stubs.intersecting).to.not.be.called;
-        })
+        });
 
         it('should do nothing no intersecting threads are found', () => {
             stubs.intersecting.returns([]);
@@ -360,7 +362,7 @@ describe('controllers/DrawingModeController', () => {
             controller.currentThread = { state: STATES.pending };
             controller.handleSelection(stubs.event);
             expect(stubs.intersecting).to.not.be.called;
-        })
+        });
 
         it('should call select on an thread found in the data store', () => {
             controller.handleSelection(stubs.event);
@@ -449,7 +451,10 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should do nothing if thread has invalid boundary', () => {
-            stubs.threadMock.expects('saveAnnotation').withArgs(TYPES.draw).never();
+            stubs.threadMock
+                .expects('saveAnnotation')
+                .withArgs(TYPES.draw)
+                .never();
             controller.saveThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
             controller.saveThread({ type: TYPES.draw });
             expect(controller.registerThread).to.not.be.called;

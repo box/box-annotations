@@ -4,7 +4,6 @@ import {
     CLASS_ADD_HIGHLIGHT_BTN,
     CLASS_ADD_HIGHLIGHT_COMMENT_BTN,
     CLASS_ANNOTATION_CARET,
-    CLASS_HIDDEN,
     CREATE_EVENT
 } from '../../constants';
 import CommentBox from '../../CommentBox';
@@ -30,7 +29,7 @@ describe('doc/CreateHighlightDialog', () => {
     beforeEach(() => {
         fixture.load('doc/__tests__/CreateHighlightDialog-test.html');
 
-        const parentEl = document.createElement('div');
+        parentEl = document.createElement('div');
         parentEl.classList.add('bp-create-dialog-container');
         dialog = new CreateHighlightDialog(parentEl, {
             allowHighlight: true,
@@ -91,7 +90,7 @@ describe('doc/CreateHighlightDialog', () => {
             stubs.parentMock.expects('appendChild').never();
             dialog.show({}, {});
             expect(stubs.pageInfo).to.be.called;
-        })
+        });
 
         it('should set the parentEl to a new reference, via setParentEl(), if a new one is supplied', () => {
             const newParent = document.createElement('span');
@@ -129,7 +128,7 @@ describe('doc/CreateHighlightDialog', () => {
 
         it('should position the dialog according to the bottom right corner of the selection', () => {
             stubs.pageInfo.returns({ pageEl: document.createElement('div') });
-            stubs.getCoords.returns({x: 1, y: 2});
+            stubs.getCoords.returns({ x: 1, y: 2 });
             dialog.setPosition(stubs.selection);
             expect(stubs.update).to.be.called;
         });
@@ -154,7 +153,7 @@ describe('doc/CreateHighlightDialog', () => {
             const highlightCreateStub = sandbox.stub(dialog.highlightCreateEl, 'removeEventListener');
             const commentCreateStub = sandbox.stub(dialog.commentCreateEl, 'removeEventListener');
 
-            const stubs = [
+            const eventStubs = [
                 {
                     stub: highlightCreateStub,
                     args: ['touchstart', dialog.stopPropagation]
@@ -179,7 +178,7 @@ describe('doc/CreateHighlightDialog', () => {
 
             dialog.destroy();
 
-            stubs.forEach((stub) => {
+            eventStubs.forEach((stub) => {
                 expect(stub.stub).to.be.calledWith(...stub.args);
             });
         });
@@ -198,7 +197,6 @@ describe('doc/CreateHighlightDialog', () => {
         });
 
         it('should update the left of the ui element, to center it', () => {
-            const width = dialog.containerEl.clientWidth;
             const x = 50;
             dialog.position.x = x;
             sandbox.stub(util, 'repositionCaret').returns(x);

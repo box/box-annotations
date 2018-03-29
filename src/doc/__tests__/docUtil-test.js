@@ -1,11 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
-import {
-    SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CONTAINER,
-    CLASS_ANNOTATION_DIALOG,
-    DATA_TYPE_ANNOTATION_DIALOG
-} from '../../constants';
+import { SELECTOR_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, DATA_TYPE_ANNOTATION_DIALOG } from '../../constants';
 import * as util from '../../util';
 
 const sandbox = sinon.sandbox.create();
@@ -72,10 +67,10 @@ describe('doc/docUtil', () => {
 
         it('should return true if the previous and current selection have changed', () => {
             const selection = {
-                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(false)} )
+                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(false) })
             };
             const diffSelection = {
-                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(true)} )
+                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(true) })
             };
             expect(docUtil.hasSelectionChanged(diffSelection, selection)).to.be.true;
             expect(docUtil.hasSelectionChanged(selection, selection)).to.be.false;
@@ -308,7 +303,7 @@ describe('doc/docUtil', () => {
             docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
             expect(docStub).to.be.called;
             expect(stubs.annotationLayer.getContext).to.be.called;
-            expect(stubs.annotationLayer.classList.add).to.be.called;;
+            expect(stubs.annotationLayer.classList.add).to.be.called;
             expect(stubs.pageEl.insertBefore).to.not.be.called;
             expect(stubs.canvasWrapper.appendChild).to.be.called;
         });
@@ -339,8 +334,10 @@ describe('doc/docUtil', () => {
     });
 
     describe('getDialogCoordsFromRange()', () => {
-        let range, parentContainer;
+        let range;
+        let parentContainer;
         const text = 'This is some text';
+
         beforeEach(() => {
             parentContainer = document.createElement('div');
             parentContainer.innerHTML = text;
@@ -408,7 +405,7 @@ describe('doc/docUtil', () => {
         it('should use the position element\'s bounds for the x and y corrdinate', () => {
             const fakeSpan = document.createElement('span');
             sandbox.stub(fakeSpan, 'getBoundingClientRect').callsFake(() => {
-                return { right: 10, bottom: 11 }
+                return { right: 10, bottom: 11 };
             });
 
             const createStub = sandbox.stub(document, 'createElement');

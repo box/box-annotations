@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import EventEmitter from 'events';
 import AnnotationThread from '../AnnotationThread';
 import Annotation from '../Annotation';
 import * as util from '../util';
@@ -262,7 +261,6 @@ describe('AnnotationThread', () => {
         it('should overwrite a local annotation to the thread if it does exist as an associated annotation', () => {
             const serverAnnotation = { annotationID: 123 };
             const tempAnnotation = { annotationID: 1 };
-            const isServerAnnotation = (annotation) => annotation === serverAnnotation;
 
             thread.annotations[tempAnnotation.annotationID] = tempAnnotation;
             expect(thread.annotations[123]).to.be.undefined;
@@ -507,7 +505,6 @@ describe('AnnotationThread', () => {
                 .then(() => {
                     expect(stubs.emit).to.be.calledWith(THREAD_EVENT.threadCleanup);
                     expect(stubs.emit).to.be.calledWith(THREAD_EVENT.delete);
-                    done();
                 })
                 .catch(() => {
                     sinon.assert.failException;

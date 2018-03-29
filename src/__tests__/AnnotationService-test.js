@@ -33,6 +33,7 @@ describe('AnnotationService', () => {
         });
 
         it('should (almost always) return unique GUIDs', () => {
+            // eslint-disable-next-line no-self-compare
             expect(AnnotationService.generateID() === AnnotationService.generateID()).to.be.false;
         });
     });
@@ -103,7 +104,9 @@ describe('AnnotationService', () => {
     });
 
     describe('read()', () => {
-        const url = `${API_HOST}/2.0/files/1/annotations?version=2&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
+        const url = `${
+            API_HOST
+        }/2.0/files/1/annotations?version=2&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
 
         it('should return array of annotations for the specified file and file version', () => {
             const annotation1 = new Annotation({
@@ -266,7 +269,7 @@ describe('AnnotationService', () => {
             sandbox.stub(annotationService, 'read').returns(Promise.resolve(threads));
             sandbox.stub(annotationService, 'createThreadMap').returns(threads);
 
-            return annotationService.getThreadMap(2).then((threadMap) => {
+            return annotationService.getThreadMap(2).then(() => {
                 expect(annotationService.createThreadMap).to.be.called;
             });
         });
@@ -459,7 +462,9 @@ describe('AnnotationService', () => {
             annotationService.api = 'box';
             annotationService.fileId = 1;
             const fileVersionId = 2;
-            const url = `${annotationService.api}/2.0/files/${annotationService.fileId}/annotations?version=${fileVersionId}&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
+            const url = `${annotationService.api}/2.0/files/${annotationService.fileId}/annotations?version=${
+                fileVersionId
+            }&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
 
             const result = annotationService.getReadUrl(fileVersionId);
             expect(result).to.equal(url);
@@ -471,7 +476,11 @@ describe('AnnotationService', () => {
             const fileVersionId = 2;
             const marker = 'next_annotation';
             const limit = 1;
-            const url = `${annotationService.api}/2.0/files/${annotationService.fileId}/annotations?version=${fileVersionId}&fields=item,thread,details,message,created_by,created_at,modified_at,permissions&marker=${marker}&limit=${limit}`;
+            const url = `${annotationService.api}/2.0/files/${annotationService.fileId}/annotations?version=${
+                fileVersionId
+            }&fields=item,thread,details,message,created_by,created_at,modified_at,permissions&marker=${marker}&limit=${
+                limit
+            }`;
 
             const result = annotationService.getReadUrl(fileVersionId, marker, limit);
             expect(result).to.equal(url);
