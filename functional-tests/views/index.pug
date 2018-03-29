@@ -1,18 +1,21 @@
+<!DOCTYPE html>
 html
   head
+    <meta charset="UTF-8">
     link(rel="stylesheet" href='annotations.css')
     script(src='annotations.js')
-    link(rel="stylesheet" href='https://cdn01.boxcdn.net/platform/preview/1.36.0/en-US/preview.css')
-    script(src='https://cdn01.boxcdn.net/platform/preview/1.36.0/en-US/preview.js')
+    link(rel="stylesheet" href='https://cdn01.boxcdn.net/platform/preview/1.37.0/en-US/preview.css')
+    script(src='https://cdn01.boxcdn.net/platform/preview/1.37.0/en-US/preview.js')
     style.
       .preview-container {
           border: 1px solid #eee;
           width: 100%;
+          height: 600px;
       }
   body
     div(class='preview-container')
     script.
-      const options = {
+      var options = {
           Image: {
               enabledTypes: ['point']
           },
@@ -20,10 +23,10 @@ html
               enabledTypes: ['point', 'draw']
           }
       };
-      const boxAnnotations = new BoxAnnotations(options);
-      const preview = new Box.Preview();
+      var boxAnnotations = new BoxAnnotations(options);
+      var preview = new Box.Preview();
       preview.show("#{file_id}", "#{token}", {
           container: '.preview-container',
           showDownload: true,
-          boxAnnotations
+          boxAnnotations: boxAnnotations
       });
