@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 export NODE_PATH=$NODE_PATH:./node_modules
 
@@ -47,6 +47,20 @@ install_dependencies() {
     else
         echo "----------------------------------------------------"
         echo "Error: Failed to run 'yarn install'!"
+        echo "----------------------------------------------------"
+        exit 1;
+    fi
+
+    echo "----------------------------------------------"
+    echo "Check for known vulnerabilities"
+    echo "----------------------------------------------"
+    if yarn run nsp; then
+        echo "----------------------------------------------------"
+        echo "No known vulnerabilities found"
+        echo "----------------------------------------------------"
+    else
+        echo "----------------------------------------------------"
+        echo "Vulnerabilities found!"
         echo "----------------------------------------------------"
         exit 1;
     fi
