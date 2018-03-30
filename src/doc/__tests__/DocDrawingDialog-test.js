@@ -130,7 +130,7 @@ describe('doc/DocDrawingDialog', () => {
         let drawingDialogEl;
 
         beforeEach(() => {
-            drawingDialogEl = document.querySelector('.ba-annotation-drawing-dialog');
+            drawingDialogEl = document.querySelector(constants.SELECTOR_ANNOTATION_DRAWING_DIALOG);
 
             sandbox.stub(dialog, 'generateDialogEl').returns(drawingDialogEl);
             sandbox.stub(dialog, 'bindDOMListeners');
@@ -243,26 +243,26 @@ describe('doc/DocDrawingDialog', () => {
 
             const dialogEl = dialog.generateDialogEl([annotation]);
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
-            expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.be.null;
-            expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
-            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN)).to.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ADD_DRAWING_BTN)).to.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ANNOTATION_DRAWING_LABEL)).to.not.be.null;
         });
 
         it('should generate without a save button', () => {
             const dialogEl = dialog.generateDialogEl([annotation]);
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
-            expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
-            expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.be.null;
-            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN)).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ADD_DRAWING_BTN)).to.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ANNOTATION_DRAWING_LABEL)).to.not.be.null;
         });
 
         it('should generate a save and delete button', () => {
             stubs.getFirstAnnotation.returns(null);
             const dialogEl = dialog.generateDialogEl([]);
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).to.be.true;
-            expect(dialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`)).to.not.be.null;
-            expect(dialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`)).to.not.be.null;
-            expect(dialogEl.querySelector('.ba-annotation-drawing-label')).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN)).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ADD_DRAWING_BTN)).to.not.be.null;
+            expect(dialogEl.querySelector(constants.SELECTOR_ANNOTATION_DRAWING_LABEL)).to.not.be.null;
         });
     });
 

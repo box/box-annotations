@@ -127,7 +127,9 @@ describe('doc/DocHighlightDialog', () => {
             Object.defineProperty(AnnotationDialog.prototype, 'postAnnotation', { value: stubs.postFunc });
         });
         it('should do nothing if not text is present', () => {
-            const headerQuery = sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
+            const headerQuery = sandbox
+                .stub(dialog.element, 'querySelector')
+                .withArgs(constants.SELECTOR_MOBILE_DIALOG_HEADER);
             dialog.postAnnotation(' ');
 
             expect(headerQuery).to.not.be.called;
@@ -136,7 +138,7 @@ describe('doc/DocHighlightDialog', () => {
         it('should not modify mobile ui there is no mobile header present', () => {
             sandbox
                 .stub(dialog.element, 'querySelector')
-                .withArgs('.ba-annotation-mobile-header')
+                .withArgs(constants.SELECTOR_MOBILE_DIALOG_HEADER)
                 .returns(null);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('This is the water and this is the well.');
@@ -146,7 +148,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should show the mobile header', () => {
             dialog.isMobile = true;
-            sandbox.stub(dialog.element, 'querySelector').withArgs('.ba-annotation-mobile-header');
+            sandbox.stub(dialog.element, 'querySelector').withArgs(constants.SELECTOR_MOBILE_DIALOG_HEADER);
             dialog.postAnnotation('Drink full and descend.');
         });
 
@@ -159,7 +161,7 @@ describe('doc/DocHighlightDialog', () => {
             };
             sandbox
                 .stub(dialog.element, 'querySelector')
-                .withArgs('.ba-annotation-mobile-header')
+                .withArgs(constants.SELECTOR_MOBILE_DIALOG_HEADER)
                 .returns(headerEl);
             const elRemove = sandbox.stub(dialog.element.classList, 'remove');
             dialog.postAnnotation('The horse is the white of the eyes, dark within.');
