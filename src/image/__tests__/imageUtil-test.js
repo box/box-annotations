@@ -9,6 +9,7 @@ import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
+const stubs = {};
 
 describe('image/imageUtil', () => {
     before(() => {
@@ -17,6 +18,7 @@ describe('image/imageUtil', () => {
 
     beforeEach(() => {
         fixture.load('image/__tests__/imageUtil-test.html');
+        stubs.annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
     });
 
     afterEach(() => {
@@ -34,8 +36,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_ONCE_DEG, dimensions, 1);
@@ -46,8 +47,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_TWICE_DEG, dimensions, 1);
@@ -58,8 +58,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_THRICE_DEG, dimensions, 1);
@@ -79,8 +78,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_ONCE_DEG, dimensions, 1);
@@ -91,8 +89,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_TWICE_DEG, dimensions, 1);
@@ -103,8 +100,7 @@ describe('image/imageUtil', () => {
             const [x, y] = [20, 30];
 
             // Get image height & width dimensions
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageDimensions = annotatedEl.querySelector('img').getBoundingClientRect();
+            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
             const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
 
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_THRICE_DEG, dimensions, 1);
@@ -115,24 +111,22 @@ describe('image/imageUtil', () => {
 
     describe('getRotatedPadding()', () => {
         it('should return top padding if image is not rotated', () => {
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageEl = annotatedEl.querySelector('img');
+            const imageEl = stubs.annotatedEl.querySelector('img');
             imageEl.style.margin = '50px';
 
             const rotatedPadding = getRotatedPadding(imageEl, false);
 
-            // Includes top 8px padding around annotatedEl
+            // Includes top 8px padding around stubs.annotatedEl
             expect(rotatedPadding).to.equal(58);
         });
 
         it('should return top padding if image is rotated', () => {
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const imageEl = annotatedEl.querySelector('img');
+            const imageEl = stubs.annotatedEl.querySelector('img');
             imageEl.style.margin = '50px';
 
             const rotatedPadding = getRotatedPadding(imageEl, true);
 
-            // Includes top 8px padding around annotatedEl
+            // Includes top 8px padding around stubs.annotatedEl
             expect(rotatedPadding).to.equal(35.5);
         });
     });
@@ -148,8 +142,7 @@ describe('image/imageUtil', () => {
                 },
                 page: 1
             };
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const coordinates = getBrowserCoordinatesFromLocation(location, annotatedEl);
+            const coordinates = getBrowserCoordinatesFromLocation(location, stubs.annotatedEl);
 
             expect(coordinates[0]).to.equal(20);
             expect(coordinates[1]).to.equal(30);
