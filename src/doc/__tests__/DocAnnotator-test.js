@@ -18,7 +18,8 @@ import {
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
-    CREATE_EVENT
+    CREATE_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
 } from '../../constants';
 
 let annotator;
@@ -63,7 +64,7 @@ describe('doc/DocAnnotator', () => {
                 loadError: 'loaderror'
             }
         });
-        annotator.annotatedElement = document.querySelector('.annotated-element');
+        annotator.annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
         annotator.annotationService = {};
         annotator.threads = {};
         annotator.modeControllers = {};
@@ -104,7 +105,7 @@ describe('doc/DocAnnotator', () => {
         annotator.modeButtons = {};
         annotator.modeControllers = {};
 
-        annotator.annotatedElement = document.querySelector('.annotated-element');
+        annotator.annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
         if (typeof annotator.destroy === 'function') {
             annotator.destroy();
             annotator = null;
@@ -212,7 +213,7 @@ describe('doc/DocAnnotator', () => {
             it('should not return a location if click is on dialog', () => {
                 stubs.selection.returns(false);
                 stubs.getPageInfo.returns({
-                    pageEl: document.querySelector('.annotated-element'),
+                    pageEl: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                     page: 1
                 });
                 stubs.isInDialog.returns(true);

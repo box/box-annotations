@@ -27,7 +27,7 @@ describe('AnnotationDialog', () => {
         fixture.load('__tests__/AnnotationDialog-test.html');
 
         dialog = new AnnotationDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT),
             container: document,
             location: {},
             annotations: {},
@@ -38,14 +38,14 @@ describe('AnnotationDialog', () => {
             posting: 'posting'
         };
         dialog.setup([]);
-        document.querySelector('.annotated-element').appendChild(dialog.element);
+        document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
         stubs.emit = sandbox.stub(dialog, 'emit');
         dialog.isMobile = false;
     });
 
     afterEach(() => {
-        const dialogEl = document.querySelector('.annotated-element');
+        const dialogEl = document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT);
         if (dialogEl && dialogEl.parentNode) {
             dialogEl.parentNode.removeChild(dialogEl);
         }
@@ -830,7 +830,7 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const username = document.querySelector('.user-name');
+            const username = document.querySelector(constants.SELECTOR_USER_NAME);
             expect(username).to.contain.html(dialog.localized.posting);
         });
 
@@ -843,7 +843,7 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const username = document.querySelector('.user-name');
+            const username = document.querySelector(constants.SELECTOR_USER_NAME);
             expect(username).to.contain.html('user');
         });
 

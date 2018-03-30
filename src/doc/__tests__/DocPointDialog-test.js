@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import DocPointDialog from '../DocPointDialog';
 import * as util from '../../util';
+import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -14,7 +15,7 @@ describe('doc/DocPointDialog', () => {
         fixture.load('doc/__tests__/DocPointDialog-test.html');
 
         dialog = new DocPointDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {},
             annotations: [],
             canAnnotate: true

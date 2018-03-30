@@ -3,7 +3,14 @@ import EventEmitter from 'events';
 import Annotator from '../Annotator';
 import * as util from '../util';
 import AnnotationService from '../AnnotationService';
-import { STATES, TYPES, ANNOTATOR_EVENT, THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
+import {
+    STATES,
+    TYPES,
+    ANNOTATOR_EVENT,
+    THREAD_EVENT,
+    CONTROLLER_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
+} from '../constants';
 
 let annotator;
 let stubs = {};
@@ -111,7 +118,7 @@ describe('Annotator', () => {
 
     describe('init()', () => {
         beforeEach(() => {
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             sandbox.stub(annotator, 'getAnnotatedEl').returns(annotatedEl);
             annotator.annotatedElement = annotatedEl;
 
@@ -256,7 +263,7 @@ describe('Annotator', () => {
 
     describe('once annotator is initialized', () => {
         beforeEach(() => {
-            const annotatedEl = document.querySelector('.annotated-element');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             annotator.annotatedElement = annotatedEl;
             sandbox.stub(annotator, 'getAnnotatedEl').returns(annotatedEl);
             sandbox.stub(annotator, 'setupAnnotations');
@@ -331,7 +338,7 @@ describe('Annotator', () => {
         describe('setScale()', () => {
             it('should set a data-scale attribute on the annotated element', () => {
                 annotator.setScale(10);
-                const annotatedEl = document.querySelector('.annotated-element');
+                const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
                 expect(annotatedEl).to.have.attribute('data-scale', '10');
             });
         });

@@ -2,7 +2,7 @@
 import ImagePointDialog from '../ImagePointDialog';
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
-import { STATES } from '../../constants';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as imageUtil from '../imageUtil';
 
 let thread;
@@ -17,7 +17,7 @@ describe('image/ImagePointThread', () => {
         fixture.load('image/__tests__/ImagePointThread-test.html');
 
         thread = new ImagePointThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: {},
             fileVersionId: 1,

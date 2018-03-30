@@ -8,7 +8,8 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     CLASS_HIDDEN,
-    THREAD_EVENT
+    THREAD_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
 } from '../constants';
 
 let thread;
@@ -24,7 +25,7 @@ describe('AnnotationThread', () => {
         fixture.load('__tests__/AnnotationThread-test.html');
 
         thread = new AnnotationThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: {},
             fileVersionId: '1',
@@ -163,7 +164,7 @@ describe('AnnotationThread', () => {
             };
 
             thread = new AnnotationThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [],
                 annotationService,
                 fileVersionId: '1',
@@ -236,7 +237,7 @@ describe('AnnotationThread', () => {
             };
 
             thread = new AnnotationThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: {},
                 annotationService,
                 fileVersionId: '1',
@@ -350,7 +351,7 @@ describe('AnnotationThread', () => {
             };
 
             thread = new AnnotationThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: { someID: stubs.annotation },
                 annotationService,
                 fileVersionId: '1',
@@ -624,7 +625,7 @@ describe('AnnotationThread', () => {
 
         it('should set state to inactive if thread is initialized with annotations', () => {
             thread = new AnnotationThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{}],
                 annotationService: {},
                 fileVersionId: '1',

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
 import * as util from '../../util';
+import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
@@ -14,7 +15,7 @@ describe('image/ImagePointDialog', () => {
         fixture.load('image/__tests__/ImagePointDialog-test.html');
 
         dialog = new ImagePointDialog({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {
                 page: 1
             },

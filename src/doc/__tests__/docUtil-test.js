@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
-import { SELECTOR_ANNOTATION_DIALOG, CLASS_ANNOTATION_DIALOG, DATA_TYPE_ANNOTATION_DIALOG } from '../../constants';
+import {
+    SELECTOR_ANNOTATION_DIALOG,
+    CLASS_ANNOTATION_DIALOG,
+    DATA_TYPE_ANNOTATION_DIALOG,
+    SELECTOR_ANNOTATED_ELEMENT
+} from '../../constants';
 import * as util from '../../util';
 
 const sandbox = sinon.sandbox.create();
@@ -23,13 +28,13 @@ describe('doc/docUtil', () => {
 
     describe('isPresentation()', () => {
         it('should return false if annotatedElement is a document', () => {
-            const docEl = document.querySelector('.annotatedElement');
+            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const result = docUtil.isPresentation(docEl);
             expect(result).to.be.false;
         });
 
         it('should return true if annotatedElement is a presentation', () => {
-            const docEl = document.querySelector('.annotatedElement');
+            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             docEl.classList.add('bp-doc-presentation');
             const result = docUtil.isPresentation(docEl);
             expect(result).to.be.true;
@@ -45,7 +50,7 @@ describe('doc/docUtil', () => {
         });
 
         it('should return true if an annotion dialog is open', () => {
-            const docEl = document.querySelector('.annotatedElement');
+            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const currDialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
             currDialogEl.classList.add('bp-is-hidden');
 
@@ -135,7 +140,7 @@ describe('doc/docUtil', () => {
                 }
             };
 
-            const annotatedEl = document.querySelector('.annotatedElement');
+            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             annotatedEl.style.height = '1030px';
             annotatedEl.style.width = '600px';
 
@@ -312,7 +317,7 @@ describe('doc/docUtil', () => {
     describe('getPageEl()', () => {
         it('should return the result of querySelector', () => {
             const page = 2;
-            const docEl = document.querySelector('.annotatedElement');
+            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const truePageEl = document.querySelector(`.page[data-page-number="${page}"]`);
             docEl.appendChild(truePageEl);
 

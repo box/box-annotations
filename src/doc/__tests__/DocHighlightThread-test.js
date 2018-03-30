@@ -4,7 +4,7 @@ import DocHighlightThread from '../DocHighlightThread';
 import AnnotationService from '../../AnnotationService';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import { STATES, TYPES, HIGHLIGHT_FILL } from '../../constants';
+import { STATES, TYPES, HIGHLIGHT_FILL, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();
@@ -18,7 +18,7 @@ describe('doc/DocHighlightThread', () => {
         fixture.load('doc/__tests__/DocHighlightThread-test.html');
 
         thread = new DocHighlightThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: new AnnotationService({
                 apiHost: 'https://app.box.com/api',
@@ -159,7 +159,7 @@ describe('doc/DocHighlightThread', () => {
     describe('deleteAnnotation()', () => {
         it('should hide the add highlight button if the user does not have permissions', () => {
             const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{ permissions: { can_delete: false } }],
                 annotationService: new AnnotationService({
                     apiHost: 'https://app.box.com/api',
@@ -193,7 +193,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should display the add highlight button if the user has permissions', () => {
             const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector('.annotated-element'),
+                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{ permissions: { can_delete: true } }],
                 annotationService: new AnnotationService({
                     apiHost: 'https://app.box.com/api',

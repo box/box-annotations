@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
 import AnnotationService from '../../AnnotationService';
-import { STATES } from '../../constants';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
 let stubs;
@@ -15,7 +15,7 @@ describe('drawing/DrawingThread', () => {
     beforeEach(() => {
         stubs = {};
         thread = new DrawingThread({
-            annotatedElement: document.querySelector('.annotated-element'),
+            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
             annotationService: new AnnotationService({
                 apiHost: 'https://app.box.com/api',

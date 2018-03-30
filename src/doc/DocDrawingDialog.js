@@ -138,8 +138,8 @@ class DocDrawingDialog extends AnnotationDialog {
         this.drawingDialogEl = this.generateDialogEl(annotations);
 
         // Set the newly created buttons from the dialog element
-        this.commitButtonEl = this.drawingDialogEl.querySelector(`.${constants.CLASS_ADD_DRAWING_BTN}`);
-        this.deleteButtonEl = this.drawingDialogEl.querySelector(`.${constants.CLASS_DELETE_DRAWING_BTN}`);
+        this.commitButtonEl = this.drawingDialogEl.querySelector(constants.SELECTOR_ADD_DRAWING_BTN);
+        this.deleteButtonEl = this.drawingDialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN);
 
         this.bindDOMListeners();
 
