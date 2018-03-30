@@ -18,10 +18,9 @@ import {
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
-    CREATE_EVENT
+    CREATE_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
 } from '../../constants';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
 let annotator;
 let stubs = {};

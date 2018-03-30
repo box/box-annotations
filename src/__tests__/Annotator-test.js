@@ -3,9 +3,14 @@ import EventEmitter from 'events';
 import Annotator from '../Annotator';
 import * as util from '../util';
 import AnnotationService from '../AnnotationService';
-import { STATES, TYPES, ANNOTATOR_EVENT, THREAD_EVENT, CONTROLLER_EVENT } from '../constants';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+import {
+    STATES,
+    TYPES,
+    ANNOTATOR_EVENT,
+    THREAD_EVENT,
+    CONTROLLER_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
+} from '../constants';
 
 let annotator;
 let stubs = {};

@@ -8,10 +8,9 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     CLASS_HIDDEN,
-    THREAD_EVENT
+    THREAD_EVENT,
+    SELECTOR_ANNOTATED_ELEMENT
 } from '../constants';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
 let thread;
 const sandbox = sinon.sandbox.create();

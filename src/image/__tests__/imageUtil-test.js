@@ -4,8 +4,7 @@ import {
     getRotatedPadding,
     getBrowserCoordinatesFromLocation
 } from '../imageUtil';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;

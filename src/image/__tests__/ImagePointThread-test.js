@@ -2,10 +2,8 @@
 import ImagePointDialog from '../ImagePointDialog';
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
-import { STATES } from '../../constants';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as imageUtil from '../imageUtil';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
 let thread;
 const sandbox = sinon.sandbox.create();

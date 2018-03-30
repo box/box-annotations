@@ -1,9 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
 import AnnotationService from '../../AnnotationService';
-import { STATES } from '../../constants';
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
 let stubs;

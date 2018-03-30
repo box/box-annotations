@@ -4,12 +4,10 @@ import DocPointThread from '../DocPointThread';
 import AnnotationThread from '../../AnnotationThread';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import { STATES } from '../../constants';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
 const sandbox = sinon.sandbox.create();
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
 describe('doc/DocPointThread', () => {
     before(() => {

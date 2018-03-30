@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
 import * as util from '../../util';
+import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
 const sandbox = sinon.sandbox.create();
-
-const SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
 
 describe('image/ImagePointDialog', () => {
     before(() => {
