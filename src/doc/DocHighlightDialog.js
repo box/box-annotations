@@ -143,7 +143,7 @@ class DocHighlightDialog extends AnnotationDialog {
         const [browserX, browserY] = this.getScaledPDFCoordinates(pageDimensions, pageHeight);
         pageEl.appendChild(this.element);
 
-        const highlightDialogWidth = this.getDialogWidth();
+        const highlightDialogWidth = util.getDialogWidth(this.element);
 
         let dialogX = browserX - highlightDialogWidth / 2; // Center dialog
         // Shorten extra transparent border top if showing comments dialog
@@ -468,37 +468,6 @@ class DocHighlightDialog extends AnnotationDialog {
         if (util.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
-    }
-
-    /**
-     * Calculates the dialog width if the highlighter's name is to be displayed
-     * in the annotations dialog
-     *
-     * @private
-     * @return {number} Annotations dialog width
-     */
-    getDialogWidth() {
-        // Ensure dialog will not be displayed off the page when
-        // calculating the dialog width
-        const prevDialogX = this.element.style.left;
-        this.element.style.left = 0;
-
-        // Switches to 'visibility: hidden' to ensure that dialog takes up
-        // DOM space while still being invisible
-        util.hideElementVisibility(this.element);
-        util.showElement(this.element);
-
-        this.highlightDialogWidth = this.element.getBoundingClientRect().width;
-
-        // Switches back to 'display: none' to so that it no longer takes up place
-        // in the DOM while remaining hidden
-        util.hideElement(this.element);
-        util.showInvisibleElement(this.element);
-
-        // Reset dialog left positioning
-        this.element.style.left = prevDialogX;
-
-        return this.highlightDialogWidth;
     }
 
     /**
