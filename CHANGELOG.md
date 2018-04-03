@@ -1,3 +1,18 @@
+<a name="1.2.0"></a>
+# 1.2.0 (2018-04-03)
+
+* Fix: Cleaning up incorrect selectors (#157) ([1710ece](https://github.com/box/box-annotations/commit/1710ece))
+* Fix: Mobile dialog doesn't properly close on delete cancel/confirm (#148) ([523217a](https://github.com/box/box-annotations/commit/523217a)), closes [#148](https://github.com/box/box-annotations/issues/148)
+* Chore: Add nsp to scan from known vulnerabilities (#153) ([5db437d](https://github.com/box/box-annotations/commit/5db437d))
+* Chore: Group CSS constants in a more readable manner (#150) ([b110632](https://github.com/box/box-annotations/commit/b110632))
+* Chore: Remove -x tag in release script (#151) ([abbaf03](https://github.com/box/box-annotations/commit/abbaf03))
+* Chore: Run eslint on test files (#149) ([75277fc](https://github.com/box/box-annotations/commit/75277fc))
+* Chore: Use decode keydown from box-react-ui to prevent duplication (#152) ([c54de5e](https://github.com/box/box-annotations/commit/c54de5e))
+* Chore: Use node 8 for building (#154) ([df7a4e5](https://github.com/box/box-annotations/commit/df7a4e5))
+* Docs: Updating issue template (#156) ([a303ac4](https://github.com/box/box-annotations/commit/a303ac4))
+
+
+
 <a name="1.1.0"></a>
 # 1.1.0 (2018-03-27)
 
