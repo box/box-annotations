@@ -12,12 +12,11 @@ major_release=false
 minor_release=false
 patch_release=false
 
-
-reset_to_master() {
-    # Update to latest code on GitHub master
-    git checkout master || return 1
-
+reset_tags() {
     # Wipe tags
+    echo "----------------------------------------------------------------------"
+    echo "Wiping local tags"
+    echo "----------------------------------------------------------------------"
     git tag -l | xargs git tag -d || return 1
 
     # Add the origin remote if it is not present
@@ -26,14 +25,46 @@ reset_to_master() {
     fi
 
     # Fetch latest code with tags
-    git fetch --tags release || return 1;
+    echo "----------------------------------------------------------------------"
+    echo "Fetching latest upstream code + tags"
+    echo "----------------------------------------------------------------------"
+    git fetch --tags github-upstream || return 1;
+}
+
+
+reset_to_previous_version() {
+    if OLD_VERSION === "XXX"; then
+        echo "----------------------------------------------------------------------"
+        echo "Error while cleaning workspace!"
+        echo "----------------------------------------------------------------------"
+        return 1;
+    fi
+
+    # Reset and fetch upstream with tags
+    reset_tags || return 1;
+
+    # Reset to previous release version and clear unstashed changes
+    echo "----------------------------------------------------------------------"
+    echo "Resetting to v" $OLD_VERSION
+    echo "----------------------------------------------------------------------"
+    git reset --hard OLD_VERSION || return 1
+    git clean -f  || return 1
+}
+
+
+reset_to_master() {
+    # Update to latest code on GitHub master
+    git checkout master || return 1
+
+    # Reset and fetch upstream with tags
+    reset_tags || return 1;
 
     # Reset to latest code and clear unstashed changes
-    git reset --hard release/master || return 1
-
-    # Remove old local tags in case a build failed
-    git fetch --prune release '+refs/tags/*:refs/tags/*' || exit 1
-    git clean -fd || return 1
+    echo "----------------------------------------------------------------------"
+    echo "Resetting to upstream/master"
+    echo "----------------------------------------------------------------------"
+    git reset --hard github-upstream/master || return 1
+    git clean -f  || return 1
 }
 
 install_dependencies() {
@@ -76,6 +107,14 @@ build_lint_and_test() {
 increment_version() {
     # Old version
     OLD_VERSION=$(./build/current_version.sh)
+
+    # The current branch should not match the previous release tag
+    if [[ $(git log --oneline ...v$OLD_VERSION) == "" ]] ; then
+        echo "----------------------------------------------------"
+        echo "Your release has no new commits!"
+        echo "----------------------------------------------------"
+        exit 1
+    fi
 
     if $major_release; then
         echo "----------------------------------------------------------------------"
@@ -275,7 +314,12 @@ if ! push_new_release; then
     echo "Cleaning workspace by checking out master and removing tags"
     echo "----------------------------------------------------------------------"
 
-    if ! reset_to_master; then
+    if $patch_release; then
+        # Only reset to previous version for patch releases
+        reset_to_previous_version || return 1
+
+    # Reset to upstream/master for major/minor releases
+    elif ! reset_to_master; then
         echo "----------------------------------------------------------------------"
         echo "Error while cleaning workspace!"
         echo "----------------------------------------------------------------------"
