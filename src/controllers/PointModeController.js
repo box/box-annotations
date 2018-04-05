@@ -16,12 +16,6 @@ class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
     exitButtonEl;
 
-    /** @property {HTMLElement} - The button to cancel the pending thread */
-    cancelButtonEl;
-
-    /** @property {HTMLElement} - The button to commit the pending thread */
-    postButtonEl;
-
     /** @inheritdoc */
     init(data) {
         super.init(data);
@@ -123,23 +117,7 @@ class PointModeController extends AnnotationModeController {
         // Get handlers
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.pointClickHandler);
 
-        this.pushElementHandler(this.exitButtonEl, 'click', () => {
-            if (this.currentThread) {
-                this.currentThread.cancelUnsavedAnnotation();
-            }
-
-            this.toggleMode();
-        });
-
-        this.pushElementHandler(this.cancelButtonEl, 'click', () => {
-            this.currentThread.cancelUnsavedAnnotation();
-            this.emit(CONTROLLER_EVENT.toggleMode);
-        });
-
-        this.pushElementHandler(this.postButtonEl, 'click', () => {
-            this.currentThread.saveAnnotation(TYPES.point);
-            this.emit(CONTROLLER_EVENT.toggleMode);
-        });
+        this.pushElementHandler(this.exitButtonEl, 'click', this.toggleMode);
     }
 
     /** @inheritdoc */
