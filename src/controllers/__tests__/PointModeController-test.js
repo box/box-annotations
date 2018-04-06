@@ -129,12 +129,10 @@ describe('controllers/PointModeController', () => {
 
     describe('setupHandlers()', () => {
         it('should successfully contain mode handlers', () => {
-            controller.postButtonEl = 'not undefined';
-            controller.cancelButtonEl = 'definitely not undefined';
             controller.exitButtonEl = 'also definitely not undefined';
 
             controller.setupHandlers();
-            expect(controller.handlers.length).to.equal(4);
+            expect(controller.handlers.length).to.equal(2);
         });
     });
 
