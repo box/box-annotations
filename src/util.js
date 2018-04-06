@@ -854,7 +854,8 @@ export function getDialogWidth(dialogEl) {
     // calculating the dialog width
     element.style.left = 0;
 
-    const dialogWidth = element.getBoundingClientRect().width;
+    const boundingRect = element.getBoundingClientRect();
+    const dialogWidth = boundingRect.width;
 
     // Switches back to 'display: none' to so that it no longer takes up place
     // in the DOM while remaining hidden
