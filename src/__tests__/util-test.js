@@ -41,7 +41,8 @@ import {
     isInDialog,
     focusTextArea,
     hasValidBoundaryCoordinates,
-    generateMobileDialogEl
+    generateMobileDialogEl,
+    getDialogWidth
 } from '../util';
 import {
     STATES,
@@ -53,7 +54,8 @@ import {
     CLASS_MOBILE_DIALOG_HEADER,
     CLASS_DIALOG_CLOSE,
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
-    CLASS_ANIMATE_DIALOG
+    CLASS_ANIMATE_DIALOG,
+    CLASS_HIDDEN
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -843,6 +845,15 @@ describe('util', () => {
             expect(el).to.have.descendant(`.${CLASS_DIALOG_CLOSE}`);
             expect(el).to.not.have.class(`.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`);
             expect(el).to.not.have.class(`.${CLASS_ANIMATE_DIALOG}`);
+        });
+    });
+
+    describe('getDialogWidth', () => {
+        it('should calculate dialog width without displaying the dialog', () => {
+            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            dialogEl.style.width = '100px';
+            expect(getDialogWidth(dialogEl)).to.equal(100);
+            expect(dialogEl).to.have.class(CLASS_HIDDEN);
         });
     });
 });
