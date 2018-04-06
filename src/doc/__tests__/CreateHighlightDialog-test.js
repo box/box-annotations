@@ -186,7 +186,14 @@ describe('doc/CreateHighlightDialog', () => {
 
     describe('updatePosition()', () => {
         beforeEach(() => {
-            dialog.show();
+            sandbox.stub(util, 'showElement');
+            dialog.isMobile = false;
+        });
+
+        it('should do nothing on mobile devices', () => {
+            dialog.isMobile = true;
+            dialog.updatePosition();
+            expect(util.showElement).to.not.be.called;
         });
 
         it('should update the top of the ui element', () => {
@@ -194,6 +201,7 @@ describe('doc/CreateHighlightDialog', () => {
             dialog.position.y = y;
             dialog.updatePosition();
             expect(dialog.containerEl.style.top).to.equal(`${y + 5}px`);
+            expect(util.showElement).to.be.called;
         });
 
         it('should update the left of the ui element, to center it', () => {
@@ -202,6 +210,7 @@ describe('doc/CreateHighlightDialog', () => {
             sandbox.stub(util, 'repositionCaret').returns(x);
             dialog.updatePosition();
             expect(dialog.containerEl.style.left).to.equal(`${x}px`);
+            expect(util.showElement).to.be.called;
         });
     });
 

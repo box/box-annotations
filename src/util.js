@@ -835,3 +835,32 @@ export function generateMobileDialogEl() {
 
     return el;
 }
+
+/**
+ * Calculates the dialog width when visible
+ *
+ * @param {HTMLElement} dialogEl - Annotation dialog element
+ * @return {number} Annotations dialog width
+ */
+export function getDialogWidth(dialogEl) {
+    const element = dialogEl;
+
+    // Switches to 'visibility: hidden' to ensure that dialog takes up
+    // DOM space while still being invisible
+    hideElementVisibility(element);
+    showElement(element);
+
+    // Ensure dialog will not be displayed off the page when
+    // calculating the dialog width
+    element.style.left = 0;
+
+    const boundingRect = element.getBoundingClientRect();
+    const dialogWidth = boundingRect.width;
+
+    // Switches back to 'display: none' to so that it no longer takes up place
+    // in the DOM while remaining hidden
+    hideElement(element);
+    showInvisibleElement(element);
+
+    return dialogWidth;
+}

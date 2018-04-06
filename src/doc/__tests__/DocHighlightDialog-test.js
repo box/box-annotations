@@ -238,7 +238,7 @@ describe('doc/DocHighlightDialog', () => {
     describe('position()', () => {
         beforeEach(() => {
             stubs.scaled = sandbox.stub(dialog, 'getScaledPDFCoordinates').returns([150, 2]);
-            stubs.width = sandbox.stub(dialog, 'getDialogWidth');
+            stubs.width = sandbox.stub(util, 'getDialogWidth');
             stubs.caret = sandbox.stub(util, 'repositionCaret');
             stubs.show = sandbox.stub(util, 'showElement');
             stubs.fit = sandbox.stub(dialog, 'fitDialogHeightInPage');
@@ -616,25 +616,6 @@ describe('doc/DocHighlightDialog', () => {
             stubs.textMock.expects('focus').never();
             sandbox.stub(util, 'isElementInViewport').returns(false);
             dialog.focusAnnotationsTextArea();
-        });
-    });
-
-    describe('getDialogWidth', () => {
-        it('should calculate dialog width once annotator\'s user name has been populated', () => {
-            const highlightLabelEl = dialog.element.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            highlightLabelEl.innerHTML = 'Bob highlighted';
-            dialog.element.style.width = '100px';
-            dialog.element.style.left = '30px';
-
-            const width = dialog.getDialogWidth();
-            expect(width).to.equal(100);
-            expect(dialog.element.style.left).to.equal('30px');
-        });
-
-        it('should return previously set dialog width if already calculated', () => {
-            dialog.element.style.width = '252px';
-            const width = dialog.getDialogWidth();
-            expect(width).to.equal(252); // Default comments dialog width
         });
     });
 

@@ -1,6 +1,6 @@
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
-import { generateBtn, repositionCaret, getPageInfo } from '../util';
+import { generateBtn, repositionCaret, getPageInfo, getDialogWidth, showElement } from '../util';
 import { getDialogCoordsFromRange } from '../doc/docUtil';
 import {
     CREATE_EVENT,
@@ -120,13 +120,13 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         const dialogParentEl = this.isMobile ? newParentEl : pageInfo.pageEl;
         super.show(dialogParentEl);
 
-        if (!this.isMobile) {
-            this.setPosition(selection);
-        }
-
         // Add to parent if it hasn't been added already
         if (!this.parentEl.querySelector(`.${CLASS_CREATE_DIALOG}`)) {
             this.parentEl.appendChild(this.containerEl);
+        }
+
+        if (!this.isMobile) {
+            this.setPosition(selection);
         }
     }
 
@@ -188,7 +188,8 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
             return;
         }
 
-        const dialogX = this.position.x - 1 - this.containerEl.clientWidth / 2;
+        const dialogWidth = getDialogWidth(this.containerEl);
+        const dialogX = this.position.x - 1 - dialogWidth / 2;
         const xPos = repositionCaret(
             this.containerEl,
             dialogX,
@@ -201,6 +202,8 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         this.containerEl.style.left = `${xPos}px`;
         // Plus 5 pixels for caret
         this.containerEl.style.top = `${this.position.y + 5}px`;
+
+        showElement(this.containerEl);
     }
 
     /**
