@@ -837,8 +837,7 @@ export function generateMobileDialogEl() {
 }
 
 /**
- * Calculates the dialog width if the highlighter's name is to be displayed
- * in the annotations dialog
+ * Calculates the dialog width when visible
  *
  * @param {HTMLElement} dialogEl - Annotation dialog element
  * @return {number} Annotations dialog width
@@ -855,12 +854,12 @@ export function getDialogWidth(dialogEl) {
     // calculating the dialog width
     element.style.left = 0;
 
-    const highlightDialogWidth = element.getBoundingClientRect().width;
+    const dialogWidth = element.getBoundingClientRect().width;
 
     // Switches back to 'display: none' to so that it no longer takes up place
     // in the DOM while remaining hidden
     hideElement(element);
     showInvisibleElement(element);
 
-    return highlightDialogWidth;
+    return dialogWidth;
 }
