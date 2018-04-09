@@ -112,6 +112,7 @@ describe('doc/DocDrawingThread', () => {
             expect(window.requestAnimationFrame).to.be.called;
             expect(thread.drawingFlag).to.equal(DRAW_STATES.drawing);
             expect(thread.hasPageChanged).to.be.called;
+            expect(thread.checkAndHandleScaleUpdate).to.be.called;
             expect(thread.pendingPath).to.be.an.instanceof(DrawingPath);
             expect(thread.state).to.equal(STATES.pending);
         });

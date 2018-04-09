@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
-import { getFirstAnnotation } from '../util';
+import { eventToLocationHandler, getFirstAnnotation } from '../util';
 import {
     STATES,
     DRAW_STATES,
@@ -119,6 +119,57 @@ class DrawingThread extends AnnotationThread {
         super.reset();
 
         this.clearBoundary();
+    }
+
+    /**
+     * Binds DOM event listeners for drawing new thread using
+     * mode specific location getter
+     *
+     * @protected
+     * @param {Function} locationFunction - Location getter method
+     * @return {void}
+     */
+    bindDrawingListeners(locationFunction) {
+        if (!this.isMobile) {
+            this.annotatedElement.addEventListener(
+                'mousemove',
+                eventToLocationHandler(locationFunction, this.handleMove)
+            );
+            this.annotatedElement.addEventListener(
+                'mouseup',
+                eventToLocationHandler(locationFunction, this.handleStop)
+            );
+        }
+
+        if (this.hasTouch) {
+            this.annotatedElement.addEventListener(
+                'touchmove',
+                eventToLocationHandler(locationFunction, this.handleMove)
+            );
+            this.annotatedElement.addEventListener(
+                'touchcancel',
+                eventToLocationHandler(locationFunction, this.handleStop)
+            );
+            this.annotatedElement.addEventListener(
+                'touchend',
+                eventToLocationHandler(locationFunction, this.handleStop)
+            );
+        }
+    }
+
+    /**
+     * Unbinds DOM event listeners for drawing new threads.
+     *
+     * @protected
+     * @return {void}
+     */
+    unbindDrawingListeners() {
+        this.annotatedElement.removeEventListener('mousemove', eventToLocationHandler);
+        this.annotatedElement.removeEventListener('mouseup', eventToLocationHandler);
+
+        this.annotatedElement.removeEventListener('touchmove', eventToLocationHandler);
+        this.annotatedElement.removeEventListener('touchcancel', eventToLocationHandler);
+        this.annotatedElement.removeEventListener('touchend', eventToLocationHandler);
     }
 
     /* eslint-disable no-unused-vars */

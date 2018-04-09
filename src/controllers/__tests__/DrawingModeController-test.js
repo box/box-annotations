@@ -12,7 +12,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
-    CLASS_ACTIVE
+    CLASS_ACTIVE,
+    THREAD_EVENT
 } from '../../constants';
 
 let controller;
@@ -39,6 +40,9 @@ describe('controllers/DrawingModeController', () => {
             deleteThread: () => {},
             clearBoundary: () => {},
             drawBoundary: () => {},
+            bindDrawingListeners: () => {},
+            unbindDrawingListeners: () => {},
+            getThreadEventData: () => {},
             show: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
@@ -186,22 +190,63 @@ describe('controllers/DrawingModeController', () => {
 
     describe('setupHandlers()', () => {
         it('should successfully contain draw mode handlers if undo and redo buttons exist', () => {
-            controller.annotator = {
-                getThreadParams: sandbox.stub(),
-                getLocationFromEvent: sandbox.stub()
-            };
             controller.annotatedElement = {};
-            stubs.getParams = controller.annotator.getThreadParams.returns({});
-            stubs.getLocation = controller.annotator.getLocationFromEvent;
-
             controller.postButtonEl = 'not undefined';
             controller.undoButtonEl = 'also not undefined';
             controller.redoButtonEl = 'additionally not undefined';
             controller.cancelButtonEl = 'definitely not undefined';
 
             controller.setupHandlers();
-            expect(stubs.getParams).to.be.called;
-            expect(controller.handlers.length).to.equal(7);
+            expect(controller.handlers.length).to.equal(5);
+        });
+    });
+
+    describe('drawingStartHandler()', () => {
+        const event = {
+            stopPropagation: () => {},
+            preventDefault: () => {}
+        };
+        const eventMock = sandbox.mock(event);
+        const location = {};
+
+        beforeEach(() => {
+            controller.annotator = {
+                getLocationFromEvent: () => {},
+                createAnnotationThread: () => {}
+            };
+            stubs.annotatorMock = sandbox.mock(controller.annotator);
+            controller.currentThread = undefined;
+            controller.locationFunction = sandbox.stub();
+
+            eventMock.expects('stopPropagation');
+            eventMock.expects('preventDefault');
+        });
+
+        it('should do nothing if drawing start is invalid', () => {
+            stubs.annotatorMock.expects('getLocationFromEvent');
+            stubs.annotatorMock.expects('createAnnotationThread').never();
+            controller.drawingStartHandler(event);
+        });
+
+        it('should continue drawing if in the middle of creating a new drawing', () => {
+            controller.currentThread = stubs.thread;
+            stubs.threadMock.expects('handleStart').withArgs(location);
+            stubs.annotatorMock.expects('getLocationFromEvent').returns(location);
+            stubs.annotatorMock.expects('createAnnotationThread').never();
+            controller.drawingStartHandler(event);
+        });
+
+        it('should begin a new drawing thread if none exist already', () => {
+            stubs.annotatorMock.expects('getLocationFromEvent').returns(location);
+            stubs.annotatorMock.expects('createAnnotationThread').returns(stubs.thread);
+            stubs.threadMock.expects('bindDrawingListeners').withArgs(controller.locationFunction);
+            stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
+            stubs.threadMock.expects('handleStart').withArgs(location);
+            stubs.threadMock.expects('getThreadEventData').returns({});
+
+            controller.drawingStartHandler(event);
+            expect(controller.currentThread).to.not.be.undefined;
+            expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, {});
         });
     });
 
@@ -234,12 +279,15 @@ describe('controllers/DrawingModeController', () => {
 
         it('should save thread on softcommit', () => {
             stubs.threadMock.expects('handleStart').never();
+            stubs.threadMock.expects('removeListener').withArgs('threadevent', sinon.match.func);
+            stubs.threadMock.expects('unbindDrawingListeners');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'softcommit'
             });
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(controller.saveThread).to.be.called;
+            expect(controller.currentThread).to.be.undefined;
         });
 
         it('should start a new thread on pagechanged', () => {
@@ -252,7 +300,9 @@ describe('controllers/DrawingModeController', () => {
                     page: 1
                 },
                 info: 'I am a thread',
-                saveAnnotation: sandbox.stub()
+                saveAnnotation: sandbox.stub(),
+                removeListener: sandbox.stub(),
+                unbindDrawingListeners: sandbox.stub()
             };
             const thread2 = {
                 minX: 10,
@@ -280,27 +330,20 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
             expect(thread2.handleStart).to.be.calledWith(data.eventData.location);
-        });
-
-        it('should update undo and redo buttons on availableactions', () => {
-            controller.handleThreadEvents(stubs.thread, {
-                event: 'availableactions',
-                eventData: {
-                    undo: 1,
-                    redo: 2
-                }
-            });
-            expect(controller.updateUndoRedoButtonEls).to.be.calledWith(1, 2);
+            expect(controller.currentThread).to.not.be.undefined;
         });
 
         it('should soft delete a pending thread and restart mode listeners', () => {
             stubs.thread.state = 'pending';
             stubs.threadMock.expects('destroy');
+            stubs.threadMock.expects('removeListener').withArgs('threadevent', sinon.match.func);
+            stubs.threadMock.expects('unbindDrawingListeners');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
             });
             expect(controller.unbindListeners).to.be.called;
             expect(controller.bindListeners).to.be.called;
+            expect(controller.currentThread).to.be.undefined;
         });
 
         it('should delete a non-pending thread', () => {
@@ -311,10 +354,13 @@ describe('controllers/DrawingModeController', () => {
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
 
             stubs.threadMock.expects('deleteThread');
+            stubs.threadMock.expects('removeListener').withArgs('threadevent', sinon.match.func);
+            stubs.threadMock.expects('unbindDrawingListeners');
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
             });
             expect(unregisterThreadStub).to.be.called;
+            expect(controller.currentThread).to.be.undefined;
         });
 
         it('should not delete a thread if the dialog no longer exists', () => {
@@ -323,6 +369,8 @@ describe('controllers/DrawingModeController', () => {
             controller.threads[1] = new rbush();
             controller.registerThread(stubs.thread);
             const unregisterThreadStub = sandbox.stub(controller, 'unregisterThread');
+            stubs.threadMock.expects('removeListener').never();
+            stubs.threadMock.expects('unbindDrawingListeners').never();
 
             controller.handleThreadEvents(stubs.thread, {
                 event: 'dialogdelete'
