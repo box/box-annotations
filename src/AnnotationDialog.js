@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import Profile from './components/Profile';
+import ProfileContainer from './components/ProfileContainer';
 import * as util from './util';
 import * as constants from './constants';
 import { ICON_DELETE } from './icons/icons';
@@ -584,13 +584,6 @@ class AnnotationDialog extends EventEmitter {
             userName = util.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
         }
 
-        const created = new Date(annotation.created).toLocaleString(this.locale, {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
         const textEl = util.createCommentTextNode(annotation.text);
 
         const annotationEl = document.createElement('div');
@@ -601,27 +594,13 @@ class AnnotationDialog extends EventEmitter {
         annotationContainerEl.appendChild(annotationEl);
 
         // Avatar
-        this.profileComponent = new Profile(annotationEl, {
+        this.profileContainerComponent = new ProfileContainer(annotationEl, {
             avatarUrl: annotation.user.avatarUrl || '',
             id: userId,
+            createdBy: annotation.created,
             name: userName
         });
-        this.profileComponent.renderProfile();
-
-        // Creator name & date
-        const profileContainerEl = document.createElement('div');
-        profileContainerEl.classList.add(constants.CLASS_PROFILE_CONTAINER);
-        annotationEl.appendChild(profileContainerEl);
-
-        const userNameEl = document.createElement('div');
-        userNameEl.classList.add(constants.CLASS_USER_NAME);
-        userNameEl.textContent = userName;
-        profileContainerEl.appendChild(userNameEl);
-
-        const createdEl = document.createElement('div');
-        createdEl.classList.add(constants.CLASS_COMMENT_DATE);
-        createdEl.textContent = created;
-        profileContainerEl.appendChild(createdEl);
+        this.profileContainerComponent.renderProfileContainer();
 
         // Comment
         const commentTextEl = document.createElement('div');
