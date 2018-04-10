@@ -1,3 +1,12 @@
+<a name="1.3.0"></a>
+# 1.3.0 (2018-04-10)
+
+* Chore: Only reset to upstream/master for major/minor releases (#160) ([e6e619c](https://github.com/box/box-annotations/commit/e6e619c))
+* Chore: Removing DrawingModeController dependency on DocDrawingThread (#161) ([a1c582d](https://github.com/box/box-annotations/commit/a1c582d))
+* Fix: Create highlight dialog is misaligned on first highlight (#159) ([d4d4fdd](https://github.com/box/box-annotations/commit/d4d4fdd))
+
+
+
 <a name="1.2.0"></a>
 # 1.2.0 (2018-04-03)
 
