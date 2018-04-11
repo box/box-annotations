@@ -4,8 +4,6 @@ node_js:
 - '8'
 notifications:
     email: false
-        # recipients:
-        #     - spramod@box.com
 aliases:
     - &sauce-labs
         before_script:

@@ -1,7 +1,4 @@
-/* eslint-disable func-names */
-/* eslint-disable prefer-arrow-callback */
-/* eslint-disable require-jsdoc */
-/* eslint-disable no-console */
+/* eslint-disable func-names, prefer-arrow-callback, require-jsdoc, no-console */
 const { event, container } = require('codeceptjs');
 const SauceLabs = require('saucelabs');
 

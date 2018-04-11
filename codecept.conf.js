@@ -25,20 +25,6 @@ const helperObj = {};
 const isLocalBuild = typeof SAUCE_USERNAME === 'undefined';
 
 if (isLocalBuild) {
-    // // Config to test using the Chrome emulator
-    // commonConfigObj.desiredCapabilities = {
-    //     platform: 'iOS',
-    //     platformName: BROWSER_PLATFORM,
-    //     browserName: 'chrome',
-    //     platformVersion: '11.2',
-    //     deviceName: 'iOS',
-    //     deviceOrientation: 'portrait',
-    //     chromeOptions: {
-    //         mobileEmulation: {
-    //             deviceName: 'iPhone 6/7/8'
-    //         }
-    //     }
-    // };
     helperObj.WebDriverIO = commonConfigObj;
 } else {
     // Common saucelab config
