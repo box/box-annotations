@@ -225,7 +225,7 @@ export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
  */
 export function getQuadPoints(element, pageEl, scale) {
     const quadCornerContainerEl = document.createElement('div');
-    quadCornerContainerEl.classList.add(constants.CLASS_HIGHLIGHT_QUAD_CORNER);
+    quadCornerContainerEl.classList.add(constants.CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER);
 
     // Create zero-size elements that can be styled to the 4 corners of
     // quadrilateral around element - using 4 divs is faster than using
