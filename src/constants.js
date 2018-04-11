@@ -91,6 +91,12 @@ export const SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG = `.${CLASS_ANNOTATION_HIGHLIG
 export const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
 export const SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT = `.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`;
 
+export const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
+export const SELECTOR_HIGHLIGHT_DIALOG = `.${CLASS_HIGHLIGHT_DIALOG}`;
+export const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
+export const SELECTOR_TEXT_HIGHLIGHTED = `.${CLASS_TEXT_HIGHLIGHTED}`;
+export const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
+export const SELECTOR_HIGHLIGHT_LABEL = `.${CLASS_HIGHLIGHT_LABEL}`;
 export const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
 export const SELECTOR_HIGHLIGHT_BTNS = `.${CLASS_HIGHLIGHT_BTNS}`;
 export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';

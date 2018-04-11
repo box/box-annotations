@@ -4,10 +4,6 @@ import * as docUtil from './docUtil';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import * as constants from '../constants';
 
-const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
-
 const HIGHLIGHT_DIALOG_HEIGHT = 38;
 const PAGE_PADDING_BOTTOM = 15;
 const PAGE_PADDING_TOP = 15;
@@ -40,7 +36,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // If annotation is blank then display who highlighted the text
         // Will be displayed as '{name} highlighted'
         if (annotation.text === '' && annotation.user.id !== '0') {
-            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 annotation.user.name
             ]);
@@ -106,7 +102,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         util.hideElement(this.commentsDialogEl);
 
-        this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
+        this.element.classList.add(constants.CLASS_HIGHLIGHT_DIALOG);
         util.showElement(this.highlightDialogEl);
         this.hasComments = false;
     }
@@ -187,7 +183,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Displays comments dialog and hides highlight annotations button
         if (commentsDialogIsHidden) {
-            this.element.classList.remove(CLASS_HIGHLIGHT_DIALOG);
+            this.element.classList.remove(constants.CLASS_HIGHLIGHT_DIALOG);
             util.hideElement(this.highlightDialogEl);
 
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
@@ -202,7 +198,7 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.classList.remove(constants.CLASS_ANNOTATION_DIALOG);
             util.hideElement(this.commentsDialogEl);
 
-            this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
+            this.element.classList.add(constants.CLASS_HIGHLIGHT_DIALOG);
             util.showElement(this.highlightDialogEl);
             this.hasComments = false;
         }
@@ -301,14 +297,14 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Indicate that text is highlighted in the highlight buttons dialog
         if (firstAnnotation) {
-            this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            this.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
         }
 
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
         if (util.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
-            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 firstAnnotation.user.name
             ]);
@@ -442,12 +438,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * @return {void}
      */
     toggleHighlight() {
-        const isTextHighlighted = this.dialogEl.classList.contains(CLASS_TEXT_HIGHLIGHTED);
+        const isTextHighlighted = this.dialogEl.classList.contains(constants.CLASS_TEXT_HIGHLIGHTED);
 
         // Creates a blank highlight annotation
         if (!isTextHighlighted) {
             this.hasComments = false;
-            this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            this.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
             this.emit('annotationcreate');
 
             // Deletes blank highlight annotation if user has permission
@@ -529,7 +525,7 @@ class DocHighlightDialog extends AnnotationDialog {
         const highlightDialogEl = document.createElement('div');
 
         const highlightLabelEl = document.createElement('span');
-        highlightLabelEl.classList.add(CLASS_HIGHLIGHT_LABEL);
+        highlightLabelEl.classList.add(constants.CLASS_HIGHLIGHT_LABEL);
         highlightLabelEl.classList.add(constants.CLASS_HIDDEN);
         highlightDialogEl.appendChild(highlightLabelEl);
 
