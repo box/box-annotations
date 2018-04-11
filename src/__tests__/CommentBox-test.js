@@ -190,7 +190,7 @@ describe('CommentBox', () => {
             el = commentBox.createHTML();
         });
 
-        it('should create and return a section element with bp-create-highlight-comment class on it', () => {
+        it('should create and return a section element with ba-create-highlight-comment class on it', () => {
             expect(el.nodeName).to.equal('SECTION');
             expect(el.classList.contains('ba-create-comment')).to.be.true;
         });

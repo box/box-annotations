@@ -10,9 +10,9 @@ let dialog;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-const CLASS_HIGHLIGHT_DIALOG = 'bp-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'bp-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'bp-annotation-highlight-label';
+const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
+const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
+const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
 const DATA_TYPE_HIGHLIGHT_BTN = 'highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;

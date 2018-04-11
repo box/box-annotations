@@ -108,7 +108,7 @@ describe('AnnotationDialog', () => {
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            commentsTextArea.classList.remove('bp-is-active');
+            commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
 
             dialog.show();
             expect(stubs.position).to.be.called;
@@ -991,7 +991,7 @@ describe('AnnotationDialog', () => {
 
         it('should do nothing if reply textarea is already active', () => {
             const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            replyTextEl.classList.add('bp-is-active');
+            replyTextEl.classList.add(constants.CLASS_ACTIVE);
             sandbox.stub(util, 'showElement');
 
             dialog.activateReply();
