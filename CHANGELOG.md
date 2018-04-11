@@ -1,3 +1,10 @@
+<a name="1.3.1"></a>
+## 1.3.1 (2018-04-11)
+
+* Fix: quadpoint CSS selectors (#163) ([91184c6](https://github.com/box/box-annotations/commit/91184c6))
+
+
+
 <a name="1.3.0"></a>
 # 1.3.0 (2018-04-10)
 
