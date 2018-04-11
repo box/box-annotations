@@ -15,10 +15,10 @@ aliases:
         cache: yarn
     - &sauce-labs-mobile
       <<: *sauce-labs
-      script: yarn run functional-tests-ci --grep @mobile
+      script: yarn run functional-tests-ci --grep @mobile --grep @enabled
     - &sauce-labs-desktop
       <<: *sauce-labs
-      script: yarn run functional-tests-ci --grep @desktop
+      script: yarn run functional-tests-ci --grep @desktop --grep @enabled
 stages:
 - ci
 - name: OSX
