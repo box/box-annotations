@@ -39,7 +39,9 @@ export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
 export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
 export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
 export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
-export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner-container';
+export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
+export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
 export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Dialog CSS constants

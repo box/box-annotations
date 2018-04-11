@@ -231,7 +231,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     unregisterThread(thread) {
-        if (!thread || !thread.location || !thread.location.page) {
+        if (!thread || !thread.location || !thread.location.page || !this.threads[thread.location.page]) {
             return;
         }
 
@@ -277,6 +277,10 @@ class AnnotationModeController extends EventEmitter {
      */
     getThreadByID(threadID) {
         let thread = null;
+        if (!threadID) {
+            return thread;
+        }
+
         Object.keys(this.threads).some((pageNum) => {
             const pageThreads = this.threads[pageNum];
             if (!pageThreads) {
