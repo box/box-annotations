@@ -8,7 +8,8 @@ const BoxSDK = require('box-node-sdk');
 
 const {
     FILE_ID,
-    ACCESS_TOKEN
+    ACCESS_TOKEN,
+    CLIENT_ID
 } = process.env;
 
 const app = express();
@@ -16,7 +17,7 @@ const server = app.listen(8080, () => console.log('Example app listening on port
 
 // Set up SDK & client
 const sdk = new BoxSDK({
-    clientID: 'l20yq2uyg3y8vl27rvw67m8s0ryo9mrz',
+    clientID: CLIENT_ID,
     clientSecret: 'NUH UH'
 });
 const client = sdk.getBasicClient(ACCESS_TOKEN);
