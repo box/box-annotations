@@ -1,6 +1,9 @@
 @import '~box-react-ui/lib/styles/variables';
-@import '~box-react-ui/lib/styles/common/buttons';
-@import '~box-react-ui/lib/styles/common/forms';
+
+.bp-container {
+    @import '~box-react-ui/lib/styles/common/buttons';
+    @import '~box-react-ui/lib/styles/common/forms';
+}
 
 $highlight-yellow: #fed94e;
 $highlight-yellow-active-hover: #ffc900;
