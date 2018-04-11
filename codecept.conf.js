@@ -63,7 +63,7 @@ if (isLocalBuild) {
 }
 
 exports.config = {
-    tests: './functional-tests/tests/*_test.js',
+    tests: './functional-tests/tests/*.js',
     timeout: DEFAULT_WAIT_TIME,
     output: './functional-tests/output',
     helpers: helperObj,
