@@ -30,7 +30,7 @@ describe('doc/CreateHighlightDialog', () => {
         fixture.load('doc/__tests__/CreateHighlightDialog-test.html');
 
         parentEl = document.createElement('div');
-        parentEl.classList.add('bp-create-dialog-container');
+        parentEl.classList.add('ba-create-dialog-container');
         dialog = new CreateHighlightDialog(parentEl, {
             allowHighlight: true,
             allowComment: true,

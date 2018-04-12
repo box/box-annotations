@@ -345,7 +345,7 @@ export function getAvatarHtml(avatarUrl, userId, userName, altText) {
     }
 
     const index = parseInt(userId, 10) || 0;
-    return `<div class="bp-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
+    return `<div class="ba-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
 }
 
 /**

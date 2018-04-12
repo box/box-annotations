@@ -213,14 +213,14 @@ describe('util', () => {
             const textAreaEl = document.querySelector('.textarea');
 
             // Fake making text area 'active'
-            textAreaEl.classList.add('bp-is-active');
+            textAreaEl.classList.add(CLASS_ACTIVE);
             textAreaEl.value = 'test';
             textAreaEl.style.width = '10px';
             textAreaEl.style.height = '10px';
 
             resetTextarea(textAreaEl);
 
-            expect(textAreaEl).to.not.have.class('bp-is-active');
+            expect(textAreaEl).to.not.have.class(CLASS_ACTIVE);
             expect(textAreaEl).to.not.have.class('ba-invalid-input');
             expect(textAreaEl.value).to.equal('test');
             expect(textAreaEl.style.width).to.equal('');
@@ -281,7 +281,7 @@ describe('util', () => {
         });
 
         it('should return avatar HTML initials if no avatarUrl is provided', () => {
-            const expectedHtml = '<div class="bp-annotation-profile avatar-color-1">SN</div>'.trim();
+            const expectedHtml = '<div class="ba-annotation-profile avatar-color-1">SN</div>'.trim();
             expect(getAvatarHtml('', '1', 'Some Name')).to.equal(expectedHtml);
         });
     });

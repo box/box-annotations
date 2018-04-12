@@ -4,9 +4,9 @@ import * as docUtil from './docUtil';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import * as constants from '../constants';
 
-const CLASS_HIGHLIGHT_DIALOG = 'bp-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'bp-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'bp-annotation-highlight-label';
+const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
+const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
+const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
 
 const HIGHLIGHT_DIALOG_HEIGHT = 38;
 const PAGE_PADDING_BOTTOM = 15;

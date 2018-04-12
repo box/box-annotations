@@ -38,7 +38,7 @@ const SELECTOR_PREVIEW_DOC = '.bp-doc';
 const CLASS_DEFAULT_CURSOR = 'bp-use-default-cursor';
 
 // Required by rangy highlighter
-const ID_ANNOTATED_ELEMENT = 'bp-rangy-annotated-element';
+const ID_ANNOTATED_ELEMENT = 'ba-rangy-annotated-element';
 
 const ANNOTATION_LAYER_CLASSES = [
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
