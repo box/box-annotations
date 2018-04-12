@@ -13,8 +13,7 @@ import {
     STATES,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
-    CONTROLLER_EVENT,
-    CLASS_ANNOTATIONS_LOADED
+    CONTROLLER_EVENT
 } from './constants';
 
 class Annotator extends EventEmitter {
@@ -150,7 +149,6 @@ class Annotator extends EventEmitter {
             .then(() => {
                 this.generateThreadMap(this.threadMap);
                 this.render();
-                this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
             .catch((error) => {
                 this.emit(ANNOTATOR_EVENT.loadError, error);

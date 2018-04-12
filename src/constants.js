@@ -16,6 +16,7 @@ export const CLASS_BUTTON_PLAIN = 'bp-btn-plain';
 export const SELECTOR_BUTTON_PLAIN = `.${CLASS_BUTTON_PLAIN}`;
 export const CLASS_BUTTON_PRIMARY = 'bp-btn-primary';
 export const SELECTOR_BUTTON_PRIMARY = `.${CLASS_BUTTON_PRIMARY}`;
+
 export const CLASS_BOX_PREVIEW_HEADER = 'bp-header';
 export const SELECTOR_BOX_PREVIEW_HEADER = `.${CLASS_BOX_PREVIEW_HEADER}`;
 export const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
@@ -25,14 +26,10 @@ export const SELECTOR_ANNOTATION_BUTTON_POINT = `.${CLASS_ANNOTATION_BUTTON_POIN
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = `.${CLASS_ANNOTATION_BUTTON_DRAW_ENTER}`;
 
-export const CLASS_BOX_PREVIEW = 'bp';
-export const SELECTOR_BOX_PREVIEW = `.${CLASS_BOX_PREVIEW}`;
 export const CLASS_PREVIEW_PRESENTATION = 'bp-doc-presentation';
 export const SELECTOR_PREVIEW_PRESENTATION = `.${CLASS_PREVIEW_PRESENTATION}`;
 
 // Annotation CSS constants
-export const CLASS_ANNOTATIONS_LOADED = 'ba-annotations-loaded';
-export const SELECTOR_ANNOTATIONS_LOADED = `.${CLASS_ANNOTATIONS_LOADED}`;
 export const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
 export const SELECTOR_ANNOTATED_ELEMENT = `.${CLASS_ANNOTATED_ELEMENT}`;
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
