@@ -15,7 +15,7 @@ module.exports = function() {
      * @param {boolean} isPassed - true if passed
      * @return {void}
      */
-    const updateStatus = (test, isPassed) => {
+    const updateStatus = function (test, isPassed) {
         const sessionId = container.helpers('WebDriverIO').browser.requestHandler.sessionID;
 
         myAccount.updateJob(sessionId, {
@@ -24,11 +24,11 @@ module.exports = function() {
         });
     };
 
-    event.dispatcher.on(event.test.passed, (test) => {
+    event.dispatcher.on(event.test.passed, function (test) {
         updateStatus(test, true);
     });
 
-    event.dispatcher.on(event.test.failed, (test) => {
+    event.dispatcher.on(event.test.failed, function (test) {
         updateStatus(test, false);
     });
 };

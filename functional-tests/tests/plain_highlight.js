@@ -14,7 +14,7 @@ Before((I) => {
     I.amOnPage('/');
 });
 
-Scenario('Create a new plain highlight annotation @desktop @enabled', (I) => {
+Scenario('Create a new plain highlight annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear after selecting text');
@@ -30,7 +30,7 @@ Scenario('Create a new plain highlight annotation @desktop @enabled', (I) => {
     I.waitForEnabled(SELECTOR_ADD_HIGHLIGHT_BTN);
 });
 
-Scenario('Delete the plain highlight annotation @desktop @enabled', (I) => {
+Scenario('Delete the plain highlight annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear on click');
