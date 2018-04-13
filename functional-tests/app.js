@@ -1,7 +1,4 @@
-/* eslint-disable func-names */
-/* eslint-disable prefer-arrow-callback */
-/* eslint-disable require-jsdoc */
-/* eslint-disable no-console */
+/* eslint-disable func-names, require-jsdoc, prefer-arrow-callback, no-console */
 const express = require('express');
 const path = require('path');
 const BoxSDK = require('box-node-sdk');
@@ -13,7 +10,9 @@ const {
 } = process.env;
 
 const app = express();
-const server = app.listen(8080, () => console.log('Example app listening on port 8080!'));
+const server = app.listen(8080, function() {
+    console.log('Example app listening on port 8080!');
+});
 
 // Set up SDK & client
 const sdk = new BoxSDK({
@@ -58,7 +57,7 @@ app.get('/', function(req, res) {
     };
 
     client.exchangeToken(['item_preview'], url, options)
-        .then((tokenInfo) => {
+        .then(function (tokenInfo) {
             // tokenInfo.accessToken contains the new annotator token
             res.render('index', { token: tokenInfo.accessToken, file_id: FILE_ID });
         })

@@ -21,7 +21,7 @@ Before((I) => {
     I.amOnPage('/');
 });
 
-Scenario('Can enter/exit drawing mode properly @desktop @enabled', (I) => {
+Scenario('Can enter/exit drawing mode properly @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -42,7 +42,7 @@ Scenario('Can enter/exit drawing mode properly @desktop @enabled', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 });
 
-Scenario('Cancel a new drawing annotation @desktop @enabled', (I) => {
+Scenario('Cancel a new drawing annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -63,7 +63,7 @@ Scenario('Cancel a new drawing annotation @desktop @enabled', (I) => {
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create a drawing annotation @desktop @enabled', (I) => {
+Scenario('Create a drawing annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 

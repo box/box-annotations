@@ -6,7 +6,8 @@ cache: yarn
 notifications:
     email:
         recipients:
-            - preview-alerts@box.com
+            # Update to preview-alerts when tests are more stable
+            - spramod@box.com
 aliases:
     - &sauce-labs
         if: type = cron
@@ -18,10 +19,10 @@ aliases:
         script: yarn run functional-tests-ci
     - &sauce-labs-mobile
       <<: *sauce-labs
-      script: yarn run functional-tests-ci --grep @mobile --grep @enabled
+      script: yarn run functional-tests-ci --grep @mobile
     - &sauce-labs-desktop
       <<: *sauce-labs
-      script: yarn run functional-tests-ci --grep @desktop --grep @enabled
+      script: yarn run functional-tests-ci --grep @desktop
 jobs:
   include:
   - script: yarn run ci
