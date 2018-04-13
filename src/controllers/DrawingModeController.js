@@ -248,7 +248,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     handleSelection(event) {
-        // NOTE: @jpress This is a workaround when buttons are not given precedence in the event chain
+        // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
             return;

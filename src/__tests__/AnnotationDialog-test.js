@@ -714,13 +714,21 @@ describe('AnnotationDialog', () => {
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
         });
 
-        it('should only stop propogation on a desktop device', () => {
+        it('should only stop propagation on a desktop device', () => {
             dialog.clickHandler(stubs.event);
             expect(stubs.event.stopPropagation).to.be.called;
             expect(stubs.event.preventDefault).to.not.be.called;
         });
 
-        it('should stop propogation AND prevent default on a mobile device', () => {
+        it('should only stop propagation on a mobile device', () => {
+            dialog.isMobile = true;
+            dialog.clickHandler(stubs.event);
+            expect(stubs.event.stopPropagation).to.be.called;
+            expect(stubs.event.preventDefault).to.not.be.called;
+        });
+
+        it('should only prevent default on button clicks for mobile devices', () => {
+            stubs.event.target = document.createElement('button');
             dialog.isMobile = true;
             dialog.clickHandler(stubs.event);
             expect(stubs.event.stopPropagation).to.be.called;
