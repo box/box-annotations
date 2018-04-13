@@ -23,15 +23,21 @@ export const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
 export const SELECTOR_BOX_PREVIEW_BASE_HEADER = `.${CLASS_BOX_PREVIEW_BASE_HEADER}`;
 export const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
 export const SELECTOR_ANNOTATION_BUTTON_POINT = `.${CLASS_ANNOTATION_BUTTON_POINT}`;
+export const CLASS_ANNOTATION_BUTTON_DRAW = 'bp-btn-annotate-draw';
+export const SELECTOR_ANNOTATION_BUTTON_DRAW = `.${CLASS_ANNOTATION_BUTTON_DRAW}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = `.${CLASS_ANNOTATION_BUTTON_DRAW_ENTER}`;
 
+export const CLASS_BOX_PREVIEW = 'bp';
+export const SELECTOR_BOX_PREVIEW = `.${CLASS_BOX_PREVIEW}`;
 export const CLASS_PREVIEW_PRESENTATION = 'bp-doc-presentation';
 export const SELECTOR_PREVIEW_PRESENTATION = `.${CLASS_PREVIEW_PRESENTATION}`;
 
 // Annotation CSS constants
 export const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
 export const SELECTOR_ANNOTATED_ELEMENT = `.${CLASS_ANNOTATED_ELEMENT}`;
+export const CLASS_ANNOTATIONS_LOADED = 'ba-annotations-loaded';
+export const SELECTOR_ANNOTATIONS_LOADED = `.${CLASS_ANNOTATIONS_LOADED}`;
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
 export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
 export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
@@ -87,6 +93,12 @@ export const SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG = `.${CLASS_ANNOTATION_HIGHLIG
 export const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
 export const SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT = `.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`;
 
+export const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
+export const SELECTOR_HIGHLIGHT_DIALOG = `.${CLASS_HIGHLIGHT_DIALOG}`;
+export const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
+export const SELECTOR_TEXT_HIGHLIGHTED = `.${CLASS_TEXT_HIGHLIGHTED}`;
+export const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
+export const SELECTOR_HIGHLIGHT_LABEL = `.${CLASS_HIGHLIGHT_LABEL}`;
 export const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
 export const SELECTOR_HIGHLIGHT_BTNS = `.${CLASS_HIGHLIGHT_BTNS}`;
 export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
@@ -151,8 +163,6 @@ export const SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS = `.${CLASS_ANNOTATION_L
 // Drawing CSS constants
 export const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';
 export const SELECTOR_ANNOTATION_DRAW = `.${CLASS_ANNOTATION_DRAW}`;
-export const CLASS_ANNOTATION_BUTTON_DRAW = 'ba-btn-annotate-draw';
-export const SELECTOR_ANNOTATION_BUTTON_DRAW = `.${CLASS_ANNOTATION_BUTTON_DRAW}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_UNDO = 'ba-btn-annotate-draw-undo';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO = `.${CLASS_ANNOTATION_BUTTON_DRAW_UNDO}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_REDO = 'ba-btn-annotate-draw-redo';

@@ -10,9 +10,6 @@ let dialog;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
 const DATA_TYPE_HIGHLIGHT_BTN = 'highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;
@@ -84,7 +81,7 @@ describe('doc/DocHighlightDialog', () => {
                 })
             );
 
-            const highlightLabelEl = dialog.element.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = dialog.element.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             expect(highlightLabelEl).to.contain.html('Bob highlighted');
             expect(dialog.position).to.be.called;
         });
@@ -219,7 +216,7 @@ describe('doc/DocHighlightDialog', () => {
             };
             dialog.hideCommentsDialog();
 
-            expect(dialog.element.classList.contains(CLASS_HIGHLIGHT_DIALOG)).to.be.true;
+            expect(dialog.element.classList.contains(constants.CLASS_HIGHLIGHT_DIALOG)).to.be.true;
         });
 
         it('should show the highlight dialog', () => {
@@ -424,7 +421,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should add the text highlighted class if thread has multiple annotations', () => {
             dialog.setup([stubs.annotation], false);
-            expect(dialog.dialogEl).to.have.class(CLASS_TEXT_HIGHLIGHTED);
+            expect(dialog.dialogEl).to.have.class(constants.CLASS_TEXT_HIGHLIGHTED);
         });
 
         it('should setup and show plain highlight dialog', () => {
@@ -581,17 +578,17 @@ describe('doc/DocHighlightDialog', () => {
 
     describe('toggleHighlight()', () => {
         it('should delete a blank annotation if text is highlighted', () => {
-            dialog.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            dialog.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
             dialog.toggleHighlight();
             expect(dialog.hasComments).to.be.true;
             expect(stubs.emit).to.be.calledWith('annotationdelete');
         });
 
         it('should create a blank annotation if text is not highlighted', () => {
-            dialog.dialogEl.classList.remove(CLASS_TEXT_HIGHLIGHTED);
+            dialog.dialogEl.classList.remove(constants.CLASS_TEXT_HIGHLIGHTED);
 
             dialog.toggleHighlight();
-            expect(dialog.dialogEl).to.have.class(CLASS_TEXT_HIGHLIGHTED);
+            expect(dialog.dialogEl).to.have.class(constants.CLASS_TEXT_HIGHLIGHTED);
             expect(dialog.hasComments).to.be.false;
             expect(stubs.emit).to.be.calledWith('annotationcreate');
         });
