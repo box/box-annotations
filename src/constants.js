@@ -23,6 +23,8 @@ export const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
 export const SELECTOR_BOX_PREVIEW_BASE_HEADER = `.${CLASS_BOX_PREVIEW_BASE_HEADER}`;
 export const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
 export const SELECTOR_ANNOTATION_BUTTON_POINT = `.${CLASS_ANNOTATION_BUTTON_POINT}`;
+export const CLASS_ANNOTATION_BUTTON_DRAW = 'bp-btn-annotate-draw';
+export const SELECTOR_ANNOTATION_BUTTON_DRAW = `.${CLASS_ANNOTATION_BUTTON_DRAW}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = `.${CLASS_ANNOTATION_BUTTON_DRAW_ENTER}`;
 
@@ -161,8 +163,6 @@ export const SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS = `.${CLASS_ANNOTATION_L
 // Drawing CSS constants
 export const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';
 export const SELECTOR_ANNOTATION_DRAW = `.${CLASS_ANNOTATION_DRAW}`;
-export const CLASS_ANNOTATION_BUTTON_DRAW = 'ba-btn-annotate-draw';
-export const SELECTOR_ANNOTATION_BUTTON_DRAW = `.${CLASS_ANNOTATION_BUTTON_DRAW}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_UNDO = 'ba-btn-annotate-draw-undo';
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO = `.${CLASS_ANNOTATION_BUTTON_DRAW_UNDO}`;
 export const CLASS_ANNOTATION_BUTTON_DRAW_REDO = 'ba-btn-annotate-draw-redo';
