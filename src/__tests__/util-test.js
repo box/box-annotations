@@ -544,7 +544,7 @@ describe('util', () => {
     });
 
     describe('prevDefAndStopProp()', () => {
-        it('should prevent default and stop propogation on an event', () => {
+        it('should prevent default and stop propagation on an event', () => {
             const event = {
                 preventDefault: sandbox.stub(),
                 stopPropagation: sandbox.stub()
