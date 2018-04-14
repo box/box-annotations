@@ -512,7 +512,7 @@ describe('controllers/AnnotationModeController', () => {
         beforeEach(() => {
             stubs.isPending = sandbox.stub(util, 'isPending').returns(false);
             stubs.isPending.withArgs(STATES.pending).returns(true);
-
+            sandbox.stub(controller, 'unregisterThread');
             controller.registerThread(stubs.thread);
         });
 
@@ -520,6 +520,8 @@ describe('controllers/AnnotationModeController', () => {
             stubs.threadMock.expects('destroy');
             const destroyed = controller.destroyPendingThreads();
             expect(destroyed).to.be.true;
+            expect(controller.unregisterThread).to.be.called;
+            expect(controller.unregisterThread).to.be.called;
         });
 
         it('should not destroy and return false if there are no threads', () => {
@@ -528,6 +530,7 @@ describe('controllers/AnnotationModeController', () => {
             stubs.isPending.returns(false);
             const destroyed = controller.destroyPendingThreads();
             expect(destroyed).to.be.false;
+            expect(controller.unregisterThread).to.not.be.called;
         });
 
         it('should not destroy and return false if the threads are not pending', () => {
@@ -537,6 +540,7 @@ describe('controllers/AnnotationModeController', () => {
             stubs.threadMock.expects('hideDialog').never();
             const destroyed = controller.destroyPendingThreads();
             expect(destroyed).to.be.false;
+            expect(controller.unregisterThread).to.not.be.called;
         });
 
         it('should hide non-pending thread dialogs that are visible', () => {
@@ -546,6 +550,7 @@ describe('controllers/AnnotationModeController', () => {
             stubs.threadMock.expects('hideDialog');
             const destroyed = controller.destroyPendingThreads();
             expect(destroyed).to.be.false;
+            expect(controller.unregisterThread).to.not.be.called;
         });
 
         it('should destroy only pending threads, and return true', () => {
@@ -568,6 +573,7 @@ describe('controllers/AnnotationModeController', () => {
             const destroyed = controller.destroyPendingThreads();
 
             expect(destroyed).to.be.true;
+            expect(controller.unregisterThread).to.be.called;
         });
     });
 
