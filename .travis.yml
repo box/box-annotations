@@ -23,6 +23,9 @@ aliases:
     - &sauce-labs-desktop
       <<: *sauce-labs
       script: yarn run functional-tests-ci --grep @desktop
+    - &sauce-labs-ie
+      <<: *sauce-labs
+      script: yarn run functional-tests-ci --grep @ie
 jobs:
   include:
   - script: yarn run ci
@@ -41,7 +44,7 @@ jobs:
     env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="MicrosoftEdge" FILE_ID="285567976309" FILE_VERSION_ID="300496707445"
     script: yarn run functional-tests-ci
   # Windows IE
-  - <<: *sauce-labs-desktop
+  - <<: *sauce-labs-ie
     env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="internet explorer" FILE_ID="285568624824" FILE_VERSION_ID="300497342136"
     script: yarn run functional-tests-ci
   # iPhone
@@ -55,4 +58,3 @@ jobs:
   - <<: *sauce-labs-mobile
     # Uses chrome file id
     env: BROWSER_PLATFORM="Android" DEVICE_NAME="Android GoogleAPI Emulator" PLATFORM_VERSION="7.1" BROWSER_NAME="Chrome" FILE_ID="285567874839" FILE_VERSION_ID="300496591287"
-    script: yarn run functional-tests-ci
