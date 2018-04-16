@@ -6,8 +6,7 @@ cache: yarn
 notifications:
     email:
         recipients:
-            # Update to preview-alerts when tests are more stable
-            - spramod@box.com
+            - preview-alerts@box.com
 aliases:
     - &sauce-labs
         if: type = cron
