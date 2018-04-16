@@ -35,18 +35,15 @@ jobs:
   # Mac Safari
   - <<: *sauce-labs-desktop
     env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="safari" FILE_ID="285569765346" FILE_VERSION_ID="300498497346"
-    script: yarn run functional-tests-ci
   # Mac Firefox
   - <<: *sauce-labs-desktop
     env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="firefox" FILE_ID="285568802145" FILE_VERSION_ID="300497533713"
   # Windows Edge
   - <<: *sauce-labs-desktop
     env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="MicrosoftEdge" FILE_ID="285567976309" FILE_VERSION_ID="300496707445"
-    script: yarn run functional-tests-ci
   # Windows IE
   - <<: *sauce-labs-ie
     env: BROWSER_PLATFORM="Windows 10" BROWSER_NAME="internet explorer" FILE_ID="285568624824" FILE_VERSION_ID="300497342136"
-    script: yarn run functional-tests-ci
   # iPhone
   - <<: *sauce-labs-mobile
     env: BROWSER_PLATFORM="iOS" DEVICE_NAME="iPhone 6 Simulator" PLATFORM_VERSION="11.2" BROWSER_NAME="Safari" FILE_ID="285569765346" FILE_VERSION_ID="300498497346"
