@@ -131,7 +131,7 @@
     fill: $highlight-yellow;
 }
 
-.bp-is-text-highlighted .ba-annotation-highlight-dialog .bp-btn-plain {
+.ba-is-text-highlighted .ba-annotation-highlight-dialog .bp-btn-plain {
     svg {
         fill: $highlight-yellow;
     }
@@ -352,7 +352,7 @@
     }
 }
 
-.bp-annotation-profile {
+.ba-annotation-profile {
     background-color: $tendemob-grey;
     border-radius: 16px; // Circle
     color: $white;
@@ -411,7 +411,7 @@
     top: 15px; // Match 15px padding top on page
 }
 
-.bp-highlight-dialog {
+.ba-highlight-dialog {
     border-top: 20px solid transparent; // Transparent border for hover detection
     color: $fours;
     display: table;
@@ -462,7 +462,7 @@
     }
 }
 
-.bp-create-highlight-comment {
+.ba-create-highlight-comment {
     background-color: #fff;
     overflow-x: hidden;
     overflow-y: auto;
@@ -486,7 +486,7 @@
 }
 
 // These helper divs allow us to calculate the quad points of an element
-.bp-quad-corner-container {
+.ba-quad-corner-container {
     bottom: 0;
     left: 0;
     position: absolute;
@@ -494,7 +494,7 @@
     top: 0;
 }
 
-.bp-quad-corner {
+.ba-quad-corner {
     background: none;
     height: 0;
     position: absolute;
@@ -522,7 +522,7 @@
 }
 
 .ba-annotation-drawing-label,
-.bp-annotation-highlight-label {
+.ba-annotation-highlight-label {
     padding: 8px 4px;
     width: 100%;
 }

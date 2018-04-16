@@ -10,9 +10,6 @@ let dialog;
 const sandbox = sinon.sandbox.create();
 let stubs = {};
 
-const CLASS_HIGHLIGHT_DIALOG = 'bp-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'bp-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'bp-annotation-highlight-label';
 const DATA_TYPE_HIGHLIGHT_BTN = 'highlight-btn';
 const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;
@@ -84,7 +81,7 @@ describe('doc/DocHighlightDialog', () => {
                 })
             );
 
-            const highlightLabelEl = dialog.element.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = dialog.element.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             expect(highlightLabelEl).to.contain.html('Bob highlighted');
             expect(dialog.position).to.be.called;
         });
@@ -219,7 +216,7 @@ describe('doc/DocHighlightDialog', () => {
             };
             dialog.hideCommentsDialog();
 
-            expect(dialog.element.classList.contains(CLASS_HIGHLIGHT_DIALOG)).to.be.true;
+            expect(dialog.element.classList.contains(constants.CLASS_HIGHLIGHT_DIALOG)).to.be.true;
         });
 
         it('should show the highlight dialog', () => {
@@ -238,7 +235,7 @@ describe('doc/DocHighlightDialog', () => {
     describe('position()', () => {
         beforeEach(() => {
             stubs.scaled = sandbox.stub(dialog, 'getScaledPDFCoordinates').returns([150, 2]);
-            stubs.width = sandbox.stub(dialog, 'getDialogWidth');
+            stubs.width = sandbox.stub(util, 'getDialogWidth');
             stubs.caret = sandbox.stub(util, 'repositionCaret');
             stubs.show = sandbox.stub(util, 'showElement');
             stubs.fit = sandbox.stub(dialog, 'fitDialogHeightInPage');
@@ -424,7 +421,7 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should add the text highlighted class if thread has multiple annotations', () => {
             dialog.setup([stubs.annotation], false);
-            expect(dialog.dialogEl).to.have.class(CLASS_TEXT_HIGHLIGHTED);
+            expect(dialog.dialogEl).to.have.class(constants.CLASS_TEXT_HIGHLIGHTED);
         });
 
         it('should setup and show plain highlight dialog', () => {
@@ -581,17 +578,17 @@ describe('doc/DocHighlightDialog', () => {
 
     describe('toggleHighlight()', () => {
         it('should delete a blank annotation if text is highlighted', () => {
-            dialog.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            dialog.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
             dialog.toggleHighlight();
             expect(dialog.hasComments).to.be.true;
             expect(stubs.emit).to.be.calledWith('annotationdelete');
         });
 
         it('should create a blank annotation if text is not highlighted', () => {
-            dialog.dialogEl.classList.remove(CLASS_TEXT_HIGHLIGHTED);
+            dialog.dialogEl.classList.remove(constants.CLASS_TEXT_HIGHLIGHTED);
 
             dialog.toggleHighlight();
-            expect(dialog.dialogEl).to.have.class(CLASS_TEXT_HIGHLIGHTED);
+            expect(dialog.dialogEl).to.have.class(constants.CLASS_TEXT_HIGHLIGHTED);
             expect(dialog.hasComments).to.be.false;
             expect(stubs.emit).to.be.calledWith('annotationcreate');
         });
@@ -616,25 +613,6 @@ describe('doc/DocHighlightDialog', () => {
             stubs.textMock.expects('focus').never();
             sandbox.stub(util, 'isElementInViewport').returns(false);
             dialog.focusAnnotationsTextArea();
-        });
-    });
-
-    describe('getDialogWidth', () => {
-        it('should calculate dialog width once annotator\'s user name has been populated', () => {
-            const highlightLabelEl = dialog.element.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
-            highlightLabelEl.innerHTML = 'Bob highlighted';
-            dialog.element.style.width = '100px';
-            dialog.element.style.left = '30px';
-
-            const width = dialog.getDialogWidth();
-            expect(width).to.equal(100);
-            expect(dialog.element.style.left).to.equal('30px');
-        });
-
-        it('should return previously set dialog width if already calculated', () => {
-            dialog.element.style.width = '252px';
-            const width = dialog.getDialogWidth();
-            expect(width).to.equal(252); // Default comments dialog width
         });
     });
 

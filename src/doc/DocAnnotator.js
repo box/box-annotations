@@ -35,7 +35,7 @@ const SELECTOR_PREVIEW_DOC = '.bp-doc';
 const CLASS_DEFAULT_CURSOR = 'bp-use-default-cursor';
 
 // Required by rangy highlighter
-const ID_ANNOTATED_ELEMENT = 'bp-rangy-annotated-element';
+const ID_ANNOTATED_ELEMENT = 'ba-rangy-annotated-element';
 
 const ANNOTATION_LAYER_CLASSES = [
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
@@ -141,7 +141,10 @@ class DocAnnotator extends Annotator {
             // If click isn't on a page, ignore
             const eventTarget = clientEvent.target;
             const pageInfo = util.getPageInfo(eventTarget);
-            if (!pageInfo.pageEl) {
+            const pageEl = pageInfo.pageEl
+                ? pageInfo.pageEl
+                : this.annotatedElement.querySelector(`[data-page-number="${pageInfo.page}"]`);
+            if (!pageEl) {
                 return location;
             }
 
@@ -157,7 +160,7 @@ class DocAnnotator extends Annotator {
             }
 
             // Store coordinates at 100% scale in PDF space in PDF units
-            const pageDimensions = pageInfo.pageEl.getBoundingClientRect();
+            const pageDimensions = pageEl.getBoundingClientRect();
             const pageWidth = pageDimensions.width;
             const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
             const browserCoordinates = [

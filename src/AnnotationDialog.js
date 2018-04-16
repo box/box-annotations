@@ -508,7 +508,8 @@ class AnnotationDialog extends EventEmitter {
     clickHandler(event) {
         event.stopPropagation();
 
-        if (this.isMobile) {
+        // NOTE: This is a workaround when buttons are not given precedence in the event chain
+        if (this.isMobile && event.target && event.target.nodeName === 'BUTTON') {
             event.preventDefault();
         }
 

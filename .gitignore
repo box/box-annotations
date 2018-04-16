@@ -14,3 +14,4 @@ src/i18n/json
 test/dev.html
 lib
 *~~bak
+functional-tests/output

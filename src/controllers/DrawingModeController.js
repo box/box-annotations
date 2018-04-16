@@ -1,17 +1,10 @@
 import AnnotationModeController from './AnnotationModeController';
 import shell from './drawingShell.html';
-import DocDrawingThread from '../doc/DocDrawingThread';
-import {
-    replaceHeader,
-    enableElement,
-    disableElement,
-    eventToLocationHandler,
-    clearCanvas,
-    hasValidBoundaryCoordinates
-} from '../util';
+import { replaceHeader, enableElement, disableElement, clearCanvas, hasValidBoundaryCoordinates } from '../util';
 import {
     TYPES,
     STATES,
+    THREAD_EVENT,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
@@ -108,40 +101,18 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     setupHandlers() {
         /* eslint-disable require-jsdoc */
-        const locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
+        this.locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
         /* eslint-enable require-jsdoc */
 
-        // Setup
-        const threadParams = this.annotator.getThreadParams([], {}, TYPES.draw);
-        this.currentThread = new DocDrawingThread(threadParams);
-        this.currentThread.addListener('threadevent', (data) => {
-            const thread = this.currentThread || this.selectedThread;
-            this.handleThreadEvents(thread, data);
-        });
-
-        // Get handlers
-        this.pushElementHandler(
-            this.annotatedElement,
-            ['mousemove', 'touchmove'],
-            eventToLocationHandler(locationFunction, this.currentThread.handleMove)
-        );
-
-        this.pushElementHandler(
-            this.annotatedElement,
-            ['mousedown', 'touchstart'],
-            eventToLocationHandler(locationFunction, this.currentThread.handleStart)
-        );
-
-        this.pushElementHandler(
-            this.annotatedElement,
-            ['mouseup', 'touchcancel', 'touchend'],
-            eventToLocationHandler(locationFunction, this.currentThread.handleStop)
-        );
+        this.drawingStartHandler = this.drawingStartHandler.bind(this);
+        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler);
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             if (this.currentThread) {
                 this.currentThread.cancelUnsavedAnnotation();
             }
+
+            this.currentThread = undefined;
             this.toggleMode();
         });
 
@@ -150,11 +121,61 @@ class DrawingModeController extends AnnotationModeController {
                 this.saveThread(this.currentThread);
             }
 
+            this.currentThread = undefined;
             this.toggleMode();
         });
 
-        this.pushElementHandler(this.undoButtonEl, 'click', this.currentThread.undo);
-        this.pushElementHandler(this.redoButtonEl, 'click', this.currentThread.redo);
+        this.pushElementHandler(this.undoButtonEl, 'click', () => {
+            if (this.currentThread) {
+                this.currentThread.undo();
+            }
+        });
+
+        this.pushElementHandler(this.redoButtonEl, 'click', () => {
+            if (this.currentThread) {
+                this.currentThread.redo();
+            }
+        });
+    }
+
+    /**
+     * Start a drawing stroke
+     *
+     * @param {Event} event - DOM event
+     * @return {void}
+     */
+    drawingStartHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        // Get annotation location from click event, ignore click if location is invalid
+        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        if (!location) {
+            return;
+        }
+
+        if (this.currentThread) {
+            this.currentThread.handleStart(location);
+            return;
+        }
+
+        // Add initial drawing boundary based on starting location
+        location.minX = location.x;
+        location.maxX = location.x;
+        location.minY = location.y;
+        location.maxY = location.y;
+
+        // Create new thread with no annotations, show indicator, and show dialog
+        const thread = this.annotator.createAnnotationThread([], location, TYPES.draw);
+        if (!thread) {
+            return;
+        }
+
+        this.currentThread = thread;
+        this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
+        thread.bindDrawingListeners(this.locationFunction);
+        thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
+        thread.handleStart(location);
     }
 
     /** @inheritdoc */
@@ -179,6 +200,9 @@ class DrawingModeController extends AnnotationModeController {
         const { eventData } = data;
         switch (data.event) {
             case 'softcommit':
+                thread.removeListener('threadevent', this.handleThreadEvents);
+                thread.unbindDrawingListeners();
+
                 this.currentThread = undefined;
                 this.saveThread(thread);
                 this.unbindListeners();
@@ -194,6 +218,10 @@ class DrawingModeController extends AnnotationModeController {
                 if (!thread || !thread.dialog) {
                     return;
                 }
+
+                this.currentThread = undefined;
+                thread.removeListener('threadevent', this.handleThreadEvents);
+                thread.unbindDrawingListeners();
 
                 if (thread.state === STATES.pending) {
                     // Soft delete, in-progress thread doesn't require a redraw or a delete on the server
@@ -228,7 +256,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     handleSelection(event) {
-        // NOTE: @jpress This is a workaround when buttons are not given precedence in the event chain
+        // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
             return;

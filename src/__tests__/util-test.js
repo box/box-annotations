@@ -41,7 +41,8 @@ import {
     isInDialog,
     focusTextArea,
     hasValidBoundaryCoordinates,
-    generateMobileDialogEl
+    generateMobileDialogEl,
+    getDialogWidth
 } from '../util';
 import {
     STATES,
@@ -53,7 +54,8 @@ import {
     CLASS_MOBILE_DIALOG_HEADER,
     CLASS_DIALOG_CLOSE,
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
-    CLASS_ANIMATE_DIALOG
+    CLASS_ANIMATE_DIALOG,
+    CLASS_HIDDEN
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -211,14 +213,14 @@ describe('util', () => {
             const textAreaEl = document.querySelector('.textarea');
 
             // Fake making text area 'active'
-            textAreaEl.classList.add('bp-is-active');
+            textAreaEl.classList.add(CLASS_ACTIVE);
             textAreaEl.value = 'test';
             textAreaEl.style.width = '10px';
             textAreaEl.style.height = '10px';
 
             resetTextarea(textAreaEl);
 
-            expect(textAreaEl).to.not.have.class('bp-is-active');
+            expect(textAreaEl).to.not.have.class(CLASS_ACTIVE);
             expect(textAreaEl).to.not.have.class('ba-invalid-input');
             expect(textAreaEl.value).to.equal('test');
             expect(textAreaEl.style.width).to.equal('');
@@ -279,7 +281,7 @@ describe('util', () => {
         });
 
         it('should return avatar HTML initials if no avatarUrl is provided', () => {
-            const expectedHtml = '<div class="bp-annotation-profile avatar-color-1">SN</div>'.trim();
+            const expectedHtml = '<div class="ba-annotation-profile avatar-color-1">SN</div>'.trim();
             expect(getAvatarHtml('', '1', 'Some Name')).to.equal(expectedHtml);
         });
     });
@@ -542,7 +544,7 @@ describe('util', () => {
     });
 
     describe('prevDefAndStopProp()', () => {
-        it('should prevent default and stop propogation on an event', () => {
+        it('should prevent default and stop propagation on an event', () => {
             const event = {
                 preventDefault: sandbox.stub(),
                 stopPropagation: sandbox.stub()
@@ -843,6 +845,15 @@ describe('util', () => {
             expect(el).to.have.descendant(`.${CLASS_DIALOG_CLOSE}`);
             expect(el).to.not.have.class(`.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`);
             expect(el).to.not.have.class(`.${CLASS_ANIMATE_DIALOG}`);
+        });
+    });
+
+    describe('getDialogWidth', () => {
+        it('should calculate dialog width without displaying the dialog', () => {
+            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            dialogEl.style.width = '100px';
+            expect(getDialogWidth(dialogEl)).to.equal(100);
+            expect(dialogEl).to.have.class(CLASS_HIDDEN);
         });
     });
 });

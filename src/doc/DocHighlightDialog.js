@@ -4,10 +4,6 @@ import * as docUtil from './docUtil';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import * as constants from '../constants';
 
-const CLASS_HIGHLIGHT_DIALOG = 'bp-highlight-dialog';
-const CLASS_TEXT_HIGHLIGHTED = 'bp-is-text-highlighted';
-const CLASS_HIGHLIGHT_LABEL = 'bp-annotation-highlight-label';
-
 const HIGHLIGHT_DIALOG_HEIGHT = 38;
 const PAGE_PADDING_BOTTOM = 15;
 const PAGE_PADDING_TOP = 15;
@@ -40,7 +36,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // If annotation is blank then display who highlighted the text
         // Will be displayed as '{name} highlighted'
         if (annotation.text === '' && annotation.user.id !== '0') {
-            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 annotation.user.name
             ]);
@@ -106,7 +102,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         util.hideElement(this.commentsDialogEl);
 
-        this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
+        this.element.classList.add(constants.CLASS_HIGHLIGHT_DIALOG);
         util.showElement(this.highlightDialogEl);
         this.hasComments = false;
     }
@@ -143,7 +139,7 @@ class DocHighlightDialog extends AnnotationDialog {
         const [browserX, browserY] = this.getScaledPDFCoordinates(pageDimensions, pageHeight);
         pageEl.appendChild(this.element);
 
-        const highlightDialogWidth = this.getDialogWidth();
+        const highlightDialogWidth = util.getDialogWidth(this.element);
 
         let dialogX = browserX - highlightDialogWidth / 2; // Center dialog
         // Shorten extra transparent border top if showing comments dialog
@@ -187,7 +183,7 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Displays comments dialog and hides highlight annotations button
         if (commentsDialogIsHidden) {
-            this.element.classList.remove(CLASS_HIGHLIGHT_DIALOG);
+            this.element.classList.remove(constants.CLASS_HIGHLIGHT_DIALOG);
             util.hideElement(this.highlightDialogEl);
 
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
@@ -202,7 +198,7 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.classList.remove(constants.CLASS_ANNOTATION_DIALOG);
             util.hideElement(this.commentsDialogEl);
 
-            this.element.classList.add(CLASS_HIGHLIGHT_DIALOG);
+            this.element.classList.add(constants.CLASS_HIGHLIGHT_DIALOG);
             util.showElement(this.highlightDialogEl);
             this.hasComments = false;
         }
@@ -301,14 +297,14 @@ class DocHighlightDialog extends AnnotationDialog {
 
         // Indicate that text is highlighted in the highlight buttons dialog
         if (firstAnnotation) {
-            this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            this.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
         }
 
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
         if (util.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
-            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${CLASS_HIGHLIGHT_LABEL}`);
+            const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
                 firstAnnotation.user.name
             ]);
@@ -432,12 +428,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * @return {void}
      */
     toggleHighlight() {
-        const isTextHighlighted = this.dialogEl.classList.contains(CLASS_TEXT_HIGHLIGHTED);
+        const isTextHighlighted = this.dialogEl.classList.contains(constants.CLASS_TEXT_HIGHLIGHTED);
 
         // Creates a blank highlight annotation
         if (!isTextHighlighted) {
             this.hasComments = false;
-            this.dialogEl.classList.add(CLASS_TEXT_HIGHLIGHTED);
+            this.dialogEl.classList.add(constants.CLASS_TEXT_HIGHLIGHTED);
             this.emit('annotationcreate');
 
             // Deletes blank highlight annotation if user has permission
@@ -458,37 +454,6 @@ class DocHighlightDialog extends AnnotationDialog {
         if (util.isElementInViewport(textAreaEl)) {
             textAreaEl.focus();
         }
-    }
-
-    /**
-     * Calculates the dialog width if the highlighter's name is to be displayed
-     * in the annotations dialog
-     *
-     * @private
-     * @return {number} Annotations dialog width
-     */
-    getDialogWidth() {
-        // Ensure dialog will not be displayed off the page when
-        // calculating the dialog width
-        const prevDialogX = this.element.style.left;
-        this.element.style.left = 0;
-
-        // Switches to 'visibility: hidden' to ensure that dialog takes up
-        // DOM space while still being invisible
-        util.hideElementVisibility(this.element);
-        util.showElement(this.element);
-
-        this.highlightDialogWidth = this.element.getBoundingClientRect().width;
-
-        // Switches back to 'display: none' to so that it no longer takes up place
-        // in the DOM while remaining hidden
-        util.hideElement(this.element);
-        util.showInvisibleElement(this.element);
-
-        // Reset dialog left positioning
-        this.element.style.left = prevDialogX;
-
-        return this.highlightDialogWidth;
     }
 
     /**
@@ -550,7 +515,7 @@ class DocHighlightDialog extends AnnotationDialog {
         const highlightDialogEl = document.createElement('div');
 
         const highlightLabelEl = document.createElement('span');
-        highlightLabelEl.classList.add(CLASS_HIGHLIGHT_LABEL);
+        highlightLabelEl.classList.add(constants.CLASS_HIGHLIGHT_LABEL);
         highlightLabelEl.classList.add(constants.CLASS_HIDDEN);
         highlightDialogEl.appendChild(highlightLabelEl);
 

@@ -21,7 +21,7 @@ const stubs = {};
 describe('CreateAnnotationDialog', () => {
     beforeEach(() => {
         parentEl = document.createElement('div');
-        parentEl.classList.add('bp-create-dialog-container');
+        parentEl.classList.add('ba-create-dialog-container');
         dialog = new CreateAnnotationDialog(parentEl, {
             isMobile: true,
             localized

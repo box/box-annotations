@@ -1270,7 +1270,7 @@ describe('doc/DocAnnotator', () => {
             stubs.thread.state = 'inactive';
         });
 
-        it('should stop event propogation', () => {
+        it('should stop event propagation', () => {
             annotator.highlightCreateHandler(stubs.event);
             expect(stubs.stopEvent).to.be.called;
         });

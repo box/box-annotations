@@ -94,6 +94,65 @@ describe('drawing/DrawingThread', () => {
         });
     });
 
+    describe('bindDrawingListeners()', () => {
+        beforeEach(() => {
+            thread.isMobile = false;
+            thread.hasTouch = false;
+            thread.annotatedElement = {
+                addEventListener: sandbox.stub()
+            };
+            stubs.add = thread.annotatedElement.addEventListener;
+        });
+
+        it('should add only mouse listeners for desktop devices', () => {
+            thread.bindDrawingListeners();
+            expect(stubs.add).to.be.calledWith('mousemove', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchmove', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchcancel', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('touchend', sinon.match.func);
+        });
+
+        it('should add all listeners for touch enabled laptop devices', () => {
+            thread.hasTouch = true;
+            thread.bindDrawingListeners();
+            expect(stubs.add).to.be.calledWith('mousemove', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchmove', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchcancel', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchend', sinon.match.func);
+        });
+
+        it('should add only touch listeners for touch enabled mobile devices', () => {
+            thread.isMobile = true;
+            thread.hasTouch = true;
+            thread.bindDrawingListeners();
+            expect(stubs.add).to.not.be.calledWith('mousemove', sinon.match.func);
+            expect(stubs.add).to.not.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchmove', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchcancel', sinon.match.func);
+            expect(stubs.add).to.be.calledWith('touchend', sinon.match.func);
+        });
+    });
+
+    describe('unbindDrawingListeners()', () => {
+        beforeEach(() => {
+            thread.annotatedElement = {
+                removeEventListener: sandbox.stub()
+            };
+            stubs.remove = thread.annotatedElement.removeEventListener;
+        });
+
+        it('should add only mouse listeners for desktop devices', () => {
+            thread.unbindDrawingListeners();
+            expect(stubs.remove).to.be.calledWith('mousemove', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('touchmove', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('touchcancel', sinon.match.func);
+            expect(stubs.remove).to.be.calledWith('touchend', sinon.match.func);
+        });
+    });
+
     describe('setContextStyles()', () => {
         it('should set configurable context properties', () => {
             thread.drawingContext = {

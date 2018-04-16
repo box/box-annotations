@@ -346,7 +346,7 @@ export function getAvatarHtml(avatarUrl, userId, userName, altText) {
     }
 
     const index = parseInt(userId, 10) || 0;
-    return `<div class="bp-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
+    return `<div class="ba-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
 }
 
 /**
@@ -847,4 +847,33 @@ export function generateMobileDialogEl() {
  */
 export function isInAnnotationMode(element) {
     return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
+}
+
+/**
+ * Calculates the dialog width when visible
+ *
+ * @param {HTMLElement} dialogEl - Annotation dialog element
+ * @return {number} Annotations dialog width
+ */
+export function getDialogWidth(dialogEl) {
+    const element = dialogEl;
+
+    // Switches to 'visibility: hidden' to ensure that dialog takes up
+    // DOM space while still being invisible
+    hideElementVisibility(element);
+    showElement(element);
+
+    // Ensure dialog will not be displayed off the page when
+    // calculating the dialog width
+    element.style.left = 0;
+
+    const boundingRect = element.getBoundingClientRect();
+    const dialogWidth = boundingRect.width;
+
+    // Switches back to 'display: none' to so that it no longer takes up place
+    // in the DOM while remaining hidden
+    hideElement(element);
+    showInvisibleElement(element);
+
+    return dialogWidth;
 }

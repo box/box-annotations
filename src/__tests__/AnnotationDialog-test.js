@@ -108,7 +108,7 @@ describe('AnnotationDialog', () => {
             dialog.hasAnnotations = true;
             dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            commentsTextArea.classList.remove('bp-is-active');
+            commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
 
             dialog.show();
             expect(stubs.position).to.be.called;
@@ -714,13 +714,21 @@ describe('AnnotationDialog', () => {
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
         });
 
-        it('should only stop propogation on a desktop device', () => {
+        it('should only stop propagation on a desktop device', () => {
             dialog.clickHandler(stubs.event);
             expect(stubs.event.stopPropagation).to.be.called;
             expect(stubs.event.preventDefault).to.not.be.called;
         });
 
-        it('should stop propogation AND prevent default on a mobile device', () => {
+        it('should only stop propagation on a mobile device', () => {
+            dialog.isMobile = true;
+            dialog.clickHandler(stubs.event);
+            expect(stubs.event.stopPropagation).to.be.called;
+            expect(stubs.event.preventDefault).to.not.be.called;
+        });
+
+        it('should only prevent default on button clicks for mobile devices', () => {
+            stubs.event.target = document.createElement('button');
             dialog.isMobile = true;
             dialog.clickHandler(stubs.event);
             expect(stubs.event.stopPropagation).to.be.called;
@@ -991,7 +999,7 @@ describe('AnnotationDialog', () => {
 
         it('should do nothing if reply textarea is already active', () => {
             const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            replyTextEl.classList.add('bp-is-active');
+            replyTextEl.classList.add(constants.CLASS_ACTIVE);
             sandbox.stub(util, 'showElement');
 
             dialog.activateReply();

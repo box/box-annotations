@@ -78,8 +78,8 @@ class DocDrawingThread extends DrawingThread {
                 page: location.page,
                 dimensions: location.dimensions
             };
-            this.checkAndHandleScaleUpdate();
         }
+        this.checkAndHandleScaleUpdate();
 
         this.drawingFlag = DRAW_STATES.drawing;
         if (!this.pendingPath) {
