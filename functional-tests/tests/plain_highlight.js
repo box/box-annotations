@@ -26,7 +26,7 @@ Scenario('Create a new plain highlight annotation @desktop', (I) => {
 
     I.say('Highlight should be created and dialog should appear');
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForText('Kanye West highlighted', 5, SELECTOR_HIGHLIGHT_LABEL);
+    I.waitForText('Kanye West highlighted', 9, SELECTOR_HIGHLIGHT_LABEL);
     I.waitForEnabled(SELECTOR_ADD_HIGHLIGHT_BTN);
 });
 
