@@ -28,7 +28,7 @@ reset_tags() {
     echo "----------------------------------------------------------------------"
     echo "Fetching latest upstream code + tags"
     echo "----------------------------------------------------------------------"
-    git fetch --tags github-upstream || return 1;
+    git fetch --tags release || return 1;
 }
 
 
@@ -63,7 +63,7 @@ reset_to_master() {
     echo "----------------------------------------------------------------------"
     echo "Resetting to upstream/master"
     echo "----------------------------------------------------------------------"
-    git reset --hard github-upstream/master || return 1
+    git reset --hard release/master || return 1
     git clean -f  || return 1
 }
 
