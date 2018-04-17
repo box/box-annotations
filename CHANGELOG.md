@@ -1,3 +1,28 @@
+<a name="1.4.0"></a>
+## 1.4.0 (2018-04-17)
+
+* Chore: Add .ba-annotations-loaded to preview when load completes (#167) ([7f62860](https://github.com/box/box-annotations/commit/7f62860)), closes [#167](https://github.com/box/box-annotations/issues/167)
+* Chore: Add basic drawing annotations test (#169) ([a35853d](https://github.com/box/box-annotations/commit/a35853d)), closes [#169](https://github.com/box/box-annotations/issues/169)
+* Chore: change release script remote to be release (#176) ([ba0e1c9](https://github.com/box/box-annotations/commit/ba0e1c9)), closes [#176](https://github.com/box/box-annotations/issues/176)
+* Chore: Email preview-alert@box.com on functional-tests failure ([aea1cfa](https://github.com/box/box-annotations/commit/aea1cfa))
+* Chore: Enable drawing annotations in functional tests express app (#171) ([628cd20](https://github.com/box/box-annotations/commit/628cd20)), closes [#171](https://github.com/box/box-annotations/issues/171)
+* Chore: Functional test fixes (#172) ([580e1d7](https://github.com/box/box-annotations/commit/580e1d7)), closes [#172](https://github.com/box/box-annotations/issues/172)
+* Chore: Increase timeout for plain highlight functional tests ([308025e](https://github.com/box/box-annotations/commit/308025e))
+* Chore: Prefix imported styles to avoid leaking (#165) ([629ecab](https://github.com/box/box-annotations/commit/629ecab)), closes [#165](https://github.com/box/box-annotations/issues/165)
+* Chore: unregister pending threads on destroy (#173) ([0b93e82](https://github.com/box/box-annotations/commit/0b93e82)), closes [#173](https://github.com/box/box-annotations/issues/173)
+* Fix: Allow textarea to be interactable in certain scenarios (#174) ([9ce5b0a](https://github.com/box/box-annotations/commit/9ce5b0a)), closes [#174](https://github.com/box/box-annotations/issues/174)
+* Fix: Change remaining CSS selectors to use ba- prefix (#164) ([baf4ebc](https://github.com/box/box-annotations/commit/baf4ebc)), closes [#164](https://github.com/box/box-annotations/issues/164)
+* Fix: firefox comment collapse on mouseout (#175) ([c63f087](https://github.com/box/box-annotations/commit/c63f087)), closes [#175](https://github.com/box/box-annotations/issues/175)
+* Fix: Only preventDefault() on mobile dialog button clicks (#170) ([a926d0e](https://github.com/box/box-annotations/commit/a926d0e)), closes [#170](https://github.com/box/box-annotations/issues/170)
+* Fix: quadpoint CSS selectors (#163) ([f881b6e](https://github.com/box/box-annotations/commit/f881b6e)), closes [#163](https://github.com/box/box-annotations/issues/163)
+* Increase selenium timeout ([6ae7e32](https://github.com/box/box-annotations/commit/6ae7e32))
+* Update .travis.yml ([a2aa15e](https://github.com/box/box-annotations/commit/a2aa15e))
+* Update .travis.yml ([e395350](https://github.com/box/box-annotations/commit/e395350))
+* New: Add plain highlight functional tests (#168) ([b8b29aa](https://github.com/box/box-annotations/commit/b8b29aa)), closes [#168](https://github.com/box/box-annotations/issues/168)
+* New: Setup selenium functional UI framework (#158) ([db9a320](https://github.com/box/box-annotations/commit/db9a320)), closes [#158](https://github.com/box/box-annotations/issues/158)
+
+
+
 <a name="1.3.0"></a>
 # 1.3.0 (2018-04-10)
 
