@@ -8,7 +8,7 @@ const {
     BROWSER_PLATFORM,
     PLATFORM_VERSION,
     DEVICE_NAME,
-    DEFAULT_WAIT_TIME = 9000
+    DEFAULT_WAIT_TIME = 90000
 } = process.env;
 const MOBILE_PLATFORMS = ['iOS', 'Android'];
 
