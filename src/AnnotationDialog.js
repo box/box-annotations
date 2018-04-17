@@ -459,7 +459,7 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     mouseleaveHandler(event) {
-        const isStillInDialog = util.isInDialog(event, event.toElement);
+        const isStillInDialog = util.isInDialog(event, event.relatedTarget);
         if (!isStillInDialog && this.hasAnnotations) {
             this.hide();
         }
