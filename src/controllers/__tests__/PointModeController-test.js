@@ -129,10 +129,20 @@ describe('controllers/PointModeController', () => {
 
     describe('setupHandlers()', () => {
         it('should successfully contain mode handlers', () => {
+            sandbox.stub(controller, 'pushElementHandler');
             controller.exitButtonEl = 'also definitely not undefined';
 
             controller.setupHandlers();
-            expect(controller.handlers.length).to.equal(2);
+            expect(controller.pushElementHandler).to.be.calledWith(
+                controller.annotatedElement,
+                ['click', 'touchstart'],
+                controller.pointClickHandler
+            );
+            expect(controller.pushElementHandler).to.be.calledWith(
+                controller.exitButtonEl,
+                'click',
+                controller.toggleMode
+            );
         });
     });
 

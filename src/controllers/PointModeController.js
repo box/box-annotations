@@ -116,7 +116,7 @@ class PointModeController extends AnnotationModeController {
         this.pointClickHandler = this.pointClickHandler.bind(this);
 
         // Get handlers
-        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.pointClickHandler);
+        this.pushElementHandler(this.annotatedElement, ['click', 'touchstart'], this.pointClickHandler);
 
         this.pushElementHandler(this.exitButtonEl, 'click', this.toggleMode);
     }
