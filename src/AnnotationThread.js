@@ -132,7 +132,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     showDialog() {
-        if (this.state !== STATES.pending && util.isInAnnotationMode(this.container, TYPES.point)) {
+        if (this.state !== STATES.pending && util.isInAnnotationMode(this.container)) {
             return;
         }
 

@@ -525,6 +525,8 @@ class AnnotationDialog extends EventEmitter {
             // Clicking 'Cancel' button to cancel the annotation OR
             // Clicking 'X' button on mobile dialog to close
             case constants.DATA_TYPE_CANCEL:
+            case constants.DATA_TYPE_MOBILE_CLOSE:
+                // @spramod: is the mobile close button still needed?
                 this.hide();
 
                 if (!this.isMobile) {
@@ -538,7 +540,7 @@ class AnnotationDialog extends EventEmitter {
                 break;
             // Canceling a reply
             case constants.DATA_TYPE_CANCEL_REPLY:
-                // this.deactivateReply(true);
+                this.deactivateReply(true);
                 this.hide();
                 break;
             // Clicking 'Post' button to create a reply annotation

@@ -668,16 +668,12 @@ describe('AnnotationThread', () => {
         it('should bind DOM listeners', () => {
             thread.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
             thread.isMobile = true;
             thread.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
     });
 
@@ -697,16 +693,12 @@ describe('AnnotationThread', () => {
         it('should unbind DOM listeners', () => {
             thread.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
             thread.isMobile = true;
             thread.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
     });
 
