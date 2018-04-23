@@ -63,6 +63,7 @@ class DocDrawingDialog extends AnnotationDialog {
         if (!this.element) {
             this.setup([annotation]);
         }
+        this.assignDrawingLabel(annotation);
     }
 
     /**
@@ -145,7 +146,7 @@ class DocDrawingDialog extends AnnotationDialog {
 
         const firstAnnotation = util.getFirstAnnotation(annotations);
         if (firstAnnotation) {
-            this.assignDrawingLabel(firstAnnotation);
+            this.addAnnotation(firstAnnotation);
         }
 
         this.element.appendChild(this.drawingDialogEl);
@@ -249,17 +250,16 @@ class DocDrawingDialog extends AnnotationDialog {
      * the username does not exist.
      *
      * @private
-     * @param {Annotation} savedAnnotation The annotation data to populate the label with.
+     * @param {Annotation} annotation The annotation data to populate the label with.
      * @return {void}
      */
-    assignDrawingLabel(savedAnnotation) {
-        if (!savedAnnotation || !this.drawingDialogEl) {
+    assignDrawingLabel(annotation) {
+        if (!annotation || !this.drawingDialogEl || annotation.user.id === '0') {
             return;
         }
 
         const drawingLabelEl = this.drawingDialogEl.querySelector(`.${constants.CLASS_ANNOTATION_DRAWING_LABEL}`);
-        const username = savedAnnotation.user ? savedAnnotation.user.name : constants.USER_ANONYMOUS;
-        drawingLabelEl.textContent = util.replacePlaceholders(this.localized.whoDrew, [username]);
+        drawingLabelEl.textContent = util.replacePlaceholders(this.localized.whoDrew, [annotation.user.name]);
 
         util.showElement(drawingLabelEl);
     }
