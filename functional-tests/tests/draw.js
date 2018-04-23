@@ -1,4 +1,5 @@
 const {
+    SELECTOR_TEXT_LAYER,
     SELECTOR_DISABLED,
     SELECTOR_ANNOTATIONS_LOADED,
     SELECTOR_ANNNOTATION_MODE_BACKGROUND,
@@ -49,9 +50,9 @@ Scenario('Cancel a new drawing annotation @desktop', (I) => {
 
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.click('.textLayer');
+    I.click(SELECTOR_TEXT_LAYER);
 
-    draw(I, '.textLayer');
+    draw(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 
@@ -70,9 +71,9 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) =>
 
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.click('.textLayer');
+    I.click(SELECTOR_TEXT_LAYER);
 
-    draw(I, '.textLayer', 100);
+    draw(I, SELECTOR_TEXT_LAYER, 100);
     I.waitForVisible(SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 
@@ -90,7 +91,7 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) =>
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
 
     I.say('Select drawing')
-    clickAtLocation(I, '.textLayer', 300);
+    clickAtLocation(I, SELECTOR_TEXT_LAYER, 300);
     I.scrollTo(SELECTOR_ANNOTATION_DRAWING_DIALOG);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 
@@ -109,9 +110,9 @@ Scenario('Create a drawing annotation by exiting mode @desktop', (I) => {
 
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.click('.textLayer');
+    I.click(SELECTOR_TEXT_LAYER);
 
-    draw(I, '.textLayer', 50);
+    draw(I, SELECTOR_TEXT_LAYER, 50);
     I.waitForVisible(SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 
