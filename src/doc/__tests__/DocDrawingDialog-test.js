@@ -45,6 +45,23 @@ describe('doc/DocDrawingDialog', () => {
         });
     });
 
+    describe('addAnnotation()', () => {
+        it('should setup the element if not already done', () => {
+            dialog.element = undefined;
+            sandbox.stub(dialog, 'setup');
+            sandbox.stub(dialog, 'assignDrawingLabel');
+
+            dialog.addAnnotation({});
+            expect(dialog.setup).to.be.calledWith([{}]);
+            expect(dialog.assignDrawingLabel).to.be.calledWith({});
+
+            dialog.element = document.createElement('div');
+            dialog.addAnnotation({});
+            expect(dialog.setup).to.be.calledWith([{}]);
+            expect(dialog.assignDrawingLabel).to.be.calledWith({});
+        });
+    });
+
     describe('postDrawing()', () => {
         it('should emit annotation create to indicate that the save button was pressed', () => {
             const event = {
@@ -134,7 +151,7 @@ describe('doc/DocDrawingDialog', () => {
 
             sandbox.stub(dialog, 'generateDialogEl').returns(drawingDialogEl);
             sandbox.stub(dialog, 'bindDOMListeners');
-            sandbox.stub(dialog, 'assignDrawingLabel');
+            sandbox.stub(dialog, 'addAnnotation');
         });
 
         it('should setup the dialog element without a commit button when given an annotation', () => {
@@ -148,7 +165,7 @@ describe('doc/DocDrawingDialog', () => {
             dialog.setup([annotation]);
             expect(dialog.generateDialogEl).to.be.called;
             expect(dialog.bindDOMListeners).to.be.called;
-            expect(dialog.assignDrawingLabel).to.be.called;
+            expect(dialog.addAnnotation).to.be.called;
             expect(dialog.element.contains(dialog.drawingDialogEl));
             expect(dialog.commitButtonEl).to.be.null;
         });
@@ -157,7 +174,7 @@ describe('doc/DocDrawingDialog', () => {
             dialog.setup([]);
             expect(dialog.generateDialogEl).to.be.called;
             expect(dialog.bindDOMListeners).to.be.called;
-            expect(dialog.assignDrawingLabel).to.not.be.called;
+            expect(dialog.addAnnotation).to.not.be.called;
             expect(dialog.element.contains(dialog.drawingDialogEl));
             expect(dialog.commitButtonEl).to.not.be.undefined;
             expect(dialog.element.contains(dialog.commitButtonEl));
@@ -276,7 +293,7 @@ describe('doc/DocDrawingDialog', () => {
             sandbox.stub(util, 'replacePlaceholders').returns(notYaoMing);
             sandbox.stub(util, 'showElement');
 
-            dialog.assignDrawingLabel('non empty');
+            dialog.assignDrawingLabel({ user: { id: '1' } });
             expect(drawingLabelEl.textContent).to.equal(notYaoMing);
             expect(dialog.drawingDialogEl.querySelector).to.be.called;
             expect(util.replacePlaceholders).to.be.called;
@@ -284,11 +301,16 @@ describe('doc/DocDrawingDialog', () => {
         });
 
         it('should do nothing when given an invalid annotation or does not have a dialog', () => {
-            expect(dialog.assignDrawingLabel, 'not empty').to.not.throw();
+            sandbox.stub(util, 'showElement');
 
-            dialog.drawingDialogEl = 'not empty';
-            expect(dialog.assignDrawingLabel, undefined).to.not.throw();
-            expect(dialog.assignDrawingLabel, null).to.not.throw();
+            dialog.drawingDialogEl = document.createElement('div');
+            dialog.assignDrawingLabel(null);
+            dialog.assignDrawingLabel({ user: { id: '0' } });
+
+            dialog.drawingDialogEl = undefined;
+            dialog.assignDrawingLabel({ user: { id: '1' } });
+
+            expect(util.showElement).to.not.be.called;
         });
     });
 });
