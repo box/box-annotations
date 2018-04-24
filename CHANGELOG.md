@@ -1,3 +1,14 @@
+<a name="1.5.0"></a>
+## 1.5.0 (2018-04-24)
+
+* Update: dependencies (#177) ([5599ca6](https://github.com/box/box-annotations/commit/5599ca6)), closes [#177](https://github.com/box/box-annotations/issues/177)
+* Chore: Add tests to select/delete drawing (#180) ([90af909](https://github.com/box/box-annotations/commit/90af909)), closes [#180](https://github.com/box/box-annotations/issues/180)
+* Chore: Ensure all new drawings get deleted in functional tests (#181) ([8339dbf](https://github.com/box/box-annotations/commit/8339dbf)), closes [#181](https://github.com/box/box-annotations/issues/181)
+* Chore: Prefix box-react-ui css with .ba-annotation-dialog (#178) ([29cc0fd](https://github.com/box/box-annotations/commit/29cc0fd)), closes [#178](https://github.com/box/box-annotations/issues/178)
+* Fix: Replace {1} with user name on drawing save (#179) ([408b495](https://github.com/box/box-annotations/commit/408b495)), closes [#179](https://github.com/box/box-annotations/issues/179)
+
+
+
 <a name="1.4.0"></a>
 ## 1.4.0 (2018-04-17)
 
