@@ -21,7 +21,8 @@ const {
     SELECTOR_REPLY_TEXTAREA,
     SELECTOR_DELETE_CONFIRM_MESSAGE,
     SELECTOR_CONFIRM_DELETE_BTN,
-    SELECTOR_CANCEL_DELETE_BTN
+    SELECTOR_CANCEL_DELETE_BTN,
+    SELECTOR_REPLY_CONTAINER
 } = require('../helpers/constants');
 const { expect } = require('chai');
 
@@ -80,7 +81,7 @@ Scenario('Cancel a new point annotation @desktop', function(I) {
     I.waitForInvisible(SELECTOR_ANNOTATION_POINT_MARKER, 1);
 });
 
-Scenario('Create a new highlight comment annotation @desktop', function*(I) {
+Scenario('Create/reply to a new point annotation @desktop', function*(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
 
@@ -106,10 +107,26 @@ Scenario('Create a new highlight comment annotation @desktop', function*(I) {
     I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
 
     I.waitForVisible(`${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
-    const placeHolder = yield I.grabAttributeFrom(SELECTOR_REPLY_TEXTAREA, 'placeholder');
-    expect(placeHolder).to.equal('Post a reply...');
+    expect(yield I.grabAttributeFrom(SELECTOR_REPLY_TEXTAREA, 'placeholder')).to.equal('Post a reply...');
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_CANCEL);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POST);
+
+    I.say('Reply to point annotation');
+    I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample reply');
+    I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
+
+    I.say('Reply should be added to dialog');
+    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
+    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
+    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
+    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
+    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
+    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
+
+    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
+    expect(yield I.grabAttributeFrom(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}`, 'placeholder')).to.equal('Post a reply...');
+    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
+    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
 });
 
 Scenario('Delete the point annotation @desktop', function(I) {
@@ -117,6 +134,7 @@ Scenario('Delete the point annotation @desktop', function(I) {
 
     I.say('Point dialog should appear on click');
     I.click(SELECTOR_ANNOTATION_POINT_MARKER);
+    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
 
@@ -131,6 +149,17 @@ Scenario('Delete the point annotation @desktop', function(I) {
     I.say('Cancel annotation delete');
     I.click(SELECTOR_CANCEL_DELETE_BTN);
     I.waitForInvisible(SELECTOR_DELETE_CONFIRM_MESSAGE);
+
+    I.say('Delete the point annotation');
+    I.click(SELECTOR_DELETE_COMMENT_BTN);
+
+    I.say('Delete confirmation should appear');
+    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
+    I.click(SELECTOR_CONFIRM_DELETE_BTN);
+
+    I.say('Point reply should be deleted');
+    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
+    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
 
     I.say('Delete the point annotation');
     I.click(SELECTOR_DELETE_COMMENT_BTN);

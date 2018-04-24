@@ -44,10 +44,6 @@ export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
 export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
 export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
 export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
-export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
-export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
-export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
-export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Dialog CSS constants
 export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
@@ -59,8 +55,6 @@ export const CLASS_TEXTAREA = 'ba-textarea';
 export const SELECTOR_TEXTAREA = `.${CLASS_TEXTAREA}`;
 export const CLASS_ANNOTATION_TEXTAREA = 'annotation-textarea';
 export const SELECTOR_ANNOTATION_TEXTAREA = `.${CLASS_ANNOTATION_TEXTAREA}`;
-export const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-export const SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
 export const CLASS_INVALID_INPUT = 'ba-invalid-input';
 export const SELECTOR_INVALID_INPUT = `.${CLASS_INVALID_INPUT}`;
 
@@ -95,6 +89,11 @@ export const SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
 export const CLASS_COMMENT_DATE = 'comment-date';
 export const SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
 
+export const CLASS_REPLY_CONTAINER = 'reply-container';
+export const SELECTOR_REPLY_CONTAINER = `.${CLASS_REPLY_CONTAINER}`;
+export const CLASS_REPLY_TEXTAREA = 'reply-textarea';
+export const SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
+
 export const CLASS_CREATE_COMMENT = 'ba-create-comment';
 export const SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
 
@@ -116,6 +115,10 @@ export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
 export const SELECTOR_ADD_HIGHLIGHT_BTN = `.${CLASS_ADD_HIGHLIGHT_BTN}`;
 export const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
 export const SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN = `.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`;
+export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
+export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Drawing dialog CSS constants
 export const CLASS_ANNOTATION_DRAWING_LABEL = 'ba-annotation-drawing-label';

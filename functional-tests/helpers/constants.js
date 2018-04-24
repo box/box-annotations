@@ -57,8 +57,6 @@ const CLASS_TEXTAREA = 'ba-textarea';
 exports.SELECTOR_TEXTAREA = `.${CLASS_TEXTAREA}`;
 const CLASS_ANNOTATION_TEXTAREA = 'annotation-textarea';
 exports.SELECTOR_ANNOTATION_TEXTAREA = `.${CLASS_ANNOTATION_TEXTAREA}`;
-const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-exports.SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
 const CLASS_INVALID_INPUT = 'ba-invalid-input';
 exports.SELECTOR_INVALID_INPUT = `.${CLASS_INVALID_INPUT}`;
 
@@ -92,6 +90,11 @@ const CLASS_USER_NAME = 'user-name';
 exports.SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
 const CLASS_COMMENT_DATE = 'comment-date';
 exports.SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
+
+const CLASS_REPLY_CONTAINER = 'reply-container';
+exports.SELECTOR_REPLY_CONTAINER = `.${CLASS_REPLY_CONTAINER}`;
+const CLASS_REPLY_TEXTAREA = 'reply-textarea';
+exports.SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
 
 const CLASS_CREATE_COMMENT = 'ba-create-comment';
 exports.SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
