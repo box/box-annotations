@@ -1,3 +1,5 @@
+exports.SELECTOR_TEXT_LAYER = '.textLayer';
+
 // Preview CSS constants
 const CLASS_ACTIVE = 'bp-is-active';
 exports.SELECTOR_ACTIVE = `.${CLASS_ACTIVE}`;

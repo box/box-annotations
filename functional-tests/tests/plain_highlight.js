@@ -1,4 +1,5 @@
 const {
+    SELECTOR_TEXT_LAYER,
     SELECTOR_ANNOTATIONS_LOADED,
     SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
     SELECTOR_ANNOTATION_DIALOG,
@@ -18,7 +19,7 @@ Scenario('Create a new plain highlight annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear after selecting text');
-    selectText(I, '.textLayer');
+    selectText(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
 
     I.say('Highlight selected text');
@@ -34,7 +35,7 @@ Scenario('Delete the plain highlight annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear on click');
-    I.click('.textLayer div');
+    I.click(`${SELECTOR_TEXT_LAYER} div`);
     I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
 
     I.say('Delete the highlight annotation');
