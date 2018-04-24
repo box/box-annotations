@@ -17,7 +17,11 @@ const {
     SELECTOR_PROFILE_IMG_CONTAINER,
     SELECTOR_USER_NAME,
     SELECTOR_DELETE_COMMENT_BTN,
-    SELECTOR_DELETE_CONFIRM_MESSAGE
+    SELECTOR_DELETE_CONFIRM_MESSAGE,
+    SELECTOR_CANCEL_DELETE_BTN,
+    SELECTOR_CONFIRM_DELETE_BTN,
+    SELECTOR_ANNOTATION_COMMENT,
+    SELECTOR_REPLY_TEXTAREA
 } = require('../helpers/constants');
 const { expect } = require('chai');
 
@@ -83,13 +87,13 @@ Scenario('Create a new highlight comment annotation @desktop', function*(I) {
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
     I.see('Posting...', SELECTOR_USER_NAME);
     I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
-    I.waitNumberOfVisibleElements('.annotation-comment', 1);
+    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
     I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
     I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
 
-    I.waitForVisible(`.reply-textarea${SELECTOR_ACTIVE}`);
-    const placeHolder = yield I.grabAttributeFrom('.reply-textarea', 'placeholder');
+    I.waitForVisible(`${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
+    const placeHolder = yield I.grabAttributeFrom(SELECTOR_REPLY_TEXTAREA, 'placeholder');
     expect(placeHolder).to.equal('Post a reply...');
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_CANCEL);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POST);
@@ -108,19 +112,19 @@ Scenario('Delete the highlight comment annotation @desktop', function(I) {
 
     I.say('Delete confirmation should appear');
     I.waitForText('Delete this annotation?', 10, SELECTOR_DELETE_CONFIRM_MESSAGE);
-    I.waitForVisible('.confirm-delete-btn');
-    I.waitForVisible('.cancel-delete-btn');
+    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
+    I.waitForVisible(SELECTOR_CANCEL_DELETE_BTN);
 
     I.say('Cancel annotation delete');
-    I.click('.cancel-delete-btn');
+    I.click(SELECTOR_CANCEL_DELETE_BTN);
     I.waitForInvisible(SELECTOR_DELETE_CONFIRM_MESSAGE);
 
     I.say('Delete the highlight annotation');
     I.click(SELECTOR_DELETE_COMMENT_BTN);
 
     I.say('Delete confirmation should appear');
-    I.waitForVisible('.confirm-delete-btn');
-    I.click('.confirm-delete-btn');
+    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
+    I.click(SELECTOR_CONFIRM_DELETE_BTN);
 
     I.say('Highlight should be deleted');
     I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 5);
