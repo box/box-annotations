@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
     SELECTOR_TEXT_LAYER,
     SELECTOR_DISABLED,
@@ -19,11 +20,11 @@ const { draw, clickAtLocation } = require('../helpers/mouseEvents');
 
 Feature('Draw Annotation Sanity');
 
-Before((I) => {
+Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Can enter/exit drawing mode properly @desktop', (I) => {
+Scenario('Can enter/exit drawing mode properly @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -44,7 +45,7 @@ Scenario('Can enter/exit drawing mode properly @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 });
 
-Scenario('Cancel a new drawing annotation @desktop', (I) => {
+Scenario('Cancel a new drawing annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -65,7 +66,7 @@ Scenario('Cancel a new drawing annotation @desktop', (I) => {
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) => {
+Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -104,7 +105,7 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) =>
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create a drawing annotation by exiting mode @desktop', (I) => {
+Scenario('Create a drawing annotation by exiting mode @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 

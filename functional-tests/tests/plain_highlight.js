@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
     SELECTOR_TEXT_LAYER,
     SELECTOR_ANNOTATIONS_LOADED,
@@ -11,11 +12,11 @@ const { selectText } = require('../helpers/mouseEvents');
 
 Feature('Plain Highlight Annotation Sanity');
 
-Before((I) => {
+Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Create a new plain highlight annotation @desktop', (I) => {
+Scenario('Create a new plain highlight annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear after selecting text');
@@ -31,7 +32,7 @@ Scenario('Create a new plain highlight annotation @desktop', (I) => {
     I.waitForEnabled(SELECTOR_ADD_HIGHLIGHT_BTN);
 });
 
-Scenario('Delete the plain highlight annotation @desktop', (I) => {
+Scenario('Delete the plain highlight annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear on click');
