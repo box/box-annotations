@@ -11,6 +11,7 @@ const {
     DEFAULT_WAIT_TIME = 90000
 } = process.env;
 const MOBILE_PLATFORMS = ['iOS', 'Android'];
+const { cleanupAnnotations } = require('./functional-tests/helpers/cleanup');
 
 // Local selenium config
 const commonConfigObj = {
@@ -61,14 +62,18 @@ if (isLocalBuild) {
     }
 }
 
+function cleanup() {
+    cleanupAnnotations() ;
+}
+
 exports.config = {
     tests: './functional-tests/tests/*.js',
     timeout: DEFAULT_WAIT_TIME,
     output: './functional-tests/output',
     helpers: helperObj,
     include: {},
-    bootstrap: './functional-tests/helpers/cleanup.js',
-    teardown: './functional-tests/helpers/cleanup.js',
+    bootstrap: cleanup,
+    teardown: cleanup,
     mocha: {},
     name: 'box-annotations',
     hooks: isLocalBuild ? [] : ['./functional-tests/helpers/eventHooks.js']

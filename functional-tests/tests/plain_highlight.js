@@ -11,11 +11,16 @@ const {
 
 const { selectText } = require('../helpers/mouseEvents');
 const { validateIconColor } = require('../helpers/validation');
+const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Plain Highlight Annotation Sanity');
 
 Before(function(I) {
     I.amOnPage('/');
+});
+
+After(function() {
+    cleanupAnnotations();
 });
 
 Scenario('Create/Delete a new plain highlight annotation @desktop', function(I) {

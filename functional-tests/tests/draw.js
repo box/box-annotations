@@ -17,11 +17,16 @@ const {
 } = require('../helpers/constants');
 
 const { draw, clickAtLocation } = require('../helpers/mouseEvents');
+const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Draw Annotation Sanity');
 
 Before(function(I) {
     I.amOnPage('/');
+});
+
+After(function() {
+    cleanupAnnotations();
 });
 
 Scenario('Create/Delete drawing @desktop', function(I) {
