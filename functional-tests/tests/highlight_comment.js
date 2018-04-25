@@ -70,8 +70,6 @@ Scenario('Create/Reply/Delete a new highlight comment annotation @desktop', func
     /*
      * Delete the highlight comment annotation and reply
      */
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-
     I.say('Highlight dialog should appear on click');
     I.click(`${SELECTOR_TEXT_LAYER} div`);
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
