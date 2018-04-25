@@ -8,25 +8,16 @@ const {
     SELECTOR_CREATE_DIALOG,
     SELECTOR_CREATE_COMMENT,
     SELECTOR_ANNOTATION_TEXTAREA,
-    SELECTOR_ACTIVE,
     SELECTOR_ANNOTATION_BUTTON_POST,
-    SELECTOR_INVALID_INPUT,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
     SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CONTAINER,
-    SELECTOR_PROFILE_IMG_CONTAINER,
-    SELECTOR_USER_NAME,
     SELECTOR_DELETE_COMMENT_BTN,
-    SELECTOR_DELETE_CONFIRM_MESSAGE,
-    SELECTOR_CANCEL_DELETE_BTN,
-    SELECTOR_CONFIRM_DELETE_BTN,
-    SELECTOR_ANNOTATION_COMMENT,
-    SELECTOR_REPLY_TEXTAREA,
-    SELECTOR_REPLY_CONTAINER
+    SELECTOR_ANNOTATION_COMMENT
 } = require('../helpers/constants');
-const { expect } = require('chai');
 
 const { selectText } = require('../helpers/mouseEvents');
+const { validateTextarea, validateAnnotation } = require('../helpers/validation');
+const { replyToThread, deleteAnnotation } = require('../helpers/actions');
 
 Feature('Highlight Comment Annotation Sanity');
 
@@ -34,7 +25,7 @@ Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Cancel a new highlight comment annotation @desktop', function*(I) {
+Scenario('Create/Reply/Delete a new highlight comment annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear after selecting text');
@@ -43,118 +34,49 @@ Scenario('Cancel a new highlight comment annotation @desktop', function*(I) {
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
 
-    I.say('Highlight selected text');
+    I.say('Create highlight comment annotation');
     I.click(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-
-    I.say('Create highlight dialog should appear with focus on the textarea');
     I.waitForVisible(SELECTOR_CREATE_DIALOG);
-    I.waitForVisible(SELECTOR_CREATE_COMMENT);
-    I.waitForVisible(`${SELECTOR_ANNOTATION_TEXTAREA}${SELECTOR_ACTIVE}`);
-
-    const placeHolder = yield I.grabAttributeFrom(SELECTOR_ANNOTATION_TEXTAREA, 'placeholder');
-    expect(placeHolder).to.equal('Add a comment here...');
-
-    I.say('Dialog validates textarea with invalid contents');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POST);
-    I.waitForVisible(SELECTOR_INVALID_INPUT);
-    I.waitForVisible(SELECTOR_CREATE_DIALOG);
+    validateTextarea(I, SELECTOR_CREATE_COMMENT, SELECTOR_ANNOTATION_TEXTAREA);
 
     I.say('Cancel highlight comment annotation');
     I.click(SELECTOR_ANNOTATION_BUTTON_CANCEL);
     I.waitForInvisible(SELECTOR_CREATE_COMMENT, 1);
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-});
 
-Scenario('Create/reply to a new highlight comment annotation @desktop', function*(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-
+    /*
+     * Create/reply to a new highlight comment annotation
+     */
     I.say('Highlight dialog should appear after selecting text');
     selectText(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
     I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
 
-    I.say('Highlight selected text');
+    I.say('Create highlight comment annotation');
     I.click(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
     I.waitForVisible(SELECTOR_CREATE_DIALOG);
-    I.waitForVisible(`${SELECTOR_ANNOTATION_TEXTAREA}${SELECTOR_ACTIVE}`);
+    validateTextarea(I, SELECTOR_CREATE_COMMENT, SELECTOR_ANNOTATION_TEXTAREA);
 
-    I.say('Post highlight annotation with comment');
+    I.say('Post highlight comment annotation');
     I.fillField(SELECTOR_ANNOTATION_TEXTAREA, 'Sample comment');
     I.click(SELECTOR_ANNOTATION_BUTTON_POST);
-
-    I.say('Highlight should be created and dialog should appear with the newly added comment');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.see('Posting...', SELECTOR_USER_NAME);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
+    validateAnnotation(I);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
 
-    I.waitForVisible(`${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
-    expect(yield I.grabAttributeFrom(SELECTOR_REPLY_TEXTAREA, 'placeholder')).to.equal('Post a reply...');
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_CANCEL);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POST);
+    replyToThread(I);
 
-    I.say('Reply to highlight comment annotation');
-    I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample reply');
-    I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
-
-    I.say('Reply should be added to dialog');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
-
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
-    expect(yield I.grabAttributeFrom(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}`, 'placeholder')).to.equal('Post a reply...');
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
-});
-
-Scenario('Delete the highlight comment annotation and reply @desktop', function(I) {
+    /*
+     * Delete the highlight comment annotation and reply
+     */
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear on click');
     I.click(`${SELECTOR_TEXT_LAYER} div`);
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
 
-    I.say('Delete the highlight annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForText('Delete this annotation?', 10, SELECTOR_DELETE_CONFIRM_MESSAGE);
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.waitForVisible(SELECTOR_CANCEL_DELETE_BTN);
-
-    I.say('Cancel annotation delete');
-    I.click(SELECTOR_CANCEL_DELETE_BTN);
-    I.waitForInvisible(SELECTOR_DELETE_CONFIRM_MESSAGE);
-
-    I.say('Delete the highlight annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.click(SELECTOR_CONFIRM_DELETE_BTN);
-
-    I.say('Highlight reply should be deleted');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
-
-    I.say('Delete the highlight annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.click(SELECTOR_CONFIRM_DELETE_BTN);
-
-    I.say('Highlight should be deleted');
-    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 5);
+    deleteAnnotation(I, 2);
+    deleteAnnotation(I, 1);
 });

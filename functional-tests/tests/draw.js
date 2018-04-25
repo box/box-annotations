@@ -24,7 +24,10 @@ Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Can enter/exit drawing mode properly @desktop', function(I) {
+Scenario('Create/Delete drawing @desktop', function(I) {
+    /*
+     * Can enter/exit drawing mode properly @desktop
+     */
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -43,12 +46,10 @@ Scenario('Can enter/exit drawing mode properly @desktop', function(I) {
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
     I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-});
 
-Scenario('Cancel a new drawing annotation @desktop', function(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-
+    /*
+     * Cancel a new drawing annotation
+     */
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
     I.click(SELECTOR_TEXT_LAYER);
@@ -64,16 +65,10 @@ Scenario('Cancel a new drawing annotation @desktop', function(I) {
     I.say('Cancel drawing');
     I.click(SELECTOR_DELETE_DRAWING_BTN);
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
-});
 
-Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', function(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-
-    I.say('Enter draw annotation mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.click(SELECTOR_TEXT_LAYER);
-
+    /*
+     * Create/Delete a drawing annotation w/ drawing dialog
+     */
     draw(I, SELECTOR_TEXT_LAYER, 100);
     I.waitForVisible(SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
@@ -105,7 +100,7 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', functi
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create a drawing annotation by exiting mode @desktop', function(I) {
+Scenario('Create/Delete a drawing by exiting mode @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 

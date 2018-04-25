@@ -9,24 +9,15 @@ const {
     SELECTOR_ANNOTATION_POINT_MARKER,
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_TEXTAREA,
-    SELECTOR_ACTIVE,
     SELECTOR_ANNOTATION_BUTTON_POST,
-    SELECTOR_INVALID_INPUT,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
-    SELECTOR_USER_NAME,
-    SELECTOR_ANNOTATION_CONTAINER,
     SELECTOR_ANNOTATION_COMMENT,
-    SELECTOR_DELETE_COMMENT_BTN,
-    SELECTOR_PROFILE_IMG_CONTAINER,
-    SELECTOR_REPLY_TEXTAREA,
-    SELECTOR_DELETE_CONFIRM_MESSAGE,
-    SELECTOR_CONFIRM_DELETE_BTN,
-    SELECTOR_CANCEL_DELETE_BTN,
-    SELECTOR_REPLY_CONTAINER
+    SELECTOR_DELETE_COMMENT_BTN
 } = require('../helpers/constants');
-const { expect } = require('chai');
 
 const { clickAtLocation } = require('../helpers/mouseEvents');
+const { validateTextarea, validateAnnotation } = require('../helpers/validation');
+const { replyToThread, deleteAnnotation } = require('../helpers/actions');
 
 Feature('Point Annotation Sanity');
 
@@ -34,7 +25,7 @@ Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Can enter/exit point mode properly @desktop', function(I) {
+Scenario('Create/Reply/Delete point annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
 
@@ -45,130 +36,52 @@ Scenario('Can enter/exit point mode properly @desktop', function(I) {
     I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
 
-    I.say('Exit point annotations mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
-    I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
-});
-
-Scenario('Cancel a new point annotation @desktop', function(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
-
-    I.say('Enter point annotation mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POINT);
-    I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
-
+    /*
+     * Cancel a new point annotation
+     */
     I.say('Create point annotation');
     clickAtLocation(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_POINT_MARKER);
 
     I.say('Annotation dialog should appear with focus on the textarea');
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForVisible(`[data-section="create"] ${SELECTOR_ANNOTATION_TEXTAREA}${SELECTOR_ACTIVE}`);
-
-    const placeHolder = yield I.grabAttributeFrom(`[data-section="create"] ${SELECTOR_ANNOTATION_TEXTAREA}`, 'placeholder');
-    expect(placeHolder).to.equal('Add a comment here...');
-
-    I.say('Dialog validates textarea with invalid contents');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POST);
-    I.waitForVisible(SELECTOR_INVALID_INPUT);
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
+    validateTextarea(I, '[data-section="create"]', SELECTOR_ANNOTATION_TEXTAREA);
 
     I.say('Cancel point annotation');
     I.click(SELECTOR_ANNOTATION_BUTTON_CANCEL);
     I.waitForInvisible(SELECTOR_ANNOTATION_DIALOG, 1);
     I.waitForInvisible(SELECTOR_ANNOTATION_POINT_MARKER, 1);
-});
 
-Scenario('Create/reply to a new point annotation @desktop', function*(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
-
-    I.say('Enter point annotation mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POINT);
-    I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
-
+    /*
+     * Create/reply to a new point annotation
+     */
     I.say('Create point annotation');
     clickAtLocation(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_POINT_MARKER);
 
-    I.say('Post highlight annotation with comment');
+    I.say('Post point annotation');
     I.fillField(SELECTOR_ANNOTATION_TEXTAREA, 'Sample comment');
     I.click(SELECTOR_ANNOTATION_BUTTON_POST);
-
-    I.say('Highlight should be created and dialog should appear with the newly added comment');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.see('Posting...', SELECTOR_USER_NAME);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
+    validateAnnotation(I);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
 
-    I.waitForVisible(`${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
-    expect(yield I.grabAttributeFrom(SELECTOR_REPLY_TEXTAREA, 'placeholder')).to.equal('Post a reply...');
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_CANCEL);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POST);
+    replyToThread(I);
 
-    I.say('Reply to point annotation');
-    I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample reply');
-    I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
+    I.say('Exit point annotation mode');
+    I.click(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+    I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
+    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
 
-    I.say('Reply should be added to dialog');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
-
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}${SELECTOR_ACTIVE}`);
-    expect(yield I.grabAttributeFrom(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_REPLY_TEXTAREA}`, 'placeholder')).to.equal('Post a reply...');
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
-    I.waitForVisible(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
-});
-
-Scenario('Delete the point annotation @desktop', function(I) {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
+    /*
+     * Delete the point annotation
+     */
 
     I.say('Point dialog should appear on click');
     I.click(SELECTOR_ANNOTATION_POINT_MARKER);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
 
-    I.say('Delete the point annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForText('Delete this annotation?', 10, SELECTOR_DELETE_CONFIRM_MESSAGE);
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.waitForVisible(SELECTOR_CANCEL_DELETE_BTN);
-
-    I.say('Cancel annotation delete');
-    I.click(SELECTOR_CANCEL_DELETE_BTN);
-    I.waitForInvisible(SELECTOR_DELETE_CONFIRM_MESSAGE);
-
-    I.say('Delete the point annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.click(SELECTOR_CONFIRM_DELETE_BTN);
-
-    I.say('Point reply should be deleted');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
-
-    I.say('Delete the point annotation');
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
-
-    I.say('Delete confirmation should appear');
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.click(SELECTOR_CONFIRM_DELETE_BTN);
-
-    I.say('Point annotation should be deleted');
+    deleteAnnotation(I, 2);
+    deleteAnnotation(I, 1);
     I.waitForDetached(SELECTOR_ANNOTATION_POINT_MARKER, 1);
-    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 1);
 });
