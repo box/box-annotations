@@ -46,8 +46,8 @@ Scenario('Create/Delete a new plain highlight annotation @desktop', function(I) 
     I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
 
     I.say('Delete the highlight annotation');
-    I.click(SELECTOR_ADD_HIGHLIGHT_BTN);
+    I.click(`${SELECTOR_ADD_HIGHLIGHT_BTN}${SELECTOR_ACTIVE}`);
 
     I.say('Highlight should be deleted');
-    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 5);
+    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 1);
 });
