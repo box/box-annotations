@@ -1,5 +1,3 @@
-exports.SELECTOR_TEXT_LAYER = '.textLayer';
-
 // Preview CSS constants
 const CLASS_ACTIVE = 'bp-is-active';
 exports.SELECTOR_ACTIVE = `.${CLASS_ACTIVE}`;
@@ -32,6 +30,8 @@ const CLASS_BOX_PREVIEW = 'bp';
 exports.SELECTOR_BOX_PREVIEW = `.${CLASS_BOX_PREVIEW}`;
 const CLASS_PREVIEW_PRESENTATION = 'bp-doc-presentation';
 exports.SELECTOR_PREVIEW_PRESENTATION = `.${CLASS_PREVIEW_PRESENTATION}`;
+const CLASS_TEXT_LAYER = 'textLayer';
+exports.SELECTOR_TEXT_LAYER = `.${CLASS_TEXT_LAYER}`;
 
 // Annotation CSS constants
 const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
@@ -68,11 +68,18 @@ const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
 exports.SELECTOR_ANNOTATION_BUTTON_POST = `.${CLASS_ANNOTATION_BUTTON_POST}`;
 const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
 exports.SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
+
 const CLASS_DELETE_CONFIRM_MESSAGE = 'delete-confirmation-message';
 exports.SELECTOR_DELETE_CONFIRM_MESSAGE = `.${CLASS_DELETE_CONFIRM_MESSAGE}`;
+const CLASS_CANCEL_DELETE_BTN = 'cancel-delete-btn';
+exports.SELECTOR_CANCEL_DELETE_BTN = `.${CLASS_CANCEL_DELETE_BTN}`;
+const CLASS_CONFIRM_DELETE_BTN = 'confirm-delete-btn';
+exports.SELECTOR_CONFIRM_DELETE_BTN = `.${CLASS_CONFIRM_DELETE_BTN}`;
 
 const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 exports.SELECTOR_ANNOTATION_CONTAINER = `.${CLASS_ANNOTATION_CONTAINER}`;
+const CLASS_ANNOTATION_COMMENT = 'annotation-comment';
+exports.SELECTOR_ANNOTATION_COMMENT = `.${CLASS_ANNOTATION_COMMENT}`;
 const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
 exports.SELECTOR_ANNOTATION_COMMENT_TEXT = `.${CLASS_ANNOTATION_COMMENT_TEXT}`;
 const CLASS_PROFILE_CONTAINER = 'profile-container';
@@ -83,6 +90,11 @@ const CLASS_USER_NAME = 'user-name';
 exports.SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
 const CLASS_COMMENT_DATE = 'comment-date';
 exports.SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
+
+const CLASS_REPLY_CONTAINER = 'reply-container';
+exports.SELECTOR_REPLY_CONTAINER = `.${CLASS_REPLY_CONTAINER}`;
+const CLASS_REPLY_TEXTAREA = 'reply-textarea';
+exports.SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
 
 const CLASS_CREATE_COMMENT = 'ba-create-comment';
 exports.SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
