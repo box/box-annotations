@@ -11,13 +11,12 @@ const {
     SELECTOR_ANNOTATION_TEXTAREA,
     SELECTOR_ANNOTATION_BUTTON_POST,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
-    SELECTOR_ANNOTATION_COMMENT,
-    SELECTOR_DELETE_COMMENT_BTN
+    SELECTOR_ANNOTATION_COMMENT
 } = require('../helpers/constants');
 
 const { clickAtLocation } = require('../helpers/mouseEvents');
 const { validateTextarea, validateAnnotation } = require('../helpers/validation');
-const { replyToThread, deleteAnnotation } = require('../helpers/actions');
+const { deleteAnnotation } = require('../helpers/actions');
 const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Point Annotation Sanity');
@@ -30,7 +29,7 @@ After(function() {
     cleanupAnnotations();
 });
 
-Scenario('Create/Reply/Delete point annotation @desktop', function(I) {
+Scenario('Create/Delete point annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
 
@@ -70,17 +69,9 @@ Scenario('Create/Reply/Delete point annotation @desktop', function(I) {
     validateAnnotation(I);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
 
-    replyToThread(I);
-
     /*
      * Delete the point annotation
      */
-
-    I.say('Point dialog should appear on click');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-
-    deleteAnnotation(I, 2, `${SELECTOR_ANNOTATION_COMMENT}:last-child`);
     deleteAnnotation(I, 1);
     I.waitForDetached(SELECTOR_ANNOTATION_POINT_MARKER, 1);
 

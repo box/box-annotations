@@ -69,14 +69,12 @@ function* validateTextarea(I, containerSel, textareaSel) {
 function validateAnnotation(I) {
     I.say('Dialog should contain new annotation');
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.see('Posting...', `${SELECTOR_ANNOTATION_COMMENT} ${SELECTOR_USER_NAME}`);
     I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
     I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, `${SELECTOR_ANNOTATION_COMMENT} ${SELECTOR_USER_NAME}`);
-
     validateTextarea(I, SELECTOR_REPLY_CONTAINER, SELECTOR_REPLY_TEXTAREA);
+    I.waitForText('Kanye West', 15, `${SELECTOR_ANNOTATION_COMMENT} ${SELECTOR_USER_NAME}`);
 }
 
 /**

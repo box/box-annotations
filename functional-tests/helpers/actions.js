@@ -11,32 +11,14 @@ const {
 const { validateReply, validateDeleteConfirmation } = require('./validation');
 
 /**
- * Ensures that the annotation dialog is not hidden
- *
- * @param {Object} I - the codeceptjs I
- *
- * @return {void}
- */
-function forceShowDialog(I) {
-    I.executeScript(
-        function(sel) {
-            const dialog = document.querySelector(sel);
-            dialog.classList.remove('.bp-hidden');
-        },
-        SELECTOR_ANNOTATION_DIALOG
-    );
-}
-
-/**
  * Replies to an annotation thread
  *
  * @param {Object} I - the codeceptjs I
+ * @param {string} selector - annotation CSS selector
  *
  * @return {void}
  */
-function replyToThread(I) {
-    forceShowDialog(I);
-
+function replyToThread(I, selector) {
     I.say('Reply to highlight comment annotation');
     I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample reply');
     I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
@@ -46,7 +28,7 @@ function replyToThread(I) {
     I.say('Cancel a reply to a highlight comment annotation');
     I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample canceled reply');
     I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
+    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
 }
 
 /**
@@ -59,7 +41,6 @@ function replyToThread(I) {
  * @return {void}
  */
 function deleteAnnotation(I, annotationCount, selector = SELECTOR_ANNOTATION_COMMENT) {
-    forceShowDialog(I);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, annotationCount);
 
     I.say('Delete the annotation');

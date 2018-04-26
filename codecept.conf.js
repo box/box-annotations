@@ -63,6 +63,9 @@ if (isLocalBuild) {
     }
 }
 
+/**
+ * @return {void}
+*/
 function cleanup() {
     cleanupAnnotations() ;
 }

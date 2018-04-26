@@ -46,10 +46,6 @@ Scenario('Create/Delete a new plain highlight annotation @desktop', function(I) 
     /*
      * Delete plain highlight annotation
      */
-    I.say('Highlight dialog should appear on click');
-    I.click(`${SELECTOR_TEXT_LAYER} div`);
-    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-
     I.say('Delete the highlight annotation');
     I.click(`${SELECTOR_ADD_HIGHLIGHT_BTN}${SELECTOR_ACTIVE}`);
 
