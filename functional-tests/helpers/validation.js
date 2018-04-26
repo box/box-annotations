@@ -18,12 +18,32 @@ const {
 } = require('../helpers/constants');
 const { expect } = require('chai');
 
+
+/**
+ * Ensures the SVG icon is of the expected color
+ *
+ * @param {Object} I - the codeceptjs I
+ * @param {string} selector - the selector to use
+ * @param {string} color - rgb icon color
+ *
+ * @return {void}
+ */
 async function validateIconColor(I, selector, color) {
     I.waitForElement(selector);
     const clr = await I.grabCssPropertyFrom(`${selector} svg`, 'fill');
     expect(clr).to.equal(color);
 }
 
+
+/**
+ * Validates that the text area appears as expected
+ *
+ * @param {Object} I - the codeceptjs I
+ * @param {string} containerSel - the container selector to use
+ * @param {string} textareaSel - the textarea selector to use
+ *
+ * @return {void}
+ */
 function* validateTextarea(I, containerSel, textareaSel) {
     I.say(`Validate ${containerSel} ${textareaSel}`);
     I.waitForVisible(`${containerSel} ${textareaSel}${SELECTOR_ACTIVE}`);
@@ -39,19 +59,31 @@ function* validateTextarea(I, containerSel, textareaSel) {
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
 }
 
+/**
+ * Validates that the annotation appears as expected
+ *
+ * @param {Object} I - the codeceptjs I
+ *
+ * @return {void}
+ */
 function validateAnnotation(I) {
     I.say('Dialog should contain new annotation');
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.see('Posting...', SELECTOR_USER_NAME);
     I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
     I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
     I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
-
     validateTextarea(I, SELECTOR_REPLY_CONTAINER, SELECTOR_REPLY_TEXTAREA);
+    I.waitForText('Kanye West', 15, `${SELECTOR_ANNOTATION_COMMENT} ${SELECTOR_USER_NAME}`);
 }
 
+/**
+ * Validates that the annotation reply appears as expected
+ *
+ * @param {Object} I - the codeceptjs I
+ *
+ * @return {void}
+ */
 function validateReply(I) {
     I.say('Reply should be added to dialog');
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
@@ -64,22 +96,31 @@ function validateReply(I) {
     validateTextarea(I, SELECTOR_REPLY_CONTAINER, SELECTOR_REPLY_TEXTAREA);
 }
 
-function validateDeleteConfirmation(I) {
+/**
+ * Validates that the delete confirmation message appears
+ * and acts as expected
+ *
+ * @param {Object} I - the codeceptjs I
+ * @param {string} selector - the selector to use
+ *
+ * @return {void}
+ */
+function validateDeleteConfirmation(I, selector = '') {
     I.say('Validate delete confirmation');
-    I.waitForText('Delete this annotation?', 10, SELECTOR_DELETE_CONFIRM_MESSAGE);
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.waitForVisible(SELECTOR_CANCEL_DELETE_BTN);
+    I.waitForText('Delete this annotation?', 10, `${selector} ${SELECTOR_DELETE_CONFIRM_MESSAGE}`);
+    I.waitForVisible(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
+    I.waitForVisible(`${selector} ${SELECTOR_CANCEL_DELETE_BTN}`);
 
     // Cancel annotation delete
-    I.click(SELECTOR_CANCEL_DELETE_BTN);
-    I.waitForInvisible(SELECTOR_DELETE_CONFIRM_MESSAGE);
+    I.click(`${selector} ${SELECTOR_CANCEL_DELETE_BTN}`);
+    I.waitForInvisible(`${selector} ${SELECTOR_DELETE_CONFIRM_MESSAGE}`);
 
     // Delete the annotation
-    I.click(SELECTOR_DELETE_COMMENT_BTN);
+    I.click(`${selector} ${SELECTOR_DELETE_COMMENT_BTN}`);
 
     // Delete confirmation should appear
-    I.waitForVisible(SELECTOR_CONFIRM_DELETE_BTN);
-    I.click(SELECTOR_CONFIRM_DELETE_BTN);
+    I.waitForVisible(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
+    I.click(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
 }
 
 exports.validateIconColor = validateIconColor;
