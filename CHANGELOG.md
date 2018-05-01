@@ -1,3 +1,13 @@
+<a name="1.6.0"></a>
+## 1.6.0 (2018-05-01)
+
+* Fix: functional tests (#185) ([664bfe3](https://github.com/box/box-annotations/commit/664bfe3)), closes [#185](https://github.com/box/box-annotations/issues/185)
+* Fix: Functional tests + cleanup annotations after Features (#186) ([ea868c4](https://github.com/box/box-annotations/commit/ea868c4)), closes [#186](https://github.com/box/box-annotations/issues/186)
+* Fix: Use BRUI CSS for create dialog textarea (#184) ([8faef28](https://github.com/box/box-annotations/commit/8faef28)), closes [#184](https://github.com/box/box-annotations/issues/184)
+* New: Add basic UI tests for point & highlight comment annotations (#182) ([44597de](https://github.com/box/box-annotations/commit/44597de)), closes [#182](https://github.com/box/box-annotations/issues/182)
+
+
+
 <a name="1.5.0"></a>
 ## 1.5.0 (2018-04-24)
 
