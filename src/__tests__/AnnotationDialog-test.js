@@ -545,15 +545,15 @@ describe('AnnotationDialog', () => {
             expect(stubs.hide).to.be.called;
         });
 
-        it('should activate the reply area when user presses another key inside the reply area', () => {
-            stubs.activate = sandbox.stub(dialog, 'activateReply');
+        it('should scroll to the bottom area when user presses a key inside the reply area', () => {
+            stubs.scrollToLastComment = sandbox.stub(dialog, 'scrollToLastComment');
 
             dialog.keydownHandler({
                 key: ' ', // space
                 target: dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`),
                 stopPropagation: () => {}
             });
-            expect(stubs.activate).to.be.called;
+            expect(stubs.scrollToLastComment).to.be.called;
         });
     });
 
