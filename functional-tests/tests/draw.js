@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
     SELECTOR_TEXT_LAYER,
     SELECTOR_DISABLED,
@@ -16,14 +17,22 @@ const {
 } = require('../helpers/constants');
 
 const { draw, clickAtLocation } = require('../helpers/mouseEvents');
+const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Draw Annotation Sanity');
 
-Before((I) => {
+Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Can enter/exit drawing mode properly @desktop', (I) => {
+After(function() {
+    cleanupAnnotations();
+});
+
+Scenario('Create/Delete drawing @desktop', function(I) {
+    /*
+     * Can enter/exit drawing mode properly @desktop
+     */
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -42,12 +51,10 @@ Scenario('Can enter/exit drawing mode properly @desktop', (I) => {
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
     I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-});
 
-Scenario('Cancel a new drawing annotation @desktop', (I) => {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-
+    /*
+     * Cancel a new drawing annotation
+     */
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
     I.click(SELECTOR_TEXT_LAYER);
@@ -63,16 +70,10 @@ Scenario('Cancel a new drawing annotation @desktop', (I) => {
     I.say('Cancel drawing');
     I.click(SELECTOR_DELETE_DRAWING_BTN);
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
-});
 
-Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) => {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
-
-    I.say('Enter draw annotation mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.click(SELECTOR_TEXT_LAYER);
-
+    /*
+     * Create/Delete a drawing annotation w/ drawing dialog
+     */
     draw(I, SELECTOR_TEXT_LAYER, 100);
     I.waitForVisible(SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
@@ -90,7 +91,7 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) =>
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
 
-    I.say('Select drawing')
+    I.say('Select drawing');
     clickAtLocation(I, SELECTOR_TEXT_LAYER, 300);
     I.scrollTo(SELECTOR_ANNOTATION_DRAWING_DIALOG);
     I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
@@ -104,7 +105,7 @@ Scenario('Create/Delete a drawing annotation w/ drawing dialog @desktop', (I) =>
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create a drawing annotation by exiting mode @desktop', (I) => {
+Scenario('Create/Delete a drawing by exiting mode @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
@@ -118,5 +119,18 @@ Scenario('Create a drawing annotation by exiting mode @desktop', (I) => {
 
     I.say('Save drawing');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
+    I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
+
+    I.say('Select drawing');
+    clickAtLocation(I, SELECTOR_TEXT_LAYER, 300);
+    I.scrollTo(SELECTOR_ANNOTATION_DRAWING_DIALOG);
+    I.waitForVisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
+
+    I.say('Drawing should have a boundary and dialog should appear');
+    I.waitForText('Kanye West drew', 9, SELECTOR_ANNOTATION_DRAWING_LABEL);
+    I.waitForEnabled(SELECTOR_DELETE_DRAWING_BTN);
+
+    I.say('Delete drawing');
+    I.click(SELECTOR_DELETE_DRAWING_BTN);
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });

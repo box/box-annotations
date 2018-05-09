@@ -8,9 +8,11 @@ const {
     BROWSER_PLATFORM,
     PLATFORM_VERSION,
     DEVICE_NAME,
-    DEFAULT_WAIT_TIME = 90000
+    DEFAULT_WAIT_TIME = 90000,
+    RUN_LOCALLY=false
 } = process.env;
 const MOBILE_PLATFORMS = ['iOS', 'Android'];
+const { cleanupAnnotations } = require('./functional-tests/helpers/cleanup');
 
 // Local selenium config
 const commonConfigObj = {
@@ -21,7 +23,7 @@ const commonConfigObj = {
 };
 
 const helperObj = {};
-const isLocalBuild = typeof SAUCE_USERNAME === 'undefined';
+const isLocalBuild = typeof SAUCE_USERNAME === 'undefined' || RUN_LOCALLY;
 
 if (isLocalBuild) {
     helperObj.WebDriverIO = commonConfigObj;
@@ -61,14 +63,21 @@ if (isLocalBuild) {
     }
 }
 
+/**
+ * @return {void}
+*/
+function cleanup() {
+    cleanupAnnotations() ;
+}
+
 exports.config = {
     tests: './functional-tests/tests/*.js',
     timeout: DEFAULT_WAIT_TIME,
     output: './functional-tests/output',
     helpers: helperObj,
     include: {},
-    bootstrap: './functional-tests/helpers/cleanup.js',
-    teardown: './functional-tests/helpers/cleanup.js',
+    bootstrap: cleanup,
+    teardown: cleanup,
     mocha: {},
     name: 'box-annotations',
     hooks: isLocalBuild ? [] : ['./functional-tests/helpers/eventHooks.js']

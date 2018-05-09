@@ -25,7 +25,7 @@ function deleteAnnotation(annotation) {
     });
 }
 
-module.exports = function() {
+function cleanupAnnotations() {
     client.get(`/files/${FILE_ID}/annotations?version=${FILE_VERSION_ID}`, {}, function(err, response) {
         if (err) {
             // handle error
@@ -42,3 +42,5 @@ module.exports = function() {
         entries.forEach(deleteAnnotation);
     });
 }
+
+exports.cleanupAnnotations = cleanupAnnotations;

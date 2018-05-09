@@ -1,6 +1,7 @@
 @import '~box-react-ui/lib/styles/variables';
 
-.ba-annotation-dialog {
+.ba-annotation-dialog,
+.ba-create-annotation-dialog {
     @import '~box-react-ui/lib/styles/common/buttons';
     @import '~box-react-ui/lib/styles/common/forms';
 }

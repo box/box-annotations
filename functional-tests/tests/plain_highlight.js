@@ -1,4 +1,6 @@
+/* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
+    SELECTOR_ACTIVE,
     SELECTOR_TEXT_LAYER,
     SELECTOR_ANNOTATIONS_LOADED,
     SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
@@ -8,16 +10,25 @@ const {
 } = require('../helpers/constants');
 
 const { selectText } = require('../helpers/mouseEvents');
+const { validateIconColor } = require('../helpers/validation');
+const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Plain Highlight Annotation Sanity');
 
-Before((I) => {
+Before(function(I) {
     I.amOnPage('/');
 });
 
-Scenario('Create a new plain highlight annotation @desktop', (I) => {
+After(function() {
+    cleanupAnnotations();
+});
+
+Scenario('Create/Delete a new plain highlight annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
+    /*
+     * Create plain highlight annotation
+     */
     I.say('Highlight dialog should appear after selecting text');
     selectText(I, SELECTOR_TEXT_LAYER);
     I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
@@ -29,18 +40,15 @@ Scenario('Create a new plain highlight annotation @desktop', (I) => {
     I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
     I.waitForText('Kanye West highlighted', 9, SELECTOR_HIGHLIGHT_LABEL);
     I.waitForEnabled(SELECTOR_ADD_HIGHLIGHT_BTN);
-});
 
-Scenario('Delete the plain highlight annotation @desktop', (I) => {
-    I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
+    validateIconColor(I, `${SELECTOR_ADD_HIGHLIGHT_BTN}${SELECTOR_ACTIVE}`, 'rgb(255, 201, 0)');
 
-    I.say('Highlight dialog should appear on click');
-    I.click(`${SELECTOR_TEXT_LAYER} div`);
-    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-
+    /*
+     * Delete plain highlight annotation
+     */
     I.say('Delete the highlight annotation');
-    I.click(SELECTOR_ADD_HIGHLIGHT_BTN);
+    I.click(`${SELECTOR_ADD_HIGHLIGHT_BTN}${SELECTOR_ACTIVE}`);
 
     I.say('Highlight should be deleted');
-    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 5);
+    I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 1);
 });
