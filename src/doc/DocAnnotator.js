@@ -401,22 +401,10 @@ class DocAnnotator extends Annotator {
 
         // Hide open threads when clicking on document
         this.annotatedElement.addEventListener(
-            'mouseup',
-            (event) => {
-                if (util.isInDialog(event)) {
-                    return;
-                }
-
-                Object.keys(this.modeControllers).forEach((mode) => {
-                    this.modeControllers[mode].applyActionToThreads((thread) => {
-                        if (!util.isPending(thread.state)) {
-                            thread.hideDialog();
-                        }
-                    });
-                });
-            },
-            true /* Use Capture so this executes first */
-        );
+            'click',
+            this.hideAnnotations,
+            true
+        ); /* Use Capture so this executes first */
 
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
         if (!this.permissions.canAnnotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {

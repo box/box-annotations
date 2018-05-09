@@ -136,7 +136,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        // Prevents the annotations dialog from being every call
+        // Prevents the annotations dialog from being set up on every call
         if (!this.dialog.element) {
             this.dialog.setup(this.annotations, this.element);
         }

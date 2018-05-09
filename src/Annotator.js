@@ -297,6 +297,27 @@ class Annotator extends EventEmitter {
     }
 
     /**
+     * Hides all non-pending annotations if mouse event occurs outside an
+     * annotation dialog
+     *
+     * @param {Event} event - Mouse event
+     * @return {void}
+     */
+    hideAnnotations(event) {
+        if (util.isInDialog(event)) {
+            return;
+        }
+
+        Object.keys(this.modeControllers).forEach((mode) => {
+            this.modeControllers[mode].applyActionToThreads((thread) => {
+                if (!util.isPending(thread.state)) {
+                    thread.hideDialog();
+                }
+            });
+        });
+    }
+
+    /**
      * Fetches persisted annotations, creates threads as needed, and generates
      * an in-memory map of page to threads.
      *

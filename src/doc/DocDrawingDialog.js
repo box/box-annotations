@@ -166,7 +166,7 @@ class DocDrawingDialog extends AnnotationDialog {
         }
 
         if (!this.element) {
-            this.setup([]);
+            this.setup();
         }
 
         // Reinsert when the dialog is removed from the page

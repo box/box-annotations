@@ -34,7 +34,7 @@ describe('doc/DocHighlightDialog', () => {
             highlightToggle: 'highlight toggle',
             whoHighlighted: '{1} highlighted'
         };
-        dialog.setup([]);
+        dialog.setup();
         document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
         stubs.emit = sandbox.stub(dialog, 'emit');

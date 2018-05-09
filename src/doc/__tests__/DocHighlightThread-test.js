@@ -42,7 +42,7 @@ describe('doc/DocHighlightThread', () => {
         thread.dialog.localized = {
             highlightToggle: 'highlight toggle'
         };
-        thread.dialog.setup([]);
+        thread.dialog.setup();
     });
 
     afterEach(() => {
@@ -179,7 +179,7 @@ describe('doc/DocHighlightThread', () => {
             plainHighlightThread.dialog.localized = {
                 highlightToggle: 'highlight toggle'
             };
-            plainHighlightThread.dialog.setup([]);
+            plainHighlightThread.dialog.setup();
 
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
                 value: sandbox.stub()

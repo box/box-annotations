@@ -37,7 +37,7 @@ describe('AnnotationDialog', () => {
             addCommentPlaceholder: 'add comment placeholder',
             posting: 'posting'
         };
-        dialog.setup([]);
+        dialog.setup();
         document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
         stubs.emit = sandbox.stub(dialog, 'emit');

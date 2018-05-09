@@ -286,12 +286,12 @@ class AnnotationDialog extends EventEmitter {
     /**
      * Sets up the dialog element.
      *
-     * @param {Object} annotations Annotations to show in the dialog
-     * @param {HTMLElement} threadEl Annotation icon element
+     * @param {Object} [annotations] Annotations to show in the dialog
+     * @param {HTMLElement} [threadEl] Annotation icon element
      * @return {void}
      * @protected
      */
-    setup(annotations, threadEl) {
+    setup(annotations = [], threadEl = undefined) {
         this.threadEl = threadEl;
 
         // Generate HTML of dialog
@@ -541,7 +541,6 @@ class AnnotationDialog extends EventEmitter {
             // Canceling a reply
             case constants.DATA_TYPE_CANCEL_REPLY:
                 this.deactivateReply(true);
-                this.hide();
                 break;
             // Clicking 'Post' button to create a reply annotation
             case constants.DATA_TYPE_POST_REPLY:
