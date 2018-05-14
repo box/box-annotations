@@ -247,12 +247,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * Sets up the dialog element.
      *
      * @override
-     * @param {Object} annotations Annotations to show in the dialog
-     * @param {boolean} showComment Whether or not show comment highlight UI
+     * @param {Object} [annotations] Annotations to show in the dialog
+     * @param {boolean} [showComment] Whether or not show comment highlight UI
      * @return {void}
      * @protected
      */
-    setup(annotations, showComment) {
+    setup(annotations = [], showComment = false) {
         // Only create an dialog element, if one doesn't already exist
         if (!this.element) {
             this.element = document.createElement('div');

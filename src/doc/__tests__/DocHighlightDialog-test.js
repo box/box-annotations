@@ -482,8 +482,6 @@ describe('doc/DocHighlightDialog', () => {
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
         });
 
         it('should not unbind mouseenter/leave events for mobile browsers', () => {
@@ -495,8 +493,6 @@ describe('doc/DocHighlightDialog', () => {
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
     });
 

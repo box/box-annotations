@@ -39,12 +39,10 @@ describe('doc/DocHighlightThread', () => {
             minY: 1,
             maxY: 10
         });
-        thread.createDialog();
         thread.dialog.localized = {
             highlightToggle: 'highlight toggle'
         };
-        thread.dialog.element = document.createElement();
-        thread.dialog.highlightDialogEl = document.createElement();
+        thread.dialog.setup();
     });
 
     afterEach(() => {
@@ -181,7 +179,7 @@ describe('doc/DocHighlightThread', () => {
             plainHighlightThread.dialog.localized = {
                 highlightToggle: 'highlight toggle'
             };
-            plainHighlightThread.createDialog();
+            plainHighlightThread.setup();
             plainHighlightThread.dialog.element = document.createElement();
 
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
