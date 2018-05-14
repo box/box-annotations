@@ -351,11 +351,6 @@ class AnnotationDialog extends EventEmitter {
         this.element.addEventListener('wheel', this.stopPropagation);
         this.element.addEventListener('mouseup', this.stopPropagation);
 
-        if (!this.isMobile) {
-            this.element.addEventListener('click', this.clickHandler);
-            this.element.addEventListener('click', this.stopPropagation);
-        }
-
         if (this.hasTouch) {
             this.element.addEventListener('touchstart', this.clickHandler);
             this.element.addEventListener('touchstart', this.stopPropagation);
@@ -369,6 +364,11 @@ class AnnotationDialog extends EventEmitter {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         if (annotationTextEl) {
             annotationTextEl.addEventListener('focus', this.validateTextArea);
+        }
+
+        if (!this.isMobile) {
+            this.element.addEventListener('click', this.clickHandler);
+            this.element.addEventListener('click', this.stopPropagation);
         }
     }
 
@@ -399,11 +399,6 @@ class AnnotationDialog extends EventEmitter {
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
 
-        if (!this.isMobile) {
-            this.element.removeEventListener('click', this.clickHandler);
-            this.element.removeEventListener('click', this.stopPropagation);
-        }
-
         if (this.hasTouch) {
             this.element.removeEventListener('touchstart', this.clickHandler);
             this.element.removeEventListener('touchstart', this.stopPropagation);
@@ -417,6 +412,11 @@ class AnnotationDialog extends EventEmitter {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         if (annotationTextEl) {
             annotationTextEl.removeEventListener('focus', this.validateTextArea);
+        }
+
+        if (!this.isMobile) {
+            this.element.removeEventListener('click', this.clickHandler);
+            this.element.removeEventListener('click', this.stopPropagation);
         }
     }
 

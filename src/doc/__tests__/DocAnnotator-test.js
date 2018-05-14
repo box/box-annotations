@@ -117,7 +117,6 @@ describe('doc/DocAnnotator', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
             annotator.init(1);
             expect(annotator.annotatedElement.id).to.not.be.undefined;
-            expect(annotator.hoverThreads).to.not.be.undefined;
         });
     });
 
@@ -659,13 +658,13 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should bind DOM listeners if user can annotate and highlight', () => {
-            stubs.elMock.expects('addEventListener').withArgs('mouseup', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('wheel', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('mousemove', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('dblclick', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('mousedown', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('contextmenu', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('click', sinon.match.func);
+            stubs.elMock.expects('addEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
+            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('addEventListener').withArgs('click', annotator.hideAnnotations, true);
+            stubs.elMock.expects('addEventListener').withArgs('dblclick', annotator.highlightMouseupHandler);
+            stubs.elMock.expects('addEventListener').withArgs('mousedown', annotator.highlightMousedownHandler);
+            stubs.elMock.expects('addEventListener').withArgs('contextmenu', annotator.highlightMousedownHandler);
+            stubs.elMock.expects('addEventListener').withArgs('click', annotator.drawingSelectionHandler);
             annotator.bindDOMListeners();
         });
 
@@ -690,9 +689,9 @@ describe('doc/DocAnnotator', () => {
             annotator.commentHighlightEnabled = true;
             annotator.drawEnabled = false;
 
-            stubs.elMock.expects('addEventListener').withArgs('mouseup', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('wheel', sinon.match.func);
-            stubs.elMock.expects('addEventListener').withArgs('mousemove', sinon.match.func);
+            stubs.elMock.expects('addEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
+            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('addEventListener').withArgs('click', annotator.hideAnnotations, true);
             annotator.bindDOMListeners();
         });
 
@@ -704,12 +703,12 @@ describe('doc/DocAnnotator', () => {
             const docListen = sandbox.spy(document, 'addEventListener');
 
             annotator.bindDOMListeners();
-            expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
+            expect(docListen).to.be.calledWith('selectionchange', annotator.onSelectionChange);
 
             annotator.isMobile = false;
             annotator.hasTouch = true;
             annotator.bindDOMListeners();
-            expect(docListen).to.be.calledWith('selectionchange', sinon.match.func);
+            expect(docListen).to.be.calledWith('selectionchange', annotator.onSelectionChange);
         });
 
         it('should not bind selection change event if both annotation types are disabled, and touch OR mobile enabled', () => {
@@ -731,23 +730,29 @@ describe('doc/DocAnnotator', () => {
             annotator.commentHighlightEnabled = false;
             annotator.drawEnabled = true;
 
-            stubs.elMock.expects('addEventListener').withArgs('click', sinon.match.func);
             stubs.elMock
                 .expects('addEventListener')
-                .never()
-                .withArgs('mouseup', sinon.match.func);
+                .withArgs('mouseup', annotator.highlightMouseupHandler)
+                .never();
             stubs.elMock
                 .expects('addEventListener')
-                .never()
-                .withArgs('dblclick', sinon.match.func);
+                .withArgs('wheel', annotator.resetHighlightSelection)
+                .never();
             stubs.elMock
                 .expects('addEventListener')
-                .never()
-                .withArgs('mousedown', sinon.match.func);
+                .withArgs('dblclick', annotator.highlightMouseupHandler)
+                .never();
             stubs.elMock
                 .expects('addEventListener')
-                .never()
-                .withArgs('contextmenu', sinon.match.func);
+                .withArgs('mousedown', annotator.highlightMousedownHandler)
+                .never();
+            stubs.elMock
+                .expects('addEventListener')
+                .withArgs('contextmenu', annotator.highlightMousedownHandler)
+                .never();
+
+            stubs.elMock.expects('addEventListener').withArgs('click', annotator.drawingSelectionHandler);
+            stubs.elMock.expects('addEventListener').withArgs('click', annotator.hideAnnotations, true);
 
             annotator.bindDOMListeners();
         });
@@ -767,13 +772,13 @@ describe('doc/DocAnnotator', () => {
         it('should unbind DOM listeners if user can annotate', () => {
             annotator.permissions.canAnnotate = true;
 
-            stubs.elMock.expects('removeEventListener').withArgs('mouseup', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('wheel', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('mousedown', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('contextmenu', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('mousemove', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('dblclick', sinon.match.func);
-            stubs.elMock.expects('removeEventListener').withArgs('click', sinon.match.func);
+            stubs.elMock.expects('removeEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
+            stubs.elMock.expects('removeEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('removeEventListener').withArgs('click', annotator.hideAnnotations);
+            stubs.elMock.expects('removeEventListener').withArgs('dblclick', annotator.highlightMouseupHandler);
+            stubs.elMock.expects('removeEventListener').withArgs('mousedown', annotator.highlightMousedownHandler);
+            stubs.elMock.expects('removeEventListener').withArgs('contextmenu', annotator.highlightMousedownHandler);
+            stubs.elMock.expects('removeEventListener').withArgs('click', annotator.drawingSelectionHandler);
             annotator.unbindDOMListeners();
         });
 
@@ -781,7 +786,6 @@ describe('doc/DocAnnotator', () => {
             const rafHandle = 12; // RAF handles are integers
             annotator.permissions.canAnnotate = true;
             annotator.highlightThrottleHandle = rafHandle;
-            sandbox.stub(annotator, 'getHighlightMouseMoveHandler').returns(sandbox.stub());
 
             const cancelRAFStub = sandbox.stub(window, 'cancelAnimationFrame');
             annotator.unbindDOMListeners();
@@ -939,144 +943,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('getHighlightMouseMoveHandler()', () => {
-        beforeEach(() => {
-            annotator.highlightMousemoveHandler = false;
-
-            // Request animation frame stub
-            stubs.RAF = sandbox.stub(window, 'requestAnimationFrame');
-        });
-
-        it('should do nothing if the highlightMousemoveHandler already exists', () => {
-            annotator.highlightMousemoveHandler = () => {};
-            const result = annotator.getHighlightMouseMoveHandler();
-
-            expect(stubs.RAF).to.not.be.called;
-            expect(result).to.not.be.null;
-        });
-    });
-
-    describe('onHighlightMouseMove()', () => {
-        it('should set didMouseMove to true if the mouse was moved enough', () => {
-            annotator.mouseX = 0;
-            annotator.mouseY = 0;
-
-            annotator.onHighlightMouseMove({ clientX: 10, clientY: 10 });
-
-            expect(annotator.didMouseMove).to.be.true;
-        });
-
-        it('should not set didMouseMove to true if the mouse was not moved enough', () => {
-            annotator.mouseX = 0;
-            annotator.mouseY = 0;
-
-            annotator.onHighlightMouseMove({ clientX: 3, clientY: 3 });
-
-            expect(annotator.didMouseMove).to.equal(undefined);
-        });
-
-        it('should assign the mouseMoveEvent if the annotator is highlighting', () => {
-            const moveEvent = { clientX: 10, clientY: 10 };
-            annotator.mouseX = 0;
-            annotator.mouseY = 0;
-
-            annotator.onHighlightMouseMove(moveEvent);
-
-            expect(annotator.mouseMoveEvent).to.deep.equal(moveEvent);
-        });
-
-        it('should not assign the mouseMoveEvent if the annotator is highlighting', () => {
-            const moveEvent = { clientX: 10, clientY: 10 };
-            annotator.mouseX = 0;
-            annotator.mouseY = 0;
-            annotator.isCreatingHighlight = true;
-
-            annotator.onHighlightMouseMove(moveEvent);
-
-            expect(annotator.mouseMoveEvent).to.not.deep.equal(moveEvent);
-        });
-    });
-
-    describe('onHighlightCheck()', () => {
-        beforeEach(() => {
-            stubs.thread = {
-                threadID: '123abc',
-                location: { page: 1 },
-                type: TYPES.highlight
-            };
-
-            stubs.getPageInfo = stubs.getPageInfo.returns({ pageEl: {}, page: 1 });
-            stubs.clock = sinon.useFakeTimers();
-            stubs.isDialog = sandbox.stub(docUtil, 'isDialogDataType');
-
-            let timer = 0;
-            window.performance = window.performance || { now: () => {} };
-            sandbox.stub(window.performance, 'now').callsFake(() => {
-                // eslint-disable-next-line no-return-assign
-                return (timer += 500);
-            });
-
-            annotator.isCreatingHighlight = false;
-
-            annotator.modeControllers = {
-                highlight: {
-                    threads: {},
-                    applyActionToThreads: () => {}
-                }
-            };
-            stubs.controllerMock = sandbox.mock(annotator.modeControllers.highlight);
-        });
-
-        afterEach(() => {
-            stubs.clock.restore();
-            annotator.threads = {};
-        });
-
-        it('should not do anything if user is creating a highlight', () => {
-            stubs.controllerMock.expects('applyActionToThreads').never();
-            annotator.isCreatingHighlight = true;
-
-            annotator.mouseMoveEvent = { clientX: 3, clientY: 3 };
-            annotator.onHighlightCheck();
-            expect(stubs.isDialog).to.not.be.called;
-        });
-
-        it('should not do anything if mouse is already over a highlight dialog', () => {
-            stubs.controllerMock.expects('applyActionToThreads').never();
-            stubs.isDialog.returns(true);
-
-            annotator.mouseMoveEvent = { clientX: 3, clientY: 3, target: {} };
-            annotator.onHighlightCheck();
-            expect(stubs.isDialog).calledWith(annotator.mouseMoveEvent.target);
-        });
-
-        it('should add delayThreads and hide innactive threads if the page is found', () => {
-            annotator.delayThread = [stubs.thread];
-            annotator.mouseMoveEvent = { clientX: 3, clientY: 3 };
-            annotator.onHighlightCheck();
-        });
-
-        it('should switch to the text cursor if mouse is no longer hovering over a highlight', () => {
-            annotator.hoverActive = true;
-            sandbox.stub(annotator, 'removeDefaultCursor');
-
-            annotator.mouseMoveEvent = { clientX: 3, clientY: 3 };
-            annotator.onHighlightCheck();
-
-            expect(annotator.removeDefaultCursor).to.not.be.called;
-
-            stubs.clock.tick(75);
-            expect(annotator.removeDefaultCursor).to.be.called;
-        });
-
-        it('should switch to the hand cursor if mouse is hovering over a highlight', () => {
-            sandbox.stub(annotator, 'useDefaultCursor');
-            annotator.mouseMoveEvent = { clientX: 3, clientY: 3 };
-            annotator.onHighlightCheck();
-            expect(annotator.cursorTimeout).to.not.be.undefined;
-        });
-    });
-
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             stubs.create = sandbox.stub(annotator, 'highlightCreateHandler');
@@ -1095,7 +961,7 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.resetHighlightSelection).to.be.called;
         });
 
-        it('should call highlightCreateHandler if not on mobile, and the user double clicked', () => {
+        it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(stubs.create).to.be.called;
             expect(stubs.click).to.not.be.called;
@@ -1103,7 +969,8 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.resetHighlightSelection).to.be.called;
         });
 
-        it('should call highlightClickHandler if not on mobile, and the mouse did not move', () => {
+        it('should call highlightClickHandler if on desktop and createHighlightDialog exists', () => {
+            annotator.createHighlightDialog = undefined;
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(stubs.create).to.not.be.called;
             expect(stubs.click).to.be.called;
@@ -1578,20 +1445,6 @@ describe('doc/DocAnnotator', () => {
         it('should render the specified page on annotationsrenderpage', () => {
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.renderPage });
             expect(annotator.renderPage).to.be.called;
-        });
-
-        it('should do nothing if deleted thread is not a highlight on unregisterthread', () => {
-            stubs.thread.type = 'point';
-            annotator.hoverThreads = [stubs.thread];
-
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.unregister, data: stubs.thread });
-            expect(annotator.hoverThreads).to.contain(stubs.thread);
-        });
-
-        it('should remove the recently deleted thread from the hoverThreads array on unregisterthread', () => {
-            annotator.hoverThreads = [stubs.thread];
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.unregister, data: stubs.thread });
-            expect(annotator.hoverThreads).to.not.contain(stubs.thread);
         });
     });
 });

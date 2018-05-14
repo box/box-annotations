@@ -443,6 +443,8 @@ class DocAnnotator extends Annotator {
             controller.removeSelection();
         });
 
+        this.annotatedElement.removeEventListener('click', this.hideAnnotations);
+
         if (this.hasTouch || this.isMobile) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
