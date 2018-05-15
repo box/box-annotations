@@ -1,3 +1,4 @@
+import formatTaggedMessage from 'box-react-ui/lib/features/activity-feed/utils/formatTaggedMessage';
 import EventEmitter from 'events';
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
@@ -66,22 +67,18 @@ class AnnotationElement extends EventEmitter {
      * @private
      */
     renderAnnotation() {
+        const { text, fileVersionId, annotationID } = this.annotation;
         this.annotationComponent = render(
             <div>
-                <Profile
-                    id={this.user.userId}
-                    name={this.user.name}
-                    avatarUrl={this.user.avatarUrl}
-                    createdBy={this.createdBy}
-                />
-                <p className={constants.CLASS_ANNOTATION_COMMENT_TEXT}>{this.annotation.text}</p>
+                <Profile {...this.user} />
+                <p className={constants.CLASS_ANNOTATION_COMMENT_TEXT}>
+                    {formatTaggedMessage(text, fileVersionId, true)}
+                </p>
                 {this.permissions.can_delete && (
                     <DeleteConfirmation
-                        annotationID={this.annotation.annotationID}
+                        annotationID={annotationID}
                         message={this.localized.deleteConfirmation}
-                        cancelButton={this.localized.cancelButton}
-                        deleteButton={this.localized.deleteButton}
-                        onConfirmDelete={this.onConfirmDelete}
+                        {...this.localized}
                     />
                 )}
             </div>,
