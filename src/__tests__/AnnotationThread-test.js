@@ -668,16 +668,12 @@ describe('AnnotationThread', () => {
         it('should bind DOM listeners', () => {
             thread.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
             thread.isMobile = true;
             thread.bindDOMListeners();
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
     });
 
@@ -697,16 +693,12 @@ describe('AnnotationThread', () => {
         it('should unbind DOM listeners', () => {
             thread.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
             thread.isMobile = true;
             thread.unbindDOMListeners();
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
         });
     });
 
@@ -721,6 +713,8 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('addListener').withArgs('annotationcreate', sinon.match.func);
             stubs.dialogMock.expects('addListener').withArgs('annotationcancel', sinon.match.func);
             stubs.dialogMock.expects('addListener').withArgs('annotationdelete', sinon.match.func);
+            stubs.dialogMock.expects('addListener').withArgs('annotationshow', sinon.match.func);
+            stubs.dialogMock.expects('addListener').withArgs('annotationhide', sinon.match.func);
             thread.bindCustomListenersOnDialog();
         });
     });
@@ -733,9 +727,15 @@ describe('AnnotationThread', () => {
         });
 
         it('should unbind custom listeners from dialog', () => {
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcreate');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcancel');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationdelete');
+            stubs.dialogMock
+                .expects('removeAllListeners')
+                .withArgs([
+                    'annotationcreate',
+                    'annotationcancel',
+                    'annotationdelete',
+                    'annotationshow',
+                    'annotationhide'
+                ]);
             thread.unbindCustomListenersOnDialog();
         });
     });

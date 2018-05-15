@@ -727,18 +727,21 @@ describe('Annotator', () => {
         describe('toggleAnnotationMode()', () => {
             beforeEach(() => {
                 annotator.modeControllers.something = stubs.controller;
+                sandbox.stub(annotator, 'hideAnnotations');
             });
 
             it('should exit the current mode', () => {
                 stubs.controllerMock.expects('isEnabled').returns(true);
                 stubs.controllerMock.expects('exit');
                 annotator.toggleAnnotationMode('something');
+                expect(annotator.hideAnnotations).to.be.called;
             });
 
             it('should enter the specified mode', () => {
                 sandbox.stub(annotator, 'getCurrentAnnotationMode');
                 stubs.controllerMock.expects('enter');
                 annotator.toggleAnnotationMode('something');
+                expect(annotator.hideAnnotations).to.be.called;
             });
         });
 

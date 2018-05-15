@@ -1,6 +1,13 @@
 import AnnotationModeController from './AnnotationModeController';
 import shell from './drawingShell.html';
-import { replaceHeader, enableElement, disableElement, clearCanvas, hasValidBoundaryCoordinates } from '../util';
+import {
+    replaceHeader,
+    enableElement,
+    disableElement,
+    clearCanvas,
+    hasValidBoundaryCoordinates,
+    findClosestElWithClass
+} from '../util';
 import {
     TYPES,
     STATES,
@@ -10,7 +17,9 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
-    CLASS_ANNOTATION_LAYER_DRAW
+    CLASS_ANNOTATION_LAYER_DRAW,
+    CLASS_ANNOTATION_DRAW_MODE,
+    CLASS_ANNOTATION_POINT_MARKER
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -97,44 +106,95 @@ class DrawingModeController extends AnnotationModeController {
         disableElement(this.redoButtonEl);
     }
 
+    /**
+     * Prevents click events from triggering other annotation types
+     *
+     * @protected
+     * @param {Event} event - Mouse event
+     * @return {void}
+     */
+    stopPropagation(event) {
+        const el = findClosestElWithClass(event.target, CLASS_ANNOTATION_POINT_MARKER);
+        if (el) {
+            event.stopPropagation();
+        }
+    }
+
+    /**
+     * Cancels drawing annotation
+     *
+     * @protected
+     * @return {void}
+     */
+    cancelDrawing() {
+        if (this.currentThread) {
+            this.currentThread.cancelUnsavedAnnotation();
+        }
+
+        this.currentThread = undefined;
+        this.toggleMode();
+    }
+
+    /**
+     * Posts drawing annotation
+     *
+     * @protected
+     * @return {void}
+     */
+    postDrawing() {
+        if (this.currentThread && this.currentThread.state === STATES.pending) {
+            this.saveThread(this.currentThread);
+        }
+
+        this.currentThread = undefined;
+        this.toggleMode();
+    }
+
+    /**
+     * Undos last drawing
+     *
+     * @protected
+     * @return {void}
+     */
+    undoDrawing() {
+        if (this.currentThread) {
+            this.currentThread.undo();
+        }
+    }
+
+    /**
+     * Redos last undone drawing annotation
+     *
+     * @protected
+     * @return {void}
+     */
+    redoDrawing() {
+        if (this.currentThread) {
+            this.currentThread.redo();
+        }
+    }
+
     /** @inheritdoc */
     setupHandlers() {
         /* eslint-disable require-jsdoc */
         this.locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
         /* eslint-enable require-jsdoc */
 
+        this.stopPropagation = this.stopPropagation.bind(this);
         this.drawingStartHandler = this.drawingStartHandler.bind(this);
-        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler);
+        this.cancelDrawing = this.cancelDrawing.bind(this);
+        this.postDrawing = this.postDrawing.bind(this);
+        this.undoDrawing = this.undoDrawing.bind(this);
+        this.redoDrawing = this.redoDrawing.bind(this);
 
-        this.pushElementHandler(this.cancelButtonEl, 'click', () => {
-            if (this.currentThread) {
-                this.currentThread.cancelUnsavedAnnotation();
-            }
+        this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
+        this.pushElementHandler(this.cancelButtonEl, 'click', this.cancelDrawing);
+        this.pushElementHandler(this.postButtonEl, 'click', this.postDrawing);
+        this.pushElementHandler(this.undoButtonEl, 'click', this.undoDrawing);
+        this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
-            this.currentThread = undefined;
-            this.toggleMode();
-        });
-
-        this.pushElementHandler(this.postButtonEl, 'click', () => {
-            if (this.currentThread && this.currentThread.state === STATES.pending) {
-                this.saveThread(this.currentThread);
-            }
-
-            this.currentThread = undefined;
-            this.toggleMode();
-        });
-
-        this.pushElementHandler(this.undoButtonEl, 'click', () => {
-            if (this.currentThread) {
-                this.currentThread.undo();
-            }
-        });
-
-        this.pushElementHandler(this.redoButtonEl, 'click', () => {
-            if (this.currentThread) {
-                this.currentThread.redo();
-            }
-        });
+        // Mobile & Desktop listeners are bound for touch-enabled laptop edge cases
+        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
     }
 
     /**
@@ -177,6 +237,12 @@ class DrawingModeController extends AnnotationModeController {
         thread.handleStart(location);
     }
 
+    /** @inheritdoc */
+    exit() {
+        this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
+        super.exit();
+    }
+
     /**
      * Enables the specified annotation mode
      *
@@ -185,6 +251,7 @@ class DrawingModeController extends AnnotationModeController {
     enter() {
         super.enter();
         replaceHeader(this.container, SELECTOR_DRAW_MODE_HEADER);
+        this.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
     }
 
     /** @inheritdoc */

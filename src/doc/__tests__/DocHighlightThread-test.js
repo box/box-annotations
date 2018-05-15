@@ -42,7 +42,7 @@ describe('doc/DocHighlightThread', () => {
         thread.dialog.localized = {
             highlightToggle: 'highlight toggle'
         };
-        thread.dialog.setup([]);
+        thread.dialog.setup();
     });
 
     afterEach(() => {
@@ -179,7 +179,8 @@ describe('doc/DocHighlightThread', () => {
             plainHighlightThread.dialog.localized = {
                 highlightToggle: 'highlight toggle'
             };
-            plainHighlightThread.dialog.setup([]);
+            plainHighlightThread.setup();
+            plainHighlightThread.dialog.element = document.createElement();
 
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
                 value: sandbox.stub()
@@ -250,12 +251,14 @@ describe('doc/DocHighlightThread', () => {
             thread.type = TYPES.highlight_comment;
             sandbox.stub(thread, 'isOnHighlight').returns(true);
             sandbox.stub(thread, 'reset');
+            sandbox.stub(thread, 'show');
 
             const isHighlightPending = thread.onClick({}, false);
 
             expect(isHighlightPending).to.be.true;
             expect(thread.reset).to.not.be.called;
             expect(thread.state).to.equal(STATES.hover);
+            expect(thread.show).to.be.called;
         });
     });
 
@@ -283,72 +286,6 @@ describe('doc/DocHighlightThread', () => {
 
             const result = thread.isOnHighlight({});
 
-            expect(result).to.be.false;
-        });
-    });
-
-    describe('onMousemove()', () => {
-        it('should return false if no dialog exists', () => {
-            thread.dialog = undefined;
-            sandbox.stub(util, 'isInDialog');
-
-            const result = thread.onMousemove({});
-            expect(result).to.be.false;
-            expect(util.isInDialog).to.not.be.called;
-        });
-
-        it('should delay drawing highlight if mouse is hovering over a highlight dialog and not pending comment', () => {
-            sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(util, 'isInDialog').returns(true);
-            thread.state = STATES.inactive;
-
-            const result = thread.onMousemove({});
-
-            expect(result).to.be.true;
-            expect(thread.state).to.equal(STATES.hover);
-        });
-
-        it('should do nothing if mouse is hovering over a highlight dialog and pending comment', () => {
-            sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(util, 'isInDialog').returns(true);
-            thread.state = STATES.pending_active;
-
-            const result = thread.onMousemove({});
-
-            expect(result).to.be.false;
-        });
-
-        it('should delay drawing highlight if mouse is hovering over a highlight', () => {
-            sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(util, 'isInDialog').returns(false);
-            sandbox.stub(thread, 'isInHighlight').returns(true);
-            thread.state = STATES.hover;
-
-            const result = thread.onMousemove({});
-
-            expect(result).to.be.true;
-        });
-
-        it('should not delay drawing highlight if mouse is not in highlight and the state is not already inactive', () => {
-            sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(util, 'isInDialog').returns(false);
-            sandbox.stub(thread, 'isInHighlight').returns(false);
-            thread.state = STATES.hover;
-
-            const result = thread.onMousemove({});
-
-            expect(thread.hoverTimeoutHandler).to.not.be.undefined;
-            expect(result).to.be.false;
-        });
-
-        it('should not delay drawing highlight if the state is already inactive', () => {
-            sandbox.stub(thread, 'getPageEl').returns(thread.annotatedElement);
-            sandbox.stub(util, 'isInDialog').returns(false);
-            sandbox.stub(thread, 'isInHighlight').returns(false);
-            thread.state = STATES.inactive;
-
-            const result = thread.onMousemove({});
-            expect(thread.state).to.equal(STATES.inactive);
             expect(result).to.be.false;
         });
     });

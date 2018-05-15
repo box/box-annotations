@@ -23,7 +23,7 @@ describe('image/ImagePointDialog', () => {
             canAnnotate: true
         });
         dialog.localized = { addCommentPlaceholder: 'placeholder' };
-        dialog.setup([]);
+        dialog.setup();
         dialog.element.style.width = '282px';
         dialog.threadEl = {
             offsetLeft: 1,

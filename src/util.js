@@ -17,7 +17,9 @@ import {
     CLASS_BOX_PREVIEW_HEADER,
     CLASS_DIALOG_CLOSE,
     CLASS_MOBILE_DIALOG_HEADER,
-    DATA_TYPE_MOBILE_CLOSE
+    DATA_TYPE_MOBILE_CLOSE,
+    SELECTOR_ANNOTATION_MODE,
+    CLASS_ANNOTATION_POINT_MARKER
 } from './constants';
 
 import { ICON_CLOSE } from './icons/icons';
@@ -250,6 +252,21 @@ export function resetTextarea(element, clearText) {
  */
 export function isInDialog(event, dialogEl) {
     return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
+}
+
+/**
+ * Checks whether mouse is inside the dialog OR annotation marker represented by this thread.
+ *
+ * @private
+ * @param {Event} event Mouse event
+ * @return {boolean} Whether or not mouse is inside dialog
+ */
+export function isInAnnotationOrMarker(event) {
+    const { target } = event;
+    return !!(
+        findClosestElWithClass(target, CLASS_ANNOTATION_DIALOG) ||
+        findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER)
+    );
 }
 
 /**
@@ -834,6 +851,18 @@ export function generateMobileDialogEl() {
     headerEl.appendChild(closeButtonEl);
 
     return el;
+}
+
+/**
+ * Whether or not the user is currently in an annotation mode other than the
+ * specified annotation mode
+ *
+ * @param {HTMLElement} element The DOM element for the annotated element
+ * @param {string} [mode] The specified annotation mode to check
+ * @return {boolean} Whether or not the user is currently in the specified annotation mode
+ */
+export function isInAnnotationOrMarkerMode(element) {
+    return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
 }
 
 /**

@@ -52,6 +52,7 @@ class AnnotationModeController extends EventEmitter {
         }
 
         this.handleThreadEvents = this.handleThreadEvents.bind(this);
+        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
     }
 
     /**
@@ -178,7 +179,9 @@ class AnnotationModeController extends EventEmitter {
             const handler = this.handlers[index];
             const types = handler.type instanceof Array ? handler.type : [handler.type];
 
-            types.forEach((eventName) => handler.eventObj.addEventListener(eventName, handler.func));
+            types.forEach((eventName) =>
+                handler.eventObj.addEventListener(eventName, handler.func, handler.useCapture)
+            );
         }
     }
 
@@ -194,7 +197,7 @@ class AnnotationModeController extends EventEmitter {
             const types = handler.type instanceof Array ? handler.type : [handler.type];
 
             types.forEach((eventName) => {
-                handler.eventObj.removeEventListener(eventName, handler.func);
+                handler.eventObj.removeEventListener(eventName, handler.func, handler.useCapture);
             });
         }
     }
@@ -324,11 +327,19 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     handleThreadEvents(thread, data) {
-        switch (data.event) {
+        const { event, data: threadData } = data;
+
+        switch (event) {
             case THREAD_EVENT.save:
             case THREAD_EVENT.cancel:
                 this.hadPendingThreads = false;
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
+                break;
+            case THREAD_EVENT.show:
+                this.visibleThreadID = threadData.threadID;
+                break;
+            case THREAD_EVENT.hide:
+                this.visibleThreadID = null;
                 break;
             case THREAD_EVENT.threadCleanup:
                 // Thread should be cleaned up, unbind listeners - we
@@ -339,18 +350,18 @@ class AnnotationModeController extends EventEmitter {
             case THREAD_EVENT.threadDelete:
                 // Thread was deleted, remove from thread map
                 this.unregisterThread(thread);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             case THREAD_EVENT.deleteError:
                 this.emit(ANNOTATOR_EVENT.error, this.localized.deleteError);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             case THREAD_EVENT.createError:
                 this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             default:
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
         }
     }
 
@@ -362,9 +373,10 @@ class AnnotationModeController extends EventEmitter {
      * @param {HTMLElement} element - The element to bind the listener to
      * @param {Array|string} type - An array of event types to listen for or the event name to listen for
      * @param {Function} handlerFn - The callback to be invoked when the element emits a specified eventname
+     * @param {boolean} [useCapture] - Whether or not to prioritize handler call
      * @return {void}
      */
-    pushElementHandler(element, type, handlerFn) {
+    pushElementHandler(element, type, handlerFn, useCapture = false) {
         if (!element) {
             return;
         }
@@ -372,7 +384,8 @@ class AnnotationModeController extends EventEmitter {
         this.handlers.push({
             eventObj: element,
             func: handlerFn,
-            type
+            type,
+            useCapture
         });
     }
 
@@ -445,6 +458,7 @@ class AnnotationModeController extends EventEmitter {
                 if (isPending(thread.state)) {
                     this.unregisterThread(thread);
                     hadPendingThreads = true;
+                    this.pendingThreadID = null;
                     thread.destroy();
                 } else if (thread.isDialogVisible()) {
                     thread.hideDialog();

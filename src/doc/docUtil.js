@@ -36,24 +36,6 @@ export function isPresentation(annotatedElement) {
 //------------------------------------------------------------------------------
 
 /**
- * Checks if there is an active annotation in the annotated document
- *
- * @private
- * @param {HTMLElement} annotatedEl - Annotated document
- * @return {boolean} Whether or not a dialog is active
- */
-export function hasActiveDialog(annotatedEl) {
-    const commentsDialogEl = annotatedEl.querySelector(
-        `.${constants.CLASS_ANNOTATION_DIALOG}:not(${constants.SELECTOR_HIDDEN})`
-    );
-    const highlightDialogEl = annotatedEl.querySelector(
-        `.${constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG}:not(${constants.SELECTOR_HIDDEN})`
-    );
-
-    return !!(commentsDialogEl || highlightDialogEl);
-}
-
-/**
  * Checks the current selection has changed
  *
  * @private

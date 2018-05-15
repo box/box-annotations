@@ -37,7 +37,7 @@ describe('AnnotationDialog', () => {
             addCommentPlaceholder: 'add comment placeholder',
             posting: 'posting'
         };
-        dialog.setup([]);
+        dialog.setup();
         document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
         stubs.emit = sandbox.stub(dialog, 'emit');
@@ -86,6 +86,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(dialog.showMobileDialog).to.be.called;
             expect(stubs.scroll).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationshow');
         });
 
         it('should do nothing if the dialog is already visible ', () => {
@@ -93,6 +94,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(dialog.showMobileDialog).to.not.be.called;
             expect(stubs.scroll).to.not.be.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationshow');
         });
 
         it('should not reposition the dialog if the reply textarea is already active', () => {
@@ -102,6 +104,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.scroll).to.be.called;
             expect(stubs.position).to.not.be.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationshow');
         });
 
         it('should position the dialog if not on a mobile device', () => {
@@ -113,6 +116,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.position).to.be.called;
             expect(stubs.scroll).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationshow');
         });
     });
 
@@ -230,6 +234,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(util, 'hideElement');
             dialog.hide();
             expect(util.hideElement).to.not.have.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationhide');
         });
 
         it('should hide dialog immediately', () => {
@@ -237,6 +242,7 @@ describe('AnnotationDialog', () => {
             dialog.hide();
             expect(dialog.element).to.have.class(constants.CLASS_HIDDEN);
             expect(dialog.toggleFlippedThreadEl).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationhide');
         });
 
         it('should hide the mobile dialog if using a mobile browser', () => {
@@ -247,6 +253,7 @@ describe('AnnotationDialog', () => {
             expect(dialog.hideMobileDialog).to.be.called;
             expect(dialog.toggleFlippedThreadEl).to.be.called;
             dialog.element = null;
+            expect(dialog.emit).to.be.calledWith('annotationhide');
         });
     });
 
@@ -411,8 +418,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.add).to.be.calledWith('click', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
             expect(stubs.add).to.be.calledWith('touchstart', dialog.clickHandler);
             expect(stubs.add).to.be.calledWith('touchstart', dialog.stopPropagation);
@@ -440,8 +445,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.add).to.not.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
             dialog.element = null;
         });
@@ -487,8 +490,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('touchstart', dialog.clickHandler);
             expect(stubs.remove).to.be.calledWith('touchstart', dialog.stopPropagation);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
@@ -516,8 +517,6 @@ describe('AnnotationDialog', () => {
             expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
             expect(stubs.remove).to.not.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseenter', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('mouseleave', sinon.match.func);
             expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
         });
     });
@@ -566,80 +565,6 @@ describe('AnnotationDialog', () => {
 
             dialog.stopPropagation(event);
             expect(stubs.stop).to.be.called;
-        });
-    });
-
-    describe('mouseenterHandler()', () => {
-        beforeEach(() => {
-            stubs.show = sandbox.stub(util, 'showElement');
-            stubs.activate = sandbox.stub(dialog, 'activateReply');
-            dialog.element.classList.remove(constants.CLASS_HIDDEN);
-        });
-
-        it('should show the element only if the element is currently hidden', () => {
-            dialog.element.classList.add(constants.CLASS_HIDDEN);
-
-            dialog.mouseenterHandler();
-            expect(util.showElement).to.be.called;
-            expect(stubs.activate).to.be.called;
-        });
-
-        it('should do nothing if the element is already shown', () => {
-            dialog.mouseenterHandler();
-            expect(util.showElement).to.not.be.called;
-            expect(stubs.activate).to.be.called;
-        });
-
-        it('should emit \'annotationcommentpending\' when user hovers back into a dialog that has a pending comment', () => {
-            dialog.element.classList.add(constants.CLASS_HIDDEN);
-            const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            commentsTextArea.textContent = 'bleh';
-
-            dialog.mouseenterHandler();
-            expect(stubs.show).to.be.called;
-            expect(stubs.emit).to.be.calledWith('annotationcommentpending');
-            expect(stubs.activate).to.be.called;
-        });
-
-        it('should not emit \'annotationcommentpending\' in read-only mode', () => {
-            dialog.element.classList.add(constants.CLASS_HIDDEN);
-            const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            commentsTextArea.parentNode.removeChild(commentsTextArea);
-
-            dialog.mouseenterHandler();
-            expect(stubs.show).to.be.called;
-            expect(stubs.emit).to.not.be.calledWith('annotationcommentpending');
-            expect(stubs.activate).to.be.called;
-        });
-    });
-
-    describe('mouseleaveHandler()', () => {
-        beforeEach(() => {
-            stubs.hide = sandbox.stub(dialog, 'hide');
-            stubs.annotation = new Annotation({
-                annotationID: 'someID',
-                text: 'blah',
-                user: {},
-                permissions: {}
-            });
-        });
-
-        it('should not do anything if there are no annotations in the dialog', () => {
-            dialog.mouseleaveHandler({});
-            expect(stubs.hide).to.not.be.called;
-        });
-
-        it('should not do anything if the mouse is still in the dialog', () => {
-            dialog.addAnnotation(stubs.annotation);
-            sandbox.stub(util, 'isInDialog').returns(true);
-            dialog.mouseleaveHandler({});
-            expect(stubs.hide).to.not.be.called;
-        });
-
-        it('should hide dialog if there are annotations in the dialog', () => {
-            dialog.addAnnotation(stubs.annotation);
-            dialog.mouseleaveHandler({});
-            expect(stubs.hide).to.be.called;
         });
     });
 

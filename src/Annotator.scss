@@ -183,15 +183,11 @@
         line-height: 13px;
         margin: 0;
         max-width: 250px;
-        min-height: 34px;
+        min-height: 68px;
         padding: 7px;
         resize: vertical;
-        transition: border-color linear .15s, box-shadow linear .1s, min-height .1s;
+        transition: border-color linear .15s, box-shadow linear .1s;
         width: 100%;
-
-        &.bp-is-active {
-            min-height: 68px;
-        }
 
         &.ba-invalid-input {
             border-color: fade-out($great-balls-of-fire, .5);
@@ -578,6 +574,14 @@
 .ba-annotation-mode > img,
 .ba-annotation-mode img {
     cursor: crosshair;
+}
+
+.ba-draw-mode .ba-point-annotation-marker {
+    cursor: crosshair;
+
+    &:focus {
+        outline: none;
+    }
 }
 
 // Needed to allow point annotations since PDF.js adds a funky mousedown handler

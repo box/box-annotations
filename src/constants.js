@@ -153,6 +153,10 @@ export const SELECTOR_DIALOG_CLOSE = `.${CLASS_DIALOG_CLOSE}`;
 // Annotation mode CSS constants
 export const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
 export const SELECTOR_ANNOTATION_MODE = `.${CLASS_ANNOTATION_MODE}`;
+export const CLASS_ANNOTATION_POINT_MODE = 'ba-point-mode';
+export const SELECTOR_ANNOTATION_POINT_MODE = `.${CLASS_ANNOTATION_POINT_MODE}`;
+export const CLASS_ANNOTATION_DRAW_MODE = 'ba-draw-mode';
+export const SELECTOR_ANNOTATION_DRAW_MODE = `.${CLASS_ANNOTATION_DRAW_MODE}`;
 export const CLASS_ANNNOTATION_MODE_BACKGROUND = 'ba-annotate-mode-background';
 export const SELECTOR_ANNNOTATION_MODE_BACKGROUND = `.${CLASS_ANNNOTATION_MODE_BACKGROUND}`;
 export const CLASS_ANNOTATION_BUTTON_POINT_EXIT = 'ba-btn-annotate-point-exit';
@@ -255,7 +259,9 @@ export const THREAD_EVENT = {
     delete: 'annotationdeleted',
     deleteError: 'annotationdeleteerror',
     cancel: 'annotationcanceled',
-    createError: 'annotationcreateerror'
+    createError: 'annotationcreateerror',
+    show: 'annotationshow',
+    hide: 'annotationhide'
 };
 
 export const CONTROLLER_EVENT = {
