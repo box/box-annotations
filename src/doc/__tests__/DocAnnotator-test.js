@@ -1123,7 +1123,6 @@ describe('doc/DocAnnotator', () => {
             pageInfo = { pageEl: {}, page: 1 };
 
             stubs.getPageInfo = stubs.getPageInfo.returns(pageInfo);
-            stubs.hasActiveDialog = sandbox.stub(docUtil, 'hasActiveDialog').returns(false);
             stubs.getLocation = sandbox.stub(annotator, 'getLocationFromEvent').returns(undefined);
             stubs.createThread = sandbox.stub(annotator, 'createAnnotationThread');
             stubs.getSel = sandbox.stub(window, 'getSelection');

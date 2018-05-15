@@ -399,13 +399,6 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.addEventListener('click', this.drawingSelectionHandler);
         }
 
-        // Hide open threads when clicking on document
-        this.annotatedElement.addEventListener(
-            'click',
-            this.hideAnnotations,
-            true
-        ); /* Use Capture so this executes first */
-
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
         if (!this.permissions.canAnnotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
             return;
@@ -443,8 +436,6 @@ class DocAnnotator extends Annotator {
             controller.removeSelection();
         });
 
-        this.annotatedElement.removeEventListener('click', this.hideAnnotations);
-
         if (this.hasTouch || this.isMobile) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
@@ -467,6 +458,17 @@ class DocAnnotator extends Annotator {
 
         this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         super.removeThreadFromSharedDialog();
+    }
+
+    /**
+     * Exits all annotation modes except the specified mode
+     *
+     * @param {string} mode - Current annotation mode
+     * @return {void}
+     */
+    toggleAnnotationMode(mode) {
+        this.resetHighlightSelection();
+        super.toggleAnnotationMode(mode);
     }
 
     /**
@@ -706,18 +708,13 @@ class DocAnnotator extends Annotator {
 
         this.resetHighlightSelection(event);
         this.isCreatingHighlight = false;
-
-        // Prevent the creation of highlights if the user is currently creating a point annotation
-        const pointController = this.modeControllers[TYPES.point];
-        if (pointController && pointController.hadPendingThreads) {
-            return;
-        }
+        const hasMouseMoved = this.mouseX !== event.clientX || this.mouseY !== event.clientY;
 
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if (this.createHighlightDialog || event.type === 'dblclick') {
+        if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
         } else {
             this.highlightClickHandler(event);
@@ -779,6 +776,8 @@ class DocAnnotator extends Annotator {
             commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(this.mouseEvent);
         }
 
+        this.hideAnnotations(event);
+
         const intersectingThreads = [].concat(plainThreads, commentThreads);
         intersectingThreads.forEach(this.clickThread);
 
@@ -816,7 +815,7 @@ class DocAnnotator extends Annotator {
             }
 
             this.consumed = this.consumed || threadActive;
-        } else if (this.isMobile) {
+        } else {
             thread.hideDialog();
         }
     }

@@ -113,6 +113,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         this.scrollToLastComment();
+        this.emit('annotationshow');
     }
 
     /**
@@ -208,6 +209,7 @@ class AnnotationDialog extends EventEmitter {
 
         util.hideElement(this.element);
         this.deactivateReply();
+        this.emit('annotationhide');
 
         // Make sure entire thread icon displays for flipped dialogs
         this.toggleFlippedThreadEl();

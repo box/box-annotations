@@ -1,6 +1,13 @@
 import AnnotationModeController from './AnnotationModeController';
 import shell from './drawingShell.html';
-import { replaceHeader, enableElement, disableElement, clearCanvas, hasValidBoundaryCoordinates } from '../util';
+import {
+    replaceHeader,
+    enableElement,
+    disableElement,
+    clearCanvas,
+    hasValidBoundaryCoordinates,
+    findClosestElWithClass
+} from '../util';
 import {
     TYPES,
     STATES,
@@ -11,7 +18,8 @@ import {
     SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ANNOTATION_DRAW_MODE
+    CLASS_ANNOTATION_DRAW_MODE,
+    CLASS_ANNOTATION_POINT_MARKER
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -105,7 +113,18 @@ class DrawingModeController extends AnnotationModeController {
         /* eslint-enable require-jsdoc */
 
         this.drawingStartHandler = this.drawingStartHandler.bind(this);
-        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler);
+        this.pushElementHandler(
+            this.annotatedElement,
+            'click',
+            (event) => {
+                const el = findClosestElWithClass(event.target, CLASS_ANNOTATION_POINT_MARKER);
+                if (el) {
+                    event.stopPropagation();
+                }
+            },
+            true
+        );
+        this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
 
         this.pushElementHandler(this.cancelButtonEl, 'click', () => {
             if (this.currentThread) {

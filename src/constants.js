@@ -259,7 +259,9 @@ export const THREAD_EVENT = {
     delete: 'annotationdeleted',
     deleteError: 'annotationdeleteerror',
     cancel: 'annotationcanceled',
-    createError: 'annotationcreateerror'
+    createError: 'annotationcreateerror',
+    show: 'annotationshow',
+    hide: 'annotationhide'
 };
 
 export const CONTROLLER_EVENT = {

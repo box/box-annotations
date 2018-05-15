@@ -132,10 +132,6 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     showDialog() {
-        if (this.state !== STATES.pending && util.isInAnnotationMode(this.container)) {
-            return;
-        }
-
         // Prevents the annotations dialog from being set up on every call
         if (!this.dialog.element) {
             this.dialog.setup(this.annotations, this.element);
@@ -406,6 +402,8 @@ class AnnotationThread extends EventEmitter {
         this.dialog.addListener('annotationcreate', this.createAnnotation);
         this.dialog.addListener('annotationcancel', this.cancelUnsavedAnnotation);
         this.dialog.addListener('annotationdelete', this.deleteAnnotationWithID);
+        this.dialog.addListener('annotationshow', () => this.emit(THREAD_EVENT.show));
+        this.dialog.addListener('annotationhide', () => this.emit(THREAD_EVENT.hide));
     }
 
     /**
@@ -422,6 +420,8 @@ class AnnotationThread extends EventEmitter {
         this.dialog.removeAllListeners('annotationcreate');
         this.dialog.removeAllListeners('annotationcancel');
         this.dialog.removeAllListeners('annotationdelete');
+        this.dialog.removeAllListeners('annotationshow');
+        this.dialog.removeAllListeners('annotationhide');
     }
 
     /**

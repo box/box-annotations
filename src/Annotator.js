@@ -74,6 +74,7 @@ class Annotator extends EventEmitter {
         this.scaleAnnotations = this.scaleAnnotations.bind(this);
         this.handleControllerEvents = this.handleControllerEvents.bind(this);
         this.handleServicesErrors = this.handleServicesErrors.bind(this);
+        this.hideAnnotations = this.hideAnnotations.bind(this);
     }
 
     /**
@@ -300,11 +301,11 @@ class Annotator extends EventEmitter {
      * Hides all non-pending annotations if mouse event occurs outside an
      * annotation dialog
      *
-     * @param {Event} event - Mouse event
+     * @param {Event} [event] - Mouse event
      * @return {void}
      */
     hideAnnotations(event) {
-        if (util.isInDialog(event)) {
+        if (event && util.isInDialog(event)) {
             return;
         }
 
@@ -580,6 +581,8 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     toggleAnnotationMode(mode) {
+        this.hideAnnotations();
+
         const currentMode = this.getCurrentAnnotationMode();
         if (currentMode) {
             this.modeControllers[currentMode].exit();
