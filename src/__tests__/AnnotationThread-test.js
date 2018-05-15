@@ -713,6 +713,8 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('addListener').withArgs('annotationcreate', sinon.match.func);
             stubs.dialogMock.expects('addListener').withArgs('annotationcancel', sinon.match.func);
             stubs.dialogMock.expects('addListener').withArgs('annotationdelete', sinon.match.func);
+            stubs.dialogMock.expects('addListener').withArgs('annotationshow', sinon.match.func);
+            stubs.dialogMock.expects('addListener').withArgs('annotationhide', sinon.match.func);
             thread.bindCustomListenersOnDialog();
         });
     });
@@ -728,6 +730,8 @@ describe('AnnotationThread', () => {
             stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcreate');
             stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcancel');
             stubs.dialogMock.expects('removeAllListeners').withArgs('annotationdelete');
+            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationshow');
+            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationhide');
             thread.unbindCustomListenersOnDialog();
         });
     });

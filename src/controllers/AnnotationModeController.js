@@ -371,10 +371,10 @@ class AnnotationModeController extends EventEmitter {
      * @param {HTMLElement} element - The element to bind the listener to
      * @param {Array|string} type - An array of event types to listen for or the event name to listen for
      * @param {Function} handlerFn - The callback to be invoked when the element emits a specified eventname
-     * @param {boolean} useCapture - Whether or not to prioritize handler call
+     * @param {boolean} [useCapture] - Whether or not to prioritize handler call
      * @return {void}
      */
-    pushElementHandler(element, type, handlerFn, useCapture) {
+    pushElementHandler(element, type, handlerFn, useCapture = false) {
         if (!element) {
             return;
         }

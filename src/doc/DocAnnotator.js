@@ -708,7 +708,8 @@ class DocAnnotator extends Annotator {
 
         this.resetHighlightSelection(event);
         this.isCreatingHighlight = false;
-        const hasMouseMoved = this.mouseX !== event.clientX || this.mouseY !== event.clientY;
+        const hasMouseMoved =
+            (this.mouseX && this.mouseX !== event.clientX) || (this.mouseY && this.mouseY !== event.clientY);
 
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and

@@ -86,6 +86,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(dialog.showMobileDialog).to.be.called;
             expect(stubs.scroll).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationshow');
         });
 
         it('should do nothing if the dialog is already visible ', () => {
@@ -93,6 +94,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(dialog.showMobileDialog).to.not.be.called;
             expect(stubs.scroll).to.not.be.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationshow');
         });
 
         it('should not reposition the dialog if the reply textarea is already active', () => {
@@ -102,6 +104,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.scroll).to.be.called;
             expect(stubs.position).to.not.be.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationshow');
         });
 
         it('should position the dialog if not on a mobile device', () => {
@@ -113,6 +116,7 @@ describe('AnnotationDialog', () => {
             dialog.show();
             expect(stubs.position).to.be.called;
             expect(stubs.scroll).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationshow');
         });
     });
 
@@ -230,6 +234,7 @@ describe('AnnotationDialog', () => {
             sandbox.stub(util, 'hideElement');
             dialog.hide();
             expect(util.hideElement).to.not.have.called;
+            expect(dialog.emit).to.not.be.calledWith('annotationhide');
         });
 
         it('should hide dialog immediately', () => {
@@ -237,6 +242,7 @@ describe('AnnotationDialog', () => {
             dialog.hide();
             expect(dialog.element).to.have.class(constants.CLASS_HIDDEN);
             expect(dialog.toggleFlippedThreadEl).to.be.called;
+            expect(dialog.emit).to.be.calledWith('annotationhide');
         });
 
         it('should hide the mobile dialog if using a mobile browser', () => {
@@ -247,6 +253,7 @@ describe('AnnotationDialog', () => {
             expect(dialog.hideMobileDialog).to.be.called;
             expect(dialog.toggleFlippedThreadEl).to.be.called;
             dialog.element = null;
+            expect(dialog.emit).to.be.calledWith('annotationhide');
         });
     });
 

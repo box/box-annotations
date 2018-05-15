@@ -438,15 +438,17 @@ describe('controllers/AnnotationModeController', () => {
             const element = 'element';
             const type = ['type1', 'type2'];
             const fn = 'fn';
+            const useCapture = true;
 
-            controller.pushElementHandler(element, type, fn);
+            controller.pushElementHandler(element, type, fn, useCapture);
             const { handlers } = controller;
             const lengthAfter = handlers.length;
             expect(lengthAfter).to.equal(lengthBefore + 1);
             expect(handlers[handlers.length - 1]).to.deep.equal({
                 eventObj: element,
                 func: fn,
-                type
+                type,
+                useCapture
             });
         });
     });
