@@ -195,9 +195,15 @@ describe('controllers/DrawingModeController', () => {
             controller.undoButtonEl = 'also not undefined';
             controller.redoButtonEl = 'additionally not undefined';
             controller.cancelButtonEl = 'definitely not undefined';
+            const push = sandbox.stub(controller, 'pushElementHandler');
 
             controller.setupHandlers();
-            expect(controller.handlers.length).to.equal(5);
+            expect(push).to.be.calledWith(controller.annotatedElement, 'click', sinon.match.func);
+            expect(push).to.be.calledWith(controller.annotatedElement, ['mousedown', 'touchstart'], sinon.match.func);
+            expect(push).to.be.calledWith(controller.postButtonEl, 'click', sinon.match.func);
+            expect(push).to.be.calledWith(controller.undoButtonEl, 'click', sinon.match.func);
+            expect(push).to.be.calledWith(controller.redoButtonEl, 'click', sinon.match.func);
+            expect(push).to.be.calledWith(controller.cancelButtonEl, 'click', sinon.match.func);
         });
     });
 

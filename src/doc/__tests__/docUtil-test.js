@@ -1,11 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
-import {
-    SELECTOR_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_DIALOG,
-    DATA_TYPE_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATED_ELEMENT
-} from '../../constants';
+import { DATA_TYPE_ANNOTATION_DIALOG, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as util from '../../util';
 
 const sandbox = sinon.sandbox.create();
@@ -37,28 +32,6 @@ describe('doc/docUtil', () => {
             const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             docEl.classList.add('bp-doc-presentation');
             const result = docUtil.isPresentation(docEl);
-            expect(result).to.be.true;
-        });
-    });
-
-    describe('hasActiveDialog()', () => {
-        it('should return false if no annotation dialog is open', () => {
-            const currDialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            currDialogEl.classList.add('bp-is-hidden');
-            const result = docUtil.hasActiveDialog(document);
-            expect(result).to.be.false;
-        });
-
-        it('should return true if an annotion dialog is open', () => {
-            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const currDialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            currDialogEl.classList.add('bp-is-hidden');
-
-            const openDialogEl = document.createElement('div');
-            openDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
-            docEl.appendChild(openDialogEl);
-
-            const result = docUtil.hasActiveDialog(document);
             expect(result).to.be.true;
         });
     });

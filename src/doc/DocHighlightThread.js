@@ -14,8 +14,6 @@ import {
     PAGE_PADDING_BOTTOM
 } from '../constants';
 
-const HOVER_TIMEOUT_MS = 75;
-
 class DocHighlightThread extends AnnotationThread {
     /**
      * Cached page element for the document.
@@ -171,6 +169,7 @@ class DocHighlightThread extends AnnotationThread {
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
             this.state = STATES.hover;
+            this.show();
             return true;
         }
 
@@ -190,50 +189,6 @@ class DocHighlightThread extends AnnotationThread {
      */
     isOnHighlight(event) {
         return util.isInDialog(event) || this.isInHighlight(event);
-    }
-
-    /**
-     * Mousemove handler for thread. If mouse is inside this highlight, set
-     * state to be hover and return true. If not, set state to be inactive,
-     * and reset. We don't draw hovered highlights in this method since we want
-     * to delay that drawing until all inactive threads have been reset.
-     *
-     * @param {Event} event Mouse event
-     * @return {boolean} Whether we should delay drawing highlight
-     */
-    onMousemove(event) {
-        if (!this.dialog) {
-            return false;
-
-            // If mouse is in dialog, change state to hover or active-hover
-        } else if (util.isInDialog(event)) {
-            // Keeps dialog open if comment is pending
-            if (this.state === STATES.pending_active) {
-                return false;
-            }
-            this.state = STATES.hover;
-
-            // If mouse is in highlight, change state to hover or active-hover
-        } else if (this.isInHighlight(event)) {
-            this.state = STATES.hover;
-            clearTimeout(this.hoverTimeoutHandler);
-
-            // No-op
-            // If mouse is not in highlight and state is not already inactive, reset
-        } else if (this.state !== STATES.inactive) {
-            // Add timeout before resettting highlight to inactive so
-            // hovering over line breaks doesn't cause flickering
-            this.hoverTimeoutHandler = setTimeout(() => {
-                this.reset();
-            }, HOVER_TIMEOUT_MS);
-
-            return false;
-
-            // If state is already inactive, don't delay or reset
-        } else {
-            return false;
-        }
-        return true;
     }
 
     //--------------------------------------------------------------------------

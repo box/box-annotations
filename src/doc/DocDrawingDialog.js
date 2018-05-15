@@ -125,11 +125,10 @@ class DocDrawingDialog extends AnnotationDialog {
      * Sets up the drawing dialog element.
      *
      * @protected
-     * @param {Object} annotations Annotations to show in the dialog
-     * @param {HTMLElement} threadEl Annotation icon element
+     * @param {Object} [annotations] Annotations to show in the dialog
      * @return {void}
      */
-    setup(annotations) {
+    setup(annotations = []) {
         // Create outermost element container
         this.element = document.createElement('div');
         this.element.addEventListener('click', util.prevDefAndStopProp);
@@ -163,6 +162,10 @@ class DocDrawingDialog extends AnnotationDialog {
     position(x, y) {
         if (!this.pageEl) {
             this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        }
+
+        if (!this.element) {
+            this.setup();
         }
 
         // Reinsert when the dialog is removed from the page

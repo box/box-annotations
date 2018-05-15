@@ -21,7 +21,7 @@ describe('doc/DocPointDialog', () => {
             canAnnotate: true
         });
         dialog.localized = { addCommentPlaceholder: 'placeholder' };
-        dialog.setup([]);
+        dialog.setup();
         dialog.threadEl = {
             offsetLeft: 1,
             offsetTop: 2

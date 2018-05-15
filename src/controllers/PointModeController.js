@@ -7,10 +7,11 @@ import {
     CREATE_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
-    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT
+    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
+    CLASS_ANNOTATION_POINT_MODE
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { isInDialog, replaceHeader } from '../util';
+import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
@@ -115,7 +116,7 @@ class PointModeController extends AnnotationModeController {
         this.pointClickHandler = this.pointClickHandler.bind(this);
 
         // Get handlers
-        this.pushElementHandler(this.annotatedElement, ['click', 'touchstart'], this.pointClickHandler);
+        this.pushElementHandler(this.annotatedElement, ['click', 'touchstart'], this.pointClickHandler, true);
 
         this.pushElementHandler(this.exitButtonEl, 'click', this.toggleMode);
     }
@@ -129,6 +130,7 @@ class PointModeController extends AnnotationModeController {
         if (this.buttonEl) {
             this.buttonEl.classList.remove(CLASS_ACTIVE);
         }
+        this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
         super.exit();
     }
@@ -137,6 +139,7 @@ class PointModeController extends AnnotationModeController {
     enter() {
         super.enter();
         replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
+        this.annotatedElement.classList.add(CLASS_ANNOTATION_POINT_MODE);
 
         if (this.buttonEl) {
             this.buttonEl.classList.add(CLASS_ACTIVE);
@@ -152,8 +155,10 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        event.stopPropagation();
-        event.preventDefault();
+        if (!isInAnnotationOrMarker(event)) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
 
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
@@ -182,13 +187,12 @@ class PointModeController extends AnnotationModeController {
 
         if (this.isMobile) {
             this.lastPointEvent = event;
-            this.pendingThreadID = thread.threadID;
-
             this.container.appendChild(this.createDialog.containerEl);
             this.createDialog.show(this.container);
             this.createDialog.showCommentBox();
         }
 
+        this.pendingThreadID = thread.threadID;
         thread.show();
         this.registerThread(thread);
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());

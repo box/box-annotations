@@ -59,11 +59,6 @@ class AnnotationDialog extends EventEmitter {
         this.clickHandler = this.clickHandler.bind(this);
         this.stopPropagation = this.stopPropagation.bind(this);
         this.validateTextArea = this.validateTextArea.bind(this);
-
-        if (!this.isMobile) {
-            this.mouseenterHandler = this.mouseenterHandler.bind(this);
-            this.mouseleaveHandler = this.mouseleaveHandler.bind(this);
-        }
     }
 
     /**
@@ -118,6 +113,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         this.scrollToLastComment();
+        this.emit('annotationshow');
     }
 
     /**
@@ -213,6 +209,7 @@ class AnnotationDialog extends EventEmitter {
 
         util.hideElement(this.element);
         this.deactivateReply();
+        this.emit('annotationhide');
 
         // Make sure entire thread icon displays for flipped dialogs
         this.toggleFlippedThreadEl();
@@ -291,12 +288,12 @@ class AnnotationDialog extends EventEmitter {
     /**
      * Sets up the dialog element.
      *
-     * @param {Object} annotations Annotations to show in the dialog
-     * @param {HTMLElement} threadEl Annotation icon element
+     * @param {Object} [annotations] Annotations to show in the dialog
+     * @param {HTMLElement} [threadEl] Annotation icon element
      * @return {void}
      * @protected
      */
-    setup(annotations, threadEl) {
+    setup(annotations = [], threadEl = undefined) {
         this.threadEl = threadEl;
 
         // Generate HTML of dialog
@@ -373,8 +370,6 @@ class AnnotationDialog extends EventEmitter {
 
         if (!this.isMobile) {
             this.element.addEventListener('click', this.clickHandler);
-            this.element.addEventListener('mouseenter', this.mouseenterHandler);
-            this.element.addEventListener('mouseleave', this.mouseleaveHandler);
         }
     }
 
@@ -422,46 +417,7 @@ class AnnotationDialog extends EventEmitter {
 
         if (!this.isMobile) {
             this.element.removeEventListener('click', this.clickHandler);
-            this.element.removeEventListener('mouseenter', this.mouseenterHandler);
-            this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
-        }
-    }
-
-    /**
-     * Mouseenter handler. Clears hide timeout.
-     *
-     * @protected
-     * @return {void}
-     */
-    mouseenterHandler() {
-        if (this.element.classList.contains(constants.CLASS_HIDDEN)) {
-            util.showElement(this.element);
-
-            const replyTextArea = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            const commentsTextArea = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            if (
-                (replyTextArea && replyTextArea.textContent !== '') ||
-                (commentsTextArea && commentsTextArea.textContent !== '')
-            ) {
-                this.emit('annotationcommentpending');
-            }
-        }
-
-        // Ensure textarea stays open
-        this.activateReply();
-    }
-
-    /**
-     * Mouseleave handler. Hides dialog if we aren't creating the first one.
-     *
-     * @protected
-     * @param {Event} event DOM event
-     * @return {void}
-     */
-    mouseleaveHandler(event) {
-        const isStillInDialog = util.isInDialog(event, event.relatedTarget);
-        if (!isStillInDialog && this.hasAnnotations) {
-            this.hide();
+            this.element.removeEventListener('click', this.stopPropagation);
         }
     }
 
@@ -571,7 +527,13 @@ class AnnotationDialog extends EventEmitter {
             // Clicking 'X' button on mobile dialog to close
             case constants.DATA_TYPE_CANCEL:
             case constants.DATA_TYPE_MOBILE_CLOSE:
-                this.cancelAnnotation();
+                // @spramod: is the mobile close button still needed?
+                this.hide();
+
+                if (!this.isMobile) {
+                    // Cancels + destroys the annotation thread
+                    this.cancelAnnotation();
+                }
                 break;
             // Clicking inside reply text area
             case constants.DATA_TYPE_REPLY_TEXTAREA:

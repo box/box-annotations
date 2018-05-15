@@ -247,12 +247,12 @@ class DocHighlightDialog extends AnnotationDialog {
      * Sets up the dialog element.
      *
      * @override
-     * @param {Object} annotations Annotations to show in the dialog
-     * @param {boolean} showComment Whether or not show comment highlight UI
+     * @param {Object} [annotations] Annotations to show in the dialog
+     * @param {boolean} [showComment] Whether or not show comment highlight UI
      * @return {void}
      * @protected
      */
-    setup(annotations, showComment) {
+    setup(annotations = [], showComment = false) {
         // Only create an dialog element, if one doesn't already exist
         if (!this.element) {
             this.element = document.createElement('div');
@@ -331,11 +331,6 @@ class DocHighlightDialog extends AnnotationDialog {
         this.element.addEventListener('keydown', this.keydownHandler);
         this.element.addEventListener('mouseup', this.stopPropagation);
         this.element.addEventListener('wheel', this.stopPropagation);
-
-        if (!this.isMobile) {
-            this.element.addEventListener('mouseenter', this.mouseenterHandler);
-            this.element.addEventListener('mouseleave', this.mouseleaveHandler);
-        }
     }
 
     /**
@@ -350,11 +345,6 @@ class DocHighlightDialog extends AnnotationDialog {
         this.element.removeEventListener('keydown', this.keydownHandler);
         this.element.removeEventListener('mouseup', this.stopPropagation);
         this.element.removeEventListener('wheel', this.stopPropagation);
-
-        if (!this.isMobile) {
-            this.element.removeEventListener('mouseenter', this.mouseenterHandler);
-            this.element.removeEventListener('mouseleave', this.mouseleaveHandler);
-        }
     }
 
     /**

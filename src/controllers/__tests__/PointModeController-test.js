@@ -136,7 +136,8 @@ describe('controllers/PointModeController', () => {
             expect(controller.pushElementHandler).to.be.calledWith(
                 controller.annotatedElement,
                 ['click', 'touchstart'],
-                controller.pointClickHandler
+                controller.pointClickHandler,
+                true
             );
             expect(controller.pushElementHandler).to.be.calledWith(
                 controller.exitButtonEl,
@@ -234,6 +235,12 @@ describe('controllers/PointModeController', () => {
         afterEach(() => {
             controller.modeButton = {};
             controller.container = document;
+        });
+
+        it('should not destroy the pending thread if click was in the dialog', () => {
+            stubs.isInDialog.returns(true);
+            controller.pointClickHandler(event);
+            expect(stubs.destroy).to.not.be.called;
         });
 
         it('should not destroy the pending thread if click was in the dialog', () => {

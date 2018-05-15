@@ -39,6 +39,7 @@ import {
     clearCanvas,
     replaceHeader,
     isInDialog,
+    isInAnnotationOrMarker,
     focusTextArea,
     hasValidBoundaryCoordinates,
     generateMobileDialogEl,
@@ -55,7 +56,8 @@ import {
     CLASS_DIALOG_CLOSE,
     CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     CLASS_ANIMATE_DIALOG,
-    CLASS_HIDDEN
+    CLASS_HIDDEN,
+    SELECTOR_ANNOTATION_POINT_MARKER
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -236,6 +238,16 @@ describe('util', () => {
         it('should return true if the event is in the given dialog', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
             expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).to.be.true;
+        });
+    });
+
+    describe('isInAnnotationOrMarker()', () => {
+        it('should return false if no dialog element exists', () => {
+            const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            const markerEl = document.querySelector(SELECTOR_ANNOTATION_POINT_MARKER);
+            expect(isInAnnotationOrMarker({ target: dialogEl })).to.be.true;
+            expect(isInAnnotationOrMarker({ target: markerEl })).to.be.true;
+            expect(isInAnnotationOrMarker({ target: document.createElement() })).to.be.false;
         });
     });
 

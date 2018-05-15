@@ -160,6 +160,7 @@ describe('doc/DocDrawingDialog', () => {
                     name: 'Yao Ming'
                 }
             };
+            sandbox.stub(util, 'getFirstAnnotation').returns(annotation);
 
             expect(dialog.element).to.be.undefined;
             dialog.setup([annotation]);
@@ -171,7 +172,8 @@ describe('doc/DocDrawingDialog', () => {
         });
 
         it('should setup the dialog element with a commit button when not given an annotation', () => {
-            dialog.setup([]);
+            sandbox.stub(util, 'getFirstAnnotation');
+            dialog.setup();
             expect(dialog.generateDialogEl).to.be.called;
             expect(dialog.bindDOMListeners).to.be.called;
             expect(dialog.addAnnotation).to.not.be.called;

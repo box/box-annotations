@@ -8,6 +8,7 @@ npm-debug.log
 yarn-debug.log
 npm-error.log
 yarn-error.log
+package-lock.json
 reports
 dist
 src/i18n/json
