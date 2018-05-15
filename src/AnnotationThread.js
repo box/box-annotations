@@ -417,11 +417,13 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.dialog.removeAllListeners('annotationcreate');
-        this.dialog.removeAllListeners('annotationcancel');
-        this.dialog.removeAllListeners('annotationdelete');
-        this.dialog.removeAllListeners('annotationshow');
-        this.dialog.removeAllListeners('annotationhide');
+        this.dialog.removeAllListeners([
+            'annotationcreate',
+            'annotationcancel',
+            'annotationdelete',
+            'annotationshow',
+            'annotationhide'
+        ]);
     }
 
     /**

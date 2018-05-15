@@ -261,7 +261,7 @@ export function isInDialog(event, dialogEl) {
  * @param {Event} event Mouse event
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInAnnotation(event) {
+export function isInAnnotationOrMarker(event) {
     const { target } = event;
     return !!(
         findClosestElWithClass(target, CLASS_ANNOTATION_DIALOG) ||
@@ -861,7 +861,7 @@ export function generateMobileDialogEl() {
  * @param {string} [mode] The specified annotation mode to check
  * @return {boolean} Whether or not the user is currently in the specified annotation mode
  */
-export function isInAnnotationMode(element) {
+export function isInAnnotationOrMarkerMode(element) {
     return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
 }
 

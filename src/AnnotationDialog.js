@@ -370,7 +370,6 @@ class AnnotationDialog extends EventEmitter {
 
         if (!this.isMobile) {
             this.element.addEventListener('click', this.clickHandler);
-            this.element.addEventListener('click', this.stopPropagation);
         }
     }
 

@@ -327,14 +327,16 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     handleThreadEvents(thread, data) {
-        switch (data.event) {
+        const { event, data: threadData } = data;
+
+        switch (event) {
             case THREAD_EVENT.save:
             case THREAD_EVENT.cancel:
                 this.hadPendingThreads = false;
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             case THREAD_EVENT.show:
-                this.visibleThreadID = data.data.threadID;
+                this.visibleThreadID = threadData.threadID;
                 break;
             case THREAD_EVENT.hide:
                 this.visibleThreadID = null;
@@ -348,18 +350,18 @@ class AnnotationModeController extends EventEmitter {
             case THREAD_EVENT.threadDelete:
                 // Thread was deleted, remove from thread map
                 this.unregisterThread(thread);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             case THREAD_EVENT.deleteError:
                 this.emit(ANNOTATOR_EVENT.error, this.localized.deleteError);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             case THREAD_EVENT.createError:
                 this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
                 break;
             default:
-                this.emit(data.event, data.data);
+                this.emit(event, threadData);
         }
     }
 

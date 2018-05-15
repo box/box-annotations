@@ -39,7 +39,7 @@ import {
     clearCanvas,
     replaceHeader,
     isInDialog,
-    isInAnnotation,
+    isInAnnotationOrMarker,
     focusTextArea,
     hasValidBoundaryCoordinates,
     generateMobileDialogEl,
@@ -241,13 +241,13 @@ describe('util', () => {
         });
     });
 
-    describe('isInAnnotation()', () => {
+    describe('isInAnnotationOrMarker()', () => {
         it('should return false if no dialog element exists', () => {
             const dialogEl = document.querySelector(SELECTOR_ANNOTATION_DIALOG);
             const markerEl = document.querySelector(SELECTOR_ANNOTATION_POINT_MARKER);
-            expect(isInAnnotation({ target: dialogEl })).to.be.true;
-            expect(isInAnnotation({ target: markerEl })).to.be.true;
-            expect(isInAnnotation({ target: document.createElement() })).to.be.false;
+            expect(isInAnnotationOrMarker({ target: dialogEl })).to.be.true;
+            expect(isInAnnotationOrMarker({ target: markerEl })).to.be.true;
+            expect(isInAnnotationOrMarker({ target: document.createElement() })).to.be.false;
         });
     });
 

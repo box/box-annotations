@@ -11,7 +11,7 @@ import {
     CLASS_ANNOTATION_POINT_MODE
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { isInDialog, replaceHeader, isInAnnotation } from '../util';
+import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
@@ -155,7 +155,7 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        if (!isInAnnotation(event)) {
+        if (!isInAnnotationOrMarker(event)) {
             event.stopPropagation();
             event.preventDefault();
         }

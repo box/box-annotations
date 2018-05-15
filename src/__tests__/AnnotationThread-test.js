@@ -727,11 +727,15 @@ describe('AnnotationThread', () => {
         });
 
         it('should unbind custom listeners from dialog', () => {
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcreate');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationcancel');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationdelete');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationshow');
-            stubs.dialogMock.expects('removeAllListeners').withArgs('annotationhide');
+            stubs.dialogMock
+                .expects('removeAllListeners')
+                .withArgs([
+                    'annotationcreate',
+                    'annotationcancel',
+                    'annotationdelete',
+                    'annotationshow',
+                    'annotationhide'
+                ]);
             thread.unbindCustomListenersOnDialog();
         });
     });

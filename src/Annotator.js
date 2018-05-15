@@ -299,7 +299,7 @@ class Annotator extends EventEmitter {
 
     /**
      * Hides all non-pending annotations if mouse event occurs outside an
-     * annotation dialog
+     * annotation dialog and click did not occur inside an annotation dialog
      *
      * @param {Event} [event] - Mouse event
      * @return {void}
