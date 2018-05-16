@@ -432,6 +432,10 @@ class AnnotationModeController extends EventEmitter {
 
         const pageThreads = this.threads[pageNum].all() || [];
         pageThreads.forEach((thread, index) => {
+            if (thread.isDialogVisible()) {
+                thread.hideDialog();
+            }
+
             // Sets the annotatedElement if the thread was fetched before the
             // dependent document/viewer finished loading
             if (!thread.annotatedElement) {
