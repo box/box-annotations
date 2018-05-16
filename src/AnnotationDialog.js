@@ -483,7 +483,7 @@ class AnnotationDialog extends EventEmitter {
         } else {
             const dataType = util.findClosestDataType(event.target);
             if (dataType === CLASS_REPLY_TEXTAREA) {
-                this.activateReply();
+                this.scrollToLastComment();
             }
         }
     }
