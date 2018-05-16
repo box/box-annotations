@@ -461,17 +461,6 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Exits all annotation modes except the specified mode
-     *
-     * @param {string} mode - Current annotation mode
-     * @return {void}
-     */
-    toggleAnnotationMode(mode) {
-        this.resetHighlightSelection();
-        super.toggleAnnotationMode(mode);
-    }
-
-    /**
      * Clears the text selection and hides the create highlight dialog
      *
      * @param {Event} event - Mouse wheel event
@@ -878,6 +867,7 @@ class DocAnnotator extends Annotator {
 
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
+                this.isCreatingHighlight = false;
                 this.resetHighlightSelection(data.event);
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
