@@ -504,6 +504,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.threads[1].insert(stubs.thread);
             controller.threads[2].insert(stubs.thread);
 
+            stubs.threadMock.expects('hideDialog').once();
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(stubs.thread.annotatedElement).to.equal('el');
