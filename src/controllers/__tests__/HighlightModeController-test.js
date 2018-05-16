@@ -16,7 +16,8 @@ describe('controllers/HighlightModeController', () => {
             location: { page: 1 },
             type: TYPES.highlight,
             show: () => {},
-            addListener: () => {}
+            addListener: () => {},
+            hideDialog: () => {}
         };
         stubs.threadMock = sandbox.mock(stubs.thread);
     });
