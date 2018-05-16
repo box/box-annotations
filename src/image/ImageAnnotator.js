@@ -13,12 +13,7 @@ class ImageAnnotator extends Annotator {
     // Abstract Implementations
     //--------------------------------------------------------------------------
 
-    /**
-     * Determines the annotated element in the viewer
-     *
-     * @param {HTMLElement} containerEl - Container element for the viewer
-     * @return {HTMLElement} Annotated element in the viewer
-     */
+    /** @inheritdoc */
     getAnnotatedEl(containerEl) {
         return containerEl.querySelector(ANNOTATED_ELEMENT_SELECTOR);
     }
@@ -86,16 +81,7 @@ class ImageAnnotator extends Annotator {
         return location;
     }
 
-    /**
-     * Creates the proper type of thread, adds it to in-memory map, and returns
-     * it.
-     *
-     * @override
-     * @param {Object} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} [type] - Optional annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
+    /** @inheritdoc */
     createAnnotationThread(annotations, location, type) {
         let thread;
 
@@ -122,13 +108,7 @@ class ImageAnnotator extends Annotator {
         return thread;
     }
 
-    /**
-     * Orient annotations to the correct scale and orientation of the annotated document.
-     *
-     * @private
-     * @param {Object} data - Scale and orientation values needed to orient annotations.
-     * @return {void}
-     */
+    /** @inheritdoc */
     scaleAnnotations(data) {
         this.setScale(data.scale);
         this.rotateAnnotations(data.rotationAngle, data.pageNum);
@@ -166,6 +146,18 @@ class ImageAnnotator extends Annotator {
         } else {
             util.showElement(pointAnnotateButton);
         }
+    }
+
+    /** @inheritdoc */
+    bindDOMListeners() {
+        this.annotatedElement.addEventListener('mouseup', this.hideAnnotations);
+        super.bindDOMListeners();
+    }
+
+    /** @inheritdoc */
+    unbindDOMListeners() {
+        this.annotatedElement.removeEventListener('mouseup', this.hideAnnotations);
+        super.bindDOMListeners();
     }
 }
 
