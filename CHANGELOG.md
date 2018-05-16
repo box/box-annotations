@@ -1,3 +1,11 @@
+<a name="2.0.0"></a>
+## 2.0.0 (2018-05-15)
+
+* Breaking: Remove hover behavior to display dialogs (#155) ([4850702](https://github.com/box/box-annotations/commit/4850702)), closes [#155](https://github.com/box/box-annotations/issues/155)
+* Chore: New issue/feature request templates (#188) ([efde642](https://github.com/box/box-annotations/commit/efde642)), closes [#188](https://github.com/box/box-annotations/issues/188)
+
+
+
 <a name="1.6.0"></a>
 ## 1.6.0 (2018-05-01)
 
