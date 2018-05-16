@@ -494,6 +494,23 @@ describe('controllers/AnnotationModeController', () => {
             controller.renderPage(1);
         });
 
+        it('should hide visible dialogs before re-rendering thread', () => {
+            controller.threads = {
+                // eslint-disable-next-line new-cap
+                1: new rbush(),
+                // eslint-disable-next-line new-cap
+                2: new rbush()
+            };
+            controller.threads[1].insert(stubs.thread);
+            controller.threads[2].insert(stubs.thread);
+
+            stubs.threadMock.expects('isDialogVisible').returns(true);
+            stubs.threadMock.expects('hideDialog').once();
+            stubs.threadMock.expects('show').once();
+            controller.renderPage(1);
+            expect(stubs.thread.annotatedElement).to.equal('el');
+        });
+
         it('should render the annotations on every page', () => {
             controller.threads = {
                 // eslint-disable-next-line new-cap
@@ -504,6 +521,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.threads[1].insert(stubs.thread);
             controller.threads[2].insert(stubs.thread);
 
+            stubs.threadMock.expects('isDialogVisible').returns(false);
             stubs.threadMock.expects('show').once();
             controller.renderPage(1);
             expect(stubs.thread.annotatedElement).to.equal('el');
