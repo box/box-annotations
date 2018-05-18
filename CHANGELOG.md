@@ -1,3 +1,10 @@
+<a name="2.0.1"></a>
+## <small>2.0.1 (2018-05-18)</small>
+
+* Fix: Hiding annotations for the image viewer (#189) ([8315778](https://github.com/box/box-annotations/commit/8315778)), closes [#189](https://github.com/box/box-annotations/issues/189)
+
+
+
 <a name="2.0.0"></a>
 ## 2.0.0 (2018-05-15)
 
