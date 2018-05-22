@@ -328,7 +328,7 @@ class DocAnnotator extends Annotator {
         this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
         this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
         this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
-        this.resetHighlightSelection = this.resetHighlightSelection.bind(this);
+        this.hideCreateDialog = this.hideCreateDialog.bind(this);
 
         this.clickThread = this.clickThread.bind(this);
 
@@ -386,10 +386,10 @@ class DocAnnotator extends Annotator {
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.addEventListener('wheel', this.resetHighlightSelection);
+            this.annotatedElement.addEventListener('wheel', this.hideCreateDialog);
 
             if (this.hasTouch) {
-                this.annotatedElement.addEventListener('touchend', this.resetHighlightSelection);
+                this.annotatedElement.addEventListener('touchend', this.hideCreateDialog);
             }
         }
 
@@ -424,7 +424,8 @@ class DocAnnotator extends Annotator {
         super.unbindDOMListeners();
 
         this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
-        this.annotatedElement.removeEventListener('wheel', this.resetHighlightSelection);
+        this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
+        this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
 
         if (this.highlightThrottleHandle) {
             cancelAnimationFrame(this.highlightThrottleHandle);
@@ -460,6 +461,15 @@ class DocAnnotator extends Annotator {
         super.removeThreadFromSharedDialog();
     }
 
+    hideCreateDialog(event) {
+        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
+        if (!isCreateDialogVisible || !event || util.isInDialog(event)) {
+            return;
+        }
+
+        this.createHighlightDialog.hide();
+    }
+
     /**
      * Clears the text selection and hides the create highlight dialog
      *
@@ -467,16 +477,9 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     resetHighlightSelection(event) {
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (!isCreateDialogVisible || !event || util.isInDialog(event)) {
-            return;
-        }
-
-        this.createHighlightDialog.hide();
-
-        if (!this.isCreatingHighlight) {
-            document.getSelection().removeAllRanges();
-        }
+        this.isCreatingHighlight = false;
+        this.hideCreateDialog(event);
+        document.getSelection().removeAllRanges();
     }
 
     //--------------------------------------------------------------------------
@@ -695,8 +698,6 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
-        this.resetHighlightSelection(event);
-        this.isCreatingHighlight = false;
         const hasMouseMoved =
             (this.mouseX && this.mouseX !== event.clientX) || (this.mouseY && this.mouseY !== event.clientY);
 
@@ -776,6 +777,8 @@ class DocAnnotator extends Annotator {
             this.activeThread.show();
         } else if (this.isMobile) {
             this.removeThreadFromSharedDialog();
+        } else {
+            this.resetHighlightSelection(event);
         }
     }
 
@@ -863,17 +866,12 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     handleControllerEvents(data) {
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
-                this.isCreatingHighlight = false;
                 this.resetHighlightSelection(data.event);
                 break;
             case CONTROLLER_EVENT.bindDOMListeners:
-                if (isCreateDialogVisible) {
-                    this.createHighlightDialog.hide();
-                }
+                this.hideCreateDialog(data);
                 break;
             case CONTROLLER_EVENT.renderPage:
                 this.renderPage(data.data);
