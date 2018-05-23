@@ -13,10 +13,11 @@ const {
     SELECTOR_ANNOTATION_DRAWING_DIALOG,
     SELECTOR_ADD_DRAWING_BTN,
     SELECTOR_ANNOTATION_DRAWING_LABEL,
-    SELECTOR_DELETE_DRAWING_BTN
+    SELECTOR_DELETE_DRAWING_BTN,
+    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG
 } = require('../helpers/constants');
 
-const { draw, clickAtLocation } = require('../helpers/mouseEvents');
+const { draw, clickAtLocation, selectText } = require('../helpers/mouseEvents');
 const { cleanupAnnotations } = require('../helpers/cleanup');
 
 Feature('Draw Annotation Sanity');
@@ -36,8 +37,13 @@ Scenario('Create/Delete drawing @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
+    I.say('Selected text will be cleared on entering draw mode');
+    selectText(I, SELECTOR_TEXT_LAYER);
+    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
+    I.waitForDetached(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
     I.waitForVisible('.bp-notification');
     I.waitForVisible(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
