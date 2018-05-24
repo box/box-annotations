@@ -659,7 +659,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should bind DOM listeners if user can annotate and highlight', () => {
             stubs.elMock.expects('addEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
-            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.hideCreateDialog);
             stubs.elMock.expects('addEventListener').withArgs('dblclick', annotator.highlightMouseupHandler);
             stubs.elMock.expects('addEventListener').withArgs('mousedown', annotator.highlightMousedownHandler);
             stubs.elMock.expects('addEventListener').withArgs('contextmenu', annotator.highlightMousedownHandler);
@@ -689,7 +689,7 @@ describe('doc/DocAnnotator', () => {
             annotator.drawEnabled = false;
 
             stubs.elMock.expects('addEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
-            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('addEventListener').withArgs('wheel', annotator.hideCreateDialog);
             annotator.bindDOMListeners();
         });
 
@@ -734,7 +734,7 @@ describe('doc/DocAnnotator', () => {
                 .never();
             stubs.elMock
                 .expects('addEventListener')
-                .withArgs('wheel', annotator.resetHighlightSelection)
+                .withArgs('wheel', annotator.hideCreateDialog)
                 .never();
             stubs.elMock
                 .expects('addEventListener')
@@ -770,7 +770,8 @@ describe('doc/DocAnnotator', () => {
             annotator.permissions.canAnnotate = true;
 
             stubs.elMock.expects('removeEventListener').withArgs('mouseup', annotator.highlightMouseupHandler);
-            stubs.elMock.expects('removeEventListener').withArgs('wheel', annotator.resetHighlightSelection);
+            stubs.elMock.expects('removeEventListener').withArgs('wheel', annotator.hideCreateDialog);
+            stubs.elMock.expects('removeEventListener').withArgs('touchend', annotator.hideCreateDialog);
             stubs.elMock.expects('removeEventListener').withArgs('dblclick', annotator.highlightMouseupHandler);
             stubs.elMock.expects('removeEventListener').withArgs('mousedown', annotator.highlightMousedownHandler);
             stubs.elMock.expects('removeEventListener').withArgs('contextmenu', annotator.highlightMousedownHandler);
@@ -846,44 +847,18 @@ describe('doc/DocAnnotator', () => {
 
     describe('resetHighlightSelection()', () => {
         beforeEach(() => {
-            annotator.createHighlightDialog = {
-                isVisible: false,
-                hide: sandbox.stub(),
-                destroy: sandbox.stub()
-            };
-            stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
-        });
-
-        it('should do nothing if the createHighlightDialog is hidden', () => {
-            annotator.resetHighlightSelection({});
-            expect(annotator.createHighlightDialog.hide).to.not.be.called;
-        });
-
-        it('should do nothing if the mouse event was triggered in an annotation dialog', () => {
-            stubs.isInDialog.returns(true);
-            annotator.resetHighlightSelection({});
-            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+            sandbox.stub(annotator, 'hideCreateDialog');
         });
 
         it('should hide the visible createHighlightDialog and clear the text selection', () => {
-            annotator.createHighlightDialog.isVisible = true;
-            annotator.resetHighlightSelection({});
-            expect(annotator.createHighlightDialog.hide).to.be.called;
-        });
-
-        it('should only clear the selected text if the user is creating a new highlight', () => {
             const selection = {
                 removeAllRanges: sandbox.stub()
             };
             sandbox.stub(document, 'getSelection').returns(selection);
-            annotator.createHighlightDialog.isVisible = true;
 
-            annotator.isCreatingHighlight = true;
             annotator.resetHighlightSelection({});
-            expect(selection.removeAllRanges).to.not.be.called;
-
-            annotator.isCreatingHighlight = false;
-            annotator.resetHighlightSelection({});
+            expect(annotator.hideCreateDialog).to.be.called;
+            expect(annotator.isCreatingHighlight).to.be.false;
             expect(selection.removeAllRanges).to.be.called;
         });
     });
@@ -943,7 +918,6 @@ describe('doc/DocAnnotator', () => {
         beforeEach(() => {
             stubs.create = sandbox.stub(annotator, 'highlightCreateHandler');
             stubs.click = sandbox.stub(annotator, 'highlightClickHandler');
-            sandbox.stub(annotator, 'resetHighlightSelection');
             annotator.mouseX = undefined;
             annotator.mouseY = undefined;
         });
@@ -954,16 +928,12 @@ describe('doc/DocAnnotator', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(stubs.create).to.be.called;
             expect(stubs.click).to.not.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
-            expect(annotator.resetHighlightSelection).to.be.called;
         });
 
         it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(stubs.create).to.be.called;
             expect(stubs.click).to.not.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
-            expect(annotator.resetHighlightSelection).to.be.called;
         });
 
         it('should call highlightClickHandler if on desktop and createHighlightDialog exists', () => {
@@ -972,8 +942,6 @@ describe('doc/DocAnnotator', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(stubs.create).to.not.be.called;
             expect(stubs.click).to.be.called;
-            expect(annotator.isCreatingHighlight).to.be.false;
-            expect(annotator.resetHighlightSelection).to.be.called;
         });
 
         it('should call highlighter.removeAllHighlghts', () => {
@@ -982,7 +950,6 @@ describe('doc/DocAnnotator', () => {
             };
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlighter.removeAllHighlights).to.be.called;
-            expect(annotator.resetHighlightSelection).to.be.called;
         });
     });
 
@@ -1192,6 +1159,7 @@ describe('doc/DocAnnotator', () => {
             sandbox.stub(annotator, 'clickThread');
             sandbox.stub(annotator, 'removeThreadFromSharedDialog');
             sandbox.stub(annotator, 'hideAnnotations');
+            sandbox.stub(annotator, 'resetHighlightSelection');
 
             annotator.modeControllers = {
                 highlight: {
@@ -1237,16 +1205,22 @@ describe('doc/DocAnnotator', () => {
             annotator.plainHighlightEnabled = false;
             annotator.commentHighlightEnabled = false;
             stubs.threadMock.expects('show').never();
+            annotator.isMobile = true;
+
+            annotator.highlightClickHandler(stubs.event);
+            expect(annotator.removeThreadFromSharedDialog).to.be.called;
+            expect(annotator.hideAnnotations).to.be.called;
+        });
+
+        it('should reset highlight selection if not on mobile and no active threads exist', () => {
+            annotator.plainHighlightEnabled = false;
+            annotator.commentHighlightEnabled = false;
+            stubs.threadMock.expects('show').never();
 
             annotator.isMobile = false;
             annotator.highlightClickHandler(stubs.event);
             expect(annotator.removeThreadFromSharedDialog).to.not.be.called;
-
-            annotator.plainHighlightEnabled = false;
-            annotator.isMobile = true;
-            annotator.highlightClickHandler(stubs.event);
-            expect(annotator.removeThreadFromSharedDialog).to.be.called;
-            expect(annotator.hideAnnotations).to.be.called;
+            expect(annotator.resetHighlightSelection).to.be.called;
         });
     });
 
@@ -1422,6 +1396,7 @@ describe('doc/DocAnnotator', () => {
             };
             sandbox.stub(annotator, 'renderPage');
             sandbox.stub(annotator, 'resetHighlightSelection');
+            sandbox.stub(annotator, 'hideCreateDialog');
         });
 
         afterEach(() => {
@@ -1435,13 +1410,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should hide the createHighlightDialog on binddomlisteners', () => {
             annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
-            expect(annotator.createHighlightDialog.hide).to.be.called;
-        });
-
-        it('should do nothing if createHighlightDialog is hidden or does not exist on binddomlisteners', () => {
-            annotator.createHighlightDialog.isVisible = false;
-            annotator.handleControllerEvents({ event: CONTROLLER_EVENT.bindDOMListeners });
-            expect(annotator.createHighlightDialog.hide).to.not.be.called;
+            expect(annotator.hideCreateDialog).to.be.called;
         });
 
         it('should render the specified page on annotationsrenderpage', () => {

@@ -11,10 +11,11 @@ const {
     SELECTOR_ANNOTATION_TEXTAREA,
     SELECTOR_ANNOTATION_BUTTON_POST,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
-    SELECTOR_ANNOTATION_COMMENT
+    SELECTOR_ANNOTATION_COMMENT,
+    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG
 } = require('../helpers/constants');
 
-const { clickAtLocation } = require('../helpers/mouseEvents');
+const { clickAtLocation, selectText } = require('../helpers/mouseEvents');
 const { validateTextarea, validateAnnotation } = require('../helpers/validation');
 const { deleteAnnotation } = require('../helpers/actions');
 const { cleanupAnnotations } = require('../helpers/cleanup');
@@ -33,8 +34,13 @@ Scenario('Create/Delete point annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
 
+    I.say('Selected text will be cleared on entering point mode');
+    selectText(I, SELECTOR_TEXT_LAYER);
+    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+
     I.say('Enter point annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_POINT);
+    I.waitForDetached(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
     I.waitForVisible('.bp-notification');
     I.waitForVisible(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
