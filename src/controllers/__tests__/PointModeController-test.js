@@ -221,6 +221,7 @@ describe('controllers/PointModeController', () => {
         beforeEach(() => {
             stubs.destroy = sandbox.stub(controller, 'destroyPendingThreads');
             sandbox.stub(controller, 'registerThread');
+            sandbox.stub(controller, 'hideSharedDialog');
             controller.modeButton = {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
@@ -235,12 +236,6 @@ describe('controllers/PointModeController', () => {
         afterEach(() => {
             controller.modeButton = {};
             controller.container = document;
-        });
-
-        it('should not destroy the pending thread if click was in the dialog', () => {
-            stubs.isInDialog.returns(true);
-            controller.pointClickHandler(event);
-            expect(stubs.destroy).to.not.be.called;
         });
 
         it('should not destroy the pending thread if click was in the dialog', () => {
@@ -266,6 +261,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.not.be.called;
+            expect(controller.hideSharedDialog).to.be.called;
         });
 
         it('should not create a thread if a location object cannot be inferred from the event', () => {
@@ -276,6 +272,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).to.not.be.called;
+            expect(controller.hideSharedDialog).to.be.called;
         });
 
         it('should create, show, and bind listeners to a thread', () => {
@@ -289,6 +286,7 @@ describe('controllers/PointModeController', () => {
             expect(controller.registerThread).to.be.called;
             expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
             expect(controller.registerThread).to.be.calledWith(stubs.thread);
+            expect(controller.hideSharedDialog).to.not.be.called;
         });
 
         it('should show the create dialog', () => {
@@ -310,6 +308,7 @@ describe('controllers/PointModeController', () => {
             createMock.expects('showCommentBox');
 
             controller.pointClickHandler(event);
+            expect(controller.hideSharedDialog).to.not.be.called;
         });
     });
 });
