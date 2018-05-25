@@ -176,12 +176,14 @@ class PointModeController extends AnnotationModeController {
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.annotator.getLocationFromEvent(event, TYPES.point);
         if (!location) {
+            this.hideSharedDialog();
             return;
         }
 
         // Create new thread with no annotations, show indicator, and show dialog
         const thread = this.annotator.createAnnotationThread([], location, TYPES.point);
         if (!thread) {
+            this.hideSharedDialog();
             return;
         }
 
