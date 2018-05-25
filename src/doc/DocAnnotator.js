@@ -170,7 +170,7 @@ class DocAnnotator extends Annotator {
             let [x, y] = browserCoordinates;
 
             // If click is outside the page, ignore
-            if (x <= 0 || x >= pageWidth || y <= 0 || y >= pageHeight) {
+            if (x < 0 || x > pageWidth || y < 0 || y > pageHeight) {
                 return location;
             }
 
