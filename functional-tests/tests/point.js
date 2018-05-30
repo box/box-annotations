@@ -40,7 +40,7 @@ Scenario('Create/Delete point annotation @desktop', function(I) {
 
     I.say('Enter point annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_POINT);
-    I.waitForDetached(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+    I.dontSeeElement(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
     I.waitForVisible('.bp-notification');
     I.waitForVisible(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
@@ -58,7 +58,7 @@ Scenario('Create/Delete point annotation @desktop', function(I) {
     validateTextarea(I, '[data-section="create"]', SELECTOR_ANNOTATION_TEXTAREA);
 
     I.say('Cancel point annotation');
-    I.click(SELECTOR_ANNOTATION_BUTTON_CANCEL);
+    I.click(`[data-section="create"] ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
     I.waitForInvisible(SELECTOR_ANNOTATION_DIALOG, 1);
     I.waitForInvisible(SELECTOR_ANNOTATION_POINT_MARKER, 1);
 
@@ -70,8 +70,8 @@ Scenario('Create/Delete point annotation @desktop', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATION_POINT_MARKER);
 
     I.say('Post point annotation');
-    I.fillField(SELECTOR_ANNOTATION_TEXTAREA, 'Sample comment');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POST);
+    I.fillField(`[data-section="create"] ${SELECTOR_ANNOTATION_TEXTAREA}`, 'Sample comment');
+    I.click(`[data-section="create"] ${SELECTOR_ANNOTATION_BUTTON_POST}`);
     validateAnnotation(I);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
 
