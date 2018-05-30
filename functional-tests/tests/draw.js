@@ -43,7 +43,7 @@ Scenario('Create/Delete drawing @desktop', function(I) {
 
     I.say('Enter draw annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
-    I.waitForDetached(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+    I.dontSeeElement(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
     I.waitForVisible('.bp-notification');
     I.waitForVisible(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
