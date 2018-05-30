@@ -1,3 +1,13 @@
+<a name="2.1.0"></a>
+## 2.1.0 (2018-05-29)
+
+* Fix: Hiding annotations for the image viewer (#189) ([71aea4b](https://github.com/box/box-annotations/commit/71aea4b)), closes [#189](https://github.com/box/box-annotations/issues/189)
+* Fix: Mobile point annotation behavior (#191) ([2416212](https://github.com/box/box-annotations/commit/2416212)), closes [#191](https://github.com/box/box-annotations/issues/191)
+* Fix: Prevent loss of dialog header when adding an annotation on android (#187) ([a33cf4a](https://github.com/box/box-annotations/commit/a33cf4a)), closes [#187](https://github.com/box/box-annotations/issues/187)
+* Fix: reset selection when entering annotation mode (#190) ([f16a273](https://github.com/box/box-annotations/commit/f16a273)), closes [#190](https://github.com/box/box-annotations/issues/190)
+
+
+
 <a name="2.0.0"></a>
 ## 2.0.0 (2018-05-15)
 
