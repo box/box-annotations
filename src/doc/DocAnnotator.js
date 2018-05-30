@@ -168,15 +168,20 @@ class DocAnnotator extends Annotator {
                 clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP
             ];
 
-            // Do not create annotation if event doesn't have coordinates
             // If click is outside the page, ignore
-            if (!docUtil.isCoordValid(browserCoordinates, pageWidth, pageHeight)) {
+            if (docUtil.isCoordOutside(browserCoordinates, pageWidth, pageHeight)) {
+                return location;
+            }
+
+            let [x, y] = browserCoordinates;
+            // Do not create annotation if event doesn't have coordinates
+            if (Number.isNaN(x) || Number.isNaN(y)) {
                 this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
                 return location;
             }
 
             const pdfCoordinates = docUtil.convertDOMSpaceToPDFSpace(browserCoordinates, pageHeight, zoomScale);
-            const [x, y] = pdfCoordinates;
+            [x, y] = pdfCoordinates;
 
             // We save the dimensions of the annotated element scaled to 100%
             // so we can compare to the annotated element during render time

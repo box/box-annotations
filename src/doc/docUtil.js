@@ -117,20 +117,20 @@ export function isSelectionPresent() {
 //------------------------------------------------------------------------------
 
 /**
- * Return false if event doesn't have coordinates or the click is outside the doc
+ * Return false if the click is outside the doc
  * @param  {number[]}  coordinates [x,y] coordinate location
  * @param  {number}  pageWidth   - Width of page in CSS pixels, needed to convert
  * coordinate origin from bottom left (PDF) to top left (DOM)
  * @param  {number}  pageHeight  - Height of page in CSS pixels, needed to convert
  * coordinate origin from bottom left (PDF) to top left (DOM)
- * @return {boolean}             True if valid, false if not valid
+ * @return {boolean}             True if outside
  */
-export function isCoordValid(coordinates, pageWidth, pageHeight) {
+export function isCoordOutside(coordinates, pageWidth, pageHeight) {
     const [x, y] = coordinates;
-    if (Number.isNaN(x) || Number.isNaN(y) || x < 0 || x > pageWidth || y < 0 || y > pageHeight) {
-        return false;
+    if (x < 0 || x > pageWidth || y < 0 || y > pageHeight) {
+        return true;
     }
-    return true;
+    return false;
 }
 
 /**
