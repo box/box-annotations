@@ -495,6 +495,7 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         it('should render the annotations on every page', () => {
+            sandbox.stub(util, 'isPending').returns(false);
             controller.threads = {
                 // eslint-disable-next-line new-cap
                 1: new rbush(),
@@ -506,8 +507,23 @@ describe('controllers/AnnotationModeController', () => {
 
             stubs.threadMock.expects('hideDialog').once();
             stubs.threadMock.expects('show').once();
+            stubs.threadMock.expects('destroy').never();
             controller.renderPage(1);
             expect(stubs.thread.annotatedElement).to.equal('el');
+        });
+
+        it('should destroy any pending annotations on re-render', () => {
+            sandbox.stub(util, 'isPending').returns(true);
+            controller.threads = {
+                // eslint-disable-next-line new-cap
+                1: new rbush()
+            };
+            controller.threads[1].insert(stubs.thread);
+
+            stubs.threadMock.expects('hideDialog').never();
+            stubs.threadMock.expects('show').never();
+            stubs.threadMock.expects('destroy').once();
+            controller.renderPage(1);
         });
     });
 
