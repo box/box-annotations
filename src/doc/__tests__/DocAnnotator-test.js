@@ -228,6 +228,23 @@ describe('doc/DocAnnotator', () => {
                 expect(docUtil.convertDOMSpaceToPDFSpace).to.not.be.called;
             });
 
+            it('should not return a location if click event is outside the doc', () => {
+                stubs.selection.returns(false);
+                stubs.findClosest.returns('not-a-dialog');
+                annotator.hasTouch = true;
+                stubs.event = {
+                    targetTouches: [
+                        {
+                            clientX: x + 1,
+                            clientY: y,
+                            target: annotator.annotatedEl
+                        }
+                    ]
+                };
+
+                expect(annotator.getLocationFromEvent(stubs.event, TYPES.point)).to.be.null;
+            });
+
             it('should return a valid point location if click is valid', () => {
                 stubs.selection.returns(false);
                 stubs.findClosest.returns('not-a-dialog');
