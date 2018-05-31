@@ -167,8 +167,13 @@ class DocAnnotator extends Annotator {
                 clientEvent.clientX - pageDimensions.left,
                 clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP
             ];
-            let [x, y] = browserCoordinates;
 
+            // If click is outside the page, ignore
+            if (docUtil.isCoordOutside(browserCoordinates, pageWidth, pageHeight)) {
+                return location;
+            }
+
+            let [x, y] = browserCoordinates;
             // Do not create annotation if event doesn't have coordinates
             if (Number.isNaN(x) || Number.isNaN(y)) {
                 this.emit(ANNOTATOR_EVENT.error, this.localized.createError);

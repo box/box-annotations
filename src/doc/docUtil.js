@@ -117,6 +117,23 @@ export function isSelectionPresent() {
 //------------------------------------------------------------------------------
 
 /**
+ * Return false if the click is outside the doc
+ * @param  {number[]}  coordinates [x,y] coordinate location
+ * @param  {number}  pageWidth   - Width of page in CSS pixels, needed to convert
+ * coordinate origin from bottom left (PDF) to top left (DOM)
+ * @param  {number}  pageHeight  - Height of page in CSS pixels, needed to convert
+ * coordinate origin from bottom left (PDF) to top left (DOM)
+ * @return {boolean}             True if outside
+ */
+export function isCoordOutside(coordinates, pageWidth, pageHeight) {
+    const [x, y] = coordinates;
+    if (x < 0 || x > pageWidth || y < 0 || y > pageHeight) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Converts coordinates in PDF space to coordinates in DOM space.
  *
  * @param {number[]} coordinates - Either a [x,y] coordinate location or
