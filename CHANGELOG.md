@@ -1,3 +1,12 @@
+<a name="2.2.0"></a>
+## 2.2.0 (2018-06-05)
+
+* Fix: Ensure pending annotations are destroyed on re-render (#194) ([1422357](https://github.com/box/box-annotations/commit/1422357)), closes [#194](https://github.com/box/box-annotations/issues/194)
+* Fix: Functional tests (#193) ([82bf717](https://github.com/box/box-annotations/commit/82bf717)), closes [#193](https://github.com/box/box-annotations/issues/193)
+* Fix: if annotation click is outside the doc, ignore (#192) ([b74484b](https://github.com/box/box-annotations/commit/b74484b)), closes [#192](https://github.com/box/box-annotations/issues/192)
+
+
+
 <a name="2.1.0"></a>
 ## 2.1.0 (2018-05-29)
 
