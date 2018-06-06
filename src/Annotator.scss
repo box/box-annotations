@@ -156,7 +156,7 @@
 .ba-annotation-dialog,
 .ba-create-annotation-dialog {
     border-top: 20px solid transparent; // Transparent border for hover detection
-    cursor: default; // Overrides cursor: none from annotation mode
+    cursor: auto; // Overrides cursor: none from annotation mode
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     text-align: left;
