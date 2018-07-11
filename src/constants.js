@@ -66,13 +66,14 @@ export const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
 export const SELECTOR_ANNOTATION_BUTTON_POST = `.${CLASS_ANNOTATION_BUTTON_POST}`;
 export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
 export const SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
-
+export const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
+export const SELECTOR_DELETE_CONFIRMATION = `.${CLASS_DELETE_CONFIRMATION}`;
 export const CLASS_DELETE_CONFIRM_MESSAGE = 'delete-confirmation-message';
 export const SELECTOR_DELETE_CONFIRM_MESSAGE = `.${CLASS_DELETE_CONFIRM_MESSAGE}`;
-export const CLASS_CANCEL_DELETE_BTN = 'cancel-delete-btn';
-export const SELECTOR_CANCEL_DELETE_BTN = `.${CLASS_CANCEL_DELETE_BTN}`;
-export const CLASS_CONFIRM_DELETE_BTN = 'confirm-delete-btn';
-export const SELECTOR_CONFIRM_DELETE_BTN = `.${CLASS_CONFIRM_DELETE_BTN}`;
+export const CLASS_CANCEL_DELETE_COMMENT_BTN = 'cancel-delete-btn';
+export const SELECTOR_CANCEL_DELETE_COMMENT_BTN = `.${CLASS_CANCEL_DELETE_COMMENT_BTN}`;
+export const CLASS_CONFIRM_DELETE_COMMENT_BTN = 'confirm-delete-btn';
+export const SELECTOR_CONFIRM_DELETE_COMMENT_BTN = `.${CLASS_CONFIRM_DELETE_COMMENT_BTN}`;
 
 export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
 export const SELECTOR_ANNOTATION_CONTAINER = `.${CLASS_ANNOTATION_CONTAINER}`;
@@ -200,10 +201,8 @@ export const DATA_TYPE_CANCEL = 'cancel-annotation-btn';
 export const DATA_TYPE_REPLY_TEXTAREA = 'reply-textarea';
 export const DATA_TYPE_CANCEL_REPLY = 'cancel-reply-btn';
 export const DATA_TYPE_POST_REPLY = 'post-reply-btn';
-export const DATA_TYPE_DELETE = 'delete-btn';
-export const DATA_TYPE_CANCEL_DELETE = 'cancel-delete-btn';
-export const DATA_TYPE_CONFIRM_DELETE = 'confirm-delete-btn';
 export const DATA_TYPE_MOBILE_CLOSE = 'mobile-dialog-close-btn';
+export const DATA_TYPE_DELETE_CONFIRMATION = 'delete-confirmation';
 
 export const SECTION_CREATE = '[data-section="create"]';
 export const SECTION_SHOW = '[data-section="show"]';
