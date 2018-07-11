@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import Profile from './components/Profile';
 import * as util from './util';
 import * as constants from './constants';
 import { ICON_DELETE } from './icons/icons';
@@ -583,8 +584,6 @@ class AnnotationDialog extends EventEmitter {
             userName = util.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
         }
 
-        const avatarUrl = util.htmlEscape(annotation.user.avatarUrl || '');
-        const avatarHtml = util.getAvatarHtml(avatarUrl, userId, userName, this.localized.profileAlt);
         const created = new Date(annotation.created).toLocaleString(this.locale, {
             month: '2-digit',
             day: '2-digit',
@@ -602,12 +601,14 @@ class AnnotationDialog extends EventEmitter {
         annotationContainerEl.appendChild(annotationEl);
 
         // Avatar
-        const avatarEl = document.createElement('div');
-        avatarEl.classList.add(constants.CLASS_PROFILE_IMG_CONTAINER);
-        avatarEl.innerHTML = avatarHtml;
-        annotationEl.appendChild(avatarEl);
+        this.profileComponent = new Profile(annotationEl, {
+            avatarUrl: annotation.user.avatarUrl || '',
+            id: userId,
+            name: userName
+        });
+        this.profileComponent.renderProfile();
 
-        // Creator namate & date
+        // Creator name & date
         const profileContainerEl = document.createElement('div');
         profileContainerEl.classList.add(constants.CLASS_PROFILE_CONTAINER);
         annotationEl.appendChild(profileContainerEl);
