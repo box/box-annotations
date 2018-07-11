@@ -30,9 +30,9 @@ After(function() {
     cleanupAnnotations();
 });
 
-Scenario('Create/Delete drawing @desktop', function(I) {
+Scenario('Create/Delete drawing @desktop @doc', function(I) {
     /*
-     * Can enter/exit drawing mode properly @desktop
+     * Can enter/exit drawing mode properly
      */
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
@@ -111,7 +111,7 @@ Scenario('Create/Delete drawing @desktop', function(I) {
     I.waitForInvisible(SELECTOR_ANNOTATION_DRAWING_DIALOG);
 });
 
-Scenario('Create/Delete a drawing by exiting mode @desktop', function(I) {
+Scenario('Create/Delete a drawing by exiting mode @desktop @doc', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
     I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
 
