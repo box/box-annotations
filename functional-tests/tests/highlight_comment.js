@@ -28,7 +28,7 @@ After(function() {
     cleanupAnnotations();
 });
 
-Scenario('Create/Delete a new highlight comment annotation @desktop', function(I) {
+Scenario('Create/Delete a new highlight comment annotation @desktop @doc', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     I.say('Highlight dialog should appear after selecting text');

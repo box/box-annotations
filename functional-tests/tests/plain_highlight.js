@@ -23,7 +23,7 @@ After(function() {
     cleanupAnnotations();
 });
 
-Scenario('Create/Delete a new plain highlight annotation @desktop', function(I) {
+Scenario('Create/Delete a new plain highlight annotation @desktop @doc', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
     /*
