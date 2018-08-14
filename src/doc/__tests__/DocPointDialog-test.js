@@ -4,15 +4,15 @@ import * as util from '../../util';
 import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
-const sandbox = sinon.sandbox.create();
+const html = '<div class="annotated-element"></div>';
 
 describe('doc/DocPointDialog', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('doc/__tests__/DocPointDialog-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         dialog = new DocPointDialog({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
@@ -29,7 +29,7 @@ describe('doc/DocPointDialog', () => {
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
         if (typeof dialog.destroy === 'function') {
             dialog.destroy();
             dialog = null;
@@ -38,15 +38,15 @@ describe('doc/DocPointDialog', () => {
 
     describe('position()', () => {
         it('should position the dialog at the right place and show it', () => {
-            sandbox.stub(util, 'showElement');
-            sandbox.stub(util, 'repositionCaret');
-            sandbox.stub(dialog, 'flipDialog').returns([]);
+            util.showElement = jest.fn();
+            util.repositionCaret = jest.fn();
+            dialog.flipDialog = jest.fn().mockReturnValue([]);
 
             dialog.position();
 
-            expect(util.repositionCaret).to.be.called;
-            expect(util.showElement).to.be.called;
-            expect(dialog.flipDialog).to.be.called;
+            expect(util.repositionCaret).toBeCalled();
+            expect(util.showElement).toBeCalled();
+            expect(dialog.flipDialog).toBeCalled();
         });
     });
 });

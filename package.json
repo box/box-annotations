@@ -52,6 +52,7 @@
     "fetch-mock-forwarder": "^1.0.0",
     "husky": "^0.14.3",
     "jest": "^23.5.0",
+    "jest-canvas-mock": "^1.1.0",
     "lint-staged": "^7.0.4",
     "mocha": "^5.1.1",
     "node-noop": "^1.0.0",
@@ -113,9 +114,12 @@
       "__NAME__": "name",
       "__VERSION__": "version"
     },
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test-utils/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/test-utils/styleMock.js"
+      "\\.(css|less|html)$": "<rootDir>/test-utils/styleMock.js"
     },
     "transformIgnorePatterns": [
       "node_modules/(?!(box-react-ui)/)"

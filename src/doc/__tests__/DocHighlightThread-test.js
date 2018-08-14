@@ -7,15 +7,23 @@ import * as docUtil from '../docUtil';
 import { STATES, TYPES, HIGHLIGHT_FILL, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
-const sandbox = sinon.sandbox.create();
+
+const html = `<div class="annotated-element">
+  <div class="ba-annotation-dialog ba-annotation-highlight-dialog">
+    <button class="ba-highlight-comment-btn"></button>
+    <textarea class="annotation-textarea"></textarea>
+  </div>
+</div>`;
+
+jest.mock('../DocHighlightDialog');
 
 describe('doc/DocHighlightThread', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('doc/__tests__/DocHighlightThread-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         thread = new DocHighlightThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
@@ -43,10 +51,14 @@ describe('doc/DocHighlightThread', () => {
             highlightToggle: 'highlight toggle'
         };
         thread.dialog.setup();
+
+        window.getSelection = jest.fn().mockReturnValue({
+            removeAllRanges: jest.fn()
+        });
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
         if (typeof thread.destroy === 'function') {
             thread.destroy();
             thread = null;
@@ -56,79 +68,72 @@ describe('doc/DocHighlightThread', () => {
     describe('cancelFirstComment()', () => {
         it('should switch dialogs when cancelling the first comment on an existing plain highlight', () => {
             // Adding a plain highlight annotation to the thread
-            sandbox.stub(thread.annotationService, 'create').returns(Promise.resolve({}));
-            sandbox.stub(thread.dialog, 'position');
-            sandbox.stub(thread.dialog, 'disable');
+            thread.annotationService.create = jest.fn().mockResolvedValue({});
             thread.saveAnnotation('highlight', '');
 
             // Cancel first comment on existing annotation
-            sandbox.stub(thread.dialog, 'toggleHighlightDialogs');
-            sandbox.stub(thread, 'reset');
+            thread.reset = jest.fn();
             thread.cancelFirstComment();
 
-            expect(thread.dialog.toggleHighlightDialogs).to.be.called;
-            expect(thread.reset).to.be.called;
+            expect(thread.dialog.toggleHighlightDialogs).toBeCalled();
+            expect(thread.reset).toBeCalled();
 
             // only plain highlight annotation should still exist
-            expect(Object.keys(thread.annotations).length).to.equal(1);
+            expect(Object.keys(thread.annotations).length).toEqual(1);
         });
 
         it('should destroy the annotation when cancelling a new highlight comment annotation', () => {
             // Cancel first comment on existing annotation
-            sandbox.stub(thread, 'destroy');
+            thread.destroy = jest.fn();
             thread.cancelFirstComment();
 
-            expect(thread.destroy).to.be.called;
-            expect(thread.element).to.be.undefined;
+            expect(thread.destroy).toBeCalled();
+            expect(thread.element).toBeUndefined();
         });
 
         it('should reset the thread if on mobile and a comment-highlight', () => {
-            sandbox.stub(thread, 'reset');
+            thread.reset = jest.fn();
             thread.annotations = [{}, {}, {}];
             thread.isMobile = true;
 
             thread.cancelFirstComment();
 
-            expect(thread.reset).to.be.called;
+            expect(thread.reset).toBeCalled();
         });
     });
 
     describe('destroy()', () => {
         it('should destroy the thread', () => {
-            sandbox.stub(thread, 'emit');
+            thread.emit = jest.fn();
             thread.state = STATES.pending;
 
             // This stubs out a parent method by forcing the method we care about
             // in the prototype of the prototype of DocHighlightThread (ie
             // AnnotationThread's prototype) to be a stub
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'destroy', {
-                value: sandbox.stub()
+                value: jest.fn()
             });
 
             thread.destroy();
-            expect(thread.element).to.be.undefined;
-            expect(thread.emit).to.be.calledWith('annotationthreadcleanup');
+            expect(thread.element).toBeUndefined();
+            expect(thread.emit).toBeCalledWith('annotationthreadcleanup');
         });
     });
 
     describe('hide()', () => {
         it('should erase highlight thread from the UI', () => {
-            sandbox.stub(thread, 'draw');
-
+            thread.draw = jest.fn();
             thread.hide();
-
-            expect(thread.draw).to.be.called;
+            expect(thread.draw).toBeCalled();
         });
     });
 
     describe('reset()', () => {
         it('should set highlight to inactive and redraw', () => {
-            sandbox.stub(thread, 'show');
-
+            thread.show = jest.fn();
             thread.reset();
-
-            expect(thread.show).to.be.called;
-            expect(thread.state).to.equal(STATES.inactive);
+            expect(thread.show).toBeCalled();
+            expect(thread.state).toEqual(STATES.inactive);
         });
     });
 
@@ -138,7 +143,7 @@ describe('doc/DocHighlightThread', () => {
             // in the prototype of the prototype of DocHighlightThread (ie
             // AnnotationThread's prototype) to be a stub
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'saveAnnotation', {
-                value: sandbox.stub()
+                value: jest.fn()
             });
 
             thread.saveAnnotation(TYPES.highlight, '');
@@ -149,7 +154,7 @@ describe('doc/DocHighlightThread', () => {
             // in the prototype of the prototype of DocHighlightThread (ie
             // AnnotationThread's prototype) to be a stub
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'saveAnnotation', {
-                value: sandbox.stub()
+                value: jest.fn()
             });
 
             thread.saveAnnotation(TYPES.highlight, 'bleh');
@@ -180,16 +185,17 @@ describe('doc/DocHighlightThread', () => {
                 highlightToggle: 'highlight toggle'
             };
             plainHighlightThread.setup();
-            plainHighlightThread.dialog.element = document.createElement();
+            plainHighlightThread.dialog = {
+                element: document.createElement('div')
+            };
 
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: sandbox.stub()
+                value: jest.fn()
             });
-            sandbox.stub(util, 'hideElement');
+            util.hideElement = jest.fn();
 
             plainHighlightThread.deleteAnnotation(1);
-
-            expect(util.hideElement).to.be.called;
+            expect(util.hideElement).toBeCalled();
         });
 
         it('should display the add highlight button if the user has permissions', () => {
@@ -213,25 +219,21 @@ describe('doc/DocHighlightThread', () => {
             });
 
             Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: sandbox.stub()
+                value: jest.fn()
             });
-            sandbox.stub(util, 'hideElement');
+            util.hideElement = jest.fn();
 
             plainHighlightThread.deleteAnnotation(1);
-
-            expect(util.hideElement).to.not.be.called;
+            expect(util.hideElement).not.toBeCalled();
         });
     });
 
     describe('onMousedown()', () => {
         it('should destroy the thread when annotation is in pending state', () => {
             thread.state = STATES.pending;
-
-            sandbox.stub(thread, 'destroy');
-
+            thread.destroy = jest.fn();
             thread.onMousedown();
-
-            expect(thread.destroy).to.be.called;
+            expect(thread.destroy).toBeCalled();
         });
     });
 
@@ -242,279 +244,250 @@ describe('doc/DocHighlightThread', () => {
 
             const isHighlightPending = thread.onClick({}, true);
 
-            expect(isHighlightPending).to.be.false;
-            expect(thread.state).to.equal(STATES.inactive);
+            expect(isHighlightPending).toBeFalsy();
+            expect(thread.state).toEqual(STATES.inactive);
         });
 
         it('should set annotation to hover if mouse is hovering over highlight or dialog', () => {
             thread.state = STATES.pending;
             thread.type = TYPES.highlight_comment;
-            sandbox.stub(thread, 'isOnHighlight').returns(true);
-            sandbox.stub(thread, 'reset');
-            sandbox.stub(thread, 'show');
+
+            thread.isOnHighlight = jest.fn().mockReturnValue(true);
+            thread.reset = jest.fn();
+            thread.show = jest.fn();
 
             const isHighlightPending = thread.onClick({}, false);
 
-            expect(isHighlightPending).to.be.true;
-            expect(thread.reset).to.not.be.called;
-            expect(thread.state).to.equal(STATES.hover);
-            expect(thread.show).to.be.called;
+            expect(isHighlightPending).toBeTruthy();
+            expect(thread.reset).not.toBeCalled();
+            expect(thread.state).toEqual(STATES.hover);
+            expect(thread.show).toBeCalled();
         });
     });
 
     describe('isOnHighlight()', () => {
         it('should return true if mouse event is over highlight', () => {
-            sandbox.stub(thread, 'isInHighlight').returns(true);
-
+            thread.isInHighlight = jest.fn().mockReturnValue(true);
             const result = thread.isOnHighlight({});
-
-            expect(result).to.be.true;
+            expect(result).toBeTruthy();
         });
 
         it('should return true if mouse event is over highlight dialog', () => {
-            sandbox.stub(thread, 'isInHighlight').returns(false);
-            sandbox.stub(util, 'isInDialog').returns(true);
-
+            thread.isInHighlight = jest.fn().mockReturnValue(false);
+            util.isInDialog = jest.fn().mockReturnValue(true);
             const result = thread.isOnHighlight({});
-
-            expect(result).to.be.true;
+            expect(result).toBeTruthy();
         });
 
         it('should return false if mouse event is neither over the highlight or the dialog', () => {
-            sandbox.stub(thread, 'isInHighlight').returns(false);
-            sandbox.stub(util, 'isInDialog').returns(false);
-
+            thread.isInHighlight = jest.fn().mockReturnValue(false);
+            util.isInDialog = jest.fn().mockReturnValue(false);
             const result = thread.isOnHighlight({});
-
-            expect(result).to.be.false;
+            expect(result).toBeFalsy();
         });
     });
 
     describe('show()', () => {
-        it('should show the dialog if the state is pending', () => {
-            sandbox.stub(thread, 'showDialog');
+        beforeEach(() => {
+            thread.draw = jest.fn();
+            thread.showDialog = jest.fn();
+            thread.hideDialog = jest.fn();
+        });
 
+        it('should show the dialog if the state is pending', () => {
             thread.state = STATES.pending;
             thread.show();
-
-            expect(thread.showDialog).to.be.called;
+            expect(thread.showDialog).toBeCalled();
         });
 
         it('should not show the dialog if the state is inactive and redraw the highlight as not active', () => {
-            sandbox.stub(thread, 'hideDialog');
-            sandbox.stub(thread, 'draw');
-
             thread.state = STATES.inactive;
             thread.show();
-
-            expect(thread.hideDialog).to.be.called;
-            expect(thread.draw).to.be.calledWith(HIGHLIGHT_FILL.normal);
+            expect(thread.hideDialog).toBeCalled();
+            expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.normal);
         });
 
         it('should show the dialog if the state is not pending and redraw the highlight as active', () => {
-            sandbox.stub(thread, 'showDialog');
-            sandbox.stub(thread, 'draw');
-
             thread.state = STATES.hover;
             thread.show();
-
-            expect(thread.showDialog).to.be.called;
-            expect(thread.draw).to.be.calledWith(HIGHLIGHT_FILL.active);
+            expect(thread.showDialog).toBeCalled();
+            expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.active);
         });
 
         it('should do nothing if state is invalid', () => {
-            sandbox.stub(thread, 'showDialog');
-            sandbox.stub(thread, 'draw');
-
             thread.state = 'invalid';
             thread.show();
-
-            expect(thread.showDialog).to.not.be.called;
-            expect(thread.draw).to.not.be.called;
+            expect(thread.showDialog).not.toBeCalled();
+            expect(thread.draw).not.toBeCalled();
         });
     });
 
     describe('showDialog()', () => {
         it('should set up the dialog if it does not exist', () => {
             thread.dialog = {
-                setup: () => {},
-                show: () => {}
+                setup: jest.fn(),
+                show: jest.fn()
             };
-            const dialogMock = sandbox.mock(thread.dialog);
 
-            dialogMock.expects('setup').withArgs(thread.annotations, thread.showComment);
-            dialogMock.expects('show');
             thread.showDialog();
+            expect(thread.dialog.setup).toBeCalledWith(thread.annotations, thread.showComment);
+            expect(thread.dialog.show).toBeCalled;
         });
     });
 
     describe('createDialog()', () => {
         it('should initialize an appropriate dialog', () => {
             thread.createDialog();
-            expect(thread.dialog instanceof DocHighlightDialog).to.be.true;
+            expect(thread.dialog instanceof DocHighlightDialog).toBeTruthy();
         });
     });
 
     describe('handleDraw()', () => {
         it('should clear the text selection and show the thread', () => {
-            const selectionStub = {
-                removeAllRanges: sandbox.stub()
+            const selection = {
+                removeAllRanges: jest.fn()
             };
-            sandbox.stub(window, 'getSelection').returns(selectionStub);
-            sandbox.stub(thread, 'show');
+            window.getSelection = jest.fn().mockReturnValue(selection);
+            thread.show = jest.fn();
 
             thread.handleDraw();
-            expect(thread.show).to.be.called;
-            expect(thread.state).to.equal(STATES.pending_active);
-            expect(selectionStub.removeAllRanges).to.be.called;
+            expect(thread.show).toBeCalled();
+            expect(thread.state).toEqual(STATES.pending_active);
+            expect(selection.removeAllRanges).toBeCalled();
         });
     });
 
     describe('handleCommentPending()', () => {
         it('should set the thread state to pending active', () => {
             thread.handleCommentPending();
-            expect(thread.state).to.equal(STATES.pending_active);
+            expect(thread.state).toEqual(STATES.pending_active);
         });
     });
 
     describe('handleCreate()', () => {
         it('should create a plain highlight and save', () => {
-            sandbox.stub(thread, 'saveAnnotation');
+            thread.saveAnnotation = jest.fn();
             thread.handleCreate();
-            expect(thread.saveAnnotation).to.be.calledWith(TYPES.highlight, '');
+            expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight, '');
         });
 
         it('should create a highlight comment and save', () => {
-            sandbox.stub(thread, 'saveAnnotation');
-            sandbox.stub(thread.dialog, 'toggleHighlightCommentsReply');
+            thread.saveAnnotation = jest.fn();
+            thread.dialog = {
+                toggleHighlightCommentsReply: jest.fn()
+            };
             thread.annotations = { 1: {}, 2: {}, 3: {} };
 
             thread.handleCreate({ text: 'something' });
-            expect(thread.saveAnnotation).to.be.calledWith(TYPES.highlight_comment, 'something');
+            expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, 'something');
         });
     });
 
     describe('handleDelete()', () => {
         beforeEach(() => {
-            sandbox.stub(thread, 'deleteAnnotation');
-            sandbox.stub(thread.dialog, 'toggleHighlightCommentsReply');
+            thread.deleteAnnotation = jest.fn();
+            thread.dialog = {
+                toggleHighlightDialogs: jest.fn()
+            };
             thread.annotations = { 1: { annotationID: 1 }, 2: { annotationID: 2 }, 3: {} };
         });
 
         it('should delete the specified annotationID', () => {
             thread.handleDelete({ annotationID: 2 });
-            expect(thread.deleteAnnotation).to.be.calledWith(2);
+            expect(thread.deleteAnnotation).toBeCalledWith(2);
         });
 
         it('should delete the first annotation in the thread if no annotationID is provided', () => {
             thread.handleDelete();
-            expect(thread.deleteAnnotation).to.be.calledWith(1);
+            expect(thread.deleteAnnotation).toBeCalledWith(1);
         });
     });
 
     describe('bindCustomListenersOnDialog()', () => {
         it('should bind custom listeners on dialog', () => {
             thread.dialog = {
-                addListener: () => {}
+                addListener: jest.fn()
             };
-
-            const addListenerStub = sandbox.stub(thread.dialog, 'addListener');
 
             thread.bindCustomListenersOnDialog();
 
-            expect(addListenerStub).to.be.calledWith('annotationdraw', sinon.match.func);
-            expect(addListenerStub).to.be.calledWith('annotationcommentpending', sinon.match.func);
-            expect(addListenerStub).to.be.calledWith('annotationcreate', sinon.match.func);
-            expect(addListenerStub).to.be.calledWith('annotationcancel', sinon.match.func);
-            expect(addListenerStub).to.be.calledWith('annotationdelete', sinon.match.func);
+            expect(thread.dialog.addListener).toBeCalledWith('annotationdraw', expect.any(Function));
+            expect(thread.dialog.addListener).toBeCalledWith('annotationcommentpending', expect.any(Function));
+            expect(thread.dialog.addListener).toBeCalledWith('annotationcreate', expect.any(Function));
+            expect(thread.dialog.addListener).toBeCalledWith('annotationcancel', expect.any(Function));
+            expect(thread.dialog.addListener).toBeCalledWith('annotationdelete', expect.any(Function));
         });
     });
 
     describe('unbindCustomListenersOnDialog()', () => {
         it('should unbind custom listeners on dialog', () => {
             thread.dialog = {
-                removeAllListeners: () => {}
+                removeAllListeners: jest.fn()
             };
-
-            const removeAllListenersStub = sandbox.stub(thread.dialog, 'removeAllListeners');
-
             thread.unbindCustomListenersOnDialog();
 
-            expect(removeAllListenersStub).to.be.calledWith('annotationdraw');
-            expect(removeAllListenersStub).to.be.calledWith('annotationcommentpending');
-            expect(removeAllListenersStub).to.be.calledWith('annotationcreate');
-            expect(removeAllListenersStub).to.be.calledWith('annotationcancel');
-            expect(removeAllListenersStub).to.be.calledWith('annotationdelete');
+            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationdraw');
+            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcommentpending');
+            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcreate');
+            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcancel');
+            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationdelete');
         });
     });
 
     describe('draw()', () => {
         it('should not draw if no context exists', () => {
-            sandbox.stub(thread, 'getPageEl');
-            sandbox.stub(docUtil, 'getContext').returns(null);
-            sandbox.stub(util, 'getScale');
+            thread.getPageEl = jest.fn();
+            docUtil.getContext = jest.fn().mockReturnValue(null);
+            util.getScale = jest.fn();
 
             thread.draw('fill');
-            expect(thread.pageEl).to.be.undefined;
-            expect(util.getScale).to.not.be.called;
+            expect(thread.pageEl).toBeUndefined();
+            expect(util.getScale).not.toBeCalled();
         });
     });
 
     describe('isInHighlight()', () => {
-        it('should not scale points if there is no dimensionScale', () => {
-            const pageEl = {
-                getBoundingClientRect: sandbox.stub()
-            };
-            pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
-            const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
-            const quadPoint = {};
-            thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
+        const pageEl = {
+            getBoundingClientRect: jest.fn().mockReturnValue({ height: 0, top: 10 })
+        };
+        let quadPoint = {};
 
+        beforeEach(() => {
+            quadPoint = {};
+            thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
+
+            thread.getPageEl = jest.fn().mockReturnValue(pageEl);
+            util.getDimensionScale = jest.fn().mockReturnValue(false);
+            docUtil.convertPDFSpaceToDOMSpace = jest.fn().mockReturnValue([0, 0, 0, 0, 0, 0, 0, 0]);
+        });
+
+        it('should not scale points if there is no dimensionScale', () => {
             thread.isInHighlight({ clientX: 0, clientY: 0 });
-            expect(pageElStub).to.be.called;
-            expect(pageEl.getBoundingClientRect).to.be.called;
-            expect(dimensionScaleStub).to.be.called;
-            expect(convertStub).to.be.called;
+            expect(thread.getPageEl).toBeCalled();
+            expect(pageEl.getBoundingClientRect).toBeCalled();
+            expect(util.getDimensionScale).toBeCalled();
+            expect(docUtil.convertPDFSpaceToDOMSpace).toBeCalled();
         });
 
         it('should scale points if there is a dimensionScale', () => {
-            const pageEl = {
-                getBoundingClientRect: sandbox.stub()
-            };
-            pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
-            const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(true);
-            const quadPoint = {};
-            thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
+            util.getDimensionScale = jest.fn().mockReturnValue(true);
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
-            expect(pageElStub).to.be.called;
-            expect(pageEl.getBoundingClientRect).to.be.called;
-            expect(dimensionScaleStub).to.be.called;
-            expect(convertStub).to.be.called;
+            expect(thread.getPageEl).toBeCalled();
+            expect(pageEl.getBoundingClientRect).toBeCalled();
+            expect(util.getDimensionScale).toBeCalled();
+            expect(docUtil.convertPDFSpaceToDOMSpace).toBeCalled();
         });
 
         it('get the quad points and return if the point isInPolyOpt', () => {
-            const pageEl = {
-                getBoundingClientRect: sandbox.stub()
-            };
-            pageEl.getBoundingClientRect.returns({ height: 0, top: 10 });
-            const pageElStub = sandbox.stub(thread, 'getPageEl').returns(pageEl);
-            const dimensionScaleStub = sandbox.stub(util, 'getDimensionScale').returns(false);
-            const quadPoint = {};
-            thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-            const convertStub = sandbox.stub(docUtil, 'convertPDFSpaceToDOMSpace').returns([0, 0, 0, 0, 0, 0, 0, 0]);
-            const pointInPolyStub = sandbox.stub(docUtil, 'isPointInPolyOpt');
+            docUtil.isPointInPolyOpt = jest.fn();
 
             thread.isInHighlight({ clientX: 0, clientY: 0 });
-            expect(pageElStub).to.be.called;
-            expect(pageEl.getBoundingClientRect).to.be.called;
-            expect(dimensionScaleStub).to.be.called;
-            expect(convertStub).to.be.called;
-            expect(pointInPolyStub).to.be.called;
+            expect(thread.getPageEl).toBeCalled();
+            expect(pageEl.getBoundingClientRect).toBeCalled();
+            expect(util.getDimensionScale).toBeCalled();
+            expect(docUtil.convertPDFSpaceToDOMSpace).toBeCalled();
+            expect(docUtil.isPointInPolyOpt).toBeCalled();
         });
     });
 
@@ -526,8 +499,8 @@ describe('doc/DocHighlightThread', () => {
             thread.location = {};
             thread.regenerateBoundary();
 
-            expect(thread.minX).to.be.undefined;
-            expect(thread.minY).to.be.undefined;
+            expect(thread.minX).toBeUndefined();
+            expect(thread.minY).toBeUndefined();
         });
 
         it('should set the min/max x/y values for thread location', () => {
@@ -535,10 +508,10 @@ describe('doc/DocHighlightThread', () => {
                 quadPoints: [[1, 1, 1, 1, 1, 1, 1, 1], [10, 10, 10, 10, 10, 10, 10, 10]]
             };
             thread.regenerateBoundary();
-            expect(thread.minX).to.equal(1);
-            expect(thread.minY).to.equal(1);
-            expect(thread.maxX).to.equal(10);
-            expect(thread.maxY).to.equal(10);
+            expect(thread.minX).toEqual(1);
+            expect(thread.minY).toEqual(1);
+            expect(thread.maxX).toEqual(10);
+            expect(thread.maxY).toEqual(10);
         });
     });
 });

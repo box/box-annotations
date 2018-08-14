@@ -4,130 +4,111 @@ import {
     getRotatedPadding,
     getBrowserCoordinatesFromLocation
 } from '../imageUtil';
-import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
-const stubs = {};
+const html = `<div class="mock-header-bar" height="30px" width="100px"></div>
+<div class="annotated-element ba-annotated">
+    <img width="100px" height="200px" data-page-number="1">
+    <button class="ba-point-annotation-marker"></button>
+</div
+`;
 
 describe('image/imageUtil', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let annotatedEl;
+    let imageEl;
 
     beforeEach(() => {
-        fixture.load('image/__tests__/imageUtil-test.html');
-        stubs.annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
+        annotatedEl = document.createElement('div');
+        annotatedEl.innerHTML = html;
+        document.body.appendChild(annotatedEl);
+        imageEl = annotatedEl.querySelector('img');
     });
 
     afterEach(() => {
-        fixture.cleanup();
+        document.body.removeChild(annotatedEl);
     });
 
     describe('getRotatedLocation()', () => {
+        let dimensions;
+        const [x, y] = [20, 30];
+
+        beforeEach(() => {
+            dimensions = {
+                height: 200,
+                width: 100
+            };
+        });
+
         it('should return annotation coordinates when image is not rotated', () => {
-            const [x, y] = [20, 30];
-            const [resultX, resultY] = getRotatedLocation(x, y, 0, {}, 1);
-            expect(resultX).to.equal(x);
-            expect(resultY).to.equal(y);
+            const [resultX, resultY] = getRotatedLocation(x, y, 0, dimensions, 1);
+            expect(resultX).toEqual(x);
+            expect(resultY).toEqual(y);
         });
         it('should return annotation coordinates when image is rotated left once', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_ONCE_DEG, dimensions, 1);
-            expect(resultX).to.equal(y);
-            expect(resultY).to.equal(180);
+            expect(resultX).toEqual(y);
+            expect(resultY).toEqual(180);
         });
         it('should return annotation coordinates when image is rotated left twice', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_TWICE_DEG, dimensions, 1);
-            expect(resultX).to.equal(80);
-            expect(resultY).to.equal(170);
+            expect(resultX).toEqual(80);
+            expect(resultY).toEqual(170);
         });
         it('should return annotation coordinates when image is rotated left thrice', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getRotatedLocation(x, y, ROTATION_THRICE_DEG, dimensions, 1);
-            expect(resultX).to.equal(70);
-            expect(resultY).to.equal(x);
+            expect(resultX).toEqual(70);
+            expect(resultY).toEqual(x);
         });
     });
 
     describe('getLocationWithoutRotation()', () => {
+        let dimensions;
+        const [x, y] = [20, 30];
+
+        beforeEach(() => {
+            dimensions = {
+                height: 200,
+                width: 100
+            };
+        });
+
         it('should return annotation coordinates when image was not rotated', () => {
-            const [x, y] = [20, 30];
-            const [resultX, resultY] = getLocationWithoutRotation(x, y, 0, {}, 1);
-            expect(resultX).to.equal(x);
-            expect(resultY).to.equal(y);
+            const [resultX, resultY] = getLocationWithoutRotation(x, y, 0, dimensions, 1);
+            expect(resultX).toEqual(x);
+            expect(resultY).toEqual(y);
         });
         it('should return annotation coordinates when image was rotated left once', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_ONCE_DEG, dimensions, 1);
-            expect(resultX).to.equal(70);
-            expect(resultY).to.equal(x);
+            expect(resultX).toEqual(70);
+            expect(resultY).toEqual(x);
         });
         it('should return annotation coordinates when image was rotated left twice', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_TWICE_DEG, dimensions, 1);
-            expect(resultX).to.equal(80);
-            expect(resultY).to.equal(170);
+            expect(resultX).toEqual(80);
+            expect(resultY).toEqual(170);
         });
         it('should return annotation coordinates when image was rotated left thrice', () => {
-            const [x, y] = [20, 30];
-
-            // Get image height & width dimensions
-            const imageDimensions = stubs.annotatedEl.querySelector('img').getBoundingClientRect();
-            const dimensions = { height: imageDimensions.height, width: imageDimensions.width };
-
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_THRICE_DEG, dimensions, 1);
-            expect(resultX).to.equal(y);
-            expect(resultY).to.equal(180);
+            expect(resultX).toEqual(y);
+            expect(resultY).toEqual(180);
         });
     });
 
     describe('getRotatedPadding()', () => {
+        beforeEach(() => {
+            imageEl = { offsetLeft: 50, offsetTop: 50 };
+        });
+
         it('should return top padding if image is not rotated', () => {
-            const imageEl = stubs.annotatedEl.querySelector('img');
-            imageEl.style.margin = '50px';
-
             const rotatedPadding = getRotatedPadding(imageEl, false);
-
-            // Includes top 8px padding around stubs.annotatedEl
-            expect(rotatedPadding).to.equal(58);
+            expect(rotatedPadding).toEqual(50);
         });
 
         it('should return top padding if image is rotated', () => {
-            const imageEl = stubs.annotatedEl.querySelector('img');
-            imageEl.style.margin = '50px';
-
             const rotatedPadding = getRotatedPadding(imageEl, true);
-
-            // Includes top 8px padding around stubs.annotatedEl
-            expect(rotatedPadding).to.equal(35.5);
+            expect(rotatedPadding).toEqual(27.5);
         });
     });
 
@@ -142,10 +123,10 @@ describe('image/imageUtil', () => {
                 },
                 page: 1
             };
-            const coordinates = getBrowserCoordinatesFromLocation(location, stubs.annotatedEl);
+            const coordinates = getBrowserCoordinatesFromLocation(location, annotatedEl);
 
-            expect(coordinates[0]).to.equal(20);
-            expect(coordinates[1]).to.equal(30);
+            expect(coordinates[0]).toEqual(20);
+            expect(coordinates[1]).toEqual(30);
         });
     });
 });

@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import EventEmitter from 'events';
 import Annotator from '../Annotator';
 import * as util from '../util';
-import AnnotationService from '../AnnotationService';
 import {
     STATES,
     TYPES,
@@ -13,37 +11,39 @@ import {
 } from '../constants';
 
 let annotator;
-let stubs = {};
-const sandbox = sinon.sandbox.create();
+let controller;
+let thread;
+const html = `<button class="bp-btn-annotate"></button>
+<div class="annotated-element"></div>`;
 
 describe('Annotator', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('__tests__/Annotator-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
-        stubs.controller = {
-            init: () => {},
-            addListener: () => {},
-            registerThread: () => {},
-            isEnabled: () => {},
-            getButton: () => {},
-            enter: () => {},
-            exit: () => {},
-            setupSharedDialog: () => {},
-            getThreadByID: () => {}
+        controller = {
+            init: jest.fn(),
+            addListener: jest.fn(),
+            registerThread: jest.fn(),
+            isEnabled: jest.fn(),
+            getButton: jest.fn(),
+            enter: jest.fn(),
+            exit: jest.fn(),
+            setupSharedDialog: jest.fn(),
+            getThreadByID: jest.fn()
         };
-        stubs.controllerMock = sandbox.mock(stubs.controller);
 
         const options = {
             annotator: {
                 NAME: 'name',
-                CONTROLLERS: { something: stubs.controller }
+                CONTROLLERS: { something: controller }
             },
             modeButtons: { something: {} }
         };
+
         annotator = new Annotator({
             canAnnotate: true,
             container: document,
@@ -63,48 +63,23 @@ describe('Annotator', () => {
             }
         });
 
-        stubs.thread = {
+        thread = {
             threadID: '123abc',
-            show: () => {},
-            hide: () => {},
-            addListener: () => {},
-            unbindCustomListenersOnThread: () => {},
-            removeListener: () => {},
-            scrollIntoView: () => {},
-            getThreadEventData: () => {},
-            showDialog: () => {},
+            show: jest.fn(),
+            hide: jest.fn(),
+            addListener: jest.fn(),
+            unbindCustomListenersOnThread: jest.fn(),
+            removeListener: jest.fn(),
+            scrollIntoView: jest.fn(),
+            getThreadEventData: jest.fn(),
+            showDialog: jest.fn(),
             type: 'something',
             location: { page: 1 }
         };
-        stubs.threadMock = sandbox.mock(stubs.thread);
-
-        stubs.thread2 = {
-            threadID: '456def',
-            show: () => {},
-            hide: () => {},
-            addListener: () => {},
-            unbindCustomListenersOnThread: () => {},
-            removeAllListeners: () => {},
-            type: 'something',
-            location: { page: 2 }
-        };
-        stubs.threadMock2 = sandbox.mock(stubs.thread2);
-
-        stubs.thread3 = {
-            threadID: '789ghi',
-            show: () => {},
-            hide: () => {},
-            addListener: () => {},
-            unbindCustomListenersOnThread: () => {},
-            removeAllListeners: () => {},
-            type: 'something',
-            location: { page: 2 }
-        };
-        stubs.threadMock3 = sandbox.mock(stubs.thread3);
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
         annotator.modeButtons = {};
         annotator.modeControllers = {};
 
@@ -112,69 +87,68 @@ describe('Annotator', () => {
             annotator.destroy();
             annotator = null;
         }
-
-        stubs = {};
     });
 
     describe('init()', () => {
         beforeEach(() => {
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            sandbox.stub(annotator, 'getAnnotatedEl').returns(annotatedEl);
+            const annotatedEl = rootElement.querySelector(SELECTOR_ANNOTATED_ELEMENT);
+            annotator.getAnnotatedEl = jest.fn().mockReturnValue(annotatedEl);
             annotator.annotatedElement = annotatedEl;
 
-            stubs.scale = sandbox.stub(annotator, 'setScale');
-            stubs.setup = sandbox.stub(annotator, 'setupAnnotations');
-            stubs.show = sandbox.stub(annotator, 'loadAnnotations');
-            stubs.setupMobileDialog = sandbox.stub(annotator, 'setupMobileDialog');
-            stubs.getPermissions = sandbox.stub(annotator, 'getAnnotationPermissions');
+            annotator.setScale = jest.fn();
+            annotator.setupAnnotations = jest.fn();
+            annotator.loadAnnotations = jest.fn();
+            annotator.setupMobileDialog = jest.fn();
+            annotator.getAnnotationPermissions = jest.fn();
 
             annotator.permissions = { canAnnotate: true };
         });
 
         it('should set scale and setup annotations', () => {
+            annotator.isMobile = false;
             annotator.init(5);
-            expect(stubs.scale).to.be.calledWith(5);
-            expect(stubs.setup).to.be.called;
-            expect(stubs.show).to.be.called;
+            expect(annotator.setScale).toBeCalledWith(5);
+            expect(annotator.setupAnnotations).toBeCalled();
+            expect(annotator.loadAnnotations).toBeCalled();
         });
 
         it('should setup mobile dialog for mobile browsers', () => {
             annotator.isMobile = true;
             annotator.init();
-            expect(stubs.setupMobileDialog).to.be.called;
+            expect(annotator.setupMobileDialog).toBeCalled();
         });
     });
 
     describe('setupMobileDialog()', () => {
         it('should generate mobile annotations dialog and append to container', () => {
             annotator.container = {
-                appendChild: sandbox.mock()
+                appendChild: jest.fn()
             };
             annotator.setupMobileDialog();
-            expect(annotator.container.appendChild).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).to.equal(1);
+            expect(annotator.container.appendChild).toBeCalled();
+            expect(annotator.mobileDialogEl.children.length).toEqual(1);
         });
     });
 
     describe('removeThreadFromSharedDialog()', () => {
         beforeEach(() => {
-            sandbox.stub(util, 'hideElement');
-            sandbox.stub(util, 'showElement');
+            util.hideElement = jest.fn();
+            util.showElement = jest.fn();
         });
 
         it('should do nothing if the mobile dialog does not exist or is hidden', () => {
             annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).to.not.be.called;
+            expect(util.hideElement).not.toBeCalled();
 
             annotator.mobileDialogEl = {
                 classList: {
-                    contains: sandbox.stub().returns(true)
+                    contains: jest.fn().mockReturnValue(true)
                 },
-                removeChild: sandbox.stub(),
+                removeChild: jest.fn(),
                 lastChild: {}
             };
             annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).to.not.be.called;
+            expect(util.hideElement).not.toBeCalled();
         });
 
         it('should generate mobile annotations dialog and append to container', () => {
@@ -182,16 +156,16 @@ describe('Annotator', () => {
             annotator.mobileDialogEl.appendChild(document.createElement('div'));
 
             annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).to.be.called;
-            expect(util.showElement).to.be.called;
-            expect(annotator.mobileDialogEl.children.length).to.equal(0);
+            expect(util.hideElement).toBeCalled();
+            expect(util.showElement).toBeCalled();
+            expect(annotator.mobileDialogEl.children.length).toEqual(0);
         });
     });
 
     describe('loadAnnotations()', () => {
         beforeEach(() => {
-            sandbox.stub(annotator, 'render');
-            sandbox.stub(annotator, 'emit');
+            annotator.render = jest.fn();
+            annotator.emit = jest.fn();
         });
 
         it('should fetch and then render annotations', () => {
@@ -199,8 +173,8 @@ describe('Annotator', () => {
             annotator.loadAnnotations();
             return annotator.fetchPromise
                 .then(() => {
-                    expect(annotator.render).to.be.called;
-                    expect(annotator.emit).to.not.be.called;
+                    expect(annotator.render).toBeCalled();
+                    expect(annotator.emit).not.toBeCalled();
                 })
                 .catch(() => {
                     sinon.assert.failException;
@@ -215,49 +189,49 @@ describe('Annotator', () => {
                     sinon.assert.failException;
                 })
                 .catch((err) => {
-                    expect(annotator.render).to.not.be.called;
-                    expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.loadError, err);
+                    expect(annotator.render).not.toBeCalled();
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, err);
                 });
         });
     });
 
     describe('setupAnnotations()', () => {
         it('should initialize thread map and bind DOM listeners', () => {
-            sandbox.stub(annotator, 'bindDOMListeners');
-            sandbox.stub(annotator, 'bindCustomListenersOnService');
-            sandbox.stub(annotator, 'addListener');
-            sandbox.stub(annotator, 'setupControllers');
+            annotator.bindDOMListeners = jest.fn();
+            annotator.bindCustomListenersOnService = jest.fn();
+            annotator.addListener = jest.fn();
+            annotator.setupControllers = jest.fn();
 
             annotator.setupAnnotations();
 
-            expect(annotator.bindDOMListeners).to.be.called;
-            expect(annotator.bindCustomListenersOnService).to.be.called;
-            expect(annotator.setupControllers).to.be.called;
-            expect(annotator.addListener).to.be.calledWith(ANNOTATOR_EVENT.scale, sinon.match.func);
+            expect(annotator.bindDOMListeners).toBeCalled();
+            expect(annotator.bindCustomListenersOnService).toBeCalled();
+            expect(annotator.setupControllers).toBeCalled();
+            expect(annotator.addListener).toBeCalledWith(ANNOTATOR_EVENT.scale, expect.any(Function));
         });
     });
 
     describe('setupControllers()', () => {
         it('should instantiate controllers for enabled types', () => {
-            annotator.modeControllers = { something: stubs.controller };
+            annotator.modeControllers = { something: controller };
             annotator.options = { modeButtons: { something: {} } };
 
-            stubs.controllerMock.expects('init');
-            stubs.controllerMock.expects('addListener').withArgs('annotationcontrollerevent', sinon.match.func);
             annotator.setupControllers();
+            expect(controller.init).toBeCalled();
+            expect(controller.addListener).toBeCalledWith('annotationcontrollerevent', expect.any(Function));
         });
 
         it('should setup shared point dialog in the point controller', () => {
-            annotator.modeControllers = { point: stubs.controller };
+            annotator.modeControllers = { point: controller };
             annotator.isMobile = true;
 
-            stubs.controllerMock.expects('init');
-            stubs.controllerMock.expects('setupSharedDialog').withArgs(annotator.container, {
+            annotator.setupControllers();
+            expect(controller.init).toBeCalled();
+            expect(controller.setupSharedDialog).toBeCalledWith(annotator.container, {
                 isMobile: annotator.isMobile,
                 hasTouch: annotator.hasTouch,
                 localized: annotator.localized
             });
-            annotator.setupControllers();
         });
     });
 
@@ -265,24 +239,24 @@ describe('Annotator', () => {
         beforeEach(() => {
             const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             annotator.annotatedElement = annotatedEl;
-            sandbox.stub(annotator, 'getAnnotatedEl').returns(annotatedEl);
-            sandbox.stub(annotator, 'setupAnnotations');
-            sandbox.stub(annotator, 'loadAnnotations');
+            annotator.getAnnotatedEl = jest.fn().mockReturnValue(annotatedEl);
+            annotator.setupAnnotations = jest.fn();
+            annotator.loadAnnotations = jest.fn();
             annotator.init();
             annotator.setupControllers();
         });
 
         describe('destroy()', () => {
             it('should unbind custom listeners on thread and unbind DOM listeners', () => {
-                const unbindDOMStub = sandbox.stub(annotator, 'unbindDOMListeners');
-                const unbindCustomListenersOnService = sandbox.stub(annotator, 'unbindCustomListenersOnService');
-                const unbindListener = sandbox.stub(annotator, 'removeListener');
+                annotator.unbindDOMListeners = jest.fn();
+                annotator.unbindCustomListenersOnService = jest.fn();
+                annotator.removeListener = jest.fn();
 
                 annotator.destroy();
 
-                expect(unbindDOMStub).to.be.called;
-                expect(unbindCustomListenersOnService).to.be.called;
-                expect(unbindListener).to.be.calledWith(ANNOTATOR_EVENT.scale, sinon.match.func);
+                expect(annotator.unbindDOMListeners).toBeCalled();
+                expect(annotator.unbindCustomListenersOnService).toBeCalled();
+                expect(annotator.removeListener).toBeCalledWith(ANNOTATOR_EVENT.scale, expect.any(Function));
             });
         });
 
@@ -290,16 +264,16 @@ describe('Annotator', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
                     type: {
-                        render: sandbox.stub()
+                        render: jest.fn()
                     },
                     type2: {
-                        render: sandbox.stub()
+                        render: jest.fn()
                     }
                 };
 
                 annotator.render();
-                expect(annotator.modeControllers.type.render).to.be.called;
-                expect(annotator.modeControllers.type2.render).to.be.called;
+                expect(annotator.modeControllers.type.render).toBeCalled();
+                expect(annotator.modeControllers.type2.render).toBeCalled();
             });
         });
 
@@ -307,15 +281,15 @@ describe('Annotator', () => {
             it('should call hide on each thread in map on page 1', () => {
                 annotator.modeControllers = {
                     type: {
-                        renderPage: sandbox.stub()
+                        renderPage: jest.fn()
                     },
                     type2: {
-                        renderPage: sandbox.stub()
+                        renderPage: jest.fn()
                     }
                 };
                 annotator.renderPage(1);
-                expect(annotator.modeControllers.type.renderPage).to.be.calledWith(1);
-                expect(annotator.modeControllers.type2.renderPage).to.be.called;
+                expect(annotator.modeControllers.type.renderPage).toBeCalledWith(1);
+                expect(annotator.modeControllers.type2.renderPage).toBeCalled();
             });
         });
 
@@ -329,9 +303,9 @@ describe('Annotator', () => {
                     }
                 };
                 const permissions = annotator.getAnnotationPermissions(file);
-                expect(permissions.canAnnotate).to.be.false;
-                expect(permissions.canViewOwnAnnotations).to.be.true;
-                expect(permissions.canViewAllAnnotations).to.be.false;
+                expect(permissions.canAnnotate).toBeFalsy();
+                expect(permissions.canViewOwnAnnotations).toBeTruthy();
+                expect(permissions.canViewAllAnnotations).toBeFalsy();
             });
         });
 
@@ -339,49 +313,42 @@ describe('Annotator', () => {
             it('should set a data-scale attribute on the annotated element', () => {
                 annotator.setScale(10);
                 const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-                expect(annotatedEl).to.have.attribute('data-scale', '10');
+                expect(annotatedEl.dataset.scale).toEqual('10');
             });
         });
 
         describe('fetchAnnotations()', () => {
-            beforeEach(() => {
-                annotator.annotationService = {
-                    getThreadMap: () => {}
-                };
-                stubs.serviceMock = sandbox.mock(annotator.annotationService);
+            const threadMap = {
+                someID: [{}, {}],
+                someID2: [{}]
+            };
+            const threadPromise = Promise.resolve(threadMap);
 
-                const threadMap = {
-                    someID: [{}, {}],
-                    someID2: [{}]
-                };
-                stubs.threadPromise = Promise.resolve(threadMap);
+            beforeEach(() => {
+                annotator.annotationService.getThreadMap = jest.fn();
 
                 annotator.permissions = {
                     canViewAllAnnotations: true,
                     canViewOwnAnnotations: true
                 };
-                sandbox.stub(annotator, 'emit');
+                annotator.emit = jest.fn();
             });
 
             it('should not fetch existing annotations if the user does not have correct permissions', () => {
-                stubs.serviceMock.expects('getThreadMap').never();
                 annotator.permissions = {
                     canViewAllAnnotations: false,
                     canViewOwnAnnotations: false
                 };
 
                 const result = annotator.fetchAnnotations();
-                result
-                    .then(() => {
-                        expect(result).to.be.true;
-                    })
-                    .catch(() => {
-                        sinon.assert.failException;
-                    });
+                result.then(() => {
+                    expect(result).toBeTruthy();
+                    expect(annotator.annotationService.getThreadMap).not.toBeCalled();
+                });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
+                annotator.annotationService.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: false,
                     canViewOwnAnnotations: true
@@ -390,9 +357,9 @@ describe('Annotator', () => {
                 const result = annotator.fetchAnnotations();
                 result
                     .then(() => {
-                        expect(result).to.be.true;
-                        expect(annotator.threadMap).to.not.be.undefined;
-                        expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
+                        expect(result).toBeTruthy();
+                        expect(annotator.threadMap).not.toBeUndefined();
+                        expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
                     })
                     .catch(() => {
                         sinon.assert.failException;
@@ -400,121 +367,104 @@ describe('Annotator', () => {
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                stubs.serviceMock.expects('getThreadMap').returns(stubs.threadPromise);
+                annotator.annotationService.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: true,
                     canViewOwnAnnotations: false
                 };
 
                 const result = annotator.fetchAnnotations();
-                result
-                    .then(() => {
-                        expect(result).to.be.true;
-                        stubs.threadPromise.then(() => {
-                            expect(annotator.threadMap).to.not.be.undefined;
-                            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.fetch);
-                        });
-                    })
-                    .catch(() => {
-                        sinon.assert.failException;
+                result.then(() => {
+                    expect(result).toBeTruthy();
+                    threadPromise.then(() => {
+                        expect(annotator.threadMap).not.toBeUndefined();
+                        expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
                     });
+                });
             });
         });
 
         describe('generateThreadMap()', () => {
+            const threadMap = { '123abc': thread };
+
             beforeEach(() => {
-                stubs.threadMap = { '123abc': stubs.thread };
                 const annotation = { location: {}, type: 'highlight' };
                 const lastAnnotation = { location: {}, type: 'highlight-comment' };
-                sandbox.stub(util, 'getFirstAnnotation').returns(annotation);
-                sandbox.stub(util, 'getLastAnnotation').returns(lastAnnotation);
+                util.getFirstAnnotation = jest.fn().mockReturnValue(annotation);
+                util.getLastAnnotation = jest.fn().mockReturnValue(lastAnnotation);
+                annotator.createAnnotationThread = jest.fn();
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
                 annotator.options = {};
-                sandbox.stub(annotator, 'createAnnotationThread');
-                annotator.generateThreadMap(stubs.threadMap);
-                expect(annotator.createAnnotationThread).to.not.be.called;
+                annotator.generateThreadMap(threadMap);
+                expect(annotator.createAnnotationThread).not.toBeCalled();
             });
 
             it('should reset and create a new thread map by from annotations fetched from server', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                sandbox.stub(annotator, 'createAnnotationThread').returns(stubs.thread);
-                annotator.generateThreadMap(stubs.threadMap);
-                expect(annotator.createAnnotationThread).to.be.called;
+                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+                annotator.generateThreadMap(threadMap);
+                expect(annotator.createAnnotationThread).toBeCalled();
             });
 
             it('should register thread if controller exists', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                annotator.modeControllers['highlight-comment'] = stubs.controller;
-                sandbox.stub(annotator, 'createAnnotationThread').returns(stubs.thread);
-                stubs.controllerMock.expects('registerThread');
-                annotator.generateThreadMap(stubs.threadMap);
+                annotator.modeControllers['highlight-comment'] = controller;
+                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+                annotator.generateThreadMap(threadMap);
+                expect(controller.registerThread).toBeCalled();
             });
 
             it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight'] };
-                annotator.modeControllers['highlight-comment'] = stubs.controller;
-                stubs.controllerMock.expects('registerThread').never();
-                annotator.generateThreadMap(stubs.threadMap);
+                annotator.modeControllers['highlight-comment'] = controller;
+                annotator.generateThreadMap(threadMap);
+                expect(controller.registerThread).not.toBeCalled();
             });
         });
 
         describe('bindCustomListenersOnService()', () => {
-            it('should do nothing if the service does not exist', () => {
-                annotator.annotationService = {
-                    addListener: sandbox.stub()
-                };
-
-                annotator.bindCustomListenersOnService();
-                expect(annotator.annotationService.addListener).to.not.be.called;
-            });
-
             it('should add an event listener', () => {
-                annotator.annotationService = new AnnotationService({
-                    apiHost: 'API',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true,
-                    canDelete: true
-                });
-                const addListenerStub = sandbox.stub(annotator.annotationService, 'addListener');
-
+                annotator.annotationService.addListener = jest.fn();
                 annotator.bindCustomListenersOnService();
-                expect(addListenerStub).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.func);
+                expect(annotator.annotationService.addListener).toBeCalledWith(
+                    ANNOTATOR_EVENT.error,
+                    expect.any(Function)
+                );
             });
         });
 
         describe('handleServicesErrors()', () => {
             beforeEach(() => {
-                sandbox.stub(annotator, 'emit');
+                annotator.emit = jest.fn();
             });
 
             it('should emit annotatorerror on read error event', () => {
                 annotator.handleServicesErrors({ reason: 'read' });
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             });
 
             it('should emit annotatorerror and show annotations on create error event', () => {
                 annotator.handleServicesErrors({ reason: 'create' });
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
-                expect(annotator.loadAnnotations).to.be.called;
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
+                expect(annotator.loadAnnotations).toBeCalled();
             });
 
             it('should emit annotatorerror and show annotations on delete error event', () => {
                 annotator.handleServicesErrors({ reason: 'delete' });
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
-                expect(annotator.loadAnnotations).to.be.called;
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
+                expect(annotator.loadAnnotations).toBeCalled();
             });
 
             it('should emit annotatorerror on authorization error event', () => {
                 annotator.handleServicesErrors({ reason: 'authorization' });
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             });
 
             it('should not emit annotatorerror when event does not match', () => {
                 annotator.handleServicesErrors({ reason: 'no match' });
-                expect(annotator.emit).to.not.be.called;
+                expect(annotator.emit).not.toBeCalled();
             });
         });
 
@@ -523,99 +473,85 @@ describe('Annotator', () => {
             const data = { mode };
 
             beforeEach(() => {
-                sandbox.stub(annotator, 'emit');
+                annotator.emit = jest.fn();
             });
 
             it('should reset mobile annotation dialog on resetMobileDialog', () => {
-                sandbox.stub(annotator, 'removeThreadFromSharedDialog');
+                annotator.removeThreadFromSharedDialog = jest.fn();
                 data.event = CONTROLLER_EVENT.resetMobileDialog;
                 annotator.handleControllerEvents(data);
-                expect(annotator.removeThreadFromSharedDialog).to.be.called;
+                expect(annotator.removeThreadFromSharedDialog).toBeCalled();
             });
 
             it('should toggle annotation mode on togglemode', () => {
-                sandbox.stub(annotator, 'toggleAnnotationMode');
+                annotator.toggleAnnotationMode = jest.fn();
                 data.event = CONTROLLER_EVENT.toggleMode;
                 annotator.handleControllerEvents(data);
-                expect(annotator.toggleAnnotationMode).to.be.calledWith(mode);
+                expect(annotator.toggleAnnotationMode).toBeCalledWith(mode);
             });
 
             it('should unbind dom listeners and emit message on mode enter', () => {
-                sandbox.stub(annotator, 'unbindDOMListeners');
+                annotator.unbindDOMListeners = jest.fn();
                 data.event = CONTROLLER_EVENT.enter;
                 annotator.handleControllerEvents(data);
-                expect(annotator.unbindDOMListeners).to.be.called;
-                expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
+                expect(annotator.unbindDOMListeners).toBeCalled();
+                expect(annotator.emit).toBeCalledWith(data.event, expect.any(Object));
             });
 
             it('should bind dom listeners and emit message on mode exit', () => {
-                sandbox.stub(annotator, 'bindDOMListeners');
+                annotator.bindDOMListeners = jest.fn();
                 data.event = CONTROLLER_EVENT.exit;
                 annotator.handleControllerEvents(data);
-                expect(annotator.bindDOMListeners).to.be.called;
-                expect(annotator.emit).to.be.calledWith(data.event, sinon.match.object);
+                expect(annotator.bindDOMListeners).toBeCalled();
+                expect(annotator.emit).toBeCalledWith(data.event, expect.any(Object));
             });
 
             it('should create a point annotation thread on createThread', () => {
-                sandbox.stub(annotator, 'createPointThread');
+                annotator.createPointThread = jest.fn();
                 data.event = CONTROLLER_EVENT.createThread;
                 annotator.handleControllerEvents(data);
-                expect(annotator.createPointThread).to.be.calledWith(data.data);
+                expect(annotator.createPointThread).toBeCalledWith(data.data);
             });
         });
 
         describe('unbindCustomListenersOnService()', () => {
-            it('should do nothing if the service does not exist', () => {
-                annotator.annotationService = {
-                    removeListener: sandbox.stub()
-                };
-
-                annotator.unbindCustomListenersOnService();
-                expect(annotator.annotationService.removeListener).to.not.be.called;
-            });
-
             it('should remove an event listener', () => {
-                annotator.annotationService = new AnnotationService({
-                    apiHost: 'API',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true,
-                    canDelete: true
-                });
-                const removeListenerStub = sandbox.stub(annotator.annotationService, 'removeListener');
-
+                annotator.annotationService.removeListener = jest.fn();
                 annotator.unbindCustomListenersOnService();
-                expect(removeListenerStub).to.be.called;
+                expect(annotator.annotationService.removeListener).toBeCalled();
             });
         });
 
         describe('getCurrentAnnotationMode()', () => {
             it('should return null if no mode is enabled', () => {
-                annotator.modeControllers.something = stubs.controller;
-                stubs.controllerMock.expects('isEnabled').returns(false);
-                expect(annotator.getCurrentAnnotationMode()).to.be.null;
+                annotator.modeControllers.something = controller;
+                controller.isEnabled = jest.fn().mockReturnValue(false);
+                expect(annotator.getCurrentAnnotationMode()).toBeNull();
             });
 
             it('should return the current annotation mode', () => {
-                annotator.modeControllers.something = stubs.controller;
-                stubs.controllerMock.expects('isEnabled').returns(true);
-                expect(annotator.getCurrentAnnotationMode()).to.equal('something');
+                annotator.modeControllers.something = controller;
+                controller.isEnabled = jest.fn().mockReturnValue(true);
+                expect(annotator.getCurrentAnnotationMode()).toEqual('something');
             });
 
             it('should null if no controllers exist', () => {
                 annotator.modeControllers = {};
-                expect(annotator.getCurrentAnnotationMode()).to.be.null;
+                expect(annotator.getCurrentAnnotationMode()).toBeNull();
             });
         });
 
         describe('createPointThread()', () => {
             beforeEach(() => {
-                stubs.getLoc = sandbox.stub(annotator, 'getLocationFromEvent').returns({ page: 1 });
-                sandbox.stub(annotator, 'emit');
-                stubs.thread.dialog = { postAnnotation: sandbox.stub() };
+                annotator.getLocationFromEvent = jest.fn().mockReturnValue({ page: 1 });
+                annotator.emit = jest.fn();
+                thread.dialog = {
+                    postAnnotation: jest.fn(),
+                    hasComments: false
+                };
 
                 annotator.modeControllers = {
-                    point: stubs.controller
+                    point: controller
                 };
             });
 
@@ -640,36 +576,35 @@ describe('Annotator', () => {
                     pendingThreadID: '123abc',
                     commentText: ' '
                 });
-                expect(annotator.emit).to.not.be.called;
+                expect(annotator.emit).not.toBeCalled();
             });
 
             it('should do nothing if no location is returned fom the lastPointEvent', () => {
-                stubs.getLoc.returns(null);
+                annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
                     commentText: 'text'
                 });
-                expect(annotator.emit).to.not.be.called;
-                expect(result).to.be.null;
+                expect(annotator.emit).not.toBeCalled();
+                expect(result).toBeNull();
             });
 
             it('should do nothing the thread does not exist in the page specified by lastPointEvent', () => {
-                stubs.controllerMock.expects('getThreadByID').returns(null);
+                controller.getThreadByID = jest.fn().mockReturnValue(null);
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
                     commentText: 'text'
                 });
-                expect(annotator.emit).to.not.be.called;
-                expect(result).to.be.null;
+                expect(annotator.emit).not.toBeCalled();
+                expect(result).toBeNull();
             });
 
             it('should create a point annotation thread using lastPointEvent', () => {
-                stubs.threadMock.expects('showDialog');
-                stubs.threadMock.expects('getThreadEventData').returns({});
-                stubs.controllerMock.expects('getThreadByID').returns(stubs.thread);
+                thread.getThreadEventData = jest.fn().mockReturnValue({});
+                controller.getThreadByID = jest.fn().mockReturnValue(thread);
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
@@ -677,41 +612,42 @@ describe('Annotator', () => {
                     commentText: 'text'
                 });
 
-                expect(stubs.thread.dialog.hasComments).to.be.true;
-                expect(stubs.thread.state).to.equal(STATES.hover);
-                expect(stubs.thread.dialog.postAnnotation).to.be.calledWith('text');
-                expect(annotator.emit).to.be.calledWith(THREAD_EVENT.threadSave, sinon.match.object);
-                expect(result).to.not.be.null;
+                expect(thread.dialog.hasComments).toBeTruthy();
+                expect(thread.state).toEqual(STATES.hover);
+                expect(thread.dialog.postAnnotation).toBeCalledWith('text');
+                expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
+                expect(result).not.toBeNull();
+                expect(thread.showDialog).toBeCalled();
             });
         });
 
         describe('scrollToAnnotation()', () => {
             it('should do nothing if no threadID is provided', () => {
-                stubs.threadMock.expects('scrollIntoView').never();
                 annotator.scrollToAnnotation();
+                expect(thread.scrollIntoView).not.toBeCalled();
             });
 
             it('should do nothing if threadID does not exist on page', () => {
-                stubs.threadMock.expects('scrollIntoView').never();
                 annotator.scrollToAnnotation('wrong');
+                expect(thread.scrollIntoView).not.toBeCalled();
             });
 
             it('should scroll to annotation if threadID exists on page', () => {
                 annotator.modeControllers = {
                     type: {
-                        getThreadByID: sandbox.stub().returns(stubs.thread),
-                        threads: { 1: { '123abc': stubs.thread } }
+                        getThreadByID: jest.fn().mockReturnValue(thread),
+                        threads: { 1: { '123abc': thread } }
                     }
                 };
-                stubs.threadMock.expects('scrollIntoView');
-                annotator.scrollToAnnotation(stubs.thread.threadID);
+                annotator.scrollToAnnotation(thread.threadID);
+                expect(thread.scrollIntoView).toBeCalled();
             });
         });
 
         describe('scaleAnnotations()', () => {
             it('should set scale and rotate annotations based on the annotated element', () => {
-                sandbox.stub(annotator, 'setScale');
-                sandbox.stub(annotator, 'render');
+                annotator.setScale = jest.fn();
+                annotator.render = jest.fn();
 
                 const data = {
                     scale: 5,
@@ -719,94 +655,67 @@ describe('Annotator', () => {
                     pageNum: 2
                 };
                 annotator.scaleAnnotations(data);
-                expect(annotator.setScale).to.be.calledWith(data.scale);
-                expect(annotator.render).to.be.called;
+                expect(annotator.setScale).toBeCalledWith(data.scale);
+                expect(annotator.render).toBeCalled();
             });
         });
 
         describe('toggleAnnotationMode()', () => {
             beforeEach(() => {
-                annotator.modeControllers.something = stubs.controller;
-                sandbox.stub(annotator, 'hideAnnotations');
+                annotator.modeControllers.something = controller;
+                annotator.hideAnnotations = jest.fn();
             });
 
             it('should exit the current mode', () => {
-                stubs.controllerMock.expects('isEnabled').returns(true);
-                stubs.controllerMock.expects('exit');
+                controller.isEnabled = jest.fn().mockReturnValue(true);
                 annotator.toggleAnnotationMode('something');
-                expect(annotator.hideAnnotations).to.be.called;
+                expect(annotator.hideAnnotations).toBeCalled();
+                expect(controller.exit).toBeCalled();
             });
 
             it('should enter the specified mode', () => {
-                sandbox.stub(annotator, 'getCurrentAnnotationMode');
-                stubs.controllerMock.expects('enter');
+                annotator.getCurrentAnnotationMode = jest.fn();
                 annotator.toggleAnnotationMode('something');
-                expect(annotator.hideAnnotations).to.be.called;
+                expect(annotator.hideAnnotations).toBeCalled();
+                expect(controller.enter).toBeCalled();
             });
         });
 
         describe('handleValidationError()', () => {
             it('should do nothing if a annotatorerror was already emitted', () => {
-                sandbox.stub(annotator, 'emit');
+                annotator.emit = jest.fn();
                 annotator.validationErrorEmitted = true;
                 annotator.handleValidationError();
-                expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error);
-                expect(annotator.validationErrorEmitted).to.be.true;
+                expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error);
+                expect(annotator.validationErrorEmitted).toBeTruthy();
             });
 
             it('should emit annotatorerror on first error', () => {
-                sandbox.stub(annotator, 'emit');
+                annotator.emit = jest.fn();
                 annotator.validationErrorEmitted = false;
                 annotator.handleValidationError();
-                expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, sinon.match.string);
-                expect(annotator.validationErrorEmitted).to.be.true;
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
+                expect(annotator.validationErrorEmitted).toBeTruthy();
             });
         });
 
         describe('emit()', () => {
-            const emitFunc = EventEmitter.prototype.emit;
-
-            afterEach(() => {
-                Object.defineProperty(EventEmitter.prototype, 'emit', { value: emitFunc });
-            });
-
             it('should pass through the event as well as broadcast it as a annotator event', () => {
-                const fileId = '1';
-                const fileVersionId = '1';
                 const event = 'someEvent';
                 const data = {};
-                const annotatorName = 'name';
+                let annotatorEventOccured = false;
+                let eventOccurred = false;
 
-                annotator = new Annotator({
-                    canAnnotate: true,
-                    container: document,
-                    annotationService: {},
-                    isMobile: false,
-                    annotator: { NAME: annotatorName },
-                    file: {
-                        id: fileId,
-                        file_version: {
-                            id: fileVersionId
-                        }
-                    },
-                    location: { locale: 'en-US' },
-                    modeButtons: {},
-                    localizedStrings: { anonymousUserName: 'anonymous' }
+                annotator.addListener('annotatorevent', () => {
+                    annotatorEventOccured = true;
                 });
-
-                const emitStub = sandbox.stub();
-                Object.defineProperty(EventEmitter.prototype, 'emit', { value: emitStub });
-
+                annotator.addListener('someEvent', () => {
+                    eventOccurred = true;
+                });
                 annotator.emit(event, data);
 
-                expect(emitStub).to.be.calledWith(event, data);
-                expect(emitStub).to.be.calledWithMatch('annotatorevent', {
-                    event,
-                    data,
-                    annotatorName,
-                    fileId,
-                    fileVersionId
-                });
+                expect(annotatorEventOccured).toBeTruthy();
+                expect(eventOccurred).toBeTruthy();
             });
         });
 
@@ -819,15 +728,15 @@ describe('Annotator', () => {
 
             it('should return false if annotations are not allowed on the current viewer', () => {
                 annotator.options.annotator = undefined;
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.false;
+                expect(annotator.isModeAnnotatable(TYPES.point)).toBeFalsy();
             });
 
             it('should return true if the type is supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable(TYPES.point)).to.be.true;
+                expect(annotator.isModeAnnotatable(TYPES.point)).toBeTruthy();
             });
 
             it('should return false if the type is not supported by the viewer', () => {
-                expect(annotator.isModeAnnotatable('drawing')).to.be.false;
+                expect(annotator.isModeAnnotatable('drawing')).toBeFalsy();
             });
         });
     });

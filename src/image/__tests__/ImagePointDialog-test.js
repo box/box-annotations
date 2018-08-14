@@ -4,15 +4,21 @@ import * as util from '../../util';
 import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
-const sandbox = sinon.sandbox.create();
+const html = `<div class="annotated-element ba-annotated">
+    <img width="400px" height="600px" data-page-number="1">
+    <div data-type="annotation-dialog" class="ba-annotation-dialog">
+        <div class="ba-annotation-caret"></div>
+    </div>
+</div>
+`;
 
 describe('image/ImagePointDialog', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('image/__tests__/ImagePointDialog-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         dialog = new ImagePointDialog({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
@@ -32,7 +38,7 @@ describe('image/ImagePointDialog', () => {
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
         if (typeof dialog.destroy === 'function') {
             dialog.destroy();
             dialog = null;
@@ -42,15 +48,15 @@ describe('image/ImagePointDialog', () => {
     describe('position()', () => {
         it('should position the dialog at the right place and show it', () => {
             dialog.container = { clientHeight: 1 };
-            sandbox.stub(util, 'repositionCaret');
-            sandbox.stub(util, 'showElement');
-            sandbox.stub(dialog, 'flipDialog').returns([]);
+            util.repositionCaret = jest.fn();
+            util.showElement = jest.fn();
+            dialog.flipDialog = jest.fn().mockReturnValue([]);
 
             dialog.position();
 
-            expect(util.repositionCaret).to.be.called;
-            expect(util.showElement).to.be.called;
-            expect(dialog.flipDialog).to.be.called;
+            expect(util.repositionCaret).toBeCalled();
+            expect(util.showElement).toBeCalled();
+            expect(dialog.flipDialog).toBeCalled();
         });
     });
 });

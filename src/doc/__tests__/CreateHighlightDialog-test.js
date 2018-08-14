@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import CreateHighlightDialog from '../CreateHighlightDialog';
 import {
-    CLASS_ADD_HIGHLIGHT_BTN,
-    CLASS_ADD_HIGHLIGHT_COMMENT_BTN,
-    CLASS_ANNOTATION_CARET,
+    SELECTOR_ADD_HIGHLIGHT_BTN,
+    SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
+    SELECTOR_ANNOTATION_CARET,
     CREATE_EVENT
 } from '../../constants';
 import CommentBox from '../../CommentBox';
@@ -11,10 +11,10 @@ import * as util from '../../util';
 import * as docUtil from '../docUtil';
 
 const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
-let stubs = {};
+const html = '<div class="ba-create-highlight-dialog-container"></div>';
 
 describe('doc/CreateHighlightDialog', () => {
-    const sandbox = sinon.sandbox.create();
+    let rootElement;
     let dialog;
     let parentEl;
     const localized = {
@@ -22,12 +22,10 @@ describe('doc/CreateHighlightDialog', () => {
         highlightComment: 'highlight comment'
     };
 
-    before(() => {
-        fixture.setBase('src');
-    });
-
     beforeEach(() => {
-        fixture.load('doc/__tests__/CreateHighlightDialog-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         parentEl = document.createElement('div');
         parentEl.classList.add('ba-create-dialog-container');
@@ -39,21 +37,20 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
         if (typeof dialog.destroy === 'function') {
             dialog.destroy();
             dialog = null;
         }
 
         parentEl = null;
-        stubs = {};
     });
 
     describe('contructor()', () => {
         it('should default to disable highlights and comments if no config passed in', () => {
             const instance = new CreateHighlightDialog(document.createElement('div'));
-            expect(instance.allowHighlight).to.be.false;
-            expect(instance.allowComment).to.be.false;
+            expect(instance.allowHighlight).toBeFalsy();
+            expect(instance.allowComment).toBeFalsy();
         });
 
         it('should take config falsey value to disable highlights and comments, when passed in', () => {
@@ -63,115 +60,131 @@ describe('doc/CreateHighlightDialog', () => {
                 localized
             };
             const instance = new CreateHighlightDialog(document.createElement('div'), config);
-            expect(instance.allowHighlight).to.be.true;
-            expect(instance.allowComment).to.be.false;
+            expect(instance.allowHighlight).toBeTruthy();
+            expect(instance.allowComment).toBeFalsy();
         });
     });
 
     describe('show()', () => {
         beforeEach(() => {
-            stubs.pageInfo = sandbox.stub(util, 'getPageInfo');
-            stubs.setPosition = sandbox.stub(dialog, 'setPosition');
+            dialog.setPosition = jest.fn();
             dialog.parentEl = {
-                querySelector: () => {},
-                appendChild: () => {}
+                querySelector: jest.fn(),
+                appendChild: jest.fn()
             };
-            stubs.parentMock = sandbox.mock(dialog.parentEl);
         });
 
         it('should do nothing if no selection is passed in', () => {
-            stubs.parentMock.expects('appendChild').never();
+            util.getPageInfo = jest.fn();
             dialog.show({});
-            expect(util.getPageInfo).to.not.be.called;
+            expect(dialog.parentEl.appendChild).not.toBeCalled();
+            expect(util.getPageInfo).not.toBeCalled();
         });
 
         it('should do nothing if no page element is calculated from the selection', () => {
-            stubs.pageInfo.returns({});
-            stubs.parentMock.expects('appendChild').never();
+            util.getPageInfo = jest.fn().mockReturnValue({});
             dialog.show({}, {});
-            expect(stubs.pageInfo).to.be.called;
+            expect(dialog.parentEl.appendChild).not.toBeCalled();
+            expect(util.getPageInfo).toBeCalled();
         });
 
         it('should set the parentEl to a new reference, via setParentEl(), if a new one is supplied', () => {
             const newParent = document.createElement('span');
-            stubs.pageInfo.returns({ pageEl: dialog.parentEl });
+            util.getPageInfo = jest.fn().mockReturnValue({ pageEl: dialog.parentEl });
 
-            stubs.parentMock.expects('querySelector');
-            stubs.parentMock.expects('appendChild');
             dialog.show(newParent, {});
+            expect(dialog.parentEl.querySelector).toBeCalled();
+            expect(dialog.parentEl.appendChild).toBeCalled();
         });
     });
 
     describe('setPosition()', () => {
+        const selection = {
+            getRangeAt: jest.fn(),
+            rangeCount: 1
+        };
+
+        const pageEl = {
+            getBoundingClientRect: jest.fn().mockReturnValue({
+                left: 1,
+                top: 2
+            })
+        };
+
         beforeEach(() => {
-            stubs.selection = {
-                getRangeAt: () => {},
-                rangeCount: 1
-            };
-            stubs.selectionMock = sandbox.mock(stubs.selection);
-            stubs.pageInfo = sandbox.stub(util, 'getPageInfo');
-            stubs.update = sandbox.stub(dialog, 'updatePosition');
-            stubs.getCoords = sandbox.stub(docUtil, 'getDialogCoordsFromRange');
+            util.getPageInfo = jest.fn();
+            dialog.updatePosition = jest.fn();
+            docUtil.getDialogCoordsFromRange = jest.fn();
         });
 
         it('should do nothing if the selection is invalid', () => {
-            stubs.selection.rangeCount = undefined;
-            stubs.selectionMock.expects('getRangeAt').never();
-            dialog.setPosition(stubs.selection);
+            selection.rangeCount = undefined;
+            dialog.setPosition(selection);
+            expect(selection.getRangeAt).not.toBeCalled();
         });
 
         it('should do nothing if no page element is calculated from the selection', () => {
-            stubs.pageInfo.returns({});
-            dialog.setPosition(stubs.selection);
-            expect(stubs.update).to.not.be.called;
-        });
-
-        it('should position the dialog according to the bottom right corner of the selection', () => {
-            stubs.pageInfo.returns({ pageEl: document.createElement('div') });
-            stubs.getCoords.returns({ x: 1, y: 2 });
-            dialog.setPosition(stubs.selection);
-            expect(stubs.update).to.be.called;
+            util.getPageInfo = jest.fn().mockReturnValue({});
+            dialog.setPosition(selection);
+            expect(pageEl.getBoundingClientRect).not.toBeCalled();
         });
     });
 
     describe('destroy()', () => {
+        beforeEach(() => {
+            dialog.containerEl = {
+                classList: { add: jest.fn() },
+                remove: jest.fn(),
+                removeEventListener: jest.fn()
+            };
+        });
+
         it('should remove click event listener from the highlight button', () => {
-            const remove = sandbox.stub(dialog.highlightCreateEl, 'removeEventListener');
+            dialog.highlightCreateEl = {
+                removeEventListener: jest.fn()
+            };
             dialog.destroy();
-            expect(remove).to.be.calledWith('click');
+            expect(dialog.highlightCreateEl.removeEventListener).toHaveBeenCalledTimes(3);
         });
 
         it('should remove click event listener from the comment button', () => {
-            const remove = sandbox.stub(dialog.commentCreateEl, 'removeEventListener');
+            dialog.commentCreateEl = {
+                removeEventListener: jest.fn()
+            };
             dialog.destroy();
-            expect(remove).to.be.calledWith('click');
+            expect(dialog.commentCreateEl.removeEventListener).toHaveBeenCalledTimes(3);
         });
 
         it('should remove out all touch events, if touch enabled', () => {
             dialog.hasTouch = true;
             dialog.isMobile = true;
-            const highlightCreateStub = sandbox.stub(dialog.highlightCreateEl, 'removeEventListener');
-            const commentCreateStub = sandbox.stub(dialog.commentCreateEl, 'removeEventListener');
+
+            dialog.highlightCreateEl = {
+                removeEventListener: jest.fn()
+            };
+            dialog.commentCreateEl = {
+                removeEventListener: jest.fn()
+            };
 
             const eventStubs = [
                 {
-                    stub: highlightCreateStub,
+                    stub: dialog.highlightCreateEl.removeEventListener,
                     args: ['touchstart', dialog.stopPropagation]
                 },
                 {
-                    stub: highlightCreateStub,
+                    stub: dialog.highlightCreateEl.removeEventListener,
                     args: ['touchend', dialog.onHighlightClick]
                 },
                 {
-                    stub: commentCreateStub,
+                    stub: dialog.commentCreateEl.removeEventListener,
                     args: ['touchstart', dialog.stopPropagation]
                 },
                 {
-                    stub: commentCreateStub,
+                    stub: dialog.commentCreateEl.removeEventListener,
                     args: ['touchend', dialog.onCommentClick]
                 },
                 {
-                    stub: sandbox.stub(dialog.containerEl, 'removeEventListener'),
+                    stub: dialog.containerEl.removeEventListener,
                     args: ['touchend', dialog.stopPropagation]
                 }
             ];
@@ -179,119 +192,128 @@ describe('doc/CreateHighlightDialog', () => {
             dialog.destroy();
 
             eventStubs.forEach((stub) => {
-                expect(stub.stub).to.be.calledWith(...stub.args);
+                expect(stub.stub).toBeCalledWith(...stub.args);
             });
         });
     });
 
     describe('updatePosition()', () => {
         beforeEach(() => {
-            sandbox.stub(util, 'showElement');
+            util.showElement = jest.fn();
             dialog.isMobile = false;
         });
 
         it('should do nothing on mobile devices', () => {
             dialog.isMobile = true;
             dialog.updatePosition();
-            expect(util.showElement).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
 
         it('should update the top of the ui element', () => {
             const y = 50;
             dialog.position.y = y;
             dialog.updatePosition();
-            expect(dialog.containerEl.style.top).to.equal(`${y + 5}px`);
-            expect(util.showElement).to.be.called;
+            expect(dialog.containerEl.style.top).toEqual(`${y + 5}px`);
+            expect(util.showElement).toBeCalled();
         });
 
         it('should update the left of the ui element, to center it', () => {
             const x = 50;
             dialog.position.x = x;
-            sandbox.stub(util, 'repositionCaret').returns(x);
+            util.repositionCaret = jest.fn().mockReturnValue(x);
             dialog.updatePosition();
-            expect(dialog.containerEl.style.left).to.equal(`${x}px`);
-            expect(util.showElement).to.be.called;
+            expect(dialog.containerEl.style.left).toEqual(`${x}px`);
+            expect(util.showElement).toBeCalled();
         });
     });
 
     describe('onHighlightClick()', () => {
         it('should invoke the "plain" highlight event', () => {
-            const emit = sandbox.stub(dialog, 'emit');
-            dialog.onHighlightClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(emit).to.be.calledWith(CREATE_EVENT.plain);
+            dialog.emit = jest.fn();
+            dialog.onHighlightClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.emit).toBeCalledWith(CREATE_EVENT.plain);
         });
     });
 
     describe('onCommentClick()', () => {
         beforeEach(() => {
             dialog.show();
+
+            dialog.commentBox = {
+                show: jest.fn(),
+                hide: jest.fn(),
+                clear: jest.fn(),
+                focus: jest.fn(),
+                removeListener: jest.fn(),
+                destroy: jest.fn()
+            };
         });
 
         it('should invoke the "comment" highlight event', () => {
-            const emit = sandbox.stub(dialog, 'emit');
-            dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(emit).to.be.calledWith(CREATE_EVENT.comment);
+            dialog.emit = jest.fn();
+            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.emit).toBeCalledWith(CREATE_EVENT.comment);
         });
 
         it('should show the comment box', () => {
-            const show = sandbox.stub(dialog.commentBox, 'show');
-            dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(show).to.be.called;
+            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.commentBox.show).toBeCalled();
         });
 
         it('should focus on the comment box', () => {
-            const focus = sandbox.stub(dialog.commentBox, 'focus');
-            dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(focus).to.be.called;
+            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.commentBox.focus).toBeCalled();
         });
 
         it('should hide the highlight buttons', () => {
-            const setVis = sandbox.stub(dialog, 'setButtonVisibility');
-            dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(setVis).to.be.called;
+            dialog.setButtonVisibility = jest.fn();
+            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.setButtonVisibility).toBeCalled();
         });
 
         it('should invoke update position', () => {
-            const update = sandbox.stub(dialog, 'updatePosition');
-            dialog.onCommentClick({ preventDefault: () => {}, stopPropagation: () => {} });
-            expect(update).to.be.called;
+            dialog.updatePosition = jest.fn();
+            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            expect(dialog.updatePosition).toBeCalled();
         });
     });
 
     describe('createElement()', () => {
         it('should create a div with the proper create highlight class', () => {
             dialog.createElement();
-            expect(dialog.containerEl.nodeName).to.equal('DIV');
-            expect(dialog.containerEl.classList.contains(CLASS_CREATE_DIALOG)).to.be.true;
+            expect(dialog.containerEl.nodeName).toEqual('DIV');
+            expect(dialog.containerEl.classList.contains(CLASS_CREATE_DIALOG)).toBeTruthy();
         });
 
         it('should make a reference to the highlight button', () => {
             dialog.createElement();
-            expect(dialog.highlightCreateEl).to.exist;
+            expect(dialog.highlightCreateEl).not.toBeNull();
+            expect(dialog.highlightCreateEl).not.toBeUndefined();
         });
 
         it('should make a reference to the comment button', () => {
             dialog.createElement();
-            expect(dialog.commentCreateEl).to.exist;
+            expect(dialog.commentCreateEl).not.toBeNull();
+            expect(dialog.commentCreateEl).not.toBeUndefined();
         });
 
         it('should create a comment box', () => {
             dialog.createElement();
-            expect(dialog.commentBox).to.be.an.instanceof(CommentBox);
+            expect(dialog.commentBox).toBeInstanceOf(CommentBox);
         });
 
         it('should not create the caret if on a mobile device', () => {
             dialog.isMobile = true;
             dialog.createElement();
 
-            expect(dialog.containerEl.querySelector(`.${CLASS_ANNOTATION_CARET}`)).to.not.exist;
+            expect(dialog.containerEl.querySelector(SELECTOR_ANNOTATION_CARET)).toBeNull();
         });
 
         it('should not create a highlight button if highlights are disabled', () => {
             dialog.allowHighlight = false;
             dialog.createElement();
 
-            expect(dialog.containerEl.querySelector(`.${CLASS_ADD_HIGHLIGHT_BTN}`)).to.not.exist;
+            expect(dialog.containerEl.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN)).toBeNull();
         });
 
         it('should not create a comment box or button if comments are disabled', () => {
@@ -299,8 +321,8 @@ describe('doc/CreateHighlightDialog', () => {
             dialog.commentBox = undefined;
             dialog.createElement();
 
-            expect(dialog.containerEl.querySelector(`.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`)).to.not.exist;
-            expect(dialog.commentBox).to.not.exist;
+            expect(dialog.containerEl.querySelector(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN)).toBeNull();
+            expect(dialog.commentBox).not.toBeInstanceOf(CommentBox);
         });
     });
 });

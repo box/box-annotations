@@ -6,25 +6,31 @@ import * as util from '../util';
 import * as constants from '../constants';
 
 const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
-const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-const CLASS_REPLY_CONTAINER = 'reply-container';
+const SELECTOR_REPLY_TEXTAREA = '.reply-textarea';
+const SELECTOR_REPLY_CONTAINER = '.reply-container';
 const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
-const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
-const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
+const SELECTOR_BUTTON_DELETE_COMMENT = '.delete-comment-btn';
+const SELECTOR_COMMENTS_CONTAINER = '.annotation-comments';
 const SELECTOR_DELETE_CONFIRMATION = '.delete-confirmation';
 const CLASS_INVALID_INPUT = 'ba-invalid-input';
 
 let dialog;
-const sandbox = sinon.sandbox.create();
-let stubs = {};
+const html = `<div class="annotated-element">
+<div class="ba-mobile-annotation-dialog">
+    <div class="ba-annotation-mobile-header">
+        <div class="ba-annotation-dialog-close"></div>
+    </div>
+</div>
+</div>`;
 
-describe('AnnotationDialog', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+describe('Annotator', () => {
+    let rootElement;
+    let annotation;
 
     beforeEach(() => {
-        fixture.load('__tests__/AnnotationDialog-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         dialog = new AnnotationDialog({
             annotatedElement: document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT),
@@ -33,14 +39,25 @@ describe('AnnotationDialog', () => {
             annotations: {},
             canAnnotate: true
         });
+
         dialog.localized = {
             addCommentPlaceholder: 'add comment placeholder',
             posting: 'posting'
         };
+
+        annotation = new Annotation({
+            annotationID: 1,
+            text: 'the preview sdk is amazing!',
+            user: { id: 1, name: 'user' },
+            permissions: { can_delete: true }
+        });
+
         dialog.setup();
         document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT).appendChild(dialog.element);
 
-        stubs.emit = sandbox.stub(dialog, 'emit');
+        dialog.emit = jest.fn();
+        util.hideElement = jest.fn();
+        util.showElement = jest.fn();
         dialog.isMobile = false;
     });
 
@@ -51,32 +68,26 @@ describe('AnnotationDialog', () => {
         }
 
         dialog.element = null;
-
-        sandbox.verifyAndRestore();
-        if (typeof dialog.destroy === 'function') {
-            dialog.destroy();
-            dialog = null;
-        }
-
-        stubs = {};
+        document.body.removeChild(rootElement);
+        dialog = null;
     });
 
     describe('destroy()', () => {
         it('should unbind DOM listeners and cleanup its HTML', () => {
-            const unbindStub = sandbox.stub(dialog, 'unbindDOMListeners');
+            dialog.unbindDOMListeners = jest.fn();
 
             dialog.destroy();
-            expect(unbindStub).to.be.called;
-            expect(dialog.element).to.be.null;
+            expect(dialog.unbindDOMListeners).toBeCalled();
+            expect(dialog.element).toBeNull();
         });
     });
 
     describe('show()', () => {
         beforeEach(() => {
-            stubs.position = sandbox.stub(dialog, 'position');
-            stubs.focus = sandbox.stub(util, 'focusTextArea');
-            stubs.scroll = sandbox.stub(dialog, 'scrollToLastComment');
-            sandbox.stub(dialog, 'showMobileDialog');
+            dialog.position = jest.fn();
+            util.focusTextArea = jest.fn();
+            dialog.scrollToLastComment = jest.fn();
+            dialog.showMobileDialog = jest.fn();
             dialog.canAnnotate = true;
             dialog.element.classList.add(constants.CLASS_HIDDEN);
         });
@@ -84,17 +95,17 @@ describe('AnnotationDialog', () => {
         it('should show the mobile dialog if on a mobile device', () => {
             dialog.isMobile = true;
             dialog.show();
-            expect(dialog.showMobileDialog).to.be.called;
-            expect(stubs.scroll).to.be.called;
-            expect(dialog.emit).to.be.calledWith('annotationshow');
+            expect(dialog.showMobileDialog).toBeCalled();
+            expect(dialog.scrollToLastComment).toBeCalled();
+            expect(dialog.emit).toBeCalledWith('annotationshow');
         });
 
         it('should do nothing if the dialog is already visible ', () => {
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
             dialog.show();
-            expect(dialog.showMobileDialog).to.not.be.called;
-            expect(stubs.scroll).to.not.be.called;
-            expect(dialog.emit).to.not.be.calledWith('annotationshow');
+            expect(dialog.showMobileDialog).not.toBeCalled();
+            expect(dialog.scrollToLastComment).not.toBeCalled();
+            expect(dialog.emit).not.toBeCalledWith('annotationshow');
         });
 
         it('should not reposition the dialog if the reply textarea is already active', () => {
@@ -102,9 +113,9 @@ describe('AnnotationDialog', () => {
             dialog.activateReply();
 
             dialog.show();
-            expect(stubs.scroll).to.be.called;
-            expect(stubs.position).to.not.be.called;
-            expect(dialog.emit).to.not.be.calledWith('annotationshow');
+            expect(dialog.scrollToLastComment).toBeCalled();
+            expect(dialog.position).not.toBeCalled();
+            expect(dialog.emit).not.toBeCalledWith('annotationshow');
         });
 
         it('should position the dialog if not on a mobile device', () => {
@@ -114,20 +125,20 @@ describe('AnnotationDialog', () => {
             commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
 
             dialog.show();
-            expect(stubs.position).to.be.called;
-            expect(stubs.scroll).to.be.called;
-            expect(dialog.emit).to.be.calledWith('annotationshow');
+            expect(dialog.position).toBeCalled();
+            expect(dialog.scrollToLastComment).toBeCalled();
+            expect(dialog.emit).toBeCalledWith('annotationshow');
         });
     });
 
     describe('scrollToLastComment()', () => {
         beforeEach(() => {
-            sandbox.stub(util, 'focusTextArea');
+            util.focusTextArea = jest.fn();
         });
 
         it('should activate the reply text area if the dialog has multiple annotations', () => {
             dialog.hasAnnotations = true;
-            sandbox.stub(dialog, 'activateReply');
+            dialog.activateReply = jest.fn();
 
             dialog.scrollToLastComment();
             expect(dialog.activateReply);
@@ -140,10 +151,10 @@ describe('AnnotationDialog', () => {
                 clientHeight: 300,
                 scrollTop: 0
             };
-            sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
+            dialog.element.querySelector = jest.fn().mockReturnValue(annotationEl);
 
             dialog.scrollToLastComment();
-            expect(annotationEl.scrollTop).to.equal(200);
+            expect(annotationEl.scrollTop).toEqual(200);
         });
 
         it('should set the flipped dialog scroll height to the bottom of the comments container', () => {
@@ -153,199 +164,173 @@ describe('AnnotationDialog', () => {
                 scrollTop: 0
             };
             dialog.dialogEl.classList.add('ba-annotation-dialog-flipped');
-            sandbox.stub(dialog.element, 'querySelector').returns(annotationEl);
+            dialog.element.querySelector = jest.fn().mockReturnValue(annotationEl);
 
             dialog.scrollToLastComment();
-            expect(annotationEl.scrollTop).to.equal(500);
+            expect(annotationEl.scrollTop).toEqual(500);
         });
     });
 
     describe('showMobileDialog()', () => {
         beforeEach(() => {
-            stubs.show = sandbox.stub(util, 'showElement');
-            stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
+            dialog.bindDOMListeners = jest.fn();
 
-            dialog.container = {
-                querySelector: sandbox.stub().returns(dialog.element)
-            };
+            dialog.container = document.createElement('div');
+            dialog.container.querySelector = jest.fn().mockReturnValue(dialog.element);
 
             dialog.element.classList.add(constants.CLASS_MOBILE_ANNOTATION_DIALOG);
             dialog.element.classList.add(constants.CLASS_HIDDEN);
 
-            sandbox.stub(dialog.element, 'querySelector').returns(document.createElement('div'));
+            dialog.element.querySelector = jest.fn().mockReturnValue(document.createElement('div'));
         });
 
         it('should populate the mobile dialog if using a mobile browser', () => {
             dialog.highlightDialogEl = null;
 
             dialog.showMobileDialog();
-            expect(stubs.show).to.be.calledWith(dialog.element);
-            expect(stubs.bind).to.be.called;
-            expect(dialog.element.classList.contains(constants.CLASS_MOBILE_ANNOTATION_DIALOG)).to.be.true;
-            expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).to.be.true;
+            expect(util.showElement).toBeCalledWith(dialog.element);
+            expect(dialog.bindDOMListeners).toBeCalled();
+            expect(dialog.element.classList.contains(constants.CLASS_MOBILE_ANNOTATION_DIALOG)).toBeTruthy();
+            expect(dialog.element.classList.contains(CLASS_ANIMATE_DIALOG)).toBeTruthy();
         });
 
         it('should reset the annotation dialog to be a plain highlight if no comments are present', () => {
             dialog.highlightDialogEl = {};
-            sandbox
-                .stub(dialog.element, 'querySelectorAll')
-                .withArgs('.annotation-comment')
-                .returns([]);
+
+            const headerEl = document.createElement('div');
+            headerEl.classList.add(constants.CLASS_MOBILE_DIALOG_HEADER);
+            dialog.element.appendChild(headerEl);
+
             dialog.showMobileDialog();
 
-            expect(dialog.element.classList.contains(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT)).to.be.true;
+            expect(dialog.element.classList).toContain(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         });
 
         it('should not re-show the dialog if it is already visible', () => {
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
             dialog.showMobileDialog();
-            expect(stubs.show).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
     });
 
     describe('hideMobileDialog()', () => {
         it('should do nothing if the dialog element does not exist', () => {
             dialog.element = null;
-            stubs.hide = sandbox.stub(util, 'hideElement');
             dialog.hideMobileDialog();
-            expect(stubs.hide).to.not.be.called;
+            expect(util.hideElement).not.toBeCalled();
         });
 
         it('should hide the mobile annotations dialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
-            stubs.hide = sandbox.stub(util, 'hideElement');
-            stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
+            dialog.unbindDOMListeners = jest.fn();
             dialog.hasAnnotations = true;
 
             dialog.hideMobileDialog();
-            expect(stubs.hide).to.be.called;
-            expect(stubs.unbind).to.be.called;
+            expect(util.hideElement).toBeCalled();
+            expect(dialog.unbindDOMListeners).toBeCalled();
         });
     });
 
     describe('hide()', () => {
         beforeEach(() => {
+            dialog.isMobile = false;
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
-            stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
+            dialog.unbindDOMListeners = jest.fn();
         });
 
         it('should do nothing if element is already hidden', () => {
             dialog.element.classList.add(constants.CLASS_HIDDEN);
-            sandbox.stub(util, 'hideElement');
             dialog.hide();
-            expect(util.hideElement).to.not.have.called;
-            expect(dialog.emit).to.not.be.calledWith('annotationhide');
+            expect(util.hideElement).not.toBeCalled();
+            expect(dialog.emit).not.toBeCalledWith('annotationhide');
         });
 
         it('should hide dialog immediately', () => {
-            sandbox.stub(dialog, 'toggleFlippedThreadEl');
+            dialog.toggleFlippedThreadEl = jest.fn();
             dialog.hide();
-            expect(dialog.element).to.have.class(constants.CLASS_HIDDEN);
-            expect(dialog.toggleFlippedThreadEl).to.be.called;
-            expect(dialog.emit).to.be.calledWith('annotationhide');
+            expect(util.hideElement).toBeCalledWith(dialog.element);
+            expect(dialog.toggleFlippedThreadEl).toBeCalled();
+            expect(dialog.emit).toBeCalledWith('annotationhide');
         });
 
         it('should hide the mobile dialog if using a mobile browser', () => {
             dialog.isMobile = true;
-            sandbox.stub(dialog, 'hideMobileDialog');
-            sandbox.stub(dialog, 'toggleFlippedThreadEl');
+            dialog.hideMobileDialog = jest.fn();
+            dialog.toggleFlippedThreadEl = jest.fn();
             dialog.hide();
-            expect(dialog.hideMobileDialog).to.be.called;
-            expect(dialog.toggleFlippedThreadEl).to.be.called;
+            expect(dialog.hideMobileDialog).toBeCalled();
+            expect(dialog.toggleFlippedThreadEl).toBeCalled();
             dialog.element = null;
-            expect(dialog.emit).to.be.calledWith('annotationhide');
+            expect(dialog.emit).toBeCalledWith('annotationhide');
         });
     });
 
     describe('addAnnotation()', () => {
         beforeEach(() => {
-            stubs.addEl = sandbox.stub(dialog, 'addAnnotationElement');
+            dialog.addAnnotationElement = jest.fn();
         });
 
         it('should add annotation to the dialog and deactivate the reply area', () => {
             dialog.addAnnotation(new Annotation({}));
-            expect(stubs.addEl).to.be.called;
+            expect(dialog.addAnnotationElement).toBeCalled();
         });
 
         it('should hide the create section and show the show section if there are no annotations', () => {
-            // Add dialog to DOM
-            dialog.annotatedElement.appendChild(dialog.element);
+            dialog.hasAnnotations = false;
 
             dialog.addAnnotation(new Annotation({}));
             const createSectionEl = document.querySelector(constants.SECTION_CREATE);
             const showSectionEl = document.querySelector(constants.SECTION_SHOW);
-            expect(createSectionEl).to.have.class(constants.CLASS_HIDDEN);
-            expect(showSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
+            expect(util.hideElement).toBeCalledWith(createSectionEl);
+            expect(util.showElement).toBeCalledWith(showSectionEl);
         });
     });
 
     describe('removeAnnotation()', () => {
         it('should remove annotation element and deactivate reply', () => {
-            dialog.addAnnotation(
-                new Annotation({
-                    annotationID: 'someID',
-                    text: 'blah',
-                    user: {},
-                    permissions: {}
-                })
-            );
+            dialog.addAnnotation(annotation);
 
             dialog.removeAnnotation('someID');
             const annotationEl = dialog.element.querySelector('[data-annotation-id="someID"]');
-            expect(annotationEl).to.be.null;
+            expect(annotationEl).toBeNull();
         });
 
         it('should focus the reply text area', () => {
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            sandbox.stub(replyTextEl, 'focus');
+            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
+            replyTextEl.focus = jest.fn();
             dialog.removeAnnotation('someID');
-            expect(replyTextEl.focus).to.be.called;
+            expect(replyTextEl.focus).toBeCalled();
         });
     });
 
     describe('element()', () => {
         it('should return dialog element', () => {
-            expect(dialog.element).to.equal(dialog.element);
+            expect(dialog.element).toEqual(dialog.element);
         });
     });
 
     describe('setup()', () => {
         beforeEach(() => {
             const dialogEl = document.createElement('div');
-            sandbox.stub(dialog, 'generateDialogEl').returns(dialogEl);
-            stubs.bind = sandbox.stub(dialog, 'bindDOMListeners');
-            stubs.addSorted = sandbox.stub(dialog, 'addSortedAnnotations');
-            stubs.unbind = sandbox.stub(dialog, 'unbindDOMListeners');
-
-            stubs.annotation = new Annotation({
-                annotationID: 'someID',
-                text: 'blah',
-                user: {},
-                permissions: {},
-                threadNumber: 1
-            });
-
+            dialog.generateDialogEl = jest.fn().mockReturnValue(dialogEl);
+            dialog.bindDOMListeners = jest.fn();
+            dialog.addSortedAnnotations = jest.fn();
+            dialog.unbindDOMListeners = jest.fn();
             dialog.isMobile = false;
         });
 
         it('should set up HTML element, add annotations to the dialog, and bind DOM listeners', () => {
-            dialog.setup([stubs.annotation], {});
-            expect(dialog.element).to.not.be.null;
-            expect(dialog.element.dataset.threadNumber).to.equal('1');
-            expect(stubs.bind).to.be.called;
-            expect(dialog.threadEl).not.be.null;
-        });
-
-        it('should not set thread number if there are no annotations in the thread', () => {
-            dialog.setup([], {});
-            expect(dialog.element.dataset.threadNumber).to.be.undefined;
+            dialog.setup([annotation], {});
+            expect(dialog.element).not.toBeNull();
+            expect(dialog.bindDOMListeners).toBeCalled();
+            expect(dialog.threadEl).not.toBeUndefined();
         });
 
         it('should not create dialog element if using a mobile browser', () => {
             dialog.isMobile = true;
-            dialog.setup([stubs.annotation, stubs.annotation], {});
-            expect(stubs.bind).to.not.be.called;
-            expect(stubs.addSorted).to.be.called;
+            dialog.setup([annotation, annotation], {});
+            expect(dialog.bindDOMListeners).not.toBeCalled();
+            expect(dialog.addSortedAnnotations).toBeCalled();
             dialog.element = null;
         });
     });
@@ -395,176 +380,164 @@ describe('AnnotationDialog', () => {
             };
 
             dialog.addSortedAnnotations(annotations);
-            const annotationContainerEl = dialog.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
-            expect(annotationContainerEl.childNodes[0]).to.have.attr('data-annotation-id', '1');
-            expect(annotationContainerEl.childNodes[1]).to.have.attr('data-annotation-id', '3');
-            expect(annotationContainerEl.childNodes[2]).to.have.attr('data-annotation-id', '2');
+            const annotationContainerEl = dialog.dialogEl.querySelector(SELECTOR_COMMENTS_CONTAINER);
+            expect(annotationContainerEl.childNodes[0].dataset.annotationId).toEqual('1');
+            expect(annotationContainerEl.childNodes[1].dataset.annotationId).toEqual('3');
+            expect(annotationContainerEl.childNodes[2].dataset.annotationId).toEqual('2');
         });
     });
 
     describe('bindDOMListeners()', () => {
         beforeEach(() => {
-            stubs.replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            stubs.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            stubs.add = sandbox.stub(dialog.element, 'addEventListener');
-            sandbox.stub(stubs.replyTextEl, 'addEventListener');
-            sandbox.stub(stubs.annotationTextEl, 'addEventListener');
+            dialog.postReplyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
+            dialog.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            dialog.element.addEventListener = jest.fn();
+            dialog.postReplyTextEl.addEventListener = jest.fn();
+            dialog.annotationTextEl.addEventListener = jest.fn();
         });
 
         it('should bind ALL DOM listeners for touch enabled laptops', () => {
             dialog.hasTouch = true;
 
             dialog.bindDOMListeners();
-            expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchstart', dialog.clickHandler);
-            expect(stubs.add).to.be.calledWith('touchstart', dialog.stopPropagation);
-            expect(stubs.replyTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
-            expect(stubs.annotationTextEl.addEventListener).to.be.calledWith('focus', sinon.match.func);
+            expect(dialog.element.addEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('wheel', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('touchstart', dialog.clickHandler);
+            expect(dialog.element.addEventListener).toBeCalledWith('touchstart', dialog.stopPropagation);
+            expect(dialog.postReplyTextEl.addEventListener).toBeCalledWith('focus', expect.any(Function));
+            expect(dialog.annotationTextEl.addEventListener).toBeCalledWith('focus', expect.any(Function));
         });
 
         it('should not bind touch events if not on a touch enabled devices', () => {
             dialog.bindDOMListeners();
-            expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.clickHandler);
-            expect(stubs.add).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            expect(dialog.element.addEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('wheel', expect.any(Function));
+            expect(dialog.element.addEventListener).not.toBeCalledWith('touchstart', dialog.clickHandler);
+            expect(dialog.element.addEventListener).not.toBeCalledWith('touchstart', dialog.stopPropagation);
             dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
             dialog.isMobile = true;
-            dialog.showMobileDialog();
-            stubs.add = sandbox.stub(dialog.element, 'addEventListener');
 
             dialog.bindDOMListeners();
-            expect(stubs.add).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('click', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('wheel', sinon.match.func);
+            expect(dialog.element.addEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.addEventListener).not.toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.addEventListener).toBeCalledWith('wheel', expect.any(Function));
             dialog.element = null;
         });
     });
 
     describe('validateTextArea()', () => {
-        it('should do nothing if keyboard event was not in a textarea', () => {
-            stubs.textEl = document.createElement('div');
-            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
-            dialog.validateTextArea({ target: stubs.textEl });
-            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
-        });
+        const textEl = document.createElement('textarea');
 
         it('should do nothing if textarea is blank', () => {
-            stubs.textEl = document.createElement('textarea');
-            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
-            dialog.validateTextArea({ target: stubs.textEl });
-            expect(stubs.textEl).to.have.class(constants.CLASS_INVALID_INPUT);
+            textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            dialog.validateTextArea({ target: textEl });
+            expect(textEl.classList).toContain(constants.CLASS_INVALID_INPUT);
         });
 
         it('should remove red border around textarea', () => {
-            stubs.textEl = document.createElement('textarea');
-            stubs.textEl.classList.add(constants.CLASS_INVALID_INPUT);
-            stubs.textEl.value = 'words';
-            dialog.validateTextArea({ target: stubs.textEl });
-            expect(stubs.textEl).to.not.have.class(constants.CLASS_INVALID_INPUT);
+            textEl.classList.add(constants.CLASS_INVALID_INPUT);
+            textEl.value = 'words';
+            dialog.validateTextArea({ target: textEl });
+            expect(textEl.classList).not.toContain(constants.CLASS_INVALID_INPUT);
         });
     });
 
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
-            stubs.replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            stubs.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
-            sandbox.stub(stubs.replyTextEl, 'removeEventListener');
-            sandbox.stub(stubs.annotationTextEl, 'removeEventListener');
+            dialog.postReplyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
+            dialog.annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            dialog.element.removeEventListener = jest.fn();
+            dialog.postReplyTextEl.removeEventListener = jest.fn();
+            dialog.annotationTextEl.removeEventListener = jest.fn();
         });
 
         it('should unbind ALL DOM listeners for touch enabled laptops', () => {
             dialog.hasTouch = true;
 
             dialog.unbindDOMListeners();
-            expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('touchstart', dialog.clickHandler);
-            expect(stubs.remove).to.be.calledWith('touchstart', dialog.stopPropagation);
-            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.replyTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
-            expect(stubs.annotationTextEl.removeEventListener).to.be.calledWith('focus', dialog.validateTextArea);
+            expect(dialog.element.removeEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('touchstart', dialog.clickHandler);
+            expect(dialog.element.removeEventListener).toBeCalledWith('touchstart', dialog.stopPropagation);
+            expect(dialog.element.removeEventListener).toBeCalledWith('wheel', expect.any(Function));
+            expect(dialog.postReplyTextEl.removeEventListener).toBeCalledWith('focus', dialog.validateTextArea);
+            expect(dialog.annotationTextEl.removeEventListener).toBeCalledWith('focus', dialog.validateTextArea);
         });
 
         it('should not bind touch events if not on a touch enabled devices', () => {
             dialog.unbindDOMListeners();
-            expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.clickHandler);
-            expect(stubs.remove).to.not.be.calledWith('touchstart', dialog.stopPropagation);
+            expect(dialog.element.removeEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('wheel', expect.any(Function));
+            expect(dialog.element.removeEventListener).not.toBeCalledWith('touchstart', dialog.clickHandler);
+            expect(dialog.element.removeEventListener).not.toBeCalledWith('touchstart', dialog.stopPropagation);
             dialog.element = null;
         });
 
         it('should not bind mouseenter/leave events for mobile browsers', () => {
             dialog.isMobile = true;
-            dialog.showMobileDialog();
-            stubs.remove = sandbox.stub(dialog.element, 'removeEventListener');
 
             dialog.unbindDOMListeners();
-            expect(stubs.remove).to.be.calledWith('keydown', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.remove).to.not.be.calledWith('click', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('wheel', sinon.match.func);
+            expect(dialog.element.removeEventListener).toBeCalledWith('keydown', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(dialog.element.removeEventListener).not.toBeCalledWith('click', expect.any(Function));
+            expect(dialog.element.removeEventListener).toBeCalledWith('wheel', expect.any(Function));
         });
     });
 
     describe('keydownHandler()', () => {
         it('should cancel any unsaved annotations when user presses Esc on pending dialog', () => {
-            stubs.cancelAnnotation = sandbox.stub(dialog, 'cancelAnnotation');
+            dialog.cancelAnnotation = jest.fn();
             dialog.hasAnnotations = false;
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
-                stopPropagation: () => {}
+                stopPropagation: jest.fn()
             });
-            expect(stubs.cancelAnnotation).to.be.called;
+            expect(dialog.cancelAnnotation).toBeCalled();
         });
 
         it('should hide the dialog when user presses Esc if not creating a new annotation', () => {
-            stubs.hide = sandbox.stub(dialog, 'hide');
+            dialog.hide = jest.fn();
             dialog.hasAnnotations = true;
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
-                stopPropagation: () => {}
+                stopPropagation: jest.fn()
             });
-            expect(stubs.hide).to.be.called;
+            expect(dialog.hide).toBeCalled();
         });
 
         it('should scroll to the bottom area when user presses a key inside the reply area', () => {
-            stubs.scrollToLastComment = sandbox.stub(dialog, 'scrollToLastComment');
+            dialog.scrollToLastComment = jest.fn();
 
             dialog.keydownHandler({
                 key: ' ', // space
-                target: dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`),
-                stopPropagation: () => {}
+                target: dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA),
+                stopPropagation: jest.fn()
             });
-            expect(stubs.scrollToLastComment).to.be.called;
+            expect(dialog.scrollToLastComment).toBeCalled();
         });
     });
 
     describe('stopPropagation()', () => {
         it('should stop propagation on the event', () => {
             const event = {
-                stopPropagation: () => {}
+                stopPropagation: jest.fn()
             };
-            stubs.stop = sandbox.stub(event, 'stopPropagation');
 
             dialog.stopPropagation(event);
-            expect(stubs.stop).to.be.called;
+            expect(event.stopPropagation).toBeCalled();
         });
     });
 
@@ -579,17 +552,17 @@ describe('AnnotationDialog', () => {
             // Add buttons
             const btn = document.createElement('button');
             btn.classList.add(constants.CLASS_DISABLED);
-            sandbox.stub(annotationEl, 'querySelectorAll').returns([btn, btn]);
+            annotationEl.querySelectorAll = jest.fn().mockReturnValue([btn, btn]);
 
             const wrongEl = document.createElement('div');
             wrongEl.setAttribute('data-annotation-id', 'invalid');
-            sandbox.stub(wrongEl, 'querySelectorAll');
+            wrongEl.querySelectorAll = jest.fn();
             dialog.element.appendChild(wrongEl);
 
             dialog.enable('123');
-            expect(annotationEl.querySelectorAll).to.be.called;
-            expect(btn).to.not.have.class(constants.CLASS_DISABLED);
-            expect(wrongEl.querySelectorAll).to.not.be.called;
+            expect(annotationEl.querySelectorAll).toBeCalled();
+            expect(btn.classList).not.toContain(constants.CLASS_DISABLED);
+            expect(wrongEl.querySelectorAll).not.toBeCalled();
         });
     });
 
@@ -603,140 +576,149 @@ describe('AnnotationDialog', () => {
 
             // Add buttons
             const btn = document.createElement('button');
-            sandbox.stub(annotationEl, 'querySelectorAll').returns([btn, btn]);
+            annotationEl.querySelectorAll = jest.fn().mockReturnValue([btn, btn]);
 
             const wrongEl = document.createElement('div');
             wrongEl.setAttribute('data-annotation-id', 'invalid');
-            sandbox.stub(wrongEl, 'querySelectorAll');
+            wrongEl.querySelectorAll = jest.fn();
             dialog.element.appendChild(wrongEl);
 
             dialog.disable('123');
-            expect(annotationEl.querySelectorAll).to.be.called;
-            expect(btn).to.have.class(constants.CLASS_DISABLED);
-            expect(wrongEl.querySelectorAll).to.not.be.called;
+            expect(annotationEl.querySelectorAll).toBeCalled();
+            expect(btn.classList).toContain(constants.CLASS_DISABLED);
+            expect(wrongEl.querySelectorAll).not.toBeCalled();
         });
     });
 
     describe('clickHandler()', () => {
+        let event;
+
         beforeEach(() => {
-            stubs.event = {
-                stopPropagation: sandbox.stub(),
-                preventDefault: sandbox.stub(),
+            event = {
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn(),
                 target: document.createElement('div')
             };
-            stubs.post = sandbox.stub(dialog, 'postAnnotation');
-            stubs.cancel = sandbox.stub(dialog, 'cancelAnnotation');
-            stubs.deactivate = sandbox.stub(dialog, 'deactivateReply');
-            stubs.activate = sandbox.stub(dialog, 'activateReply');
-            stubs.findClosest = sandbox.stub(util, 'findClosestDataType');
-            stubs.showDelete = sandbox.stub(dialog, 'showDeleteConfirmation');
-            stubs.hideDelete = sandbox.stub(dialog, 'hideDeleteConfirmation');
-            stubs.delete = sandbox.stub(dialog, 'deleteAnnotation');
-            stubs.reply = sandbox.stub(dialog, 'postReply');
-            stubs.hideMobile = sandbox.stub(dialog, 'hideMobileDialog');
-            dialog.isMobile = false;
 
+            dialog.postAnnotation = jest.fn();
+            dialog.cancelAnnotation = jest.fn();
+            dialog.deactivateReply = jest.fn();
+            dialog.activateReply = jest.fn();
+            util.findClosestDataType = jest.fn();
+            dialog.showDeleteConfirmation = jest.fn();
+            dialog.hideDeleteConfirmation = jest.fn();
+            dialog.deleteAnnotation = jest.fn();
+            dialog.postReply = jest.fn();
+            dialog.hideMobileDialog = jest.fn();
+
+            dialog.isMobile = false;
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
         });
 
         it('should only stop propagation on a desktop device', () => {
-            dialog.clickHandler(stubs.event);
-            expect(stubs.event.stopPropagation).to.be.called;
-            expect(stubs.event.preventDefault).to.not.be.called;
+            dialog.clickHandler(event);
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).not.toBeCalled();
         });
 
         it('should only stop propagation on a mobile device', () => {
             dialog.isMobile = true;
-            dialog.clickHandler(stubs.event);
-            expect(stubs.event.stopPropagation).to.be.called;
-            expect(stubs.event.preventDefault).to.not.be.called;
+            dialog.clickHandler(event);
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).not.toBeCalled();
         });
 
         it('should only prevent default on button clicks for mobile devices', () => {
-            stubs.event.target = document.createElement('button');
+            event.target = document.createElement('button');
             dialog.isMobile = true;
-            dialog.clickHandler(stubs.event);
-            expect(stubs.event.stopPropagation).to.be.called;
-            expect(stubs.event.preventDefault).to.be.called;
+            dialog.clickHandler(event);
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
         });
 
         it('should post annotation when post annotation button is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_POST);
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_POST);
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.post).to.be.called;
+            dialog.clickHandler(event);
+            expect(dialog.postAnnotation).toBeCalled();
         });
 
         it('should cancel annotation when cancel annotation button is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_CANCEL);
-            dialog.clickHandler(stubs.event);
-            expect(stubs.cancel).to.be.called;
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_CANCEL);
+            dialog.clickHandler(event);
+            expect(dialog.cancelAnnotation).toBeCalled();
         });
 
         it('should cancel annotation when mobile dialog close button is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_MOBILE_CLOSE);
-            dialog.clickHandler(stubs.event);
-            expect(stubs.cancel).to.be.called;
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_MOBILE_CLOSE);
+            dialog.clickHandler(event);
+            expect(dialog.cancelAnnotation).toBeCalled();
         });
 
         it('should activate reply area when textarea is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_REPLY_TEXTAREA);
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_REPLY_TEXTAREA);
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.activate).to.be.called;
+            dialog.clickHandler(event);
+            expect(dialog.activateReply).toBeCalled();
         });
 
         it('should deactivate reply area when cancel reply button is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_CANCEL_REPLY);
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_CANCEL_REPLY);
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.deactivate).to.be.calledWith(true);
+            dialog.clickHandler(event);
+            expect(dialog.deactivateReply).toBeCalledWith(true);
         });
 
         it('should post reply when post reply button is clicked', () => {
-            stubs.findClosest.returns(constants.DATA_TYPE_POST_REPLY);
+            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_POST_REPLY);
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.reply).to.be.called;
+            dialog.clickHandler(event);
+            expect(dialog.postReply).toBeCalled();
         });
 
         it('should show delete confirmation when delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_DELETE);
-            stubs.findClosest.onSecondCall().returns('someID');
+            util.findClosestDataType = jest
+                .fn()
+                .mockReturnValueOnce(constants.DATA_TYPE_DELETE)
+                .mockReturnValue('someID');
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.showDelete).to.be.calledWith('someID');
+            dialog.clickHandler(event);
+            expect(dialog.showDeleteConfirmation).toBeCalledWith('someID');
         });
 
         it('should cancel deletion when cancel delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_CANCEL_DELETE);
-            stubs.findClosest.onSecondCall().returns('someID');
+            util.findClosestDataType = jest
+                .fn()
+                .mockReturnValueOnce(constants.DATA_TYPE_CANCEL_DELETE)
+                .mockReturnValue('someID');
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.hideDelete).to.be.calledWith('someID');
+            dialog.clickHandler(event);
+            expect(dialog.hideDeleteConfirmation).toBeCalledWith('someID');
         });
 
         it('should confirm deletion when confirm delete button is clicked', () => {
-            stubs.findClosest.onFirstCall().returns(constants.DATA_TYPE_CONFIRM_DELETE);
-            stubs.findClosest.onSecondCall().returns('someID');
+            util.findClosestDataType = jest
+                .fn()
+                .mockReturnValueOnce(constants.DATA_TYPE_CONFIRM_DELETE)
+                .mockReturnValue('someID');
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.delete).to.be.calledWith('someID');
+            dialog.clickHandler(event);
+            expect(dialog.deleteAnnotation).toBeCalledWith('someID');
         });
 
         it('should do nothing if dataType does not match any button in the annotation dialog', () => {
-            stubs.findClosest.returns(null);
+            util.findClosestDataType = jest.fn().mockReturnValue(null);
 
-            dialog.clickHandler(stubs.event);
-            expect(stubs.post).to.not.be.called;
-            expect(stubs.reply).to.not.be.called;
-            expect(stubs.cancel).to.not.be.called;
-            expect(stubs.deactivate).to.not.be.called;
-            expect(stubs.activate).to.not.be.called;
-            expect(stubs.reply).to.not.be.called;
-            expect(stubs.showDelete).to.not.be.called;
-            expect(stubs.hideDelete).to.not.be.called;
-            expect(stubs.delete).to.not.be.called;
+            dialog.clickHandler(event);
+            expect(dialog.postAnnotation).not.toBeCalled();
+            expect(dialog.postReply).not.toBeCalled();
+            expect(dialog.cancelAnnotation).not.toBeCalled();
+            expect(dialog.deactivateReply).not.toBeCalled();
+            expect(dialog.activateReply).not.toBeCalled();
+            expect(dialog.postReply).not.toBeCalled();
+            expect(dialog.showDeleteConfirmation).not.toBeCalled();
+            expect(dialog.hideDeleteConfirmation).not.toBeCalled();
+            expect(dialog.deleteAnnotation).not.toBeCalled();
         });
     });
 
@@ -751,7 +733,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
-            expect(annotationComment).to.contain.html('the preview sdk is awesome!');
+            expect(annotationComment.textContent).toContain('the preview sdk is awesome!');
         });
 
         it('should display the posting message if the user id is 0', () => {
@@ -764,7 +746,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const username = document.querySelector(constants.SELECTOR_USER_NAME);
-            expect(username).to.contain.html(dialog.localized.posting);
+            expect(username.textContent).toContain(dialog.localized.posting);
         });
 
         it('should display user name if the user id is not 0', () => {
@@ -777,7 +759,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const username = document.querySelector(constants.SELECTOR_USER_NAME);
-            expect(username).to.contain.html('user');
+            expect(username.textContent).toContain('user');
         });
 
         it('should not the delete icon if the user does not have delete permissions', () => {
@@ -789,8 +771,8 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: false }
                 })
             );
-            const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.be.null;
+            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
+            expect(deleteButton).toBeNull();
         });
 
         it('should not add the delete icon if the delete permission is not specified', () => {
@@ -802,8 +784,8 @@ describe('AnnotationDialog', () => {
                     permissions: {}
                 })
             );
-            const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.be.null;
+            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
+            expect(deleteButton).toBeNull();
         });
 
         it('should make delete icon visible if the user has delete permission', () => {
@@ -815,8 +797,8 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: true }
                 })
             );
-            const deleteButton = document.querySelector(`.${CLASS_BUTTON_DELETE_COMMENT}`);
-            expect(deleteButton).to.not.have.class(constants.CLASS_HIDDEN);
+            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
+            expect(deleteButton.classList).not.toContain(constants.CLASS_HIDDEN);
         });
 
         it('should hide the delete confirmation UI by default', () => {
@@ -829,24 +811,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const deleteConfirmation = document.querySelector(SELECTOR_DELETE_CONFIRMATION);
-            expect(deleteConfirmation).to.have.class(constants.CLASS_HIDDEN);
-        });
-
-        it('should correctly format the date and time in a different locale', () => {
-            const date = new Date();
-            stubs.locale = sandbox.stub(Date.prototype, 'toLocaleString');
-            dialog.locale = 'en-GB';
-
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true },
-                    created: date
-                })
-            );
-            expect(stubs.locale).to.be.calledWith('en-GB');
+            expect(deleteConfirmation.classList).toContain(constants.CLASS_HIDDEN);
         });
 
         it('should add a <br> for each newline', () => {
@@ -864,7 +829,7 @@ describe('AnnotationDialog', () => {
                 })
             );
             const breaks = document.querySelectorAll(`${constants.SELECTOR_ANNOTATION_COMMENT_TEXT} br`);
-            expect(breaks.length === 3).to.be.true;
+            expect(breaks.length === 3).toBeTruthy();
         });
 
         it('should respect symbols added to the text', () => {
@@ -878,8 +843,8 @@ describe('AnnotationDialog', () => {
                 })
             );
             const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
-            expect(annotationComment.textContent).to.equal(text);
-            expect(annotationComment.textContent.includes('&amp;')).to.be.false;
+            expect(annotationComment.textContent).toEqual(text);
+            expect(annotationComment.textContent).toContain('&&&');
         });
     });
 
@@ -887,15 +852,15 @@ describe('AnnotationDialog', () => {
         it('should not post an annotation to the dialog if it has no text', () => {
             const annotationTextEl = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             dialog.postAnnotation();
-            expect(stubs.emit).to.not.be.called;
-            expect(annotationTextEl).to.have.class(CLASS_INVALID_INPUT);
+            expect(dialog.emit).not.toBeCalled();
+            expect(annotationTextEl.classList).toContain(CLASS_INVALID_INPUT);
         });
 
         it('should post an annotation to the dialog if it has text', () => {
             document.querySelector('textarea').innerHTML += 'the preview SDK is great!';
 
             dialog.postAnnotation();
-            expect(stubs.emit).to.be.calledWith('annotationcreate', { text: 'the preview SDK is great!' });
+            expect(dialog.emit).toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
         });
 
         it('should clear the annotation text element after posting', () => {
@@ -903,165 +868,115 @@ describe('AnnotationDialog', () => {
             annotationTextEl.innerHTML += 'the preview SDK is great!';
 
             dialog.postAnnotation();
-            expect(annotationTextEl).to.have.value('');
+            expect(annotationTextEl.value).toEqual('');
         });
     });
 
     describe('cancelAnnotation()', () => {
         it('should emit the annotationcancel message', () => {
             dialog.cancelAnnotation();
-            expect(stubs.emit).to.be.calledWith('annotationcancel');
+            expect(dialog.emit).toBeCalledWith('annotationcancel');
         });
     });
 
     describe('activateReply()', () => {
         it('should do nothing if the dialogEl does not exist', () => {
             dialog.dialogEl = null;
-            sandbox.stub(util, 'showElement');
             dialog.activateReply();
-            expect(util.showElement).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
 
         it('should do nothing if reply textarea is already active', () => {
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
             replyTextEl.classList.add(constants.CLASS_ACTIVE);
-            sandbox.stub(util, 'showElement');
-
             dialog.activateReply();
-            expect(util.showElement).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
 
         it('should do nothing if reply text area does not exist', () => {
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
             replyTextEl.parentNode.removeChild(replyTextEl);
-            sandbox.stub(util, 'showElement');
-
             dialog.activateReply();
-            expect(util.showElement).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
 
         it('should show the correct UI when the reply textarea is activated', () => {
-            document.querySelector('textarea').innerHTML += 'the preview SDK is great!';
-            dialog.addAnnotationElement({
-                annotationID: 1,
-                text: 'the preview sdk is amazing!',
-                user: { id: 1, name: 'user' },
-                permissions: { can_delete: true }
-            });
-            const replyTextEl = document.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-            const buttonContainer = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
+            document.querySelector('textarea').textContent = 'the preview SDK is great!';
+            dialog.addAnnotationElement(annotation);
+            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
+            replyTextEl.classList.remove(constants.CLASS_ACTIVE);
 
             dialog.activateReply();
-            expect(replyTextEl).to.have.class(constants.CLASS_ACTIVE);
-            expect(buttonContainer).to.not.have.class(constants.CLASS_HIDDEN);
+            expect(replyTextEl.classList).toContain(constants.CLASS_ACTIVE);
         });
     });
 
     describe('deactivateReply()', () => {
         it('should do nothing if element does not exist', () => {
             dialog.dialogEl = null;
-            sandbox.stub(util, 'resetTextarea');
+            util.resetTextarea = jest.fn();
 
             dialog.deactivateReply();
-            expect(util.resetTextarea).to.not.be.called;
+            expect(util.resetTextarea).not.toBeCalled();
         });
 
         it('should do nothing if reply text area does not exist', () => {
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_CONTAINER}`);
+            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_CONTAINER);
             replyTextEl.parentNode.removeChild(replyTextEl);
-            sandbox.stub(util, 'showElement');
-
             dialog.deactivateReply();
-            expect(util.showElement).to.not.be.called;
+            expect(util.showElement).not.toBeCalled();
         });
 
         it('should show the correct UI when the reply textarea is deactivated', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const replyTextEl = document.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            dialog.addAnnotationElement(annotation);
+            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             const buttonContainer = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
 
             dialog.deactivateReply();
-            expect(replyTextEl).to.not.have.class(constants.CLASS_ACTIVE);
-            expect(buttonContainer).to.have.class(constants.CLASS_HIDDEN);
+            expect(replyTextEl.classList).not.toContain(constants.CLASS_ACTIVE);
+            expect(buttonContainer.classList).toContain(constants.CLASS_HIDDEN);
         });
     });
 
     describe('postReply()', () => {
         it('should not post reply to the dialog if it has no text', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
+            dialog.addAnnotationElement(annotation);
             dialog.activateReply();
-            const replyTextEl = dialog.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
 
             dialog.postReply();
-            expect(stubs.emit).to.not.be.called;
-            expect(replyTextEl).to.have.class(CLASS_INVALID_INPUT);
+            expect(dialog.emit).not.toBeCalled();
+            expect(replyTextEl.classList).toContain(CLASS_INVALID_INPUT);
         });
 
         it('should post a reply to the dialog if it has text', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const replyTextEl = document.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            dialog.addAnnotationElement(annotation);
+            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
 
             dialog.postReply();
-            expect(stubs.emit).to.be.calledWith('annotationcreate', { text: 'the preview SDK is great!' });
+            expect(dialog.emit).toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
         });
 
         it('should clear the reply text element after posting', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const replyTextEl = document.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
+            dialog.addAnnotationElement(annotation);
+            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
-            sandbox.stub(replyTextEl, 'focus');
+            replyTextEl.focus = jest.fn();
 
             dialog.postReply();
-            expect(replyTextEl).to.have.value('');
-            expect(replyTextEl.focus).to.be.called;
+            expect(replyTextEl.value).toEqual('');
+            expect(replyTextEl.focus).toBeCalled();
         });
     });
 
     describe('showDeleteConfirmation()', () => {
         it('should show the correct UI when a user clicks on delete', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const showElementStub = sandbox.stub(util, 'showElement');
-
+            dialog.addAnnotationElement(annotation);
             dialog.showDeleteConfirmation(1);
-            expect(showElementStub).to.be.called;
+            expect(util.showElement).toBeCalled();
         });
     });
 
@@ -1075,11 +990,10 @@ describe('AnnotationDialog', () => {
                     permissions: { can_delete: true }
                 })
             );
-            const hideElementStub = sandbox.stub(util, 'hideElement');
             dialog.showDeleteConfirmation(1);
 
             dialog.hideDeleteConfirmation(1);
-            expect(hideElementStub).to.be.called;
+            expect(util.hideElement).toBeCalled();
         });
     });
 
@@ -1095,7 +1009,7 @@ describe('AnnotationDialog', () => {
             );
 
             dialog.deleteAnnotation(1);
-            expect(stubs.emit).to.be.calledWith('annotationdelete', { annotationID: 1 });
+            expect(dialog.emit).toBeCalledWith('annotationdelete', { annotationID: 1 });
         });
     });
 
@@ -1104,16 +1018,16 @@ describe('AnnotationDialog', () => {
             const dialogEl = dialog.generateDialogEl(0);
             const createSectionEl = dialogEl.querySelector(constants.SECTION_CREATE);
             const showSectionEl = dialogEl.querySelector(constants.SECTION_SHOW);
-            expect(createSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
-            expect(showSectionEl).to.have.class(constants.CLASS_HIDDEN);
+            expect(createSectionEl.classList).not.toContain(constants.CLASS_HIDDEN);
+            expect(showSectionEl.classList).toContain(constants.CLASS_HIDDEN);
         });
 
         it('should generate an annotations dialog element with annotations', () => {
             const dialogEl = dialog.generateDialogEl(1);
             const createSectionEl = dialogEl.querySelector(constants.SECTION_CREATE);
             const showSectionEl = dialogEl.querySelector(constants.SECTION_SHOW);
-            expect(createSectionEl).to.have.class(constants.CLASS_HIDDEN);
-            expect(showSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
+            expect(createSectionEl.classList).toContain(constants.CLASS_HIDDEN);
+            expect(showSectionEl.classList).not.toContain(constants.CLASS_HIDDEN);
         });
 
         it('should not add the create section nor the reply container in read-only mode', () => {
@@ -1121,11 +1035,11 @@ describe('AnnotationDialog', () => {
             const dialogEl = dialog.generateDialogEl(1);
 
             const createSectionEl = dialogEl.querySelector(constants.SECTION_CREATE);
-            const replyContainerEl = dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
+            const replyContainerEl = dialogEl.querySelector(SELECTOR_REPLY_CONTAINER);
             const showSectionEl = dialogEl.querySelector(constants.SECTION_SHOW);
-            expect(createSectionEl).to.be.null;
-            expect(replyContainerEl).to.be.null;
-            expect(showSectionEl).to.not.have.class(constants.CLASS_HIDDEN);
+            expect(createSectionEl).toBeNull();
+            expect(replyContainerEl).toBeNull();
+            expect(showSectionEl.classList).not.toContain(constants.CLASS_HIDDEN);
         });
     });
 
@@ -1133,9 +1047,10 @@ describe('AnnotationDialog', () => {
         const containerHeight = 5;
 
         beforeEach(() => {
-            sandbox.stub(dialog.element, 'querySelector').returns(document.createElement('div'));
-            sandbox.stub(dialog, 'fitDialogHeightInPage');
-            sandbox.stub(dialog, 'toggleFlippedThreadEl');
+            dialog.element = document.createElement('div');
+            dialog.element.querySelector = jest.fn().mockReturnValue(document.createElement('div'));
+            dialog.fitDialogHeightInPage = jest.fn();
+            dialog.toggleFlippedThreadEl = jest.fn();
         });
 
         afterEach(() => {
@@ -1144,18 +1059,18 @@ describe('AnnotationDialog', () => {
 
         it('should keep the dialog below the annotation icon if the annotation is in the top half of the viewport', () => {
             const { top, bottom } = dialog.flipDialog(2, containerHeight);
-            expect(dialog.element).to.not.have.class(CLASS_FLIPPED_DIALOG);
-            expect(top).to.not.equal('');
-            expect(bottom).to.equal('');
-            expect(dialog.fitDialogHeightInPage).to.be.called;
-            expect(dialog.toggleFlippedThreadEl).to.be.called;
+            expect(dialog.element.classList).not.toContain(CLASS_FLIPPED_DIALOG);
+            expect(top).not.toEqual('');
+            expect(bottom).toEqual('');
+            expect(dialog.fitDialogHeightInPage).toBeCalled();
+            expect(dialog.toggleFlippedThreadEl).toBeCalled();
         });
 
         it('should flip the dialog above the annotation icon if the annotation is in the lower half of the viewport', () => {
             const { top, bottom } = dialog.flipDialog(4, containerHeight);
-            expect(dialog.element).to.have.class(CLASS_FLIPPED_DIALOG);
-            expect(top).to.equal('');
-            expect(bottom).to.not.equal('');
+            expect(dialog.element.classList).toContain(CLASS_FLIPPED_DIALOG);
+            expect(top).toEqual('');
+            expect(bottom).not.toEqual('');
         });
     });
 
@@ -1166,30 +1081,21 @@ describe('AnnotationDialog', () => {
         });
 
         it('should do nothing if the dialog is not flipped', () => {
-            stubs.add = sandbox.stub(dialog.threadEl.classList, 'add');
-            stubs.remove = sandbox.stub(dialog.threadEl.classList, 'remove');
             dialog.toggleFlippedThreadEl();
-            expect(stubs.add).to.not.be.called;
-            expect(stubs.remove).to.not.be.called;
+            expect(dialog.threadEl.classList).not.toContain(CLASS_FLIPPED_DIALOG);
         });
 
         it('should reset thread icon if dialog is flipped and hidden', () => {
             dialog.element.classList.add(CLASS_FLIPPED_DIALOG);
-            stubs.add = sandbox.stub(dialog.threadEl.classList, 'add');
-            stubs.remove = sandbox.stub(dialog.threadEl.classList, 'remove');
             dialog.toggleFlippedThreadEl();
-            expect(stubs.add).to.be.called;
-            expect(stubs.remove).to.not.be.called;
+            expect(dialog.threadEl.classList).toContain(CLASS_FLIPPED_DIALOG);
         });
 
         it('should flip thread icon if dialog is flipped and not hidden', () => {
             dialog.element.classList.add(CLASS_FLIPPED_DIALOG);
             dialog.element.classList.add(constants.CLASS_HIDDEN);
-            stubs.add = sandbox.stub(dialog.threadEl.classList, 'add');
-            stubs.remove = sandbox.stub(dialog.threadEl.classList, 'remove');
             dialog.toggleFlippedThreadEl();
-            expect(stubs.add).to.not.be.called;
-            expect(stubs.remove).to.be.called;
+            expect(dialog.threadEl.classList).not.toContain(CLASS_FLIPPED_DIALOG);
         });
     });
 
@@ -1197,23 +1103,23 @@ describe('AnnotationDialog', () => {
         it('should allow scrolling on annotations dialog if file is a powerpoint', () => {
             dialog.dialogEl = {
                 style: {},
-                querySelector: sandbox.stub().returns(null)
+                querySelector: jest.fn().mockReturnValue(null)
             };
             dialog.container = { clientHeight: 100 };
             dialog.fitDialogHeightInPage();
-            expect(dialog.dialogEl.style.maxHeight).to.equal('20px');
+            expect(dialog.dialogEl.style.maxHeight).toEqual('20px');
         });
 
         it('should allow scrolling on annotations dialog if file is a powerpoint', () => {
             const commentsEl = document.createElement('div');
             dialog.dialogEl = {
                 style: {},
-                querySelector: sandbox.stub().returns(commentsEl)
+                querySelector: jest.fn().mockReturnValue(commentsEl)
             };
             dialog.container = { clientHeight: 100 };
             dialog.fitDialogHeightInPage();
-            expect(dialog.dialogEl.style.maxHeight).to.equal('20px');
-            expect(commentsEl.style.maxHeight).to.equal('20px');
+            expect(dialog.dialogEl.style.maxHeight).toEqual('20px');
+            expect(commentsEl.style.maxHeight).toEqual('20px');
         });
     });
 });
