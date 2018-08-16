@@ -22,9 +22,7 @@ module.exports = () => {
                 {
                     test: /\.js$/,
                     use: 'babel-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: /(node_modules)/
                 },
                 {
                     test: /\.s?css$/,
@@ -44,10 +42,7 @@ module.exports = () => {
                                 loader: 'sass-loader'
                             }
                         ]
-                    }),
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    })
                 },
                 {
                     test: /\.(svg|html)$/,

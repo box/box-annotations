@@ -35,7 +35,6 @@ import {
     canLoadAnnotations,
     insertTemplate,
     generateBtn,
-    createCommentTextNode,
     clearCanvas,
     replaceHeader,
     isInDialog,
@@ -48,7 +47,6 @@ import {
 import {
     STATES,
     TYPES,
-    CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
     SELECTOR_ANNOTATION_CARET,
     CLASS_ACTIVE,
@@ -720,44 +718,6 @@ describe('util', () => {
         it('should return true if user has at least can_view_annotations_self permissions', () => {
             stubs.permissions.can_view_annotations_self = true;
             expect(canLoadAnnotations(stubs.permissions)).to.be.true;
-        });
-    });
-
-    describe('createCommentTextNode()', () => {
-        it('should add a <br> for each newline', () => {
-            const text = `
-
-
-            yay, three breaks!`;
-
-            const textEl = createCommentTextNode(text);
-
-            const breaks = textEl.querySelectorAll('br');
-            expect(breaks.length === 3).to.be.true;
-        });
-
-        it('should add a <p> containing text for mixed newline/text', () => {
-            const text = 'some breaks \n and \n text';
-            const textEl = createCommentTextNode(text);
-
-            const paras = textEl.querySelectorAll('p');
-            expect(paras.length === 3).to.be.true;
-        });
-
-        it('should use the text as textContent if no newlines', () => {
-            const text = 'no breaks and some text';
-            const textEl = createCommentTextNode(text);
-
-            const paras = textEl.querySelectorAll('p');
-            expect(paras.length === 0).to.be.true;
-            expect(textEl.textContent).to.equal(text);
-        });
-
-        it('should add the comment text class to the element created', () => {
-            const text = 'no breaks and some text';
-            const textEl = createCommentTextNode(text);
-
-            expect(textEl.classList.contains(CLASS_ANNOTATION_COMMENT_TEXT)).to.be.true;
         });
     });
 

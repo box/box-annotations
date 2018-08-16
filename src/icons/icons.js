@@ -3,7 +3,6 @@ import ANNOTATION_HIGHLIGHT_COMMENT from './annotation_highlight_comment_24px.sv
 import PLACED_ANNOTATION from './placed_annotation_24px.svg';
 import DROP_DOWN from './arrow_drop_down_24px.svg';
 import DROP_UP from './arrow_drop_up_24px.svg';
-import DELETE from './delete_24px.svg';
 import HIGHLIGHT from './highlight_24px.svg';
 import CLOSE from './close.svg';
 import DRAW_SAVE from './draw_save.svg';
@@ -14,7 +13,6 @@ export const ICON_HIGHLIGHT_COMMENT = ANNOTATION_HIGHLIGHT_COMMENT;
 export const ICON_PLACED_ANNOTATION = PLACED_ANNOTATION;
 export const ICON_DROP_DOWN = DROP_DOWN;
 export const ICON_DROP_UP = DROP_UP;
-export const ICON_DELETE = DELETE;
 export const ICON_HIGHLIGHT = HIGHLIGHT;
 export const ICON_CLOSE = CLOSE;
 export const ICON_DRAW_SAVE = DRAW_SAVE;

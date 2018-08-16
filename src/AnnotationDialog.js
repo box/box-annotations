@@ -1,20 +1,16 @@
 import EventEmitter from 'events';
 import * as util from './util';
 import * as constants from './constants';
-import { ICON_DELETE } from './icons/icons';
+import AnnotationElement from './components/AnnotationElement';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
 
-const CLASS_CANCEL_DELETE = 'cancel-delete-btn';
 const CLASS_COMMENT = 'annotation-comment';
 const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 const CLASS_REPLY_CONTAINER = 'reply-container';
 const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
-const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
-const CLASS_BUTTON_DELETE_CONFIRM = 'confirm-delete-btn';
 
 class AnnotationDialog extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -332,9 +328,7 @@ class AnnotationDialog extends EventEmitter {
     addSortedAnnotations(annotations) {
         // Sort annotations by date created
         const sorted = Object.keys(annotations).map((key) => annotations[key]);
-        sorted.sort((a, b) => {
-            return new Date(a.created) - new Date(b.created);
-        });
+        sorted.sort((a, b) => new Date(a.created) - new Date(b.created));
 
         // Add sorted annotations to dialog
         sorted.forEach((annotation) => {
@@ -507,16 +501,20 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     clickHandler(event) {
+        const eventTarget = event.target;
+        const dataType = util.findClosestDataType(eventTarget);
+
+        // Do nothing if click event happened in the DeleteConfirmation component
+        if (dataType === constants.DATA_TYPE_DELETE_CONFIRMATION) {
+            return;
+        }
+
         event.stopPropagation();
 
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         if (this.isMobile && event.target && event.target.nodeName === 'BUTTON') {
             event.preventDefault();
         }
-
-        const eventTarget = event.target;
-        const dataType = util.findClosestDataType(eventTarget);
-        const annotationID = util.findClosestDataType(eventTarget, 'data-annotation-id');
 
         switch (dataType) {
             // Clicking 'Post' button to create an annotation
@@ -547,18 +545,6 @@ class AnnotationDialog extends EventEmitter {
             case constants.DATA_TYPE_POST_REPLY:
                 this.postReply();
                 break;
-            // Clicking trash icon to initiate deletion
-            case constants.DATA_TYPE_DELETE:
-                this.showDeleteConfirmation(annotationID);
-                break;
-            // Clicking 'Cancel' button to cancel deletion
-            case constants.DATA_TYPE_CANCEL_DELETE:
-                this.hideDeleteConfirmation(annotationID);
-                break;
-            // Clicking 'Delete' button to confirm deletion
-            case constants.DATA_TYPE_CONFIRM_DELETE:
-                this.deleteAnnotation(annotationID);
-                break;
 
             default:
                 break;
@@ -573,102 +559,20 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     addAnnotationElement(annotation) {
-        const userId = util.htmlEscape(annotation.user.id || '0');
-
-        // Temporary until annotation user API is available
-        let userName;
-        if (userId === '0') {
-            userName = this.localized.posting;
-        } else {
-            userName = util.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
-        }
-
-        const avatarUrl = util.htmlEscape(annotation.user.avatarUrl || '');
-        const avatarHtml = util.getAvatarHtml(avatarUrl, userId, userName, this.localized.profileAlt);
-        const created = new Date(annotation.created).toLocaleString(this.locale, {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        const textEl = util.createCommentTextNode(annotation.text);
+        const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
 
         const annotationEl = document.createElement('div');
         annotationEl.classList.add(CLASS_COMMENT);
         annotationEl.setAttribute('data-annotation-id', annotation.annotationID);
-
-        const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
         annotationContainerEl.appendChild(annotationEl);
 
-        // Avatar
-        const avatarEl = document.createElement('div');
-        avatarEl.classList.add(constants.CLASS_PROFILE_IMG_CONTAINER);
-        avatarEl.innerHTML = avatarHtml;
-        annotationEl.appendChild(avatarEl);
-
-        // Creator namate & date
-        const profileContainerEl = document.createElement('div');
-        profileContainerEl.classList.add(constants.CLASS_PROFILE_CONTAINER);
-        annotationEl.appendChild(profileContainerEl);
-
-        const userNameEl = document.createElement('div');
-        userNameEl.classList.add(constants.CLASS_USER_NAME);
-        userNameEl.textContent = userName;
-        profileContainerEl.appendChild(userNameEl);
-
-        const createdEl = document.createElement('div');
-        createdEl.classList.add(constants.CLASS_COMMENT_DATE);
-        createdEl.textContent = created;
-        profileContainerEl.appendChild(createdEl);
-
-        // Comment
-        const commentTextEl = document.createElement('div');
-        commentTextEl.appendChild(textEl);
-        annotationEl.appendChild(commentTextEl);
-
-        // Delete button
-        if (!annotation.permissions.can_delete) {
-            return;
-        }
-
-        const deleteBtn = util.generateBtn(
-            [constants.CLASS_BUTTON_PLAIN, CLASS_BUTTON_DELETE_COMMENT],
-            this.localized.deleteButton,
-            ICON_DELETE,
-            constants.DATA_TYPE_DELETE
-        );
-        annotationEl.appendChild(deleteBtn);
-
-        const deleteConfirmEl = document.createElement('div');
-        deleteConfirmEl.classList.add(CLASS_DELETE_CONFIRMATION);
-        deleteConfirmEl.classList.add(constants.CLASS_HIDDEN);
-        annotationEl.appendChild(deleteConfirmEl);
-
-        const confirmMsgEl = document.createElement('div');
-        confirmMsgEl.classList.add(constants.CLASS_DELETE_CONFIRM_MESSAGE);
-        confirmMsgEl.textContent = this.localized.deleteConfirmation;
-        deleteConfirmEl.appendChild(confirmMsgEl);
-
-        const deleteBtnsEl = document.createElement('div');
-        deleteBtnsEl.classList.add(constants.CLASS_BUTTON_CONTAINER);
-        deleteConfirmEl.appendChild(deleteBtnsEl);
-
-        const cancelDeleteBtn = util.generateBtn(
-            [constants.CLASS_BUTTON, CLASS_CANCEL_DELETE],
-            this.localized.cancelButton,
-            this.localized.cancelButton,
-            constants.DATA_TYPE_CANCEL_DELETE
-        );
-        deleteBtnsEl.appendChild(cancelDeleteBtn);
-
-        const confirmDeleteBtn = util.generateBtn(
-            [constants.CLASS_BUTTON, CLASS_BUTTON_DELETE_CONFIRM, constants.CLASS_BUTTON_PRIMARY],
-            this.localized.deleteButton,
-            this.localized.deleteButton,
-            constants.DATA_TYPE_CONFIRM_DELETE
-        );
-        deleteBtnsEl.appendChild(confirmDeleteBtn);
+        const annotationComponent = new AnnotationElement(annotationEl, {
+            annotation,
+            localized: this.localized,
+            locale: this.locale,
+            onAnnotationDelete: this.deleteAnnotation.bind(this)
+        });
+        annotationComponent.renderAnnotation();
     }
 
     /**
@@ -749,39 +653,6 @@ class AnnotationDialog extends EventEmitter {
         this.emit('annotationcreate', { text });
         replyTextEl.value = '';
         replyTextEl.focus();
-    }
-
-    /**
-     * Shows delete confirmation.
-     *
-     * @private
-     * @param {string} annotationID ID of annotation to delete
-     * @return {void}
-     */
-    showDeleteConfirmation(annotationID) {
-        const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
-        const deleteConfirmationEl = annotationEl.querySelector(`.${CLASS_DELETE_CONFIRMATION}`);
-        const cancelDeleteButtonEl = annotationEl.querySelector(`.${CLASS_CANCEL_DELETE}`);
-        const deleteButtonEl = annotationEl.querySelector(constants.SELECTOR_DELETE_COMMENT_BTN);
-        util.hideElement(deleteButtonEl);
-        util.showElement(deleteConfirmationEl);
-        cancelDeleteButtonEl.focus();
-    }
-
-    /**
-     * Hides delete confirmation.
-     *
-     * @private
-     * @param {string} annotationID ID of annotation to delete
-     * @return {void}
-     */
-    hideDeleteConfirmation(annotationID) {
-        const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
-        const deleteConfirmationEl = annotationEl.querySelector(`.${CLASS_DELETE_CONFIRMATION}`);
-        const deleteButtonEl = annotationEl.querySelector(constants.SELECTOR_DELETE_COMMENT_BTN);
-        util.showElement(deleteButtonEl);
-        util.hideElement(deleteConfirmationEl);
-        deleteButtonEl.focus();
     }
 
     /**
