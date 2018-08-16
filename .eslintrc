@@ -9,12 +9,13 @@
         "es6": true,
         "browser": true,
         "mocha": true,
-        "commonjs": true
+        "commonjs": true,
+        "jest": true
     },
     "globals": {
-        "after": false,
+        "afterAll": false,
         "afterEach": false,
-        "before": false,
+        "beforeAll": false,
         "beforeEach": false,
         "describe": false,
         "expect": false,
@@ -27,7 +28,8 @@
         "Feature": false,
         "Before": false,
         "After": false,
-        "Scenario": false
+        "Scenario": false,
+        "jest": false
     },
     "rules": {
         "quotes": [

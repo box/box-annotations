@@ -4,104 +4,103 @@ import * as util from '../../util';
 import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '../../constants';
 
 let controller;
-let stubs = {};
-const sandbox = sinon.sandbox.create();
+let thread;
 
 describe('controllers/HighlightModeController', () => {
     beforeEach(() => {
         controller = new HighlightModeController();
-        sandbox.stub(controller, 'emit');
-        stubs.thread = {
+        controller.emit = jest.fn();
+
+        thread = {
             annotations: {},
             location: { page: 1 },
             type: TYPES.highlight,
-            show: () => {},
-            addListener: () => {},
-            hideDialog: () => {}
+            show: jest.fn(),
+            addListener: jest.fn(),
+            hideDialog: jest.fn()
         };
-        stubs.threadMock = sandbox.mock(stubs.thread);
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
-        stubs = {};
         controller = null;
     });
 
     describe('handleThreadEvents()', () => {
         it('should render page on save only if plain highlight was converted to a highlight comment', () => {
-            stubs.thread.annotations = {
+            thread.annotations = {
                 1: { type: 'highlight' }
             };
-            sandbox.stub(controller, 'renderPage');
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
-            expect(controller.renderPage).to.not.be.called;
+            controller.renderPage = jest.fn();
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).not.toBeCalled();
 
-            stubs.thread.annotations = {
+            thread.annotations = {
                 1: { type: 'highlight' },
                 2: { type: 'highlight-comment' }
             };
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
-            expect(controller.renderPage).to.be.calledWith(1);
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.renderPage).toBeCalledWith(1);
         });
 
         it('should emit annotationsrenderpage with page number on threadCleanup', () => {
-            sandbox.stub(controller, 'unregisterThread');
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
-            expect(controller.unregisterThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.renderPage, stubs.thread.location.page);
+            controller.unregisterThread = jest.fn();
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
+            expect(controller.unregisterThread).toBeCalled();
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.renderPage, thread.location.page);
         });
     });
 
     describe('exit()', () => {
         it('should exit annotation mode', () => {
-            sandbox.stub(controller, 'destroyPendingThreads');
-            sandbox.stub(controller, 'unbindListeners');
+            controller.destroyPendingThreads = jest.fn();
+            controller.unbindListeners = jest.fn();
 
-            const selection = window.getSelection();
-            sandbox.stub(selection, 'removeAllRanges');
+            const selection = {
+                removeAllRanges: jest.fn()
+            };
+            window.getSelection = jest.fn().mockReturnValue(selection);
 
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
 
             controller.exit();
-            expect(controller.destroyPendingThreads).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.bindDOMListeners);
-            expect(controller.unbindListeners).to.be.called;
+            expect(controller.destroyPendingThreads).toBeCalled();
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.bindDOMListeners);
+            expect(controller.unbindListeners).toBeCalled();
             expect(selection.removeAllRanges);
         });
     });
 
     describe('enter()', () => {
         it('should enter annotation mode', () => {
-            sandbox.stub(controller, 'bindListeners');
+            controller.bindListeners = jest.fn();
 
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
 
             controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
-            expect(controller.bindListeners).to.be.called;
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.unbindDOMListeners);
+            expect(controller.bindListeners).toBeCalled();
         });
     });
 
     describe('render()', () => {
         beforeEach(() => {
-            sandbox.stub(controller, 'renderPage');
-            sandbox.stub(controller, 'destroyPendingThreads');
+            controller.renderPage = jest.fn();
+            controller.destroyPendingThreads = jest.fn();
         });
 
         it('should do nothing if no threads exist', () => {
             controller.render();
-            expect(controller.renderPage).to.not.be.called;
-            expect(controller.destroyPendingThreads).to.be.called;
+            expect(controller.renderPage).not.toBeCalled();
+            expect(controller.destroyPendingThreads).toBeCalled();
         });
 
         it('should render the annotations on every page', () => {
             controller.threads = { 1: {}, 2: {} };
             controller.render();
-            expect(controller.renderPage).to.be.calledTwice;
-            expect(controller.destroyPendingThreads).to.be.called;
+            expect(controller.renderPage).toBeCalledTwice;
+            expect(controller.destroyPendingThreads).toBeCalled();
         });
     });
 
@@ -109,20 +108,20 @@ describe('controllers/HighlightModeController', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.setAttribute('data-page-number', 1);
-            sandbox.stub(util, 'clearCanvas');
+            util.clearCanvas = jest.fn();
         });
 
         it('should do nothing if no threads exist', () => {
-            stubs.threadMock.expects('show').never();
             controller.renderPage(1);
-            expect(util.clearCanvas).to.be.called;
+            expect(util.clearCanvas).toBeCalled();
+            expect(thread.show).not.toBeCalled();
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.registerThread(stubs.thread);
-            stubs.threadMock.expects('show');
+            controller.registerThread(thread);
             controller.renderPage(1);
-            expect(util.clearCanvas).to.be.called;
+            expect(util.clearCanvas).toBeCalled();
+            expect(thread.show).toBeCalled();
         });
     });
 });

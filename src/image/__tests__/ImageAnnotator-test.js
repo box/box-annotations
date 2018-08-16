@@ -6,16 +6,19 @@ import * as imageUtil from '../imageUtil';
 import { TYPES, ANNOTATOR_EVENT } from '../../constants';
 
 let annotator;
-const sandbox = sinon.sandbox.create();
-let stubs = {};
+const html = `<div class="bp-image annotated-element">
+    <img class="page" width="100px" height="200px" data-page-number="1">
+    <button class="ba-point-annotation-marker"></button>
+</div>
+`;
 
 describe('image/ImageAnnotator', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('image/__tests__/ImageAnnotator-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         const options = {
             annotator: {
@@ -47,18 +50,17 @@ describe('image/ImageAnnotator', () => {
         annotator.modeControllers = {};
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
 
-        sandbox.stub(annotator, 'emit');
+        annotator.emit = jest.fn();
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
-        stubs = {};
+        document.body.removeChild(rootElement);
         annotator = null;
     });
 
     describe('getAnnotatedEl()', () => {
         it('should return the annotated element as the document', () => {
-            expect(annotator.annotatedElement).to.not.be.null;
+            expect(annotator.annotatedElement).not.toBeNull();
         });
     });
 
@@ -93,12 +95,12 @@ describe('image/ImageAnnotator', () => {
                     nodeName: 'not-annotated'
                 }
             });
-            expect(location).to.be.null;
+            expect(location).toBeNull();
         });
 
         it('should not return a location if no touch event is available and user is on a mobile device', () => {
             annotator.hasTouch = true;
-            expect(annotator.getLocationFromEvent({ targetTouches: [] })).to.be.null;
+            expect(annotator.getLocationFromEvent({ targetTouches: [] })).toBeNull();
         });
 
         it('should replace event with mobile touch event if user is on a mobile device', () => {
@@ -113,7 +115,7 @@ describe('image/ImageAnnotator', () => {
                     nodeName: 'not-annotated'
                 }
             });
-            expect(location).to.be.null;
+            expect(location).toBeNull();
 
             event = {
                 targetTouches: [
@@ -122,24 +124,30 @@ describe('image/ImageAnnotator', () => {
                     }
                 ]
             };
-            expect(annotator.getLocationFromEvent(event)).to.be.null;
+            expect(annotator.getLocationFromEvent(event)).toBeNull();
         });
 
         it('should not return a location if click event does not have coordinates', () => {
             event = { target: imageEl };
-            expect(annotator.getLocationFromEvent(event)).to.be.null;
+            expect(annotator.getLocationFromEvent(event)).toBeNull();
         });
 
         it('should return a valid point location if click is valid', () => {
-            sandbox.stub(util, 'getScale').returns(1);
-            sandbox.stub(imageUtil, 'getLocationWithoutRotation').returns([x, y]);
+            util.getScale = jest.fn().mockReturnValue(1);
+            imageUtil.getLocationWithoutRotation = jest.fn().mockReturnValue([x, y]);
+            imageEl.getBoundingClientRect = jest.fn().mockReturnValue({
+                width: 100,
+                height: 200,
+                left: 0,
+                top: 0
+            });
 
             const location = annotator.getLocationFromEvent({
                 clientX: x,
                 clientY: y,
                 target: imageEl
             });
-            expect(location).to.deep.equal({
+            expect(location).toStrictEqual({
                 x,
                 y,
                 imageEl,
@@ -150,72 +158,67 @@ describe('image/ImageAnnotator', () => {
     });
 
     describe('createAnnotationThread()', () => {
+        beforeEach(() => {
+            util.areThreadParamsValid = jest.fn().mockReturnValue(true);
+            annotator.handleValidationError = jest.fn();
+        });
+
         it('should emit error and return undefined if thread fails to create', () => {
-            sandbox.stub(util, 'areThreadParamsValid').returns(true);
             const thread = annotator.createAnnotationThread([], {}, 'random');
-            expect(thread).to.be.undefined;
-            expect(annotator.emit).to.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+            expect(thread).toBeUndefined();
+            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
 
         it('should create, add point thread to internal map, and return it', () => {
-            sandbox.stub(util, 'areThreadParamsValid').returns(true);
-            sandbox.stub(annotator, 'handleValidationError');
             const thread = annotator.createAnnotationThread([], { page: 2 }, TYPES.point);
 
-            expect(thread instanceof ImagePointThread).to.be.true;
-            expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).to.equal(2);
-            expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+            expect(thread instanceof ImagePointThread).toBeTruthy();
+            expect(annotator.handleValidationError).not.toBeCalled();
+            expect(thread.location.page).toEqual(2);
+            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
 
         it('should emit error and return undefined if thread params are invalid', () => {
-            sandbox.stub(util, 'areThreadParamsValid').returns(false);
-            sandbox.stub(annotator, 'handleValidationError');
+            util.areThreadParamsValid = jest.fn().mockReturnValue(false);
             const thread = annotator.createAnnotationThread([], {}, TYPES.point);
-            expect(thread instanceof ImagePointThread).to.be.false;
-            expect(annotator.handleValidationError).to.be.called;
+            expect(thread instanceof ImagePointThread).toBeFalsy();
+            expect(annotator.handleValidationError).toBeCalled();
         });
 
         it('should force page number 1 if the annotation was created without one', () => {
-            sandbox.stub(util, 'areThreadParamsValid').returns(true);
-            sandbox.stub(annotator, 'handleValidationError');
             const thread = annotator.createAnnotationThread([], {}, TYPES.point);
 
-            expect(thread instanceof ImagePointThread).to.be.true;
-            expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).to.equal(1);
-            expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+            expect(thread instanceof ImagePointThread).toBeTruthy();
+            expect(annotator.handleValidationError).not.toBeCalled();
+            expect(thread.location.page).toEqual(1);
+            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
 
         it('should force page number 1 if the annotation was created wit page number -1', () => {
-            sandbox.stub(util, 'areThreadParamsValid').returns(true);
-            sandbox.stub(annotator, 'handleValidationError');
             const thread = annotator.createAnnotationThread([], { page: -1 }, TYPES.point);
 
-            expect(thread instanceof ImagePointThread).to.be.true;
-            expect(annotator.handleValidationError).to.not.be.called;
-            expect(thread.location.page).to.equal(1);
-            expect(annotator.emit).to.not.be.calledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+            expect(thread instanceof ImagePointThread).toBeTruthy();
+            expect(annotator.handleValidationError).not.toBeCalled();
+            expect(thread.location.page).toEqual(1);
+            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
     });
 
     describe('rotateAnnotations()', () => {
         beforeEach(() => {
             annotator.permissions.canAnnotate = true;
-            stubs.hide = sandbox.stub(util, 'hideElement');
-            stubs.show = sandbox.stub(util, 'showElement');
-            stubs.render = sandbox.stub(annotator, 'render');
-            stubs.renderPage = sandbox.stub(annotator, 'renderPage');
+            util.hideElement = jest.fn();
+            util.showElement = jest.fn();
+            annotator.render = jest.fn();
+            annotator.renderPage = jest.fn();
 
             annotator.modeButtons = {
                 point: { selector: 'point_btn' }
             };
 
-            stubs.controller = {
-                getButton: () => {}
+            annotator.modeControllers.point = {
+                getButton: jest.fn()
             };
-            stubs.controllerMock = sandbox.mock(stubs.controller);
-            annotator.modeControllers.point = stubs.controller;
         });
 
         afterEach(() => {
@@ -225,23 +228,23 @@ describe('image/ImageAnnotator', () => {
         it('should only render annotations if user cannot annotate', () => {
             annotator.permissions.canAnnotate = false;
             annotator.rotateAnnotations();
-            expect(stubs.hide).to.not.be.called;
-            expect(stubs.show).to.not.be.called;
-            expect(stubs.render).to.be.called;
+            expect(util.hideElement).not.toBeCalled();
+            expect(util.showElement).not.toBeCalled();
+            expect(annotator.render).toBeCalled();
         });
 
         it('should hide point annotation button if image is rotated', () => {
             annotator.rotateAnnotations(90);
-            expect(stubs.hide).to.be.called;
-            expect(stubs.show).to.not.be.called;
-            expect(stubs.render).to.be.called;
+            expect(util.hideElement).toBeCalled();
+            expect(util.showElement).not.toBeCalled();
+            expect(annotator.render).toBeCalled();
         });
 
         it('should show point annotation button if image is rotated', () => {
             annotator.rotateAnnotations();
-            expect(stubs.hide).to.not.be.called;
-            expect(stubs.show).to.be.called;
-            expect(stubs.render).to.be.called;
+            expect(util.hideElement).not.toBeCalled();
+            expect(util.showElement).toBeCalled();
+            expect(annotator.render).toBeCalled();
         });
     });
 });

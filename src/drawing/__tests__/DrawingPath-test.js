@@ -2,19 +2,13 @@
 import DrawingPath from '../DrawingPath';
 
 let drawingPath;
-const sandbox = sinon.sandbox.create();
 
 describe('drawing/DrawingPath', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
-
     beforeEach(() => {
         drawingPath = new DrawingPath();
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
         drawingPath = null;
     });
 
@@ -32,7 +26,7 @@ describe('drawing/DrawingPath', () => {
 
             let lengthAfter = drawingPath.path.length;
 
-            expect(lengthAfter).to.equal(lengthBefore);
+            expect(lengthAfter).toEqual(lengthBefore);
 
             lengthBefore = drawingPath.browserPath.length;
             drawingPath.addCoordinate(
@@ -56,7 +50,7 @@ describe('drawing/DrawingPath', () => {
                 }
             );
             lengthAfter = drawingPath.browserPath.length;
-            expect(lengthAfter).to.equal(lengthBefore);
+            expect(lengthAfter).toEqual(lengthBefore);
         });
 
         it('should insert the new coordinate into its path container', () => {
@@ -67,8 +61,8 @@ describe('drawing/DrawingPath', () => {
             });
             const lengthAfter = drawingPath.path.length;
 
-            expect(lengthAfter).to.equal(lengthBefore + 1);
-            expect(drawingPath.path[lengthAfter - 1]).to.deep.equal({
+            expect(lengthAfter).toEqual(lengthBefore + 1);
+            expect(drawingPath.path[lengthAfter - 1]).toStrictEqual({
                 x: 1,
                 y: 2
             });
@@ -91,16 +85,16 @@ describe('drawing/DrawingPath', () => {
                 y: rectBounds.y2
             });
 
-            expect(drawingPath.minY).to.equal(rectBounds.y1);
-            expect(drawingPath.minX).to.equal(rectBounds.x1);
-            expect(drawingPath.maxY).to.equal(rectBounds.y2);
-            expect(drawingPath.maxX).to.equal(rectBounds.x2);
+            expect(drawingPath.minY).toEqual(rectBounds.y1);
+            expect(drawingPath.minX).toEqual(rectBounds.x1);
+            expect(drawingPath.maxY).toEqual(rectBounds.y2);
+            expect(drawingPath.maxX).toEqual(rectBounds.x2);
         });
     });
 
     describe('isEmpty()', () => {
         it('should return true when nothing has been inserted', () => {
-            expect(drawingPath.isEmpty()).to.be.true;
+            expect(drawingPath.isEmpty()).toBeTruthy();
         });
 
         it('should return false when a coordinate has been inserted', () => {
@@ -109,15 +103,15 @@ describe('drawing/DrawingPath', () => {
                 y: 1
             };
             drawingPath.addCoordinate(coord);
-            expect(drawingPath.isEmpty()).to.be.false;
+            expect(drawingPath.isEmpty()).toBeFalsy();
         });
     });
 
     describe('drawPath()', () => {
         it('should draw when there are browser coordinates', () => {
             const context = {
-                quadraticCurveTo: sandbox.stub(),
-                moveTo: sandbox.stub()
+                quadraticCurveTo: jest.fn(),
+                moveTo: jest.fn()
             };
             const docCoord = {
                 x: 1,
@@ -131,14 +125,14 @@ describe('drawing/DrawingPath', () => {
             drawingPath.addCoordinate(docCoord, browserCoord);
             drawingPath.drawPath(context);
 
-            expect(context.quadraticCurveTo).to.be.called;
-            expect(context.moveTo).to.be.called;
+            expect(context.quadraticCurveTo).toBeCalled();
+            expect(context.moveTo).toBeCalled();
         });
 
         it('should not draw when there are no browser coordinates', () => {
             const context = {
-                quadraticCurveTo: sandbox.stub(),
-                moveTo: sandbox.stub()
+                quadraticCurveTo: jest.fn(),
+                moveTo: jest.fn()
             };
 
             drawingPath.path.push({
@@ -146,11 +140,11 @@ describe('drawing/DrawingPath', () => {
                 y: 1
             });
 
-            expect(drawingPath.browserPath.length).to.equal(0);
+            expect(drawingPath.browserPath.length).toEqual(0);
             drawingPath.drawPath(context);
 
-            expect(context.quadraticCurveTo).to.not.be.called;
-            expect(context.moveTo).to.not.be.called;
+            expect(context.quadraticCurveTo).not.toBeCalled();
+            expect(context.moveTo).not.toBeCalled();
         });
     });
 
@@ -177,8 +171,8 @@ describe('drawing/DrawingPath', () => {
 
             // eslint-disable-next-line require-jsdoc
             const isBrowserCoord = (item) => item.x === documentCoord.x + 1 && item.y === documentCoord.y + 1;
-            expect(lengthBefore).to.be.lessThan(lengthAfter);
-            expect(drawingPath.browserPath.find(isBrowserCoord)).to.not.be.undefined;
+            expect(lengthBefore).toBeLessThan(lengthAfter);
+            expect(drawingPath.browserPath.find(isBrowserCoord)).not.toBeUndefined();
         });
     });
 
@@ -193,11 +187,11 @@ describe('drawing/DrawingPath', () => {
             };
 
             const result = DrawingPath.extractDrawingInfo(drawingObjA, {});
-            expect(result.minX).to.equal(drawingObjA.minX);
-            expect(result.minY).to.equal(drawingObjA.minY);
-            expect(result.maxX).to.equal(drawingObjA.maxX);
-            expect(result.maxY).to.equal(drawingObjA.maxY);
-            expect(result.paths).to.deep.equal([{ path: drawingObjA.path }]);
+            expect(result.minX).toEqual(drawingObjA.minX);
+            expect(result.minY).toEqual(drawingObjA.minY);
+            expect(result.maxX).toEqual(drawingObjA.maxX);
+            expect(result.maxY).toEqual(drawingObjA.maxY);
+            expect(result.paths).toStrictEqual([{ path: drawingObjA.path }]);
         });
 
         it('should add a path to the accumulator', () => {
@@ -217,11 +211,11 @@ describe('drawing/DrawingPath', () => {
             };
 
             const result = DrawingPath.extractDrawingInfo(drawingObjC, acc);
-            expect(result.minX).to.equal(drawingObjC.minX);
-            expect(result.minY).to.equal(drawingObjC.minY);
-            expect(result.maxX).to.equal(acc.maxX);
-            expect(result.maxY).to.equal(acc.maxY);
-            expect(result.paths).to.deep.equal([{ path: 'pathA' }, { path: 'pathB' }, { path: 'pathC' }]);
+            expect(result.minX).toEqual(drawingObjC.minX);
+            expect(result.minY).toEqual(drawingObjC.minY);
+            expect(result.maxX).toEqual(acc.maxX);
+            expect(result.maxY).toEqual(acc.maxY);
+            expect(result.paths).toStrictEqual([{ path: 'pathA' }, { path: 'pathB' }, { path: 'pathC' }]);
         });
     });
 });

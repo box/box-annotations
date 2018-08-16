@@ -12,56 +12,49 @@ import {
 } from '../../constants';
 
 let controller;
-let stubs = {};
-const sandbox = sinon.sandbox.create();
+let thread;
 
 describe('controllers/PointModeController', () => {
     beforeEach(() => {
         controller = new PointModeController();
         controller.container = document;
-        stubs.thread = {
-            show: () => {},
-            getThreadEventData: () => {},
-            destroy: () => {}
-        };
-        stubs.threadMock = sandbox.mock(stubs.thread);
+        controller.emit = jest.fn();
 
-        sandbox.stub(controller, 'emit');
+        thread = {
+            show: jest.fn(),
+            getThreadEventData: jest.fn(),
+            destroy: jest.fn()
+        };
+
         controller.annotatedElement = {};
         controller.annotator = {
-            getLocationFromEvent: () => {},
-            createAnnotationThread: () => {}
+            getLocationFromEvent: jest.fn(),
+            createAnnotationThread: jest.fn()
         };
-        stubs.annotatorMock = sandbox.mock(controller.annotator);
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
-        stubs = {};
         controller = null;
     });
 
     describe('init()', () => {
-        beforeEach(() => {
-            Object.defineProperty(AnnotationModeController.prototype, 'init', { value: sandbox.stub() });
-            sandbox.stub(controller, 'setupHeader');
-        });
-
         it('should set up the point annotations header if using the preview header', () => {
+            Object.defineProperty(AnnotationModeController.prototype, 'init', { value: jest.fn() });
+            controller.setupHeader = jest.fn();
             controller.init({ options: { header: 'light' } });
-            expect(controller.setupHeader).to.be.called;
+            expect(controller.setupHeader).toBeCalled();
         });
     });
 
     describe('setupHeader', () => {
         it('should setup header and get all the mode buttons', () => {
             const blankDiv = document.createElement('div');
-            stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
-            sandbox.stub(controller, 'getButton').returns(blankDiv);
+            util.insertTemplate = jest.fn();
+            controller.getButton = jest.fn().mockReturnValue(blankDiv);
             controller.localized = { closeButton: 'Close' };
 
             controller.setupHeader(blankDiv, blankDiv);
-            expect(controller.getButton).to.be.calledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
         });
     });
 
@@ -74,72 +67,68 @@ describe('controllers/PointModeController', () => {
             };
 
             controller.setupSharedDialog(document.createElement('div'), options);
-            expect(controller.createDialog).to.not.be.undefined;
+            expect(controller.createDialog).not.toBeUndefined();
         });
     });
 
     describe('onDialogCancel()', () => {
         it('should unregister/destroy the pending thread and clear the create dialog', () => {
-            sandbox.stub(controller, 'getThreadByID').returns(stubs.thread);
-            sandbox.stub(controller, 'unregisterThread');
-            sandbox.stub(controller, 'hideSharedDialog');
+            controller.getThreadByID = jest.fn().mockReturnValue(thread);
+            controller.unregisterThread = jest.fn();
+            controller.hideSharedDialog = jest.fn();
 
-            stubs.threadMock.expects('destroy');
             controller.onDialogCancel();
-            expect(controller.unregisterThread).to.be.calledWith(stubs.thread);
-            expect(controller.hideSharedDialog).to.be.called;
+            expect(controller.unregisterThread).toBeCalledWith(thread);
+            expect(controller.hideSharedDialog).toBeCalled();
+            expect(thread.destroy).toBeCalled();
         });
     });
 
     describe('onDialogPost()', () => {
         it('should notify listeners of post event and clear the create dialog', () => {
-            sandbox.stub(controller, 'hideSharedDialog');
+            controller.hideSharedDialog = jest.fn();
             controller.lastPointEvent = {};
             controller.pendingThreadID = '123abc';
 
             controller.onDialogPost('text');
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.createThread, {
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.createThread, {
                 commentText: 'text',
                 lastPointEvent: {},
                 pendingThreadID: '123abc'
             });
-            expect(controller.hideSharedDialog).to.be.called;
+            expect(controller.hideSharedDialog).toBeCalled();
         });
     });
 
     describe('hideSharedDialog', () => {
         it('should not hide the shared annotation dialog if already hidden', () => {
-            controller.createDialog = { hide: () => {} };
-            const createMock = sandbox.mock(controller.createDialog);
+            controller.createDialog = { hide: jest.fn() };
             controller.createDialog.isVisible = false;
-
-            createMock.expects('hide').never();
             controller.hideSharedDialog();
+            expect(controller.createDialog.hide).not.toBeCalled();
         });
 
         it('should hide the shared annotation dialog', () => {
-            controller.createDialog = { hide: () => {} };
-            const createMock = sandbox.mock(controller.createDialog);
+            controller.createDialog = { hide: jest.fn() };
             controller.createDialog.isVisible = true;
-
-            createMock.expects('hide');
             controller.hideSharedDialog();
+            expect(controller.createDialog.hide).toBeCalled();
         });
     });
 
     describe('setupHandlers()', () => {
         it('should successfully contain mode handlers', () => {
-            sandbox.stub(controller, 'pushElementHandler');
+            controller.pushElementHandler = jest.fn();
             controller.exitButtonEl = 'also definitely not undefined';
 
             controller.setupHandlers();
-            expect(controller.pushElementHandler).to.be.calledWith(
+            expect(controller.pushElementHandler).toBeCalledWith(
                 controller.annotatedElement,
                 ['click', 'touchstart'],
                 controller.pointClickHandler,
                 true
             );
-            expect(controller.pushElementHandler).to.be.calledWith(
+            expect(controller.pushElementHandler).toBeCalledWith(
                 controller.exitButtonEl,
                 'click',
                 controller.toggleMode
@@ -149,8 +138,8 @@ describe('controllers/PointModeController', () => {
 
     describe('exit()', () => {
         beforeEach(() => {
-            sandbox.stub(controller, 'destroyPendingThreads');
-            sandbox.stub(controller, 'unbindListeners');
+            controller.destroyPendingThreads = jest.fn();
+            controller.unbindListeners = jest.fn();
 
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
@@ -162,33 +151,32 @@ describe('controllers/PointModeController', () => {
 
         it('should hide the createDialog if it exists', () => {
             controller.createDialog = {
-                hide: () => {}
+                hide: jest.fn()
             };
-            const createMock = sandbox.mock(controller.createDialog);
-            createMock.expects('hide');
             controller.exit();
+            expect(controller.createDialog.hide).toBeCalled();
         });
 
         it('should exit annotation mode', () => {
             controller.exit();
-            expect(controller.destroyPendingThreads).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit);
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.hadPendingThreads).to.be.false;
+            expect(controller.destroyPendingThreads).toBeCalled();
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.exit, expect.any(Object));
+            expect(controller.unbindListeners).toBeCalled();
+            expect(controller.hadPendingThreads).toBeFalsy();
         });
 
         it('should deactive mode button if available', () => {
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
             controller.exit();
-            expect(controller.buttonEl).to.not.have.class(CLASS_ACTIVE);
+            expect(controller.buttonEl.classList).not.toContain(CLASS_ACTIVE);
         });
     });
 
     describe('enter()', () => {
         beforeEach(() => {
-            sandbox.stub(controller, 'bindListeners');
-            sandbox.stub(util, 'replaceHeader');
+            controller.bindListeners = jest.fn();
+            util.replaceHeader = jest.fn();
 
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
@@ -199,38 +187,35 @@ describe('controllers/PointModeController', () => {
 
         it('should enter annotation mode', () => {
             controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter);
-            expect(controller.bindListeners).to.be.called;
-            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.enter, expect.any(Object));
+            expect(controller.bindListeners).toBeCalled();
+            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
         });
 
         it('should activate mode button if available', () => {
             controller.buttonEl = document.createElement('button');
             controller.enter();
-            expect(controller.buttonEl).to.have.class(CLASS_ACTIVE);
-            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
+            expect(controller.buttonEl.classList).toContain(CLASS_ACTIVE);
+            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
         });
     });
 
     describe('pointClickHandler()', () => {
         const event = {
-            stopPropagation: () => {},
-            preventDefault: () => {}
+            stopPropagation: jest.fn(),
+            preventDefault: jest.fn()
         };
 
         beforeEach(() => {
-            stubs.destroy = sandbox.stub(controller, 'destroyPendingThreads');
-            sandbox.stub(controller, 'registerThread');
-            sandbox.stub(controller, 'hideSharedDialog');
+            controller.destroyPendingThreads = jest.fn().mockReturnValue(false);
+            util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
+            controller.registerThread = jest.fn();
+            controller.hideSharedDialog = jest.fn();
             controller.modeButton = {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
             };
-            stubs.isInDialog = sandbox.stub(util, 'isInDialog').returns(false);
-
-            const eventMock = sandbox.mock(event);
-            eventMock.expects('stopPropagation');
-            eventMock.expects('preventDefault');
+            util.isInDialog = jest.fn().mockReturnValue(false);
         });
 
         afterEach(() => {
@@ -238,77 +223,94 @@ describe('controllers/PointModeController', () => {
             controller.container = document;
         });
 
-        it('should not destroy the pending thread if click was in the dialog', () => {
-            stubs.isInDialog.returns(true);
+        it('should not prevent default events if click occurred in an annotation or marker', () => {
+            util.isInAnnotationOrMarker = jest.fn().mockReturnValue(true);
             controller.pointClickHandler(event);
-            expect(stubs.destroy).to.not.be.called;
+            expect(event.stopPropagation).not.toBeCalled();
+            expect(event.preventDefault).not.toBeCalled();
+        });
+
+        it('should not destroy the pending thread if click was in the dialog', () => {
+            controller.destroyPendingThreads = jest.fn().mockReturnValue(true);
+            util.isInDialog = jest.fn().mockReturnValue(true);
+            controller.pointClickHandler(event);
+            expect(controller.destroyPendingThreads).not.toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
         });
 
         it('should reset the mobile annotations dialog if the user is on a mobile device', () => {
-            stubs.destroy.returns(false);
-            stubs.annotatorMock.expects('getLocationFromEvent');
-            stubs.threadMock.expects('show').never();
             controller.isMobile = true;
 
             controller.pointClickHandler(event);
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.resetMobileDialog);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.resetMobileDialog);
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(thread.show).not.toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
         });
 
         it('should not do anything if thread is invalid', () => {
-            stubs.destroy.returns(false);
-            stubs.annotatorMock.expects('getLocationFromEvent');
-            stubs.threadMock.expects('show').never();
-
             controller.pointClickHandler(event);
-            expect(controller.registerThread).to.not.be.called;
-            expect(controller.hideSharedDialog).to.be.called;
+            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.hideSharedDialog).toBeCalled();
+            expect(thread.show).not.toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
 
         it('should not create a thread if a location object cannot be inferred from the event', () => {
-            stubs.destroy.returns(false);
-            stubs.annotatorMock.expects('getLocationFromEvent').returns(null);
-            stubs.annotatorMock.expects('createAnnotationThread').never();
-            stubs.threadMock.expects('show').never();
+            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
+            controller.annotator.createAnnotationThread = jest.fn();
 
             controller.pointClickHandler(event);
-            expect(controller.registerThread).to.not.be.called;
-            expect(controller.hideSharedDialog).to.be.called;
+            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.hideSharedDialog).toBeCalled();
+            expect(thread.show).not.toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
+            expect(controller.annotator.createAnnotationThread).not.toBeCalled();
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
 
         it('should create, show, and bind listeners to a thread', () => {
-            stubs.destroy.returns(false);
-            stubs.annotatorMock.expects('getLocationFromEvent').returns({});
-            stubs.annotatorMock.expects('createAnnotationThread').returns(stubs.thread);
-            stubs.threadMock.expects('getThreadEventData').returns('data');
-            stubs.threadMock.expects('show');
+            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
+            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            thread.getThreadEventData = jest.fn().mockReturnValue('data');
 
             controller.pointClickHandler(event);
-            expect(controller.registerThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.pending, 'data');
-            expect(controller.registerThread).to.be.calledWith(stubs.thread);
-            expect(controller.hideSharedDialog).to.not.be.called;
+            expect(controller.registerThread).toBeCalled();
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.pending, 'data');
+            expect(controller.registerThread).toBeCalledWith(thread);
+            expect(controller.hideSharedDialog).not.toBeCalled();
+            expect(thread.show).toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
 
         it('should show the create dialog', () => {
-            stubs.destroy.returns(false);
-            stubs.annotatorMock.expects('getLocationFromEvent').returns({});
-            stubs.annotatorMock.expects('createAnnotationThread').returns(stubs.thread);
-            stubs.threadMock.expects('getThreadEventData').returns('data');
-            stubs.threadMock.expects('show');
+            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
+            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            thread.getThreadEventData = jest.fn().mockReturnValue('data');
 
             controller.isMobile = true;
             controller.container = document.createElement('div');
             controller.createDialog = {
                 containerEl: document.createElement('div'),
-                show: () => {},
-                showCommentBox: () => {}
+                show: jest.fn(),
+                showCommentBox: jest.fn()
             };
-            const createMock = sandbox.mock(controller.createDialog);
-            createMock.expects('show').withArgs(controller.container);
-            createMock.expects('showCommentBox');
 
             controller.pointClickHandler(event);
-            expect(controller.hideSharedDialog).to.not.be.called;
+            expect(controller.hideSharedDialog).not.toBeCalled();
+            expect(thread.show).toBeCalled();
+            expect(controller.createDialog.show).toBeCalledWith(controller.container);
+            expect(controller.createDialog.showCommentBox).toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
     });
 });

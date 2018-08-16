@@ -6,15 +6,19 @@ import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as imageUtil from '../imageUtil';
 
 let thread;
-const sandbox = sinon.sandbox.create();
+const html = `<div class="annotated-element" data-page-number="1">
+    <img width="100px" height="200px">
+    <button class="ba-point-annotation-marker"></button>
+</div>
+`;
 
 describe('image/ImagePointThread', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('image/__tests__/ImagePointThread-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
 
         thread = new ImagePointThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
@@ -33,60 +37,50 @@ describe('image/ImagePointThread', () => {
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
+        document.body.removeChild(rootElement);
     });
 
     describe('show', () => {
         beforeEach(() => {
-            sandbox.stub(util, 'showElement');
-            sandbox.stub(thread, 'showDialog');
+            util.showElement = jest.fn();
+            thread.showDialog = jest.fn();
+            imageUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([1, 2]);
         });
 
         it('should show the thread', () => {
-            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-
             thread.show();
-
-            expect(imageUtil.getBrowserCoordinatesFromLocation).to.be.calledWith(
+            expect(imageUtil.getBrowserCoordinatesFromLocation).toBeCalledWith(
                 thread.location,
                 thread.annotatedElement
             );
-            expect(util.showElement).to.be.calledWith(thread.element);
+            expect(util.showElement).toBeCalledWith(thread.element);
         });
 
         it('should show the dialog if the state is pending', () => {
-            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-
             thread.state = STATES.pending;
             thread.show();
-
-            expect(thread.showDialog).to.be.called;
+            expect(thread.showDialog).toBeCalled();
         });
 
         it('should not show the dialog if the state is not pending', () => {
-            sandbox.stub(imageUtil, 'getBrowserCoordinatesFromLocation').returns([1, 2]);
-
             thread.state = STATES.inactive;
             thread.show();
-
-            expect(thread.showDialog).to.not.be.called;
+            expect(thread.showDialog).not.toBeCalled();
         });
 
         it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
             thread.isMobile = true;
             thread.annotations = {};
-
             thread.state = STATES.inactive;
             thread.show();
-
-            expect(thread.showDialog).to.not.be.called;
+            expect(thread.showDialog).not.toBeCalled();
         });
     });
 
     describe('createDialog', () => {
         it('should initialize an appropriate dialog', () => {
             thread.createDialog();
-            expect(thread.dialog instanceof ImagePointDialog).to.be.true;
+            expect(thread.dialog instanceof ImagePointDialog).toBeTruthy();
         });
     });
 });

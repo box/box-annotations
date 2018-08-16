@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import rbush from 'rbush';
-import EventEmitter from 'events';
 import AnnotationModeController from '../AnnotationModeController';
 import * as util from '../../util';
 import {
@@ -16,64 +15,60 @@ import {
 } from '../../constants';
 
 let controller;
-let stubs = {};
-const sandbox = sinon.sandbox.create();
+let thread;
 
 describe('controllers/AnnotationModeController', () => {
     beforeEach(() => {
         controller = new AnnotationModeController();
         controller.container = document;
-        stubs.thread = {
+        thread = {
             threadID: '123abc',
             location: { page: 1 },
             type: 'type',
             state: STATES.pending,
-            addListener: () => {},
-            removeListener: () => {},
-            saveAnnotation: () => {},
-            handleStart: () => {},
-            destroy: () => {},
-            deleteThread: () => {},
-            hideDialog: () => {},
-            isDialogVisible: () => {},
-            show: () => {},
+            addListener: jest.fn(),
+            removeListener: jest.fn(),
+            saveAnnotation: jest.fn(),
+            handleStart: jest.fn(),
+            destroy: jest.fn(),
+            deleteThread: jest.fn(),
+            hideDialog: jest.fn(),
+            isDialogVisible: jest.fn(),
+            show: jest.fn(),
             minX: 1,
             minY: 2,
             maxX: 1,
             maxY: 2
         };
-        stubs.threadMock = sandbox.mock(stubs.thread);
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
-        stubs = {};
         controller = null;
     });
 
     describe('init()', () => {
         it('should init controller', () => {
-            stubs.showButton = sandbox.stub(controller, 'showButton');
+            controller.showButton = jest.fn();
             controller.init({
                 modeButton: {},
                 permissions: { canAnnotate: true }
             });
-            expect(stubs.showButton).to.be.called;
+            expect(controller.showButton).toBeCalled();
         });
 
         it('should not show modeButton if none provided', () => {
-            sandbox.stub(controller, 'showButton');
+            controller.showButton = jest.fn();
             controller.init({});
-            expect(controller.showButton).to.not.be.called;
+            expect(controller.showButton).not.toBeCalled();
         });
 
         it('should not show modeButton if none provided', () => {
-            sandbox.stub(controller, 'showButton');
+            controller.showButton = jest.fn();
             controller.init({
                 modeButton: {},
                 permissions: { canAnnotate: false }
             });
-            expect(controller.showButton).to.not.be.called;
+            expect(controller.showButton).not.toBeCalled();
         });
     });
 
@@ -81,18 +76,18 @@ describe('controllers/AnnotationModeController', () => {
         it('should destroy all the threads in controller', () => {
             // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
-            controller.registerThread(stubs.thread);
+            controller.registerThread(thread);
 
             controller.destroy();
-            expect(controller.buttonEl).to.be.undefined;
+            expect(controller.buttonEl).toBeUndefined();
         });
 
         it('should remove listener from button', () => {
             controller.buttonEl = {
-                removeEventListener: sandbox.stub()
+                removeEventListener: jest.fn()
             };
             controller.destroy();
-            expect(controller.buttonEl.removeEventListener).to.be.called;
+            expect(controller.buttonEl.removeEventListener).toBeCalled();
         });
     });
 
@@ -103,11 +98,13 @@ describe('controllers/AnnotationModeController', () => {
             controller.container = document.createElement('div');
             controller.container.appendChild(buttonEl);
 
-            expect(controller.getButton('.class')).to.not.be.null;
+            expect(controller.getButton('.class')).not.toBeNull();
         });
     });
 
     describe('showButton()', () => {
+        let buttonEl;
+
         beforeEach(() => {
             controller.modeButton = {
                 type: {
@@ -115,63 +112,59 @@ describe('controllers/AnnotationModeController', () => {
                     selector: '.selector'
                 }
             };
-            const buttonEl = document.createElement('button');
+            buttonEl = document.createElement('button');
             buttonEl.title = controller.modeButton.title;
             buttonEl.classList.add(CLASS_HIDDEN);
             buttonEl.classList.add('selector');
+            buttonEl.addEventListener = jest.fn();
 
             controller.permissions = { canAnnotate: true };
-            stubs.getButton = sandbox.stub(controller, 'getButton').returns(buttonEl);
+            controller.getButton = jest.fn().mockReturnValue(buttonEl);
         });
 
         it('should do nothing if user cannot annotate', () => {
-            const buttonEl = controller.getButton(controller.modeButton.selector);
             controller.permissions.canAnnotate = false;
             controller.showButton();
-            expect(buttonEl).to.have.class(CLASS_HIDDEN);
+            expect(buttonEl.classList).toContain(CLASS_HIDDEN);
         });
 
         it('should do nothing if the button is not in the container', () => {
-            const buttonEl = controller.getButton(controller.modeButton.selector);
-            stubs.getButton.returns(null);
+            controller.getButton = jest.fn();
             controller.showButton();
-            expect(buttonEl).to.have.class(CLASS_HIDDEN);
+            expect(buttonEl.classList).toContain(CLASS_HIDDEN);
         });
 
         it('should set up and show an annotate button', () => {
-            const buttonEl = controller.getButton(controller.modeButton.selector);
-            sandbox.stub(buttonEl, 'addEventListener');
-
             controller.showButton();
-            expect(buttonEl).to.not.have.class(CLASS_HIDDEN);
-            expect(buttonEl.addEventListener).to.be.calledWith('click', controller.toggleMode);
+            expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
+            expect(buttonEl.addEventListener).toBeCalledWith('click', controller.toggleMode);
         });
     });
 
     describe('toggleMode()', () => {
         beforeEach(() => {
-            sandbox.stub(controller, 'destroyPendingThreads');
-            sandbox.stub(controller, 'emit');
+            controller.emit = jest.fn();
+            controller.destroyPendingThreads = jest.fn();
         });
 
         it('should destroy all threads', () => {
             controller.modeButton = undefined;
             controller.toggleMode();
-            expect(controller.emit).to.not.be.calledWith(CONTROLLER_EVENT.toggleMode);
+            expect(controller.emit).not.toBeCalledWith(CONTROLLER_EVENT.toggleMode);
         });
 
         it('should only toggle the current annotation mode if it has a button', () => {
             controller.modeButton = {};
             controller.toggleMode();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.toggleMode);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.toggleMode);
         });
     });
 
     describe('exit()', () => {
         it('should exit annotation mode', () => {
-            sandbox.stub(controller, 'unbindListeners');
-            sandbox.stub(controller, 'emit');
-            sandbox.stub(util, 'replaceHeader');
+            controller.unbindListeners = jest.fn();
+            controller.emit = jest.fn();
+            util.replaceHeader = jest.fn();
 
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
@@ -182,36 +175,36 @@ describe('controllers/AnnotationModeController', () => {
             controller.buttonEl.classList.add(CLASS_ACTIVE);
 
             controller.exit();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.exit, sinon.match.object);
-            expect(controller.unbindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith('binddomlisteners');
-            expect(util.replaceHeader).to.be.calledWith(controller.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.exit, expect.any(Object));
+            expect(controller.unbindListeners).toBeCalled();
+            expect(controller.emit).toBeCalledWith('binddomlisteners');
+            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
         });
     });
 
     describe('enter()', () => {
         it('should exit annotation mode', () => {
-            sandbox.stub(controller, 'bindListeners');
-            sandbox.stub(controller, 'emit');
+            controller.bindListeners = jest.fn();
+            controller.emit = jest.fn();
 
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.buttonEl = document.createElement('button');
 
             controller.enter();
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.enter, sinon.match.object);
-            expect(controller.bindListeners).to.be.called;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unbindDOMListeners);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.enter, expect.any(Object));
+            expect(controller.bindListeners).toBeCalled();
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.unbindDOMListeners);
         });
     });
 
     describe('isEnabled()', () => {
         it('should return whether or not the current annotation mode is enabled', () => {
             controller.buttonEl = document.createElement('button');
-            expect(controller.isEnabled()).to.be.false;
+            expect(controller.isEnabled()).toBeFalsy();
 
             controller.buttonEl.classList.add(CLASS_ACTIVE);
-            expect(controller.isEnabled()).to.be.true;
+            expect(controller.isEnabled()).toBeTruthy();
         });
     });
 
@@ -219,19 +212,20 @@ describe('controllers/AnnotationModeController', () => {
         it('should bind mode listeners', () => {
             const handlerObj = {
                 type: 'event',
-                func: () => {},
+                func: jest.fn(),
+                useCapture: false,
                 eventObj: {
-                    addEventListener: sandbox.stub()
+                    addEventListener: jest.fn()
                 }
             };
-            sandbox.stub(controller, 'setupHandlers').callsFake(() => {
+            controller.setupHandlers = jest.fn(() => {
                 controller.handlers = [handlerObj];
             });
-            expect(controller.handlers.length).to.equal(0);
+            expect(controller.handlers.length).toEqual(0);
 
             controller.bindListeners();
-            expect(handlerObj.eventObj.addEventListener).to.be.calledWith(handlerObj.type, handlerObj.func);
-            expect(controller.handlers.length).to.equal(1);
+            expect(handlerObj.eventObj.addEventListener).toBeCalledWith(handlerObj.type, handlerObj.func, false);
+            expect(controller.handlers).toContain(handlerObj);
         });
     });
 
@@ -239,18 +233,19 @@ describe('controllers/AnnotationModeController', () => {
         it('should unbind mode listeners', () => {
             const handlerObj = {
                 type: 'event',
-                func: () => {},
+                func: jest.fn(),
+                useCapture: false,
                 eventObj: {
-                    removeEventListener: sandbox.stub()
+                    removeEventListener: jest.fn()
                 }
             };
 
             controller.handlers = [handlerObj];
-            expect(controller.handlers.length).to.equal(1);
+            expect(controller.handlers.length).toEqual(1);
 
             controller.unbindListeners();
-            expect(handlerObj.eventObj.removeEventListener).to.be.calledWith(handlerObj.type, handlerObj.func);
-            expect(controller.handlers.length).to.equal(0);
+            expect(handlerObj.eventObj.removeEventListener).toBeCalledWith(handlerObj.type, handlerObj.func, false);
+            expect(controller.handlers).toEqual([]);
         });
     });
 
@@ -263,42 +258,40 @@ describe('controllers/AnnotationModeController', () => {
         };
 
         beforeEach(() => {
-            sandbox.stub(controller, 'emit');
+            controller.emit = jest.fn();
             controller.threads = {};
         });
 
         it('should do nothing if thread does not have location', () => {
             controller.registerThread();
             controller.registerThread({ type: 'someType' });
-            expect(controller.emit).to.not.be.called;
+            expect(controller.emit).not.toBeCalled();
         });
 
         it('should do nothing if thread has invalid boundary', () => {
             controller.registerThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
             controller.registerThread({ type: 'someType' });
-            expect(controller.emit).to.not.be.called;
+            expect(controller.emit).not.toBeCalled();
         });
 
         it('should create a new rbush for the thread\'s page location', () => {
-            stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
-
-            controller.registerThread(stubs.thread);
-
+            controller.registerThread(thread);
             const pageThreads = controller.threads[1];
-            expect(pageThreads.search(boundingBox)).includes(stubs.thread);
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, stubs.thread);
+            expect(pageThreads.search(boundingBox)).toContain(thread);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.register, thread);
+            expect(thread.addListener).toBeCalledWith('threadevent', expect.any(Function));
         });
 
         it('should internally keep track of the registered thread', () => {
             // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
             const pageThreads = controller.threads[1];
-            expect(pageThreads.collides(boundingBox)).to.be.false;
+            expect(pageThreads.collides(boundingBox)).toBeFalsy();
 
-            stubs.threadMock.expects('addListener').withArgs('threadevent', sinon.match.func);
-            controller.registerThread(stubs.thread);
-            expect(pageThreads.search(boundingBox)).includes(stubs.thread);
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.register, stubs.thread);
+            controller.registerThread(thread);
+            expect(pageThreads.search(boundingBox)).toContain(thread);
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.register, thread);
+            expect(thread.addListener).toBeCalledWith('threadevent', expect.any(Function));
         });
     });
 
@@ -311,7 +304,7 @@ describe('controllers/AnnotationModeController', () => {
         };
 
         beforeEach(() => {
-            sandbox.stub(controller, 'emit');
+            controller.emit = jest.fn();
             controller.threads = {};
         });
 
@@ -319,7 +312,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.unregisterThread();
             controller.unregisterThread({ type: 'someType' });
             controller.unregisterThread({ location: 'noPage' });
-            expect(controller.emit).to.not.be.called;
+            expect(controller.emit).not.toBeCalled();
         });
 
         it('should internally keep track of the registered thread', () => {
@@ -327,57 +320,54 @@ describe('controllers/AnnotationModeController', () => {
             controller.threads = { 1: new rbush() };
             const pageThreads = controller.threads[1];
 
-            controller.registerThread(stubs.thread);
-            expect(pageThreads.collides(boundingBox)).to.be.true;
+            controller.registerThread(thread);
+            expect(pageThreads.collides(boundingBox)).toBeTruthy();
 
-            stubs.threadMock.expects('removeListener').withArgs('threadevent', sinon.match.func);
-            controller.unregisterThread(stubs.thread);
-            expect(pageThreads.collides(boundingBox)).to.be.false;
-            expect(controller.emit).to.be.calledWith(CONTROLLER_EVENT.unregister, stubs.thread);
+            controller.unregisterThread(thread);
+            expect(pageThreads.collides(boundingBox)).toBeFalsy();
+            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.unregister, thread);
+            expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
         });
     });
 
     describe('applyActionToPageThreads()', () => {
         it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
-            controller.registerThread(stubs.thread);
-            stubs.threadMock.expects('addListener').once();
-            controller.applyActionToPageThreads(stubs.thread.addListener, 2); // func not called
-            controller.applyActionToPageThreads(stubs.thread.addListener, 1);
+            controller.registerThread(thread);
+            controller.applyActionToPageThreads(thread.addListener, 2); // func not called
+            controller.applyActionToPageThreads(thread.addListener, 1);
+            expect(thread.addListener).toHaveBeenCalled();
         });
     });
 
     describe('applyActionToThreads()', () => {
         it('should apply the predicate function to all of the controller\'s threads', () => {
-            controller.registerThread(stubs.thread);
-            stubs.threadMock.expects('addListener').once();
-            controller.applyActionToThreads(stubs.thread.addListener);
+            controller.registerThread(thread);
+            controller.applyActionToThreads(thread.addListener);
+            expect(thread.addListener).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('getThreadByID()', () => {
         it('should return null if no page threads exist', () => {
             controller.threads = {};
-            const thread = controller.getThreadByID(stubs.thread.threadID);
-            expect(thread).to.be.null;
+            expect(controller.getThreadByID(thread.threadID)).toBeNull();
         });
 
         it('should find and return annotation thread specified by threadID', () => {
-            controller.registerThread(stubs.thread);
-            const thread = controller.getThreadByID(stubs.thread.threadID);
-            expect(thread).to.deep.equal(stubs.thread);
+            controller.registerThread(thread);
+            expect(controller.getThreadByID(thread.threadID)).toStrictEqual(thread);
         });
 
         it('should return null if specified annotation thread is not found', () => {
-            controller.registerThread(stubs.thread);
-            const thread = controller.getThreadByID('random');
-            expect(thread).to.be.undefined;
+            controller.registerThread(thread);
+            expect(controller.getThreadByID('random')).toBeUndefined();
         });
     });
 
     describe('handleThreadEvents()', () => {
         beforeEach(() => {
-            sandbox.stub(controller, 'unregisterThread');
-            sandbox.stub(controller, 'emit');
+            controller.emit = jest.fn();
+            controller.unregisterThread = jest.fn();
             controller.localized = {
                 deleteError: 'delete error',
                 createError: 'create error'
@@ -385,42 +375,42 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         it('should mark hadPendingThreads as false and emit event on thread save or cancel', () => {
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.save, data: {} });
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.save, sinon.match.object);
-            expect(controller.hadPendingThreads).to.be.false;
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.save, expect.any(Object));
+            expect(controller.hadPendingThreads).toBeFalsy();
 
             controller.hadPendingThreads = true;
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.cancel, data: {} });
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.cancel, sinon.match.object);
-            expect(controller.hadPendingThreads).to.be.false;
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.cancel, data: {} });
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.cancel, expect.any(Object));
+            expect(controller.hadPendingThreads).toBeFalsy();
         });
 
         it('should unregister thread on threadCleanup', () => {
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadCleanup, data: {} });
-            expect(controller.unregisterThread).to.be.called;
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
+            expect(controller.unregisterThread).toBeCalled();
         });
 
         it('should unregister thread on threadDelete', () => {
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.threadDelete, data: {} });
-            expect(controller.unregisterThread).to.be.called;
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.threadDelete, sinon.match.object);
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadDelete, data: {} });
+            expect(controller.unregisterThread).toBeCalled();
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.threadDelete, expect.any(Object));
         });
 
         it('should unregister thread on deleteError', () => {
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.deleteError, data: {} });
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.error, controller.localized.deleteError);
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.deleteError, sinon.match.object);
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.deleteError, data: {} });
+            expect(controller.emit).toBeCalledWith(ANNOTATOR_EVENT.error, controller.localized.deleteError);
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.deleteError, expect.any(Object));
         });
 
         it('should unregister thread on createError', () => {
-            controller.handleThreadEvents(stubs.thread, { event: THREAD_EVENT.createError, data: {} });
-            expect(controller.emit).to.be.calledWith(ANNOTATOR_EVENT.error, controller.localized.createError);
-            expect(controller.emit).to.be.calledWith(THREAD_EVENT.createError, sinon.match.object);
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.createError, data: {} });
+            expect(controller.emit).toBeCalledWith(ANNOTATOR_EVENT.error, controller.localized.createError);
+            expect(controller.emit).toBeCalledWith(THREAD_EVENT.createError, expect.any(Object));
         });
 
         it('should emit the event on default', () => {
-            controller.handleThreadEvents(stubs.thread, { event: 'random', data: {} });
-            expect(controller.emit).to.be.calledWith('random', sinon.match.object);
+            controller.handleThreadEvents(thread, { event: 'random', data: {} });
+            expect(controller.emit).toBeCalledWith('random', expect.any(Object));
         });
     });
 
@@ -428,9 +418,9 @@ describe('controllers/AnnotationModeController', () => {
         it('should do nothing when the element is invalid', () => {
             const lengthBefore = controller.handlers.length;
 
-            controller.pushElementHandler(undefined, 'type', () => {});
+            controller.pushElementHandler(undefined, 'type', jest.fn());
             const lengthAfter = controller.handlers.length;
-            expect(lengthAfter).to.equal(lengthBefore);
+            expect(lengthAfter).toEqual(lengthBefore);
         });
 
         it('should add a handler descriptor to the handlers array', () => {
@@ -443,8 +433,8 @@ describe('controllers/AnnotationModeController', () => {
             controller.pushElementHandler(element, type, fn, useCapture);
             const { handlers } = controller;
             const lengthAfter = handlers.length;
-            expect(lengthAfter).to.equal(lengthBefore + 1);
-            expect(handlers[handlers.length - 1]).to.deep.equal({
+            expect(lengthAfter).toEqual(lengthBefore + 1);
+            expect(handlers[handlers.length - 1]).toStrictEqual({
                 eventObj: element,
                 func: fn,
                 type,
@@ -455,32 +445,31 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('setupHeader()', () => {
         it('should insert the new header into the container before the baseheader', () => {
-            stubs.insertTemplate = sandbox.stub(util, 'insertTemplate');
+            util.insertTemplate = jest.fn();
             const container = {
                 firstElementChild: 'child'
             };
             const header = document.createElement('div');
 
             controller.setupHeader(container, header);
-
-            expect(stubs.insertTemplate).to.be.calledWith(container, header);
+            expect(util.insertTemplate).toBeCalledWith(container, header, container.firstElementChild);
         });
     });
 
     describe('render()', () => {
         beforeEach(() => {
-            stubs.renderPage = sandbox.stub(controller, 'renderPage');
+            controller.renderPage = jest.fn();
         });
 
         it('should do nothing if no threads exist', () => {
             controller.render();
-            expect(stubs.renderPage).to.not.be.called;
+            expect(controller.renderPage).not.toBeCalled();
         });
 
         it('should render the annotations on every page', () => {
             controller.threads = { 1: {}, 2: {} };
             controller.render();
-            expect(stubs.renderPage).to.be.calledTwice;
+            expect(controller.renderPage).toBeCalledTwice;
         });
     });
 
@@ -490,172 +479,169 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         it('should do nothing if no threads exist', () => {
-            stubs.threadMock.expects('show').never();
             controller.renderPage(1);
+            expect(thread.show).not.toBeCalled();
         });
 
         it('should render the annotations on every page', () => {
-            sandbox.stub(util, 'isPending').returns(false);
+            util.isPending = jest.fn().mockReturnValue(false);
             controller.threads = {
                 // eslint-disable-next-line new-cap
                 1: new rbush(),
                 // eslint-disable-next-line new-cap
                 2: new rbush()
             };
-            controller.threads[1].insert(stubs.thread);
-            controller.threads[2].insert(stubs.thread);
+            controller.threads[1].insert(thread);
+            controller.threads[2].insert(thread);
 
-            stubs.threadMock.expects('hideDialog').once();
-            stubs.threadMock.expects('show').once();
-            stubs.threadMock.expects('destroy').never();
             controller.renderPage(1);
-            expect(stubs.thread.annotatedElement).to.equal('el');
+            expect(thread.annotatedElement).toEqual('el');
+            expect(thread.show).toHaveBeenCalledTimes(1);
+            expect(thread.destroy).not.toBeCalled();
+            expect(thread.hideDialog).toBeCalled();
         });
 
         it('should destroy any pending annotations on re-render', () => {
-            sandbox.stub(util, 'isPending').returns(true);
+            util.isPending = jest.fn().mockReturnValue(true);
             controller.threads = {
                 // eslint-disable-next-line new-cap
                 1: new rbush()
             };
-            controller.threads[1].insert(stubs.thread);
+            controller.threads[1].insert(thread);
 
-            stubs.threadMock.expects('hideDialog').never();
-            stubs.threadMock.expects('show').never();
-            stubs.threadMock.expects('destroy').once();
             controller.renderPage(1);
+            expect(thread.show).not.toBeCalled();
+            expect(thread.destroy).toHaveBeenCalledTimes(1);
+            expect(thread.hideDialog).not.toBeCalled();
         });
     });
 
     describe('destroyPendingThreads()', () => {
         beforeEach(() => {
-            stubs.isPending = sandbox.stub(util, 'isPending').returns(false);
-            stubs.isPending.withArgs(STATES.pending).returns(true);
-            sandbox.stub(controller, 'unregisterThread');
-            controller.registerThread(stubs.thread);
+            util.isPending = jest.fn((state) => {
+                if (state === STATES.pending) {
+                    return true;
+                }
+                return false;
+            });
+            controller.unregisterThread = jest.fn();
+            controller.registerThread(thread);
         });
 
         it('should destroy and return true if there are any pending threads', () => {
-            stubs.threadMock.expects('destroy');
             const destroyed = controller.destroyPendingThreads();
-            expect(destroyed).to.be.true;
-            expect(controller.unregisterThread).to.be.called;
-            expect(controller.unregisterThread).to.be.called;
+            expect(destroyed).toBeTruthy();
+            expect(controller.unregisterThread).toBeCalled();
+            expect(controller.unregisterThread).toBeCalled();
+            expect(thread.destroy).toBeCalled();
         });
 
         it('should not destroy and return false if there are no threads', () => {
             controller.threads = {};
-            stubs.threadMock.expects('destroy').never();
-            stubs.isPending.returns(false);
             const destroyed = controller.destroyPendingThreads();
-            expect(destroyed).to.be.false;
-            expect(controller.unregisterThread).to.not.be.called;
+            expect(destroyed).toBeFalsy();
+            expect(controller.unregisterThread).not.toBeCalled();
+            expect(thread.destroy).not.toBeCalled();
         });
 
         it('should not destroy and return false if the threads are not pending', () => {
-            stubs.thread.state = 'NOT_PENDING';
-            stubs.threadMock.expects('isDialogVisible').returns(false);
-            stubs.threadMock.expects('destroy').never();
-            stubs.threadMock.expects('hideDialog').never();
+            thread.state = 'NOT_PENDING';
+            thread.isDialogVisible = jest.fn().mockReturnValue(false);
             const destroyed = controller.destroyPendingThreads();
-            expect(destroyed).to.be.false;
-            expect(controller.unregisterThread).to.not.be.called;
+            expect(destroyed).toBeFalsy();
+            expect(controller.unregisterThread).not.toBeCalled();
+            expect(thread.destroy).not.toBeCalled();
+            expect(thread.hideDialog).not.toBeCalled();
         });
 
         it('should hide non-pending thread dialogs that are visible', () => {
-            stubs.thread.state = 'NOT_PENDING';
-            stubs.threadMock.expects('isDialogVisible').returns(true);
-            stubs.threadMock.expects('destroy').never();
-            stubs.threadMock.expects('hideDialog');
+            thread.state = 'NOT_PENDING';
+            thread.isDialogVisible = jest.fn().mockReturnValue(true);
             const destroyed = controller.destroyPendingThreads();
-            expect(destroyed).to.be.false;
-            expect(controller.unregisterThread).to.not.be.called;
+            expect(destroyed).toBeFalsy();
+            expect(controller.unregisterThread).not.toBeCalled();
+            expect(thread.destroy).not.toBeCalled();
+            expect(thread.hideDialog).toBeCalled();
         });
 
         it('should destroy only pending threads, and return true', () => {
-            stubs.thread.state = 'NOT_PENDING';
+            thread.state = 'NOT_PENDING';
             const pendingThread = {
                 threadID: '456def',
                 location: { page: 1 },
                 type: 'type',
                 state: STATES.pending,
-                destroy: () => {},
-                unbindCustomListenersOnThread: () => {},
-                addListener: () => {},
-                removeAllListeners: () => {}
+                destroy: jest.fn(),
+                unbindCustomListenersOnThread: jest.fn(),
+                addListener: jest.fn(),
+                removeAllListeners: jest.fn()
             };
-            stubs.pendingMock = sandbox.mock(pendingThread);
             controller.threads[1].insert(pendingThread);
 
-            stubs.threadMock.expects('destroy').never();
-            stubs.pendingMock.expects('destroy');
             const destroyed = controller.destroyPendingThreads();
-
-            expect(destroyed).to.be.true;
-            expect(controller.unregisterThread).to.be.called;
+            expect(destroyed).toBeTruthy();
+            expect(controller.unregisterThread).toBeCalled();
+            expect(thread.destroy).not.toBeCalled();
+            expect(pendingThread.destroy).toBeCalled();
         });
     });
 
     describe('getIntersectingThreads()', () => {
-        let annotatorMock;
-
         beforeEach(() => {
             controller.annotator = {
-                getLocationFromEvent: () => {}
+                getLocationFromEvent: jest.fn()
             };
-            annotatorMock = sandbox.mock(controller.annotator);
             controller.threads = {};
-            controller.registerThread(stubs.thread);
+            controller.registerThread(thread);
         });
 
         it('should return an empty array if event or threads do not exist', () => {
-            annotatorMock.expects('getLocationFromEvent').never();
-            expect(controller.getIntersectingThreads()).to.be.empty;
+            expect(controller.getIntersectingThreads()).toEqual([]);
 
             controller.threads = null;
-            expect(controller.getIntersectingThreads({})).to.be.empty;
+            expect(controller.getIntersectingThreads({})).toEqual([]);
+            expect(controller.annotator.getLocationFromEvent).not.toBeCalled();
         });
 
         it('should return an empty array if no location is found for the mouse event', () => {
-            annotatorMock.expects('getLocationFromEvent');
-            expect(controller.getIntersectingThreads({})).to.be.empty;
+            expect(controller.getIntersectingThreads({})).toEqual([]);
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
 
         it('should return an empty array if the mouse location is on a page without threads', () => {
-            annotatorMock.expects('getLocationFromEvent').returns({ page: 2 });
-            expect(controller.getIntersectingThreads({})).to.be.empty;
+            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({ page: 2 });
+            expect(controller.getIntersectingThreads({})).toEqual([]);
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
 
         it('should return an array with the intersecting thread', () => {
-            annotatorMock.expects('getLocationFromEvent').returns({
+            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({
                 page: 1,
                 x: 1,
                 y: 2
             });
-            expect(controller.getIntersectingThreads({})).includes(stubs.thread);
+            expect(controller.getIntersectingThreads({})).toContain(thread);
+            expect(controller.annotator.getLocationFromEvent).toBeCalled();
         });
     });
 
     describe('emit()', () => {
-        const emitFunc = EventEmitter.prototype.emit;
-
-        afterEach(() => {
-            Object.defineProperty(EventEmitter.prototype, 'emit', { value: emitFunc });
-        });
-
         it('should pass through the event as well as broadcast it as a controller event', () => {
-            const mode = 'this mode';
             const event = 'event';
             const data = {};
-            controller.mode = mode;
+            let controllerEventOccurred = false;
+            let eventOccurred = false;
 
-            const emitStub = sandbox.stub();
-            Object.defineProperty(EventEmitter.prototype, 'emit', { value: emitStub });
-
+            controller.addListener('annotationcontrollerevent', () => {
+                controllerEventOccurred = true;
+            });
+            controller.addListener('event', () => {
+                eventOccurred = true;
+            });
             controller.emit(event, data);
 
-            expect(emitStub).to.be.calledWith(event, data);
-            expect(emitStub).to.be.calledWithMatch('annotationcontrollerevent', { event, data, mode });
+            expect(controllerEventOccurred).toBeTruthy();
+            expect(eventOccurred).toBeTruthy();
         });
     });
 });

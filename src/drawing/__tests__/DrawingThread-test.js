@@ -4,16 +4,9 @@ import AnnotationService from '../../AnnotationService';
 import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let thread;
-let stubs;
-const sandbox = sinon.sandbox.create();
 
 describe('drawing/DrawingThread', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
-
     beforeEach(() => {
-        stubs = {};
         thread = new DrawingThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
@@ -29,11 +22,10 @@ describe('drawing/DrawingThread', () => {
             threadID: 2,
             type: 'draw'
         });
-        expect(thread.state).to.equal(STATES.inactive);
+        expect(thread.state).toEqual(STATES.inactive);
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
         thread = null;
     });
 
@@ -43,13 +35,13 @@ describe('drawing/DrawingThread', () => {
         });
 
         it('should clean up drawings', () => {
-            sandbox.stub(window, 'cancelAnimationFrame');
-            sandbox.stub(thread, 'reset');
-            sandbox.stub(thread, 'emit');
+            window.cancelAnimationFrame = jest.fn();
+            thread.reset = jest.fn();
+            thread.emit = jest.fn();
 
             thread.lastAnimationRequestId = 1;
             thread.drawingContext = {
-                clearRect: sandbox.stub(),
+                clearRect: jest.fn(),
                 canvas: {
                     width: 100,
                     height: 100
@@ -57,40 +49,40 @@ describe('drawing/DrawingThread', () => {
             };
             thread.destroy();
 
-            expect(window.cancelAnimationFrame).to.be.calledWith(1);
-            expect(thread.reset).to.be.called;
+            expect(window.cancelAnimationFrame).toBeCalledWith(1);
+            expect(thread.reset).toBeCalled();
         });
     });
 
     describe('reset()', () => {
         it('should clear the boundary', () => {
-            sandbox.stub(thread, 'clearBoundary');
+            thread.clearBoundary = jest.fn();
             thread.reset();
-            expect(thread.clearBoundary).to.be.called;
+            expect(thread.clearBoundary).toBeCalled();
         });
     });
 
     describe('deleteThread()', () => {
         it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
-            sandbox.stub(thread, 'getBrowserRectangularBoundary').returns(['a', 'b', 'c', 'd']);
-            sandbox.stub(thread, 'deleteAnnotationWithID');
-            sandbox.stub(thread, 'clearBoundary');
+            thread.clearBoundary = jest.fn();
+            thread.deleteAnnotationWithID = jest.fn();
+            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
             thread.concreteContext = {
-                clearRect: sandbox.stub()
+                clearRect: jest.fn()
             };
 
             thread.pathContainer = {
-                destroy: sandbox.stub()
+                destroy: jest.fn()
             };
 
             thread.annotations = { '123abc': {} };
 
             thread.deleteThread();
-            expect(thread.getBrowserRectangularBoundary).to.be.called;
-            expect(thread.concreteContext.clearRect).to.be.called;
-            expect(thread.clearBoundary).to.be.called;
-            expect(thread.deleteAnnotationWithID).to.be.calledWith({ annotationID: '123abc' });
-            expect(thread.pathContainer).to.equal(null);
+            expect(thread.getBrowserRectangularBoundary).toBeCalled();
+            expect(thread.concreteContext.clearRect).toBeCalled();
+            expect(thread.clearBoundary).toBeCalled();
+            expect(thread.deleteAnnotationWithID).toBeCalledWith({ annotationID: '123abc' });
+            expect(thread.pathContainer).toEqual(null);
         });
     });
 
@@ -99,57 +91,55 @@ describe('drawing/DrawingThread', () => {
             thread.isMobile = false;
             thread.hasTouch = false;
             thread.annotatedElement = {
-                addEventListener: sandbox.stub()
+                addEventListener: jest.fn()
             };
-            stubs.add = thread.annotatedElement.addEventListener;
         });
 
         it('should add only mouse listeners for desktop devices', () => {
             thread.bindDrawingListeners();
-            expect(stubs.add).to.be.calledWith('mousemove', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('touchmove', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('touchcancel', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('touchend', sinon.match.func);
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mousemove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('touchmove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('touchcancel', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('touchend', expect.any(Function));
         });
 
         it('should add all listeners for touch enabled laptop devices', () => {
             thread.hasTouch = true;
             thread.bindDrawingListeners();
-            expect(stubs.add).to.be.calledWith('mousemove', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchmove', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchcancel', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchend', sinon.match.func);
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mousemove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchmove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchcancel', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchend', expect.any(Function));
         });
 
         it('should add only touch listeners for touch enabled mobile devices', () => {
             thread.isMobile = true;
             thread.hasTouch = true;
             thread.bindDrawingListeners();
-            expect(stubs.add).to.not.be.calledWith('mousemove', sinon.match.func);
-            expect(stubs.add).to.not.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchmove', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchcancel', sinon.match.func);
-            expect(stubs.add).to.be.calledWith('touchend', sinon.match.func);
+            expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mousemove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mouseup', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchmove', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchcancel', expect.any(Function));
+            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchend', expect.any(Function));
         });
     });
 
     describe('unbindDrawingListeners()', () => {
         beforeEach(() => {
             thread.annotatedElement = {
-                removeEventListener: sandbox.stub()
+                removeEventListener: jest.fn()
             };
-            stubs.remove = thread.annotatedElement.removeEventListener;
         });
 
         it('should add only mouse listeners for desktop devices', () => {
             thread.unbindDrawingListeners();
-            expect(stubs.remove).to.be.calledWith('mousemove', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('mouseup', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('touchmove', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('touchcancel', sinon.match.func);
-            expect(stubs.remove).to.be.calledWith('touchend', sinon.match.func);
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mousemove', expect.any(Function));
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mouseup', expect.any(Function));
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchmove', expect.any(Function));
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchcancel', expect.any(Function));
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchend', expect.any(Function));
         });
     });
 
@@ -168,112 +158,115 @@ describe('drawing/DrawingThread', () => {
             };
 
             thread.setContextStyles(config);
-            expect(thread.drawingContext).to.deep.equal({
+            expect(thread.drawingContext).toStrictEqual({
                 lineCap: 'round',
                 lineJoin: 'round',
                 strokeStyle: 'blue',
                 lineWidth: thread.drawingContext.lineWidth
             });
-            expect(thread.drawingContext.lineWidth % config.scale).to.equal(0);
+            expect(thread.drawingContext.lineWidth % config.scale).toEqual(0);
         });
     });
 
     describe('render()', () => {
         beforeEach(() => {
-            sandbox.stub(thread, 'draw');
-            sandbox.stub(thread, 'drawBoundary');
+            thread.draw = jest.fn();
+            thread.drawBoundary = jest.fn();
         });
 
         it('should draw the pending path when the context is not empty', () => {
             const timeStamp = 20000;
             thread.render(timeStamp);
-            expect(thread.draw).to.be.called;
-            expect(thread.drawBoundary).to.be.called;
+            expect(thread.draw).toBeCalled();
+            expect(thread.drawBoundary).toBeCalled();
         });
 
         it('should do nothing when the timeElapsed is less than the refresh rate', () => {
             const timeStamp = 100;
             thread.lastRenderTimestamp = 100;
             thread.render(timeStamp);
-            expect(thread.draw).to.not.be.called;
-            expect(thread.drawBoundary).to.not.be.called;
+            expect(thread.draw).not.toBeCalled();
+            expect(thread.drawBoundary).not.toBeCalled();
         });
     });
 
     describe('setup()', () => {
         beforeEach(() => {
-            stubs.createDialog = sandbox.stub(thread, 'createDialog');
+            thread.createDialog = jest.fn();
         });
 
         it('should set the state to be pending when there are no saved annotations', () => {
             thread.annotations = [];
             thread.setup();
-            expect(thread.state).to.equal(STATES.pending);
-            expect(stubs.createDialog).to.not.be.called;
+            expect(thread.state).toEqual(STATES.pending);
+            expect(thread.createDialog).not.toBeCalled();
         });
 
         it('should set the state to be inactive and create a dialog when there are saved annotations', () => {
             thread.annotations = ['not empty'];
             thread.setup();
-            expect(thread.state).to.equal(STATES.inactive);
-            expect(stubs.createDialog).to.be.called;
+            expect(thread.state).toEqual(STATES.inactive);
+            expect(thread.createDialog).toBeCalled();
         });
     });
 
     describe('undo()', () => {
         beforeEach(() => {
-            stubs.draw = sandbox.stub(thread, 'draw');
-            stubs.updateBoundary = sandbox.stub(thread, 'updateBoundary');
-            stubs.regenerateBoundary = sandbox.stub(thread, 'regenerateBoundary');
-            stubs.drawBoundary = sandbox.stub(thread, 'drawBoundary');
-            stubs.emitAvailableActions = sandbox.stub(thread, 'emitAvailableActions');
-            stubs.containerUndo = sandbox.stub(thread.pathContainer, 'undo');
+            thread.draw = jest.fn();
+            thread.updateBoundary = jest.fn();
+            thread.regenerateBoundary = jest.fn();
+            thread.drawBoundary = jest.fn();
+            thread.emitAvailableActions = jest.fn();
+            thread.pathContainer = {
+                undo: jest.fn().mockReturnValue(false)
+            };
         });
 
         it('should do nothing when the path container fails to undo', () => {
-            stubs.containerUndo.returns(false);
             thread.undo();
-            expect(stubs.containerUndo).to.be.called;
-            expect(stubs.draw).to.not.be.called;
-            expect(stubs.emitAvailableActions).to.not.be.called;
-            expect(stubs.updateBoundary).to.not.be.called;
-            expect(stubs.regenerateBoundary).to.not.be.called;
-            expect(stubs.drawBoundary).to.not.be.called;
+            expect(thread.pathContainer.undo).toBeCalled();
+            expect(thread.draw).not.toBeCalled();
+            expect(thread.emitAvailableActions).not.toBeCalled();
+            expect(thread.updateBoundary).not.toBeCalled();
+            expect(thread.regenerateBoundary).not.toBeCalled();
+            expect(thread.drawBoundary).not.toBeCalled();
         });
 
         it('should draw when the path container indicates a successful undo', () => {
-            stubs.containerUndo.returns(true);
+            thread.pathContainer.undo = jest.fn().mockReturnValue(true);
             thread.undo();
-            expect(stubs.containerUndo).to.be.called;
-            expect(stubs.draw).to.be.called;
-            expect(stubs.emitAvailableActions).to.be.called;
-            expect(stubs.updateBoundary).to.be.called;
-            expect(stubs.regenerateBoundary).to.be.called;
-            expect(stubs.drawBoundary).to.be.called;
+            expect(thread.pathContainer.undo).toBeCalled();
+            expect(thread.draw).toBeCalled();
+            expect(thread.emitAvailableActions).toBeCalled();
+            expect(thread.updateBoundary).toBeCalled();
+            expect(thread.regenerateBoundary).toBeCalled();
+            expect(thread.drawBoundary).toBeCalled();
         });
     });
 
     describe('redo()', () => {
         beforeEach(() => {
-            stubs.draw = sandbox.stub(thread, 'draw');
-            stubs.emitAvailableActions = sandbox.stub(thread, 'emitAvailableActions');
-            stubs.containerRedo = sandbox.stub(thread.pathContainer, 'redo');
+            thread.draw = jest.fn();
+            thread.emitAvailableActions = jest.fn();
+            thread.pathContainer = {
+                redo: jest.fn().mockReturnValue(false),
+                getAxisAlignedBoundingBox: jest.fn()
+            };
         });
 
         it('should do nothing when the path container fails to redo', () => {
-            stubs.containerRedo.returns(false);
             thread.redo();
-            expect(stubs.containerRedo).to.be.called;
-            expect(stubs.draw).to.not.be.called;
-            expect(stubs.emitAvailableActions).to.not.be.called;
+            expect(thread.pathContainer.redo).toBeCalled();
+            expect(thread.draw).not.toBeCalled();
+            expect(thread.emitAvailableActions).not.toBeCalled();
         });
 
         it('should draw when the path container indicates a successful redo', () => {
-            stubs.containerRedo.returns(true);
+            thread.pathContainer.redo = jest.fn().mockReturnValue(true);
             thread.redo();
-            expect(stubs.containerRedo).to.be.called;
-            expect(stubs.draw).to.be.called;
-            expect(stubs.emitAvailableActions).to.be.called;
+            expect(thread.pathContainer.redo).toBeCalled();
+            expect(thread.draw).toBeCalled();
+            expect(thread.emitAvailableActions).toBeCalled();
         });
     });
 
@@ -282,16 +275,16 @@ describe('drawing/DrawingThread', () => {
 
         beforeEach(() => {
             thread.pendingPath = {
-                isEmpty: sandbox.stub(),
-                drawPath: sandbox.stub()
+                isEmpty: jest.fn(),
+                drawPath: jest.fn()
             };
-            stubs.applyToItems = sandbox.stub(thread.pathContainer, 'applyToItems');
-            stubs.pendingEmpty = thread.pendingPath.isEmpty;
-            stubs.pendingDraw = thread.pendingPath.drawPath;
+            thread.pathContainer = {
+                applyToItems: jest.fn()
+            };
             context = {
-                clearRect: sandbox.stub(),
-                beginPath: sandbox.stub(),
-                stroke: sandbox.stub(),
+                clearRect: jest.fn(),
+                beginPath: jest.fn(),
+                stroke: jest.fn(),
                 canvas: {
                     width: 1,
                     height: 2
@@ -304,27 +297,27 @@ describe('drawing/DrawingThread', () => {
             thread.draw(context);
             context = null;
             thread.draw(context);
-            expect(stubs.applyToItems).to.not.be.called;
+            expect(thread.pathContainer.applyToItems).not.toBeCalled();
         });
 
         it('should draw the items in the path container when given a valid context', () => {
-            stubs.pendingEmpty.returns(false);
+            thread.pendingPath.isEmpty = jest.fn().mockReturnValue(false);
             thread.draw(context);
-            expect(context.beginPath).to.be.called;
-            expect(stubs.applyToItems).to.be.called;
-            expect(stubs.pendingEmpty).to.be.called;
-            expect(stubs.pendingDraw).to.be.called;
-            expect(context.stroke).to.be.called;
+            expect(context.beginPath).toBeCalled();
+            expect(thread.pathContainer.applyToItems).toBeCalled();
+            expect(thread.pendingPath.isEmpty).toBeCalled();
+            expect(thread.pendingPath.drawPath).toBeCalled();
+            expect(context.stroke).toBeCalled();
         });
 
         it('should clear the canvas when the flag is true', () => {
             thread.draw(context, true);
-            expect(context.clearRect).to.be.called;
+            expect(context.clearRect).toBeCalled();
         });
 
         it('should not clear the canvas when the flag is true', () => {
             thread.draw(context, false);
-            expect(context.clearRect).to.not.be.called;
+            expect(context.clearRect).not.toBeCalled();
         });
     });
 
@@ -338,12 +331,14 @@ describe('drawing/DrawingThread', () => {
                 undoCount: 3,
                 redoCount: 2
             };
-            sandbox.stub(thread.pathContainer, 'getNumberOfItems').returns(numItems);
+            thread.pathContainer = {
+                getNumberOfItems: jest.fn().mockReturnValue(numItems)
+            };
             thread.addListener('threadevent', (data) => {
                 const { eventData } = data;
-                expect(data.event).to.equal('availableactions');
-                expect(eventData.undo).to.equal(numItems.undoCount);
-                expect(eventData.redo).to.equal(numItems.redoCount);
+                expect(data.event).toEqual('availableactions');
+                expect(eventData.undo).toEqual(numItems.undoCount);
+                expect(eventData.redo).toEqual(numItems.redoCount);
                 done();
             });
 
@@ -352,39 +347,37 @@ describe('drawing/DrawingThread', () => {
     });
 
     describe('drawBoundary()', () => {
-        beforeEach(() => {
-            stubs.getBrowserRectangularBoundary = sandbox.stub(thread, 'getBrowserRectangularBoundary');
-        });
-
         it('should do nothing when the location has no page', () => {
             thread.location = {
                 page: undefined
             };
+            thread.getBrowserRectangularBoundary = jest.fn();
 
             thread.drawBoundary();
-            expect(stubs.getBrowserRectangularBoundary).to.not.be.called;
+            expect(thread.getBrowserRectangularBoundary).not.toBeCalled();
         });
 
         it('should draw the boundary of the saved path', () => {
             thread.drawingContext = {
-                save: sandbox.stub(),
-                beginPath: sandbox.stub(),
-                setLineDash: sandbox.stub(),
-                rect: sandbox.stub(),
-                stroke: sandbox.stub(),
-                restore: sandbox.stub()
+                save: jest.fn(),
+                beginPath: jest.fn(),
+                setLineDash: jest.fn(),
+                rect: jest.fn(),
+                stroke: jest.fn(),
+                restore: jest.fn()
             };
-            stubs.getBrowserRectangularBoundary.returns([1, 2, 5, 6]);
+
+            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue([1, 2, 5, 6]);
             thread.location = { page: 1 };
 
             thread.drawBoundary();
-            expect(stubs.getBrowserRectangularBoundary).to.be.called;
-            expect(thread.drawingContext.save).to.be.called;
-            expect(thread.drawingContext.beginPath).to.be.called;
-            expect(thread.drawingContext.setLineDash).to.be.called;
-            expect(thread.drawingContext.rect).to.be.called;
-            expect(thread.drawingContext.stroke).to.be.called;
-            expect(thread.drawingContext.restore).to.be.called;
+            expect(thread.getBrowserRectangularBoundary).toBeCalled();
+            expect(thread.drawingContext.save).toBeCalled();
+            expect(thread.drawingContext.beginPath).toBeCalled();
+            expect(thread.drawingContext.setLineDash).toBeCalled();
+            expect(thread.drawingContext.rect).toBeCalled();
+            expect(thread.drawingContext.stroke).toBeCalled();
+            expect(thread.drawingContext.restore).toBeCalled();
         });
     });
 
@@ -393,10 +386,10 @@ describe('drawing/DrawingThread', () => {
             thread.location = {};
 
             thread.regenerateBoundary();
-            expect(thread.minX).to.be.undefined;
-            expect(thread.maxX).to.be.undefined;
-            expect(thread.minY).to.be.undefined;
-            expect(thread.maxY).to.be.undefined;
+            expect(thread.minX).toBeUndefined();
+            expect(thread.maxX).toBeUndefined();
+            expect(thread.minY).toBeUndefined();
+            expect(thread.maxY).toBeUndefined();
         });
 
         it('should set the boundary when the location has been assigned', () => {
@@ -408,10 +401,10 @@ describe('drawing/DrawingThread', () => {
             };
 
             thread.regenerateBoundary();
-            expect(thread.minX).to.equal(thread.location.minX);
-            expect(thread.maxX).to.equal(thread.location.maxX);
-            expect(thread.minY).to.equal(thread.location.minY);
-            expect(thread.maxY).to.equal(thread.location.maxY);
+            expect(thread.minX).toEqual(thread.location.minX);
+            expect(thread.maxX).toEqual(thread.location.maxX);
+            expect(thread.minY).toEqual(thread.location.minY);
+            expect(thread.maxY).toEqual(thread.location.maxY);
         });
     });
 
@@ -422,20 +415,20 @@ describe('drawing/DrawingThread', () => {
                     width: 100,
                     height: 100
                 },
-                clearRect: sandbox.stub()
+                clearRect: jest.fn()
             };
 
             thread.dialog = {
-                isVisible: sandbox.stub().returns(true),
-                hide: sandbox.stub(),
-                destroy: () => {},
-                removeAllListeners: () => {}
+                isVisible: jest.fn().mockReturnValue(true),
+                hide: jest.fn(),
+                destroy: jest.fn(),
+                removeAllListeners: jest.fn()
             };
 
             thread.clearBoundary();
-            expect(thread.drawingContext.clearRect).to.be.called;
-            expect(thread.dialog.isVisible).to.be.called;
-            expect(thread.dialog.hide).to.be.called;
+            expect(thread.drawingContext.clearRect).toBeCalled();
+            expect(thread.dialog.isVisible).toBeCalled();
+            expect(thread.dialog.hide).toBeCalled();
         });
     });
 });

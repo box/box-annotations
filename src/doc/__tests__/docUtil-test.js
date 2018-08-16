@@ -3,82 +3,92 @@ import * as docUtil from '../docUtil';
 import { DATA_TYPE_ANNOTATION_DIALOG, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as util from '../../util';
 
-const sandbox = sinon.sandbox.create();
-let stubs = {};
+const html = `<div class="annotated-element">
+    <div class="ba-annotation-dialog" style="width: 10px; height: 10px;">
+        <div class="annotation-container"></div>
+    </div>
+</div>
+
+<div class="page" data-page-number="2">
+    <div class="foo"></div>
+</div>
+
+<div class="bar">some text</div>`;
 
 describe('doc/docUtil', () => {
-    before(() => {
-        fixture.setBase('src');
-    });
+    let rootElement;
 
     beforeEach(() => {
-        fixture.load('doc/__tests__/docUtil-test.html');
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
+        document.createRange = jest.fn();
+        global.Range = { START_TO_END: 1 };
     });
 
     afterEach(() => {
-        sandbox.verifyAndRestore();
-        fixture.cleanup();
-        stubs = {};
+        document.body.removeChild(rootElement);
     });
 
     describe('isPresentation()', () => {
         it('should return false if annotatedElement is a document', () => {
             const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             const result = docUtil.isPresentation(docEl);
-            expect(result).to.be.false;
+            expect(result).toBeFalsy();
         });
 
         it('should return true if annotatedElement is a presentation', () => {
             const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
             docEl.classList.add('bp-doc-presentation');
             const result = docUtil.isPresentation(docEl);
-            expect(result).to.be.true;
+            expect(result).toBeTruthy();
         });
     });
 
     describe('hasSelectionChanged()', () => {
         it('should return false if the selection is invalid or no previous selection exists or if the selections matches', () => {
-            expect(docUtil.hasSelectionChanged()).to.be.false;
-            expect(docUtil.hasSelectionChanged({})).to.be.false;
-            expect(docUtil.hasSelectionChanged({ rangeCount: 1 })).to.be.false;
+            expect(docUtil.hasSelectionChanged()).toBeFalsy();
+            expect(docUtil.hasSelectionChanged({})).toBeFalsy();
+            expect(docUtil.hasSelectionChanged({ rangeCount: 1 })).toBeFalsy();
         });
 
         it('should return true if the previous and current selection have changed', () => {
             const selection = {
-                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(false) })
+                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(false) })
             };
             const diffSelection = {
-                getRangeAt: sandbox.stub().returns({ compareBoundaryPoints: sandbox.stub().returns(true) })
+                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(true) })
             };
-            expect(docUtil.hasSelectionChanged(diffSelection, selection)).to.be.true;
-            expect(docUtil.hasSelectionChanged(selection, selection)).to.be.false;
+            expect(docUtil.hasSelectionChanged(diffSelection, selection)).toBeTruthy();
+            expect(docUtil.hasSelectionChanged(selection, selection)).toBeFalsy();
         });
     });
 
     describe('isPointInPolyOpt()', () => {
         it('should return true if point is inside polygon', () => {
             const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
-            expect(docUtil.isPointInPolyOpt(polygon, 50, 50)).to.be.true;
+            expect(docUtil.isPointInPolyOpt(polygon, 50, 50)).toBeTruthy();
         });
 
         it('should return false if point is outside polygon', () => {
             const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
-            expect(docUtil.isPointInPolyOpt(polygon, 120, 50)).to.be.false;
+            expect(docUtil.isPointInPolyOpt(polygon, 120, 50)).toBeFalsy();
         });
     });
 
     describe('isSelectionPresent()', () => {
         it('should return true if there is a non-empty selection on the page', () => {
-            const barEl = document.querySelector('.bar');
-            const range = document.createRange();
-            range.selectNode(barEl.childNodes[0]);
-            const selection = window.getSelection();
-            selection.addRange(range);
-            expect(docUtil.isSelectionPresent()).to.be.true;
+            window.getSelection = jest.fn().mockReturnValue({
+                isCollapsed: false,
+                rangeCount: 1
+            });
+            expect(docUtil.isSelectionPresent()).toBeTruthy();
         });
 
         it('should return false if there is no non-empty selection on the page', () => {
-            expect(docUtil.isSelectionPresent()).to.be.false;
+            window.getSelection = jest.fn();
+            expect(docUtil.isSelectionPresent()).toBeFalsy();
         });
     });
 
@@ -88,7 +98,7 @@ describe('doc/docUtil', () => {
 
             // 300 * 4/3 * 0.5, 1000 - 300 * 4/3 * 0.5
             const expected = [200, 800];
-            expect(docUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).to.deep.equal(expected);
+            expect(docUtil.convertPDFSpaceToDOMSpace(coordinates, 1000, 0.5)).toStrictEqual(expected);
         });
     });
 
@@ -98,7 +108,7 @@ describe('doc/docUtil', () => {
 
             // 400 * 3/4 / 0.5 to fixed 4, (1000 - 400) * 3/4 / 0.5 to fixed 4
             const expected = [Number(600).toFixed(4), Number(900).toFixed(4)];
-            expect(docUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).to.deep.equal(expected);
+            expect(docUtil.convertDOMSpaceToPDFSpace(coordinates, 1000, 0.5)).toStrictEqual(expected);
         });
     });
 
@@ -113,24 +123,25 @@ describe('doc/docUtil', () => {
                 }
             };
 
-            const annotatedEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            annotatedEl.style.height = '1030px';
-            annotatedEl.style.width = '600px';
+            const annotatedEl = document.createElement('div');
+            annotatedEl.querySelector = jest.fn().mockReturnValue(rootElement);
+            rootElement.getBoundingClientRect = jest.fn().mockReturnValue({
+                height: 1030,
+                width: 600
+            });
 
-            expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).to.deep.equal([400, 600]);
+            expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).toStrictEqual([400, 600]);
         });
     });
 
     describe('getLowerRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
-
-        expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).to.deep.equal([10, 0]);
+        expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).toStrictEqual([10, 0]);
     });
 
     describe('getTopRightCornerOfLastQuadPoint()', () => {
         const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
-
-        expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).to.deep.equal([0, 0]);
+        expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).toStrictEqual([0, 0]);
     });
 
     describe('isValidSelection', () => {
@@ -140,7 +151,7 @@ describe('doc/docUtil', () => {
                 isCollapsed: false,
                 toString: () => 'I am valid!'
             };
-            expect(docUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
 
         it('should return false if the selection isn\'t collapsed', () => {
@@ -149,7 +160,7 @@ describe('doc/docUtil', () => {
                 isCollapsed: true,
                 toString: () => 'I am valid!'
             };
-            expect(docUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
 
         it('should return false if the selection is empty', () => {
@@ -158,7 +169,7 @@ describe('doc/docUtil', () => {
                 isCollapsed: false,
                 toString: () => ''
             };
-            expect(docUtil.isValidSelection(selection)).to.be.false;
+            expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
 
         it('should return true if the selection is valid', () => {
@@ -167,7 +178,7 @@ describe('doc/docUtil', () => {
                 isCollapsed: false,
                 toString: () => 'I am valid!'
             };
-            expect(docUtil.isValidSelection(selection)).to.be.true;
+            expect(docUtil.isValidSelection(selection)).toBeTruthy();
         });
     });
 
@@ -177,113 +188,94 @@ describe('doc/docUtil', () => {
 
         // PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM
         const pagePadding = 30;
+        const annotationLayer = document.createElement('canvas');
+        const pageEl = {
+            getBoundingClientRect: jest.fn().mockReturnValue({
+                width,
+                height
+            })
+        };
+        const canvasHeight = height - pagePadding;
 
         beforeEach(() => {
-            stubs.annotationLayer = document.createElement('canvas');
-            stubs.context = {
-                scale: sandbox.stub()
+            const context = {
+                scale: jest.fn()
             };
-            sandbox.stub(stubs.annotationLayer, 'getContext').returns(stubs.context);
-
-            stubs.pageEl = {
-                getBoundingClientRect: sandbox.stub().returns({
-                    width,
-                    height
-                })
-            };
-
-            stubs.canvasHeight = height - pagePadding;
+            annotationLayer.getContext = jest.fn().mockReturnValue(context);
         });
 
         it('should adjust canvas height and width and return the scaled canvas', () => {
-            const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
-            expect(scaledCanvas.width).to.equal(width);
-            expect(scaledCanvas.height).to.equal(stubs.canvasHeight);
-            expect(scaledCanvas.style.width).to.not.equal(`${width}px`);
-            expect(scaledCanvas.style.height).to.not.equal(`${height}px`);
+            const scaledCanvas = docUtil.scaleCanvas(pageEl, annotationLayer);
+            expect(scaledCanvas.width).toEqual(width);
+            expect(scaledCanvas.height).toEqual(canvasHeight);
+            expect(scaledCanvas.style.width).not.toEqual(`${width}px`);
+            expect(scaledCanvas.style.height).not.toEqual(`${height}px`);
         });
 
         it('should add style height & width if device pixel ratio is not 1', () => {
             const pxRatio = 2;
             window.devicePixelRatio = pxRatio;
 
-            const scaledCanvas = docUtil.scaleCanvas(stubs.pageEl, stubs.annotationLayer);
+            const scaledCanvas = docUtil.scaleCanvas(pageEl, annotationLayer);
 
-            expect(scaledCanvas.width).to.equal(width * pxRatio);
-            expect(scaledCanvas.height).to.equal(stubs.canvasHeight * pxRatio);
-            expect(scaledCanvas.style.width).to.equal(`${width}px`);
-            expect(scaledCanvas.style.height).to.equal(`${stubs.canvasHeight}px`);
-            expect(stubs.annotationLayer.getContext).to.be.called;
+            expect(scaledCanvas.width).toEqual(width * pxRatio);
+            expect(scaledCanvas.height).toEqual(canvasHeight * pxRatio);
+            expect(scaledCanvas.style.width).toEqual(`${width}px`);
+            expect(scaledCanvas.style.height).toEqual(`${canvasHeight}px`);
+            expect(annotationLayer.getContext).toBeCalled();
         });
     });
 
     describe('getContext()', () => {
+        const annotationLayer = document.createElement('canvas');
+        const canvasWrapper = document.createElement('div');
+        const textLayer = document.createElement('div');
+
         beforeEach(() => {
-            stubs.annotationLayer = {
-                width: 0,
-                height: 0,
-                getContext: sandbox.stub().returns('2d context'),
-                classList: {
-                    add: sandbox.stub()
-                },
-                style: {}
-            };
+            docUtil.scaleCanvas = jest.fn().mockReturnValue(annotationLayer);
 
-            stubs.pageEl = {
-                querySelector: sandbox.stub(),
-                getBoundingClientRect: sandbox.stub(),
-                insertBefore: sandbox.stub()
-            };
+            annotationLayer.getContext = jest.fn().mockReturnValue({
+                scale: jest.fn()
+            });
 
-            stubs.canvasWrapper = {
-                appendChild: sandbox.stub()
-            };
+            rootElement.insertBefore = jest.fn();
+            rootElement.getBoundingClientRect = jest.fn().mockReturnValue({ width: 0, height: 0 });
 
-            sandbox.stub(docUtil, 'scaleCanvas').returns(stubs.annotationLayer);
+            if (rootElement.querySelector('canvas')) {
+                rootElement.removeChild(annotationLayer);
+            }
+
+            textLayer.classList.add('textLayer');
+            textLayer.insertBefore = jest.fn();
+
+            canvasWrapper.classList.add('canvasWrapper');
+            canvasWrapper.appendChild = jest.fn();
         });
 
         it('should return null if there is no pageEl', () => {
             const result = docUtil.getContext(null, 'random-class-name', 0, 0);
-            expect(result).to.equal(null);
+            expect(result).toEqual(null);
         });
 
         it('should not insert into the pageEl if the annotationLayerEl already exists', () => {
-            stubs.pageEl.querySelector.returns(stubs.annotationLayer);
-            docUtil.getContext(stubs.pageEl, 'random-class-name');
-            expect(stubs.annotationLayer.getContext).to.be.called;
-            expect(stubs.pageEl.insertBefore).to.not.be.called;
+            rootElement.appendChild(annotationLayer);
+            docUtil.getContext(rootElement, 'random-class-name');
+            expect(rootElement.insertBefore).not.toBeCalled();
         });
 
-        it('should insert after the page textlayer if the annotationLayerEl does not exist and the text layer is available', () => {
-            stubs.annotationLayer.getContext.returns({
-                scale: sandbox.stub()
-            });
-            stubs.pageEl.getBoundingClientRect.returns({ width: 0, height: 0 });
-            stubs.pageEl.querySelector.onSecondCall().returns({});
-            const docStub = sandbox.stub(document, 'createElement').returns(stubs.annotationLayer);
-
-            docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
-            expect(docStub).to.be.called;
-            expect(stubs.annotationLayer.getContext).to.be.called;
-            expect(stubs.annotationLayer.classList.add).to.be.called;
-            expect(stubs.pageEl.insertBefore).to.be.called;
-            expect(stubs.canvasWrapper.appendChild).to.not.be.called;
+        it('should insert before the page textlayer if the annotationLayerEl does not exist and the text layer is available', () => {
+            rootElement.appendChild(textLayer);
+            docUtil.getContext(rootElement, 'random-class-name', 0, 0);
+            expect(rootElement.insertBefore).toBeCalled();
+            expect(canvasWrapper.appendChild).not.toBeCalled();
+            rootElement.removeChild(textLayer);
         });
 
         it('should insert into the page canvasWrapper if the annotationLayerEl does not exist and no text layer is available', () => {
-            stubs.annotationLayer.getContext.returns({
-                scale: sandbox.stub()
-            });
-            stubs.pageEl.getBoundingClientRect.returns({ width: 0, height: 0 });
-            const docStub = sandbox.stub(document, 'createElement').returns(stubs.annotationLayer);
-            stubs.pageEl.querySelector.onThirdCall().returns(stubs.canvasWrapper);
-
-            docUtil.getContext(stubs.pageEl, 'random-class-name', 0, 0);
-            expect(docStub).to.be.called;
-            expect(stubs.annotationLayer.getContext).to.be.called;
-            expect(stubs.annotationLayer.classList.add).to.be.called;
-            expect(stubs.pageEl.insertBefore).to.not.be.called;
-            expect(stubs.canvasWrapper.appendChild).to.be.called;
+            rootElement.appendChild(canvasWrapper);
+            docUtil.getContext(rootElement, 'random-class-name', 0, 0);
+            expect(rootElement.insertBefore).not.toBeCalled();
+            expect(canvasWrapper.appendChild).toBeCalled();
         });
     });
 
@@ -295,104 +287,114 @@ describe('doc/docUtil', () => {
             docEl.appendChild(truePageEl);
 
             const pageEl = docUtil.getPageEl(docEl, page);
-            expect(pageEl).to.equal(truePageEl);
+            expect(pageEl).toEqual(truePageEl);
         });
     });
 
     describe('isDialogDataType()', () => {
         it('should return true if the mouse event occured in a highlight dialog', () => {
-            sandbox.stub(util, 'findClosestDataType').returns(DATA_TYPE_ANNOTATION_DIALOG);
-            expect(docUtil.isDialogDataType({})).to.be.true;
+            util.findClosestDataType = jest.fn().mockReturnValue(DATA_TYPE_ANNOTATION_DIALOG);
+            expect(docUtil.isDialogDataType({})).toBeTruthy();
         });
 
         it('should return false if the mouse event occured outside a highlight dialog', () => {
-            sandbox.stub(util, 'findClosestDataType').returns('something');
-            expect(docUtil.isDialogDataType({})).to.be.false;
+            util.findClosestDataType = jest.fn().mockReturnValue('something');
+            expect(docUtil.isDialogDataType({})).toBeFalsy();
         });
     });
 
     describe('getDialogCoordsFromRange()', () => {
         let range;
+        let previousSibling;
+        let endContainer;
         let parentContainer;
         const text = 'This is some text';
 
         beforeEach(() => {
-            parentContainer = document.createElement('div');
-            parentContainer.innerHTML = text;
-            const endContainer = parentContainer.firstChild;
+            parentContainer = {
+                innerHTML: text,
+                insertBefore: jest.fn(),
+                appendChild: jest.fn(),
+                removeChild: jest.fn(),
+                querySelector: jest.fn((sel) => {
+                    return rootElement.querySelector(sel);
+                })
+            };
+
+            previousSibling = document.createElement('div');
+            previousSibling.appendChild = jest.fn();
+
+            endContainer = {
+                nodeName: '#text',
+                splitText: jest.fn(),
+                insertBefore: jest.fn(),
+                appendChild: jest.fn(),
+                previousSibling,
+                parentNode: parentContainer
+            };
+
             range = {
                 endContainer,
-                endOffset: 6 // split 'is' => "This i", "s some text"
+                endOffset: 6,
+                setStart: jest.fn(),
+                setEnd: jest.fn()
             };
+
+            document.createElement('span').getBoundingClientRect = jest.fn().mockReturnValue({
+                right: 10,
+                bottom: 11
+            });
         });
 
         it('should split the text node by the endOffset to add the position element to', () => {
-            let offset;
-            sandbox.stub(range.endContainer, 'splitText').callsFake((value) => {
-                offset = value;
-            });
             docUtil.getDialogCoordsFromRange(range);
-
-            expect(offset).to.equal(6);
+            expect(endContainer.splitText).toBeCalled();
         });
 
         describe('When end container is not a part of the text range', () => {
+            beforeEach(() => {
+                endContainer.nodeName = 'not text';
+            });
+
+            afterEach(() => {
+                expect(endContainer.splitText).not.toBeCalled();
+            });
+
             it('should calculate coords off of the end of the second last element in the range', () => {
-                const parent = document.createElement('div');
-                const first = document.createElement('span');
-                const appendStub = sandbox.stub(first, 'appendChild');
-                const second = document.createElement('p');
-                parent.appendChild(first);
-                parent.appendChild(second);
-
-                range.endContainer = second;
+                endContainer.previousElementSibling = previousSibling;
                 docUtil.getDialogCoordsFromRange(range);
-
-                expect(appendStub).to.be.called;
+                expect(endContainer.previousSibling.appendChild).toBeCalled();
             });
 
             it('should calculate coords from the last container if no second last element in the range', () => {
-                const parent = document.createElement('div');
-                const insertStub = sandbox.stub(parent, 'insertBefore');
-                const first = document.createElement('span');
-                parent.appendChild(first);
-
-                range.endContainer = parent;
+                endContainer.firstChild = document.createElement('div');
                 docUtil.getDialogCoordsFromRange(range);
-
-                expect(insertStub).to.be.called;
+                expect(endContainer.insertBefore).toBeCalled();
             });
 
-            it('should calculate coords from the end of the end container, if no elements in the end of the range', () => {
-                const parent = document.createElement('div');
-                const appendStub = sandbox.stub(parent, 'appendChild');
-
-                range.endContainer = parent;
+            it('should calculate coords from the end of the endContainer, if no elements in the end of the range', () => {
+                endContainer.previousElementSibling = undefined;
+                endContainer.firstChild = undefined;
+                endContainer.previousSibling = previousSibling;
                 docUtil.getDialogCoordsFromRange(range);
-
-                expect(appendStub).to.be.called;
+                expect(endContainer.appendChild).toBeCalled();
             });
         });
 
         it('should clean out the position element from the container it was added to', () => {
             docUtil.getDialogCoordsFromRange(range);
             const dummy = parentContainer.querySelector('span');
-            expect(dummy).to.not.exist;
+            expect(dummy).toBeNull();
         });
 
-        it('should use the position element\'s bounds for the x and y corrdinate', () => {
-            const fakeSpan = document.createElement('span');
-            sandbox.stub(fakeSpan, 'getBoundingClientRect').callsFake(() => {
-                return { right: 10, bottom: 11 };
+        it('should use the position element\'s bounds for the x and y coordinate', () => {
+            docUtil.getDialogCoordsFromRange = jest.fn().mockReturnValue({
+                x: 10,
+                y: 11
             });
-
-            const createStub = sandbox.stub(document, 'createElement');
-            createStub.withArgs('span').returns(fakeSpan);
-            createStub.callThrough();
-
             const coords = docUtil.getDialogCoordsFromRange(range);
-            expect(coords.x).to.equal(10);
-            expect(coords.y).to.equal(11);
+            expect(coords.x).toEqual(10);
+            expect(coords.y).toEqual(11);
         });
     });
 });

@@ -76,7 +76,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // Convert from plain highlight to comment
         const headerEl = this.element.querySelector(constants.SELECTOR_MOBILE_DIALOG_HEADER);
         if (headerEl) {
-            headerEl.classList.remove(constants.CLASS_HIDDEN);
+            util.showElement(constants.CLASS_MOBILE_DIALOG_HEADER);
             this.element.classList.remove(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         }
 
