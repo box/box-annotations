@@ -13,17 +13,6 @@
         "transform-regenerator"
     ],
     "env": {
-        "dev": {
-            "plugins": [
-                "flow-react-proptypes", [
-                    "react-intl",
-                    {
-                        "enforceDescriptions": true,
-                        "messagesDir": "./i18n/json"
-                    }
-                ]
-            ]
-        },
         "npm": {
             "plugins": [
                 [

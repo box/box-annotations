@@ -47,9 +47,7 @@ module.exports = () => {
                 {
                     test: /\.(svg|html)$/,
                     loader: 'raw-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 },
                 {
                     test: /\.(jpe?g|png|gif|woff2|woff)$/,
@@ -57,9 +55,7 @@ module.exports = () => {
                     options: {
                         name: '[name].[ext]'
                     },
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 }
             ]
         },

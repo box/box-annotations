@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
-import AnnotationComponent from './AnnotationComponent';
+import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
+import Profile from './components/Profile';
 import * as util from './util';
 import * as constants from './constants';
 import { ICON_DELETE } from './icons/icons';
@@ -76,6 +78,11 @@ class AnnotationDialog extends EventEmitter {
             }
 
             this.element = null;
+        }
+
+        if (this.profileComponent) {
+            unmountComponentAtNode(this.annotatedElement);
+            this.profileComponent = null;
         }
     }
 
@@ -593,14 +600,19 @@ class AnnotationDialog extends EventEmitter {
         annotationContainerEl.appendChild(annotationEl);
 
         // Avatar
-        this.profileComponent = new AnnotationComponent(annotationEl, {
-            avatarUrl: annotation.user.avatarUrl || '',
+        const user = {
             id: userId,
-            createdBy: annotation.created,
             name: userName,
-            locale: this.locale
+            avatarUrl: annotation.user.avatarUrl || ''
+        };
+        const createdBy = new Date(annotation.created).toLocaleString(this.locale, {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
-        this.profileComponent.render();
+        this.profileComponent = render(<Profile user={user} createdBy={createdBy} />, this.annotationEl);
 
         // Comment
         const commentTextEl = document.createElement('div');
