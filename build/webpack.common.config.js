@@ -22,9 +22,7 @@ module.exports = () => {
                 {
                     test: /\.js$/,
                     use: 'babel-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: /(node_modules)/
                 },
                 {
                     test: /\.s?css$/,
@@ -44,17 +42,12 @@ module.exports = () => {
                                 loader: 'sass-loader'
                             }
                         ]
-                    }),
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    })
                 },
                 {
                     test: /\.(svg|html)$/,
                     loader: 'raw-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 },
                 {
                     test: /\.(jpe?g|png|gif|woff2|woff)$/,
@@ -62,9 +55,7 @@ module.exports = () => {
                     options: {
                         name: '[name].[ext]'
                     },
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 }
             ]
         },
