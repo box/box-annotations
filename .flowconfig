@@ -1,0 +1,28 @@
+[ignore]
+.*/build/.*
+.*/lib/.*
+.*/functional-tests/.*
+.*/test-utils/.*
+.*/reports/.*
+.*/node_modules/babel-plugin-flow-react-proptypes.*
+.*/node_modules/conventional-changelog*
+.*/node_modules/eslint*
+.*/node_modules/jest*
+.*/node_modules/npm-shrinkwrap.*
+.*/node_modules/stylelint.*
+.*/node_modules/webpack*
+.*/node_modules/draft-js*
+.*/node_modules/findup*
+
+[untyped]
+.*/node_modules/box-react-ui/*
+
+[include]
+./src
+
+[libs]
+
+[options]
+module.name_mapper.extension='scss' -> '<PROJECT_ROOT>/flow/SCSSFlowStub.js.flow'
+module.name_mapper.extension='css' -> '<PROJECT_ROOT>/flow/SCSSFlowStub.js.flow'
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe

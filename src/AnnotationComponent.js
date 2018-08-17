@@ -1,7 +1,5 @@
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import Avatar from 'box-react-ui/lib/components/avatar/Avatar';
-import * as constants from '../constants';
 
 class Profile {
     /**
@@ -13,8 +11,9 @@ class Profile {
      */
     constructor(annotationEl, data) {
         this.annotationEl = annotationEl;
-        this.user = data;
-        this.createdBy = new Date(data.createdBy).toLocaleString(data.locale, {
+        const { createdBy, locale, ...rest } = data;
+        this.user = rest;
+        this.createdBy = new Date(createdBy).toLocaleString(locale, {
             month: '2-digit',
             day: '2-digit',
             year: 'numeric',
