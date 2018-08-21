@@ -4,22 +4,22 @@ exports[`components/Profile should display user profile with created by date 1`]
 <div>
   <Avatar
     avatarUrl="foo.bar"
-    className="profile-image-container"
+    className="ba-profile-image-container"
     id="123"
     name="Kanye West"
   />
   <div
-    className="profile-container"
+    className="ba-profile-container"
   >
     <div
-      className="user-name"
+      className="ba-user-name"
     >
        
       Kanye West
        
     </div>
     <div
-      className="comment-date"
+      className="ba-created-date"
     >
        
       2017-09-27T10:40:41-07:00
