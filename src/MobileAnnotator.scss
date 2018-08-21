@@ -13,11 +13,13 @@
     top: 0;
     width: 100%;
     z-index: 130;
+
     &.ba-animate-show-dialog {
         &:not(.ba-plain-highlight) {
             animation: show-dialog-small;
             animation-duration: .2s;
             animation-fill-mode: forwards;
+
             @media #{$tablet} {
                 animation: show-dialog-tablet;
                 animation-duration: .2s;
@@ -26,6 +28,7 @@
                 width: 450px;
             }
         }
+
         &.ba-plain-highlight {
             animation: show-highlight-dialog;
             animation-duration: .2s;
@@ -42,6 +45,7 @@
 
 .ba-create-annotation-dialog.ba-mobile-annotation-dialog {
     height: auto;
+
     .ba-annotation-highlight-dialog {
         bottom: 0;
     }
@@ -51,6 +55,7 @@
     0% {
         top: 100%;
     }
+
     100% {
         top: 0%;
     }
@@ -60,6 +65,7 @@
     0% {
         right: -50%;
     }
+
     100% {
         right: 0%;
     }
@@ -69,6 +75,7 @@
     0% {
         top: -48px;
     }
+
     100% {
         top: 0;
     }
@@ -88,6 +95,7 @@
         top: 48px;
         width: 100%;
     }
+
     .ba-annotation-mobile-header {
         align-items: center;
         background-color: $white;
@@ -99,8 +107,10 @@
         top: 0;
         width: 100%;
         z-index: 160;
+
         @include border-top-bottom;
     }
+
     .ba-annotation-dialog-close {
         background: none;
         border: 0;
@@ -111,49 +121,61 @@
         padding: 3px;
         vertical-align: middle;
         width: 48px;
+
         .icon {
             fill: fade-out($better-black, .25);
         }
+
         &:hover .icon {
             fill: $better-black;
         }
     }
+
     .ba-textarea {
         font-size: 16px;
         line-height: 16px;
         min-width: 100%;
     }
+
     .comment-text {
         width: 100%;
     }
+
     .ba-profile-image-container {
         width: 43px;
+
         img {
             height: 40px;
             width: 40px;
         }
     }
+
     .ba-profile-container {
         .ba-user-name {
             font-size: 16px;
         }
+
         .ba-created-date {
             font-size: 14px;
         }
     }
+
     .bp-btn {
         font-size: 16;
     }
+
     .comment-text,
     .delete-confirmation-message {
         font-size: 15px;
     }
+
     .delete-comment-btn {
         svg {
             height: 24px;
             width: 24px;
         }
     }
+
     .reply-container {
         padding-bottom: 45px;
     }
@@ -164,6 +186,7 @@
 .ba-mobile-annotation-dialog.ba-plain-highlight {
     height: 47px; // includes mobile header & highlight dialog
     top: auto;
+
     @include border-top-bottom;
 }
 
@@ -177,6 +200,7 @@
     padding: 15px;
     position: fixed;
     width: 100%;
+
     @include border-top-bottom;
 }
 
@@ -198,13 +222,16 @@
     position: absolute;
     text-align: center;
     z-index: 9999;
+
     .ba-annotation-highlight-btns {
         display: flex;
         justify-content: flex-start;
         padding: 0;
+
         button {
             flex-grow: 1;
             padding: 15px 0;
+
             &:nth-child(2)::before {
                 border-right: 1px solid $seesee;
                 bottom: 17px;
@@ -215,6 +242,7 @@
             }
         }
     }
+
     &.cannot-annotate {
         .ba-add-highlight-btn,
         .ba-highlight-comment-btn {
@@ -225,6 +253,7 @@
 
 .bp-container .ba-draw-undo-redo-container {
     margin: 0;
+
     @media #{$tablet} {
         margin: 0 auto;
     }
