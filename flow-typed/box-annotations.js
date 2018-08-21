@@ -6,20 +6,20 @@ type AnnotationPermissions = {
 };
 
 type Coordinates = {
-    x: string,
-    y: string
+    x: Number,
+    y: Number
 };
 
 // [x1, x2, x3, x4, y1, y2, y3 ,y4]
 type QuadPoint = {
-    x1: string,
-    y1: string,
-    x2: string,
-    y2: string,
-    x3: string,
-    y3: string,
-    x4: string,
-    y4: string
+    x1: Number,
+    y1: Number,
+    x2: Number,
+    y2: Number,
+    x3: Number,
+    y3: Number,
+    x4: Number,
+    y4: Number
 };
 type QuadPoints = Array<QuadPoint>;
 
@@ -29,10 +29,10 @@ type Location = {
     min: Coordinates,
     max: Coordinates,
     dimensions: {
-        x: string,
-        y: string
+        x: Number,
+        y: Number
     },
-    page: string
+    page: Number
 };
 
 type PointLocation = {

@@ -3,6 +3,7 @@
     "typescript.validate.enable": false,
     "typescript.format.enable": false,
     "flow.useNPMPackagedFlow": true,
+    "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
     "flow.enabled": true,
     "javascript.validate.enable": false,
     "prettier.eslintIntegration": true,

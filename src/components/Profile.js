@@ -8,16 +8,11 @@ type Props = {
     createdBy: Date
 };
 
-const Profile = ({ user, createdBy }: Props): React.Node => (
+const Profile = ({ user: { id, name, avatarUrl }, createdBy }: Props): React.Node => (
     <div>
-        <Avatar
-            id={user.id}
-            name={user.name}
-            avatarUrl={user.avatarUrl}
-            className={constants.CLASS_PROFILE_IMG_CONTAINER}
-        />
+        <Avatar id={id} name={name} avatarUrl={avatarUrl} className={constants.CLASS_PROFILE_IMG_CONTAINER} />
         <div className={constants.CLASS_PROFILE_CONTAINER}>
-            <div className={constants.CLASS_USER_NAME}> {user.name} </div>
+            <div className={constants.CLASS_USER_NAME}> {name} </div>
             <div className={constants.CLASS_COMMENT_DATE}> {createdBy} </div>
         </div>
     </div>

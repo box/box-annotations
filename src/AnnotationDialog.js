@@ -19,6 +19,14 @@ const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
 const CLASS_BUTTON_DELETE_CONFIRM = 'confirm-delete-btn';
 
+const DATE_FORMAT = {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+};
+
 class AnnotationDialog extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -605,13 +613,7 @@ class AnnotationDialog extends EventEmitter {
             name: userName,
             avatarUrl: annotation.user.avatarUrl || ''
         };
-        const createdBy = new Date(annotation.created).toLocaleString(this.locale, {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        const createdBy = new Date(annotation.created).toLocaleString(this.locale, DATE_FORMAT);
         this.profileComponent = render(<Profile user={user} createdBy={createdBy} />, this.annotationEl);
 
         // Comment
