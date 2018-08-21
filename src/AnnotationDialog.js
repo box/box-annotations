@@ -581,6 +581,18 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
+     * Renders the user profile React component attached to the annotationEl
+     *
+     * @private
+     * @param {Object} user User who created the annotation
+     * @param {string} createdBy Localized date string
+     * @return {void}
+     */
+    renderUserProfile(user, createdBy) {
+        this.profileComponent = render(<Profile user={user} createdBy={createdBy} />, this.annotatedElement);
+    }
+
+    /**
      * Adds an annotation to the dialog.
      *
      * @private
@@ -614,7 +626,7 @@ class AnnotationDialog extends EventEmitter {
             avatarUrl: annotation.user.avatarUrl || ''
         };
         const createdBy = new Date(annotation.created).toLocaleString(this.locale, DATE_FORMAT);
-        this.profileComponent = render(<Profile user={user} createdBy={createdBy} />, this.annotationEl);
+        this.renderUserProfile(user, createdBy);
 
         // Comment
         const commentTextEl = document.createElement('div');
