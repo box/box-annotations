@@ -65,10 +65,6 @@ class AnnotationThread extends EventEmitter {
         // Explicitly bind listeners
         this.showDialog = this.showDialog.bind(this);
 
-        if (!this.isMobile) {
-            this.mouseoutHandler = this.mouseoutHandler.bind(this);
-        }
-
         this.setup();
     }
 
@@ -547,26 +543,6 @@ class AnnotationThread extends EventEmitter {
         indicatorEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_INDICATOR);
         indicatorEl.innerHTML = ICON_PLACED_ANNOTATION;
         return indicatorEl;
-    }
-
-    /**
-     * Mouseout handler. Hides dialog if we aren't creating the first one.
-     *
-     * @private
-     * @param {HTMLEvent} event - DOM event
-     * @return {void}
-     */
-    mouseoutHandler(event) {
-        if (!event) {
-            return;
-        }
-
-        const mouseInDialog = util.isInDialog(event, event.toElement);
-
-        const firstAnnotation = util.getFirstAnnotation(this.annotations);
-        if (firstAnnotation && !mouseInDialog) {
-            this.hideDialog();
-        }
     }
 
     /**
