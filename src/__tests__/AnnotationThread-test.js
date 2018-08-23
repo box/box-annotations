@@ -681,38 +681,6 @@ describe('AnnotationThread', () => {
         });
     });
 
-    // describe('mouseoutHandler()', () => {
-    //     it('should do nothing if event does not exist', () => {
-    //         util.isInDialog = jest.fn();
-    //         thread.mouseoutHandler();
-    //         expect(util.isInDialog).not.toBeCalled();
-    //     });
-
-    //     it('should not call hideDialog if there are no annotations in the thread', () => {
-    //         thread.annotations = [];
-    //         thread.hideDialog = jest.fn();
-    //         thread.mouseoutHandler({});
-    //         expect(thread.hideDialog).not.toBeCalled();
-    //     });
-
-    //     it('should call hideDialog if there are annotations in the thread', () => {
-    //         thread.hideDialog = jest.fn();
-    //         const annotation = new Annotation({
-    //             fileVersionId: '2',
-    //             threadID: '1',
-    //             type: 'point',
-    //             text: 'blah',
-    //             threadNumber: '1',
-    //             location: { x: 0, y: 0 },
-    //             created: Date.now()
-    //         });
-
-    //         thread.annotations = [annotation];
-    //         thread.mouseoutHandler({});
-    //         expect(thread.hideDialog).toBeCalled();
-    //     });
-    // });
-
     describe('saveAnnotationToThread()', () => {
         it('should add the annotation to the thread, and add to the dialog when the dialog exists', () => {
             thread.annotations.push = jest.fn();
