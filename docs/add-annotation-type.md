@@ -3,7 +3,7 @@ See [Image Point Annotations](https://github.com/box/box-annotations/tree/master
 
 ### Abstract Classes
 - Annotator: This class is the communicator between the file itself and the [controller](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js).
-- Annotation Controller: This class is the communicator between the [Annotator](https://github.com/box/box-annotations/blob/master/src/Annotator.js) and the [Annotation threads](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js). Each controller maintains an object of pages which contains a [red/black tree](https://github.com/mourner/rbush)
+- Annotation Controller: This class is the communicator between the [Annotator](https://github.com/box/box-annotations/blob/master/src/Annotator.js) and the [Annotation threads](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js). Each controller maintains an object of pages which contains an [R-tree](https://github.com/mourner/rbush)
 - Annotation Thread: This class maintains a 'thread' of annotations associated by a unique thread ID, ie a group of annotations at the same location
 - Annotation Dialog: This class maintains the dialog UI corresponding with an [annotation thread](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js), displaying the metadata of annotations and buttons to create/update/delete
 
