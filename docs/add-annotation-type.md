@@ -10,23 +10,23 @@ See [Image Point Annotations](https://github.com/box/box-annotations/tree/master
 ** {**VIEWER**} refers to a viewer in [Box Content Preview](https://github.com/box/box-content-preview#viewers)
 
 ### The following files/abstract methods need to be implemented:
-* controllers/{**TYPE**}Controller.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)):
+* controllers/{**TYPE**}ModeController.js i.e. controllers/DrawingModeController.js (extends [AnnotationModeController](https://github.com/box/box-annotations/blob/master/src/controllers/AnnotationModeController.js)):
     * Abstract methods that should be implemented by subclasses:
         * **handleThreadEvents()** - Handles annotation [thread events](thread.md#events) and emits them to the viewer
         * **enter()** - Enables the specified annotation mode
         * **exit()** - Disables the specified annotation mode
 
-* {**VIEWER**}/{**TYPE**}Dialog.js (extends [AnnotationDialog](https://github.com/box/box-annotations/blob/master/src/AnnotationDialog.js)):
+* {**VIEWER**}/{**TYPE**}Dialog.js i.e. doc/DocPointDialog.js (extends [AnnotationDialog](https://github.com/box/box-annotations/blob/master/src/AnnotationDialog.js)):
     * Abstract methods that should be implemented by subclasses:
         * **position()** - positions the dialog relative to the associated annotation thread
 
-* {**VIEWER**}/{**TYPE**}Thread.js (extends [AnnotationThread](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js)):
+* {**VIEWER**}/{**TYPE**}Thread.js i.e. doc/DocPointThread.js (extends [AnnotationThread](https://github.com/box/box-annotations/blob/master/src/AnnotationThread.js)):
     * Abstract methods that should be implemented by subclasses:
         * **show()** - positions and shows the UI indicator for thread (blue icon for point annotations, highlight itself for highlights, etc)
         * **createDialog()** - creates and caches the appropriate dialog
 
 ### The following files need to be modified:
-* {**VIEWER**}/{**VIEWER**}Annotator.js (extends [Annotator](https://github.com/box/box-annotations/blob/master/src/Annotator.js)):
+* {**VIEWER**}/{**VIEWER**}Annotator.js i.e. doc/DocAnnotator.js (extends [Annotator](https://github.com/box/box-annotations/blob/master/src/Annotator.js)):
     * Methods that should be modified
         * **getLocationFromEvent()** - Returns an annotation location on an image from the DOM event or null if no correct annotation location can be inferred from the event. For point annotations, we return the (x, y) coordinates for the point with the top left corner of the image as the origin. See [DocAnnotator.getLocationFromEvent()](https://github.com/box/box-annotations/blob/master/src/doc/DocAnnotator.js#L145) to see how to support multiple annotation types with this method
         * **createAnnotationThread()** - Creates the proper type of AnnotationThread based on the type of the newly created annotation, and returns
