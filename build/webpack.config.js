@@ -4,11 +4,11 @@ const isRelease = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'dev';
 
 const path = require('path');
-const commonConfig = require('./webpack.common.config');
-const { UglifyJsPlugin } = require('webpack').optimize;
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const commonConfig = require('./webpack.common.config');
 const license = require('./license');
 
 /* eslint-disable key-spacing, require-jsdoc */
@@ -38,22 +38,29 @@ if (isRelease) {
         })
     );
 
-    // http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
-    config.plugins.push(
-        new UglifyJsPlugin({
-            compress: {
-                warnings: false, // Don't output warnings
-                drop_console: true // Drop console statements
-            },
-            comments: false, // Remove comments
-            sourceMap: false
-        })
-    );
+    // https://webpack.js.org/configuration/optimization/#optimization-minimize
+    config.optimization = {
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    warnings: false, // Don't output warnings
+                    compress: {
+                        drop_console: true // Drop console statements
+                    },
+                    output: {
+                        comments: false // Remove comments
+                    }
+                },
+                sourceMap: false
+            })
+        ]
+    };
 
     // Optimize CSS - minimize, remove comments and duplicate rules
     config.plugins.push(
         new OptimizeCssAssetsPlugin({
             cssProcessorOptions: {
+                discardComments: { removeAll: true },
                 safe: true
             }
         })

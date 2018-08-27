@@ -1,7 +1,7 @@
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
 import { generateBtn, repositionCaret, getPageInfo, getDialogWidth, showElement } from '../util';
-import { getDialogCoordsFromRange } from '../doc/docUtil';
+import { getDialogCoordsFromRange } from './docUtil';
 import {
     CREATE_EVENT,
     CLASS_ANNOTATION_CARET,

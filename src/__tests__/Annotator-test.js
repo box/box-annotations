@@ -171,14 +171,10 @@ describe('Annotator', () => {
         it('should fetch and then render annotations', () => {
             annotator.fetchPromise = Promise.resolve();
             annotator.loadAnnotations();
-            return annotator.fetchPromise
-                .then(() => {
-                    expect(annotator.render).toBeCalled();
-                    expect(annotator.emit).not.toBeCalled();
-                })
-                .catch(() => {
-                    sinon.assert.failException;
-                });
+            return annotator.fetchPromise.then(() => {
+                expect(annotator.render).toBeCalled();
+                expect(annotator.emit).not.toBeCalled();
+            });
         });
 
         it('should emit an error if the annotator fails to fetch and render annotations', () => {
@@ -186,10 +182,9 @@ describe('Annotator', () => {
             annotator.loadAnnotations();
             return annotator.fetchPromise
                 .then(() => {
-                    sinon.assert.failException;
+                    expect(annotator.render).not.toBeCalled();
                 })
                 .catch((err) => {
-                    expect(annotator.render).not.toBeCalled();
                     expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, err);
                 });
         });
@@ -355,15 +350,11 @@ describe('Annotator', () => {
                 };
 
                 const result = annotator.fetchAnnotations();
-                result
-                    .then(() => {
-                        expect(result).toBeTruthy();
-                        expect(annotator.threadMap).not.toBeUndefined();
-                        expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
-                    })
-                    .catch(() => {
-                        sinon.assert.failException;
-                    });
+                result.then(() => {
+                    expect(result).toBeTruthy();
+                    expect(annotator.threadMap).not.toBeUndefined();
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
+                });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {

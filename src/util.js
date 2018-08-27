@@ -500,7 +500,9 @@ export function repositionCaret(dialogEl, dialogX, highlightDialogWidth, browser
         annotationCaretEl.style.left = `${caretLeftX}px`;
 
         return 0;
-    } else if (dialogPastRight && !dialogPastLeft) {
+    }
+
+    if (dialogPastRight && !dialogPastLeft) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
         const caretRightX = Math.max(10, pageWidth - browserX);
 

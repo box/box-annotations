@@ -1,7 +1,7 @@
 const path = require('path');
-const pkg = require('../package.json');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const pkg = require('../package.json');
 
 const { DefinePlugin } = webpack;
 const NormalPlugin = webpack.NormalModuleReplacementPlugin;
@@ -22,39 +22,16 @@ module.exports = () => {
                 {
                     test: /\.js$/,
                     use: 'babel-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 },
                 {
                     test: /\.s?css$/,
-                    loader: ExtractTextPlugin.extract({
-                        fallback: 'style-loader',
-                        use: [
-                            {
-                                loader: 'css-loader',
-                                options: {
-                                    importLoaders: 1
-                                }
-                            },
-                            {
-                                loader: 'postcss-loader'
-                            },
-                            {
-                                loader: 'sass-loader'
-                            }
-                        ]
-                    }),
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
                 },
                 {
                     test: /\.(svg|html)$/,
                     loader: 'raw-loader',
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 },
                 {
                     test: /\.(jpe?g|png|gif|woff2|woff)$/,
@@ -62,16 +39,13 @@ module.exports = () => {
                     options: {
                         name: '[name].[ext]'
                     },
-                    exclude: [
-                        path.resolve('node_modules')
-                    ]
+                    exclude: [path.resolve('node_modules')]
                 }
             ]
         },
         plugins: [
-            new ExtractTextPlugin({
-                filename: '[name].css',
-                allChunks: true
+            new MiniCssExtractPlugin({
+                filename: '[name].css'
             }),
             new DefinePlugin({
                 __NAME__: JSON.stringify(pkg.name),
