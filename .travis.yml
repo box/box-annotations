@@ -22,6 +22,9 @@ aliases:
     - &sauce-labs-image-desktop
       <<: *sauce-labs
       script: travis_retry yarn run functional-tests-ci --grep '(?=.*@desktop)(?=.*@image)'
+    - &sauce-labs-multiimage-desktop
+      <<: *sauce-labs
+      script: travis_retry yarn run functional-tests-ci --grep '(?=.*@desktop)(?=.*@multiimage)'
     - &sauce-labs-ie
       <<: *sauce-labs
       script: travis_retry yarn run functional-tests-ci --grep @ie
@@ -62,5 +65,5 @@ jobs:
   # MULTI-PAGE IMAGE FUNCTIONAL TESTS
   #
   # Mac Chrome
-  - <<: *sauce-labs-image-desktop
+  - <<: *sauce-labs-multiimage-desktop
     env: BROWSER_PLATFORM="macOS 10.13" BROWSER_NAME="chrome" FILE_ID="303903703739" FILE_VERSION_ID="320047230971"
