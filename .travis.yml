@@ -18,10 +18,10 @@ aliases:
         script: travis_retry yarn run functional-tests-ci
     - &sauce-labs-doc-desktop
       <<: *sauce-labs
-      script: travis_retry yarn run functional-tests-ci --grep '(@desktop)(@doc)'
+      script: travis_retry yarn run functional-tests-ci --grep '(?=.*@desktop)(?=.*@doc)'
     - &sauce-labs-image-desktop
       <<: *sauce-labs
-      script: travis_retry yarn run functional-tests-ci --grep '(@desktop)(@image)'
+      script: travis_retry yarn run functional-tests-ci --grep '(?=.*@desktop)(?=.*@image)'
     - &sauce-labs-ie
       <<: *sauce-labs
       script: travis_retry yarn run functional-tests-ci --grep @ie
