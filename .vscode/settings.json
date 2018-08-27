@@ -1,14 +1,13 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "editor.rulers": [
-        120
-    ],
-    "flow.enabled": false,
+    "typescript.validate.enable": false,
+    "typescript.format.enable": false,
+    "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
     "flow.useNPMPackagedFlow": true,
+    "flow.enabled": true,
+    "javascript.validate.enable": false,
     "prettier.eslintIntegration": true,
     "prettier.printWidth": 120,
-    "prettier.singleQuote": true,
     "prettier.tabWidth": 4,
-    "typescript.format.enable": false,
-    "typescript.validate.enable": false
+    "prettier.singleQuote": true
 }
