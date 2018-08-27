@@ -1,4 +1,7 @@
 import EventEmitter from 'events';
+import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
+import Profile from './components/Profile';
 import * as util from './util';
 import * as constants from './constants';
 import { ICON_DELETE } from './icons/icons';
@@ -15,6 +18,14 @@ const CLASS_REPLY_TEXTAREA = 'reply-textarea';
 const CLASS_BUTTON_DELETE_COMMENT = 'delete-comment-btn';
 const CLASS_DELETE_CONFIRMATION = 'delete-confirmation';
 const CLASS_BUTTON_DELETE_CONFIRM = 'confirm-delete-btn';
+
+const DATE_FORMAT = {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+};
 
 class AnnotationDialog extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -75,6 +86,11 @@ class AnnotationDialog extends EventEmitter {
             }
 
             this.element = null;
+        }
+
+        if (this.profileComponent) {
+            unmountComponentAtNode(this.annotatedElement);
+            this.profileComponent = null;
         }
     }
 
@@ -332,9 +348,7 @@ class AnnotationDialog extends EventEmitter {
     addSortedAnnotations(annotations) {
         // Sort annotations by date created
         const sorted = Object.keys(annotations).map((key) => annotations[key]);
-        sorted.sort((a, b) => {
-            return new Date(a.created) - new Date(b.created);
-        });
+        sorted.sort((a, b) => new Date(a.created) - new Date(b.created));
 
         // Add sorted annotations to dialog
         sorted.forEach((annotation) => {
@@ -534,6 +548,7 @@ class AnnotationDialog extends EventEmitter {
                     // Cancels + destroys the annotation thread
                     this.cancelAnnotation();
                 }
+
                 break;
             // Clicking inside reply text area
             case constants.DATA_TYPE_REPLY_TEXTAREA:
@@ -566,6 +581,18 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
+     * Renders the user profile React component attached to the annotationEl
+     *
+     * @private
+     * @param {Object} user User who created the annotation
+     * @param {string} createdBy Localized date string
+     * @return {void}
+     */
+    renderUserProfile(user, createdBy) {
+        this.profileComponent = render(<Profile user={user} createdBy={createdBy} />, this.annotatedElement);
+    }
+
+    /**
      * Adds an annotation to the dialog.
      *
      * @private
@@ -583,15 +610,6 @@ class AnnotationDialog extends EventEmitter {
             userName = util.htmlEscape(annotation.user.name) || this.localized.anonymousUserName;
         }
 
-        const avatarUrl = util.htmlEscape(annotation.user.avatarUrl || '');
-        const avatarHtml = util.getAvatarHtml(avatarUrl, userId, userName, this.localized.profileAlt);
-        const created = new Date(annotation.created).toLocaleString(this.locale, {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
         const textEl = util.createCommentTextNode(annotation.text);
 
         const annotationEl = document.createElement('div');
@@ -602,25 +620,13 @@ class AnnotationDialog extends EventEmitter {
         annotationContainerEl.appendChild(annotationEl);
 
         // Avatar
-        const avatarEl = document.createElement('div');
-        avatarEl.classList.add(constants.CLASS_PROFILE_IMG_CONTAINER);
-        avatarEl.innerHTML = avatarHtml;
-        annotationEl.appendChild(avatarEl);
-
-        // Creator namate & date
-        const profileContainerEl = document.createElement('div');
-        profileContainerEl.classList.add(constants.CLASS_PROFILE_CONTAINER);
-        annotationEl.appendChild(profileContainerEl);
-
-        const userNameEl = document.createElement('div');
-        userNameEl.classList.add(constants.CLASS_USER_NAME);
-        userNameEl.textContent = userName;
-        profileContainerEl.appendChild(userNameEl);
-
-        const createdEl = document.createElement('div');
-        createdEl.classList.add(constants.CLASS_COMMENT_DATE);
-        createdEl.textContent = created;
-        profileContainerEl.appendChild(createdEl);
+        const user = {
+            id: userId,
+            name: userName,
+            avatarUrl: annotation.user.avatarUrl || ''
+        };
+        const createdBy = new Date(annotation.created).toLocaleString(this.locale, DATE_FORMAT);
+        this.renderUserProfile(user, createdBy);
 
         // Comment
         const commentTextEl = document.createElement('div');
@@ -812,6 +818,7 @@ class AnnotationDialog extends EventEmitter {
             if (numAnnotations) {
                 createSectionEl.classList.add(constants.CLASS_HIDDEN);
             }
+
             dialogEl.appendChild(createSectionEl);
 
             const createTextArea = document.createElement('textarea');
@@ -847,6 +854,7 @@ class AnnotationDialog extends EventEmitter {
         if (!numAnnotations) {
             showSectionEl.classList.add(constants.CLASS_HIDDEN);
         }
+
         dialogEl.appendChild(showSectionEl);
 
         const showCommentsContainer = document.createElement('div');

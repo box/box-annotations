@@ -66,9 +66,7 @@
 
 .ba-annotation-caret {
     left: 50%;
-    position: absolute;
-
-    // CSS arrow for caret above container
+    position: absolute; // CSS arrow for caret above container
     &::after,
     &::before {
         border: solid transparent;
@@ -152,7 +150,6 @@
 //------------------------------------------------------------------------------
 // CSS for points and dialogs
 //------------------------------------------------------------------------------
-
 .ba-annotation-dialog,
 .ba-create-annotation-dialog {
     border-top: 20px solid transparent; // Transparent border for hover detection
@@ -161,7 +158,6 @@
     position: absolute;
     text-align: left;
     z-index: 130; // Annotation dialog should be above other content
-
     .annotation-container {
         background-color: $white;
         border: 1px solid $seesee;
@@ -217,7 +213,7 @@
         }
     }
 
-    .profile-image-container {
+    .ba-profile-image-container {
         display: inline-block;
         padding-right: 5px;
         vertical-align: top;
@@ -231,10 +227,10 @@
         }
     }
 
-    .profile-container {
+    .ba-profile-container {
         display: inline-block;
 
-        .user-name {
+        .ba-user-name {
             color: $fours;
             font-size: 13px;
             font-weight: bold;
@@ -244,7 +240,7 @@
             white-space: nowrap;
         }
 
-        .comment-date {
+        .ba-created-date {
             color: lighten($fours, 20%);
             font-size: 11px;
             padding-top: 2px;
@@ -267,7 +263,6 @@
         top: 0;
         width: 100%;
         z-index: 2; // Above the delete button
-
         .button-container {
             margin-top: 0;
             text-align: center;
@@ -427,9 +422,7 @@
     border: 1px solid $seesee;
     border-radius: 3px;
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding: 5px 6px;
-
-    // Center buttons
+    padding: 5px 6px; // Center buttons
     .ba-add-highlight-btn {
         padding-top: 1px;
     }
@@ -471,9 +464,7 @@
 }
 
 .bp-use-default-cursor {
-    cursor: default;
-
-    // Overrides pdf_viewer.css
+    cursor: default; // Overrides pdf_viewer.css
     .textLayer > div {
         cursor: default;
     }
