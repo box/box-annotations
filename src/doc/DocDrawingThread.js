@@ -1,6 +1,6 @@
 import DrawingPath from '../drawing/DrawingPath';
 import DrawingThread from '../drawing/DrawingThread';
-import DocDrawingDialog from '../doc/DocDrawingDialog';
+import DocDrawingDialog from './DocDrawingDialog';
 import {
     STATES,
     DRAW_STATES,
@@ -41,7 +41,9 @@ class DocDrawingThread extends DrawingThread {
     handleMove(location) {
         if (this.drawingFlag !== DRAW_STATES.drawing || !location) {
             return;
-        } else if (this.hasPageChanged(location)) {
+        }
+
+        if (this.hasPageChanged(location)) {
             this.onPageChange(location);
             return;
         }
