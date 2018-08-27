@@ -2,7 +2,10 @@
     "parser": "babel-eslint",
     "extends": [
         "airbnb",
+        "plugin:flowtype/recommended",
+        "plugin:react/recommended",
         "prettier",
+        "prettier/flowtype",
         "prettier/react"
     ],
     "env": {
@@ -31,102 +34,56 @@
         "jest": false
     },
     "rules": {
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "comma-dangle": [
-            "error",
-            "never"
-        ],
-        "indent": [
-            "error",
-            4,
-            {
-                "SwitchCase": 1
+        "camelcase": ["off"],
+        "react/no-unused-prop-types": ["off"],
+        "react/default-props-match-prop-types": ["off", {
+            "allowRequiredDefaults": true
+        }],
+        "react/sort-comp": ["off"],
+        "react/forbid-prop-types": ["off"],
+        "no-param-reassign": ["error", {
+            "props": false
+        }],
+        "react/require-default-props": ["off"],
+        "react/display-name": ["off"],
+        "quotes": ["error", "single"],
+        "comma-dangle": ["error", "never"],
+        "indent": ["error", 4, {
+            "SwitchCase": 1
+        }],
+        "import/imports-first": ["off"],
+        "jsx-quotes": ["error", "prefer-single"],
+        "max-len": ["off"],
+        "react/jsx-indent-props": ["error", 4],
+        "react/jsx-indent": ["error", 4],
+        "no-underscore-dangle": ["off"],
+        "react/jsx-filename-extension": ["off"],
+        "arrow-body-style": ["off"],
+        "class-methods-use-this": ["off"],
+        "arrow-parens": ["error", "always"],
+        "no-plusplus": ["error", {
+            "allowForLoopAfterthoughts": true
+        }],
+        "import/no-extraneous-dependencies": ["off"],
+        "import/no-webpack-loader-syntax": ["off"],
+        "valid-jsdoc": ["warn", {
+            "prefer": {
+                "returns": "return",
+                "class": "constructor"
+            },
+            "preferType": {
+                "array": "Array",
+                "function": "Function",
+                "object": "Object",
+                "Boolean": "boolean",
+                "Number": "number",
+                "String": "string"
             }
-        ],
-        "import/imports-first": [
-            "off"
-        ],
-        "jsx-quotes": [
-            "error",
-            "prefer-single"
-        ],
-        "max-len": [
-            "off"
-        ],
-        "react/jsx-indent-props": [
-            "error",
-            4
-        ],
-        "react/jsx-indent": [
-            "error",
-            4
-        ],
-        "no-underscore-dangle": [
-            "off"
-        ],
-        "react/jsx-filename-extension": [
-            "off"
-        ],
-        "arrow-body-style": [
-            "off"
-        ],
-        "class-methods-use-this": [
-            "off"
-        ],
-        "arrow-parens": [
-            "error",
-            "always"
-        ],
-        "no-plusplus": [
-            "error",
-            {
-                "allowForLoopAfterthoughts": true
-            }
-        ],
-        "import/no-extraneous-dependencies": [
-            "off"
-        ],
-        "import/no-webpack-loader-syntax": [
-            "off"
-        ],
-        "require-jsdoc": [
-            "warn",
-            {
-                "require": {
-                    "FunctionDeclaration": true,
-                    "MethodDefinition": false,
-                    "ClassDeclaration": false,
-                    "ArrowFunctionExpression": true
-                }
-            }
-        ],
-        "valid-jsdoc": [
-            "warn",
-            {
-                "prefer": {
-                    "returns": "return",
-                    "class": "constructor"
-                },
-                "preferType": {
-                    "array": "Array",
-                    "function": "Function",
-                    "object": "Object",
-                    "Boolean": "boolean",
-                    "Number": "number",
-                    "String": "string"
-                }
-            }
-        ],
-        "prefer-destructuring": [
-            "error",
-            {
-                "object": true,
-                "array": false
-            }
-        ]
+        }],
+        "prefer-destructuring": ["error", {
+            "object": true,
+            "array": false
+        }]
     },
     "settings": {
         "import/resolver": {
