@@ -1,10 +1,4 @@
-@import '~box-react-ui/lib/styles/variables';
-
-.ba-annotation-dialog,
-.ba-create-annotation-dialog {
-    @import '~box-react-ui/lib/styles/common/buttons';
-    @import '~box-react-ui/lib/styles/common/forms';
-}
+@import './variables';
 
 $highlight-yellow: #fed94e;
 $highlight-yellow-active-hover: #ffc900;
@@ -22,3 +16,84 @@ $avatar-color-8: #b800b2;
 $avatar-color-9: #f22c44;
 
 $tablet: '(min-width: 768px)';
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Lato Regular'), local('Lato-Regular'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Lato Bold'), local('Lato-Bold'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff') format('woff');
+}
+
+.ba,
+.ba-annotation-dialog,
+.ba-create-annotation-dialog {
+    @include reset;
+
+    // links have tag styles
+    @import '~box-react-ui/lib/styles/common/links';
+    // Forms have tag styles
+    @import '~box-react-ui/lib/styles/common/forms';
+    @import '~box-react-ui/lib/styles/common/buttons';
+
+    background: $white;
+    border: 0 none;
+    /* stylelint-disable declaration-no-important */
+    box-sizing: border-box !important;
+    /* stylelint-enable declaration-no-important */
+    color: $twos;
+    height: 100%;
+    letter-spacing: .3px;
+    line-height: 20px;
+    margin: 0;
+    outline: none;
+    overflow: hidden;
+    padding: 0;
+    user-select: none;
+    width: 100%;
+
+    .ReactModal__Body--open & {
+        position: relative;
+    }
+
+    /* stylelint-disable */
+    ::-webkit-input-placeholder {
+        @include placeholder;
+    }
+
+    ::-moz-placeholder {
+        @include placeholder;
+    }
+
+    :-ms-input-placeholder {
+        @include placeholder;
+    }
+
+    ::-webkit-file-upload-button {
+        cursor: pointer;
+    }
+
+    /* stylelint-enable */
+    ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+            list-style: none;
+        }
+    }
+
+    .btn-plain,
+    input,
+    textarea,
+    select,
+    .select-button {
+        font: inherit;
+    }
+}
