@@ -1,0 +1,1 @@
+require('./TranslationsPlugin').prototype.buildTranslations();
