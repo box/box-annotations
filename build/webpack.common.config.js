@@ -4,8 +4,6 @@ const { DefinePlugin, NormalModuleReplacementPlugin } = require('webpack');
 const packageJSON = require('../package.json');
 
 const language = process.env.LANGUAGE;
-const token = process.env.TOKEN; // used for examples only
-const fileVersionId = process.env.FILEVERSIONID; // used for examples only
 const isRelease = process.env.NODE_ENV === 'production';
 const version = isRelease ? packageJSON.version : 'dev';
 
@@ -50,8 +48,6 @@ module.exports = () => {
             new DefinePlugin({
                 __LANGUAGE__: JSON.stringify(language),
                 __VERSION__: JSON.stringify(version),
-                __TOKEN__: JSON.stringify(token), // used for examples only
-                __FILEVERSIONID__: JSON.stringify(fileVersionId), // used for examples only
                 'process.env': {
                     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
                     BABEL_ENV: JSON.stringify(process.env.BABEL_ENV)
