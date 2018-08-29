@@ -17,7 +17,6 @@ type FilePermissions = {
 
 type AnnotationType = 'point' | 'plain-highlight' | 'highlight-comment' | 'draw';
 
-
 type Coordinates = {
     x: Number,
     y: Number
@@ -41,7 +40,6 @@ type Path = {
 };
 type DrawingPaths = Array<Path>;
 
-// API response
 type LocationInfo = {
     dimensions: { // original file dimensions
         x: Number,
@@ -64,9 +62,6 @@ type DrawingLocationInfo = {
     paths: DrawingPaths
 } & LocationInfo;
 
-//--------------------------------------------------------------------------
-// API Response
-//--------------------------------------------------------------------------
 type User = {
     type: 'user',
     id: string,
