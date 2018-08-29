@@ -31,16 +31,13 @@ $tablet: '(min-width: 768px)';
     src: local('Lato Bold'), local('Lato-Bold'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff') format('woff');
 }
 
-.ba,
-.ba-annotation-dialog,
-.ba-create-annotation-dialog {
+.ba {
     @include reset;
 
     // links have tag styles
     @import '~box-react-ui/lib/styles/common/links';
     // Forms have tag styles
     @import '~box-react-ui/lib/styles/common/forms';
-    @import '~box-react-ui/lib/styles/common/buttons';
 
     background: $white;
     border: 0 none;
@@ -96,4 +93,11 @@ $tablet: '(min-width: 768px)';
     .select-button {
         font: inherit;
     }
+}
+
+.ba-annotation-dialog,
+.ba-create-annotation-dialog {
+    // stylelint-disable no-duplicate-at-import-rules
+    @import '~box-react-ui/lib/styles/common/forms';
+    @import '~box-react-ui/lib/styles/common/buttons';
 }
