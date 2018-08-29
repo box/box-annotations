@@ -4,12 +4,19 @@
  * @author Box
  */
 /* eslint-disable no-use-before-define */
-import type { MessageDescriptor, InjectIntlProvidedProps } from 'react-intl';
-
 type AnnotationPermissions = {
     can_edit: boolean,
     can_delete: boolean
 };
+
+type FilePermissions = {
+    can_annotate: boolean,
+    can_view_annotations_all: boolean,
+    can_view_annotations_self: boolean
+};
+
+type AnnotationType = 'point' | 'plain-highlight' | 'highlight-comment' | 'draw';
+
 
 type Coordinates = {
     x: Number,
@@ -31,10 +38,11 @@ type QuadPoints = Array<QuadPoint>;
 
 type Path = Array<Coordinates>;
 
+// API response
 type Location = {
     min: Coordinates,
     max: Coordinates,
-    dimensions: {
+    dimensions: { // original file dimensions
         x: Number,
         y: Number
     },
@@ -53,43 +61,36 @@ type DrawingLocation = {
     coordinates: Path
 } & Location;
 
+//--------------------------------------------------------------------------
+// API Response
+//--------------------------------------------------------------------------
 type User = {
     type: 'user',
     id: string,
     name: string,
-    email?: string,
-    avatarUrl?: string
+    login: string,
+    profile_image: string
 };
 
-type AnnotationType = 'point' | 'plain-highlight' | 'highlight-comment' | 'draw';
+type AnnotationDetails = {
+    threadID: string,
+    type: string,
+    location: PointLocation | HighlightLocation | DrawingLocation
+};
+
+type BoxFile = {
+    id: string,
+    type: 'file_version'
+};
 
 type Annotation = {
-    annotationId: string,
-    text: ?string,
-    type: AnnotationType,
-    location: Location,
-    user: User,
+    id: string, 
+    item: BoxFile,
+    message: string,
+    thread: string,
+    created_by: User,
     permissions: AnnotationPermissions,
-    created: string,
-    modified: string,
-    isPending: boolean
-};
-
-type FilePermissions = {
-    can_annotate: boolean,
-    can_view_annotations_all: boolean,
-    can_view_annotations_self: boolean
-};
-
-type Thread = {
-    threadId: string,
-    fileVersionId: string,
-    threadNumber: string,
-    type: AnnotationType,
-    annotations: [Annotation],
-    permissions: FilePermissions,
-    reply: Function,
-    delete: Function,
-    destroy: Function,
-    move: Function
+    created_at: string,
+    modified_at: string,
+    details: AnnotationDetails
 };
