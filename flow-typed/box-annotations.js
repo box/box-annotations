@@ -40,8 +40,6 @@ type Path = Array<Coordinates>;
 
 // API response
 type Location = {
-    min: Coordinates,
-    max: Coordinates,
     dimensions: { // original file dimensions
         x: Number,
         y: Number
