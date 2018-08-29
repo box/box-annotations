@@ -70,12 +70,12 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         defaultMessage: 'There was an error deleting this annotation.'
     },
     deleteLabel: {
-        id: 'be.deleteLabel',
+        id: 'ba.deleteLabel',
         defaultMessage: 'Delete',
         description: 'Aria label for button to delete a comment or task'
     },
     editLabel: {
-        id: 'be.editLabel',
+        id: 'ba.editLabel',
         defaultMessage: 'Edit',
         description: 'Aria label for button to edit a comment or task'
     },
