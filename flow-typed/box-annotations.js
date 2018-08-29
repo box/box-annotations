@@ -36,7 +36,10 @@ type QuadPoint = {
 };
 type QuadPoints = Array<QuadPoint>;
 
-type Path = Array<Coordinates>;
+type Path = {
+    path: Array<Coordinates>
+};
+type DrawingPaths = Array<Path>;
 
 // API response
 type Location = {
@@ -47,16 +50,18 @@ type Location = {
     page: Number
 };
 
-type PointLocation = {
-    coordinates: Coordinates
-} & Location;
+type PointLocation = Coordinates & Location;
 
 type HighlightLocation = {
-    coordinates: QuadPoints
+    quadpoints: QuadPoints
 } & Location;
 
 type DrawingLocation = {
-    coordinates: Path
+    minX: Number,
+    minY: Number,
+    maxX: Number, 
+    maxY: Number,
+    paths: DrawingPaths
 } & Location;
 
 //--------------------------------------------------------------------------
