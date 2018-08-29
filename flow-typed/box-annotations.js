@@ -42,7 +42,7 @@ type Path = {
 type DrawingPaths = Array<Path>;
 
 // API response
-type Location = {
+type LocationInfo = {
     dimensions: { // original file dimensions
         x: Number,
         y: Number
@@ -50,19 +50,19 @@ type Location = {
     page: Number
 };
 
-type PointLocation = Coordinates & Location;
+type PointLocationInfo = Coordinates & LocationInfo;
 
-type HighlightLocation = {
+type HighlightLocationInfo = {
     quadpoints: QuadPoints
-} & Location;
+} & LocationInfo;
 
-type DrawingLocation = {
+type DrawingLocationInfo = {
     minX: Number,
     minY: Number,
     maxX: Number, 
     maxY: Number,
     paths: DrawingPaths
-} & Location;
+} & LocationInfo;
 
 //--------------------------------------------------------------------------
 // API Response
@@ -78,7 +78,7 @@ type User = {
 type AnnotationDetails = {
     threadID: string,
     type: string,
-    location: PointLocation | HighlightLocation | DrawingLocation
+    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
 };
 
 type BoxFile = {
