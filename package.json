@@ -26,8 +26,7 @@
     "react-dom": "^16.3.1",
     "react-immutable-proptypes": "^2.1.0",
     "react-intl": "^2.4.0",
-    "react-process-string": "^1.2.0",
-    "react-styleguidist": "^7.2.3"
+    "react-process-string": "^1.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.1.3",
@@ -102,7 +101,6 @@
     "react-immutable-proptypes": "^2.1.0",
     "react-intl": "^2.4.0",
     "react-process-string": "^1.2.0",
-    "react-styleguidist": "^7.2.3",
     "sass-loader": "^7.1.0",
     "sinon": "^4.1.2",
     "sinon-chai": "^3.0.0",
@@ -145,8 +143,7 @@
     "major": "./build/release.sh -m && ./build/publish.sh",
     "patch": "./build/release.sh -p && ./build/publish.sh",
     "nsp": "nsp check --reporter summary",
-    "upgrade-brui": "./build/upgrade_brui.sh",
-    "styleguide": "yarn run pre-build && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development"
+    "upgrade-brui": "./build/upgrade_brui.sh"
   },
   "lint-staged": {
     "src/**/*.js": [
