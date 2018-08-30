@@ -53,6 +53,15 @@ describe('components/Annotation', () => {
         expect(wrapper.find('.ba-annotation').hasClass('ba-is-focused')).toBe(false);
     });
 
+    test('should correctly display anonymous username if no name was provided in created_by', () => {
+        const unknownUser = {
+            type: 'user',
+            id: '0'
+        };
+        const wrapper = render({ created_by: unknownUser });
+        expect(wrapper.find('UserLink').length).toEqual(0);
+    });
+
     test('should not allow actions when annotation is pending', () => {
         const annotation = {
             created_at: TIME_STRING_SEPT_27_2017,

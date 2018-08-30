@@ -9,19 +9,6 @@ module.exports = {
                 loader: 'babel-loader'
             },
             {
-                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    minetype: 'application/font-woff/',
-                    name: 'fonts/[name].[ext]'
-                }
-            },
-            {
-                test: /\.png$/,
-                loader: 'url-loader'
-            },
-            {
                 test: /\.s?css$/,
                 use: ['style-loader', 'css-loader', 'sass-loader']
             },
@@ -31,6 +18,19 @@ module.exports = {
                 options: {
                     name: '[name].[ext]'
                 }
+            },
+            {
+                test: /\.(svg|html)$/,
+                loader: 'raw-loader',
+                exclude: [path.resolve('node_modules')]
+            },
+            {
+                test: /\.(jpe?g|png|gif|woff2|woff)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]'
+                },
+                exclude: [path.resolve('node_modules')]
             }
         ]
     },

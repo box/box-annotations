@@ -69,7 +69,6 @@ const DeletableAnnotation = () => (
     />
 );
 
-
 const AnnnotationExamples = () => (
     <div>
         <ActiveAnnotation />

@@ -81,7 +81,15 @@ class Annotation extends React.Component<Props, State> {
                     <Avatar className='ba-annotation-avatar' {...created_by} />
                     <div className='ba-annotation-content'>
                         <div className='ba-annotation-headline'>
-                            <UserLink className='ba-annotation-user-name' id={created_by.id} name={created_by.name} />
+                            {created_by.name ? (
+                                <UserLink
+                                    className='ba-annotation-user-name'
+                                    id={created_by.id}
+                                    name={created_by.name}
+                                />
+                            ) : (
+                                <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
+                            )}
                             <Tooltip
                                 text={
                                     <FormattedMessage
