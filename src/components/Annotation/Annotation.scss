@@ -1,0 +1,128 @@
+@import '../../common.scss';
+
+.ba {
+    .ba-annotation-container {
+        position: relative;
+        z-index: 1;
+
+        .ba-annotation-error {
+            padding: 14px 15px;
+
+            .ba-annotation-error-action {
+                color: $king-crimson;
+                display: block;
+                margin-top: 5px;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .ba-annotation {
+        border-bottom: 1px solid $seesee;
+        display: flex;
+        margin-top: 23px;
+        opacity: .9999;
+        padding-bottom: 15px;
+        width: 100%;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        .bcs-comment-delete-container {
+            margin-top: 3px;
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 1;
+
+            &.ba-is-confirming {
+                opacity: 1;
+            }
+
+            .bcs-comment-delete {
+                vertical-align: top;
+            }
+
+            .bcs-comment-delete-no,
+            .bcs-comment-delete-yes {
+                margin: 0 3px;
+            }
+
+            .flyout-wrapper .overlay-wrapper .overlay {
+                min-width: 120px;
+
+                .overlay-title {
+                    white-space: nowrap;
+                }
+            }
+
+            .flyout-wrapper .overlay-wrapper.left {
+                .overlay {
+                    padding: 10px 15px;
+                    transform: translateY(-20%);
+                }
+
+                .arrow {
+                    top: 20%;
+                }
+            }
+        }
+
+        &:hover,
+        &.ba-is-focused {
+            .bcs-comment-delete-container {
+                opacity: 1;
+            }
+        }
+
+        .bcs-comment-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        &.ba-is-pending {
+            opacity: .4;
+        }
+
+        .ba-annotation-avatar {
+            flex-shrink: 0;
+            margin-right: 17px;
+            margin-top: 3px;
+        }
+
+        .ba-annotation-content {
+            color: $fours;
+            flex: 1;
+            min-width: 0;
+
+            .ba-annotation-user-name {
+                color: $twos;
+                font-weight: bold;
+                line-height: 19.5px;
+                margin-right: 10px;
+            }
+
+            .ba-annotation-created-at {
+                color: $nines;
+                cursor: default;
+            }
+        }
+
+        .ba-annotation-headline {
+            display: flex;
+            flex-flow: row wrap;
+            padding-right: 25px;
+            position: relative;
+        }
+
+        .ba-annotation-text-loading {
+            margin-top: 3px;
+        }
+    }
+}

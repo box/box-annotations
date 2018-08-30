@@ -38,7 +38,12 @@ module.exports = {
         alias: {
             // Map to uncompiled source code so we get nice source maps for debugging
             'box-annotations/lib': path.join(__dirname, '../src'),
-            Wrapper: path.join(__dirname, '../src/components/Wrapper')
+            examples: path.join(__dirname, '../examples/src'),
+            Wrapper: path.join(__dirname, '../examples/Wrapper'),
+            'rsg-components/Wrapper': path.join(
+                __dirname,
+                '../examples/Wrapper',
+            ),
         }
     }
 };

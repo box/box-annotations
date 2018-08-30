@@ -13,7 +13,7 @@ type Props = {
 
 const Wrapper = ({ children }: Props) => (
     <IntlProvider locale='en' textComponent={React.Fragment}>
-        <div className='ba'>{children}</div>
+        {children}
     </IntlProvider>
 );
 

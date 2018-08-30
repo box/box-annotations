@@ -9,6 +9,16 @@ import { defineMessages } from 'react-intl';
 import type { MessageDescriptor } from 'react-intl';
 
 const messages: { [string]: MessageDescriptor } = defineMessages({
+    annotationPostedFullDateTime: {
+        id: 'ba.annotationPostedFullDateTime',
+        defaultMessage: '{time, date, full} at {time, time, short}',
+        description: 'Annotation posted full date time for title'
+    },
+    annotationDeletePrompt: {
+        id: 'ba.annotationDeletePrompt',
+        defaultMessage: 'Delete annotation?',
+        description: 'Confirmation prompt text to delete annotation'
+    },
     loadErrorMessage: {
         id: 'ba.loadErrorMessage',
         description: 'Error when annotations fail to load',
@@ -18,11 +28,6 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         id: 'ba.authErrorMessage',
         description: 'Error when the user\'s token has expired',
         defaultMessage: 'Your session has expired. Please refresh the page.'
-    },
-    posting: {
-        id: 'ba.posting',
-        description: 'Placeholder when the annotation is pending',
-        defaultMessage: 'Posting...'
     },
     anonymousUserName: {
         id: 'ba.anonymousUserName',
@@ -41,8 +46,8 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
     },
     highlightCommentToggle: {
         id: 'ba.highlightComment',
-        description: 'Highlight comment annotation toggle',
-        defaultMessage: 'Add comment to highlighted text'
+        description: 'Highlight annotation annotation toggle',
+        defaultMessage: 'Add annotation to highlighted text'
     },
     whoHighlighted: {
         id: 'ba.whoHighlighted',

@@ -17,17 +17,12 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
     commentDeleteCancel: {
         id: 'be.commentDeleteCancel',
         defaultMessage: 'No',
-        description: 'Button text to cancel annotation deletion'
+        description: 'Button text to cancel comment deletion'
     },
     commentDeleteConfirm: {
         id: 'be.commentDeleteConfirm',
         defaultMessage: 'Yes',
-        description: 'Button text to confirm annotation deletion'
-    },
-    commentDeletePrompt: {
-        id: 'be.commentDeletePrompt',
-        defaultMessage: 'Delete annotation?',
-        description: 'Confirmation prompt text to delete annotation'
+        description: 'Button text to confirm comment deletion'
     },
     commentPost: {
         id: 'be.commentPost',
@@ -37,37 +32,32 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
     commentShowOriginal: {
         id: 'be.commentShowOriginal',
         defaultMessage: 'Show Original',
-        description: 'Show original button for showing original annotation'
+        description: 'Show original button for showing original comment'
     },
     commentTranslate: {
         id: 'be.commentTranslate',
         defaultMessage: 'Translate',
-        description: 'Translate button for translating annotation'
+        description: 'Translate button for translating comment'
     },
     commentWrite: {
         id: 'be.commentWrite',
-        defaultMessage: 'Add an annotation',
-        description: 'Placeholder for annotation input'
-    },
-    commentPostedFullDateTime: {
-        id: 'be.commentPostedFullDateTime',
-        defaultMessage: '{time, date, full} at {time, time, short}',
-        description: 'Comment posted full date time for title'
+        defaultMessage: 'Add a comment',
+        description: 'Placeholder for comment input'
     },
     commentCreateErrorMessage: {
         id: 'be.commentCreateErrorMessage',
-        description: 'Error message when an annotation creation fails',
-        defaultMessage: 'There was an error creating this annotation.'
+        description: 'Error message when a comment creation fails',
+        defaultMessage: 'There was an error creating this comment.'
     },
     commentCreateConflictMessage: {
         id: 'be.commentCreateConflictMessage',
-        description: 'Error message when an annotation creation fails due to a conflict',
-        defaultMessage: 'This annotation already exists.'
+        description: 'Error message when a comment creation fails due to a conflict',
+        defaultMessage: 'This comment already exists.'
     },
     commentDeleteErrorMessage: {
         id: 'be.commentDeleteErrorMessage',
-        description: 'Error message when an annotation deletion fails',
-        defaultMessage: 'There was an error deleting this annotation.'
+        description: 'Error message when a comment deletion fails',
+        defaultMessage: 'There was an error deleting this comment.'
     },
     deleteLabel: {
         id: 'be.deleteLabel',

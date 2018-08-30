@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ba.annotationPostedFullDateTime",
+    "description": "Annotation posted full date time for title",
+    "defaultMessage": "{time, date, full} at {time, time, short}"
+  },
+  {
+    "id": "ba.annotationDeletePrompt",
+    "description": "Confirmation prompt text to delete annotation",
+    "defaultMessage": "Delete annotation?"
+  },
+  {
+    "id": "ba.loadErrorMessage",
+    "description": "Error when annotations fail to load",
+    "defaultMessage": "We're sorry, annotations failed to load for this file."
+  },
+  {
+    "id": "ba.authErrorMessage",
+    "description": "Error when the user's token has expired",
+    "defaultMessage": "Your session has expired. Please refresh the page."
+  },
+  {
+    "id": "ba.anonymousUserName",
+    "description": "Placeholder when the current annotation's user information is unknown",
+    "defaultMessage": "Some User"
+  },
+  {
+    "id": "ba.pointToggle",
+    "description": "Point annotation mode toggle",
+    "defaultMessage": "Point annotation mode"
+  },
+  {
+    "id": "ba.highlightToggle",
+    "description": "Plain highlight annotation toggle",
+    "defaultMessage": "Highlight tex"
+  },
+  {
+    "id": "ba.highlightComment",
+    "description": "Highlight annotation annotation toggle",
+    "defaultMessage": "Add annotation to highlighted text"
+  },
+  {
+    "id": "ba.whoHighlighted",
+    "description": "Label for who highlighted the annotated text",
+    "defaultMessage": "{1} highlighted"
+  },
+  {
+    "id": "ba.drawToggle",
+    "description": "Drawing annotation mode toggle",
+    "defaultMessage": "Drawing annotation mode"
+  },
+  {
+    "id": "ba.whoDrew",
+    "description": "Label for who drew the drawing annotation",
+    "defaultMessage": "{1} drew"
+  }
+]
