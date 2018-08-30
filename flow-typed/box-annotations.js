@@ -76,14 +76,14 @@ type AnnotationDetails = {
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
 };
 
-type BoxFile = {
+type BoxFileVersion = {
     id: string,
     type: 'file_version'
 };
 
 type Annotation = {
     id: string, 
-    item: BoxFile,
+    item: BoxFileVersion,
     message: string,
     thread: string,
     created_by: User,
