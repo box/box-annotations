@@ -29,9 +29,7 @@ const PENDING_TRUE = true;
 const onDelete = () => console.log('annotation deleted');
 
 const AnnotationContainer = (props) => (
-    <div className='ba annotation-container'>
-        <Annotation {...props} />
-    </div>
+    <Annotation {...props} />
 );
 
 const ActiveAnnotation = () => (
@@ -70,7 +68,7 @@ const DeletableAnnotation = () => (
 );
 
 const AnnnotationExamples = () => (
-    <div>
+    <div className='ba'>
         <ActiveAnnotation />
         <PendingAnnotation />
         <DeletableAnnotation />

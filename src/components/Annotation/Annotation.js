@@ -9,10 +9,10 @@ import Avatar from 'box-react-ui/lib/components/avatar';
 import { ReadableTime } from 'box-react-ui/lib/components/time';
 import Tooltip from 'box-react-ui/lib/components/tooltip';
 
-import CommentText from './CommentText';
-import InlineDelete from './InlineDelete';
-import CommentInlineError from './CommentInlineError';
-import UserLink from './UserLink';
+import CommentText from '../../../third-party/components/CommentText';
+import InlineDelete from '../../../third-party/components/InlineDelete';
+import CommentInlineError from '../../../third-party/components/CommentInlineError';
+import UserLink from '../../../third-party/components/UserLink';
 import messages from './messages';
 
 import './Annotation.scss';
