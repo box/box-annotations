@@ -40,12 +40,14 @@ type Path = {
 };
 type DrawingPaths = Array<Path>;
 
+type OriginalDimensions = {
+    width: Number,
+    height: Number
+}
+
 type LocationInfo = {
-    dimensions: { // original file dimensions
-        x: Number,
-        y: Number
-    },
-    page: Number
+    dimensions: OriginalDimensions,
+    pageNumber: Number
 };
 
 type PointLocationInfo = Coordinates & LocationInfo;
@@ -62,15 +64,15 @@ type DrawingLocationInfo = {
     paths: DrawingPaths
 } & LocationInfo;
 
-type User = {
+type BoxUser = {
     type: 'user',
     id: string,
     name: string,
-    login: string,
-    profile_image: string
+    email: string,
+    avatarUrl: string
 };
 
-type AnnotationDetails = {
+type BoxAnnotationDetails = {
     threadID: string,
     type: string,
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
@@ -85,10 +87,14 @@ type Annotation = {
     id: string, 
     item: BoxFileVersion,
     message: string,
-    thread: string,
-    created_by: User,
     permissions: AnnotationPermissions,
-    created_at: string,
-    modified_at: string,
-    details: AnnotationDetails
+    details: AnnotationDetails,
+    createdBy: User, 
+    createdAt: string,
+    modifiedBy?: string,
+    threadNumber: string
 };
+
+type PointAnnotation = PointLocationInfo & Annotation;
+type HighlightAnnotation = HighlightLocationInfo & Annotation;
+type DrawAnnotation = DrawingLocationInfo & Annotation;
