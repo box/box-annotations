@@ -18,8 +18,8 @@ describe('components/Annotation', () => {
     const render = (props = {}) =>
         shallow(
             <Annotation
-                created_at={TIME_STRING_SEPT_27_2017}
-                created_by={USER}
+                createdAt={TIME_STRING_SEPT_27_2017}
+                createdBy={USER}
                 message='test'
                 permissions={{}}
                 {...props}
@@ -29,9 +29,9 @@ describe('components/Annotation', () => {
     test('should correctly render annotation', () => {
         const unixTime = new Date(TIME_STRING_SEPT_27_2017).getTime();
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER
+            createdBy: USER
         };
 
         const wrapper = shallow(<Annotation id='123' {...annotation} />);
@@ -53,20 +53,20 @@ describe('components/Annotation', () => {
         expect(wrapper.find('.ba-annotation').hasClass('ba-is-focused')).toBe(false);
     });
 
-    test('should correctly display anonymous username if no name was provided in created_by', () => {
+    test('should correctly display anonymous username if no name was provided in createdBy', () => {
         const unknownUser = {
             type: 'user',
             id: '0'
         };
-        const wrapper = render({ created_by: unknownUser });
+        const wrapper = render({ createdBy: unknownUser });
         expect(wrapper.find('UserLink').length).toEqual(0);
     });
 
     test('should not allow actions when annotation is pending', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER,
+            createdBy: USER,
             permissions: { can_delete: true },
             isPending: true
         };
@@ -79,9 +79,9 @@ describe('components/Annotation', () => {
     // eslint-disable-next-line
     test('should allow user to delete if they have delete permissions on the annotation and delete handler is defined', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER,
+            createdBy: USER,
             permissions: { can_delete: true }
         };
 
@@ -92,9 +92,9 @@ describe('components/Annotation', () => {
 
     test('should not allow user to delete if they lack delete permissions on the annotation', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER,
+            createdBy: USER,
             permissions: {}
         };
 
@@ -105,9 +105,9 @@ describe('components/Annotation', () => {
 
     test('should not allow user to delete if onDelete handler is undefined', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER
+            createdBy: USER
         };
 
         const wrapper = shallow(<Annotation id='123' {...annotation} />);
@@ -117,9 +117,9 @@ describe('components/Annotation', () => {
 
     test('should render an error when one is defined', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER
+            createdBy: USER
         };
 
         const wrapper = shallow(
@@ -139,9 +139,9 @@ describe('components/Annotation', () => {
 
     test('should render an error cta when an action is defined', () => {
         const annotation = {
-            created_at: TIME_STRING_SEPT_27_2017,
+            createdAt: TIME_STRING_SEPT_27_2017,
             message: 'test',
-            created_by: USER
+            createdBy: USER
         };
         const onActionSpy = jest.fn();
 

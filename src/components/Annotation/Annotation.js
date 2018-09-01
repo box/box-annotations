@@ -22,10 +22,10 @@ const ONE_HOUR_MS = 3600000; // 60 * 60 * 1000
 type Props = {
     id: string,
     message: string,
-    created_by: User,
     permissions: AnnotationPermissions,
-    created_at: string,
-    modified_at?: string,
+    createdAt: string,
+    createdBy?: User,
+    modifiedAt?: string,
     onDelete?: Function,
     isPending?: boolean,
     error?: ActionItemError
@@ -56,8 +56,8 @@ class Annotation extends React.Component<Props, State> {
     render() {
         const {
             id,
-            created_at,
-            created_by,
+            createdAt,
+            createdBy,
             permissions,
             message,
             isPending = false,
@@ -66,7 +66,7 @@ class Annotation extends React.Component<Props, State> {
         } = this.props;
         const { isFocused } = this.state;
         const canDelete = getProp(permissions, 'can_delete', false);
-        const createdAtTimestamp = new Date(created_at).getTime();
+        const createdAtTimestamp = new Date(createdAt).getTime();
 
         return (
             <div className='ba-annotation-container'>
@@ -78,15 +78,11 @@ class Annotation extends React.Component<Props, State> {
                     onBlur={this.handleCommentBlur}
                     onFocus={this.handleCommentFocus}
                 >
-                    <Avatar className='ba-annotation-avatar' {...created_by} />
+                    <Avatar className='ba-annotation-avatar' {...createdBy} />
                     <div className='ba-annotation-content'>
                         <div className='ba-annotation-headline'>
-                            {created_by.name ? (
-                                <UserLink
-                                    className='ba-annotation-user-name'
-                                    id={created_by.id}
-                                    name={created_by.name}
-                                />
+                            {createdBy && createdBy.name ? (
+                                <UserLink className='ba-annotation-user-name' id={createdBy.id} name={createdBy.name} />
                             ) : (
                                 <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
                             )}
