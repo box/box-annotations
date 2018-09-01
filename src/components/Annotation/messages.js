@@ -44,8 +44,8 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         description: 'Plain highlight annotation toggle',
         defaultMessage: 'Highlight tex'
     },
-    highlightCommentToggle: {
-        id: 'ba.highlightComment',
+    highlightannotationToggle: {
+        id: 'ba.highlightannotation',
         description: 'Highlight annotation annotation toggle',
         defaultMessage: 'Add annotation to highlighted text'
     },

@@ -2,8 +2,15 @@
 
 .ba {
     .ba-annotation-container {
+        @import '~box-react-ui/lib/styles/common/inline-notifications';
+
+        border-bottom: 1px solid $seesee;
         position: relative;
         z-index: 1;
+
+        &:last-child {
+            border-bottom: 0;
+        }
 
         .ba-annotation-error {
             padding: 14px 15px;
@@ -18,20 +25,11 @@
     }
 
     .ba-annotation {
-        border-bottom: 1px solid $seesee;
         display: flex;
         margin-top: 23px;
-        opacity: .9999;
+        opacity: 1;
         padding-bottom: 15px;
         width: 100%;
-
-        &:first-child {
-            margin-top: 0;
-        }
-
-        &:last-child {
-            border-bottom: 0;
-        }
 
         .bcs-comment-delete-container {
             margin-top: 3px;
