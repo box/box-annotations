@@ -105,6 +105,7 @@ class Annotator extends EventEmitter {
         if (typeof this.options.container === 'string') {
             this.container = document.querySelector(this.options.container);
         }
+        this.container.classList.add('ba');
 
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);

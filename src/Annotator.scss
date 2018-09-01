@@ -95,17 +95,6 @@
     }
 }
 
-// Icon buttons
-.delete-comment-btn {
-    svg {
-        fill: lighten($better-black, 10%);
-    }
-
-    &:hover svg {
-        fill: $better-black;
-    }
-}
-
 .ba-annotation-drawing-dialog,
 .ba-annotation-highlight-dialog .bp-btn-plain,
 .ba-annotation-highlight-dialog .bp-btn-plain:hover {
@@ -172,6 +161,23 @@
         width: 282px; // Hard-coded width to solve layout issues
     }
 
+    .ba-annotation-list {
+        width: 100%;
+
+        > li {
+            border-bottom: 1px solid $seesee;
+
+            &:first-child .ba-annotation {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                border-bottom: 0;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
     .annotation-container section {
         padding: 15px;
     }
@@ -194,93 +200,6 @@
         }
     }
 
-    .annotation-comment {
-        border-bottom: 1px solid $seesee;
-        margin-top: 15px;
-        padding-bottom: 15px;
-        position: relative;
-
-        &:first-child {
-            margin-top: 0;
-        }
-
-        &:last-child {
-            border-bottom: 0;
-        }
-
-        .ba-annotation-comment-text {
-            margin-bottom: 0;
-
-            & p {
-                margin: 0;
-            }
-        }
-    }
-
-    .profile-image-container {
-        display: inline-block;
-        padding-right: 5px;
-        vertical-align: top;
-        width: 37px;
-
-        img {
-            border-radius: 50%;
-            display: block; // Remove padding from inline display
-            height: 32px;
-            width: 32px;
-        }
-    }
-
-    .profile-container {
-        display: inline-block;
-
-        .user-name {
-            color: $fours;
-            font-size: 13px;
-            font-weight: bold;
-            max-width: 175px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .comment-date {
-            color: lighten($fours, 20%);
-            font-size: 11px;
-            padding-top: 2px;
-        }
-    }
-
-    .comment-text {
-        color: $fours;
-        font-size: 12px;
-        padding-top: 10px;
-        width: 250px;
-        word-wrap: break-word;
-    }
-
-    .delete-confirmation {
-        background-color: fade-out($white, .05);
-        height: 100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-        width: 100%;
-        z-index: 2; // Above the delete button
-
-        .button-container {
-            margin-top: 0;
-            text-align: center;
-        }
-    }
-
-    .delete-confirmation-message {
-        color: $fours;
-        font-size: 12px;
-        padding: 0 0 5px;
-        text-align: center;
-    }
-
     .button-container {
         margin-top: 15px;
         position: relative;
@@ -289,21 +208,6 @@
 
         .bp-btn:last-child {
             margin-right: 0;
-        }
-    }
-
-    .delete-comment-btn {
-        position: absolute;
-        right: 0;
-        top: 0;
-
-        svg {
-            height: 18px;
-            width: 18px;
-        }
-
-        &:focus {
-            box-shadow: 0 0 2px 1px fade-out($black, .8);
         }
     }
 }
@@ -349,53 +253,6 @@
 .ba-annotation-dialog-flipped {
     .ba-annotation-caret {
         transform: rotate(180deg);
-    }
-}
-
-.ba-annotation-profile {
-    background-color: $tendemob-grey;
-    border-radius: 16px; // Circle
-    color: $white;
-    font-size: 12px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    width: 32px;
-
-    &.avatar-color-0 {
-        background-color: $avatar-color-1;
-    }
-
-    &.avatar-color-1 {
-        background-color: $avatar-color-2;
-    }
-
-    &.avatar-color-2 {
-        background-color: $avatar-color-3;
-    }
-
-    &.avatar-color-3 {
-        background-color: $avatar-color-4;
-    }
-
-    &.avatar-color-4 {
-        background-color: $avatar-color-5;
-    }
-
-    &.avatar-color-5 {
-        background-color: $avatar-color-6;
-    }
-
-    &.avatar-color-6 {
-        background-color: $avatar-color-7;
-    }
-
-    &.avatar-color-7 {
-        background-color: $avatar-color-8;
-    }
-
-    &.avatar-color-8 {
-        background-color: $avatar-color-9;
     }
 }
 

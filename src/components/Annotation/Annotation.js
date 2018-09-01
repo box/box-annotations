@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, IntlProvider } from 'react-intl';
 import getProp from 'lodash/get';
 import noop from 'lodash/noop';
 
@@ -32,7 +32,8 @@ type Props = {
     error?: ActionItemError,
     className: string,
     onBlur: Function,
-    onFocus: Function
+    onFocus: Function,
+    locale: string
 };
 
 class Annotation extends React.PureComponent<Props> {
@@ -53,7 +54,8 @@ class Annotation extends React.PureComponent<Props> {
             onDelete,
             className,
             onBlur,
-            onFocus
+            onFocus,
+            locale
         } = this.props;
 
         const canDelete = getProp(permissions, 'can_delete', false);
@@ -71,44 +73,46 @@ class Annotation extends React.PureComponent<Props> {
         };
 
         return (
-            <div
-                className={classNames(`ba-annotation ${className}`, {
-                    'ba-is-pending': isPending || error
-                })}
-                onBlur={onBlur}
-                onFocus={onFocus}
-            >
-                <div className='ba-annotation-content'>
-                    <Avatar className='ba-annotation-avatar' {...createdBy} />
-                    <div className='ba-annotation-text'>
-                        <div className='ba-annotation-headline'>
-                            <UserLink className='ba-annotation-user-name' {...annotator} />
-                            <Tooltip
-                                text={
-                                    <FormattedMessage
-                                        {...messages.annotationPostedFullDateTime}
-                                        values={{ time: createdAtTimestamp }}
+            <IntlProvider locale={locale} textComponent={React.Fragment}>
+                <div
+                    className={classNames(`ba-annotation ${className}`, {
+                        'ba-is-pending': isPending || error
+                    })}
+                    onBlur={onBlur}
+                    onFocus={onFocus}
+                >
+                    <div className='ba-annotation-content'>
+                        <Avatar className='ba-annotation-avatar' {...createdBy} />
+                        <div className='ba-annotation-text'>
+                            <div className='ba-annotation-headline'>
+                                <UserLink className='ba-annotation-user-name' {...annotator} />
+                                <Tooltip
+                                    text={
+                                        <FormattedMessage
+                                            {...messages.annotationPostedFullDateTime}
+                                            values={{ time: createdAtTimestamp }}
+                                        />
+                                    }
+                                >
+                                    <time className='ba-annotation-created-at'>
+                                        <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
+                                    </time>
+                                </Tooltip>
+                                {hasDeletePermission ? (
+                                    <InlineDelete
+                                        id={id}
+                                        permissions={permissions}
+                                        message={<FormattedMessage {...messages.annotationDeletePrompt} />}
+                                        onDelete={onDelete}
                                     />
-                                }
-                            >
-                                <time className='ba-annotation-created-at'>
-                                    <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
-                                </time>
-                            </Tooltip>
-                            {hasDeletePermission ? (
-                                <InlineDelete
-                                    id={id}
-                                    permissions={permissions}
-                                    message={<FormattedMessage {...messages.annotationDeletePrompt} />}
-                                    onDelete={onDelete}
-                                />
-                            ) : null}
+                                ) : null}
+                            </div>
+                            <CommentText id={id} tagged_message={message} translationEnabled={false} />
                         </div>
-                        <CommentText id={id} tagged_message={message} translationEnabled={false} />
                     </div>
+                    {error ? <CommentInlineError {...error} /> : null}
                 </div>
-                {error ? <CommentInlineError {...error} /> : null}
-            </div>
+            </IntlProvider>
         );
     }
 }

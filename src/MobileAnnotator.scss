@@ -137,43 +137,8 @@
         min-width: 100%;
     }
 
-    .comment-text {
-        width: 100%;
-    }
-
-    .profile-image-container {
-        width: 43px;
-
-        img {
-            height: 40px;
-            width: 40px;
-        }
-    }
-
-    .profile-container {
-        .user-name {
-            font-size: 16px;
-        }
-
-        .comment-date {
-            font-size: 14px;
-        }
-    }
-
     .bp-btn {
         font-size: 16;
-    }
-
-    .comment-text,
-    .delete-confirmation-message {
-        font-size: 15px;
-    }
-
-    .delete-comment-btn {
-        svg {
-            height: 24px;
-            width: 24px;
-        }
     }
 
     .reply-container {

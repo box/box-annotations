@@ -499,7 +499,8 @@ class DocHighlightDialog extends AnnotationDialog {
         if (annotation.text === '') {
             this.highlightDialogEl.dataset.annotationId = annotation.annotationID;
         } else {
-            super.addAnnotationElement(annotation);
+            this.annotations.push(annotation);
+            this.renderAnnotations();
         }
     }
 

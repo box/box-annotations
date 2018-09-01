@@ -16,7 +16,7 @@ class AnnotationService extends EventEmitter {
      */
     static generateID() {
         /* eslint-disable */
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             var r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
@@ -256,9 +256,9 @@ class AnnotationService extends EventEmitter {
      * @return {Promise} Promise that resolves with fetched annotations
      */
     getReadUrl(fileVersionId, marker = null, limit = null) {
-        let apiUrl = `${this.api}/2.0/files/${this.fileId}/annotations?version=${
-            fileVersionId
-        }&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
+        let apiUrl = `${this.api}/2.0/files/${
+            this.fileId
+        }/annotations?version=${fileVersionId}&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
         if (marker) {
             apiUrl += `&marker=${marker}`;
         }
