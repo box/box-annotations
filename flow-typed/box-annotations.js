@@ -64,7 +64,7 @@ type DrawingLocationInfo = {
     paths: DrawingPaths
 } & LocationInfo;
 
-type BoxUser = {
+type User = {
     type: 'user',
     id: string,
     name: string,
@@ -72,7 +72,7 @@ type BoxUser = {
     avatarUrl: string
 };
 
-type BoxAnnotationDetails = {
+type AnnotationDetails = {
     threadID: string,
     type: string,
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
