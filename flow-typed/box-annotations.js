@@ -9,7 +9,7 @@ type AnnotationPermissions = {
     can_delete: boolean
 };
 
-type FilePermissions = {
+type BoxItemPermissions = {
     can_annotate: boolean,
     can_view_annotations_all: boolean,
     can_view_annotations_self: boolean
