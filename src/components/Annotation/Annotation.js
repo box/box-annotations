@@ -13,6 +13,7 @@ import CommentText from '../../../third-party/components/CommentText';
 import InlineDelete from '../../../third-party/components/InlineDelete';
 import CommentInlineError from '../../../third-party/components/CommentInlineError';
 import UserLink from '../../../third-party/components/UserLink';
+import withFocus from '../withFocus';
 import messages from './messages';
 
 import './Annotation.scss';
@@ -28,66 +29,63 @@ type Props = {
     modifiedAt?: string,
     onDelete?: Function,
     isPending?: boolean,
-    error?: ActionItemError
+    error?: ActionItemError,
+    className: string,
+    onBlur: Function,
+    onFocus: Function
 };
 
-type State = {
-    isFocused?: boolean
-};
-
-class Annotation extends React.Component<Props, State> {
+class Annotation extends React.PureComponent<Props> {
     static defaultProps = {
         isPending: false,
         onDelete: noop
     };
 
-    state = {
-        isFocused: false
-    };
-
-    onKeyDown = (event: SyntheticKeyboardEvent<>): void => {
-        const { nativeEvent } = event;
-        nativeEvent.stopImmediatePropagation();
-    };
-
-    handleAnnotationFocus = (): void => {
-        this.setState({ isFocused: true });
-    };
-
-    handleAnnotationBlur = (): void => {
-        this.setState({ isFocused: false });
-    };
-
     render() {
-        const { id, createdAt, createdBy, permissions, message, isPending, error, onDelete } = this.props;
-        const { isFocused } = this.state;
-        const canDelete = getProp(permissions, 'can_delete', false);
-        const createdAtTimestamp = new Date(createdAt).getTime();
+        const {
+            id,
+            isPending,
+            error,
+            createdAt,
+            createdBy,
+            permissions,
+            message,
+            onDelete,
+            className,
+            onBlur,
+            onFocus
+        } = this.props;
 
+        const canDelete = getProp(permissions, 'can_delete', false);
+        const hasDeletePermission = onDelete && canDelete && !isPending;
+        const hasKnownAnnotator = createdBy && createdBy.name;
+
+        const createdAtTimestamp = new Date(createdAt).getTime();
         const annotator = {
-            id: createdBy && createdBy.name ? createdBy.id : '0',
-            name:
-                createdBy && createdBy.name ? (
-                    createdBy.name
-                ) : (
-                    <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
-                )
+            id:
+                // $FlowFixMe
+                hasKnownAnnotator ? createdBy.id : '0',
+            name: hasKnownAnnotator ? (
+                // $FlowFixMe
+                createdBy.name
+            ) : (
+                <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
+            )
         };
 
         return (
             <div
-                className={classNames('ba-annotation', {
-                    'ba-is-pending': isPending || error,
-                    'ba-is-focused': isFocused
+                className={classNames(`ba-annotation ${className}`, {
+                    'ba-is-pending': isPending || error
                 })}
-                onBlur={this.handleAnnotationBlur}
-                onFocus={this.handleAnnotationFocus}
+                onBlur={onBlur}
+                onFocus={onFocus}
             >
                 <div className='ba-annotation-content'>
                     <Avatar className='ba-annotation-avatar' {...createdBy} />
                     <div className='ba-annotation-text'>
                         <div className='ba-annotation-headline'>
-                            <UserLink className='ba-annotation-user-name' id={annotator.id} name={annotator.name} />
+                            <UserLink className='ba-annotation-user-name' {...annotator} />
                             <Tooltip
                                 text={
                                     <FormattedMessage
@@ -100,7 +98,7 @@ class Annotation extends React.Component<Props, State> {
                                     <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
                                 </time>
                             </Tooltip>
-                            {onDelete && canDelete && !isPending ? (
+                            {hasDeletePermission ? (
                                 <InlineDelete
                                     id={id}
                                     permissions={permissions}
@@ -118,4 +116,5 @@ class Annotation extends React.Component<Props, State> {
     }
 }
 
-export default Annotation;
+export { Annotation as AnnotationComponent };
+export default withFocus(Annotation);

@@ -11,16 +11,16 @@ const USER1 = {
 
 const USER2 = {
     type: 'user',
-    id: '456def',
-    name: 'Brian O\'Conner',
-    email: '2fast@furious.com'
+    id: '789ghi',
+    name: 'Mia Thermopolis',
+    email: 'princess@genovia.gov'
 };
 
 const USER3 = {
     type: 'user',
-    id: '789ghi',
-    name: 'Mia Thermopolis',
-    email: 'princess@genovia.gov'
+    id: '456def',
+    name: 'Brian O\'Conner',
+    email: '2fast@furious.com'
 };
 
 const DATE = '2017-08-27T10:40:41-07:00';
@@ -57,9 +57,8 @@ const PendingAnnotation = () => (
         id='456def'
         createdAt={DATE}
         createdBy={USER2}
-        message={'I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! '}
+        message={'I\'m a princess?'}
         isPending={PENDING_TRUE}
-        permissions={{}}
     />
 );
 
@@ -68,7 +67,7 @@ const DeletableAnnotation = () => (
         id='789ghi'
         createdAt={DATE}
         createdBy={USER3}
-        message={'I\'m a princess?'}
+        message={'I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! '}
         permissions={{
             can_delete: true
         }}
@@ -89,7 +88,8 @@ const ErrorAnnotation = () => (
     <AnnotationContainer
         id='654fed'
         createdAt={DATE}
-        message='WHOOPSY!'
+        createdBy={USER3}
+        message='WHOOPS!'
         permissions={{}}
         error={ERROR}
     />
