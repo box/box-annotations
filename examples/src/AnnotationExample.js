@@ -57,7 +57,7 @@ const PendingAnnotation = () => (
         id='456def'
         createdAt={DATE}
         createdBy={USER2}
-        message={'I\'m not a cop'}
+        message={'I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! I\'m not a cop! '}
         isPending={PENDING_TRUE}
         permissions={{}}
     />

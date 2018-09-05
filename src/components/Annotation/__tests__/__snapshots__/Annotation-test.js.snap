@@ -2,12 +2,12 @@
 
 exports[`components/Annotation should correctly render annotation 1`] = `
 <div
-  className="ba-annotation-container"
+  className="ba-annotation"
+  onBlur={[Function]}
+  onFocus={[Function]}
 >
   <div
-    className="ba-annotation"
-    onBlur={[Function]}
-    onFocus={[Function]}
+    className="ba-annotation-content"
   >
     <Avatar
       className="ba-annotation-avatar"
@@ -17,7 +17,7 @@ exports[`components/Annotation should correctly render annotation 1`] = `
       type="user"
     />
     <div
-      className="ba-annotation-content"
+      className="ba-annotation-text"
     >
       <div
         className="ba-annotation-headline"
@@ -44,14 +44,14 @@ exports[`components/Annotation should correctly render annotation 1`] = `
           }
           theme="default"
         >
-          <small
+          <time
             className="ba-annotation-created-at"
           >
             <ReadableTime
               relativeThreshold={3600000}
               timestamp={1506534041000}
             />
-          </small>
+          </time>
         </Tooltip>
       </div>
       <CommentText
@@ -66,12 +66,12 @@ exports[`components/Annotation should correctly render annotation 1`] = `
 
 exports[`components/Annotation should render an error when one is defined 1`] = `
 <div
-  className="ba-annotation-container"
+  className="ba-annotation ba-is-pending"
+  onBlur={[Function]}
+  onFocus={[Function]}
 >
   <div
-    className="ba-annotation ba-is-pending"
-    onBlur={[Function]}
-    onFocus={[Function]}
+    className="ba-annotation-content"
   >
     <Avatar
       className="ba-annotation-avatar"
@@ -81,7 +81,7 @@ exports[`components/Annotation should render an error when one is defined 1`] = 
       type="user"
     />
     <div
-      className="ba-annotation-content"
+      className="ba-annotation-text"
     >
       <div
         className="ba-annotation-headline"
@@ -108,14 +108,14 @@ exports[`components/Annotation should render an error when one is defined 1`] = 
           }
           theme="default"
         >
-          <small
+          <time
             className="ba-annotation-created-at"
           >
             <ReadableTime
               relativeThreshold={3600000}
               timestamp={1506534041000}
             />
-          </small>
+          </time>
         </Tooltip>
       </div>
       <CommentText

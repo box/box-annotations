@@ -36,6 +36,11 @@ type State = {
 };
 
 class Annotation extends React.Component<Props, State> {
+    static defaultProps = {
+        isPending: false,
+        onDelete: noop
+    };
+
     state = {
         isFocused: false
     };
@@ -45,47 +50,44 @@ class Annotation extends React.Component<Props, State> {
         nativeEvent.stopImmediatePropagation();
     };
 
-    handleCommentFocus = (): void => {
+    handleAnnotationFocus = (): void => {
         this.setState({ isFocused: true });
     };
 
-    handleCommentBlur = (): void => {
+    handleAnnotationBlur = (): void => {
         this.setState({ isFocused: false });
     };
 
     render() {
-        const {
-            id,
-            createdAt,
-            createdBy,
-            permissions,
-            message,
-            isPending = false,
-            error,
-            onDelete = noop
-        } = this.props;
+        const { id, createdAt, createdBy, permissions, message, isPending, error, onDelete } = this.props;
         const { isFocused } = this.state;
         const canDelete = getProp(permissions, 'can_delete', false);
         const createdAtTimestamp = new Date(createdAt).getTime();
 
+        const annotator = {
+            id: createdBy && createdBy.name ? createdBy.id : '0',
+            name:
+                createdBy && createdBy.name ? (
+                    createdBy.name
+                ) : (
+                    <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
+                )
+        };
+
         return (
-            <div className='ba-annotation-container'>
-                <div
-                    className={classNames('ba-annotation', {
-                        'ba-is-pending': isPending || error,
-                        'ba-is-focused': isFocused
-                    })}
-                    onBlur={this.handleCommentBlur}
-                    onFocus={this.handleCommentFocus}
-                >
+            <div
+                className={classNames('ba-annotation', {
+                    'ba-is-pending': isPending || error,
+                    'ba-is-focused': isFocused
+                })}
+                onBlur={this.handleAnnotationBlur}
+                onFocus={this.handleAnnotationFocus}
+            >
+                <div className='ba-annotation-content'>
                     <Avatar className='ba-annotation-avatar' {...createdBy} />
-                    <div className='ba-annotation-content'>
+                    <div className='ba-annotation-text'>
                         <div className='ba-annotation-headline'>
-                            {createdBy && createdBy.name ? (
-                                <UserLink className='ba-annotation-user-name' id={createdBy.id} name={createdBy.name} />
-                            ) : (
-                                <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
-                            )}
+                            <UserLink className='ba-annotation-user-name' id={annotator.id} name={annotator.name} />
                             <Tooltip
                                 text={
                                     <FormattedMessage
@@ -94,9 +96,9 @@ class Annotation extends React.Component<Props, State> {
                                     />
                                 }
                             >
-                                <small className='ba-annotation-created-at'>
+                                <time className='ba-annotation-created-at'>
                                     <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
-                                </small>
+                                </time>
                             </Tooltip>
                             {onDelete && canDelete && !isPending ? (
                                 <InlineDelete

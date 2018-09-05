@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { mount, shallow } from 'enzyme';
 
+import { FormattedMessage } from 'react-intl';
 import Annotation from '../Annotation';
+import messages from '../messages';
 
 const USER = {
     type: 'user',
@@ -58,8 +60,11 @@ describe('components/Annotation', () => {
             type: 'user',
             id: '0'
         };
+        const anonymousUserName = (
+            <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
+        );
         const wrapper = render({ createdBy: unknownUser });
-        expect(wrapper.find('UserLink').length).toEqual(0);
+        expect(wrapper.find('UserLink').prop('name')).toEqual(anonymousUserName);
     });
 
     test('should not allow actions when annotation is pending', () => {
