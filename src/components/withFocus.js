@@ -8,7 +8,7 @@ import * as React from 'react';
 
 type Props = {};
 type State = {
-    isFocused?: boolean
+    isFocused: boolean
 };
 
 const withFocus = (WrappedComponent: React.ComponentType<any>) => {
