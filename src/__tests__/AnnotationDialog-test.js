@@ -9,9 +9,6 @@ const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
 const SELECTOR_REPLY_TEXTAREA = '.reply-textarea';
 const SELECTOR_REPLY_CONTAINER = '.reply-container';
 const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
-const SELECTOR_BUTTON_DELETE_COMMENT = '.delete-comment-btn';
-const SELECTOR_COMMENTS_CONTAINER = '.annotation-comments';
-const SELECTOR_DELETE_CONFIRMATION = '.delete-confirmation';
 const CLASS_INVALID_INPUT = 'ba-invalid-input';
 
 let dialog;
@@ -23,7 +20,7 @@ const html = `<div class="annotated-element">
 </div>
 </div>`;
 
-describe('Annotator', () => {
+describe('AnnotationDialog', () => {
     let rootElement;
     let annotation;
 
@@ -37,7 +34,8 @@ describe('Annotator', () => {
             container: document,
             location: {},
             annotations: {},
-            canAnnotate: true
+            canAnnotate: true,
+            locale: 'en-US'
         });
 
         dialog.localized = {
@@ -62,6 +60,7 @@ describe('Annotator', () => {
     });
 
     afterEach(() => {
+        dialog.annotations = [];
         const dialogEl = document.querySelector(constants.SELECTOR_ANNOTATED_ELEMENT);
         if (dialogEl && dialogEl.parentNode) {
             dialogEl.parentNode.removeChild(dialogEl);
@@ -267,12 +266,12 @@ describe('Annotator', () => {
 
     describe('addAnnotation()', () => {
         beforeEach(() => {
-            dialog.addAnnotationElement = jest.fn();
+            dialog.renderAnnotations = jest.fn();
         });
 
         it('should add annotation to the dialog and deactivate the reply area', () => {
             dialog.addAnnotation(new Annotation({}));
-            expect(dialog.addAnnotationElement).toBeCalled();
+            expect(dialog.renderAnnotations).toBeCalled();
         });
 
         it('should hide the create section and show the show section if there are no annotations', () => {
@@ -289,17 +288,29 @@ describe('Annotator', () => {
     describe('removeAnnotation()', () => {
         it('should remove annotation element and deactivate reply', () => {
             dialog.addAnnotation(annotation);
-
-            dialog.removeAnnotation('someID');
-            const annotationEl = dialog.element.querySelector('[data-annotation-id="someID"]');
-            expect(annotationEl).toBeNull();
+            dialog.removeAnnotation(1);
+            expect(dialog.annotations).not.toContain(annotation);
         });
+    });
 
-        it('should focus the reply text area', () => {
-            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
-            replyTextEl.focus = jest.fn();
-            dialog.removeAnnotation('someID');
-            expect(replyTextEl.focus).toBeCalled();
+    describe('renderAnnotations()', () => {
+        it('should render a list of annotations', () => {
+            dialog.annotations = [
+                annotation,
+                new Annotation({
+                    annotationID: 2,
+                    text: 'the preview sdk is amazing!',
+                    user: { id: 1, name: 'user' }
+                }),
+                new Annotation({
+                    annotationID: 3,
+                    text: 'the preview sdk is amazing!',
+                    user: { id: 1, name: 'user' }
+                })
+            ];
+            dialog.renderAnnotations();
+            expect(dialog.annotationListComponent).not.toBeUndefined();
+            expect(dialog.annotationListComponent.querySelectorAll('.ba-annotation-list-item').length).toEqual(3);
         });
     });
 
@@ -380,10 +391,9 @@ describe('Annotator', () => {
             };
 
             dialog.addSortedAnnotations(annotations);
-            const annotationContainerEl = dialog.dialogEl.querySelector(SELECTOR_COMMENTS_CONTAINER);
-            expect(annotationContainerEl.childNodes[0].dataset.annotationId).toEqual('1');
-            expect(annotationContainerEl.childNodes[1].dataset.annotationId).toEqual('3');
-            expect(annotationContainerEl.childNodes[2].dataset.annotationId).toEqual('2');
+            expect(dialog.annotations[0].annotationID).toEqual(1);
+            expect(dialog.annotations[1].annotationID).toEqual(3);
+            expect(dialog.annotations[2].annotationID).toEqual(2);
         });
     });
 
@@ -594,46 +604,18 @@ describe('Annotator', () => {
         let event;
 
         beforeEach(() => {
-            event = {
-                stopPropagation: jest.fn(),
-                preventDefault: jest.fn(),
-                target: document.createElement('div')
-            };
+            event = { target: document.createElement('div') };
 
             dialog.postAnnotation = jest.fn();
             dialog.cancelAnnotation = jest.fn();
             dialog.deactivateReply = jest.fn();
             dialog.activateReply = jest.fn();
             util.findClosestDataType = jest.fn();
-            dialog.showDeleteConfirmation = jest.fn();
-            dialog.hideDeleteConfirmation = jest.fn();
-            dialog.deleteAnnotation = jest.fn();
             dialog.postReply = jest.fn();
             dialog.hideMobileDialog = jest.fn();
 
             dialog.isMobile = false;
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
-        });
-
-        it('should only stop propagation on a desktop device', () => {
-            dialog.clickHandler(event);
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).not.toBeCalled();
-        });
-
-        it('should only stop propagation on a mobile device', () => {
-            dialog.isMobile = true;
-            dialog.clickHandler(event);
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).not.toBeCalled();
-        });
-
-        it('should only prevent default on button clicks for mobile devices', () => {
-            event.target = document.createElement('button');
-            dialog.isMobile = true;
-            dialog.clickHandler(event);
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).toBeCalled();
         });
 
         it('should post annotation when post annotation button is clicked', () => {
@@ -676,36 +658,6 @@ describe('Annotator', () => {
             expect(dialog.postReply).toBeCalled();
         });
 
-        it('should show delete confirmation when delete button is clicked', () => {
-            util.findClosestDataType = jest
-                .fn()
-                .mockReturnValueOnce(constants.DATA_TYPE_DELETE)
-                .mockReturnValue('someID');
-
-            dialog.clickHandler(event);
-            expect(dialog.showDeleteConfirmation).toBeCalledWith('someID');
-        });
-
-        it('should cancel deletion when cancel delete button is clicked', () => {
-            util.findClosestDataType = jest
-                .fn()
-                .mockReturnValueOnce(constants.DATA_TYPE_CANCEL_DELETE)
-                .mockReturnValue('someID');
-
-            dialog.clickHandler(event);
-            expect(dialog.hideDeleteConfirmation).toBeCalledWith('someID');
-        });
-
-        it('should confirm deletion when confirm delete button is clicked', () => {
-            util.findClosestDataType = jest
-                .fn()
-                .mockReturnValueOnce(constants.DATA_TYPE_CONFIRM_DELETE)
-                .mockReturnValue('someID');
-
-            dialog.clickHandler(event);
-            expect(dialog.deleteAnnotation).toBeCalledWith('someID');
-        });
-
         it('should do nothing if dataType does not match any button in the annotation dialog', () => {
             util.findClosestDataType = jest.fn().mockReturnValue(null);
 
@@ -716,135 +668,6 @@ describe('Annotator', () => {
             expect(dialog.deactivateReply).not.toBeCalled();
             expect(dialog.activateReply).not.toBeCalled();
             expect(dialog.postReply).not.toBeCalled();
-            expect(dialog.showDeleteConfirmation).not.toBeCalled();
-            expect(dialog.hideDeleteConfirmation).not.toBeCalled();
-            expect(dialog.deleteAnnotation).not.toBeCalled();
-        });
-    });
-
-    describe('addAnnotationElement()', () => {
-        it('should add an annotation comment if text is present', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is awesome!',
-                    user: {},
-                    permissions: {}
-                })
-            );
-            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
-            expect(annotationComment.textContent).toContain('the preview sdk is awesome!');
-        });
-
-        it('should display the posting message if the user id is 0', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is awesome!',
-                    user: { id: 0 },
-                    permissions: {}
-                })
-            );
-            const username = document.querySelector(constants.SELECTOR_USER_NAME);
-            expect(username.textContent).toContain(dialog.localized.posting);
-        });
-
-        it('should display user name if the user id is not 0', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is awesome!',
-                    user: { id: 1, name: 'user' },
-                    permissions: {}
-                })
-            );
-            const username = document.querySelector(constants.SELECTOR_USER_NAME);
-            expect(username.textContent).toContain('user');
-        });
-
-        it('should not the delete icon if the user does not have delete permissions', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: false }
-                })
-            );
-            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
-            expect(deleteButton).toBeNull();
-        });
-
-        it('should not add the delete icon if the delete permission is not specified', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: {}
-                })
-            );
-            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
-            expect(deleteButton).toBeNull();
-        });
-
-        it('should make delete icon visible if the user has delete permission', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const deleteButton = document.querySelector(SELECTOR_BUTTON_DELETE_COMMENT);
-            expect(deleteButton.classList).not.toContain(constants.CLASS_HIDDEN);
-        });
-
-        it('should hide the delete confirmation UI by default', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const deleteConfirmation = document.querySelector(SELECTOR_DELETE_CONFIRMATION);
-            expect(deleteConfirmation.classList).toContain(constants.CLASS_HIDDEN);
-        });
-
-        it('should add a <br> for each newline', () => {
-            const withBreaks = `
-
-
-            yay, three breaks!`;
-
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: withBreaks,
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            const breaks = document.querySelectorAll(`${constants.SELECTOR_ANNOTATION_COMMENT_TEXT} br`);
-            expect(breaks.length === 3).toBeTruthy();
-        });
-
-        it('should respect symbols added to the text', () => {
-            const text = 'I can add symbols &&&';
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text,
-                    user: {},
-                    permissions: {}
-                })
-            );
-            const annotationComment = document.querySelector(constants.SELECTOR_ANNOTATION_COMMENT_TEXT);
-            expect(annotationComment.textContent).toEqual(text);
-            expect(annotationComment.textContent).toContain('&&&');
         });
     });
 
@@ -902,7 +725,7 @@ describe('Annotator', () => {
 
         it('should show the correct UI when the reply textarea is activated', () => {
             document.querySelector('textarea').textContent = 'the preview SDK is great!';
-            dialog.addAnnotationElement(annotation);
+            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             replyTextEl.classList.remove(constants.CLASS_ACTIVE);
 
@@ -928,7 +751,7 @@ describe('Annotator', () => {
         });
 
         it('should show the correct UI when the reply textarea is deactivated', () => {
-            dialog.addAnnotationElement(annotation);
+            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             const buttonContainer = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
 
@@ -940,7 +763,7 @@ describe('Annotator', () => {
 
     describe('postReply()', () => {
         it('should not post reply to the dialog if it has no text', () => {
-            dialog.addAnnotationElement(annotation);
+            dialog.annotations.push(annotation);
             dialog.activateReply();
             const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
 
@@ -950,7 +773,7 @@ describe('Annotator', () => {
         });
 
         it('should post a reply to the dialog if it has text', () => {
-            dialog.addAnnotationElement(annotation);
+            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
@@ -960,7 +783,7 @@ describe('Annotator', () => {
         });
 
         it('should clear the reply text element after posting', () => {
-            dialog.addAnnotationElement(annotation);
+            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
@@ -972,44 +795,10 @@ describe('Annotator', () => {
         });
     });
 
-    describe('showDeleteConfirmation()', () => {
-        it('should show the correct UI when a user clicks on delete', () => {
-            dialog.addAnnotationElement(annotation);
-            dialog.showDeleteConfirmation(1);
-            expect(util.showElement).toBeCalled();
-        });
-    });
-
-    describe('hideDeleteConfirmation()', () => {
-        it('should show the correct UI when a user clicks cancel in the delete confirmation', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-            dialog.showDeleteConfirmation(1);
-
-            dialog.hideDeleteConfirmation(1);
-            expect(util.hideElement).toBeCalled();
-        });
-    });
-
     describe('deleteAnnotation()', () => {
         it('should emit the annotationdelete message', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' },
-                    permissions: { can_delete: true }
-                })
-            );
-
-            dialog.deleteAnnotation(1);
-            expect(dialog.emit).toBeCalledWith('annotationdelete', { annotationID: 1 });
+            dialog.deleteAnnotation(annotation);
+            expect(dialog.emit).toBeCalledWith('annotationdelete', annotation);
         });
     });
 

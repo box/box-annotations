@@ -24,7 +24,7 @@ type Props = {
     id: string,
     message: string,
     permissions: AnnotationPermissions,
-    createdAt: string,
+    createdAt?: string,
     createdBy?: User,
     modifiedAt?: string,
     onDelete?: Function,
@@ -61,7 +61,6 @@ class Annotation extends React.PureComponent<Props> {
         const canDelete = getProp(permissions, 'can_delete', false);
         const hasDeletePermission = onDelete && canDelete && !isPending;
 
-        const createdAtTimestamp = new Date(createdAt).getTime();
         const annotator = {
             id: createdBy && createdBy.name ? createdBy.id : '0',
             name:
@@ -86,18 +85,23 @@ class Annotation extends React.PureComponent<Props> {
                         <div className='ba-annotation-text'>
                             <div className='ba-annotation-headline'>
                                 <UserLink className='ba-annotation-user-name' {...annotator} />
-                                <Tooltip
-                                    text={
-                                        <FormattedMessage
-                                            {...messages.annotationPostedFullDateTime}
-                                            values={{ time: createdAtTimestamp }}
-                                        />
-                                    }
-                                >
-                                    <time className='ba-annotation-created-at'>
-                                        <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
-                                    </time>
-                                </Tooltip>
+                                {createdAt && (
+                                    <Tooltip
+                                        text={
+                                            <FormattedMessage
+                                                {...messages.annotationPostedFullDateTime}
+                                                values={{ time: new Date(createdAt).getTime() }}
+                                            />
+                                        }
+                                    >
+                                        <time className='ba-annotation-created-at'>
+                                            <ReadableTime
+                                                timestamp={new Date(createdAt).getTime()}
+                                                relativeThreshold={ONE_HOUR_MS}
+                                            />
+                                        </time>
+                                    </Tooltip>
+                                )}
                                 {hasDeletePermission ? (
                                     <InlineDelete
                                         id={id}

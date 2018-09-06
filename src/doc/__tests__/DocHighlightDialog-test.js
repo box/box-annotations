@@ -43,7 +43,8 @@ describe('doc/DocHighlightDialog', () => {
                 page: 1
             },
             annotations: [],
-            canAnnotate: true
+            canAnnotate: true,
+            locale: 'en-US'
         });
         dialog.localized = {
             highlightToggle: 'highlight toggle',
@@ -97,32 +98,6 @@ describe('doc/DocHighlightDialog', () => {
             const highlightLabelEl = dialog.element.querySelector(constants.SELECTOR_HIGHLIGHT_LABEL);
             expect(highlightLabelEl.innerHTML).toContain('Bob highlighted');
             expect(dialog.position).toBeCalled();
-        });
-    });
-
-    describe('removeAnnotation()', () => {
-        it('should not do anything if the specified annotation does not exist', () => {
-            dialog.deactivateReply = jest.fn();
-            dialog.removeAnnotation('someID');
-            expect(dialog.deactivateReply).not.toBeCalled();
-        });
-
-        it('should remove annotation element and deactivate reply', () => {
-            dialog.deactivateReply = jest.fn();
-
-            dialog.addAnnotation(
-                new Annotation({
-                    annotationID: 'someID',
-                    text: 'blah',
-                    user: {},
-                    permissions: {}
-                })
-            );
-
-            dialog.removeAnnotation('someID');
-            const annotationEl = dialog.commentsDialogEl.querySelector('[data-annotation-id="someID"]');
-            expect(annotationEl).toBeNull();
-            expect(dialog.deactivateReply).toBeCalled();
         });
     });
 
@@ -570,6 +545,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.dialogEl = {
                 querySelector: jest.fn().mockReturnValue(textarea)
             };
+            dialog.annotationListComponent = null;
         });
 
         it('should focus the add comment area if it exists', () => {

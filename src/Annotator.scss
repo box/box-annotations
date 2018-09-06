@@ -212,6 +212,24 @@
     }
 }
 
+ul .ba-annotation-list-item {
+    border-bottom: 1px solid $ffive;
+    list-style: none;
+
+    // Spaces annotation elements from each other and the dividing border
+    // Adds extra spacing above consecutive annotations as well
+    margin-top: 23px; // Matches spacing of activity feed items in UI Elements
+    padding-bottom: 15px;
+
+    &:first-child {
+        margin: 0;
+    }
+
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
 .ba-create-annotation-dialog .ba-create-comment {
     background-color: $white;
     overflow-x: hidden;

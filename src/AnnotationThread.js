@@ -166,8 +166,6 @@ class AnnotationThread extends EventEmitter {
             can_edit: true,
             can_delete: true
         };
-        tempAnnotationData.created = new Date().getTime();
-        tempAnnotationData.modified = tempAnnotationData.created;
         const tempAnnotation = new Annotation(tempAnnotationData);
         this.saveAnnotationToThread(tempAnnotation);
         this.state = STATES.inactive;
@@ -516,6 +514,8 @@ class AnnotationThread extends EventEmitter {
                 this.dialog.element.dataset.threadNumber = this.threadNumber;
             }
 
+            console.log(new Date().getTime() - new Date(savedAnnotation.created).getTime());
+
             // Remove temporary annotation and replace it with the saved annotation
             this.dialog.addAnnotation(savedAnnotation);
             this.dialog.removeAnnotation(tempAnnotation.annotationID);
@@ -601,7 +601,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteAnnotationWithID(data) {
-        this.deleteAnnotation(data.annotationID);
+        this.deleteAnnotation(data.annotationID || data.id);
     }
 
     /**

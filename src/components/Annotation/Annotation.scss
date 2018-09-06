@@ -3,23 +3,8 @@
 .ba .ba-annotation {
     @import '~box-react-ui/lib/styles/common/inline-notifications';
 
-    border-bottom: 1px solid $ffive;
-
-    // Spaces annotation elements from each other and the dividing border
-    // Adds extra spacing above consecutive annotations as well
-    margin-top: 23px; // Matches spacing of activity feed items in UI Elements
-    padding-bottom: 15px;
     position: relative;
     z-index: 1;
-
-    &:first-child {
-        margin: 0;
-    }
-
-    &:last-child {
-        border-bottom: 0;
-        padding-bottom: 23px; // Adds extra spacing below consecutive annotations and textarea
-    }
 
     &.ba-is-pending {
         opacity: 50%;
