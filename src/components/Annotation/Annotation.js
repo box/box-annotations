@@ -58,19 +58,16 @@ class Annotation extends React.PureComponent<Props> {
 
         const canDelete = getProp(permissions, 'can_delete', false);
         const hasDeletePermission = onDelete && canDelete && !isPending;
-        const hasKnownAnnotator = createdBy && createdBy.name;
 
         const createdAtTimestamp = new Date(createdAt).getTime();
         const annotator = {
-            id:
-                // $FlowFixMe
-                hasKnownAnnotator ? createdBy.id : '0',
-            name: hasKnownAnnotator ? (
-                // $FlowFixMe
-                createdBy.name
-            ) : (
-                <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
-            )
+            id: createdBy && createdBy.name ? createdBy.id : '0',
+            name:
+                createdBy && createdBy.name ? (
+                    createdBy.name
+                ) : (
+                    <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
+                )
         };
 
         return (
