@@ -2,7 +2,7 @@
 
 exports[`components/Annotation should correctly render annotation 1`] = `
 <div
-  className="ba-annotation"
+  className="ba-annotation "
   onBlur={[Function]}
   onFocus={[Function]}
 >
@@ -66,7 +66,7 @@ exports[`components/Annotation should correctly render annotation 1`] = `
 
 exports[`components/Annotation should render an error when one is defined 1`] = `
 <div
-  className="ba-annotation ba-is-pending"
+  className="ba-annotation  ba-is-pending"
   onBlur={[Function]}
   onFocus={[Function]}
 >
