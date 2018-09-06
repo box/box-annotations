@@ -1,0 +1,27 @@
+[
+  {
+    "id": "be.commentDeleteCancel",
+    "description": "Button text to cancel comment deletion",
+    "defaultMessage": "No"
+  },
+  {
+    "id": "be.commentDeleteConfirm",
+    "description": "Button text to confirm comment deletion",
+    "defaultMessage": "Yes"
+  },
+  {
+    "id": "be.commentShowOriginal",
+    "description": "Show original button for showing original comment",
+    "defaultMessage": "Show Original"
+  },
+  {
+    "id": "be.commentTranslate",
+    "description": "Translate button for translating comment",
+    "defaultMessage": "Translate"
+  },
+  {
+    "id": "be.deleteLabel",
+    "description": "Aria label for button to delete a comment or task",
+    "defaultMessage": "Delete"
+  }
+]

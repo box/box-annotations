@@ -56,7 +56,7 @@ module.exports = () => {
             new MiniCssExtractPlugin({
                 filename: '[name].css'
             }),
-            new NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop')
+            new NormalModuleReplacementPlugin(/\/iconv-loader$/)
         ],
         stats: {
             assets: true,
