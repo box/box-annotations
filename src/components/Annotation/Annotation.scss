@@ -3,8 +3,11 @@
 .ba .ba-annotation {
     @import '~box-react-ui/lib/styles/common/inline-notifications';
 
-    border-bottom: 1px solid $seesee;
-    margin-top: 23px;
+    border-bottom: 1px solid $ffive;
+
+    // Spaces annotation elements from each other and the dividing border
+    // Adds extra spacing above consecutive annotations as well
+    margin-top: 23px; // Matches spacing of activity feed items in UI Elements
     padding-bottom: 15px;
     position: relative;
     z-index: 1;
@@ -18,7 +21,7 @@
     }
 
     &.ba-is-pending {
-        opacity: .4;
+        opacity: 50%;
     }
 
     &:hover,
@@ -36,8 +39,8 @@
 
     .ba-annotation-avatar {
         flex-shrink: 0;
-        margin-right: 17px;
-        margin-top: 3px;
+        margin-right: 17px; // Spaces avatar circle from text to the right
+        margin-top: 3px; // Required to top align avatar circle with text to the right
     }
 
     .ba-annotation-text {
@@ -49,7 +52,7 @@
     .ba-annotation-user-name {
         color: $twos;
         font-weight: bold;
-        margin-right: 10px;
+        margin-right: 10px; // Spaces user name from timestamp
     }
 
     .ba-annotation-created-at {
@@ -61,12 +64,6 @@
     .ba-annotation-headline {
         display: flex;
         flex-flow: row wrap;
-        padding-right: 25px;
-        position: relative;
-    }
-
-    .ba-annotation-text-loading {
-        margin-top: 3px;
     }
 
     .bcs-comment-text {
@@ -75,7 +72,7 @@
     }
 
     .bcs-comment-delete-container {
-        margin-top: 3px;
+        margin-top: 3px; // Required to top align trash icon with text to the left
         opacity: 0;
         position: absolute;
         right: 0;
@@ -91,39 +88,22 @@
         vertical-align: top;
     }
 
-    .bcs-comment-delete-no,
-    .bcs-comment-delete-yes {
-        margin: 0 3px;
-    }
-
-    .flyout-wrapper .overlay-wrapper .overlay {
-        min-width: 120px;
-
-        .overlay-title {
-            white-space: nowrap;
-        }
-    }
-
-    .flyout-wrapper .overlay-wrapper.left {
-        .overlay {
-            padding: 10px 15px;
-            transform: translateY(-20%);
-        }
-
-        .arrow {
-            top: 20%;
-        }
-    }
-
     .bcs-comment-error {
         display: block;
-        padding: 14px 15px;
+        padding: 15px;
     }
 
     .bcs-comment-error-action {
         color: $king-crimson;
         display: block;
-        margin-top: 5px;
+        margin-top: 5px; // Required to distinguish between action and error text
         text-decoration: underline;
+    }
+}
+
+.flyout-overlay {
+    .bcs-comment-delete-yes,
+    .bcs-comment-delete-no {
+        font-size: inherit;
     }
 }
