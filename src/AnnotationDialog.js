@@ -569,7 +569,7 @@ class AnnotationDialog extends EventEmitter {
                                 modifiedAt={modified}
                                 message={text}
                                 locale={locale}
-                                onDelete={() => this.deleteAnnotation(item)}
+                                onDelete={() => this.emitAnnotationDelete(item)}
                                 {...item}
                             />
                         </li>
@@ -667,7 +667,7 @@ class AnnotationDialog extends EventEmitter {
      * @param {Annotation} annotation annotation to delete
      * @return {void}
      */
-    deleteAnnotation(annotation) {
+    emitAnnotationDelete(annotation) {
         this.emit('annotationdelete', annotation);
     }
 

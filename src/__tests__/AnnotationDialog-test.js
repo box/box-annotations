@@ -795,9 +795,9 @@ describe('AnnotationDialog', () => {
         });
     });
 
-    describe('deleteAnnotation()', () => {
+    describe('emitAnnotationDelete()', () => {
         it('should emit the annotationdelete message', () => {
-            dialog.deleteAnnotation(annotation);
+            dialog.emitAnnotationDelete(annotation);
             expect(dialog.emit).toBeCalledWith('annotationdelete', annotation);
         });
     });
