@@ -49,7 +49,6 @@ class AnnotationDialog extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.container = data.container;
         this.location = data.location;
-        this.hasAnnotations = Object.keys(data.annotations).length > 0;
         this.canAnnotate = data.canAnnotate;
         this.locale = data.locale;
         this.isMobile = data.isMobile || false;
@@ -99,9 +98,10 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
-        const textAreaEl = this.hasAnnotations
-            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        const textAreaEl =
+            this.annotations.length > 0
+                ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+                : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
 
         if (this.canAnnotate) {
             // Don't re-position if reply textarea is already active
@@ -134,13 +134,14 @@ class AnnotationDialog extends EventEmitter {
         }
 
         // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.hasAnnotations) {
+        if (this.annotations.length > 0) {
             this.activateReply();
         }
 
-        const textAreaEl = this.hasAnnotations
-            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        const textAreaEl =
+            this.annotations.length > 0
+                ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+                : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         util.focusTextArea(textAreaEl);
 
         const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
@@ -230,12 +231,11 @@ class AnnotationDialog extends EventEmitter {
      */
     addAnnotation(annotation) {
         // Show new section if needed
-        if (!this.hasAnnotations) {
+        if (!this.annotations.length > 0) {
             const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
             const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
             util.hideElement(createSectionEl);
             util.showElement(showSectionEl);
-            this.hasAnnotations = true;
         }
 
         this.annotations.push(annotation);
@@ -472,7 +472,7 @@ class AnnotationDialog extends EventEmitter {
 
         const key = util.decodeKeydown(event);
         if (key === 'Escape') {
-            if (this.hasAnnotations) {
+            if (this.annotations.length > 0) {
                 this.hide();
             } else {
                 this.cancelAnnotation();

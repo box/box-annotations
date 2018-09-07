@@ -108,7 +108,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should not reposition the dialog if the reply textarea is already active', () => {
-            dialog.hasAnnotations = true;
+            dialog.annotations.push({});
             dialog.activateReply();
 
             dialog.show();
@@ -118,7 +118,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should position the dialog if not on a mobile device', () => {
-            dialog.hasAnnotations = true;
+            dialog.annotations.push({});
             dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
@@ -136,7 +136,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should activate the reply text area if the dialog has multiple annotations', () => {
-            dialog.hasAnnotations = true;
+            dialog.annotations.push({});
             dialog.activateReply = jest.fn();
 
             dialog.scrollToLastComment();
@@ -222,7 +222,7 @@ describe('AnnotationDialog', () => {
         it('should hide the mobile annotations dialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
             dialog.unbindDOMListeners = jest.fn();
-            dialog.hasAnnotations = true;
+            dialog.annotations.push({});
 
             dialog.hideMobileDialog();
             expect(util.hideElement).toBeCalled();
@@ -275,7 +275,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should hide the create section and show the show section if there are no annotations', () => {
-            dialog.hasAnnotations = false;
+            dialog.annotations = [];
 
             dialog.addAnnotation(new Annotation({}));
             const createSectionEl = document.querySelector(constants.SECTION_CREATE);
@@ -508,7 +508,7 @@ describe('AnnotationDialog', () => {
     describe('keydownHandler()', () => {
         it('should cancel any unsaved annotations when user presses Esc on pending dialog', () => {
             dialog.cancelAnnotation = jest.fn();
-            dialog.hasAnnotations = false;
+            dialog.annotations = [];
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
@@ -519,7 +519,7 @@ describe('AnnotationDialog', () => {
 
         it('should hide the dialog when user presses Esc if not creating a new annotation', () => {
             dialog.hide = jest.fn();
-            dialog.hasAnnotations = true;
+            dialog.annotations.push({});
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
