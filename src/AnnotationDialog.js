@@ -557,7 +557,11 @@ class AnnotationDialog extends EventEmitter {
         this.annotationListComponent = render(
             <ul className='ba-annotation-list'>
                 {this.annotations.map((item) => {
-                    const { annotationID, created, modified, text, user } = item;
+                    const { annotationID, created, modified, text, user, type } = item;
+                    if (type === constants.TYPES.highlight) {
+                        return null;
+                    }
+
                     return (
                         <li className='ba-annotation-list-item' key={`annotation_${item.annotationID}`}>
                             <Annotation
