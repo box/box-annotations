@@ -320,7 +320,7 @@ class AnnotationDialog extends EventEmitter {
         }
 
         // Add annotation elements
-        this.addSortedAnnotations(annotations);
+        this.sortAnnotationsList(annotations);
     }
 
     /**
@@ -330,7 +330,7 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      * @protected
      */
-    addSortedAnnotations(annotations) {
+    sortAnnotationsList(annotations) {
         // Sort annotations by date created
         this.annotations = Object.keys(annotations).map((key) => annotations[key]);
         this.annotations.sort((a, b) => {
@@ -504,8 +504,6 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     clickHandler(event) {
-        // event.stopPropagation();
-
         const eventTarget = event.target;
         const dataType = util.findClosestDataType(eventTarget);
 

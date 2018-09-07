@@ -325,7 +325,7 @@ describe('AnnotationDialog', () => {
             const dialogEl = document.createElement('div');
             dialog.generateDialogEl = jest.fn().mockReturnValue(dialogEl);
             dialog.bindDOMListeners = jest.fn();
-            dialog.addSortedAnnotations = jest.fn();
+            dialog.sortAnnotationsList = jest.fn();
             dialog.unbindDOMListeners = jest.fn();
             dialog.isMobile = false;
         });
@@ -341,12 +341,12 @@ describe('AnnotationDialog', () => {
             dialog.isMobile = true;
             dialog.setup([annotation, annotation], {});
             expect(dialog.bindDOMListeners).not.toBeCalled();
-            expect(dialog.addSortedAnnotations).toBeCalled();
+            expect(dialog.sortAnnotationsList).toBeCalled();
             dialog.element = null;
         });
     });
 
-    describe('addSortedAnnotations()', () => {
+    describe('sortAnnotationsList()', () => {
         it('should add annotations to the dialog in chronological order', () => {
             // Dates are provided as a string format from the API such as "2016-10-30T14:19:56",
             // ensures that the method converts to a Date() format for comparison/sorting
@@ -390,7 +390,7 @@ describe('AnnotationDialog', () => {
                 3: annotation3
             };
 
-            dialog.addSortedAnnotations(annotations);
+            dialog.sortAnnotationsList(annotations);
             expect(dialog.annotations[0].annotationID).toEqual(1);
             expect(dialog.annotations[1].annotationID).toEqual(3);
             expect(dialog.annotations[2].annotationID).toEqual(2);

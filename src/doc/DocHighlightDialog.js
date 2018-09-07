@@ -298,7 +298,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Add annotation elements
-        this.addSortedAnnotations(annotations);
+        this.sortAnnotationsList(annotations);
 
         if (!this.isMobile && this.canAnnotate) {
             this.bindDOMListeners();
