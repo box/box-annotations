@@ -514,8 +514,6 @@ class AnnotationThread extends EventEmitter {
                 this.dialog.element.dataset.threadNumber = this.threadNumber;
             }
 
-            console.log(new Date().getTime() - new Date(savedAnnotation.created).getTime());
-
             // Remove temporary annotation and replace it with the saved annotation
             this.dialog.addAnnotation(savedAnnotation);
             this.dialog.removeAnnotation(tempAnnotation.annotationID);

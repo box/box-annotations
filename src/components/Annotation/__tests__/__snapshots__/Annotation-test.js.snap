@@ -1,133 +1,141 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/Annotation should correctly render annotation 1`] = `
-<div
-  className="ba-annotation "
-  onBlur={[Function]}
-  onFocus={[Function]}
+<IntlProvider
+  textComponent={Symbol(react.fragment)}
 >
   <div
-    className="ba-annotation-content"
+    className="ba-annotation "
+    onBlur={[Function]}
+    onFocus={[Function]}
   >
-    <Avatar
-      className="ba-annotation-avatar"
-      email="princess@genovia.gov"
-      id="789ghi"
-      name="Mia Thermopolis"
-      type="user"
-    />
     <div
-      className="ba-annotation-text"
+      className="ba-annotation-content"
     >
-      <div
-        className="ba-annotation-headline"
-      >
-        <UserLink
-          className="ba-annotation-user-name"
-          id="789ghi"
-          name="Mia Thermopolis"
-        />
-        <Tooltip
-          constrainToScrollParent={false}
-          constrainToWindow={true}
-          position="top-center"
-          text={
-            <FormattedMessage
-              defaultMessage="{time, date, full} at {time, time, short}"
-              id="ba.annotationPostedFullDateTime"
-              values={
-                Object {
-                  "time": 1506534041000,
-                }
-              }
-            />
-          }
-          theme="default"
-        >
-          <time
-            className="ba-annotation-created-at"
-          >
-            <ReadableTime
-              relativeThreshold={3600000}
-              timestamp={1506534041000}
-            />
-          </time>
-        </Tooltip>
-      </div>
-      <CommentText
-        id="123"
-        tagged_message="test"
-        translationEnabled={false}
+      <Avatar
+        className="ba-annotation-avatar"
+        email="princess@genovia.gov"
+        id="789ghi"
+        name="Mia Thermopolis"
+        type="user"
       />
+      <div
+        className="ba-annotation-text"
+      >
+        <div
+          className="ba-annotation-headline"
+        >
+          <UserLink
+            className="ba-annotation-user-name"
+            id="789ghi"
+            name="Mia Thermopolis"
+          />
+          <Tooltip
+            constrainToScrollParent={false}
+            constrainToWindow={true}
+            position="top-center"
+            text={
+              <FormattedMessage
+                defaultMessage="{time, date, full} at {time, time, short}"
+                id="ba.annotationPostedFullDateTime"
+                values={
+                  Object {
+                    "time": 1506534041000,
+                  }
+                }
+              />
+            }
+            theme="default"
+          >
+            <time
+              className="ba-annotation-created-at"
+            >
+              <ReadableTime
+                relativeThreshold={3600000}
+                timestamp={1506534041000}
+              />
+            </time>
+          </Tooltip>
+        </div>
+        <CommentText
+          id="123"
+          tagged_message="test"
+          translationEnabled={false}
+        />
+      </div>
     </div>
   </div>
-</div>
+</IntlProvider>
 `;
 
 exports[`components/Annotation should render an error when one is defined 1`] = `
-<div
-  className="ba-annotation  ba-is-pending"
-  onBlur={[Function]}
-  onFocus={[Function]}
+<IntlProvider
+  textComponent={Symbol(react.fragment)}
 >
   <div
-    className="ba-annotation-content"
+    className="ba-annotation  ba-is-pending"
+    onBlur={[Function]}
+    onFocus={[Function]}
   >
-    <Avatar
-      className="ba-annotation-avatar"
-      email="princess@genovia.gov"
-      id="789ghi"
-      name="Mia Thermopolis"
-      type="user"
-    />
     <div
-      className="ba-annotation-text"
+      className="ba-annotation-content"
     >
-      <div
-        className="ba-annotation-headline"
-      >
-        <UserLink
-          className="ba-annotation-user-name"
-          id="789ghi"
-          name="Mia Thermopolis"
-        />
-        <Tooltip
-          constrainToScrollParent={false}
-          constrainToWindow={true}
-          position="top-center"
-          text={
-            <FormattedMessage
-              defaultMessage="{time, date, full} at {time, time, short}"
-              id="ba.annotationPostedFullDateTime"
-              values={
-                Object {
-                  "time": 1506534041000,
-                }
-              }
-            />
-          }
-          theme="default"
-        >
-          <time
-            className="ba-annotation-created-at"
-          >
-            <ReadableTime
-              relativeThreshold={3600000}
-              timestamp={1506534041000}
-            />
-          </time>
-        </Tooltip>
-      </div>
-      <CommentText
-        id="123"
-        tagged_message="test"
-        translationEnabled={false}
+      <Avatar
+        className="ba-annotation-avatar"
+        email="princess@genovia.gov"
+        id="789ghi"
+        name="Mia Thermopolis"
+        type="user"
       />
+      <div
+        className="ba-annotation-text"
+      >
+        <div
+          className="ba-annotation-headline"
+        >
+          <UserLink
+            className="ba-annotation-user-name"
+            id="789ghi"
+            name="Mia Thermopolis"
+          />
+          <Tooltip
+            constrainToScrollParent={false}
+            constrainToWindow={true}
+            position="top-center"
+            text={
+              <FormattedMessage
+                defaultMessage="{time, date, full} at {time, time, short}"
+                id="ba.annotationPostedFullDateTime"
+                values={
+                  Object {
+                    "time": 1506534041000,
+                  }
+                }
+              />
+            }
+            theme="default"
+          >
+            <time
+              className="ba-annotation-created-at"
+            >
+              <ReadableTime
+                relativeThreshold={3600000}
+                timestamp={1506534041000}
+              />
+            </time>
+          </Tooltip>
+        </div>
+        <CommentText
+          id="123"
+          tagged_message="test"
+          translationEnabled={false}
+        />
+      </div>
     </div>
+    <CommentInlineError
+      message="errorrrrr"
+      title="error"
+    />
   </div>
-  <CommentInlineError
-    message="errorrrrr"
-    title="error"
-  />
-</div>
+</IntlProvider>
 `;
