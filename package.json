@@ -121,7 +121,7 @@
     "build": "yarn install && LANGUAGE=en-US BABEL_ENV=production NODE_ENV=production CI=1 node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js -p --progress --colors --config build/webpack.config.js",
     "build-locales": "node ./build/props-to-es2015.js",
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
-    "watch": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js",
+    "watch": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
     "test": "yarn install && NODE_ENV=test yarn run jest",
     "debug": "yarn install && NODE_ENV=test yarn run jest --watch",
     "setup-travis": "cd functional-tests && yarn install && node app.js",

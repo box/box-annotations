@@ -31,19 +31,6 @@ const config = Object.assign(commonConfig(), {
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
             'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`)
         }
-    },
-    stats: {
-        assets: true,
-        colors: true,
-        version: false,
-        hash: false,
-        timings: true,
-        chunks: false,
-        chunkModules: false,
-        children: false
-    },
-    externals: {
-        react: 'React'
     }
 });
 

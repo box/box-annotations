@@ -9,5 +9,10 @@ export default {
   "ba.loadErrorMessage": "We're sorry, annotations failed to load for this file.",
   "ba.pointToggle": "Point annotation mode",
   "ba.whoDrew": "{1} drew",
-  "ba.whoHighlighted": "{1} highlighted"
+  "ba.whoHighlighted": "{1} highlighted",
+  "be.commentDeleteCancel": "No",
+  "be.commentDeleteConfirm": "Yes",
+  "be.commentShowOriginal": "Show Original",
+  "be.commentTranslate": "Translate",
+  "be.deleteLabel": "Delete"
 }
