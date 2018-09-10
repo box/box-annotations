@@ -1,11 +1,11 @@
-/* eslint-disable */
-const execSync = require('child_process').execSync;
+const { execSync } = require('child_process');
 
 /**
  * Build a single locale
  *
  * @param {string} locale - locale to build
  * @param {*} callback - callback from worker-farm master process
+ * @return {void}
  */
 module.exports = (locale, callback) => {
     try {

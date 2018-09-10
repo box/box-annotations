@@ -1,8 +1,7 @@
-/* eslint-disable */
 const workerFarm = require('worker-farm');
 const locales = require('box-locales');
 const numCPUs = require('os').cpus().length;
-const execSync = require('child_process').execSync;
+const { execSync } = require('child_process');
 const path = require('path');
 
 const filename = path.basename(__filename);
@@ -19,7 +18,7 @@ const workers = workerFarm(
 
 locales.forEach((locale) => {
     workers(locale, (error) => {
-        if (++counter === bundleCount || error) {
+        if (++counter === bundleCount || error) { // eslint-disable-line
             // terminate after all locales have been processed
             workerFarm.end(workers);
         }
