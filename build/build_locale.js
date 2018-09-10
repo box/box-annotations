@@ -7,11 +7,11 @@ const execSync = require('child_process').execSync;
  * @param {string} locale - locale to build
  * @param {*} callback - callback from worker-farm master process
  */
-module.exports = (locale, react, callback) => {
+module.exports = (locale, callback) => {
     try {
         console.log(`Building ${locale}`);
         // build assets for a single locale
-        execSync(`time LANGUAGE=${locale} REACT=${react} yarn run build-prod`);
+        execSync(`time LANGUAGE=${locale} yarn run build-prod`);
         callback();
     } catch (error) {
         console.error(`Error: Failed to build ${locale}`);
