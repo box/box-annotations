@@ -51,20 +51,6 @@ class DocHighlightDialog extends AnnotationDialog {
         super.addAnnotation(annotation);
     }
 
-    /**
-     * Removes an annotation from the dialog.
-     *
-     * @param {string} annotationID ID of annotation to remove
-     * @return {void}
-     */
-    removeAnnotation(annotationID) {
-        const annotationEl = this.commentsDialogEl.querySelector(`[data-annotation-id="${annotationID}"]`);
-        if (annotationEl) {
-            annotationEl.parentNode.removeChild(annotationEl);
-            this.deactivateReply(); // Deactivate reply area and focus
-        }
-    }
-
     /** @inheritdoc */
     postAnnotation(textInput) {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
@@ -312,7 +298,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Add annotation elements
-        this.addSortedAnnotations(annotations);
+        this.sortAnnotationsList(annotations);
 
         if (!this.isMobile && this.canAnnotate) {
             this.bindDOMListeners();
@@ -499,7 +485,8 @@ class DocHighlightDialog extends AnnotationDialog {
         if (annotation.text === '') {
             this.highlightDialogEl.dataset.annotationId = annotation.annotationID;
         } else {
-            super.addAnnotationElement(annotation);
+            this.annotations.push(annotation);
+            this.renderAnnotations();
         }
     }
 

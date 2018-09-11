@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 
 import { FormattedMessage } from 'react-intl';
 import Annotation from '../Annotation';
@@ -26,7 +26,6 @@ describe('components/Annotation', () => {
     beforeEach(() => {});
 
     const render = (props = {}) => shallow(<Annotation {...annotation} {...props} />).dive();
-    const deepRender = (props = {}) => mount(<Annotation {...annotation} {...props} />);
 
     test('should correctly render annotation', () => {
         const unixTime = new Date(TIME_STRING_SEPT_27_2017).getTime();
@@ -85,28 +84,5 @@ describe('components/Annotation', () => {
         });
 
         expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should render an error cta when an action is defined', () => {
-        const onActionSpy = jest.fn();
-
-        const wrapper = deepRender({
-            onDelete: jest.fn(),
-            error: {
-                title: 'error',
-                message: 'errorrrrr',
-                action: {
-                    text: 'click',
-                    onAction: onActionSpy
-                }
-            }
-        });
-
-        const inlineErrorActionLink = wrapper.find('InlineError').find('PlainButton.lnk');
-        expect(inlineErrorActionLink.length).toEqual(1);
-
-        inlineErrorActionLink.simulate('click');
-
-        expect(onActionSpy).toHaveBeenCalledTimes(1);
     });
 });

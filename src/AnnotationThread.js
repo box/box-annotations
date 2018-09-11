@@ -166,8 +166,6 @@ class AnnotationThread extends EventEmitter {
             can_edit: true,
             can_delete: true
         };
-        tempAnnotationData.created = new Date().getTime();
-        tempAnnotationData.modified = tempAnnotationData.created;
         const tempAnnotation = new Annotation(tempAnnotationData);
         this.annotations.push(tempAnnotation);
 

@@ -3,22 +3,8 @@
 .ba .ba-annotation {
     @import '~box-react-ui/lib/styles/common/inline-notifications';
 
-    border-bottom: 1px solid $ffive;
-
-    // Spaces annotation elements from each other and the dividing border
-    // Adds extra spacing above consecutive annotations as well
-    margin-top: 23px; // Matches spacing of activity feed items in UI Elements
-    padding-bottom: 15px;
     position: relative;
     z-index: 1;
-
-    &:first-child {
-        margin: 0;
-    }
-
-    &:last-child {
-        border-bottom: 0;
-    }
 
     &.ba-is-pending {
         opacity: 50%;
@@ -105,5 +91,42 @@
     .bcs-comment-delete-yes,
     .bcs-comment-delete-no {
         font-size: inherit;
+    }
+}
+
+.ba-mobile-annotation-dialog .ba-annotation {
+    .bcs-comment-text {
+        width: 100%;
+    }
+
+    .ba-annotation-avatar {
+        width: 43px;
+
+        img {
+            height: 40px;
+            width: 40px;
+        }
+    }
+
+    .ba-annotation-user-name {
+        font-size: 16px;
+    }
+
+    .ba-annotation-created-at {
+        font-size: 14px;
+    }
+
+    .bcs-comment-text,
+    .bcs-comment-delete-container {
+        font-size: 15px;
+    }
+
+    .bcs-comment-delete-container {
+        opacity: 1;
+    }
+
+    .bcs-comment-delete svg {
+        height: 18px;
+        width: 18px;
     }
 }

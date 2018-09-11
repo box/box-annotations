@@ -17,7 +17,7 @@ class DocDrawingDialog extends AnnotationDialog {
         super(data);
 
         this.postDrawing = this.postDrawing.bind(this);
-        this.deleteAnnotation = this.deleteAnnotation.bind(this);
+        this.emitAnnotationDelete = this.emitAnnotationDelete.bind(this);
     }
 
     /**
@@ -94,11 +94,11 @@ class DocDrawingDialog extends AnnotationDialog {
 
         if (this.deleteButtonEl) {
             if (!this.isMobile) {
-                this.deleteButtonEl.addEventListener('click', this.deleteAnnotation);
+                this.deleteButtonEl.addEventListener('click', this.emitAnnotationDelete);
             }
 
             if (this.hasTouch) {
-                this.deleteButtonEl.addEventListener('touchend', this.deleteAnnotation);
+                this.deleteButtonEl.addEventListener('touchend', this.emitAnnotationDelete);
             }
         }
     }
@@ -116,8 +116,8 @@ class DocDrawingDialog extends AnnotationDialog {
         }
 
         if (this.deleteButtonEl) {
-            this.deleteButtonEl.removeEventListener('click', this.deleteAnnotation);
-            this.deleteButtonEl.removeEventListener('touchend', this.deleteAnnotation);
+            this.deleteButtonEl.removeEventListener('click', this.emitAnnotationDelete);
+            this.deleteButtonEl.removeEventListener('touchend', this.emitAnnotationDelete);
         }
     }
 
@@ -287,7 +287,7 @@ class DocDrawingDialog extends AnnotationDialog {
      * @param {event} event The event object from an event emitter
      * @return {void}
      */
-    deleteAnnotation(event) {
+    emitAnnotationDelete(event) {
         event.stopPropagation();
         event.preventDefault();
         this.emit('annotationdelete');

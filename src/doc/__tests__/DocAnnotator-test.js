@@ -48,7 +48,7 @@ describe('doc/DocAnnotator', () => {
         };
         annotator = new DocAnnotator({
             canAnnotate: true,
-            container: document,
+            container: rootElement,
             annotationService: {},
             file: {
                 file_version: { id: 1 }

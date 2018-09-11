@@ -4,6 +4,7 @@
  * @author Box
  */
 /* eslint-disable no-use-before-define */
+type StringMap = { [string]: string };
 type AnnotationPermissions = {
     can_edit: boolean,
     can_delete: boolean

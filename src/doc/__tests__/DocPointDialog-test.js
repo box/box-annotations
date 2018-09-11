@@ -17,6 +17,7 @@ describe('doc/DocPointDialog', () => {
         dialog = new DocPointDialog({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             location: {},
+            locale: 'en-US',
             annotations: [],
             canAnnotate: true
         });

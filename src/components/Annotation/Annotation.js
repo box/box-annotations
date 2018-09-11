@@ -13,6 +13,7 @@ import CommentText from '../../../third-party/components/CommentText';
 import InlineDelete from '../../../third-party/components/InlineDelete';
 import CommentInlineError from '../../../third-party/components/CommentInlineError';
 import UserLink from '../../../third-party/components/UserLink';
+import Internationalize from '../Internationalize';
 import withFocus from '../withFocus';
 import messages from './messages';
 
@@ -24,15 +25,18 @@ type Props = {
     id: string,
     message: string,
     permissions: AnnotationPermissions,
-    createdAt: string,
+    createdAt?: string,
     createdBy?: User,
     modifiedAt?: string,
     onDelete?: Function,
     isPending?: boolean,
     error?: ActionItemError,
+    language?: string,
+    messages?: StringMap,
     className: string,
     onBlur: Function,
-    onFocus: Function
+    onFocus: Function,
+    locale: string
 };
 
 class Annotation extends React.PureComponent<Props> {
@@ -53,13 +57,16 @@ class Annotation extends React.PureComponent<Props> {
             onDelete,
             className,
             onBlur,
-            onFocus
+            onFocus,
+            language,
+            messages: intlMessages
         } = this.props;
 
         const canDelete = getProp(permissions, 'can_delete', false);
         const hasDeletePermission = onDelete && canDelete && !isPending;
 
-        const createdAtTimestamp = new Date(createdAt).getTime();
+        const createdAtTimestamp = createdAt ? new Date(createdAt).getTime() : null;
+
         const annotator = {
             id: createdBy && createdBy.name ? createdBy.id : '0',
             name:
@@ -71,44 +78,51 @@ class Annotation extends React.PureComponent<Props> {
         };
 
         return (
-            <div
-                className={classNames(`ba-annotation ${className}`, {
-                    'ba-is-pending': isPending || error
-                })}
-                onBlur={onBlur}
-                onFocus={onFocus}
-            >
-                <div className='ba-annotation-content'>
-                    <Avatar className='ba-annotation-avatar' {...createdBy} />
-                    <div className='ba-annotation-text'>
-                        <div className='ba-annotation-headline'>
-                            <UserLink className='ba-annotation-user-name' {...annotator} />
-                            <Tooltip
-                                text={
-                                    <FormattedMessage
-                                        {...messages.annotationPostedFullDateTime}
-                                        values={{ time: createdAtTimestamp }}
+            <Internationalize language={language} messages={intlMessages}>
+                <div
+                    className={classNames(`ba-annotation ${className}`, {
+                        'ba-is-pending': isPending || error
+                    })}
+                    onBlur={onBlur}
+                    onFocus={onFocus}
+                >
+                    <div className='ba-annotation-content'>
+                        <Avatar className='ba-annotation-avatar' {...createdBy} />
+                        <div className='ba-annotation-text'>
+                            <div className='ba-annotation-headline'>
+                                <UserLink className='ba-annotation-user-name' {...annotator} />
+                                {createdAtTimestamp && (
+                                    <Tooltip
+                                        text={
+                                            <FormattedMessage
+                                                {...messages.annotationPostedFullDateTime}
+                                                values={{ time: createdAtTimestamp }}
+                                            />
+                                        }
+                                    >
+                                        <time className='ba-annotation-created-at'>
+                                            <ReadableTime
+                                                timestamp={createdAtTimestamp}
+                                                relativeThreshold={ONE_HOUR_MS}
+                                            />
+                                        </time>
+                                    </Tooltip>
+                                )}
+                                {hasDeletePermission ? (
+                                    <InlineDelete
+                                        id={id}
+                                        permissions={permissions}
+                                        message={<FormattedMessage {...messages.annotationDeletePrompt} />}
+                                        onDelete={onDelete}
                                     />
-                                }
-                            >
-                                <time className='ba-annotation-created-at'>
-                                    <ReadableTime timestamp={createdAtTimestamp} relativeThreshold={ONE_HOUR_MS} />
-                                </time>
-                            </Tooltip>
-                            {hasDeletePermission ? (
-                                <InlineDelete
-                                    id={id}
-                                    permissions={permissions}
-                                    message={<FormattedMessage {...messages.annotationDeletePrompt} />}
-                                    onDelete={onDelete}
-                                />
-                            ) : null}
+                                ) : null}
+                            </div>
+                            <CommentText id={id} tagged_message={message} translationEnabled={false} />
                         </div>
-                        <CommentText id={id} tagged_message={message} translationEnabled={false} />
                     </div>
+                    {error ? <CommentInlineError {...error} /> : null}
                 </div>
-                {error ? <CommentInlineError {...error} /> : null}
-            </div>
+            </Internationalize>
         );
     }
 }

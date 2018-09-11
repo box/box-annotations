@@ -101,8 +101,8 @@ describe('doc/DocDrawingDialog', () => {
             dialog.bindDOMListeners();
             expect(dialog.commitButtonEl.addEventListener).not.toBeCalledWith('click', dialog.postDrawing);
             expect(dialog.commitButtonEl.addEventListener).toBeCalledWith('touchend', dialog.postDrawing);
-            expect(dialog.deleteButtonEl.addEventListener).not.toBeCalledWith('click', dialog.deleteAnnotation);
-            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('touchend', dialog.deleteAnnotation);
+            expect(dialog.deleteButtonEl.addEventListener).not.toBeCalledWith('click', dialog.emitAnnotationDelete);
+            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('touchend', dialog.emitAnnotationDelete);
         });
         it('should bind touch-enabled desktop listeners to buttons', () => {
             dialog.isMobile = false;
@@ -110,8 +110,8 @@ describe('doc/DocDrawingDialog', () => {
             dialog.bindDOMListeners();
             expect(dialog.commitButtonEl.addEventListener).toBeCalledWith('click', dialog.postDrawing);
             expect(dialog.commitButtonEl.addEventListener).toBeCalledWith('touchend', dialog.postDrawing);
-            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('click', dialog.deleteAnnotation);
-            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('touchend', dialog.deleteAnnotation);
+            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('click', dialog.emitAnnotationDelete);
+            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('touchend', dialog.emitAnnotationDelete);
         });
         it('should bind desktop listeners to buttons', () => {
             dialog.isMobile = false;
@@ -119,8 +119,8 @@ describe('doc/DocDrawingDialog', () => {
             dialog.bindDOMListeners();
             expect(dialog.commitButtonEl.addEventListener).toBeCalledWith('click', dialog.postDrawing);
             expect(dialog.commitButtonEl.addEventListener).not.toBeCalledWith('touchend', dialog.postDrawing);
-            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('click', dialog.deleteAnnotation);
-            expect(dialog.deleteButtonEl.addEventListener).not.toBeCalledWith('touchend', dialog.deleteAnnotation);
+            expect(dialog.deleteButtonEl.addEventListener).toBeCalledWith('click', dialog.emitAnnotationDelete);
+            expect(dialog.deleteButtonEl.addEventListener).not.toBeCalledWith('touchend', dialog.emitAnnotationDelete);
         });
     });
 
@@ -143,8 +143,8 @@ describe('doc/DocDrawingDialog', () => {
             };
 
             dialog.unbindDOMListeners();
-            expect(dialog.deleteButtonEl.removeEventListener).toBeCalledWith('click', dialog.deleteAnnotation);
-            expect(dialog.deleteButtonEl.removeEventListener).toBeCalledWith('touchend', dialog.deleteAnnotation);
+            expect(dialog.deleteButtonEl.removeEventListener).toBeCalledWith('click', dialog.emitAnnotationDelete);
+            expect(dialog.deleteButtonEl.removeEventListener).toBeCalledWith('touchend', dialog.emitAnnotationDelete);
         });
     });
 

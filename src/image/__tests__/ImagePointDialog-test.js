@@ -26,7 +26,8 @@ describe('image/ImagePointDialog', () => {
                 page: 1
             },
             annotations: [],
-            canAnnotate: true
+            canAnnotate: true,
+            locale: 'en-US'
         });
         dialog.localized = { addCommentPlaceholder: 'placeholder' };
         dialog.setup();
