@@ -162,20 +162,25 @@
     }
 
     .ba-annotation-list {
+        padding-bottom: 10px;
         width: 100%;
+    }
 
-        > li {
-            border-bottom: 1px solid $seesee;
+    .ba-annotation-list-item {
+        list-style: none;
 
-            &:first-child .ba-annotation {
-                margin-top: 0;
-            }
+        // Spaces annotation elements from each other and the dividing border
+        // Adds extra spacing above consecutive annotations as well
+        margin-top: 23px; // Matches spacing of activity feed items in UI Elements
+        padding-bottom: 15px;
 
-            &:last-child {
-                border-bottom: 0;
-                margin-bottom: 10px;
-            }
+        &:first-child {
+            margin: 0;
         }
+    }
+
+    .ba-annotation-list-item + .ba-annotation-list-item {
+        border-bottom: 1px solid $seesee;
     }
 
     .annotation-container section {
@@ -209,24 +214,6 @@
         .bp-btn:last-child {
             margin-right: 0;
         }
-    }
-}
-
-ul .ba-annotation-list-item {
-    border-bottom: 1px solid $ffive;
-    list-style: none;
-
-    // Spaces annotation elements from each other and the dividing border
-    // Adds extra spacing above consecutive annotations as well
-    margin-top: 23px; // Matches spacing of activity feed items in UI Elements
-    padding-bottom: 15px;
-
-    &:first-child {
-        margin: 0;
-    }
-
-    &:last-child {
-        border-bottom: 0;
     }
 }
 

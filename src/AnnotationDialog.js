@@ -545,27 +545,27 @@ class AnnotationDialog extends EventEmitter {
      */
     renderAnnotations() {
         const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
-        const locale = this.locale.substr(0, this.locale.indexOf('-'));
+        const language = this.locale.substr(0, this.locale.indexOf('-'));
 
         this.annotationListComponent = render(
             <ul className='ba-annotation-list'>
-                {this.annotations.map((item) => {
-                    const { annotationID, created, modified, text, user, type } = item;
+                {this.annotations.map((annotation) => {
+                    const { annotationID, created, modified, text, user, type, permissions } = annotation;
                     if (type === constants.TYPES.highlight) {
                         return null;
                     }
 
                     return (
-                        <li className='ba-annotation-list-item' key={`annotation_${item.annotationID}`}>
+                        <li className='ba-annotation-list-item' key={`annotation_${annotationID}`}>
                             <Annotation
                                 id={annotationID}
                                 createdBy={user}
                                 createdAt={created}
                                 modifiedAt={modified}
                                 message={text}
-                                locale={locale}
-                                onDelete={() => this.emitAnnotationDelete(item)}
-                                {...item}
+                                language={language}
+                                permissions={permissions}
+                                onDelete={() => this.emitAnnotationDelete(annotation)}
                             />
                         </li>
                     );
