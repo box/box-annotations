@@ -25,7 +25,7 @@ class AnnotationDialog extends EventEmitter {
      *
      * @typedef {Object} AnnotationDialogData
      * @property {HTMLElement} annotatedElement HTML element being annotated on
-     * @property {Object} annotations Annotations in dialog, can be an
+     * @property {Annotation[]} annotations Annotations in dialog, can be an
      * empty array for a new thread
      * @property {Object} location Location object
      * @property {boolean} canAnnotate Whether or not user can annotate
@@ -98,10 +98,9 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
-        const textAreaEl =
-            this.annotations.length > 0
-                ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-                : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        const textAreaEl = this.hasAnnotations()
+            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
 
         if (this.canAnnotate) {
             // Don't re-position if reply textarea is already active
@@ -134,14 +133,13 @@ class AnnotationDialog extends EventEmitter {
         }
 
         // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.annotations.length > 0) {
+        if (this.hasAnnotations()) {
             this.activateReply();
         }
 
-        const textAreaEl =
-            this.annotations.length > 0
-                ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-                : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        const textAreaEl = this.hasAnnotations()
+            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
+            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         util.focusTextArea(textAreaEl);
 
         const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
@@ -231,7 +229,7 @@ class AnnotationDialog extends EventEmitter {
      */
     addAnnotation(annotation) {
         // Show new section if needed
-        if (!this.annotations.length > 0) {
+        if (!this.hasAnnotations()) {
             const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
             const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
             util.hideElement(createSectionEl);
@@ -245,11 +243,11 @@ class AnnotationDialog extends EventEmitter {
     /**
      * Removes an annotation from the dialog.
      *
-     * @param {string} annotationID ID of annotation to remove
+     * @param {string} annotationIDToRemove ID of annotation to remove
      * @return {void}
      */
-    removeAnnotation(annotationID) {
-        this.annotations = this.annotations.filter((annotation) => annotation.annotationID !== annotationID);
+    removeAnnotation(annotationIDToRemove) {
+        this.annotations = this.annotations.filter(({ annotationID }) => annotationID !== annotationIDToRemove);
         this.renderAnnotations();
     }
 
@@ -333,9 +331,7 @@ class AnnotationDialog extends EventEmitter {
     sortAnnotationsList(annotations) {
         // Sort annotations by date created
         this.annotations = Object.keys(annotations).map((key) => annotations[key]);
-        this.annotations.sort((a, b) => {
-            return new Date(a.created) - new Date(b.created);
-        });
+        this.annotations.sort((a, b) => new Date(a.created) - new Date(b.created));
         this.renderAnnotations();
     }
 
@@ -472,7 +468,7 @@ class AnnotationDialog extends EventEmitter {
 
         const key = util.decodeKeydown(event);
         if (key === 'Escape') {
-            if (this.annotations.length > 0) {
+            if (this.hasAnnotations()) {
                 this.hide();
             } else {
                 this.cancelAnnotation();
@@ -848,6 +844,13 @@ class AnnotationDialog extends EventEmitter {
         if (commentsEl) {
             commentsEl.style.maxHeight = `${maxHeight}px`;
         }
+    }
+
+    /**
+     * @return {boolean} Whether or not the dialog contains any saved annotations
+     */
+    hasAnnotations() {
+        return this.annotations.length > 0;
     }
 }
 
