@@ -29,7 +29,7 @@ class ImagePointThread extends AnnotationThread {
 
         util.showElement(this.element);
 
-        if (this.state !== STATES.pending || (this.isMobile && Object.keys(this.annotations).length === 0)) {
+        if (this.state !== STATES.pending || (this.isMobile && this.annotations.length === 0)) {
             return;
         }
 

@@ -153,9 +153,7 @@ class Annotator extends EventEmitter {
                 this.render();
                 this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
-            .catch((error) => {
-                this.emit(ANNOTATOR_EVENT.loadError, error);
-            });
+            .catch((error) => this.emit(ANNOTATOR_EVENT.loadError, error));
     }
 
     /**
@@ -188,7 +186,7 @@ class Annotator extends EventEmitter {
      * Must be implemented to create the appropriate new thread, add it to the
      * in-memory map, and return the thread.
      *
-     * @param {Object} annotations - Annotations in thread
+     * @param {Annotations[]} annotations - Annotations in thread
      * @param {Object} location - Location object
      * @param {string} type - Annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -358,12 +356,12 @@ class Annotator extends EventEmitter {
 
         // Generate map of page to threads
         Object.keys(threadMap).forEach((threadID) => {
-            const annotations = threadMap[threadID];
+            const annotations = threadMap[threadID].sort((a, b) => a.created - b.created);
 
             // NOTE: Using the last annotation to evaluate if the annotation type
             // is enabled because highlight comment annotations may have a plain
             // highlight as the first annotation in the thread.
-            const lastAnnotation = util.getLastAnnotation(annotations);
+            const lastAnnotation = annotations[annotations.length - 1];
             if (!lastAnnotation || !this.isModeAnnotatable(lastAnnotation.type)) {
                 return;
             }
@@ -373,7 +371,7 @@ class Annotator extends EventEmitter {
             // annotation (which shouldn't change regardless of what is specified
             // in later annotations in that specific thread) whereas the last
             // annotation is used to determine the type as specified above
-            const firstAnnotation = util.getFirstAnnotation(annotations);
+            const firstAnnotation = annotations[0];
             const thread = this.createAnnotationThread(annotations, firstAnnotation.location, lastAnnotation.type);
             const controller = this.modeControllers[lastAnnotation.type];
             if (controller) {
@@ -457,7 +455,7 @@ class Annotator extends EventEmitter {
         };
 
         // Set existing thread ID if created with annotations
-        const firstAnnotation = util.getFirstAnnotation(annotations);
+        const firstAnnotation = annotations[0];
         if (firstAnnotation) {
             params.threadID = firstAnnotation.threadID;
             params.threadNumber = firstAnnotation.threadNumber;
@@ -633,7 +631,7 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Handle events emitted by the annotaiton service
+     * Handle events emitted by the annotation service
      *
      * @private
      * @param {Object} [data] - Annotation service event data

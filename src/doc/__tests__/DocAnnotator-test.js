@@ -489,7 +489,7 @@ describe('doc/DocAnnotator', () => {
             annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
 
             annotator.createHighlightThread('some text with severe passive agression');
-            expect(annotator.createAnnotationThread).toBeCalledWith({}, location, TYPES.highlight_comment);
+            expect(annotator.createAnnotationThread).toBeCalledWith([], location, TYPES.highlight_comment);
         });
 
         it('should bail out of making an annotation if thread is null', () => {

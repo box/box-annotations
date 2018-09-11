@@ -259,7 +259,7 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         // Determine if highlight buttons or comments dialog will display
-        const firstAnnotation = util.getFirstAnnotation(annotations);
+        const firstAnnotation = annotations[0];
         if (firstAnnotation) {
             this.hasComments = firstAnnotation.text !== '' || Object.keys(annotations).length > 1;
         }

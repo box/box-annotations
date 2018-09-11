@@ -125,12 +125,12 @@ class DocHighlightThread extends AnnotationThread {
 
         // Hide delete button on plain highlights if user doesn't have
         // permissions
-        const firstAnnotation = util.getFirstAnnotation(this.annotations);
+        const firstAnnotation = this.annotations[0];
         if (!firstAnnotation) {
             return;
         }
 
-        const hasComments = firstAnnotation.text !== '' || Object.keys(this.annotations).length > 1;
+        const hasComments = firstAnnotation.text !== '' || this.annotations.length > 1;
         if (hasComments && firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
             const addHighlightBtn = this.dialog.element.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN);
             util.hideElement(addHighlightBtn);
@@ -262,12 +262,12 @@ class DocHighlightThread extends AnnotationThread {
         });
 
         // Ensures that previously created annotations have the right type
-        const firstAnnotation = util.getFirstAnnotation(this.annotations);
+        const firstAnnotation = this.annotations[0];
         if (!firstAnnotation) {
             return;
         }
 
-        const hasComments = firstAnnotation.text !== '' || Object.keys(this.annotations).length > 1;
+        const hasComments = firstAnnotation.text !== '' || this.annotations.length > 1;
         if (hasComments && this.type === TYPES.highlight) {
             this.type = TYPES.highlight_comment;
         }
@@ -320,7 +320,7 @@ class DocHighlightThread extends AnnotationThread {
     handleCreate(data) {
         if (data) {
             this.type = TYPES.highlight_comment;
-            this.dialog.toggleHighlightCommentsReply(Object.keys(this.annotations).length);
+            this.dialog.toggleHighlightCommentsReply(this.annotations.length);
         } else {
             this.type = TYPES.highlight;
         }
@@ -342,7 +342,7 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const firstAnnotation = util.getFirstAnnotation(this.annotations);
+        const firstAnnotation = this.annotations[0];
         if (firstAnnotation) {
             this.deleteAnnotation(firstAnnotation.annotationID);
         }

@@ -374,9 +374,11 @@ describe('doc/DocHighlightThread', () => {
         it('should create a highlight comment and save', () => {
             thread.saveAnnotation = jest.fn();
             thread.dialog = {
-                toggleHighlightCommentsReply: jest.fn()
+                toggleHighlightCommentsReply: jest.fn(),
+                removeAllListeners: jest.fn(),
+                destroy: jest.fn()
             };
-            thread.annotations = { 1: {}, 2: {}, 3: {} };
+            thread.annotations = [{}, {}, {}];
 
             thread.handleCreate({ text: 'something' });
             expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, 'something');
@@ -387,9 +389,11 @@ describe('doc/DocHighlightThread', () => {
         beforeEach(() => {
             thread.deleteAnnotation = jest.fn();
             thread.dialog = {
-                toggleHighlightDialogs: jest.fn()
+                toggleHighlightDialogs: jest.fn(),
+                removeAllListeners: jest.fn(),
+                destroy: jest.fn()
             };
-            thread.annotations = { 1: { annotationID: 1 }, 2: { annotationID: 2 }, 3: {} };
+            thread.annotations = [{ annotationID: 1 }, { annotationID: 2 }, {}];
         });
 
         it('should delete the specified annotationID', () => {
