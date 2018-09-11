@@ -363,7 +363,7 @@ class Annotator extends EventEmitter {
 
         // Generate map of page to threads
         Object.keys(threadMap).forEach((threadID) => {
-            const annotations = threadMap[threadID].sort((a, b) => a.created - b.created);
+            const annotations = threadMap[threadID];
 
             // NOTE: Using the last annotation to evaluate if the annotation type
             // is enabled because highlight comment annotations may have a plain

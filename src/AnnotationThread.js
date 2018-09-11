@@ -497,11 +497,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     updateTemporaryAnnotation(tempAnnotation, savedAnnotation) {
-        if (this.annotations.includes(tempAnnotation)) {
-            this.annotations = this.annotations.filter(
-                ({ annotationID }) => annotationID !== tempAnnotation.annotationID
-            );
-        }
+        this.annotations = this.annotations.filter(({ annotationID }) => annotationID !== tempAnnotation.annotationID);
         this.annotations.push(savedAnnotation);
 
         // Set threadNumber if the savedAnnotation is the first annotation of the thread
