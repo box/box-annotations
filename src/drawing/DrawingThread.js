@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
-import { eventToLocationHandler, getFirstAnnotation } from '../util';
+import { eventToLocationHandler } from '../util';
 import {
     STATES,
     DRAW_STATES,
@@ -209,7 +209,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     deleteThread() {
-        Object.keys(this.annotations).forEach((annotationID) => this.deleteAnnotationWithID({ annotationID }));
+        this.annotations.forEach((annotation) => this.deleteAnnotationWithID(annotation));
 
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
@@ -314,7 +314,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     setup() {
-        const firstAnnotation = getFirstAnnotation(this.annotations);
+        const firstAnnotation = this.annotations[0];
         if (!firstAnnotation) {
             // Newly created thread
             this.state = STATES.pending;

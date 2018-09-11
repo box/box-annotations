@@ -372,12 +372,8 @@ describe('Annotator', () => {
                 created: '2016-10-30T14:20:56'
             });
 
-            // Chronologically ordered by annotationID -> [1, 3, 2]
-            const annotations = {
-                1: annotation1,
-                2: annotation2,
-                3: annotation3
-            };
+            // Chronologically ordered by annotationID should equal [1, 3, 2]
+            const annotations = [annotation1, annotation2, annotation3];
 
             dialog.addSortedAnnotations(annotations);
             const annotationContainerEl = dialog.dialogEl.querySelector(SELECTOR_COMMENTS_CONTAINER);

@@ -380,37 +380,14 @@ export function getScale(annotatedElement) {
 //------------------------------------------------------------------------------
 
 /**
- * Return first annotation in thread
- *
- * @param {Object} annotations - Annotations in thread
- * @return {Annotation} First annotation in thread
- */
-export function getFirstAnnotation(annotations) {
-    const firstAnnotationId = Object.keys(annotations)[0];
-    return annotations[firstAnnotationId];
-}
-
-/**
- * Return first annotation in thread
- *
- * @param {Object} annotations - Annotations in thread
- * @return {Annotation} First annotation in thread
- */
-export function getLastAnnotation(annotations) {
-    const numAnnotations = Object.keys(annotations).length;
-    const lastAnnotationID = Object.keys(annotations)[numAnnotations - 1];
-    return annotations[lastAnnotationID];
-}
-
-/**
  * Whether or not a highlight annotation has comments or is a plain highlight
  *
- * @param {Object} annotations Annotations in highlight thread
+ * @param {Annotation[]} annotations Annotations in highlight thread
  * @return {boolean} Whether annotation is a plain highlight annotation
  */
 export function isPlainHighlight(annotations) {
-    const firstAnnotation = getFirstAnnotation(annotations);
-    return Object.keys(annotations).length === 1 && firstAnnotation.text === '';
+    const firstAnnotation = annotations[annotations.length - 1];
+    return annotations.length === 1 && firstAnnotation.text === '';
 }
 
 /**

@@ -75,7 +75,7 @@ describe('drawing/DrawingThread', () => {
                 destroy: jest.fn()
             };
 
-            thread.annotations = { '123abc': {} };
+            thread.annotations = [{ annotationID: '123abc' }];
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).toBeCalled();

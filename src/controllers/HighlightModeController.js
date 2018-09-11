@@ -1,5 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
-import { clearCanvas, getFirstAnnotation } from '../util';
+import { clearCanvas } from '../util';
 import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
@@ -25,7 +25,7 @@ class HighlightModeController extends AnnotationModeController {
         switch (data.event) {
             case THREAD_EVENT.save:
                 // Re-render plain highlight canvas when a plain highlight is converted to a highlight comment
-                firstAnnotation = getFirstAnnotation(thread.annotations);
+                firstAnnotation = thread.annotations[0];
                 if (
                     firstAnnotation &&
                     firstAnnotation.type === TYPES.highlight &&
