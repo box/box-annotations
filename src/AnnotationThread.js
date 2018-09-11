@@ -579,7 +579,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteAnnotationWithID(data) {
-        this.deleteAnnotation(data.annotationID || data.id);
+        this.deleteAnnotation(data.annotationID);
     }
 
     /**
