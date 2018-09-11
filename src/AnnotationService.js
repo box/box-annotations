@@ -16,7 +16,7 @@ class AnnotationService extends EventEmitter {
      */
     static generateID() {
         /* eslint-disable */
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
             var r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
@@ -135,7 +135,7 @@ class AnnotationService extends EventEmitter {
      * @return {Promise} Promise that resolves with fetched annotations
      */
     read(fileVersionId) {
-        this.annotations = {};
+        this.annotations = [];
         let resolve;
         let reject;
         const promise = new Promise((success, failure) => {
@@ -200,20 +200,19 @@ class AnnotationService extends EventEmitter {
      * Generates a map of thread ID to annotations in thread.
      *
      * @private
-     * @param {Object} annotations - Annotations to generate map from
-     * @return {Object} Map of thread ID to annotations in that thread
+     * @param {Annotations[]} annotations - Annotations to generate map from
+     * @return {Annotations[]} Map of thread ID to annotations in that thread
      */
     createThreadMap(annotations) {
         const threadMap = {};
         this.annotations = annotations;
 
         // Construct map of thread ID to annotations
-        Object.keys(annotations).forEach((annotationID) => {
-            const annotation = annotations[annotationID];
+        this.annotations.forEach((annotation) => {
             const { threadID } = annotation;
-            const thread = threadMap[threadID] || [];
-            threadMap[threadID] = thread;
-            thread[annotation.annotationID] = annotation;
+            const threadAnnotations = threadMap[threadID] || [];
+            threadAnnotations.push(annotation);
+            threadMap[threadID] = threadAnnotations;
         });
 
         return threadMap;
@@ -256,9 +255,9 @@ class AnnotationService extends EventEmitter {
      * @return {Promise} Promise that resolves with fetched annotations
      */
     getReadUrl(fileVersionId, marker = null, limit = null) {
-        let apiUrl = `${this.api}/2.0/files/${this.fileId}/annotations?version=${
-            fileVersionId
-        }&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
+        let apiUrl = `${this.api}/2.0/files/${
+            this.fileId
+        }/annotations?version=${fileVersionId}&fields=item,thread,details,message,created_by,created_at,modified_at,permissions`;
         if (marker) {
             apiUrl += `&marker=${marker}`;
         }
@@ -298,7 +297,7 @@ class AnnotationService extends EventEmitter {
                 } else {
                     data.entries.forEach((annotationData) => {
                         const annotation = this.createAnnotation(annotationData);
-                        this.annotations[annotation.annotationID] = annotation;
+                        this.annotations.push(annotation);
                     });
 
                     if (data.next_marker) {

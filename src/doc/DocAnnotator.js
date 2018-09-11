@@ -238,7 +238,7 @@ class DocAnnotator extends Annotator {
      * Creates the proper type of thread, adds it to in-memory map, and returns it.
      *
      * @override
-     * @param {Object} annotations Annotations in thread
+     * @param {Annotations[]} annotations Annotations in thread
      * @param {Object} location Location object
      * @param {string} [type] Optional annotation type
      * @return {AnnotationThread} Created annotation thread
@@ -530,7 +530,7 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const annotations = {};
+        const annotations = [];
         const thread = this.createAnnotationThread(annotations, location, highlightType);
         this.lastHighlightEvent = null;
         this.lastSelection = null;
@@ -862,7 +862,7 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Handle events emitted by the annotaiton service
+     * Handle events emitted by the annotation service
      *
      * @private
      * @param {Object} [data] Annotation service event data

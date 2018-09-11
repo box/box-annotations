@@ -13,8 +13,6 @@ import {
     isElementInViewport,
     getAvatarHtml,
     getScale,
-    getFirstAnnotation,
-    getLastAnnotation,
     isPlainHighlight,
     isHighlightAnnotation,
     getDimensionScale,
@@ -319,26 +317,6 @@ describe('util', () => {
 
         it('should return a zoom scale of 1 if no stored zoom is found on the element', () => {
             expect(getScale(childEl)).toEqual(1);
-        });
-    });
-
-    describe('getFirstAnnotation()', () => {
-        it('should return the first annotation in thread', () => {
-            const annotations = {
-                def123: { id: 1 },
-                abc456: { id: 2 }
-            };
-            expect(getFirstAnnotation(annotations)).toStrictEqual({ id: 1 });
-        });
-    });
-
-    describe('getLastAnnotation()', () => {
-        it('should return the last annotation in thread', () => {
-            const annotations = {
-                def123: { id: 1 },
-                abc456: { id: 2 }
-            };
-            expect(getLastAnnotation(annotations)).toStrictEqual({ id: 2 });
         });
     });
 

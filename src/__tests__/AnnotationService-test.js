@@ -2,7 +2,6 @@
 import fetchMock from 'fetch-mock';
 import Annotation from '../Annotation';
 import AnnotationService from '../AnnotationService';
-import * as util from '../util';
 
 const API_HOST = 'https://app.box.com/api';
 
@@ -313,8 +312,8 @@ describe('AnnotationService', () => {
             expect(Object.keys(threadMap[annotation1.threadID]).length).toEqual(3);
 
             const thread = threadMap[annotation1.threadID];
-            expect(thread[1]).toStrictEqual(annotation1);
-            expect(thread[1].threadNumber).toEqual(annotation1.threadNumber);
+            expect(thread[0]).toStrictEqual(annotation1);
+            expect(thread[0].threadNumber).toEqual(annotation1.threadNumber);
             expect(thread).not.toContain(annotation2);
         });
     });
@@ -383,8 +382,8 @@ describe('AnnotationService', () => {
             annotationService.annotations = [];
             annotationService.readFromMarker(resolve, reject, 2, 'a', 1);
             promise.then((result) => {
-                expect(Object.keys(result).length).toEqual(1);
-                const firstAnnotation = util.getFirstAnnotation(result);
+                expect(result.length).toEqual(1);
+                const firstAnnotation = result[0];
                 expect(firstAnnotation.text).toEqual(annotation2.text);
                 expect(firstAnnotation.threadNumber).toEqual(annotation2.threadNumber);
             });

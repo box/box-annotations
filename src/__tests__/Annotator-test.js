@@ -10,14 +10,13 @@ import {
     SELECTOR_ANNOTATED_ELEMENT
 } from '../constants';
 
-let annotator;
-let controller;
-let thread;
-const html = `<button class="bp-btn-annotate"></button>
-<div class="annotated-element"></div>`;
-
 describe('Annotator', () => {
     let rootElement;
+    let annotator;
+    let controller;
+    let thread;
+    const html = `<button class="bp-btn-annotate"></button>
+    <div class="annotated-element"></div>`;
 
     beforeEach(() => {
         rootElement = document.createElement('div');
@@ -74,7 +73,8 @@ describe('Annotator', () => {
             getThreadEventData: jest.fn(),
             showDialog: jest.fn(),
             type: 'something',
-            location: { page: 1 }
+            location: { page: 1 },
+            annotations: []
         };
     });
 
@@ -374,15 +374,11 @@ describe('Annotator', () => {
                 });
             });
         });
-
         describe('generateThreadMap()', () => {
-            const threadMap = { '123abc': thread };
+            let threadMap;
 
             beforeEach(() => {
-                const annotation = { location: {}, type: 'highlight' };
-                const lastAnnotation = { location: {}, type: 'highlight-comment' };
-                util.getFirstAnnotation = jest.fn().mockReturnValue(annotation);
-                util.getLastAnnotation = jest.fn().mockReturnValue(lastAnnotation);
+                threadMap = { '123abc': [{ type: 'highlight-comment' }] };
                 annotator.createAnnotationThread = jest.fn();
             });
 

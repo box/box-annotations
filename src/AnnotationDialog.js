@@ -309,7 +309,7 @@ class AnnotationDialog extends EventEmitter {
             this.element.appendChild(this.dialogEl);
 
             // Adding thread number to dialog
-            const firstAnnotation = util.getFirstAnnotation(annotations);
+            const firstAnnotation = annotations[0];
             if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }
@@ -324,14 +324,13 @@ class AnnotationDialog extends EventEmitter {
     /**
      * Sorts and adds annotations to the dialog
      *
-     * @param {Object} annotations Annotations to show in the dialog
+     * @param {Annotations[]} annotations Annotations to show in the dialog
      * @return {void}
      * @protected
      */
     sortAnnotationsList(annotations) {
         // Sort annotations by date created
-        this.annotations = Object.keys(annotations).map((key) => annotations[key]);
-        this.annotations.sort((a, b) => new Date(a.created) - new Date(b.created));
+        this.annotations = annotations.sort((a, b) => new Date(a.created) - new Date(b.created));
         this.renderAnnotations();
     }
 

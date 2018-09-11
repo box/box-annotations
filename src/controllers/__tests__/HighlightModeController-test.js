@@ -27,17 +27,12 @@ describe('controllers/HighlightModeController', () => {
 
     describe('handleThreadEvents()', () => {
         it('should render page on save only if plain highlight was converted to a highlight comment', () => {
-            thread.annotations = {
-                1: { type: 'highlight' }
-            };
+            thread.annotations = [{ type: 'highlight' }];
             controller.renderPage = jest.fn();
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).not.toBeCalled();
 
-            thread.annotations = {
-                1: { type: 'highlight' },
-                2: { type: 'highlight-comment' }
-            };
+            thread.annotations = [{ type: 'highlight' }, { type: 'highlight-comment' }];
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).toBeCalledWith(1);
         });

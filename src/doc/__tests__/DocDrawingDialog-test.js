@@ -165,7 +165,6 @@ describe('doc/DocDrawingDialog', () => {
                     name: 'Yao Ming'
                 }
             };
-            util.getFirstAnnotation = jest.fn().mockReturnValue(annotation);
 
             expect(dialog.element).toBeUndefined();
             dialog.setup([annotation]);
@@ -177,7 +176,6 @@ describe('doc/DocDrawingDialog', () => {
         });
 
         it('should setup the dialog element with a commit button when not given an annotation', () => {
-            util.getFirstAnnotation = jest.fn();
             dialog.setup();
             expect(dialog.generateDialogEl).toBeCalled();
             expect(dialog.bindDOMListeners).toBeCalled();
@@ -259,7 +257,6 @@ describe('doc/DocDrawingDialog', () => {
                     can_delete: true
                 }
             };
-            util.getFirstAnnotation = jest.fn().mockReturnValue(annotation);
         });
 
         it('should generate the correctly formatted label dialog element', () => {
@@ -281,7 +278,6 @@ describe('doc/DocDrawingDialog', () => {
         });
 
         it('should generate a save and delete button', () => {
-            util.getFirstAnnotation = jest.fn().mockReturnValue(null);
             const dialogEl = dialog.generateDialogEl([]);
             expect(dialogEl.classList.contains(constants.CLASS_ANNOTATION_DRAWING_DIALOG)).toBeTruthy();
             expect(dialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN)).not.toBeNull;
