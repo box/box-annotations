@@ -161,7 +161,8 @@
     "clearMocks": true,
     "globals": {
       "__NAME__": "name",
-      "__VERSION__": "version"
+      "__VERSION__": "version",
+      "__LANGUAGE__": "en-US"
     },
     "setupFiles": [
       "jest-canvas-mock"

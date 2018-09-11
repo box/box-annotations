@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/Annotation should correctly render annotation 1`] = `
-<IntlProvider
-  textComponent={Symbol(react.fragment)}
->
+<Internationalize>
   <div
     className="ba-annotation "
     onBlur={[Function]}
@@ -65,13 +63,11 @@ exports[`components/Annotation should correctly render annotation 1`] = `
       </div>
     </div>
   </div>
-</IntlProvider>
+</Internationalize>
 `;
 
 exports[`components/Annotation should render an error when one is defined 1`] = `
-<IntlProvider
-  textComponent={Symbol(react.fragment)}
->
+<Internationalize>
   <div
     className="ba-annotation  ba-is-pending"
     onBlur={[Function]}
@@ -137,5 +133,5 @@ exports[`components/Annotation should render an error when one is defined 1`] = 
       title="error"
     />
   </div>
-</IntlProvider>
+</Internationalize>
 `;

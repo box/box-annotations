@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import classNames from 'classnames';
-import { FormattedMessage, IntlProvider } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import getProp from 'lodash/get';
 import noop from 'lodash/noop';
 
@@ -13,6 +13,7 @@ import CommentText from '../../../third-party/components/CommentText';
 import InlineDelete from '../../../third-party/components/InlineDelete';
 import CommentInlineError from '../../../third-party/components/CommentInlineError';
 import UserLink from '../../../third-party/components/UserLink';
+import Internationalize from '../Internationalize';
 import withFocus from '../withFocus';
 import messages from './messages';
 
@@ -30,6 +31,8 @@ type Props = {
     onDelete?: Function,
     isPending?: boolean,
     error?: ActionItemError,
+    language?: string,
+    messages?: StringMap,
     className: string,
     onBlur: Function,
     onFocus: Function,
@@ -55,7 +58,8 @@ class Annotation extends React.PureComponent<Props> {
             className,
             onBlur,
             onFocus,
-            locale
+            language,
+            messages: intlMessages
         } = this.props;
 
         const canDelete = getProp(permissions, 'can_delete', false);
@@ -74,7 +78,7 @@ class Annotation extends React.PureComponent<Props> {
         };
 
         return (
-            <IntlProvider locale={locale} textComponent={React.Fragment}>
+            <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames(`ba-annotation ${className}`, {
                         'ba-is-pending': isPending || error
@@ -118,7 +122,7 @@ class Annotation extends React.PureComponent<Props> {
                     </div>
                     {error ? <CommentInlineError {...error} /> : null}
                 </div>
-            </IntlProvider>
+            </Internationalize>
         );
     }
 }
