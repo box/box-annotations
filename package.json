@@ -48,6 +48,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-1": "^6.24.1",
+    "box-locales": "^0.0.1",
     "box-react-ui": "^25.12.0",
     "chai": "^4.1.2",
     "chai-dom": "^1.8.0",
@@ -120,6 +121,7 @@
   "scripts": {
     "build": "yarn install && LANGUAGE=en-US BABEL_ENV=production NODE_ENV=production CI=1 node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js -p --progress --colors --config build/webpack.config.js",
     "build-locales": "node ./build/props-to-es2015.js",
+    "build-prod": "BABEL_ENV=production NODE_ENV=production webpack --config build/webpack.config.js --mode production",
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
     "watch": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
     "test": "yarn install && NODE_ENV=test yarn run jest",
