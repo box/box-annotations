@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Annotation/Timestamp should correctly render annotation 1`] = `
+<TetherComponent
+  attachment="bottom center"
+  bodyElement={<body />}
+  classPrefix="tooltip"
+  constraints={
+    Array [
+      Object {
+        "attachment": "together",
+        "to": "window",
+      },
+    ]
+  }
+  enabled={false}
+  renderElementTag="div"
+  renderElementTo={null}
+  targetAttachment="top center"
+>
+  <time
+    className="ba-annotation-created-at"
+    onBlur={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+    tabIndex="0"
+  >
+    <ReadableTime
+      relativeThreshold={3600000}
+      timestamp={1506534041000}
+    />
+  </time>
+</TetherComponent>
+`;
