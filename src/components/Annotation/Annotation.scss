@@ -10,13 +10,6 @@
         opacity: 50%;
     }
 
-    &:hover,
-    &.ba-is-focused {
-        .bcs-comment-delete-container {
-            opacity: 1;
-        }
-    }
-
     .ba-annotation-content {
         display: flex;
         min-width: 0;
@@ -29,49 +22,9 @@
         margin-top: 3px; // Required to top align avatar circle with text to the right
     }
 
-    .ba-annotation-text {
-        color: $fours;
-        flex: 1;
-        opacity: 1;
-    }
-
-    .ba-annotation-user-name {
-        color: $twos;
-        font-weight: bold;
-        margin-right: 10px; // Spaces user name from timestamp
-    }
-
-    .ba-annotation-created-at {
-        color: $nines;
-        cursor: default;
-        font-size: smaller;
-    }
-
-    .ba-annotation-headline {
-        display: flex;
-        flex-flow: row wrap;
-    }
-
     .bcs-comment-text {
         white-space: pre-wrap;
         word-wrap: break-word;
-    }
-
-    .bcs-comment-delete-container {
-        margin-top: 3px; // Required to top align trash icon with text to the left
-        opacity: 0;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 1;
-
-        &.ba-is-confirming {
-            opacity: 1;
-        }
-    }
-
-    .bcs-comment-delete {
-        vertical-align: top;
     }
 
     .bcs-comment-error {
@@ -87,46 +40,9 @@
     }
 }
 
-.flyout-overlay {
-    .bcs-comment-delete-yes,
-    .bcs-comment-delete-no {
-        font-size: inherit;
-    }
-}
-
 .ba-mobile-annotation-dialog .ba-annotation {
     .bcs-comment-text {
-        width: 100%;
-    }
-
-    .ba-annotation-avatar {
-        width: 43px;
-
-        img {
-            height: 40px;
-            width: 40px;
-        }
-    }
-
-    .ba-annotation-user-name {
-        font-size: 16px;
-    }
-
-    .ba-annotation-created-at {
-        font-size: 14px;
-    }
-
-    .bcs-comment-text,
-    .bcs-comment-delete-container {
         font-size: 15px;
-    }
-
-    .bcs-comment-delete-container {
-        opacity: 1;
-    }
-
-    .bcs-comment-delete svg {
-        height: 18px;
-        width: 18px;
+        width: 100%;
     }
 }
