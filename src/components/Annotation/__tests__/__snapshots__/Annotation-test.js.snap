@@ -31,6 +31,7 @@ exports[`components/Annotation should correctly render annotation 1`] = `
             }
           }
           id="123"
+          isPending={false}
           onDelete={[Function]}
           permissions={Object {}}
         />
@@ -76,7 +77,8 @@ exports[`components/Annotation should render an error when one is defined 1`] = 
             }
           }
           id="123"
-          onDelete={[Function]}
+          isPending={false}
+          onDelete={[MockFunction]}
           permissions={Object {}}
         />
         <CommentText

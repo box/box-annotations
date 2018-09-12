@@ -44,9 +44,14 @@ describe('components/Annotation/AnnotationHeader', () => {
     });
 
     // eslint-disable-next-line
-    test('should allow user to delete if onDelete handler is defined', () => {
+    test('should allow user to delete if they have delete permissions on the annotation and delete handler is defined', () => {
         const wrapper = render({ onDelete: jest.fn(), permissions: { can_delete: true } });
         expect(wrapper.find('InlineDelete').length).toEqual(1);
+    });
+
+    test('should not allow user to delete if they lack delete permissions on the annotation', () => {
+        const wrapper = render({ onDelete: jest.fn() });
+        expect(wrapper.find('InlineDelete').length).toEqual(0);
     });
 
     test('should not allow user to delete if onDelete handler is undefined', () => {
