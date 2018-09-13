@@ -1,8 +1,10 @@
 @import '../../variables.scss';
 
-.ba .ba-annotation-list {
-    padding-bottom: 10px;
-    width: 100%;
+.ba {
+    .ba-annotation-list {
+        padding-bottom: 10px;
+        width: 100%;
+    }
 
     .ba-annotation-list-item {
         list-style: none;
