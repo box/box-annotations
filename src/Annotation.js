@@ -42,6 +42,7 @@ class Annotation {
         this.permissions = data.permissions;
         this.created = data.created;
         this.modified = data.modified;
+        this.isPending = false;
     }
 }
 

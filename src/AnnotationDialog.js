@@ -398,44 +398,6 @@ class AnnotationDialog extends EventEmitter {
         }
     }
 
-    /**
-     * Enable all buttons for the temporary annotation element
-     *
-     * @protected
-     * @param {string} annotationID Annotation of saved annotation element
-     * @return {void}
-     */
-    enable(annotationID) {
-        const annotationEl = this.element.querySelector(`[data-annotation-id="${annotationID}"]`);
-        if (!annotationEl) {
-            return;
-        }
-
-        const btns = annotationEl.querySelectorAll('button');
-        Array.prototype.forEach.call(btns, (btn) => {
-            btn.classList.remove(constants.CLASS_DISABLED);
-        });
-    }
-
-    /**
-     * Disable all buttons for the temporary annotation element
-     *
-     * @protected
-     * @param {string} tempAnnotationID Annotation of temporary annotation element
-     * @return {void}
-     */
-    disable(tempAnnotationID) {
-        const annotationEl = this.element.querySelector(`[data-annotation-id="${tempAnnotationID}"]`);
-        if (!annotationEl) {
-            return;
-        }
-
-        const btns = annotationEl.querySelectorAll('button');
-        Array.prototype.forEach.call(btns, (btn) => {
-            btn.classList.add(constants.CLASS_DISABLED);
-        });
-    }
-
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
