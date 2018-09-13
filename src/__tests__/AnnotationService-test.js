@@ -59,7 +59,7 @@ describe('AnnotationService', () => {
                         location: annotationToSave.location
                     },
                     thread: annotationToSave.threadNumber,
-                    message: annotationToSave.text,
+                    message: annotationToSave.message,
                     created_by: {}
                 }
             });
@@ -69,7 +69,7 @@ describe('AnnotationService', () => {
                 expect(createdAnnotation.threadID).toEqual(annotationToSave.threadID);
                 expect(createdAnnotation.threadNumber).toEqual(annotationToSave.threadNumber);
                 expect(createdAnnotation.type).toEqual(annotationToSave.type);
-                expect(createdAnnotation.text).toEqual(annotationToSave.text);
+                expect(createdAnnotation.message).toEqual(annotationToSave.message);
                 expect(createdAnnotation.location.x).toEqual(annotationToSave.location.x);
                 expect(createdAnnotation.location.y).toEqual(annotationToSave.location.y);
                 expect(annotationService.emit).not.toBeCalled();
@@ -133,7 +133,7 @@ describe('AnnotationService', () => {
                                 threadID: annotation1.threadID,
                                 location: annotation1.location
                             },
-                            message: annotation1.text,
+                            message: annotation1.message,
                             thread: annotation1.threadNumber,
                             created_by: {}
                         },
@@ -147,7 +147,7 @@ describe('AnnotationService', () => {
                                 threadID: annotation2.threadID,
                                 location: annotation2.location
                             },
-                            message: annotation2.text,
+                            message: annotation2.message,
                             threadNumber: annotation2.threadNumber,
                             created_by: {}
                         }
@@ -160,11 +160,11 @@ describe('AnnotationService', () => {
 
                 const firstAnnotationId = Object.keys(annotations)[0];
                 const createdAnnotation1 = annotations[firstAnnotationId];
-                expect(createdAnnotation1.text).toEqual(annotation1.text);
+                expect(createdAnnotation1.message).toEqual(annotation1.message);
 
                 const secondAnnotationId = Object.keys(annotations)[1];
                 const createdAnnotation2 = annotations[secondAnnotationId];
-                expect(createdAnnotation2.text).toEqual(annotation2.text);
+                expect(createdAnnotation2.message).toEqual(annotation2.message);
             });
         });
 
@@ -223,7 +223,7 @@ describe('AnnotationService', () => {
         it('should call read and then generate a map of thread ID to annotations in those threads', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 1,
+                id: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
@@ -233,7 +233,7 @@ describe('AnnotationService', () => {
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 2,
+                id: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
@@ -243,7 +243,7 @@ describe('AnnotationService', () => {
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 3,
+                id: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
@@ -269,7 +269,7 @@ describe('AnnotationService', () => {
         it('should create a thread map with the correct annotations', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 1,
+                id: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
@@ -279,7 +279,7 @@ describe('AnnotationService', () => {
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 2,
+                id: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
@@ -289,7 +289,7 @@ describe('AnnotationService', () => {
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 3,
+                id: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
@@ -299,7 +299,7 @@ describe('AnnotationService', () => {
 
             const annotation4 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 4,
+                id: 4,
                 type: 'point',
                 text: 'blah4',
                 threadNumber: '1',
@@ -365,7 +365,7 @@ describe('AnnotationService', () => {
                                 location: annotation2.location
                             },
                             thread: annotation2.threadNumber,
-                            message: annotation2.text,
+                            message: annotation2.message,
                             created_by: {}
                         }
                     ]
@@ -384,7 +384,7 @@ describe('AnnotationService', () => {
             promise.then((result) => {
                 expect(result.length).toEqual(1);
                 const firstAnnotation = result[0];
-                expect(firstAnnotation.text).toEqual(annotation2.text);
+                expect(firstAnnotation.message).toEqual(annotation2.message);
                 expect(firstAnnotation.threadNumber).toEqual(annotation2.threadNumber);
             });
         });

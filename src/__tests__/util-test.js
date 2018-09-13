@@ -322,19 +322,19 @@ describe('util', () => {
 
     describe('isPlainHighlight()', () => {
         it('should return true if highlight annotation is a plain highlight', () => {
-            const annotations = [{ text: '' }];
+            const annotations = [{ message: '' }];
 
             expect(isPlainHighlight(annotations)).toBeTruthy();
         });
 
         it('should return false if a plain highlight annotation had comments added to it', () => {
-            const annotations = [{ text: '' }, { text: 'bleh' }];
+            const annotations = [{ message: '' }, { message: 'bleh' }];
 
             expect(isPlainHighlight(annotations)).toBeFalsy();
         });
 
         it('should return false if highlight annotation has comments', () => {
-            const annotations = [{ text: 'bleh' }];
+            const annotations = [{ message: 'bleh' }];
 
             expect(isPlainHighlight(annotations)).toBeFalsy();
         });

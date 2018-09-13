@@ -380,7 +380,7 @@ describe('doc/DocHighlightThread', () => {
             };
             thread.annotations = [{}, {}, {}];
 
-            thread.handleCreate({ text: 'something' });
+            thread.handleCreate('something');
             expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, 'something');
         });
     });
@@ -393,15 +393,15 @@ describe('doc/DocHighlightThread', () => {
                 removeAllListeners: jest.fn(),
                 destroy: jest.fn()
             };
-            thread.annotations = [{ annotationID: 1 }, { annotationID: 2 }, {}];
+            thread.annotations = [{ id: 1 }, { id: 2 }, {}];
         });
 
-        it('should delete the specified annotationID', () => {
-            thread.handleDelete({ annotationID: 2 });
+        it('should delete the specified id', () => {
+            thread.handleDelete({ id: 2 });
             expect(thread.deleteAnnotation).toBeCalledWith(2);
         });
 
-        it('should delete the first annotation in the thread if no annotationID is provided', () => {
+        it('should delete the first annotation in the thread if no id is provided', () => {
             thread.handleDelete();
             expect(thread.deleteAnnotation).toBeCalledWith(1);
         });

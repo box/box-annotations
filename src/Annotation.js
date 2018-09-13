@@ -7,17 +7,17 @@ class Annotation {
      * The data object for constructing an annotation.
      *
      * @typedef {Object} AnnotationData
-     * @property {string} annotationID Annotation ID
+     * @property {string} id Annotation ID
      * @property {string} fileVersionId File version ID for this annotation
      * @property {string} threadID Thread ID
      * @property {string} thread Thread number
      * @property {string} type Annotation type, e.g. 'point' or 'highlight'
-     * @property {string} text Annotation text
+     * @property {string} message Annotation text
      * @property {Object} location Location object
-     * @property {Object} user User creating/that created this annotation
+     * @property {Object} createdBy User creating/that created this annotation
      * @property {Object} permissions Permissions user has
-     * @property {number} created Created timestamp
-     * @property {number} modified Modified timestamp
+     * @property {number} createdAt Created timestamp
+     * @property {number} modifiedAt Modified timestamp
      */
 
     //--------------------------------------------------------------------------
@@ -31,17 +31,17 @@ class Annotation {
      * @return {Annotation} Instance of annotation
      */
     constructor(data) {
-        this.annotationID = data.annotationID;
+        this.id = data.id;
         this.fileVersionId = data.fileVersionId;
         this.threadID = data.threadID;
         this.threadNumber = data.threadNumber;
         this.type = data.type;
-        this.text = data.text;
+        this.message = data.message;
         this.location = data.location;
-        this.user = data.user;
+        this.createdBy = data.createdBy;
         this.permissions = data.permissions;
-        this.created = data.created;
-        this.modified = data.modified;
+        this.createdAt = data.createdAt;
+        this.modifiedAt = data.modifiedAt;
     }
 }
 
