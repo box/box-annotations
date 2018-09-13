@@ -16,9 +16,9 @@ type Props = {
 const AnnotationList = ({ annotations, language, messages: intlMessages, onDelete }: Props) => (
     <Internationalize language={language} messages={intlMessages}>
         <ul className='ba-annotation-list'>
-            {annotations.map((annotation) => (
-                <li className='ba-annotation-list-item' key={`annotation_${annotation.id}`}>
-                    <Annotation {...annotation} onDelete={onDelete} />
+            {annotations.map(({ id, ...rest }) => (
+                <li className='ba-annotation-list-item' key={`annotation_${id}`}>
+                    <Annotation id={id} onDelete={onDelete} {...rest} />
                 </li>
             ))}
         </ul>
