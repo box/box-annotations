@@ -47,10 +47,20 @@ class DocHighlightDialog extends AnnotationDialog {
             ]);
             util.showElement(highlightLabelEl);
 
+            const btns = this.highlightDialogEl.querySelectorAll('button');
+            btns.forEach((btn) => {
+                btn.classList.remove(constants.CLASS_DISABLED);
+            });
+
             // Only reposition if mouse is still hovering over the dialog and not mobile
             if (!this.isMobile) {
                 this.position();
             }
+        } else if (firstAnnotation.isPending && firstAnnotation.type === 'highlight' && annotations.length === 1) {
+            const btns = this.highlightDialogEl.querySelectorAll('button');
+            btns.forEach((btn) => {
+                btn.classList.add(constants.CLASS_DISABLED);
+            });
         }
 
         super.show(annotations);
