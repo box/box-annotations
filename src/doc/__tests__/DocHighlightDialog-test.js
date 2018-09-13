@@ -97,11 +97,11 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should display who highlighted the text for plain highlights', () => {
             const annotation = {
-                user: {
+                createdBy: {
                     id: 1,
                     name: 'Sumedha Pramod'
                 },
-                text: ''
+                message: ''
             };
             dialog.show([annotation]);
             expect(dialog.emit).toBeCalledWith('annotationshow');
@@ -125,11 +125,11 @@ describe('doc/DocHighlightDialog', () => {
 
         it('should not position plain highlights on mobile devices', () => {
             const annotation = {
-                user: {
+                createdBy: {
                     id: 1,
                     name: 'Sumedha Pramod'
                 },
-                text: ''
+                message: ''
             };
             dialog.isMobile = true;
             dialog.showMobileDialog = jest.fn();
@@ -342,8 +342,8 @@ describe('doc/DocHighlightDialog', () => {
 
         beforeEach(() => {
             annotation = new Annotation({
-                text: 'blargh',
-                user: { id: 1, name: 'Bob' },
+                message: 'blargh',
+                createdBy: { id: 1, name: 'Bob' },
                 permissions: {
                     can_delete: true
                 },
@@ -368,7 +368,7 @@ describe('doc/DocHighlightDialog', () => {
             expect(dialog.hasComments).toBeTruthy();
 
             dialog.hasComments = null;
-            annotation.text = '';
+            annotation.message = '';
             dialog.setup([annotation], false);
             expect(dialog.hasComments).toBeFalsy();
         });
@@ -382,8 +382,8 @@ describe('doc/DocHighlightDialog', () => {
         it('should hide the comments dialog if thread does not have comments', () => {
             dialog.hasComments = false;
             annotation = new Annotation({
-                text: '',
-                user: { id: 1, name: 'Bob' },
+                message: '',
+                createdBy: { id: 1, name: 'Bob' },
                 permissions: {
                     can_delete: true
                 },

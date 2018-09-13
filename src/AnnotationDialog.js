@@ -116,28 +116,22 @@ class AnnotationDialog extends EventEmitter {
         if (!this.hasAnnotations(annotations)) {
             return;
         }
-
         const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
         const language = this.locale.substr(0, this.locale.indexOf('-'));
 
         this.annotationListComponent = render(
             <ul className='ba-annotation-list'>
                 {annotations.map((annotation) => {
-                    const { annotationID, created, modified, text, user, type, permissions } = annotation;
+                    const { id, type } = annotation;
                     if (type === constants.TYPES.highlight) {
                         return null;
                     }
 
                     return (
-                        <li className='ba-annotation-list-item' key={`annotation_${annotationID}`}>
+                        <li className='ba-annotation-list-item' key={`annotation_${id}`}>
                             <Annotation
-                                id={annotationID}
-                                createdBy={user}
-                                createdAt={created}
-                                modifiedAt={modified}
-                                message={text}
+                                {...annotation}
                                 language={language}
-                                permissions={permissions}
                                 onDelete={() => this.emitAnnotationDelete(annotation)}
                             />
                         </li>
@@ -258,13 +252,13 @@ class AnnotationDialog extends EventEmitter {
      */
     postAnnotation(textInput) {
         const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        const text = textInput || annotationTextEl.value;
-        if (text.trim() === '') {
+        const message = textInput || annotationTextEl.value;
+        if (message.trim() === '') {
             annotationTextEl.classList.add(constants.CLASS_INVALID_INPUT);
             return;
         }
 
-        this.emit('annotationcreate', { text });
+        this.emit('annotationcreate', message);
         annotationTextEl.value = '';
     }
 
@@ -553,13 +547,13 @@ class AnnotationDialog extends EventEmitter {
      */
     postReply() {
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        const text = replyTextEl.value;
-        if (text.trim() === '') {
+        const message = replyTextEl.value;
+        if (message.trim() === '') {
             replyTextEl.classList.add(constants.CLASS_INVALID_INPUT);
             return;
         }
 
-        this.emit('annotationcreate', { text });
+        this.emit('annotationcreate', message);
         replyTextEl.value = '';
         replyTextEl.focus();
     }

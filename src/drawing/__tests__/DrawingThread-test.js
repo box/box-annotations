@@ -75,13 +75,13 @@ describe('drawing/DrawingThread', () => {
                 destroy: jest.fn()
             };
 
-            thread.annotations = [{ annotationID: '123abc' }];
+            thread.annotations = [{ id: '123abc' }];
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).toBeCalled();
             expect(thread.concreteContext.clearRect).toBeCalled();
             expect(thread.clearBoundary).toBeCalled();
-            expect(thread.deleteAnnotationWithID).toBeCalledWith({ annotationID: '123abc' });
+            expect(thread.deleteAnnotationWithID).toBeCalledWith({ id: '123abc' });
             expect(thread.pathContainer).toEqual(null);
         });
     });
