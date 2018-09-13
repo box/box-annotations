@@ -7,7 +7,6 @@ import Avatar from 'box-react-ui/lib/components/avatar';
 
 import CommentText from '../../../third-party/components/CommentText';
 import CommentInlineError from '../../../third-party/components/CommentInlineError';
-import Internationalize from '../Internationalize';
 import AnnotationHeader from './AnnotationHeader';
 import withFocus from '../withFocus';
 
@@ -23,8 +22,6 @@ type Props = {
     onDelete?: Function,
     isPending?: boolean,
     error?: ActionItemError,
-    language?: string,
-    messages?: StringMap,
     className: string,
     onBlur: Function,
     onFocus: Function
@@ -41,35 +38,31 @@ const Annotation = ({
     onDelete = noop,
     className,
     onBlur,
-    onFocus,
-    language,
-    messages: intlMessages
+    onFocus
 }: Props) => (
-    <Internationalize language={language} messages={intlMessages}>
-        <div
-            className={classNames(`ba-annotation ${className}`, {
-                'ba-is-pending': isPending || error
-            })}
-            onBlur={onBlur}
-            onFocus={onFocus}
-        >
-            <div className='ba-annotation-content'>
-                <Avatar className='ba-annotation-avatar' {...createdBy} />
-                <div className='ba-annotation-text'>
-                    <AnnotationHeader
-                        id={id}
-                        permissions={permissions}
-                        onDelete={onDelete}
-                        createdAt={createdAt}
-                        createdBy={createdBy}
-                        isPending={isPending}
-                    />
-                    <CommentText id={id} tagged_message={message} translationEnabled={false} />
-                </div>
+    <div
+        className={classNames(`ba-annotation ${className}`, {
+            'ba-is-pending': isPending || error
+        })}
+        onBlur={onBlur}
+        onFocus={onFocus}
+    >
+        <div className='ba-annotation-content'>
+            <Avatar className='ba-annotation-avatar' {...createdBy} />
+            <div className='ba-annotation-text'>
+                <AnnotationHeader
+                    id={id}
+                    permissions={permissions}
+                    onDelete={onDelete}
+                    createdAt={createdAt}
+                    createdBy={createdBy}
+                    isPending={isPending}
+                />
+                <CommentText id={id} tagged_message={message} translationEnabled={false} />
             </div>
-            {error && <CommentInlineError {...error} />}
         </div>
-    </Internationalize>
+        {error && <CommentInlineError {...error} />}
+    </div>
 );
 
 export { Annotation as AnnotationComponent };

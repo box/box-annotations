@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Annotation from 'box-annotations/lib/components/Annotation';
+import './AnnotationExample.scss';
 
 const USER1 = {
     type: 'user',
@@ -38,7 +39,9 @@ const ERROR = {
 const onDelete = () => console.log('annotation deleted');
 
 const AnnotationContainer = (props) => (
-    <Annotation {...props} />
+    <div className='annotation-container'>
+        <Annotation {...props} />
+    </div>
 );
 
 const ActiveAnnotation = () => (
@@ -58,6 +61,7 @@ const PendingAnnotation = () => (
         createdAt={DATE}
         createdBy={USER2}
         message={'I\'m a princess?'}
+        permissions={{}}
         isPending={PENDING_TRUE}
     />
 );

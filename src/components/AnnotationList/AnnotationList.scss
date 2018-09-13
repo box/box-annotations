@@ -1,0 +1,23 @@
+@import '../../variables.scss';
+
+.ba .ba-annotation-list {
+    padding-bottom: 10px;
+    width: 100%;
+
+    .ba-annotation-list-item {
+        list-style: none;
+
+        // Spaces annotation elements from each other and the dividing border
+        // Adds extra spacing above consecutive annotations as well
+        margin-top: 23px; // Matches spacing of activity feed items in UI Elements
+        padding-top: 15px;
+
+        &:first-child {
+            margin: 0;
+        }
+    }
+
+    .ba-annotation-list-item + .ba-annotation-list-item {
+        border-top: 1px solid $seesee;
+    }
+}
