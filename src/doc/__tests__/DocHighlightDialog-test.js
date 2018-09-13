@@ -67,6 +67,13 @@ describe('doc/DocHighlightDialog', () => {
     });
 
     describe('show()', () => {
+        const btn = {
+            classList: {
+                remove: jest.fn(),
+                add: jest.fn()
+            }
+        };
+
         beforeEach(() => {
             dialog.hasAnnotations = jest.fn().mockReturnValue(true);
             dialog.position = jest.fn();
@@ -78,6 +85,8 @@ describe('doc/DocHighlightDialog', () => {
             labelEl.classList.add(constants.CLASS_HIGHLIGHT_LABEL);
             dialog.highlightDialogEl = document.createElement('div');
             dialog.highlightDialogEl.appendChild(labelEl);
+
+            dialog.highlightDialogEl.querySelectorAll = jest.fn().mockReturnValue([btn]);
         });
 
         it('should do nothing if dialog has no annotations', () => {
@@ -98,6 +107,19 @@ describe('doc/DocHighlightDialog', () => {
             expect(dialog.emit).toBeCalledWith('annotationshow');
             expect(util.replacePlaceholders).toBeCalled();
             expect(util.showElement).toBeCalled();
+            expect(btn.classList.remove).toBeCalled();
+            expect(dialog.position).toBeCalled();
+        });
+
+        it('should disable buttons when plain highlight is pending', () => {
+            const annotation = {
+                isPending: true,
+                type: 'highlight'
+            };
+            dialog.show([annotation]);
+            expect(dialog.emit).toBeCalledWith('annotationshow');
+            expect(util.replacePlaceholders).not.toBeCalled();
+            expect(btn.classList.add).toBeCalled();
             expect(dialog.position).toBeCalled();
         });
 

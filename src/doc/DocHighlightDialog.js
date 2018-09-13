@@ -48,7 +48,7 @@ class DocHighlightDialog extends AnnotationDialog {
             util.showElement(highlightLabelEl);
 
             const btns = this.highlightDialogEl.querySelectorAll('button');
-            Array.prototype.forEach.call(btns, (btn) => {
+            btns.forEach((btn) => {
                 btn.classList.remove(constants.CLASS_DISABLED);
             });
 
@@ -58,7 +58,7 @@ class DocHighlightDialog extends AnnotationDialog {
             }
         } else if (firstAnnotation.isPending && firstAnnotation.type === 'highlight' && annotations.length === 1) {
             const btns = this.highlightDialogEl.querySelectorAll('button');
-            Array.prototype.forEach.call(btns, (btn) => {
+            btns.forEach((btn) => {
                 btn.classList.add(constants.CLASS_DISABLED);
             });
         }
