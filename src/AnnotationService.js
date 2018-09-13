@@ -150,12 +150,12 @@ class AnnotationService extends EventEmitter {
     /**
      * Delete an annotation.
      *
-     * @param {string} annotationID - Id of annotation to delete
+     * @param {string} id - Id of annotation to delete
      * @return {Promise} Promise to delete annotation
      */
-    delete(annotationID) {
+    delete(id) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.api}/2.0/annotations/${annotationID}`, {
+            fetch(`${this.api}/2.0/annotations/${id}`, {
                 method: 'DELETE',
                 headers: this.headers
             })
@@ -163,7 +163,7 @@ class AnnotationService extends EventEmitter {
                     if (response.status === 204) {
                         resolve();
                     } else {
-                        const error = new Error(`Could not delete annotation with ID ${annotationID}`);
+                        const error = new Error(`Could not delete annotation with ID ${id}`);
                         reject(error);
                         this.emit('annotationerror', {
                             reason: 'delete',

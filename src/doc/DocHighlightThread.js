@@ -116,12 +116,12 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationID ID of annotation to delete
+     * @param {string} id ID of annotation to delete
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    deleteAnnotation(annotationID, useServer = true) {
-        super.deleteAnnotation(annotationID, useServer);
+    deleteAnnotation(id, useServer = true) {
+        super.deleteAnnotation(id, useServer);
 
         // Hide delete button on plain highlights if user doesn't have
         // permissions
@@ -330,7 +330,7 @@ class DocHighlightThread extends AnnotationThread {
 
     /**
      * Delete the annotation annotation or the thread's first annotation based on
-     * if an annotationID is specified on 'annotationdelete'
+     * if an id is specified on 'annotationdelete'
      *
      * @private
      * @param {Object} data Event data

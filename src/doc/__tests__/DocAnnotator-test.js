@@ -377,7 +377,7 @@ describe('doc/DocAnnotator', () => {
                 threadID: '1',
                 type: TYPES.point,
                 threadNumber: '1',
-                text: 'blah',
+                message: 'blah',
                 location: { x: 0, y: 0 }
             });
             thread = annotator.createAnnotationThread([annotation], {}, TYPES.highlight);

@@ -223,7 +223,7 @@ describe('AnnotationService', () => {
         it('should call read and then generate a map of thread ID to annotations in those threads', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 1,
+                id: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
@@ -233,7 +233,7 @@ describe('AnnotationService', () => {
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 2,
+                id: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
@@ -243,7 +243,7 @@ describe('AnnotationService', () => {
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 3,
+                id: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
@@ -269,7 +269,7 @@ describe('AnnotationService', () => {
         it('should create a thread map with the correct annotations', () => {
             const annotation1 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 1,
+                id: 1,
                 type: 'point',
                 text: 'blah',
                 threadNumber: '1',
@@ -279,7 +279,7 @@ describe('AnnotationService', () => {
 
             const annotation2 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 2,
+                id: 2,
                 type: 'point',
                 text: 'blah2',
                 threadNumber: '2',
@@ -289,7 +289,7 @@ describe('AnnotationService', () => {
 
             const annotation3 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 3,
+                id: 3,
                 type: 'point',
                 text: 'blah3',
                 threadNumber: '1',
@@ -299,7 +299,7 @@ describe('AnnotationService', () => {
 
             const annotation4 = new Annotation({
                 fileVersionId: 2,
-                annotationID: 4,
+                id: 4,
                 type: 'point',
                 text: 'blah4',
                 threadNumber: '1',

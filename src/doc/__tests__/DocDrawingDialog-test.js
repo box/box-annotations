@@ -144,7 +144,7 @@ describe('doc/DocDrawingDialog', () => {
 
         it('should setup the dialog element without a commit button when given an annotation', () => {
             const annotation = {
-                user: {
+                createdBy: {
                     name: 'Yao Ming'
                 }
             };
@@ -249,7 +249,7 @@ describe('doc/DocDrawingDialog', () => {
 
         beforeEach(() => {
             annotation = {
-                user: {
+                createdBy: {
                     name: 'Yao Ming'
                 },
                 permissions: {
@@ -295,7 +295,7 @@ describe('doc/DocDrawingDialog', () => {
             util.replacePlaceholders = jest.fn().mockReturnValue(notYaoMing);
             util.showElement = jest.fn();
 
-            dialog.assignDrawingLabel({ user: { id: '1' } });
+            dialog.assignDrawingLabel({ createdBy: { id: '1' } });
             expect(drawingLabelEl.textContent).toEqual(notYaoMing);
             expect(dialog.drawingDialogEl.querySelector).toBeCalled();
             expect(util.replacePlaceholders).toBeCalled();
@@ -307,10 +307,10 @@ describe('doc/DocDrawingDialog', () => {
 
             dialog.drawingDialogEl = document.createElement('div');
             dialog.assignDrawingLabel(null);
-            dialog.assignDrawingLabel({ user: { id: '0' } });
+            dialog.assignDrawingLabel({ createdBy: { id: '0' } });
 
             dialog.drawingDialogEl = undefined;
-            dialog.assignDrawingLabel({ user: { id: '1' } });
+            dialog.assignDrawingLabel({ createdBy: { id: '1' } });
 
             expect(util.showElement).not.toBeCalled();
         });

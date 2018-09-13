@@ -633,7 +633,7 @@ class AnnotationThread extends EventEmitter {
             threadID: this.threadID
         };
 
-        if (this.annotationService.user.id > 0) {
+        if (this.annotationService.user && this.annotationService.user.id > 0) {
             threadData.userId = this.annotationService.user.id;
         }
         if (this.threadNumber) {
