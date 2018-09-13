@@ -40,10 +40,10 @@ class DocHighlightDialog extends AnnotationDialog {
         // If annotation is blank then display who highlighted the text
         // Will be displayed as '{name} highlighted'
         const firstAnnotation = annotations[0];
-        if (firstAnnotation.text === '' && firstAnnotation.user.id !== '0') {
+        if (firstAnnotation.message === '' && firstAnnotation.createdBy.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
-                firstAnnotation.user.name
+                firstAnnotation.createdBy.name
             ]);
             util.showElement(highlightLabelEl);
 
@@ -252,7 +252,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // Determine if highlight buttons or comments dialog will display
         const firstAnnotation = annotations[0];
         if (firstAnnotation) {
-            this.hasComments = firstAnnotation.text !== '' || annotations.length > 1;
+            this.hasComments = firstAnnotation.message !== '' || annotations.length > 1;
         }
 
         // Generate HTML of highlight dialog
@@ -294,10 +294,10 @@ class DocHighlightDialog extends AnnotationDialog {
         // Checks if highlight is a plain highlight annotation and if
         // user name has been populated. If userID is 0, user name will
         // be 'Some User'
-        if (util.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.user.id !== '0') {
+        if (util.isPlainHighlight(annotations) && firstAnnotation && firstAnnotation.createdBy.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
-                firstAnnotation.user.name
+                firstAnnotation.createdBy.name
             ]);
             util.showElement(highlightLabelEl);
         }

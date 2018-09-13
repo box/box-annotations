@@ -27,7 +27,7 @@ class AnnotationThread extends EventEmitter {
      * @property {string} fileVersionId File version ID
      * @property {Object} location Location object
      * @property {string} threadID Thread ID
-     * @property {string} thread Thread number
+     * @property {string} threadNumber Thread number
      * @property {string} type Type of thread
      */
 
@@ -163,7 +163,7 @@ class AnnotationThread extends EventEmitter {
         // Save annotation on client
         const tempAnnotationID = AnnotationService.generateID();
         const tempAnnotationData = annotationData;
-        tempAnnotationData.annotationID = tempAnnotationID;
+        tempAnnotationData.id = tempAnnotationID;
         tempAnnotationData.permissions = {
             can_edit: true,
             can_delete: true
@@ -179,7 +179,7 @@ class AnnotationThread extends EventEmitter {
         this.state = STATES.inactive;
 
         if (this.dialog) {
-            this.dialog.disable(tempAnnotation.annotationID);
+            this.dialog.disable(tempAnnotation.id);
         }
 
         // Save annotation on server
@@ -198,7 +198,7 @@ class AnnotationThread extends EventEmitter {
      */
     deleteAnnotation(annotationIDToRemove, useServer = true) {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
-        const annotation = this.annotations.find(({ annotationID }) => annotationID === annotationIDToRemove);
+        const annotation = this.annotations.find(({ id }) => id === annotationIDToRemove);
         if (!annotation) {
             // Broadcast error
             this.emit(THREAD_EVENT.deleteError);
@@ -214,14 +214,14 @@ class AnnotationThread extends EventEmitter {
             /* eslint-disable no-console */
             console.error(
                 THREAD_EVENT.deleteError,
-                `User does not have the correct permissions to delete annotation with ID ${annotation.annotationID}.`
+                `User does not have the correct permissions to delete annotation with ID ${annotation.id}.`
             );
             /* eslint-enable no-console */
             return Promise.reject();
         }
 
         // Delete annotation on client
-        this.annotations = this.annotations.filter(({ annotationID }) => annotationID !== annotationIDToRemove);
+        this.annotations = this.annotations.filter(({ id }) => id !== annotationIDToRemove);
 
         // If the user doesn't have permission to delete the entire highlight
         // annotation, display the annotation as a plain highlight
@@ -266,7 +266,7 @@ class AnnotationThread extends EventEmitter {
                 canDeleteAnnotation =
                     firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
                 if (util.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
-                    this.annotationService.delete(firstAnnotation.annotationID);
+                    this.annotationService.delete(firstAnnotation.id);
                 }
 
                 // Broadcast thread cleanup if needed
@@ -499,7 +499,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     updateTemporaryAnnotation(tempAnnotation, savedAnnotation) {
-        this.annotations = this.annotations.filter(({ annotationID }) => annotationID !== tempAnnotation.annotationID);
+        this.annotations = this.annotations.filter(({ id }) => id !== tempAnnotation.id);
         this.annotations.push(savedAnnotation);
 
         // Set threadNumber if the savedAnnotation is the first annotation of the thread
@@ -546,16 +546,16 @@ class AnnotationThread extends EventEmitter {
      *
      * @private
      * @param {string} type - Type of annotation
-     * @param {string} text - Annotation text
+     * @param {string} message - Annotation text
      * @return {Object} Annotation data
      */
-    createAnnotationData(type, text) {
+    createAnnotationData(type, message) {
         return {
             fileVersionId: this.fileVersionId,
             type,
-            text,
+            message,
             location: this.location,
-            user: this.annotationService.user,
+            createdBy: this.annotationService.user,
             threadID: this.threadID,
             threadNumber: this.threadNumber
         };
@@ -565,22 +565,22 @@ class AnnotationThread extends EventEmitter {
      * Creates a new point annotation
      *
      * @private
-     * @param {Object} data - Annotation data
+     * @param {string} message - Annotation message string
      * @return {void}
      */
-    createAnnotation(data) {
-        this.saveAnnotation(TYPES.point, data.text);
+    createAnnotation(message) {
+        this.saveAnnotation(TYPES.point, message);
     }
 
     /**
-     * Deletes annotation with annotationID from thread
+     * Deletes annotation with a specific id from thread
      *
      * @private
      * @param {Object} data - Annotation data
      * @return {void}
      */
     deleteAnnotationWithID(data) {
-        this.deleteAnnotation(data.annotationID);
+        this.deleteAnnotation(data.id);
     }
 
     /**

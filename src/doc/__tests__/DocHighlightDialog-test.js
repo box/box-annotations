@@ -346,7 +346,7 @@ describe('doc/DocHighlightDialog', () => {
             expect(dialog.hasComments).toBeTruthy();
 
             dialog.hasComments = null;
-            annotation.text = '';
+            annotation.message = '';
             dialog.setup([annotation], false);
             expect(dialog.hasComments).toBeFalsy();
         });

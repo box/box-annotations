@@ -130,7 +130,7 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const hasComments = firstAnnotation.text !== '' || this.annotations.length > 1;
+        const hasComments = firstAnnotation.message !== '' || this.annotations.length > 1;
         if (hasComments && firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
             const addHighlightBtn = this.dialog.element.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN);
             util.hideElement(addHighlightBtn);
@@ -267,7 +267,7 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const hasComments = firstAnnotation.text !== '' || this.annotations.length > 1;
+        const hasComments = firstAnnotation.message !== '' || this.annotations.length > 1;
         if (hasComments && this.type === TYPES.highlight) {
             this.type = TYPES.highlight_comment;
         }
@@ -314,18 +314,18 @@ class DocHighlightThread extends AnnotationThread {
      * 'annotationcreate'
      *
      * @private
-     * @param {Object} data Event data
+     * @param {string} message Annotation message string
      * @return {void}
      */
-    handleCreate(data) {
-        if (data) {
+    handleCreate(message) {
+        if (message) {
             this.type = TYPES.highlight_comment;
             this.dialog.toggleHighlightCommentsReply(this.annotations.length);
         } else {
             this.type = TYPES.highlight;
         }
 
-        this.saveAnnotation(this.type, data ? data.text : '');
+        this.saveAnnotation(this.type, message || '');
     }
 
     /**
@@ -338,13 +338,13 @@ class DocHighlightThread extends AnnotationThread {
      */
     handleDelete(data) {
         if (data) {
-            this.deleteAnnotation(data.annotationID);
+            this.deleteAnnotation(data.id);
             return;
         }
 
         const firstAnnotation = this.annotations[0];
         if (firstAnnotation) {
-            this.deleteAnnotation(firstAnnotation.annotationID);
+            this.deleteAnnotation(firstAnnotation.id);
         }
     }
 
