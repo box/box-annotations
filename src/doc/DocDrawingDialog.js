@@ -56,24 +56,20 @@ class DocDrawingDialog extends AnnotationDialog {
      *
      * @override
      * @protected
-     * @param {Annotation} annotation Annotation to add
+     * @param {Annotation[]} annotations list of annotations
      * @return {void}
      */
-    addAnnotation(annotation) {
-        if (!this.element) {
-            this.setup([annotation]);
+    show(annotations) {
+        if (!this.hasAnnotations(annotations)) {
+            return;
         }
-        this.assignDrawingLabel(annotation);
-    }
 
-    /**
-     * Empty stub to avoid unexpected behavior. Removing a drawing annotation can only be done by deleting the thread.
-     *
-     * @override
-     * @protected
-     * @return {void}
-     */
-    removeAnnotation() {}
+        if (!this.element) {
+            this.setup(annotations);
+        }
+        this.visible = true;
+        this.assignDrawingLabel(annotations[0]);
+    }
 
     /**
      * Bind dialog button listeners
@@ -142,11 +138,7 @@ class DocDrawingDialog extends AnnotationDialog {
         this.deleteButtonEl = this.drawingDialogEl.querySelector(constants.SELECTOR_DELETE_DRAWING_BTN);
 
         this.bindDOMListeners();
-
-        const firstAnnotation = annotations[0];
-        if (firstAnnotation) {
-            this.addAnnotation(firstAnnotation);
-        }
+        this.show(annotations);
 
         this.element.appendChild(this.drawingDialogEl);
     }
@@ -189,17 +181,6 @@ class DocDrawingDialog extends AnnotationDialog {
     hide() {
         util.hideElement(this.element);
         this.visible = false;
-    }
-
-    /**
-     * Display the dialog in the browser
-     *
-     * @protected
-     * @return {void}
-     */
-    show() {
-        util.showElement(this.element);
-        this.visible = true;
     }
 
     /**

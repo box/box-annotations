@@ -186,7 +186,7 @@ class DocDrawingThread extends DrawingThread {
         const context = this.selectContext();
         if (this.dialog && this.dialog.isVisible()) {
             this.drawBoundary();
-            this.dialog.show();
+            this.dialog.show(this.annotations);
         }
 
         // Generate the paths and draw to the annotation layer canvas

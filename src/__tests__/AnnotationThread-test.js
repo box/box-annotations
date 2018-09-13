@@ -38,14 +38,12 @@ describe('AnnotationThread', () => {
             activateReply: jest.fn(),
             addListener: jest.fn(),
             annotations: [],
-            addAnnotation: jest.fn(),
             destroy: jest.fn(),
             setup: jest.fn(),
             removeAllListeners: jest.fn(),
             show: jest.fn(),
             hide: jest.fn(),
             scrollToLastComment: jest.fn(),
-            removeAnnotation: jest.fn(),
             enable: jest.fn(),
             disable: jest.fn()
         };
@@ -220,9 +218,7 @@ describe('AnnotationThread', () => {
 
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.dialog.element.dataset.threadNumber).not.toBeUndefined();
-            expect(thread.dialog.enable).toBeCalledWith(serverAnnotation.annotationID);
-            expect(thread.dialog.addAnnotation).toBeCalledWith(serverAnnotation);
-            expect(thread.dialog.removeAnnotation).toBeCalledWith(tempAnnotation.annotationID);
+            expect(thread.dialog.show).toBeCalledWith([serverAnnotation]);
             expect(thread.dialog.scrollToLastComment).toBeCalled();
         });
 
@@ -286,14 +282,12 @@ describe('AnnotationThread', () => {
 
             thread.dialog = {
                 addListener: jest.fn(),
-                addAnnotation: jest.fn(),
                 activateReply: jest.fn(),
                 annotations: [annotation],
                 destroy: jest.fn(),
                 removeAllListeners: jest.fn(),
                 show: jest.fn(),
                 hide: jest.fn(),
-                removeAnnotation: jest.fn(),
                 hideMobileDialog: jest.fn(),
                 setup: jest.fn()
             };
@@ -315,7 +309,7 @@ describe('AnnotationThread', () => {
             promise.then(() => {
                 threadPromise.then(() => {
                     expect(thread.destroy).toBeCalled();
-                    expect(thread.dialog.removeAnnotation).not.toBeCalled();
+                    expect(thread.dialog.show).not.toBeCalled();
                     expect(thread.dialog.hideMobileDialog).not.toBeCalled();
                     done();
                 });
@@ -327,7 +321,7 @@ describe('AnnotationThread', () => {
 
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
-                expect(thread.dialog.removeAnnotation).toBeCalled();
+                expect(thread.dialog.show).toBeCalled();
                 expect(thread.dialog.hideMobileDialog).toBeCalled();
                 done();
             });
@@ -337,7 +331,7 @@ describe('AnnotationThread', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
-                expect(thread.dialog.removeAnnotation).toBeCalledWith('someID');
+                expect(thread.dialog.show).toBeCalledWith([annotation2]);
                 expect(thread.dialog.activateReply).toBeCalled();
                 done();
             });

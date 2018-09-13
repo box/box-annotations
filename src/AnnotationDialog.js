@@ -44,8 +44,6 @@ class AnnotationDialog extends EventEmitter {
     constructor(data) {
         super();
 
-        this.annotations = [];
-
         this.annotatedElement = data.annotatedElement;
         this.container = data.container;
         this.location = data.location;
@@ -87,29 +85,26 @@ class AnnotationDialog extends EventEmitter {
     /**
      * Positions and shows the dialog.
      *
+     * @param {Annotations[]} annotations List of annotations
      * @return {void}
      */
-    show() {
+    show(annotations) {
+        this.emit('annotationshow');
+
         // Populate mobile annotations dialog with annotations information
         if (this.isMobile) {
             this.showMobileDialog();
-        } else if (this.element && !this.element.classList.contains(constants.CLASS_HIDDEN)) {
-            // Do not re-show dialog if it is already visible
-            return;
         }
 
-        const textAreaEl = this.hasAnnotations()
-            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-
-        if (this.canAnnotate) {
-            // Don't re-position if reply textarea is already active
-            const textareaIsActive = textAreaEl.classList.contains(constants.CLASS_ACTIVE);
-            if (textareaIsActive && this.element.parentNode) {
-                util.showElement(this.element);
-                this.scrollToLastComment();
-                return;
-            }
+        // Show the appropriate section
+        const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
+        const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
+        if (!this.hasAnnotations(annotations)) {
+            util.showElement(createSectionEl);
+            util.hideElement(showSectionEl);
+        } else {
+            util.hideElement(createSectionEl);
+            util.showElement(showSectionEl);
         }
 
         // Position and show - we need to reposition every time since
@@ -118,26 +113,60 @@ class AnnotationDialog extends EventEmitter {
             this.position();
         }
 
-        this.scrollToLastComment();
-        this.emit('annotationshow');
+        if (!this.hasAnnotations(annotations)) {
+            return;
+        }
+
+        const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
+        const language = this.locale.substr(0, this.locale.indexOf('-'));
+
+        this.annotationListComponent = render(
+            <ul className='ba-annotation-list'>
+                {annotations.map((annotation) => {
+                    const { annotationID, created, modified, text, user, type, permissions } = annotation;
+                    if (type === constants.TYPES.highlight) {
+                        return null;
+                    }
+
+                    return (
+                        <li className='ba-annotation-list-item' key={`annotation_${annotationID}`}>
+                            <Annotation
+                                id={annotationID}
+                                createdBy={user}
+                                createdAt={created}
+                                modifiedAt={modified}
+                                message={text}
+                                language={language}
+                                permissions={permissions}
+                                onDelete={() => this.emitAnnotationDelete(annotation)}
+                            />
+                        </li>
+                    );
+                })}
+            </ul>,
+            annotationContainerEl
+        );
+
+        this.scrollToLastComment(annotations);
     }
 
     /**
      * Auto scroll annotations dialog to bottom where new comment was added
      *
+     * @param {Annotations[]} annotations List of annotations
      * @return {void}
      */
-    scrollToLastComment() {
+    scrollToLastComment(annotations) {
         if (!this.element) {
             return;
         }
 
         // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.hasAnnotations()) {
+        if (this.hasAnnotations(annotations)) {
             this.activateReply();
         }
 
-        const textAreaEl = this.hasAnnotations()
+        const textAreaEl = this.hasAnnotations(annotations)
             ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
             : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
         util.focusTextArea(textAreaEl);
@@ -222,36 +251,6 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Adds an annotation to the dialog.
-     *
-     * @param {Annotation} annotation Annotation to add
-     * @return {void}
-     */
-    addAnnotation(annotation) {
-        // Show new section if needed
-        if (!this.hasAnnotations()) {
-            const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
-            const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
-            util.hideElement(createSectionEl);
-            util.showElement(showSectionEl);
-        }
-
-        this.annotations.push(annotation);
-        this.renderAnnotations();
-    }
-
-    /**
-     * Removes an annotation from the dialog.
-     *
-     * @param {string} annotationIDToRemove ID of annotation to remove
-     * @return {void}
-     */
-    removeAnnotation(annotationIDToRemove) {
-        this.annotations = this.annotations.filter(({ annotationID }) => annotationID !== annotationIDToRemove);
-        this.renderAnnotations();
-    }
-
-    /**
      * Posts an annotation in the dialog.
      *
      * @param {string} [textInput] Annotation text to post
@@ -296,7 +295,7 @@ class AnnotationDialog extends EventEmitter {
         this.threadEl = threadEl;
 
         // Generate HTML of dialog
-        this.dialogEl = this.generateDialogEl(Object.keys(annotations).length);
+        this.dialogEl = this.generateDialogEl(annotations.length);
         this.dialogEl.classList.add(constants.CLASS_ANNOTATION_CONTAINER);
 
         // Setup annotations dialog if not on a mobile device
@@ -317,21 +316,7 @@ class AnnotationDialog extends EventEmitter {
             this.bindDOMListeners();
         }
 
-        // Add annotation elements
-        this.sortAnnotationsList(annotations);
-    }
-
-    /**
-     * Sorts and adds annotations to the dialog
-     *
-     * @param {Annotations[]} annotations Annotations to show in the dialog
-     * @return {void}
-     * @protected
-     */
-    sortAnnotationsList(annotations) {
-        // Sort annotations by date created
-        this.annotations = annotations.sort((a, b) => new Date(a.created) - new Date(b.created));
-        this.renderAnnotations();
+        this.show(annotations);
     }
 
     /**
@@ -535,44 +520,6 @@ class AnnotationDialog extends EventEmitter {
             default:
                 break;
         }
-    }
-
-    /**
-     * Adds an annotation to the dialog.
-     *
-     * @private
-     * @return {void}
-     */
-    renderAnnotations() {
-        const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
-        const language = this.locale.substr(0, this.locale.indexOf('-'));
-
-        this.annotationListComponent = render(
-            <ul className='ba-annotation-list'>
-                {this.annotations.map((annotation) => {
-                    const { annotationID, created, modified, text, user, type, permissions } = annotation;
-                    if (type === constants.TYPES.highlight) {
-                        return null;
-                    }
-
-                    return (
-                        <li className='ba-annotation-list-item' key={`annotation_${annotationID}`}>
-                            <Annotation
-                                id={annotationID}
-                                createdBy={user}
-                                createdAt={created}
-                                modifiedAt={modified}
-                                message={text}
-                                language={language}
-                                permissions={permissions}
-                                onDelete={() => this.emitAnnotationDelete(annotation)}
-                            />
-                        </li>
-                    );
-                })}
-            </ul>,
-            annotationContainerEl
-        );
     }
 
     /**
@@ -846,10 +793,11 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
+     * @param {Annotations[]} annotations List of annotations
      * @return {boolean} Whether or not the dialog contains any saved annotations
      */
-    hasAnnotations() {
-        return this.annotations.length > 0;
+    hasAnnotations(annotations) {
+        return annotations && annotations.length > 0;
     }
 }
 

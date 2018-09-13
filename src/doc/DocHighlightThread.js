@@ -240,7 +240,7 @@ class DocHighlightThread extends AnnotationThread {
             this.dialog.setup(this.annotations, this.showComment);
         }
 
-        this.dialog.show();
+        this.dialog.show(this.annotations);
     }
 
     /**

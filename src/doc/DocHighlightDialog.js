@@ -29,16 +29,21 @@ class DocHighlightDialog extends AnnotationDialog {
      * The annotation is still added to the thread on the server side.
      *
      * @override
-     * @param {Annotation} annotation Annotation to add
+     * @param {Annotation[]} annotations List of annotations
      * @return {void}
      */
-    addAnnotation(annotation) {
+    show(annotations) {
+        if (!this.hasAnnotations(annotations)) {
+            return;
+        }
+
         // If annotation is blank then display who highlighted the text
         // Will be displayed as '{name} highlighted'
-        if (annotation.text === '' && annotation.user.id !== '0') {
+        const firstAnnotation = annotations[0];
+        if (firstAnnotation.text === '' && firstAnnotation.user.id !== '0') {
             const highlightLabelEl = this.highlightDialogEl.querySelector(`.${constants.CLASS_HIGHLIGHT_LABEL}`);
             highlightLabelEl.textContent = util.replacePlaceholders(this.localized.whoHighlighted, [
-                annotation.user.name
+                firstAnnotation.user.name
             ]);
             util.showElement(highlightLabelEl);
 
@@ -48,7 +53,7 @@ class DocHighlightDialog extends AnnotationDialog {
             }
         }
 
-        super.addAnnotation(annotation);
+        super.show(annotations);
     }
 
     /** @inheritdoc */
@@ -247,7 +252,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // Determine if highlight buttons or comments dialog will display
         const firstAnnotation = annotations[0];
         if (firstAnnotation) {
-            this.hasComments = firstAnnotation.text !== '' || Object.keys(annotations).length > 1;
+            this.hasComments = firstAnnotation.text !== '' || annotations.length > 1;
         }
 
         // Generate HTML of highlight dialog
@@ -256,7 +261,7 @@ class DocHighlightDialog extends AnnotationDialog {
         this.highlightDialogEl.classList.add(constants.CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
 
         // Generate HTML of comments dialog
-        this.commentsDialogEl = this.generateDialogEl(Object.keys(annotations).length);
+        this.commentsDialogEl = this.generateDialogEl(annotations.length);
         this.commentsDialogEl.classList.add(constants.CLASS_ANNOTATION_CONTAINER);
 
         this.dialogEl = document.createElement('div');
@@ -297,8 +302,7 @@ class DocHighlightDialog extends AnnotationDialog {
             util.showElement(highlightLabelEl);
         }
 
-        // Add annotation elements
-        this.sortAnnotationsList(annotations);
+        this.show(annotations);
 
         if (!this.isMobile && this.canAnnotate) {
             this.bindDOMListeners();
@@ -470,24 +474,6 @@ class DocHighlightDialog extends AnnotationDialog {
         }
 
         return docUtil.convertPDFSpaceToDOMSpace([x, y], pageHeight, zoomScale);
-    }
-
-    /**
-     * Adds an annotation to the dialog.
-     *
-     * @override
-     * @private
-     * @param {Annotation} annotation Annotation to add
-     * @return {void}
-     */
-    addAnnotationElement(annotation) {
-        // If annotation text is blank, don't add to the comments dialog
-        if (annotation.text === '') {
-            this.highlightDialogEl.dataset.annotationId = annotation.annotationID;
-        } else {
-            this.annotations.push(annotation);
-            this.renderAnnotations();
-        }
     }
 
     /**

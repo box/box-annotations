@@ -66,38 +66,57 @@ describe('doc/DocHighlightDialog', () => {
         }
     });
 
-    describe('addAnnotation()', () => {
-        const addFunc = AnnotationDialog.prototype.addAnnotation;
+    describe('show()', () => {
         beforeEach(() => {
-            Object.defineProperty(AnnotationDialog.prototype, 'addAnnotation', { value: jest.fn() });
+            dialog.hasAnnotations = jest.fn().mockReturnValue(true);
             dialog.position = jest.fn();
+            util.replacePlaceholders = jest.fn();
+            util.showElement = jest.fn();
+            dialog.emit = jest.fn();
+
+            const labelEl = document.createElement('div');
+            labelEl.classList.add(constants.CLASS_HIGHLIGHT_LABEL);
+            dialog.highlightDialogEl = document.createElement('div');
+            dialog.highlightDialogEl.appendChild(labelEl);
         });
 
-        afterEach(() => {
-            Object.defineProperty(AnnotationDialog.prototype, 'addAnnotation', { value: addFunc });
+        it('should do nothing if dialog has no annotations', () => {
+            dialog.hasAnnotations = jest.fn().mockReturnValue(false);
+            dialog.show([]);
+            expect(dialog.emit).not.toBeCalledWith('annotationshow');
         });
 
-        it('should add a highlight comment annotation', () => {
-            dialog.addAnnotation(
-                new Annotation({
-                    text: 'blargh',
-                    user: { id: 1, name: 'Bob' }
-                })
-            );
-            expect(dialog.position).not.toBeCalled();
-        });
-
-        it('should add a plain highlight annotation', () => {
-            dialog.addAnnotation(
-                new Annotation({
-                    text: '',
-                    user: { id: 1, name: 'Bob' }
-                })
-            );
-
-            const highlightLabelEl = dialog.element.querySelector(constants.SELECTOR_HIGHLIGHT_LABEL);
-            expect(highlightLabelEl.innerHTML).toContain('Bob highlighted');
+        it('should display who highlighted the text for plain highlights', () => {
+            const annotation = {
+                user: {
+                    id: 1,
+                    name: 'Sumedha Pramod'
+                },
+                text: ''
+            };
+            dialog.show([annotation]);
+            expect(dialog.emit).toBeCalledWith('annotationshow');
+            expect(util.replacePlaceholders).toBeCalled();
+            expect(util.showElement).toBeCalled();
             expect(dialog.position).toBeCalled();
+        });
+
+        it('should not position plain highlights on mobile devices', () => {
+            const annotation = {
+                user: {
+                    id: 1,
+                    name: 'Sumedha Pramod'
+                },
+                text: ''
+            };
+            dialog.isMobile = true;
+            dialog.showMobileDialog = jest.fn();
+
+            dialog.show([annotation]);
+            expect(dialog.emit).toBeCalledWith('annotationshow');
+            expect(util.replacePlaceholders).toBeCalled();
+            expect(util.showElement).toBeCalled();
+            expect(dialog.position).not.toBeCalled();
         });
     });
 
@@ -311,6 +330,7 @@ describe('doc/DocHighlightDialog', () => {
 
             util.showElement = jest.fn();
             util.hideElement = jest.fn();
+            dialog.show = jest.fn();
         });
 
         it('should create a dialog element if it does not already exist', () => {
@@ -375,9 +395,9 @@ describe('doc/DocHighlightDialog', () => {
         });
 
         it('should add annotation elements', () => {
-            dialog.addAnnotation = jest.fn();
+            dialog.show = jest.fn();
             dialog.setup([annotation, annotation], false);
-            expect(dialog.addAnnotation).toBeCalledTwice;
+            expect(dialog.show).toBeCalled();
         });
 
         it('should bind DOM listeners', () => {
@@ -571,24 +591,6 @@ describe('doc/DocHighlightDialog', () => {
 
             dialog.getScaledPDFCoordinates({}, 100);
             expect(docUtil.getLowerRightCornerOfLastQuadPoint).toBeCalled();
-        });
-    });
-
-    describe('addAnnotationElement()', () => {
-        it('should not add a comment if the text is blank', () => {
-            dialog.addAnnotationElement(
-                new Annotation({
-                    annotationID: 1,
-                    text: '',
-                    user: {},
-                    permissions: {}
-                })
-            );
-            const highlight = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-            const comment = document.querySelector('.annotation-comment');
-
-            expect(comment).toBeNull();
-            expect(highlight.dataset.annotationId).toEqual('1');
         });
     });
 

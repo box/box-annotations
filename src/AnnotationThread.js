@@ -45,7 +45,6 @@ class AnnotationThread extends EventEmitter {
         super();
 
         this.annotatedElement = data.annotatedElement;
-        this.annotations = data.annotations || [];
         this.annotationService = data.annotationService;
         this.container = data.container;
         this.fileVersionId = data.fileVersionId;
@@ -59,6 +58,9 @@ class AnnotationThread extends EventEmitter {
         this.permissions = data.permissions;
         this.localized = data.localized;
         this.state = STATES.inactive;
+
+        this.annotations = data.annotations || [];
+        this.annotations = this.annotations.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         this.regenerateBoundary();
 
@@ -133,7 +135,7 @@ class AnnotationThread extends EventEmitter {
             this.dialog.setup(this.annotations, this.element);
         }
 
-        this.dialog.show();
+        this.dialog.show(this.annotations);
     }
 
     /**
@@ -170,7 +172,7 @@ class AnnotationThread extends EventEmitter {
         this.annotations.push(tempAnnotation);
 
         if (this.dialog) {
-            this.dialog.addAnnotation(tempAnnotation);
+            this.dialog.show(this.annotations);
             this.dialog.activateReply();
         }
 
@@ -233,13 +235,13 @@ class AnnotationThread extends EventEmitter {
         } else if (!firstAnnotation || util.isPlainHighlight(this.annotations)) {
             if (this.isMobile && this.dialog) {
                 this.dialog.hideMobileDialog();
-                this.dialog.removeAnnotation(annotationIDToRemove);
+                this.dialog.show(this.annotations);
             }
             this.destroy();
 
             // Otherwise, remove deleted annotation from dialog
         } else if (this.dialog) {
-            this.dialog.removeAnnotation(annotationIDToRemove);
+            this.dialog.show(this.annotations);
             this.showDialog();
             this.dialog.activateReply();
         }
@@ -512,9 +514,8 @@ class AnnotationThread extends EventEmitter {
             }
 
             // Remove temporary annotation and replace it with the saved annotation
-            this.dialog.addAnnotation(savedAnnotation);
-            this.dialog.removeAnnotation(tempAnnotation.annotationID);
-            this.dialog.enable(savedAnnotation.annotationID);
+            this.dialog.show(this.annotations);
+            this.dialog.enable(savedAnnotation.id);
             this.dialog.scrollToLastComment();
         }
 

@@ -52,23 +52,6 @@ describe('doc/DocDrawingDialog', () => {
         });
     });
 
-    describe('addAnnotation()', () => {
-        it('should setup the element if not already done', () => {
-            dialog.element = undefined;
-            dialog.setup = jest.fn();
-            dialog.assignDrawingLabel = jest.fn();
-
-            dialog.addAnnotation({});
-            expect(dialog.setup).toBeCalledWith([{}]);
-            expect(dialog.assignDrawingLabel).toBeCalledWith({});
-
-            dialog.element = document.createElement('div');
-            dialog.addAnnotation({});
-            expect(dialog.setup).toBeCalledWith([{}]);
-            expect(dialog.assignDrawingLabel).toBeCalledWith({});
-        });
-    });
-
     describe('postDrawing()', () => {
         it('should emit annotation create to indicate that the save button was pressed', () => {
             const event = {
@@ -156,7 +139,7 @@ describe('doc/DocDrawingDialog', () => {
 
             dialog.generateDialogEl = jest.fn().mockReturnValue(drawingDialogEl);
             dialog.bindDOMListeners = jest.fn();
-            dialog.addAnnotation = jest.fn();
+            dialog.show = jest.fn();
         });
 
         it('should setup the dialog element without a commit button when given an annotation', () => {
@@ -170,7 +153,7 @@ describe('doc/DocDrawingDialog', () => {
             dialog.setup([annotation]);
             expect(dialog.generateDialogEl).toBeCalled();
             expect(dialog.bindDOMListeners).toBeCalled();
-            expect(dialog.addAnnotation).toBeCalled();
+            expect(dialog.show).toBeCalledWith([annotation]);
             expect(dialog.element.contains(dialog.drawingDialogEl));
             expect(dialog.commitButtonEl).toBeNull;
         });
@@ -179,7 +162,7 @@ describe('doc/DocDrawingDialog', () => {
             dialog.setup();
             expect(dialog.generateDialogEl).toBeCalled();
             expect(dialog.bindDOMListeners).toBeCalled();
-            expect(dialog.addAnnotation).not.toBeCalled();
+            expect(dialog.show).toBeCalledWith([]);
             expect(dialog.element.contains(dialog.drawingDialogEl));
             expect(dialog.commitButtonEl).not.toBeUndefined();
             expect(dialog.element.contains(dialog.commitButtonEl));
@@ -232,16 +215,32 @@ describe('doc/DocDrawingDialog', () => {
     });
 
     describe('show()', () => {
-        it('should show the element with css', () => {
-            const element = 'e';
+        const annotation = {};
+        beforeEach(() => {
+            dialog.hasAnnotations = jest.fn().mockReturnValue(true);
+            dialog.setup = jest.fn();
+            dialog.assignDrawingLabel = jest.fn();
+        });
 
-            util.showElement = jest.fn();
-            dialog.element = element;
-            expect(dialog.visible).toBeFalsy();
+        it('should do nothing if dialog has no annotations', () => {
+            dialog.hasAnnotations = jest.fn().mockReturnValue(false);
+            dialog.show([]);
+            expect(dialog.assignDrawingLabel).not.toBeCalled();
+        });
 
-            dialog.show();
-            expect(util.showElement).toBeCalledWith(element);
-            expect(dialog.visible).toBeTruthy();
+        it('should setup the dialog if no element exists', () => {
+            dialog.show([annotation]);
+            expect(dialog.setup).toBeCalledWith([annotation]);
+            expect(dialog.isVisible).toBeTruthy();
+            expect(dialog.assignDrawingLabel).toBeCalledWith(annotation);
+        });
+
+        it('should show the dialog if an element exists', () => {
+            dialog.element = document.createElement('div');
+            dialog.show([annotation]);
+            expect(dialog.setup).not.toBeCalledWith([annotation]);
+            expect(dialog.isVisible).toBeTruthy();
+            expect(dialog.assignDrawingLabel).toBeCalledWith(annotation);
         });
     });
 

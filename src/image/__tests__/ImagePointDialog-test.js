@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointDialog from '../ImagePointDialog';
 import * as util from '../../util';
-import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
 const html = `<div class="annotated-element ba-annotated">
@@ -21,7 +20,7 @@ describe('image/ImagePointDialog', () => {
         document.body.appendChild(rootElement);
 
         dialog = new ImagePointDialog({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             location: {
                 page: 1
             },
@@ -30,12 +29,10 @@ describe('image/ImagePointDialog', () => {
             locale: 'en-US'
         });
         dialog.localized = { addCommentPlaceholder: 'placeholder' };
-        dialog.setup();
+        dialog.threadEl = document.createElement('button');
+        dialog.element = document.createElement('div');
+        dialog.dialogEl = document.createElement('div');
         dialog.element.style.width = '282px';
-        dialog.threadEl = {
-            offsetLeft: 1,
-            offsetTop: 2
-        };
     });
 
     afterEach(() => {
