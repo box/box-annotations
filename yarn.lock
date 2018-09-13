@@ -1978,9 +1978,9 @@ box-locales@^0.0.1:
   version "0.0.1"
   resolved "http://registry.npmjs.org/box-locales/-/box-locales-0.0.1.tgz#1724959f293ae85f235b681b775d0f1a52a76b54"
 
-box-react-ui@^25.12.0:
-  version "25.12.0"
-  resolved "https://registry.yarnpkg.com/box-react-ui/-/box-react-ui-25.12.0.tgz#2e2348b347a42dff77317c265f539f1ba908001a"
+box-react-ui@^26.1.1:
+  version "26.1.1"
+  resolved "https://registry.yarnpkg.com/box-react-ui/-/box-react-ui-26.1.1.tgz#f951f7961334d76c7d8a924a5a41762326ac4b7f"
 
 brace-expansion@^1.0.0, brace-expansion@^1.1.7:
   version "1.1.11"
