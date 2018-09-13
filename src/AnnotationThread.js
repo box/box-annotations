@@ -169,6 +169,7 @@ class AnnotationThread extends EventEmitter {
             can_delete: true
         };
         const tempAnnotation = new Annotation(tempAnnotationData);
+        tempAnnotation.isPending = true;
         this.annotations.push(tempAnnotation);
 
         if (this.dialog) {
@@ -177,10 +178,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.state = STATES.inactive;
-
-        if (this.dialog) {
-            this.dialog.disable(tempAnnotation.id);
-        }
 
         // Save annotation on server
         return this.annotationService
@@ -513,9 +510,7 @@ class AnnotationThread extends EventEmitter {
                 this.dialog.element.dataset.threadNumber = this.threadNumber;
             }
 
-            // Remove temporary annotation and replace it with the saved annotation
             this.dialog.show(this.annotations);
-            this.dialog.enable(savedAnnotation.id);
             this.dialog.scrollToLastComment();
         }
 
