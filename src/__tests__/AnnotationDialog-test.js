@@ -447,55 +447,6 @@ describe('AnnotationDialog', () => {
         });
     });
 
-    describe('enable()', () => {
-        it('should enable all buttons in specified annotation element', () => {
-            dialog.element = document.createElement('div');
-
-            const annotationEl = document.createElement('div');
-            annotationEl.setAttribute('data-annotation-id', '123');
-            dialog.element.appendChild(annotationEl);
-
-            // Add buttons
-            const btn = document.createElement('button');
-            btn.classList.add(constants.CLASS_DISABLED);
-            annotationEl.querySelectorAll = jest.fn().mockReturnValue([btn, btn]);
-
-            const wrongEl = document.createElement('div');
-            wrongEl.setAttribute('data-annotation-id', 'invalid');
-            wrongEl.querySelectorAll = jest.fn();
-            dialog.element.appendChild(wrongEl);
-
-            dialog.enable('123');
-            expect(annotationEl.querySelectorAll).toBeCalled();
-            expect(btn.classList).not.toContain(constants.CLASS_DISABLED);
-            expect(wrongEl.querySelectorAll).not.toBeCalled();
-        });
-    });
-
-    describe('disable()', () => {
-        it('should disable all buttons in specified annotation element', () => {
-            dialog.element = document.createElement('div');
-
-            const annotationEl = document.createElement('div');
-            annotationEl.setAttribute('data-annotation-id', '123');
-            dialog.element.appendChild(annotationEl);
-
-            // Add buttons
-            const btn = document.createElement('button');
-            annotationEl.querySelectorAll = jest.fn().mockReturnValue([btn, btn]);
-
-            const wrongEl = document.createElement('div');
-            wrongEl.setAttribute('data-annotation-id', 'invalid');
-            wrongEl.querySelectorAll = jest.fn();
-            dialog.element.appendChild(wrongEl);
-
-            dialog.disable('123');
-            expect(annotationEl.querySelectorAll).toBeCalled();
-            expect(btn.classList).toContain(constants.CLASS_DISABLED);
-            expect(wrongEl.querySelectorAll).not.toBeCalled();
-        });
-    });
-
     describe('clickHandler()', () => {
         let event;
 

@@ -43,9 +43,7 @@ describe('AnnotationThread', () => {
             removeAllListeners: jest.fn(),
             show: jest.fn(),
             hide: jest.fn(),
-            scrollToLastComment: jest.fn(),
-            enable: jest.fn(),
-            disable: jest.fn()
+            scrollToLastComment: jest.fn()
         };
 
         thread.emit = jest.fn();
@@ -160,7 +158,6 @@ describe('AnnotationThread', () => {
                 done();
             });
             expect(thread.annotationService.create).toBeCalled();
-            expect(thread.dialog.disable).toBeCalled();
         });
 
         it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {
@@ -173,7 +170,6 @@ describe('AnnotationThread', () => {
             });
             expect(thread.annotationService.create).toBeCalled();
             expect(thread.updateTemporaryAnnotation).not.toBeCalled();
-            expect(thread.dialog.disable).toBeCalled();
         });
     });
 
