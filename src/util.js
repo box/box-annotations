@@ -387,7 +387,7 @@ export function getScale(annotatedElement) {
  */
 export function isPlainHighlight(annotations) {
     const firstAnnotation = annotations[annotations.length - 1];
-    return annotations.length === 1 && firstAnnotation.text === '';
+    return annotations.length === 1 && firstAnnotation.message === '';
 }
 
 /**

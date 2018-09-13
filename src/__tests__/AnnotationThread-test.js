@@ -191,8 +191,8 @@ describe('AnnotationThread', () => {
         });
 
         it('should overwrite a local annotation to the thread if it does exist as an associated annotation', () => {
-            const serverAnnotation = { annotationID: 123 };
-            const tempAnnotation = { annotationID: 1 };
+            const serverAnnotation = { id: 123 };
+            const tempAnnotation = { id: 1 };
 
             thread.annotations.push(tempAnnotation);
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
@@ -211,8 +211,8 @@ describe('AnnotationThread', () => {
         });
 
         it('should update thread number and replace temporary annotation if dialog exists', () => {
-            const serverAnnotation = { annotationID: 123 };
-            const tempAnnotation = { annotationID: 1 };
+            const serverAnnotation = { id: 123 };
+            const tempAnnotation = { id: 1 };
             thread.threadNumber = 'something';
             thread.dialog.element = document.createElement('div');
 
@@ -253,7 +253,7 @@ describe('AnnotationThread', () => {
             };
 
             annotation = {
-                annotationID: 'someID',
+                id: 'someID',
                 permissions: {
                     can_delete: true
                 },
@@ -261,7 +261,7 @@ describe('AnnotationThread', () => {
             };
 
             annotation2 = {
-                annotationID: 'someID2',
+                id: 'someID2',
                 permissions: {
                     can_delete: false
                 },
@@ -674,22 +674,22 @@ describe('AnnotationThread', () => {
             expect(annotationData.location).toEqual(thread.location);
             expect(annotationData.fileVersionId).toEqual(thread.fileVersionId);
             expect(annotationData.thread).toEqual(thread.thread);
-            expect(annotationData.user.id).toEqual('1');
+            expect(annotationData.createdBy.id).toEqual('1');
         });
     });
 
     describe('createAnnotation()', () => {
         it('should create a new point annotation', () => {
             thread.saveAnnotation = jest.fn();
-            thread.createAnnotation({ text: 'bleh' });
+            thread.createAnnotation('bleh');
             expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'bleh');
         });
     });
 
     describe('deleteAnnotationWithID()', () => {
-        it('should delete a point annotation with the matching annotationID', () => {
+        it('should delete a point annotation with the matching id', () => {
             thread.deleteAnnotation = jest.fn();
-            thread.deleteAnnotationWithID({ annotationID: 1 });
+            thread.deleteAnnotationWithID({ id: 1 });
             expect(thread.deleteAnnotation).toBeCalledWith(1);
         });
     });
