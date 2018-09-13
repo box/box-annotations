@@ -682,10 +682,10 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('deleteAnnotationWithID()', () => {
-        it('should delete a point annotation with the matching id', () => {
+    describe('deleteAnnotation()', () => {
+        it('should delete a point annotation with the matching annotationID', () => {
             thread.deleteAnnotation = jest.fn();
-            thread.deleteAnnotationWithID({ id: 1 });
+            thread.deleteAnnotation({ annotationID: 1 });
             expect(thread.deleteAnnotation).toBeCalledWith(1);
         });
     });
