@@ -93,40 +93,40 @@ describe('AnnotationDialog', () => {
 
         it('should show the mobile dialog if on a mobile device', () => {
             dialog.isMobile = true;
-            dialog.show();
+            dialog.show([annotation]);
             expect(dialog.showMobileDialog).toBeCalled();
             expect(dialog.scrollToLastComment).toBeCalled();
             expect(dialog.emit).toBeCalledWith('annotationshow');
         });
 
-        it('should do nothing if the dialog is already visible ', () => {
-            dialog.element.classList.remove(constants.CLASS_HIDDEN);
-            dialog.show();
-            expect(dialog.showMobileDialog).not.toBeCalled();
-            expect(dialog.scrollToLastComment).not.toBeCalled();
-            expect(dialog.emit).not.toBeCalledWith('annotationshow');
-        });
-
-        it('should not reposition the dialog if the reply textarea is already active', () => {
-            dialog.annotations.push({});
-            dialog.activateReply();
-
-            dialog.show();
-            expect(dialog.scrollToLastComment).toBeCalled();
-            expect(dialog.position).not.toBeCalled();
-            expect(dialog.emit).not.toBeCalledWith('annotationshow');
-        });
-
         it('should position the dialog if not on a mobile device', () => {
-            dialog.annotations.push({});
             dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
 
-            dialog.show();
+            dialog.show([annotation]);
             expect(dialog.position).toBeCalled();
             expect(dialog.scrollToLastComment).toBeCalled();
             expect(dialog.emit).toBeCalledWith('annotationshow');
+        });
+
+        it('should render a list of annotations', () => {
+            const annotations = [
+                annotation,
+                new Annotation({
+                    annotationID: 2,
+                    text: 'the preview sdk is amazing!',
+                    user: { id: 1, name: 'user' }
+                }),
+                new Annotation({
+                    annotationID: 3,
+                    text: 'the preview sdk is amazing!',
+                    user: { id: 1, name: 'user' }
+                })
+            ];
+            dialog.show(annotations);
+            expect(dialog.annotationListComponent).not.toBeUndefined();
+            expect(dialog.annotationListComponent.querySelectorAll('.ba-annotation-list-item').length).toEqual(3);
         });
     });
 
@@ -136,7 +136,6 @@ describe('AnnotationDialog', () => {
         });
 
         it('should activate the reply text area if the dialog has multiple annotations', () => {
-            dialog.annotations.push({});
             dialog.activateReply = jest.fn();
 
             dialog.scrollToLastComment();
@@ -222,7 +221,6 @@ describe('AnnotationDialog', () => {
         it('should hide the mobile annotations dialog', () => {
             dialog.element = document.querySelector(constants.SELECTOR_MOBILE_ANNOTATION_DIALOG);
             dialog.unbindDOMListeners = jest.fn();
-            dialog.annotations.push({});
 
             dialog.hideMobileDialog();
             expect(util.hideElement).toBeCalled();
@@ -264,56 +262,6 @@ describe('AnnotationDialog', () => {
         });
     });
 
-    describe('addAnnotation()', () => {
-        beforeEach(() => {
-            dialog.renderAnnotations = jest.fn();
-        });
-
-        it('should add annotation to the dialog and deactivate the reply area', () => {
-            dialog.addAnnotation(new Annotation({}));
-            expect(dialog.renderAnnotations).toBeCalled();
-        });
-
-        it('should hide the create section and show the show section if there are no annotations', () => {
-            dialog.annotations = [];
-
-            dialog.addAnnotation(new Annotation({}));
-            const createSectionEl = document.querySelector(constants.SECTION_CREATE);
-            const showSectionEl = document.querySelector(constants.SECTION_SHOW);
-            expect(util.hideElement).toBeCalledWith(createSectionEl);
-            expect(util.showElement).toBeCalledWith(showSectionEl);
-        });
-    });
-
-    describe('removeAnnotation()', () => {
-        it('should remove annotation element and deactivate reply', () => {
-            dialog.addAnnotation(annotation);
-            dialog.removeAnnotation(1);
-            expect(dialog.annotations).not.toContain(annotation);
-        });
-    });
-
-    describe('renderAnnotations()', () => {
-        it('should render a list of annotations', () => {
-            dialog.annotations = [
-                annotation,
-                new Annotation({
-                    annotationID: 2,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' }
-                }),
-                new Annotation({
-                    annotationID: 3,
-                    text: 'the preview sdk is amazing!',
-                    user: { id: 1, name: 'user' }
-                })
-            ];
-            dialog.renderAnnotations();
-            expect(dialog.annotationListComponent).not.toBeUndefined();
-            expect(dialog.annotationListComponent.querySelectorAll('.ba-annotation-list-item').length).toEqual(3);
-        });
-    });
-
     describe('element()', () => {
         it('should return dialog element', () => {
             expect(dialog.element).toEqual(dialog.element);
@@ -325,7 +273,7 @@ describe('AnnotationDialog', () => {
             const dialogEl = document.createElement('div');
             dialog.generateDialogEl = jest.fn().mockReturnValue(dialogEl);
             dialog.bindDOMListeners = jest.fn();
-            dialog.sortAnnotationsList = jest.fn();
+            dialog.show = jest.fn();
             dialog.unbindDOMListeners = jest.fn();
             dialog.isMobile = false;
         });
@@ -341,55 +289,8 @@ describe('AnnotationDialog', () => {
             dialog.isMobile = true;
             dialog.setup([annotation, annotation], {});
             expect(dialog.bindDOMListeners).not.toBeCalled();
-            expect(dialog.sortAnnotationsList).toBeCalled();
+            expect(dialog.show).toBeCalledWith([annotation, annotation]);
             dialog.element = null;
-        });
-    });
-
-    describe('sortAnnotationsList()', () => {
-        it('should add annotations to the dialog in chronological order', () => {
-            // Dates are provided as a string format from the API such as "2016-10-30T14:19:56",
-            // ensures that the method converts to a Date() format for comparison/sorting
-            // Hard coding dates to ensure formatting resembles API response
-            const threadID = AnnotationService.generateID();
-            const annotation1 = new Annotation({
-                annotationID: 1,
-                threadID,
-                text: 'blah',
-                threadNumber: '1',
-                user: { id: 1 },
-                permissions: { can_delete: false },
-                created: '2016-10-29T14:19:56'
-            });
-
-            // Ensures annotations are not provided in chronological order
-            const annotation3 = new Annotation({
-                annotationID: 3,
-                threadID,
-                text: 'blah3',
-                threadNumber: '1',
-                user: { id: 1 },
-                permissions: { can_delete: false },
-                created: '2016-10-30T14:19:56'
-            });
-
-            const annotation2 = new Annotation({
-                annotationID: 2,
-                threadID,
-                text: 'blah2',
-                threadNumber: '1',
-                user: { id: 1 },
-                permissions: { can_delete: false },
-                created: '2016-10-30T14:20:56'
-            });
-
-            // Chronologically ordered by annotationID should equal [1, 3, 2]
-            const annotations = [annotation1, annotation2, annotation3];
-
-            dialog.sortAnnotationsList(annotations);
-            expect(dialog.annotations[0].annotationID).toEqual(1);
-            expect(dialog.annotations[1].annotationID).toEqual(3);
-            expect(dialog.annotations[2].annotationID).toEqual(2);
         });
     });
 
@@ -515,7 +416,7 @@ describe('AnnotationDialog', () => {
 
         it('should hide the dialog when user presses Esc if not creating a new annotation', () => {
             dialog.hide = jest.fn();
-            dialog.annotations.push({});
+            dialog.hasAnnotations = jest.fn().mockReturnValue(true);
 
             dialog.keydownHandler({
                 key: 'U+001B', // esc key
@@ -721,7 +622,6 @@ describe('AnnotationDialog', () => {
 
         it('should show the correct UI when the reply textarea is activated', () => {
             document.querySelector('textarea').textContent = 'the preview SDK is great!';
-            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             replyTextEl.classList.remove(constants.CLASS_ACTIVE);
 
@@ -747,7 +647,6 @@ describe('AnnotationDialog', () => {
         });
 
         it('should show the correct UI when the reply textarea is deactivated', () => {
-            dialog.annotations.push(annotation);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             const buttonContainer = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
 
@@ -759,17 +658,17 @@ describe('AnnotationDialog', () => {
 
     describe('postReply()', () => {
         it('should not post reply to the dialog if it has no text', () => {
-            dialog.annotations.push(annotation);
+            dialog.show([annotation]);
             dialog.activateReply();
             const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
 
             dialog.postReply();
-            expect(dialog.emit).not.toBeCalled();
+            expect(dialog.emit).not.toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
             expect(replyTextEl.classList).toContain(CLASS_INVALID_INPUT);
         });
 
         it('should post a reply to the dialog if it has text', () => {
-            dialog.annotations.push(annotation);
+            dialog.show([annotation]);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
@@ -779,7 +678,7 @@ describe('AnnotationDialog', () => {
         });
 
         it('should clear the reply text element after posting', () => {
-            dialog.annotations.push(annotation);
+            dialog.show([annotation]);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';

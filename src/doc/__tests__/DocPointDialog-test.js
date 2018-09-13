@@ -1,32 +1,27 @@
 /* eslint-disable no-unused-expressions */
 import DocPointDialog from '../DocPointDialog';
 import * as util from '../../util';
-import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 let dialog;
-const html = '<div class="annotated-element"></div>';
 
 describe('doc/DocPointDialog', () => {
     let rootElement;
 
     beforeEach(() => {
         rootElement = document.createElement('div');
-        rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
         dialog = new DocPointDialog({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             location: {},
             locale: 'en-US',
             annotations: [],
             canAnnotate: true
         });
         dialog.localized = { addCommentPlaceholder: 'placeholder' };
-        dialog.setup();
-        dialog.threadEl = {
-            offsetLeft: 1,
-            offsetTop: 2
-        };
+        dialog.threadEl = document.createElement('button');
+        dialog.element = document.createElement('div');
+        dialog.dialogEl = document.createElement('div');
     });
 
     afterEach(() => {
