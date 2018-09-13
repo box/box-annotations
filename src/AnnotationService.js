@@ -84,7 +84,7 @@ class AnnotationService extends EventEmitter {
                         location: annotation.location,
                         threadID: annotation.threadID
                     },
-                    message: annotation.text,
+                    message: annotation.message,
                     thread: annotation.threadNumber
                 })
                 // NOTE: Ensure that threadNumbers are sent to the API as
@@ -104,7 +104,7 @@ class AnnotationService extends EventEmitter {
 
                         // Set user if not set already
                         if (this.user.id === '0') {
-                            this.user = createdAnnotation.user;
+                            this.user = createdAnnotation.createdBy;
                         }
 
                         resolve(createdAnnotation);
@@ -150,12 +150,12 @@ class AnnotationService extends EventEmitter {
     /**
      * Delete an annotation.
      *
-     * @param {string} annotationID - Id of annotation to delete
+     * @param {string} id - Id of annotation to delete
      * @return {Promise} Promise to delete annotation
      */
-    delete(annotationID) {
+    delete(id) {
         return new Promise((resolve, reject) => {
-            fetch(`${this.api}/2.0/annotations/${annotationID}`, {
+            fetch(`${this.api}/2.0/annotations/${id}`, {
                 method: 'DELETE',
                 headers: this.headers
             })
@@ -163,7 +163,7 @@ class AnnotationService extends EventEmitter {
                     if (response.status === 204) {
                         resolve();
                     } else {
-                        const error = new Error(`Could not delete annotation with ID ${annotationID}`);
+                        const error = new Error(`Could not delete annotation with ID ${id}`);
                         reject(error);
                         this.emit('annotationerror', {
                             reason: 'delete',
@@ -226,22 +226,34 @@ class AnnotationService extends EventEmitter {
      * @return {Annotation} Created annotation
      */
     createAnnotation(data) {
+        const {
+            id,
+            details,
+            item,
+            message,
+            permissions,
+            created_by: createdBy,
+            created_at: createdAt,
+            modified_at: modifiedAt,
+            thread: threadNumber
+        } = data;
+
         return new Annotation({
-            annotationID: data.id,
-            fileVersionId: data.item.id,
-            threadID: data.details.threadID,
-            type: data.details.type,
-            threadNumber: data.thread,
-            text: data.message,
-            location: data.details.location,
-            user: {
-                id: data.created_by.id,
-                name: data.created_by.name,
-                avatarUrl: data.created_by.profile_image
+            id,
+            fileVersionId: item.id,
+            threadID: details.threadID,
+            type: details.type,
+            threadNumber,
+            message,
+            location: details.location,
+            createdBy: {
+                id: createdBy.id,
+                name: createdBy.name,
+                avatarUrl: createdBy.profile_image
             },
-            permissions: data.permissions,
-            created: data.created_at,
-            modified: data.modified_at
+            permissions,
+            createdAt,
+            modifiedAt
         });
     }
 

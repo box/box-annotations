@@ -43,8 +43,8 @@ describe('AnnotationDialog', () => {
         };
 
         annotation = new Annotation({
-            annotationID: 1,
-            text: 'the preview sdk is amazing!',
+            id: 1,
+            message: 'the preview sdk is amazing!',
             user: { id: 1, name: 'user' },
             permissions: { can_delete: true }
         });
@@ -113,13 +113,13 @@ describe('AnnotationDialog', () => {
             const annotations = [
                 annotation,
                 new Annotation({
-                    annotationID: 2,
-                    text: 'the preview sdk is amazing!',
+                    id: 2,
+                    message: 'the preview sdk is amazing!',
                     user: { id: 1, name: 'user' }
                 }),
                 new Annotation({
-                    annotationID: 3,
-                    text: 'the preview sdk is amazing!',
+                    id: 3,
+                    message: 'the preview sdk is amazing!',
                     user: { id: 1, name: 'user' }
                 })
             ];
@@ -577,9 +577,8 @@ describe('AnnotationDialog', () => {
 
         it('should post an annotation to the dialog if it has text', () => {
             document.querySelector('textarea').innerHTML += 'the preview SDK is great!';
-
             dialog.postAnnotation();
-            expect(dialog.emit).toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
+            expect(dialog.emit).toBeCalledWith('annotationcreate', 'the preview SDK is great!');
         });
 
         it('should clear the annotation text element after posting', () => {
@@ -657,27 +656,24 @@ describe('AnnotationDialog', () => {
 
     describe('postReply()', () => {
         it('should not post reply to the dialog if it has no text', () => {
-            dialog.show([annotation]);
             dialog.activateReply();
             const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
 
             dialog.postReply();
-            expect(dialog.emit).not.toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
+            expect(dialog.emit).not.toBeCalledWith('annotationcreate', 'the preview SDK is great!');
             expect(replyTextEl.classList).toContain(CLASS_INVALID_INPUT);
         });
 
         it('should post a reply to the dialog if it has text', () => {
-            dialog.show([annotation]);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
 
             dialog.postReply();
-            expect(dialog.emit).toBeCalledWith('annotationcreate', { text: 'the preview SDK is great!' });
+            expect(dialog.emit).toBeCalledWith('annotationcreate', 'the preview SDK is great!');
         });
 
         it('should clear the reply text element after posting', () => {
-            dialog.show([annotation]);
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
             dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';

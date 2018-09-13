@@ -238,12 +238,12 @@ class DocDrawingDialog extends AnnotationDialog {
      * @return {void}
      */
     assignDrawingLabel(annotation) {
-        if (!annotation || !this.drawingDialogEl || annotation.user.id === '0') {
+        if (!annotation || !this.drawingDialogEl || annotation.createdBy.id === '0') {
             return;
         }
 
         const drawingLabelEl = this.drawingDialogEl.querySelector(`.${constants.CLASS_ANNOTATION_DRAWING_LABEL}`);
-        drawingLabelEl.textContent = util.replacePlaceholders(this.localized.whoDrew, [annotation.user.name]);
+        drawingLabelEl.textContent = util.replacePlaceholders(this.localized.whoDrew, [annotation.createdBy.name]);
 
         util.showElement(drawingLabelEl);
     }
