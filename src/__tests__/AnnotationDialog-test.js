@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import Annotation from '../Annotation';
 import AnnotationDialog from '../AnnotationDialog';
-import AnnotationService from '../AnnotationService';
 import * as util from '../util';
 import * as constants from '../constants';
 
