@@ -5,6 +5,7 @@ import * as util from './util';
 import * as constants from './constants';
 
 import Annotation from './components/Annotation';
+import AnnotationForm from './components/AnnotationForm';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
@@ -72,6 +73,12 @@ class AnnotationDialog extends EventEmitter {
             if (this.annotationListComponent && annotationContainerEl) {
                 unmountComponentAtNode(annotationContainerEl);
                 this.annotationListComponent = null;
+            }
+
+            const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
+            if (this.annotationFormComponent && createSectionEl) {
+                unmountComponentAtNode(createSectionEl);
+                this.annotationFormComponent = null;
             }
 
             if (this.element.parentNode) {
@@ -588,31 +595,15 @@ class AnnotationDialog extends EventEmitter {
             }
             dialogEl.appendChild(createSectionEl);
 
-            const createTextArea = document.createElement('textarea');
-            createTextArea.classList.add(constants.CLASS_TEXTAREA);
-            createTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            createTextArea.placeholder = this.localized.addCommentPlaceholder;
-            createSectionEl.appendChild(createTextArea);
-
-            const createBtnsContainer = document.createElement('div');
-            createBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
-            createSectionEl.appendChild(createBtnsContainer);
-
-            const cancelBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
-                this.localized.cancelButton,
-                this.localized.cancelButton,
-                constants.DATA_TYPE_CANCEL
+            const language = this.locale.substr(0, this.locale.indexOf('-'));
+            this.annotationFormComponent = render(
+                <AnnotationForm
+                    createAnnotation={({ text }) => this.postAnnotation(text)}
+                    onCancel={() => this.cancelAnnotation()}
+                    langauge={language}
+                />,
+                createSectionEl
             );
-            createBtnsContainer.appendChild(cancelBtn);
-
-            const postBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
-                this.localized.postButton,
-                this.localized.postButton,
-                constants.DATA_TYPE_POST
-            );
-            createBtnsContainer.appendChild(postBtn);
         }
 
         // Show section including the annotations container
@@ -633,34 +624,15 @@ class AnnotationDialog extends EventEmitter {
             replyContainer.classList.add(CLASS_REPLY_CONTAINER);
             showSectionEl.appendChild(replyContainer);
 
-            const replyTextArea = document.createElement('textarea');
-            replyTextArea.classList.add(constants.CLASS_TEXTAREA);
-            replyTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            replyTextArea.classList.add(CLASS_REPLY_TEXTAREA);
-            replyTextArea.placeholder = this.localized.replyPlaceholder;
-            replyTextArea.setAttribute('data-type', constants.DATA_TYPE_REPLY_TEXTAREA);
-            replyContainer.appendChild(replyTextArea);
-
-            const replyBtnsContainer = document.createElement('div');
-            replyBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
-            replyBtnsContainer.classList.add(constants.CLASS_HIDDEN);
-            replyContainer.appendChild(replyBtnsContainer);
-
-            const cancelBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
-                this.localized.cancelButton,
-                this.localized.cancelButton,
-                constants.DATA_TYPE_CANCEL_REPLY
+            const language = this.locale.substr(0, this.locale.indexOf('-'));
+            this.annotationFormComponent = render(
+                <AnnotationForm
+                    createAnnotation={({ text }) => this.postReply(text)}
+                    onCancel={() => this.cancelAnnotation()}
+                    langauge={language}
+                />,
+                replyContainer
             );
-            replyBtnsContainer.appendChild(cancelBtn);
-
-            const postBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
-                this.localized.postButton,
-                this.localized.postButton,
-                constants.DATA_TYPE_POST_REPLY
-            );
-            replyBtnsContainer.appendChild(postBtn);
         }
 
         return dialogEl;
