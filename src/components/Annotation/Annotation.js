@@ -7,7 +7,6 @@ import Avatar from 'box-react-ui/lib/components/avatar';
 import CommentText from '../../../third-party/components/Comment/CommentText';
 import CommentInlineError from '../../../third-party/components/Comment/CommentInlineError';
 
-import Internationalize from '../Internationalize';
 import AnnotationHeader from './AnnotationHeader';
 import withFocus from '../withFocus';
 
