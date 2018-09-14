@@ -7,9 +7,9 @@
 import React from 'react';
 import noop from 'lodash/noop';
 
-import ApprovalCommentForm from '../../third-party/components/ApprovalCommentForm';
-import Internationalize from './Internationalize';
-import withFocus from './withFocus';
+import ApprovalCommentForm from '../../../third-party/components/ApprovalCommentForm';
+import Internationalize from '../Internationalize';
+import withFocus from '../withFocus';
 
 type Props = {
     createAnnotation: Function,
