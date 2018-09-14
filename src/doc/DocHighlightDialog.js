@@ -226,12 +226,10 @@ class DocHighlightDialog extends AnnotationDialog {
         if (hasAnnotations) {
             util.hideElement(replyTextEl);
             util.showElement(commentTextEl);
-            this.deactivateReply();
         } else {
             // Ensures that "Reply" text area is shown
             util.hideElement(commentTextEl);
             util.showElement(replyTextEl);
-            this.activateReply();
         }
 
         // Reposition dialog

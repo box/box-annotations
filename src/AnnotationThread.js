@@ -174,7 +174,6 @@ class AnnotationThread extends EventEmitter {
 
         if (this.dialog) {
             this.dialog.show(this.annotations);
-            this.dialog.activateReply();
         }
 
         this.state = STATES.inactive;
@@ -240,7 +239,6 @@ class AnnotationThread extends EventEmitter {
         } else if (this.dialog) {
             this.dialog.show(this.annotations);
             this.showDialog();
-            this.dialog.activateReply();
         }
 
         if (!useServer) {

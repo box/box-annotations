@@ -99,7 +99,6 @@ describe('AnnotationDialog', () => {
         });
 
         it('should position the dialog if not on a mobile device', () => {
-            dialog.deactivateReply();
             const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
             commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
 
@@ -132,14 +131,6 @@ describe('AnnotationDialog', () => {
     describe('scrollToLastComment()', () => {
         beforeEach(() => {
             util.focusTextArea = jest.fn();
-        });
-
-        it('should activate the reply text area if the dialog has multiple annotations', () => {
-            dialog.activateReply = jest.fn();
-
-            dialog.scrollToLastComment();
-            expect(dialog.activateReply);
-            expect(util.focusTextArea);
         });
 
         it('should set the dialog scroll height to the bottom of the comments container', () => {
@@ -455,21 +446,12 @@ describe('AnnotationDialog', () => {
 
             dialog.postAnnotation = jest.fn();
             dialog.cancelAnnotation = jest.fn();
-            dialog.deactivateReply = jest.fn();
-            dialog.activateReply = jest.fn();
             util.findClosestDataType = jest.fn();
             dialog.postReply = jest.fn();
             dialog.hideMobileDialog = jest.fn();
 
             dialog.isMobile = false;
             dialog.element.classList.remove(constants.CLASS_HIDDEN);
-        });
-
-        it('should post annotation when post annotation button is clicked', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_POST);
-
-            dialog.clickHandler(event);
-            expect(dialog.postAnnotation).toBeCalled();
         });
 
         it('should cancel annotation when cancel annotation button is clicked', () => {
@@ -484,27 +466,6 @@ describe('AnnotationDialog', () => {
             expect(dialog.cancelAnnotation).toBeCalled();
         });
 
-        it('should activate reply area when textarea is clicked', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_REPLY_TEXTAREA);
-
-            dialog.clickHandler(event);
-            expect(dialog.activateReply).toBeCalled();
-        });
-
-        it('should deactivate reply area when cancel reply button is clicked', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_CANCEL_REPLY);
-
-            dialog.clickHandler(event);
-            expect(dialog.deactivateReply).toBeCalledWith(true);
-        });
-
-        it('should post reply when post reply button is clicked', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue(constants.DATA_TYPE_POST_REPLY);
-
-            dialog.clickHandler(event);
-            expect(dialog.postReply).toBeCalled();
-        });
-
         it('should do nothing if dataType does not match any button in the annotation dialog', () => {
             util.findClosestDataType = jest.fn().mockReturnValue(null);
 
@@ -512,8 +473,6 @@ describe('AnnotationDialog', () => {
             expect(dialog.postAnnotation).not.toBeCalled();
             expect(dialog.postReply).not.toBeCalled();
             expect(dialog.cancelAnnotation).not.toBeCalled();
-            expect(dialog.deactivateReply).not.toBeCalled();
-            expect(dialog.activateReply).not.toBeCalled();
             expect(dialog.postReply).not.toBeCalled();
         });
     });
@@ -548,66 +507,8 @@ describe('AnnotationDialog', () => {
         });
     });
 
-    describe('activateReply()', () => {
-        it('should do nothing if the dialogEl does not exist', () => {
-            dialog.dialogEl = null;
-            dialog.activateReply();
-            expect(util.showElement).not.toBeCalled();
-        });
-
-        it('should do nothing if reply textarea is already active', () => {
-            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
-            replyTextEl.classList.add(constants.CLASS_ACTIVE);
-            dialog.activateReply();
-            expect(util.showElement).not.toBeCalled();
-        });
-
-        it('should do nothing if reply text area does not exist', () => {
-            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
-            replyTextEl.parentNode.removeChild(replyTextEl);
-            dialog.activateReply();
-            expect(util.showElement).not.toBeCalled();
-        });
-
-        it('should show the correct UI when the reply textarea is activated', () => {
-            document.querySelector('textarea').textContent = 'the preview SDK is great!';
-            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
-            replyTextEl.classList.remove(constants.CLASS_ACTIVE);
-
-            dialog.activateReply();
-            expect(replyTextEl.classList).toContain(constants.CLASS_ACTIVE);
-        });
-    });
-
-    describe('deactivateReply()', () => {
-        it('should do nothing if element does not exist', () => {
-            dialog.dialogEl = null;
-            util.resetTextarea = jest.fn();
-
-            dialog.deactivateReply();
-            expect(util.resetTextarea).not.toBeCalled();
-        });
-
-        it('should do nothing if reply text area does not exist', () => {
-            const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_CONTAINER);
-            replyTextEl.parentNode.removeChild(replyTextEl);
-            dialog.deactivateReply();
-            expect(util.showElement).not.toBeCalled();
-        });
-
-        it('should show the correct UI when the reply textarea is deactivated', () => {
-            const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
-            const buttonContainer = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-
-            dialog.deactivateReply();
-            expect(replyTextEl.classList).not.toContain(constants.CLASS_ACTIVE);
-            expect(buttonContainer.classList).toContain(constants.CLASS_HIDDEN);
-        });
-    });
-
     describe('postReply()', () => {
         it('should not post reply to the dialog if it has no text', () => {
-            dialog.activateReply();
             const replyTextEl = dialog.element.querySelector(SELECTOR_REPLY_TEXTAREA);
 
             dialog.postReply();
@@ -617,7 +518,6 @@ describe('AnnotationDialog', () => {
 
         it('should post a reply to the dialog if it has text', () => {
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
-            dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
 
             dialog.postReply();
@@ -626,7 +526,6 @@ describe('AnnotationDialog', () => {
 
         it('should clear the reply text element after posting', () => {
             const replyTextEl = document.querySelector(SELECTOR_REPLY_TEXTAREA);
-            dialog.activateReply();
             replyTextEl.innerHTML += 'the preview SDK is great!';
             replyTextEl.focus = jest.fn();
 

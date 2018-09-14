@@ -35,7 +35,6 @@ describe('AnnotationThread', () => {
         });
 
         thread.dialog = {
-            activateReply: jest.fn(),
             addListener: jest.fn(),
             annotations: [],
             destroy: jest.fn(),
@@ -278,7 +277,6 @@ describe('AnnotationThread', () => {
 
             thread.dialog = {
                 addListener: jest.fn(),
-                activateReply: jest.fn(),
                 annotations: [annotation],
                 destroy: jest.fn(),
                 removeAllListeners: jest.fn(),
@@ -328,7 +326,6 @@ describe('AnnotationThread', () => {
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
                 expect(thread.dialog.show).toBeCalledWith([annotation2]);
-                expect(thread.dialog.activateReply).toBeCalled();
                 done();
             });
         });

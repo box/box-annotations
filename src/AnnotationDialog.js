@@ -162,11 +162,6 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
-        // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.hasAnnotations(annotations)) {
-            this.activateReply();
-        }
-
         const textAreaEl = this.hasAnnotations(annotations)
             ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
             : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
@@ -244,7 +239,6 @@ class AnnotationDialog extends EventEmitter {
         }
 
         util.hideElement(this.element);
-        this.deactivateReply();
         this.emit('annotationhide');
 
         // Make sure entire thread icon displays for flipped dialogs
@@ -451,13 +445,8 @@ class AnnotationDialog extends EventEmitter {
         const dataType = util.findClosestDataType(eventTarget);
 
         switch (dataType) {
-            // Clicking 'Post' button to create an annotation
-            case constants.DATA_TYPE_POST:
-                this.postAnnotation();
-                break;
             // Clicking 'Cancel' button to cancel the annotation OR
             // Clicking 'X' button on mobile dialog to close
-            case constants.DATA_TYPE_CANCEL:
             case constants.DATA_TYPE_MOBILE_CLOSE:
                 // @spramod: is the mobile close button still needed?
                 this.hide();
@@ -467,19 +456,6 @@ class AnnotationDialog extends EventEmitter {
                     this.cancelAnnotation();
                 }
                 break;
-            // Clicking inside reply text area
-            case constants.DATA_TYPE_REPLY_TEXTAREA:
-                this.activateReply();
-                break;
-            // Canceling a reply
-            case constants.DATA_TYPE_CANCEL_REPLY:
-                this.deactivateReply(true);
-                break;
-            // Clicking 'Post' button to create a reply annotation
-            case constants.DATA_TYPE_POST_REPLY:
-                this.postReply();
-                break;
-
             default:
                 break;
         }
@@ -493,57 +469,6 @@ class AnnotationDialog extends EventEmitter {
      */
     cancelAnnotation() {
         this.emit('annotationcancel');
-    }
-
-    /**
-     * Activates reply textarea.
-     *
-     * @private
-     * @return {void}
-     */
-    activateReply() {
-        if (!this.dialogEl) {
-            return;
-        }
-
-        const replyTextEl = this.dialogEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        if (!replyTextEl) {
-            return;
-        }
-
-        // Don't activate if reply textarea is already active
-        const isActive = replyTextEl.classList.contains(constants.CLASS_ACTIVE);
-        replyTextEl.classList.remove(constants.CLASS_INVALID_INPUT);
-        if (isActive) {
-            return;
-        }
-
-        const replyButtonEls = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-        replyTextEl.classList.add(constants.CLASS_ACTIVE);
-        util.showElement(replyButtonEls);
-    }
-
-    /**
-     * Deactivate reply textarea.
-     *
-     * @private
-     * @param {boolean} clearText Whether or not text in text area should be cleared
-     * @return {void}
-     */
-    deactivateReply(clearText) {
-        if (!this.dialogEl) {
-            return;
-        }
-
-        const replyContainerEl = this.dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
-        if (!replyContainerEl) {
-            return;
-        }
-
-        const replyTextEl = replyContainerEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-        util.resetTextarea(replyTextEl, clearText);
-        util.hideElement(replyButtonEls);
     }
 
     /**
