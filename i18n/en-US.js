@@ -10,9 +10,18 @@ export default {
   "ba.pointToggle": "Point annotation mode",
   "ba.whoDrew": "{1} drew",
   "ba.whoHighlighted": "{1} highlighted",
+  "be.approvalAddTask": "Add Task",
+  "be.approvalAddTaskTooltip": "Assigning a task to someone will send them a notification with the message in the comment box and allow them to approve or deny.",
+  "be.approvalAssignees": "Assignees",
+  "be.approvalDueDate": "Due Date",
+  "be.approvalSelectDate": "Select a date",
+  "be.atMentionTip": "@mention users to notify them.",
+  "be.commentCancel": "Cancel",
   "be.commentDeleteCancel": "No",
   "be.commentDeleteConfirm": "Yes",
+  "be.commentPost": "Post",
   "be.commentShowOriginal": "Show Original",
   "be.commentTranslate": "Translate",
+  "be.commentWrite": "Write a comment",
   "be.deleteLabel": "Delete"
 }
