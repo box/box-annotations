@@ -3,8 +3,8 @@ import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import getProp from 'lodash/get';
 
-import InlineDelete from '../../../third-party/components/InlineDelete';
-import UserLink from '../../../third-party/components/UserLink';
+import InlineDelete from '../../../third-party/components/Comment/InlineDelete';
+import UserLink from '../../../third-party/components/Comment/UserLink';
 import Timestamp from './Timestamp';
 import messages from './messages';
 

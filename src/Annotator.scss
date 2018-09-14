@@ -448,4 +448,94 @@
     pointer-events: none;
 }
 
+//ACF
+.ba .bcs-comment-input-container {
+    display: flex;
+
+    form {
+        margin: 0;
+    }
+
+    .bcs-comment-input {
+        div[contentEditable="true"].public-DraftEditor-content {
+            width: auto;
+        }
+
+        box-shadow: none;
+        margin-bottom: 15px;
+        max-height: 140px;
+        width: auto;
+
+        .datalist-item {
+            padding: 5px 35px 5px 15px;
+        }
+
+        .mention-selector-wrapper,
+        .content-editable-container,
+        .content-editable {
+            margin: 0;
+            width: 100%;
+        }
+
+        ~ .bcs-comment-input-controls {
+            display: none;
+
+            .btn {
+                margin-bottom: 10px;
+                margin-right: 0;
+                margin-top: 0;
+            }
+
+            .btn:last-child {
+                margin-left: 10px;
+            }
+        }
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:empty {
+            &::before {
+                color: $seesee;
+                content: attr(placeholder);
+                cursor: text;
+                display: block;
+            }
+        }
+    }
+
+    &.bcs-comment-input-is-open {
+        .bcs-comment-input {
+            .public-DraftEditor-content {
+                max-height: 140px;
+                min-height: 68px;
+                overflow: auto;
+            }
+
+            ~ .bcs-comment-input-controls {
+                display: block;
+                text-align: right;
+            }
+        }
+    }
+
+    .bcs-comment-input-form-container {
+        flex: 1;
+        min-width: 0;
+
+        aside {
+            color: $eights;
+            margin-top: -8px;
+        }
+
+        input {
+            &[type='text'] {
+                width: 100%;
+            }
+        }
+    }
+}
+
 @import './MobileAnnotator';
+

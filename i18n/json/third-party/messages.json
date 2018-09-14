@@ -1,5 +1,40 @@
 [
   {
+    "id": "be.approvalAddTask",
+    "description": "Label for checkbox to add approvers to a comment",
+    "defaultMessage": "Add Task"
+  },
+  {
+    "id": "be.approvalAddTaskTooltip",
+    "description": "Tooltip text for checkbox to add approvers to a comment",
+    "defaultMessage": "Assigning a task to someone will send them a notification with the message in the comment box and allow them to approve or deny."
+  },
+  {
+    "id": "be.approvalAssignees",
+    "description": "Title for assignees input",
+    "defaultMessage": "Assignees"
+  },
+  {
+    "id": "be.approvalDueDate",
+    "description": "Title for approvers due date input",
+    "defaultMessage": "Due Date"
+  },
+  {
+    "id": "be.approvalSelectDate",
+    "description": "Placeholder for due date input",
+    "defaultMessage": "Select a date"
+  },
+  {
+    "id": "be.atMentionTip",
+    "description": "Mentioning call to action displayed below the comment input",
+    "defaultMessage": "@mention users to notify them."
+  },
+  {
+    "id": "be.commentCancel",
+    "description": "Text for cancel button",
+    "defaultMessage": "Cancel"
+  },
+  {
     "id": "be.commentDeleteCancel",
     "description": "Button text to cancel comment deletion",
     "defaultMessage": "No"
@@ -10,6 +45,11 @@
     "defaultMessage": "Yes"
   },
   {
+    "id": "be.commentPost",
+    "description": "Text for post button",
+    "defaultMessage": "Post"
+  },
+  {
     "id": "be.commentShowOriginal",
     "description": "Show original button for showing original comment",
     "defaultMessage": "Show Original"
@@ -18,6 +58,11 @@
     "id": "be.commentTranslate",
     "description": "Translate button for translating comment",
     "defaultMessage": "Translate"
+  },
+  {
+    "id": "be.commentWrite",
+    "description": "Placeholder for comment input",
+    "defaultMessage": "Write a comment"
   },
   {
     "id": "be.deleteLabel",
