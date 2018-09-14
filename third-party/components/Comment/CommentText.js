@@ -8,7 +8,7 @@ import noop from 'lodash/noop';
 
 import LoadingIndicator from 'box-react-ui/lib/components/loading-indicator';
 
-import formatTaggedMessage from '../util/formatTaggedMessage';
+import formatTaggedMessage from '../../util/formatTaggedMessage';
 import ShowOriginalButton from './ShowOriginalButton';
 import TranslateButton from './TranslateButton';
 

@@ -5,7 +5,7 @@
 /* eslint-disable */
 import * as React from 'react';
 import { Link } from 'box-react-ui/lib/components/link';
-import UserLink from '../components/UserLink';
+import UserLink from '../components/Comment/UserLink';
 import { ACTIVITY_TARGETS } from '../interactionTargets';
 
 // this regex matches one of the following regular expressions:
