@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/AnnotationList should correctly render a list of annotation 1`] = `
+<IntlProvider
+  locale="en"
+  messages={Object {}}
+>
+  <ul
+    className="ba-annotation-list"
+  >
+    <li
+      className="ba-annotation-list-item"
+      key="annotation_123"
+    >
+      <_class2
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
+          Object {
+            "email": "princess@genovia.gov",
+            "id": "789ghi",
+            "name": "Mia Thermopolis",
+            "type": "user",
+          }
+        }
+        id="123"
+        message="test"
+        onDelete={[Function]}
+        permissions={Object {}}
+      />
+    </li>
+    <li
+      className="ba-annotation-list-item"
+      key="annotation_456"
+    >
+      <_class2
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
+          Object {
+            "email": "princess@genovia.gov",
+            "id": "789ghi",
+            "name": "Mia Thermopolis",
+            "type": "user",
+          }
+        }
+        id="456"
+        message="test"
+        onDelete={[Function]}
+        permissions={Object {}}
+      />
+    </li>
+  </ul>
+</IntlProvider>
+`;

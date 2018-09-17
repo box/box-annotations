@@ -79,22 +79,29 @@ type AnnotationDetails = {
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
 };
 
-type BoxFileVersion = {
-    id: string,
-    type: 'file_version'
-};
-
 type Annotation = {
     id: string, 
-    item: BoxFileVersion,
     message: string,
     permissions: AnnotationPermissions,
     details: AnnotationDetails,
     createdBy: User, 
     createdAt: string,
     modifiedBy?: string,
-    threadNumber: string
+    isPending?: boolean
 };
+
+type Annotations = Array<Annotation>;
+
+type BoxFileVersion = {
+    id: string,
+    type: 'file_version'
+};
+
+type AnnotationThread = {
+    item: BoxFileVersion,
+    threadNumber: string,
+    annotations: Annotations
+}
 
 type PointAnnotation = PointLocationInfo & Annotation;
 type HighlightAnnotation = HighlightLocationInfo & Annotation;
