@@ -107,3 +107,13 @@ $tablet: '(min-width: 768px)';
     @import '~box-react-ui/lib/styles/common/links';
     @import '~box-react-ui/lib/styles/common/buttons';
 }
+
+/**************************************
+ * Accessibility
+ **************************************/
+
+.accessibility-hidden {
+    top: auto; /* Some browsers ignore left without a top */
+    left: -9999px;
+    position: absolute;
+}
