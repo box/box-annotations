@@ -1,97 +1,93 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/Annotation should correctly render annotation 1`] = `
-<Internationalize>
+<div
+  className="ba-annotation "
+  onBlur={[Function]}
+  onFocus={[Function]}
+>
   <div
-    className="ba-annotation "
-    onBlur={[Function]}
-    onFocus={[Function]}
+    className="ba-annotation-content"
   >
+    <Avatar
+      className="ba-annotation-avatar"
+      email="princess@genovia.gov"
+      id="789ghi"
+      name="Mia Thermopolis"
+      type="user"
+    />
     <div
-      className="ba-annotation-content"
+      className="ba-annotation-text"
     >
-      <Avatar
-        className="ba-annotation-avatar"
-        email="princess@genovia.gov"
-        id="789ghi"
-        name="Mia Thermopolis"
-        type="user"
-      />
-      <div
-        className="ba-annotation-text"
-      >
-        <AnnotationHeader
-          createdAt="2017-09-27T10:40:41-07:00"
-          createdBy={
-            Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            }
+      <AnnotationHeader
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
+          Object {
+            "email": "princess@genovia.gov",
+            "id": "789ghi",
+            "name": "Mia Thermopolis",
+            "type": "user",
           }
-          id="123"
-          isPending={false}
-          onDelete={[Function]}
-          permissions={Object {}}
-        />
-        <CommentText
-          id="123"
-          tagged_message="test"
-          translationEnabled={false}
-        />
-      </div>
+        }
+        id="123"
+        isPending={false}
+        onDelete={[Function]}
+        permissions={Object {}}
+      />
+      <CommentText
+        id="123"
+        tagged_message="test"
+        translationEnabled={false}
+      />
     </div>
   </div>
-</Internationalize>
+</div>
 `;
 
 exports[`components/Annotation should render an error when one is defined 1`] = `
-<Internationalize>
+<div
+  className="ba-annotation  ba-is-pending"
+  onBlur={[Function]}
+  onFocus={[Function]}
+>
   <div
-    className="ba-annotation  ba-is-pending"
-    onBlur={[Function]}
-    onFocus={[Function]}
+    className="ba-annotation-content"
   >
-    <div
-      className="ba-annotation-content"
-    >
-      <Avatar
-        className="ba-annotation-avatar"
-        email="princess@genovia.gov"
-        id="789ghi"
-        name="Mia Thermopolis"
-        type="user"
-      />
-      <div
-        className="ba-annotation-text"
-      >
-        <AnnotationHeader
-          createdAt="2017-09-27T10:40:41-07:00"
-          createdBy={
-            Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            }
-          }
-          id="123"
-          isPending={false}
-          onDelete={[MockFunction]}
-          permissions={Object {}}
-        />
-        <CommentText
-          id="123"
-          tagged_message="test"
-          translationEnabled={false}
-        />
-      </div>
-    </div>
-    <CommentInlineError
-      message="errorrrrr"
-      title="error"
+    <Avatar
+      className="ba-annotation-avatar"
+      email="princess@genovia.gov"
+      id="789ghi"
+      name="Mia Thermopolis"
+      type="user"
     />
+    <div
+      className="ba-annotation-text"
+    >
+      <AnnotationHeader
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
+          Object {
+            "email": "princess@genovia.gov",
+            "id": "789ghi",
+            "name": "Mia Thermopolis",
+            "type": "user",
+          }
+        }
+        id="123"
+        isPending={false}
+        onDelete={[MockFunction]}
+        permissions={Object {}}
+      />
+      <CommentText
+        id="123"
+        tagged_message="test"
+        translationEnabled={false}
+      />
+    </div>
   </div>
-</Internationalize>
+  <CommentInlineError
+    message="errorrrrr"
+    title="error"
+  />
+</div>
 `;
