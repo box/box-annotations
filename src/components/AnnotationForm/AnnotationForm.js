@@ -1,9 +1,4 @@
-/**
- * @flow
- * @file Wraps a component in an IntlProvider
- * @author Box
- */
-
+// @flow
 import React from 'react';
 import noop from 'lodash/noop';
 
@@ -12,29 +7,29 @@ import Internationalize from '../Internationalize';
 import withFocus from '../withFocus';
 
 type Props = {
-    createAnnotation: Function,
+    onCreate: Function,
     onCancel: Function,
     language?: string,
     messages?: StringMap,
-    placeholderText: string
+    placeholderText?: string
 };
 
 const DUMMY_USER = {};
 const IS_EDITING = true;
 const KEEP_INPUT_OPEN = true;
 
-const AnnotationForm = ({ createAnnotation, onCancel, placeholderText, language, messages: intlMessages }: Props) => (
+const AnnotationForm = ({ onCreate, onCancel, placeholderText, language, messages: intlMessages }: Props) => (
     <Internationalize language={language} messages={intlMessages}>
         <ApprovalCommentForm
             className='ba-annotation-input-container'
             user={DUMMY_USER}
             isOpen={KEEP_INPUT_OPEN}
             isEditing={IS_EDITING}
-            createComment={createAnnotation}
+            createComment={onCreate}
             onCancel={onCancel}
             onSubmit={noop}
             onFocus={noop}
-            getAvatarUrl={() => {}}
+            getAvatarUrl={noop}
             tagged_message={placeholderText}
         />
     </Internationalize>

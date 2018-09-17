@@ -124,7 +124,6 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
         const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
-        const language = this.locale.substr(0, this.locale.indexOf('-'));
 
         this.annotationListComponent = render(
             <ul className='ba-annotation-list'>
@@ -136,11 +135,7 @@ class AnnotationDialog extends EventEmitter {
 
                     return (
                         <li className='ba-annotation-list-item' key={`annotation_${id}`}>
-                            <Annotation
-                                {...annotation}
-                                language={language}
-                                onDelete={() => this.emitAnnotationDelete(annotation)}
-                            />
+                            <Annotation {...annotation} onDelete={() => this.emitAnnotationDelete(annotation)} />
                         </li>
                     );
                 })}
@@ -520,12 +515,10 @@ class AnnotationDialog extends EventEmitter {
             }
             dialogEl.appendChild(createSectionEl);
 
-            const language = this.locale.substr(0, this.locale.indexOf('-'));
             this.annotationFormComponent = render(
                 <AnnotationForm
-                    createAnnotation={({ text }) => this.postAnnotation(text)}
+                    onCreate={({ text }) => this.postAnnotation(text)}
                     onCancel={() => this.cancelAnnotation()}
-                    langauge={language}
                 />,
                 createSectionEl
             );
@@ -549,12 +542,10 @@ class AnnotationDialog extends EventEmitter {
             replyContainer.classList.add(CLASS_REPLY_CONTAINER);
             showSectionEl.appendChild(replyContainer);
 
-            const language = this.locale.substr(0, this.locale.indexOf('-'));
             this.annotationFormComponent = render(
                 <AnnotationForm
                     createAnnotation={({ text }) => this.postReply(text)}
                     onCancel={() => this.cancelAnnotation()}
-                    langauge={language}
                 />,
                 replyContainer
             );
