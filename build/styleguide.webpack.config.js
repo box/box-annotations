@@ -1,4 +1,8 @@
 const path = require('path');
+const { DefinePlugin } = require('webpack');
+
+const language = 'en-US';
+const locale = 'en';
 
 module.exports = {
     module: {
@@ -34,10 +38,18 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new DefinePlugin({
+            __LANGUAGE__: JSON.stringify(language)
+        })
+    ],
     resolve: {
         alias: {
             // Map to uncompiled source code so we get nice source maps for debugging
             'box-annotations/lib': path.join(__dirname, '../src'),
+            'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
+            'box-annotations-locale-data': path.resolve(`i18n/${language}`),
+            'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
             examples: path.join(__dirname, '../examples/src'),
             Wrapper: path.join(__dirname, '../examples/Wrapper'),
             'rsg-components/Wrapper': path.join(
