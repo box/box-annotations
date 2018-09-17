@@ -81,10 +81,10 @@ describe('AnnotationDialog', () => {
     describe('show()', () => {
         beforeEach(() => {
             dialog.position = jest.fn();
-            util.focusTextArea = jest.fn();
             dialog.scrollToLastComment = jest.fn();
             dialog.showMobileDialog = jest.fn();
             dialog.canAnnotate = true;
+            dialog.isMobile = false;
             dialog.element.classList.add(constants.CLASS_HIDDEN);
         });
 
@@ -97,8 +97,10 @@ describe('AnnotationDialog', () => {
         });
 
         it('should position the dialog if not on a mobile device', () => {
-            const commentsTextArea = dialog.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+            const commentsTextArea = document.createElement('textarea');
+            commentsTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
             commentsTextArea.classList.remove(constants.CLASS_ACTIVE);
+            dialog.element.appendChild(commentsTextArea);
 
             dialog.show([annotation]);
             expect(dialog.position).toBeCalled();
@@ -127,10 +129,6 @@ describe('AnnotationDialog', () => {
     });
 
     describe('scrollToLastComment()', () => {
-        beforeEach(() => {
-            util.focusTextArea = jest.fn();
-        });
-
         it('should set the dialog scroll height to the bottom of the comments container', () => {
             const annotationEl = {
                 scrollHeight: 500,

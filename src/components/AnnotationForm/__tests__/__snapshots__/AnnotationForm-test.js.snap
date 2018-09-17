@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/AnnotationForm should correctly render a list of annotation 1`] = `
+<Internationalize>
+  <ApprovalCommentForm
+    className="ba-annotation-input-container"
+    createComment={[Function]}
+    getAvatarUrl={[Function]}
+    isEditing={true}
+    isOpen={true}
+    onCancel={[Function]}
+    onFocus={[Function]}
+    onSubmit={[Function]}
+    user={Object {}}
+  />
+</Internationalize>
+`;

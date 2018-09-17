@@ -190,9 +190,6 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
             util.showElement(this.commentsDialogEl);
             this.hasComments = true;
-            // Activate comments textarea
-            const textAreaEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            textAreaEl.classList.add(constants.CLASS_ACTIVE);
         } else {
             // Displays the highlight and comment buttons dialog and
             // hides the comments dialog

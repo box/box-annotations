@@ -438,10 +438,8 @@ describe('doc/DocHighlightDialog', () => {
 
     describe('bindDOMListeners()', () => {
         beforeEach(() => {
-            dialog.element = {
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn()
-            };
+            dialog.element.addEventListener = jest.fn();
+            dialog.element.removeEventListener = jest.fn();
         });
 
         it('should bind DOM listeners', () => {
@@ -465,9 +463,7 @@ describe('doc/DocHighlightDialog', () => {
 
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
-            dialog.element = {
-                removeEventListener: jest.fn()
-            };
+            dialog.element.removeEventListener = jest.fn();
         });
 
         it('should unbind DOM listeners', () => {
