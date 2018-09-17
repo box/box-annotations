@@ -391,11 +391,11 @@ class AnnotationThread extends EventEmitter {
         // Explicitly bind listeners to the dialog
         this.createAnnotation = this.createAnnotation.bind(this);
         this.cancelUnsavedAnnotation = this.cancelUnsavedAnnotation.bind(this);
-        this.deleteAnnotationWithID = this.deleteAnnotationWithID.bind(this);
+        this.deleteAnnotation = this.deleteAnnotation.bind(this);
 
         this.dialog.addListener('annotationcreate', this.createAnnotation);
         this.dialog.addListener('annotationcancel', this.cancelUnsavedAnnotation);
-        this.dialog.addListener('annotationdelete', this.deleteAnnotationWithID);
+        this.dialog.addListener('annotationdelete', this.deleteAnnotation);
         this.dialog.addListener('annotationshow', () => this.emit(THREAD_EVENT.show));
         this.dialog.addListener('annotationhide', () => this.emit(THREAD_EVENT.hide));
     }
@@ -563,17 +563,6 @@ class AnnotationThread extends EventEmitter {
      */
     createAnnotation(message) {
         this.saveAnnotation(TYPES.point, message);
-    }
-
-    /**
-     * Deletes annotation with a specific id from thread
-     *
-     * @private
-     * @param {Object} data - Annotation data
-     * @return {void}
-     */
-    deleteAnnotationWithID(data) {
-        this.deleteAnnotation(data.id);
     }
 
     /**

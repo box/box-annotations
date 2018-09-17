@@ -4,7 +4,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import * as util from './util';
 import * as constants from './constants';
 
-import Annotation from './components/Annotation';
+import AnnotationList from './components/AnnotationList';
 import AnnotationForm from './components/AnnotationForm';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -118,22 +118,10 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
         const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
+        const annotationsWithComments = annotations.filter(({ type }) => type !== constants.TYPES.highlight);
 
         this.annotationListComponent = render(
-            <ul className='ba-annotation-list'>
-                {annotations.map((annotation) => {
-                    const { id, type } = annotation;
-                    if (type === constants.TYPES.highlight) {
-                        return null;
-                    }
-
-                    return (
-                        <li className='ba-annotation-list-item' key={`annotation_${id}`}>
-                            <Annotation {...annotation} onDelete={() => this.emitAnnotationDelete(annotation)} />
-                        </li>
-                    );
-                })}
-            </ul>,
+            <AnnotationList annotations={annotationsWithComments} onDelete={this.emitAnnotationDelete} />,
             annotationContainerEl
         );
 

@@ -124,7 +124,6 @@ describe('AnnotationDialog', () => {
             ];
             dialog.show(annotations);
             expect(dialog.annotationListComponent).not.toBeUndefined();
-            expect(dialog.annotationListComponent.querySelectorAll('.ba-annotation-list-item').length).toEqual(3);
         });
     });
 
