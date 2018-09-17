@@ -82,12 +82,12 @@ const annotations = [
     }
 ];
 
-const AnnnotationExamples = () => (
+const AnnotationListExamples = () => (
     <div className='ba'>
         <AnnotationList annotations={annotations} onDelete={onDelete} />
     </div>
 );
 
-AnnnotationExamples.displayName = 'AnnotationExamples';
+AnnotationListExamples.displayName = 'AnnotationListExamples';
 
-export default AnnnotationExamples;
+export default AnnotationListExamples;
