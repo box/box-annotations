@@ -3,8 +3,8 @@ import { shallow } from 'enzyme';
 
 import AnnotationForm from '../AnnotationForm';
 
-const onCreate = ({ text }) => console.log(`created with '${text}'`);
-const onCancel = () => console.log('canceled');
+const onCreate = jest.fn();
+const onCancel = jest.fn();
 
 describe('components/AnnotationForm', () => {
     test('should correctly render a list of annotation', () => {

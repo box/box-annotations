@@ -8,6 +8,7 @@ import CommentText from '../../../third-party/components/Comment/CommentText';
 import CommentInlineError from '../../../third-party/components/Comment/CommentInlineError';
 
 import AnnotationHeader from './AnnotationHeader';
+import Internationalize from '../Internationalize';
 import withFocus from '../withFocus';
 
 import './Annotation.scss';
@@ -24,7 +25,9 @@ type Props = {
     error?: ActionItemError,
     className: string,
     onBlur: Function,
-    onFocus: Function
+    onFocus: Function,
+    language?: string,
+    messages?: StringMap
 };
 
 const Annotation = ({
@@ -38,31 +41,35 @@ const Annotation = ({
     onDelete = noop,
     className,
     onBlur,
-    onFocus
+    onFocus,
+    language,
+    messages: intlMessages
 }: Props) => (
-    <div
-        className={classNames(`ba-annotation ${className}`, {
-            'ba-is-pending': isPending || error
-        })}
-        onBlur={onBlur}
-        onFocus={onFocus}
-    >
-        <div className='ba-annotation-content'>
-            <Avatar className='ba-annotation-avatar' {...createdBy} />
-            <div className='ba-annotation-text'>
-                <AnnotationHeader
-                    id={id}
-                    permissions={permissions}
-                    onDelete={onDelete}
-                    createdAt={createdAt}
-                    createdBy={createdBy}
-                    isPending={isPending}
-                />
-                <CommentText id={id} tagged_message={message} translationEnabled={false} />
+    <Internationalize language={language} messages={intlMessages}>
+        <div
+            className={classNames(`ba-annotation ${className}`, {
+                'ba-is-pending': isPending || error
+            })}
+            onBlur={onBlur}
+            onFocus={onFocus}
+        >
+            <div className='ba-annotation-content'>
+                <Avatar className='ba-annotation-avatar' {...createdBy} />
+                <div className='ba-annotation-text'>
+                    <AnnotationHeader
+                        id={id}
+                        permissions={permissions}
+                        onDelete={onDelete}
+                        createdAt={createdAt}
+                        createdBy={createdBy}
+                        isPending={isPending}
+                    />
+                    <CommentText id={id} tagged_message={message} translationEnabled={false} />
+                </div>
             </div>
+            {error && <CommentInlineError {...error} />}
         </div>
-        {error && <CommentInlineError {...error} />}
-    </div>
+    </Internationalize>
 );
 
 export { Annotation as AnnotationComponent };

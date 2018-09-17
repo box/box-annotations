@@ -76,8 +76,10 @@ class AnnotationDialog extends EventEmitter {
             }
 
             const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
-            if (this.annotationFormComponent && createSectionEl) {
+            const replyContainer = this.element.querySelector(constants.SELECTOR_REPLY_CONTAINER);
+            if (this.annotationFormComponent && createSectionEl && replyContainer) {
                 unmountComponentAtNode(createSectionEl);
+                unmountComponentAtNode(replyContainer);
                 this.annotationFormComponent = null;
             }
 
@@ -105,13 +107,11 @@ class AnnotationDialog extends EventEmitter {
 
         // Show the appropriate section
         const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
-        const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
+        const replyContainer = this.element.querySelector(constants.SELECTOR_REPLY_CONTAINER);
         if (!this.hasAnnotations(annotations)) {
-            util.showElement(createSectionEl);
-            util.hideElement(showSectionEl);
+            this.renderAnnotationForm(createSectionEl, this.postAnnotation);
         } else {
-            util.hideElement(createSectionEl);
-            util.showElement(showSectionEl);
+            this.renderAnnotationForm(replyContainer, this.postReply);
         }
 
         // Position and show - we need to reposition every time since
@@ -225,12 +225,20 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     hide() {
-        if (this.element && this.element.classList.contains(constants.CLASS_HIDDEN)) {
+        if (!this.element || (this.element && this.element.classList.contains(constants.CLASS_HIDDEN))) {
             return;
         }
 
         if (this.isMobile) {
             this.hideMobileDialog();
+        }
+
+        const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
+        const replyContainer = this.element.querySelector(constants.SELECTOR_REPLY_CONTAINER);
+        if (this.annotationFormComponent && createSectionEl && replyContainer) {
+            unmountComponentAtNode(createSectionEl);
+            unmountComponentAtNode(replyContainer);
+            this.annotationFormComponent = null;
         }
 
         util.hideElement(this.element);
@@ -509,14 +517,6 @@ class AnnotationDialog extends EventEmitter {
                 createSectionEl.classList.add(constants.CLASS_HIDDEN);
             }
             dialogEl.appendChild(createSectionEl);
-
-            this.annotationFormComponent = render(
-                <AnnotationForm
-                    onCreate={({ text }) => this.postAnnotation(text)}
-                    onCancel={() => this.cancelAnnotation()}
-                />,
-                createSectionEl
-            );
         }
 
         // Show section including the annotations container
@@ -536,17 +536,24 @@ class AnnotationDialog extends EventEmitter {
             const replyContainer = document.createElement('div');
             replyContainer.classList.add(CLASS_REPLY_CONTAINER);
             showSectionEl.appendChild(replyContainer);
-
-            this.annotationFormComponent = render(
-                <AnnotationForm
-                    createAnnotation={({ text }) => this.postReply(text)}
-                    onCancel={() => this.cancelAnnotation()}
-                />,
-                replyContainer
-            );
         }
 
         return dialogEl;
+    }
+
+    /**
+     * Render the annotation form
+     *
+     * @private
+     * @param {HTMLElement} containerEl Container element to bind annotation form to
+     * @param {Function} onCreate method to create annotation
+     * @return {void}
+     */
+    renderAnnotationForm(containerEl, onCreate) {
+        this.annotationFormComponent = render(
+            <AnnotationForm onCreate={({ text }) => onCreate(text)} onCancel={() => this.cancelAnnotation()} />,
+            containerEl
+        );
     }
 
     /**
