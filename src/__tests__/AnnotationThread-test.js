@@ -682,14 +682,6 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('deleteAnnotationWithID()', () => {
-        it('should delete a point annotation with the matching id', () => {
-            thread.deleteAnnotation = jest.fn();
-            thread.deleteAnnotationWithID({ id: 1 });
-            expect(thread.deleteAnnotation).toBeCalledWith(1);
-        });
-    });
-
     describe('regenerateBoundary()', () => {
         it('should do nothing if a valid location does not exist', () => {
             thread.location = undefined;
