@@ -3,7 +3,6 @@
 [![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
 [![version](https://img.shields.io/badge/version-v2.2.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
-[![Greenkeeper badge](https://badges.greenkeeper.io/box/box-annotations.svg)](https://greenkeeper.io/)
 
 # [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
 
@@ -70,6 +69,8 @@ Point annotations are supported on both document and image formats. Highlight co
 Supported document file extensions: `pdf, doc, docx, ppt, pptx`
 
 Supported image file extensions: `ai, bmp, dcm, eps, gif, png, ps, psd, svs, tga, tif, tiff`
+
+Supported excel extensions: `xls, xlsm, xlsx`
 
 ## Development Setup
 
