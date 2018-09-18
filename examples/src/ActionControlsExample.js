@@ -10,12 +10,7 @@ const USER = {
     name: 'Sumedha Pramod'
 };
 const ANONYMOUS_USER = { id: '0' };
-const ITEM_PERMISSIONS = {
-    can_annotate: true
-};
-const PERMISSIONS = {
-    can_delete: true
-};
+const CAN_DO_ACTION = true;
 
 const ActionControlsContainer = (props) => (
     <div className='action-controls-container'>
@@ -24,7 +19,7 @@ const ActionControlsContainer = (props) => (
 );
 
 const PendingPlainHighlightControls = () => (
-    <ActionControlsContainer isPending={IS_PENDING} type='highlight' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS}
+    <ActionControlsContainer isPending={IS_PENDING} type='highlight' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION}
     />
 );
 
@@ -34,12 +29,12 @@ const AnonymousPlainHighlightControls = () => (
 );
 
 const PlainHighlightControls = () => (
-    <ActionControlsContainer currentUser={USER} type='highlight' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS}
+    <ActionControlsContainer currentUser={USER} type='highlight' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION}
     />
 );
 
 const PendingHighlightCommentControls = () => (
-    <ActionControlsContainer isPending={IS_PENDING} type='highlight' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS}
+    <ActionControlsContainer isPending={IS_PENDING} type='highlight' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION}
     />
 );
 
@@ -48,11 +43,11 @@ const AnonymousHighlightCommentControls = () => (
 );
 
 const HighlightCommentControls = () => (
-    <ActionControlsContainer currentUser={USER} type='highlight-comment' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS} />
+    <ActionControlsContainer currentUser={USER} type='highlight-comment' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION} />
 );
 
 const DrawingControls = () => (
-    <ActionControlsContainer currentUser={USER} type='draw' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS} />
+    <ActionControlsContainer currentUser={USER} type='draw' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION} />
 );
 
 const AnonymousDrawingControls = () => (
@@ -60,7 +55,7 @@ const AnonymousDrawingControls = () => (
 );
 
 const DeletableDrawingControls = () => (
-    <ActionControlsContainer currentUser={USER} type='draw' itemPermissions={ITEM_PERMISSIONS} permissions={PERMISSIONS} />
+    <ActionControlsContainer currentUser={USER} type='draw' canAnnotate={CAN_DO_ACTION} canDelete={CAN_DO_ACTION} />
 );
 
 const ActionControlsExample = () => (

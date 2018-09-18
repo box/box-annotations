@@ -18,8 +18,8 @@ import AnnotatorLabel from './AnnotatorLabel';
 type Props = {
     id: string,
     type: AnnotationType,
-    itemPermissions: BoxItemPermissions,
-    permissions: AnnotationPermissions,
+    canDelete: boolean,
+    canAnnotate: boolean,
     onCreate: Function,
     onCommentClick: Function,
     isPending: boolean,
@@ -32,8 +32,8 @@ type Props = {
 const ActionControls = ({
     id,
     type,
-    itemPermissions,
-    permissions,
+    canDelete,
+    canAnnotate,
     onCreate,
     onCommentClick,
     isPending,
@@ -43,8 +43,7 @@ const ActionControls = ({
 }: Props) => {
     const isHighlight = isHighlightAnnotation(type);
     const isDrawing = type === TYPES.draw;
-    const canComment = isHighlight && getProp(itemPermissions, 'can_annotate', false);
-    const canDelete = getProp(permissions, 'can_delete', false);
+    const canComment = isHighlight && canAnnotate;
 
     return (
         <Internationalize language={language} messages={intlMessages}>
