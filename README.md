@@ -66,11 +66,9 @@ See [the following documentation](docs/auth.md) for more details on Annotation-s
 
 Point annotations are supported on both document and image formats. Highlight comment, highlight only, and draw annotations are only supported on document formats.
 
-Supported document file extensions: `pdf, doc, docx, ppt, pptx`
+Supported document file extensions: `pdf, doc, docx, ppt, pptx, xls, xlsm, xlsx`
 
 Supported image file extensions: `ai, bmp, dcm, eps, gif, png, ps, psd, svs, tga, tif, tiff`
-
-Supported excel extensions: `xls, xlsm, xlsx`
 
 ## Development Setup
 
