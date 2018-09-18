@@ -23,6 +23,11 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         id: 'ba.whoDrew',
         description: 'Label for who drew the drawing annotation',
         defaultMessage: '{name} drew'
+    },
+    whoAnnotated: {
+        id: 'ba.whoAnnotated',
+        description: 'Label for who left the annotation',
+        defaultMessage: '{name} annotated'
     }
 });
 

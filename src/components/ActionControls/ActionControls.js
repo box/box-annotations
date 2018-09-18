@@ -19,7 +19,7 @@ import './ActionControls.scss';
 
 type Props = {
     id: string,
-    type: Annotations,
+    type: AnnotationType,
     itemPermissions: BoxItemPermissions,
     permissions: AnnotationPermissions,
     onCreate: Function,
@@ -37,19 +37,15 @@ class ActionControls extends React.PureComponent<Props> {
         const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
         const annotatorName = !!currentUser && !!currentUser.name ? currentUser.name : anonymousUserName;
 
-        let message = '';
-        switch (type) {
-            case TYPES.highlight:
-            case TYPES.highlight_comment:
-                message = intl.formatMessage(messages.whoHighlighted, { name: annotatorName });
-                break;
-            case TYPES.draw:
-                message = intl.formatMessage(messages.whoDrew, { name: annotatorName });
-                break;
-            default:
-                break;
+        if (isHighlightAnnotation(type)) {
+            return intl.formatMessage(messages.whoHighlighted, { name: annotatorName });
         }
-        return message;
+
+        if (type === TYPES.draw) {
+            return intl.formatMessage(messages.whoDrew, { name: annotatorName });
+        }
+
+        return intl.formatMessage(messages.whoAnnotated, { name: annotatorName });
     }
 
     render() {
@@ -64,7 +60,7 @@ class ActionControls extends React.PureComponent<Props> {
             language,
             messages: intlMessages
         } = this.props;
-        const isHighlight = !!isHighlightAnnotation(type);
+        const isHighlight = isHighlightAnnotation(type);
         const isDrawing = type === TYPES.draw;
         const canComment = !!(isHighlight && getProp(itemPermissions, 'can_annotate', false));
         const canDelete = getProp(permissions, 'can_delete', false);
