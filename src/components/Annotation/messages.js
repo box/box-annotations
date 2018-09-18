@@ -49,20 +49,10 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         description: 'Highlight annotation annotation toggle',
         defaultMessage: 'Add annotation to highlighted text'
     },
-    whoHighlighted: {
-        id: 'ba.whoHighlighted',
-        description: 'Label for who highlighted the annotated text',
-        defaultMessage: '{1} highlighted'
-    },
     drawToggle: {
         id: 'ba.drawToggle',
         description: 'Drawing annotation mode toggle',
         defaultMessage: 'Drawing annotation mode'
-    },
-    whoDrew: {
-        id: 'ba.whoDrew',
-        description: 'Label for who drew the drawing annotation',
-        defaultMessage: '{1} drew'
     }
 });
 

@@ -40,18 +40,8 @@
     "defaultMessage": "Add annotation to highlighted text"
   },
   {
-    "id": "ba.whoHighlighted",
-    "description": "Label for who highlighted the annotated text",
-    "defaultMessage": "{1} highlighted"
-  },
-  {
     "id": "ba.drawToggle",
     "description": "Drawing annotation mode toggle",
     "defaultMessage": "Drawing annotation mode"
-  },
-  {
-    "id": "ba.whoDrew",
-    "description": "Label for who drew the drawing annotation",
-    "defaultMessage": "{1} drew"
   }
 ]
