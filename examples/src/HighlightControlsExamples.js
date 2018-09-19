@@ -41,7 +41,7 @@ const DeletableHighlightCommentControls = () => (
 );
 
 
-const ActionControlsExample = () => (
+const HighlightControlsExamples = () => (
     <div className='ba'>
         <PendingPlainHighlightControls />
         <PlainHighlightControls />
@@ -52,6 +52,4 @@ const ActionControlsExample = () => (
     </div>
 );
 
-ActionControlsExample.displayName = 'ActionControls';
-
-export default ActionControlsExample;
+export default HighlightControlsExamples;

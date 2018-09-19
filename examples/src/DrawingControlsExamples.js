@@ -20,13 +20,11 @@ const DeletableDrawingControls = () => (
     <ActionControlsContainer canDelete={CAN_DO_ACTION} />
 );
 
-const ActionControlsExample = () => (
+const DrawingControlsExamples = () => (
     <div className='ba'>
         <DrawingControls />
         <DeletableDrawingControls />
     </div>
 );
 
-ActionControlsExample.displayName = 'ActionControls';
-
-export default ActionControlsExample;
+export default DrawingControlsExamples;
