@@ -13,7 +13,7 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
-},
+  },
   "devEngines": {
     "node": ">=8.x",
     "npm": ">=3.x",
