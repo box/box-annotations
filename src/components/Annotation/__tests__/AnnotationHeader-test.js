@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { FormattedMessage } from 'react-intl';
 import AnnotationHeader from '../AnnotationHeader';
-import messages from '../messages';
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
@@ -13,6 +11,7 @@ const USER = {
     name: 'Mia Thermopolis',
     email: 'princess@genovia.gov'
 };
+const ANONYMOUS_USER = 'Some User';
 
 const headerProps = {
     id: '123',
@@ -22,7 +21,7 @@ const headerProps = {
 };
 
 describe('components/Annotation/AnnotationHeader', () => {
-    const render = (props = {}) => shallow(<AnnotationHeader {...headerProps} {...props} />);
+    const render = (props = {}) => shallow(<AnnotationHeader {...headerProps} {...props} />).dive();
 
     test('should correctly render annotation header', () => {
         const wrapper = render({ isAnonymousUser: true });
@@ -36,11 +35,8 @@ describe('components/Annotation/AnnotationHeader', () => {
             type: 'user',
             id: '0'
         };
-        const anonymousUserName = (
-            <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
-        );
         const wrapper = render({ createdBy: unknownUser });
-        expect(wrapper.find('UserLink').prop('name')).toEqual(anonymousUserName);
+        expect(wrapper.find('UserLink').prop('name')).toEqual(ANONYMOUS_USER);
     });
 
     // eslint-disable-next-line

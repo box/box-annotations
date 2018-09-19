@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Annotation from 'box-annotations/lib/components/Annotation';
-import './AnnotationExample.scss';
 
 const USER1 = {
     type: 'user',

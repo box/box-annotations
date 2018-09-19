@@ -24,7 +24,7 @@ exports[`components/AnnotationList should correctly render a list of annotation 
         }
         id="123"
         message="test"
-        onDelete={[Function]}
+        onDelete={[MockFunction]}
         permissions={Object {}}
       />
     </li>
@@ -44,7 +44,7 @@ exports[`components/AnnotationList should correctly render a list of annotation 
         }
         id="456"
         message="test"
-        onDelete={[Function]}
+        onDelete={[MockFunction]}
         permissions={Object {}}
       />
     </li>

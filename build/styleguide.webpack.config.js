@@ -40,6 +40,8 @@ module.exports = {
     },
     plugins: [
         new DefinePlugin({
+            __NAME__: JSON.stringify('name'),
+            __VERSION__: JSON.stringify('version'),
             __LANGUAGE__: JSON.stringify(language)
         })
     ],

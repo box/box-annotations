@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import getProp from 'lodash/get';
 
 import InlineDelete from '../../../third-party/components/Comment/InlineDelete';
@@ -10,25 +10,26 @@ import messages from './messages';
 
 import './AnnotationHeader.scss';
 
-const ANONYMOUS_USER = {
-    id: '0',
-    name: <FormattedMessage className='ba-annotation-user-name' {...messages.anonymousUserName} />
-};
-
 type Props = {
     id: string,
     permissions: AnnotationPermissions,
     createdAt?: string,
     createdBy?: User,
     onDelete?: Function,
-    isPending: boolean
+    isPending: boolean,
+    intl: any
 };
 
-const AnnotationHeader = ({ id, permissions, onDelete, createdAt, createdBy, isPending }: Props) => {
+const AnnotationHeader = ({ id, permissions, onDelete, createdAt, createdBy, isPending, intl }: Props) => {
     const canDelete = getProp(permissions, 'can_delete', false);
     const hasDeletePermission = onDelete && canDelete && !isPending;
 
-    const annotator = !!createdBy && !!createdBy.name ? createdBy : ANONYMOUS_USER;
+    const anonymousUser = {
+        id: '0',
+        name: intl.formatMessage(messages.anonymousUserName)
+    };
+
+    const annotator = !!createdBy && !!createdBy.name ? createdBy : anonymousUser;
 
     return (
         <div className='ba-annotation-headline'>
@@ -46,4 +47,4 @@ const AnnotationHeader = ({ id, permissions, onDelete, createdAt, createdBy, isP
     );
 };
 
-export default AnnotationHeader;
+export default injectIntl(AnnotationHeader);

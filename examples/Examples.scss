@@ -1,0 +1,13 @@
+@import '../src/variables';
+
+.annotation-container {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.action-controls-container {
+    border: 1px solid $see-see;
+    border-radius: 3px;
+    margin: 10px;
+}

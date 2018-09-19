@@ -4224,6 +4224,18 @@ declare module 'box-react-ui/lib/icons/accessible-svg/AccessibleSVG.js' {
 declare module 'box-react-ui/lib/icons/accessible-svg' {
   declare module.exports: $Exports<'box-react-ui/lib/icons/accessible-svg/index'>;
 }
+
+declare module 'box-react-ui/lib/icons/annotations/IconHighlightAnnotation' {
+  declare module.exports: $Exports<'box-react-ui/lib/icons/annotations/IconHighlightAnnotation'>;
+}
+
+declare module 'box-react-ui/lib/icons/annotations/IconHighlightCommentAnnotation' {
+  declare module.exports: $Exports<'box-react-ui/lib/icons/annotations/IconHighlightCommentAnnotation'>;
+}
+
+declare module 'box-react-ui/lib/icons/annotations/IconPointAnnotation' {
+  declare module.exports: $Exports<'box-react-ui/lib/icons/annotations/IconPointAnnotation'>;
+}
 declare module 'box-react-ui/lib/icons/adobe-sign/IconAdobeSign.js' {
   declare module.exports: $Exports<'box-react-ui/lib/icons/adobe-sign/IconAdobeSign'>;
 }

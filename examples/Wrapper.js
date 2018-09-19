@@ -8,6 +8,8 @@ import * as React from 'react';
 
 import Internationalize from '../src/components/Internationalize';
 
+import './Examples.scss';
+
 type Props = {
     children: React.Node
 };
