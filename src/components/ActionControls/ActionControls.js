@@ -1,72 +1,39 @@
 // @flow
 import React from 'react';
-import { injectIntl } from 'react-intl';
-import getProp from 'lodash/get';
-
-import PlainButton from 'box-react-ui/lib/components/plain-button';
-import IconHighlightAnnotation from 'box-react-ui/lib/icons/annotations/IconHighlightAnnotation';
-import IconHighlightCommentAnnotation from 'box-react-ui/lib/icons/annotations/IconHighlightCommentAnnotation';
-import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 
 import { TYPES } from '../../constants';
 import { isHighlightAnnotation } from '../../util';
-import Internationalize from '../Internationalize';
 
 import './ActionControls.scss';
-import AnnotatorLabel from './AnnotatorLabel';
+import HighlightControls from './HighlightControls';
+import DrawingControls from './DrawingControls';
 
 type Props = {
-    id: string,
     type: AnnotationType,
     canDelete: boolean,
     canAnnotate: boolean,
-    onCreate: Function,
-    onCommentClick: Function,
-    isPending: boolean,
-    currentUser?: User,
-    language?: string,
-    messages?: StringMap,
-    intl: any
+    onCreate?: Function,
+    onCommentClick?: Function,
+    onDelete?: Function
 };
 
-const ActionControls = ({
-    id,
-    type,
-    canDelete,
-    canAnnotate,
-    onCreate,
-    onCommentClick,
-    isPending,
-    currentUser,
-    language,
-    messages: intlMessages
-}: Props) => {
+const ActionControls = ({ type, canDelete, canAnnotate, onCreate, onCommentClick, onDelete }: Props) => {
     const isHighlight = isHighlightAnnotation(type);
     const isDrawing = type === TYPES.draw;
-    const canComment = isHighlight && canAnnotate;
 
     return (
-        <Internationalize language={language} messages={intlMessages}>
-            <div className='ba-action-controls'>
-                {!isPending && <AnnotatorLabel id={id} type={type} currentUser={currentUser} />}
-                {!!(isHighlight && canDelete) && (
-                    <PlainButton type='button' className='ba-highlight-btn' onClick={onCreate}>
-                        <IconHighlightAnnotation />
-                    </PlainButton>
-                )}
-                {canComment && (
-                    <PlainButton type='button' className='ba-highlight-comment-btn' onClick={onCommentClick}>
-                        <IconHighlightCommentAnnotation />
-                    </PlainButton>
-                )}
-                {!!(isDrawing && canDelete) && (
-                    <PlainButton type='button' className='ba-drawing-delete-btn' onClick={onCommentClick}>
-                        <IconClose />
-                    </PlainButton>
-                )}
-            </div>
-        </Internationalize>
+        <div className='ba-action-controls'>
+            {isHighlight && (
+                <HighlightControls
+                    canDelete={canDelete}
+                    canAnnotate={canAnnotate}
+                    onCreate={onCreate}
+                    onCommentClick={onCommentClick}
+                />
+            )}
+            {isDrawing && <DrawingControls canDelete={canDelete} onDelete={onDelete} />}
+        </div>
     );
 };
 
-export default injectIntl(ActionControls);
+export default ActionControls;

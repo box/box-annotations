@@ -1,3 +1,4 @@
 export { default as AnnotationExample } from './AnnotationExample';
 export { default as AnnotationListExample } from './AnnotationListExample';
-export { default as ActionControlsExample } from './ActionControlsExample';
+export { default as DrawingControlsExamples } from './DrawingControlsExamples';
+export { default as HighlightControlsExamples } from './HighlightControlsExamples';

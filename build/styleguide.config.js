@@ -16,7 +16,8 @@ module.exports = {
             components: () => [
                 '../src/components/Annotation/Annotation.js',
                 '../src/components/AnnotationList/AnnotationList.js',
-                '../src/components/ActionControls/ActionControls.js'
+                '../src/components/ActionControls/DrawingControls.js',
+                '../src/components/ActionControls/HighlightControls.js'
             ]
         }
     ],
