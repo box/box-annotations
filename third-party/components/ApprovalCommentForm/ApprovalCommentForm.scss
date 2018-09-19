@@ -1,6 +1,6 @@
-@import '../../../src/variables';
-
 .bcs-comment-input-container {
+    @import '../../../src/variables';
+    
     border-top: solid 1px $off-white;
     display: flex;
 

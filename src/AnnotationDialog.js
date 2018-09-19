@@ -203,7 +203,7 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     hide() {
-        if (!this.element || (this.element && this.element.classList.contains(constants.CLASS_HIDDEN))) {
+        if (!this.element || this.element.classList.contains(constants.CLASS_HIDDEN)) {
             return;
         }
 
@@ -529,7 +529,7 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Render the annotation form
+     * Unmount the annotation form
      *
      * @private
      * @return {void}
