@@ -12,6 +12,7 @@ type Props = {
     type: AnnotationType,
     canDelete: boolean,
     canAnnotate: boolean,
+    canComment: boolean,
     onCreate: Function,
     onCommentClick: Function,
     onDelete: Function,
@@ -27,6 +28,7 @@ const SimpleAnnotation = ({
     type,
     canDelete,
     canAnnotate,
+    canComment,
     onCreate,
     onCommentClick,
     onDelete,
@@ -43,6 +45,7 @@ const SimpleAnnotation = ({
                     type={type}
                     canDelete={canDelete}
                     canAnnotate={canAnnotate}
+                    canComment={canComment}
                     onCreate={onCreate}
                     onCommentClick={onCommentClick}
                     onDelete={onDelete}

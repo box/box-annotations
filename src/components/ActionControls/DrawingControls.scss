@@ -1,22 +1,37 @@
 @import '../../variables';
 
 .ba {
+    .ba-action-controls-draw {
+        display: flex;
+    }
+
+    .btn-plain.ba-drawing-save-btn,
     .btn-plain.ba-drawing-delete-btn {
+        align-items: center;
+        display: flex;
         padding-left: 5px;
         padding-right: 5px;
 
-        svg,
-        .icon {
+        .fill-color {
             fill: lighten($better-black, 10%);
         }
     }
 
+    .ba-button-label {
+        color: lighten($better-black, 10%);
+        line-height: 24px;
+
+        &:hover {
+            color: $better-black;
+        }
+    }
+
+    .btn-plain.ba-drawing-save-btn:hover,
     .btn-plain.ba-drawing-delete-btn:hover {
         padding-left: 5px;
         padding-right: 5px;
 
-        svg,
-        .icon {
+        .fill-color {
             fill: $better-black;
         }
     }

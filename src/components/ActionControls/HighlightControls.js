@@ -10,18 +10,20 @@ import './HighlightControls.scss';
 type Props = {
     canDelete: boolean,
     canAnnotate: boolean,
+    canComment: boolean,
     onCreate: Function,
     onCommentClick: Function
 };
 
-const HighlightControls = ({ canDelete, canAnnotate, onCreate, onCommentClick }: Props) => (
+const HighlightControls = ({ canDelete, canAnnotate, canComment, onCreate, onCommentClick }: Props) => (
     <div className='ba-action-controls-highlight'>
-        {canDelete && (
+        {canAnnotate &&
+            canDelete && (
             <PlainButton type='button' className='ba-highlight-btn' onClick={onCreate}>
                 <IconHighlightAnnotation />
             </PlainButton>
         )}
-        {canAnnotate && (
+        {canComment && (
             <PlainButton type='button' className='ba-highlight-comment-btn' onClick={onCommentClick}>
                 <IconHighlightCommentAnnotation />
             </PlainButton>

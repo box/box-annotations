@@ -4,15 +4,20 @@ import React from 'react';
 import ActionControls from 'box-annotations/lib/components/ActionControls';
 
 const onDelete = () => {};
+const onCreate = () => {};
 
 const ActionControlsContainer = (props) => (
     <div className='action-controls-container'>
-        <ActionControls type='draw' canDelete={false} canAnnotate={false} onDelete={onDelete}  {...props}/>
+        <ActionControls type='draw' canDelete={false} canAnnotate={false} onDelete={onDelete} onCreate={onCreate} {...props}/>
     </div>
 );
 
 const DrawingControls = () => (
     <ActionControlsContainer />
+);
+
+const SaveableDrawingControls = () => (
+    <ActionControlsContainer canAnnotate={true} canDelete={true} />
 );
 
 const DeletableDrawingControls = () => (
@@ -22,6 +27,7 @@ const DeletableDrawingControls = () => (
 const DrawingControlsExamples = () => (
     <div className='ba'>
         <DrawingControls />
+        <SaveableDrawingControls />
         <DeletableDrawingControls />
     </div>
 );

@@ -12,12 +12,13 @@ type Props = {
     type: AnnotationType,
     canDelete: boolean,
     canAnnotate: boolean,
+    canComment: boolean,
     onCreate: Function,
     onCommentClick: Function,
     onDelete: Function
 };
 
-const ActionControls = ({ type, canDelete, canAnnotate, onCreate, onCommentClick, onDelete }: Props) => {
+const ActionControls = ({ type, canDelete, canAnnotate, canComment, onCreate, onCommentClick, onDelete }: Props) => {
     const isHighlight = isHighlightAnnotation(type);
     const isDrawing = type === TYPES.draw;
 
@@ -27,11 +28,19 @@ const ActionControls = ({ type, canDelete, canAnnotate, onCreate, onCommentClick
                 <HighlightControls
                     canDelete={canDelete}
                     canAnnotate={canAnnotate}
+                    canComment={canComment}
                     onCreate={onCreate}
                     onCommentClick={onCommentClick}
                 />
             )}
-            {isDrawing && <DrawingControls canDelete={canDelete} onDelete={onDelete} />}
+            {isDrawing && (
+                <DrawingControls
+                    canAnnotate={canAnnotate}
+                    canDelete={canDelete}
+                    onCreate={onCreate}
+                    onDelete={onDelete}
+                />
+            )}
         </div>
     );
 };
