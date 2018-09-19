@@ -11,6 +11,4 @@ const AnnotationFormExample = () => (
     </div>
 );
 
-AnnotationFormExample.displayName = 'AnnotationForm';
-
 export default AnnotationFormExample;

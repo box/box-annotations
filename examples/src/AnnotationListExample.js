@@ -88,6 +88,4 @@ const AnnotationListExamples = () => (
     </div>
 );
 
-AnnotationListExamples.displayName = 'AnnotationListExamples';
-
 export default AnnotationListExamples;

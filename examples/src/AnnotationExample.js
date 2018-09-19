@@ -109,6 +109,4 @@ const AnnnotationExamples = () => (
     </div>
 );
 
-AnnnotationExamples.displayName = 'AnnotationExamples';
-
 export default AnnnotationExamples;
