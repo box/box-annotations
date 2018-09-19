@@ -12,10 +12,6 @@ const ActionControlsContainer = (props) => (
     </div>
 );
 
-const DrawingControls = () => (
-    <ActionControlsContainer />
-);
-
 const SaveableDrawingControls = () => (
     <ActionControlsContainer canAnnotate={true} canDelete={true} />
 );
@@ -26,7 +22,6 @@ const DeletableDrawingControls = () => (
 
 const DrawingControlsExamples = () => (
     <div className='ba'>
-        <DrawingControls />
         <SaveableDrawingControls />
         <DeletableDrawingControls />
     </div>

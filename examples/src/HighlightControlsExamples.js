@@ -8,7 +8,7 @@ const onCommentClick = () => {};
 
 const ActionControlsContainer = (props) => (
     <div className='action-controls-container'>
-        <ActionControls canDelete={false} canAnnotate={false} onCreate={onCreate} onCommentClick={onCommentClick} {...props}/>
+        <ActionControls canAnnotate={false} canDelete={false} canComment={false} onCreate={onCreate} onCommentClick={onCommentClick} {...props}/>
     </div>
 );
 
@@ -20,22 +20,12 @@ const PlainHighlightControls = () => (
     <ActionControlsContainer type='highlight' canAnnotate={true}  />
 );
 
-const DeletablePlainHighlightControls = () => (
-    <ActionControlsContainer type='highlight' canAnnotate={true} canDelete={true}
-    />
-);
-
 const PendingHighlightCommentControls = () => (
-    <ActionControlsContainer isPending={true} type='highlight' canAnnotate={true} />
+    <ActionControlsContainer isPending={true} type='highlight' canAnnotate={true} canComment={true} />
 );
 
 const HighlightCommentControls = () => (
-    <ActionControlsContainer type='highlight-comment' canAnnotate={true} />
-);
-
-const DeletableHighlightCommentControls = () => (
-    <ActionControlsContainer type='highlight' canAnnotate={true} canDelete={true}
-    />
+    <ActionControlsContainer type='highlight-comment' canAnnotate={true} canComment={true} />
 );
 
 
@@ -43,10 +33,8 @@ const HighlightControlsExamples = () => (
     <div className='ba'>
         <PendingPlainHighlightControls />
         <PlainHighlightControls />
-        <DeletablePlainHighlightControls />
         <PendingHighlightCommentControls />
         <HighlightCommentControls />
-        <DeletableHighlightCommentControls />
     </div>
 );
 

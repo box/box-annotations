@@ -30,7 +30,8 @@ const DrawingControls = ({ canAnnotate, canDelete, onCreate, onDelete }: Props) 
 );
 
 DrawingControls.defaultProps = {
-    canDelete: false
+    canDelete: false,
+    canAnnotate: false
 };
 
 export default DrawingControls;

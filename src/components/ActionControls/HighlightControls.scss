@@ -5,11 +5,15 @@
     .btn-plain.ba-highlight-comment-btn {
         padding-left: 5px;
         padding-right: 5px;
+    }
 
-        svg,
-        .icon {
-            fill: lighten($better-black, 10%);
-        }
+    .icon-annotation-highlight,
+    .icon-annotation-highlight-comment .icon {
+        fill: lighten($better-black, 10%);
+    }
+
+    .ba-saved-highlight {
+        fill: $highlight-yellow;
     }
 
     .btn-plain.ba-highlight-btn:hover,
@@ -17,8 +21,12 @@
         padding-left: 5px;
         padding-right: 5px;
 
-        svg,
-        .icon {
+        .ba-saved-highlight {
+            fill: $highlight-yellow-hover;
+        }
+
+        .icon-annotation-highlight,
+        .icon-annotation-highlight-comment .icon {
             fill: $better-black;
         }
     }
