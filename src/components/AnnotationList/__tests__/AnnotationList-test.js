@@ -29,7 +29,7 @@ const annotations = [
     }
 ];
 
-const onDelete = () => console.log('deleted');
+const onDelete = () => jest.fn();
 
 describe('components/AnnotationList', () => {
     test('should correctly render a list of annotation', () => {
