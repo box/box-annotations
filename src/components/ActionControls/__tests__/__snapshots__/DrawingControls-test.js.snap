@@ -6,7 +6,7 @@ exports[`components/ActionControls/DrawingControls should correctly render the d
 >
   <PlainButton
     className="ba-drawing-delete-btn"
-    onClick={[Function]}
+    onClick={[MockFunction]}
     type="button"
   >
     <IconClose />

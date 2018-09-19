@@ -6,7 +6,7 @@ exports[`components/ActionControls should correctly render controls for drawing 
 >
   <DrawingControls
     canDelete={true}
-    onDelete={[Function]}
+    onDelete={[MockFunction]}
   />
 </div>
 `;
@@ -18,8 +18,8 @@ exports[`components/ActionControls should not render controls for highlight comm
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
-    onCommentClick={[Function]}
-    onCreate={[Function]}
+    onCommentClick={[MockFunction]}
+    onCreate={[MockFunction]}
   />
 </div>
 `;
@@ -31,8 +31,8 @@ exports[`components/ActionControls should not render controls for plain highligh
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
-    onCommentClick={[Function]}
-    onCreate={[Function]}
+    onCommentClick={[MockFunction]}
+    onCreate={[MockFunction]}
   />
 </div>
 `;

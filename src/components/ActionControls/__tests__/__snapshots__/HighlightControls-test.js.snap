@@ -6,7 +6,7 @@ exports[`components/ActionControls/HighlightControls should correctly render the
 >
   <PlainButton
     className="ba-highlight-btn"
-    onClick={[Function]}
+    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation
@@ -17,7 +17,7 @@ exports[`components/ActionControls/HighlightControls should correctly render the
   </PlainButton>
   <PlainButton
     className="ba-highlight-comment-btn"
-    onClick={[Function]}
+    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightCommentAnnotation
@@ -35,7 +35,7 @@ exports[`components/ActionControls/HighlightControls should not render the highl
 >
   <PlainButton
     className="ba-highlight-btn"
-    onClick={[Function]}
+    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation
@@ -53,7 +53,7 @@ exports[`components/ActionControls/HighlightControls should not render the highl
 >
   <PlainButton
     className="ba-highlight-comment-btn"
-    onClick={[Function]}
+    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightCommentAnnotation
