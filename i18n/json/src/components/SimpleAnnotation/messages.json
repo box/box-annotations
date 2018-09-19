@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ba.anonymousUserName",
+    "description": "Placeholder when the current annotation's user information is unknown",
+    "defaultMessage": "Some User"
+  },
+  {
+    "id": "ba.whoHighlighted",
+    "description": "Label for who highlighted the annotated text",
+    "defaultMessage": "{name} highlighted"
+  },
+  {
+    "id": "ba.whoDrew",
+    "description": "Label for who drew the drawing annotation",
+    "defaultMessage": "{name} drew"
+  },
+  {
+    "id": "ba.whoAnnotated",
+    "description": "Label for who left the annotation",
+    "defaultMessage": "{name} annotated"
+  }
+]
