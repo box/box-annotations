@@ -5,6 +5,7 @@ import * as util from './util';
 import * as constants from './constants';
 
 import AnnotationList from './components/AnnotationList';
+import AnnotationForm from './components/AnnotationForm';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
@@ -74,6 +75,8 @@ class AnnotationDialog extends EventEmitter {
                 this.annotationListComponent = null;
             }
 
+            this.unmountAnnotationForm();
+
             if (this.element.parentNode) {
                 this.element.parentNode.removeChild(this.element);
             }
@@ -98,13 +101,11 @@ class AnnotationDialog extends EventEmitter {
 
         // Show the appropriate section
         const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
-        const showSectionEl = this.element.querySelector(constants.SECTION_SHOW);
+        const replyContainer = this.element.querySelector(constants.SELECTOR_REPLY_CONTAINER);
         if (!this.hasAnnotations(annotations)) {
-            util.showElement(createSectionEl);
-            util.hideElement(showSectionEl);
+            this.renderAnnotationForm(createSectionEl, this.postAnnotation);
         } else {
-            util.hideElement(createSectionEl);
-            util.showElement(showSectionEl);
+            this.renderAnnotationForm(replyContainer, this.postReply);
         }
 
         // Position and show - we need to reposition every time since
@@ -124,29 +125,18 @@ class AnnotationDialog extends EventEmitter {
             annotationContainerEl
         );
 
-        this.scrollToLastComment(annotations);
+        this.scrollToLastComment();
     }
 
     /**
      * Auto scroll annotations dialog to bottom where new comment was added
      *
-     * @param {Annotations[]} annotations List of annotations
      * @return {void}
      */
-    scrollToLastComment(annotations) {
+    scrollToLastComment() {
         if (!this.element) {
             return;
         }
-
-        // Activate and move cursor in the appropriate text area if not in read-only mode
-        if (this.hasAnnotations(annotations)) {
-            this.activateReply();
-        }
-
-        const textAreaEl = this.hasAnnotations(annotations)
-            ? this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`)
-            : this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        util.focusTextArea(textAreaEl);
 
         const annotationsEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_CONTAINER);
         if (annotationsEl) {
@@ -195,6 +185,8 @@ class AnnotationDialog extends EventEmitter {
             return;
         }
 
+        this.unmountAnnotationForm();
+
         if (this.dialogEl && this.dialogEl.parentNode) {
             this.dialogEl.parentNode.removeChild(this.dialogEl);
         }
@@ -211,7 +203,7 @@ class AnnotationDialog extends EventEmitter {
      * @return {void}
      */
     hide() {
-        if (this.element && this.element.classList.contains(constants.CLASS_HIDDEN)) {
+        if (!this.element || this.element.classList.contains(constants.CLASS_HIDDEN)) {
             return;
         }
 
@@ -219,8 +211,9 @@ class AnnotationDialog extends EventEmitter {
             this.hideMobileDialog();
         }
 
+        this.unmountAnnotationForm();
+
         util.hideElement(this.element);
-        this.deactivateReply();
         this.emit('annotationhide');
 
         // Make sure entire thread icon displays for flipped dialogs
@@ -396,11 +389,6 @@ class AnnotationDialog extends EventEmitter {
             } else {
                 this.cancelAnnotation();
             }
-        } else {
-            const dataType = util.findClosestDataType(event.target);
-            if (dataType === CLASS_REPLY_TEXTAREA) {
-                this.scrollToLastComment();
-            }
         }
     }
 
@@ -427,13 +415,8 @@ class AnnotationDialog extends EventEmitter {
         const dataType = util.findClosestDataType(eventTarget);
 
         switch (dataType) {
-            // Clicking 'Post' button to create an annotation
-            case constants.DATA_TYPE_POST:
-                this.postAnnotation();
-                break;
             // Clicking 'Cancel' button to cancel the annotation OR
             // Clicking 'X' button on mobile dialog to close
-            case constants.DATA_TYPE_CANCEL:
             case constants.DATA_TYPE_MOBILE_CLOSE:
                 // @spramod: is the mobile close button still needed?
                 this.hide();
@@ -443,19 +426,6 @@ class AnnotationDialog extends EventEmitter {
                     this.cancelAnnotation();
                 }
                 break;
-            // Clicking inside reply text area
-            case constants.DATA_TYPE_REPLY_TEXTAREA:
-                this.activateReply();
-                break;
-            // Canceling a reply
-            case constants.DATA_TYPE_CANCEL_REPLY:
-                this.deactivateReply(true);
-                break;
-            // Clicking 'Post' button to create a reply annotation
-            case constants.DATA_TYPE_POST_REPLY:
-                this.postReply();
-                break;
-
             default:
                 break;
         }
@@ -469,57 +439,6 @@ class AnnotationDialog extends EventEmitter {
      */
     cancelAnnotation() {
         this.emit('annotationcancel');
-    }
-
-    /**
-     * Activates reply textarea.
-     *
-     * @private
-     * @return {void}
-     */
-    activateReply() {
-        if (!this.dialogEl) {
-            return;
-        }
-
-        const replyTextEl = this.dialogEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        if (!replyTextEl) {
-            return;
-        }
-
-        // Don't activate if reply textarea is already active
-        const isActive = replyTextEl.classList.contains(constants.CLASS_ACTIVE);
-        replyTextEl.classList.remove(constants.CLASS_INVALID_INPUT);
-        if (isActive) {
-            return;
-        }
-
-        const replyButtonEls = replyTextEl.parentNode.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-        replyTextEl.classList.add(constants.CLASS_ACTIVE);
-        util.showElement(replyButtonEls);
-    }
-
-    /**
-     * Deactivate reply textarea.
-     *
-     * @private
-     * @param {boolean} clearText Whether or not text in text area should be cleared
-     * @return {void}
-     */
-    deactivateReply(clearText) {
-        if (!this.dialogEl) {
-            return;
-        }
-
-        const replyContainerEl = this.dialogEl.querySelector(`.${CLASS_REPLY_CONTAINER}`);
-        if (!replyContainerEl) {
-            return;
-        }
-
-        const replyTextEl = replyContainerEl.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
-        const replyButtonEls = replyContainerEl.querySelector(constants.SELECTOR_BUTTON_CONTAINER);
-        util.resetTextarea(replyTextEl, clearText);
-        util.hideElement(replyButtonEls);
     }
 
     /**
@@ -570,32 +489,6 @@ class AnnotationDialog extends EventEmitter {
                 createSectionEl.classList.add(constants.CLASS_HIDDEN);
             }
             dialogEl.appendChild(createSectionEl);
-
-            const createTextArea = document.createElement('textarea');
-            createTextArea.classList.add(constants.CLASS_TEXTAREA);
-            createTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            createTextArea.placeholder = this.localized.addCommentPlaceholder;
-            createSectionEl.appendChild(createTextArea);
-
-            const createBtnsContainer = document.createElement('div');
-            createBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
-            createSectionEl.appendChild(createBtnsContainer);
-
-            const cancelBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
-                this.localized.cancelButton,
-                this.localized.cancelButton,
-                constants.DATA_TYPE_CANCEL
-            );
-            createBtnsContainer.appendChild(cancelBtn);
-
-            const postBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
-                this.localized.postButton,
-                this.localized.postButton,
-                constants.DATA_TYPE_POST
-            );
-            createBtnsContainer.appendChild(postBtn);
         }
 
         // Show section including the annotations container
@@ -615,38 +508,40 @@ class AnnotationDialog extends EventEmitter {
             const replyContainer = document.createElement('div');
             replyContainer.classList.add(CLASS_REPLY_CONTAINER);
             showSectionEl.appendChild(replyContainer);
-
-            const replyTextArea = document.createElement('textarea');
-            replyTextArea.classList.add(constants.CLASS_TEXTAREA);
-            replyTextArea.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            replyTextArea.classList.add(CLASS_REPLY_TEXTAREA);
-            replyTextArea.placeholder = this.localized.replyPlaceholder;
-            replyTextArea.setAttribute('data-type', constants.DATA_TYPE_REPLY_TEXTAREA);
-            replyContainer.appendChild(replyTextArea);
-
-            const replyBtnsContainer = document.createElement('div');
-            replyBtnsContainer.classList.add(constants.CLASS_BUTTON_CONTAINER);
-            replyBtnsContainer.classList.add(constants.CLASS_HIDDEN);
-            replyContainer.appendChild(replyBtnsContainer);
-
-            const cancelBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_ANNOTATION_BUTTON_CANCEL],
-                this.localized.cancelButton,
-                this.localized.cancelButton,
-                constants.DATA_TYPE_CANCEL_REPLY
-            );
-            replyBtnsContainer.appendChild(cancelBtn);
-
-            const postBtn = util.generateBtn(
-                [constants.CLASS_BUTTON, constants.CLASS_BUTTON_PRIMARY, constants.CLASS_ANNOTATION_BUTTON_POST],
-                this.localized.postButton,
-                this.localized.postButton,
-                constants.DATA_TYPE_POST_REPLY
-            );
-            replyBtnsContainer.appendChild(postBtn);
         }
 
         return dialogEl;
+    }
+
+    /**
+     * Render the annotation form
+     *
+     * @private
+     * @param {HTMLElement} containerEl Container element to bind annotation form to
+     * @param {Function} onCreate method to create annotation
+     * @return {void}
+     */
+    renderAnnotationForm(containerEl, onCreate) {
+        this.annotationFormComponent = render(
+            <AnnotationForm onCreate={({ text }) => onCreate(text)} onCancel={() => this.cancelAnnotation()} />,
+            containerEl
+        );
+    }
+
+    /**
+     * Unmount the annotation form
+     *
+     * @private
+     * @return {void}
+     */
+    unmountAnnotationForm() {
+        const createSectionEl = this.element.querySelector(constants.SECTION_CREATE);
+        const replyContainer = this.element.querySelector(constants.SELECTOR_REPLY_CONTAINER);
+        if (this.annotationFormComponent && createSectionEl && replyContainer) {
+            unmountComponentAtNode(createSectionEl);
+            unmountComponentAtNode(replyContainer);
+            this.annotationFormComponent = null;
+        }
     }
 
     /**

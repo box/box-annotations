@@ -5,7 +5,8 @@
 // $FlowFixMe
 import 'core-js'; // For IE11
 import * as React from 'react';
-import { IntlProvider } from 'react-intl';
+
+import Internationalize from '../src/components/Internationalize';
 
 import './Examples.scss';
 
@@ -14,9 +15,9 @@ type Props = {
 };
 
 const Wrapper = ({ children }: Props) => (
-    <IntlProvider locale='en' textComponent={React.Fragment}>
+    <Internationalize>
         {children}
-    </IntlProvider>
+    </Internationalize>
 );
 
 export default Wrapper;

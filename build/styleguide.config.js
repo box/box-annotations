@@ -13,12 +13,7 @@ module.exports = {
     sections: [
         {
             name: 'Components',
-            components: () => [
-                '../src/components/Annotation/Annotation.js',
-                '../src/components/AnnotationList/AnnotationList.js',
-                '../src/components/ActionControls/DrawingControls.js',
-                '../src/components/ActionControls/HighlightControls.js'
-            ]
+            components: '../src/components/**/[A-Z]*.js'
         }
     ],
     title: `Box Annotations ${version}`,

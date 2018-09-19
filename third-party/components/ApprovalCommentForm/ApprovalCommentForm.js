@@ -21,6 +21,8 @@ import CommentInputControls from './CommentInputControls';
 import Avatar from '../Avatar';
 import messages from '../../messages';
 
+import './ApprovalCommentForm.scss';
+
 type Props = {
     className: string,
     createComment?: Function,

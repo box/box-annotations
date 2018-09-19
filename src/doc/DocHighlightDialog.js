@@ -190,9 +190,6 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.classList.add(constants.CLASS_ANNOTATION_DIALOG);
             util.showElement(this.commentsDialogEl);
             this.hasComments = true;
-            // Activate comments textarea
-            const textAreaEl = this.dialogEl.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-            textAreaEl.classList.add(constants.CLASS_ACTIVE);
         } else {
             // Displays the highlight and comment buttons dialog and
             // hides the comments dialog
@@ -226,12 +223,10 @@ class DocHighlightDialog extends AnnotationDialog {
         if (hasAnnotations) {
             util.hideElement(replyTextEl);
             util.showElement(commentTextEl);
-            this.deactivateReply();
         } else {
             // Ensures that "Reply" text area is shown
             util.hideElement(commentTextEl);
             util.showElement(replyTextEl);
-            this.activateReply();
         }
 
         // Reposition dialog
