@@ -17,7 +17,6 @@ const USER2 = {
 };
 
 const createdAt = '2017-08-27T10:40:41-07:00';
-const IS_TRUE = true;
 
 const onDelete = () => console.log('annotation deleted');
 const onCreate = ({ text }) => console.log(`annotation created with '${text}'`);
@@ -41,7 +40,7 @@ const annotations = [
         message: 'I\'m a princess?',
         permissions: {},
         onDelete,
-        isPending: IS_TRUE
+        isPending: true
     }
 ];
 
@@ -52,11 +51,11 @@ const AnnotationPopoverContainer = (props) => (
 );
 
 const ListPopover = () => (
-    <AnnotationPopoverContainer annotations={annotations} canAnnotate={IS_TRUE} />
+    <AnnotationPopoverContainer annotations={annotations} canAnnotate={true} />
 );
 
 const CreatePopover = () => (
-    <AnnotationPopoverContainer canAnnotate={IS_TRUE} />
+    <AnnotationPopoverContainer annotations={{}} canAnnotate={true} />
 );
 
 const CannotAnnotatePopover = () => (

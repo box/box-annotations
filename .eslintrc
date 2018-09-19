@@ -35,6 +35,7 @@
     },
     "rules": {
         "camelcase": ["off"],
+        "react/jsx-boolean-value": ["off"],
         "react/no-unused-prop-types": ["off"],
         "react/default-props-match-prop-types": ["off", {
             "allowRequiredDefaults": true

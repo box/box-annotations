@@ -25,7 +25,6 @@ type State = {
 };
 
 const NULL_USER = {};
-const IS_EDITING_TRUE = true;
 
 class AnnotationPopover extends React.Component<Props, State> {
     defaultProps = {
@@ -46,7 +45,7 @@ class AnnotationPopover extends React.Component<Props, State> {
 
     hasAnnotations = () => {
         const { annotations } = this.props;
-        return annotations && annotations.length > 0;
+        return annotations.length > 0;
     };
 
     render() {
@@ -62,7 +61,7 @@ class AnnotationPopover extends React.Component<Props, State> {
                             // $FlowFixMe
                             user={NULL_USER}
                             isOpen={isInputOpen}
-                            isEditing={IS_EDITING_TRUE}
+                            isEditing={true}
                             createComment={onCreate}
                             onCancel={onCancel}
                             onSubmit={noop}
