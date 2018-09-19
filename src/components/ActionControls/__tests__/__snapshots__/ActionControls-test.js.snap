@@ -5,7 +5,9 @@ exports[`components/ActionControls should correctly render controls for drawing 
   className="ba-action-controls"
 >
   <DrawingControls
+    canAnnotate={true}
     canDelete={true}
+    onCreate={[MockFunction]}
     onDelete={[MockFunction]}
   />
 </div>
