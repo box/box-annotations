@@ -12,9 +12,9 @@ type Props = {
     type: AnnotationType,
     canDelete: boolean,
     canAnnotate: boolean,
-    onCreate?: Function,
-    onCommentClick?: Function,
-    onDelete?: Function
+    onCreate: Function,
+    onCommentClick: Function,
+    onDelete: Function
 };
 
 const ActionControls = ({ type, canDelete, canAnnotate, onCreate, onCommentClick, onDelete }: Props) => {

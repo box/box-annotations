@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/ActionControls/DrawingControls should correctly render the drawing controls 1`] = `
+<div
+  className="ba-action-controls-draw"
+>
+  <PlainButton
+    className="ba-drawing-delete-btn"
+    onClick={[Function]}
+    type="button"
+  >
+    <IconClose />
+  </PlainButton>
+</div>
+`;
+
+exports[`components/ActionControls/DrawingControls should not render the drawing delete button if the user does not have appropriate permissions 1`] = `
+<div
+  className="ba-action-controls-draw"
+/>
+`;
