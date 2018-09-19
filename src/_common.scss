@@ -113,7 +113,7 @@ $tablet: '(min-width: 768px)';
  **************************************/
 
 .accessibility-hidden {
-    top: auto; /* Some browsers ignore left without a top */
     left: -9999px;
     position: absolute;
+    top: auto; /* Some browsers ignore left without a top */
 }

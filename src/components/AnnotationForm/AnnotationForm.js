@@ -44,6 +44,7 @@ class AnnotationForm extends React.Component<Props, State> {
             <Internationalize language={language} messages={intlMessages}>
                 <ApprovalCommentForm
                     className='ba-annotation-input-container'
+                    // $FlowFixMe
                     user={DUMMY_USER}
                     isOpen={isOpen}
                     isEditing={IS_EDITING}
@@ -51,6 +52,7 @@ class AnnotationForm extends React.Component<Props, State> {
                     onCancel={onCancel}
                     onSubmit={noop}
                     onFocus={noop}
+                    // $FlowFixMe
                     getAvatarUrl={noop}
                     tagged_message={placeholderText}
                 />

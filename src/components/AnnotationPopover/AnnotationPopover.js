@@ -59,6 +59,7 @@ class AnnotationPopover extends React.Component<Props, State> {
                     {canAnnotate && (
                         <ApprovalCommentForm
                             className='ba-annotation-input-container'
+                            // $FlowFixMe
                             user={NULL_USER}
                             isOpen={isInputOpen}
                             isEditing={IS_EDITING_TRUE}
@@ -66,6 +67,7 @@ class AnnotationPopover extends React.Component<Props, State> {
                             onCancel={onCancel}
                             onSubmit={noop}
                             onFocus={noop}
+                            // $FlowFixMe
                             getAvatarUrl={noop}
                         />
                     )}
