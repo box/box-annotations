@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/AnnotationPopover should correctly render the list popover 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover"
+  >
+    <AnnotationList
+      annotations={
+        Array [
+          Object {
+            "createdAt": "2017-09-27T10:40:41-07:00",
+            "createdBy": Object {
+              "email": "princess@genovia.gov",
+              "id": "789ghi",
+              "name": "Mia Thermopolis",
+              "type": "user",
+            },
+            "id": "123",
+            "message": "test",
+            "permissions": Object {},
+          },
+          Object {
+            "createdAt": "2017-09-27T10:40:41-07:00",
+            "createdBy": Object {
+              "email": "princess@genovia.gov",
+              "id": "789ghi",
+              "name": "Mia Thermopolis",
+              "type": "user",
+            },
+            "id": "456",
+            "message": "test",
+            "permissions": Object {},
+          },
+        ]
+      }
+      onDelete={[MockFunction]}
+    />
+    <ApprovalCommentForm
+      className="ba-annotation-input-container"
+      createComment={[MockFunction]}
+      getAvatarUrl={[Function]}
+      isEditing={true}
+      isOpen={true}
+      onCancel={[MockFunction]}
+      onFocus={[Function]}
+      onSubmit={[Function]}
+      user={Object {}}
+    />
+  </Overlay>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should render the create popover 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover"
+  >
+    <ApprovalCommentForm
+      className="ba-annotation-input-container"
+      createComment={[MockFunction]}
+      getAvatarUrl={[Function]}
+      isEditing={true}
+      isOpen={true}
+      onCancel={[MockFunction]}
+      onFocus={[Function]}
+      onSubmit={[Function]}
+      user={Object {}}
+    />
+  </Overlay>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should render the view-only list popover 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover"
+  >
+    <AnnotationList
+      annotations={
+        Array [
+          Object {
+            "createdAt": "2017-09-27T10:40:41-07:00",
+            "createdBy": Object {
+              "email": "princess@genovia.gov",
+              "id": "789ghi",
+              "name": "Mia Thermopolis",
+              "type": "user",
+            },
+            "id": "123",
+            "message": "test",
+            "permissions": Object {},
+          },
+          Object {
+            "createdAt": "2017-09-27T10:40:41-07:00",
+            "createdBy": Object {
+              "email": "princess@genovia.gov",
+              "id": "789ghi",
+              "name": "Mia Thermopolis",
+              "type": "user",
+            },
+            "id": "456",
+            "message": "test",
+            "permissions": Object {},
+          },
+        ]
+      }
+      onDelete={[MockFunction]}
+    />
+  </Overlay>
+</Internationalize>
+`;
