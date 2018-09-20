@@ -20,6 +20,7 @@ exports[`components/ActionControls should not render controls for highlight comm
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
+    isPending={false}
     onCommentClick={[MockFunction]}
     onCreate={[MockFunction]}
   />
@@ -33,6 +34,7 @@ exports[`components/ActionControls should not render controls for plain highligh
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
+    isPending={false}
     onCommentClick={[MockFunction]}
     onCreate={[MockFunction]}
   />

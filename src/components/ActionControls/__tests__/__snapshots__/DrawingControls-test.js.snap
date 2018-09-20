@@ -9,11 +9,10 @@ exports[`components/ActionControls/DrawingControls should correctly render the d
     onClick={[MockFunction]}
     type="button"
   >
-    <FormattedMessage
-      defaultMessage="Delete"
-      id="ba.drawingDeleteLabel"
+    <IconTrash
+      height={18}
+      width={18}
     />
-    <IconClose />
   </PlainButton>
 </div>
 `;

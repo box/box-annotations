@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import SimpleAnnotation from '../SimpleAnnotation';
 
-const IS_TRUE = true;
 const onDelete = jest.fn();
 const onCreate = jest.fn();
 const onCommentClick = jest.fn();
@@ -20,8 +19,8 @@ describe('components/SimpleAnnotation', () => {
         shallow(
             <SimpleAnnotation
                 id='123'
-                canAnnotate={IS_TRUE}
-                canDelete={IS_TRUE}
+                canAnnotate={true}
+                canDelete={true}
                 onCreate={onCreate}
                 onCommentClick={onCommentClick}
                 onDelete={onDelete}

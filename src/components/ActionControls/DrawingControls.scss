@@ -2,35 +2,22 @@
 
 .ba {
     .ba-action-controls-draw {
-        display: flex;
-    }
-
-    .btn-plain.ba-drawing-save-btn,
-    .btn-plain.ba-drawing-delete-btn {
-        align-items: center;
-        display: flex;
-        padding-left: 5px;
         padding-right: 5px;
+
+        & .btn-plain + .btn-plain {
+            padding-left: 5px;
+        }
 
         .fill-color {
             fill: lighten($better-black, 10%);
         }
     }
 
-    .ba-button-label {
-        color: lighten($better-black, 10%);
-        line-height: 24px;
-
-        &:hover {
-            color: $better-black;
-        }
+    .icon-trash {
+        margin: 3px 0;
     }
 
-    .btn-plain.ba-drawing-save-btn:hover,
-    .btn-plain.ba-drawing-delete-btn:hover {
-        padding-left: 5px;
-        padding-right: 5px;
-
+    .ba-action-controls-draw .btn-plain:hover {
         .fill-color {
             fill: $better-black;
         }

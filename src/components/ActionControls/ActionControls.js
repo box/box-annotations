@@ -48,6 +48,7 @@ const ActionControls = ({
                 <DrawingControls
                     canAnnotate={canAnnotate}
                     canDelete={canDelete}
+                    isPending={isPending}
                     onCreate={onCreate}
                     onDelete={onDelete}
                 />
