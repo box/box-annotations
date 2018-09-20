@@ -1,17 +1,14 @@
 @import '../../variables';
 
 .ba {
-    .ba-action-controls-highlight {
+    .ba-action-controls-highlight .btn-plain {
+        padding-left: 5px;
         padding-right: 5px;
-
-        & .btn-plain + .btn-plain {
-            padding-left: 5px;
-        }
     }
 
     .icon-annotation-highlight,
     .icon-annotation-highlight-comment .icon {
-        fill: lighten($better-black, 10%);
+        fill: $sevens;
     }
 
     .ba-saved-highlight {
@@ -19,13 +16,16 @@
     }
 
     .ba-action-controls-highlight .btn-plain:hover {
-        .ba-saved-highlight {
-            fill: $highlight-yellow-hover;
-        }
+        padding-left: 5px;
+        padding-right: 5px;
 
         .icon-annotation-highlight,
         .icon-annotation-highlight-comment .icon {
             fill: $better-black;
+        }
+
+        .icon-annotation-highlight.ba-saved-highlight {
+            fill: $highlight-yellow-hover;
         }
     }
 }

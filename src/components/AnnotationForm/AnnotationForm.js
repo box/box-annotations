@@ -27,7 +27,7 @@ class AnnotationForm extends React.Component<Props, State> {
         isOpen: true
     };
 
-    componentWillMount() {
+    componentDidMount() {
         this.setState({ isOpen: true });
     }
 

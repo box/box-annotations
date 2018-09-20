@@ -1,9 +1,6 @@
 // @flow
 import React from 'react';
 
-import Internationalize from '../Internationalize';
-
-// import './SimpleAnnotation.scss';
 import AnnotatorLabel from './AnnotatorLabel';
 import ActionControls from '../ActionControls';
 
@@ -19,10 +16,7 @@ type Props = {
     onCommentClick: Function,
     onDelete: Function,
     isPending: boolean,
-    user?: User,
-    language?: string,
-    messages?: StringMap,
-    intl: any
+    createdBy: ?User
 };
 
 const SimpleAnnotation = ({
@@ -35,26 +29,22 @@ const SimpleAnnotation = ({
     onCommentClick,
     onDelete,
     isPending,
-    user,
-    language,
-    messages: intlMessages
+    createdBy
 }: Props) => {
     return (
-        <Internationalize language={language} messages={intlMessages}>
-            <div className='ba-annotation-simple'>
-                {!isPending && <AnnotatorLabel id={id} type={type} user={user} />}
-                <ActionControls
-                    type={type}
-                    canDelete={canDelete}
-                    canAnnotate={canAnnotate}
-                    canComment={canComment}
-                    isPending={isPending}
-                    onCreate={onCreate}
-                    onCommentClick={onCommentClick}
-                    onDelete={onDelete}
-                />
-            </div>
-        </Internationalize>
+        <span className='ba-annotation-simple'>
+            {!isPending && <AnnotatorLabel id={id} type={type} createdBy={createdBy} />}
+            <ActionControls
+                type={type}
+                canDelete={canDelete}
+                canAnnotate={canAnnotate}
+                canComment={canComment}
+                isPending={isPending}
+                onCreate={onCreate}
+                onCommentClick={onCommentClick}
+                onDelete={onDelete}
+            />
+        </span>
     );
 };
 

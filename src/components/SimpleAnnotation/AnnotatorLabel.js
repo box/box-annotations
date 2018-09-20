@@ -14,15 +14,15 @@ import messages from './messages';
 type Props = {
     id: string,
     type: AnnotationType,
-    user?: User,
+    createdBy: ?User,
     intl: any
 };
 
 class AnnotatorLabel extends React.PureComponent<Props> {
     getAnnotationLabel() {
-        const { type, user, intl } = this.props;
+        const { type, createdBy, intl } = this.props;
         const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
-        const annotatorName = !!user && !!user.name ? user.name : anonymousUserName;
+        const annotatorName = !!createdBy && !!createdBy.name ? createdBy.name : anonymousUserName;
 
         if (isHighlightAnnotation(type)) {
             return intl.formatMessage(messages.whoHighlighted, { name: annotatorName });

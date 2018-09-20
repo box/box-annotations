@@ -23,9 +23,9 @@ const DrawingControls = ({ isPending, canAnnotate, canDelete, onCreate, onDelete
                 <IconCheck />
             </PlainButton>
         )}
-        {canDelete && (
+        {(canAnnotate || canDelete) && (
             <PlainButton type='button' className='ba-drawing-delete-btn' onClick={onDelete}>
-                <IconTrash height={18} width={18} />
+                <IconTrash height={16} width={16} />
             </PlainButton>
         )}
     </div>

@@ -28,15 +28,15 @@ const AnonymousHighlightCommentAnnotation = () => (
 );
 
 const DrawAnnotation = () => (
-    <SimpleAnnotationContainer type='draw' canAnnotate={true} canDelete={true} user={USER} />
+    <SimpleAnnotationContainer type='draw' canAnnotate={true} canDelete={true} createdBy={USER} />
 );
 
 const PlainHighlightAnnotation = () => (
-    <SimpleAnnotationContainer type='highlight' canAnnotate={true} canDelete={true} user={USER} />
+    <SimpleAnnotationContainer type='highlight' canAnnotate={true} canDelete={true} createdBy={USER} />
 );
 
 const HighlightCommentAnnotation = () => (
-    <SimpleAnnotationContainer type='highlight-comment' canAnnotate={true} canDelete={true} canComment={true} user={USER} />
+    <SimpleAnnotationContainer type='highlight-comment' canAnnotate={true} canDelete={true} canComment={true} createdBy={USER} />
 );
 
 const SimpleAnnotationExamples = () => (

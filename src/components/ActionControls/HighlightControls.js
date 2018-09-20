@@ -39,7 +39,7 @@ class HighlightControls extends React.PureComponent<Props> {
                 )}
                 {canComment && (
                     <PlainButton type='button' className='ba-highlight-comment-btn' onClick={onCommentClick}>
-                        <IconHighlightCommentAnnotation />
+                        <IconHighlightCommentAnnotation height={24} />
                     </PlainButton>
                 )}
             </div>
