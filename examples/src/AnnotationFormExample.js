@@ -1,9 +1,10 @@
 import React from 'react';
 
+/* eslint-disable-next-line */
 import AnnotationForm from 'box-annotations/lib/components/AnnotationForm';
 
-const onCreate = ({ text }) => console.log(`annotation created with '${text}'`);
-const onCancel = () => console.log('annotation canceled');
+const onCreate = () => {};
+const onCancel = () => {};
 
 const AnnotationFormExample = () => (
     <div className='ba'>

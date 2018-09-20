@@ -3,7 +3,6 @@ import { shallow } from 'enzyme';
 
 import ActionControls from '../ActionControls';
 
-const IS_TRUE = true;
 const onDelete = jest.fn();
 const onCreate = jest.fn();
 const onCommentClick = jest.fn();
@@ -12,8 +11,8 @@ describe('components/ActionControls', () => {
     const render = (props = {}) =>
         shallow(
             <ActionControls
-                canAnnotate={IS_TRUE}
-                canDelete={IS_TRUE}
+                canAnnotate={true}
+                canDelete={true}
                 onCreate={onCreate}
                 onCommentClick={onCommentClick}
                 onDelete={onDelete}

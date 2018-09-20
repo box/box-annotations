@@ -3,12 +3,11 @@ import { shallow } from 'enzyme';
 
 import DrawingControls from '../DrawingControls';
 
-const IS_TRUE = true;
 const onDelete = jest.fn();
 
 describe('components/ActionControls/DrawingControls', () => {
     test('should correctly render the drawing controls', () => {
-        const wrapper = shallow(<DrawingControls canDelete={IS_TRUE} onDelete={onDelete} />);
+        const wrapper = shallow(<DrawingControls canDelete={true} onDelete={onDelete} />);
         expect(wrapper).toMatchSnapshot();
     });
 

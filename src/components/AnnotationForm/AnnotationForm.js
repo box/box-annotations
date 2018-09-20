@@ -21,7 +21,6 @@ type State = {
 };
 
 const DUMMY_USER = {};
-const IS_EDITING = true;
 
 class AnnotationForm extends React.Component<Props, State> {
     state = {
@@ -47,7 +46,7 @@ class AnnotationForm extends React.Component<Props, State> {
                     // $FlowFixMe
                     user={DUMMY_USER}
                     isOpen={isOpen}
-                    isEditing={IS_EDITING}
+                    isEditing={true}
                     createComment={onCreate}
                     onCancel={onCancel}
                     onSubmit={noop}

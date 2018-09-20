@@ -1,5 +1,6 @@
 import React from 'react';
 
+/* eslint-disable-next-line */
 import AnnotationPopover from 'box-annotations/lib/components/AnnotationPopover';
 
 const USER1 = {
@@ -18,9 +19,9 @@ const USER2 = {
 
 const createdAt = '2017-08-27T10:40:41-07:00';
 
-const onDelete = () => console.log('annotation deleted');
-const onCreate = ({ text }) => console.log(`annotation created with '${text}'`);
-const onCancel = () => console.log('annotation canceled');
+const onDelete = () => {};
+const onCreate = () => {};
+const onCancel = () => {};
 
 const annotations = [
     {

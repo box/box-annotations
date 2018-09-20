@@ -1,5 +1,6 @@
 import React from 'react';
 
+/* eslint-disable-next-line */
 import Annotation from 'box-annotations/lib/components/Annotation';
 
 const USER1 = {
@@ -24,18 +25,17 @@ const USER3 = {
 };
 
 const DATE = '2017-08-27T10:40:41-07:00';
-const PENDING_TRUE = true;
 
 const ERROR = {
     action: {
-        onAction: () => console.log('action'),
+        onAction: () => {},
         text: 'This does things'
     },
     message: { id: '123', defaultMessage: 'Something happened' },
     title: { id: '456', defaultMessage: 'Uh Oh!' }
 }
 
-const onDelete = () => console.log('annotation deleted');
+const onDelete = () => {};
 
 const AnnotationContainer = (props) => (
     <div className='annotation-container'>
@@ -61,7 +61,7 @@ const PendingAnnotation = () => (
         createdBy={USER2}
         message={'I\'m a princess?'}
         permissions={{}}
-        isPending={PENDING_TRUE}
+        isPending={true}
     />
 );
 
