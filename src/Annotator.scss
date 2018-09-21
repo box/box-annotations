@@ -210,6 +210,7 @@
 
         .ba-annotation-comment-text {
             margin-bottom: 0;
+            word-break: break-all;
 
             & p {
                 margin: 0;
