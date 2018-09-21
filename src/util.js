@@ -401,6 +401,16 @@ export function isHighlightAnnotation(type) {
     return type === TYPES.highlight || type === TYPES.highlight_comment;
 }
 
+/**
+ * Returns whether or not the annotation type is 'draw'
+ *
+ * @param {string} type Annotatation type
+ * @return {boolean} Whether or not annotation is a drawing
+ */
+export function isDrawingAnnotation(type) {
+    return type === TYPES.draw;
+}
+
 //------------------------------------------------------------------------------
 // General Utils
 //------------------------------------------------------------------------------

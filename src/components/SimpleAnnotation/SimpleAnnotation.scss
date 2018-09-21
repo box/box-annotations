@@ -1,0 +1,18 @@
+@import '../../variables';
+
+.ba {
+    .ba-annotation-simple {
+        align-items: center;
+        display: flex;
+    }
+
+    .ba-annotation-label {
+        line-height: 23px;
+        padding: 3px 0;
+    }
+
+    .ba-annotation-label ~ .ba-action-controls {
+        border-left: 1px solid $see-see;
+        margin-left: 5px;
+    }
+}

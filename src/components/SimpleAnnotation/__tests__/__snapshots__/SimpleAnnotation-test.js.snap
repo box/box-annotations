@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/SimpleAnnotation should correctly render a drawing dialog 1`] = `
+<Internationalize>
+  <div
+    className="ba-annotation-simple"
+  >
+    <ActionControls
+      canAnnotate={true}
+      canDelete={true}
+      onCommentClick={[MockFunction]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+      type="draw"
+    />
+  </div>
+</Internationalize>
+`;
+
+exports[`components/SimpleAnnotation should correctly render a highlight dialog 1`] = `
+<Internationalize>
+  <div
+    className="ba-annotation-simple"
+  >
+    <ActionControls
+      canAnnotate={true}
+      canDelete={true}
+      onCommentClick={[MockFunction]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+      type="highlight"
+    />
+  </div>
+</Internationalize>
+`;
+
+exports[`components/SimpleAnnotation should correctly render a pending drawing dialog 1`] = `
+<Internationalize>
+  <div
+    className="ba-annotation-simple"
+  >
+    <ActionControls
+      canAnnotate={true}
+      canDelete={true}
+      onCommentClick={[MockFunction]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+      type="draw"
+    />
+  </div>
+</Internationalize>
+`;
+
+exports[`components/SimpleAnnotation should correctly render a pending highlight dialog 1`] = `
+<Internationalize>
+  <div
+    className="ba-annotation-simple"
+  >
+    <ActionControls
+      canAnnotate={true}
+      canDelete={true}
+      onCommentClick={[MockFunction]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+      type="highlight"
+    />
+  </div>
+</Internationalize>
+`;

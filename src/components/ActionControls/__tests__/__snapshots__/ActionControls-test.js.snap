@@ -5,7 +5,9 @@ exports[`components/ActionControls should correctly render controls for drawing 
   className="ba-action-controls"
 >
   <DrawingControls
+    canAnnotate={true}
     canDelete={true}
+    onCreate={[MockFunction]}
     onDelete={[MockFunction]}
   />
 </div>
@@ -18,6 +20,7 @@ exports[`components/ActionControls should not render controls for highlight comm
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
+    isPending={false}
     onCommentClick={[MockFunction]}
     onCreate={[MockFunction]}
   />
@@ -31,6 +34,7 @@ exports[`components/ActionControls should not render controls for plain highligh
   <HighlightControls
     canAnnotate={true}
     canDelete={true}
+    isPending={false}
     onCommentClick={[MockFunction]}
     onCreate={[MockFunction]}
   />
