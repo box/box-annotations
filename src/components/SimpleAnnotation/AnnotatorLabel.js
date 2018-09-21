@@ -1,15 +1,12 @@
 // @flow
 import React from 'react';
 import { injectIntl } from 'react-intl';
+import get from 'lodash/get';
 
 import CommentText from '../../../third-party/components/Comment/CommentText';
 
-import { TYPES } from '../../constants';
-import { isHighlightAnnotation } from '../../util';
-
+import { isHighlightAnnotation, isDrawingAnnotation } from '../../util';
 import messages from './messages';
-
-// import './AnnotatorLabel.scss';
 
 type Props = {
     id: string,
@@ -19,29 +16,30 @@ type Props = {
 };
 
 class AnnotatorLabel extends React.PureComponent<Props> {
-    getAnnotationLabel() {
+    /**
+     * Return a string describes the action completed by the annotator
+     * @return {string} Localized annotator label message
+     */
+    getAnnotatorLabelMessage() {
         const { type, createdBy, intl } = this.props;
         const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
-        const annotatorName = !!createdBy && !!createdBy.name ? createdBy.name : anonymousUserName;
+        const name = get(createdBy, 'name', anonymousUserName);
 
+        let labelMessage = messages.whoAnnotated;
         if (isHighlightAnnotation(type)) {
-            return intl.formatMessage(messages.whoHighlighted, { name: annotatorName });
+            labelMessage = messages.whoHighlighted;
+        } else if (isDrawingAnnotation(type)) {
+            labelMessage = messages.whoDrew;
         }
 
-        if (type === TYPES.draw) {
-            return intl.formatMessage(messages.whoDrew, { name: annotatorName });
-        }
-
-        return intl.formatMessage(messages.whoAnnotated, { name: annotatorName });
+        return intl.formatMessage(labelMessage, { name });
     }
 
     render() {
         const { id } = this.props;
-        const annotatorLabelMessage = this.getAnnotationLabel();
-
         return (
             <span className='ba-annotation-label'>
-                <CommentText id={id} tagged_message={annotatorLabelMessage} translationEnabled={false} />
+                <CommentText id={id} tagged_message={this.getAnnotatorLabelMessage()} translationEnabled={false} />
             </span>
         );
     }
