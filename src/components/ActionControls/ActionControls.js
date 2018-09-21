@@ -44,9 +44,9 @@ const ActionControls = ({
                     onCommentClick={onCommentClick}
                 />
             )}
-            {isDrawing && (
+            {isDrawing &&
+                canAnnotate && (
                 <DrawingControls
-                    canAnnotate={canAnnotate}
                     canDelete={canDelete}
                     isPending={isPending}
                     onCreate={onCreate}
