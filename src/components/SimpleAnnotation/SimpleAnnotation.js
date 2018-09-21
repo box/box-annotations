@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import noop from 'lodash/noop';
 
 import AnnotatorLabel from './AnnotatorLabel';
 import ActionControls from '../ActionControls';
@@ -46,6 +47,14 @@ const SimpleAnnotation = ({
             />
         </span>
     );
+};
+
+SimpleAnnotation.defaultProps = {
+    canAnnotate: false,
+    canDelete: false,
+    canComment: false,
+    isPending: false,
+    onCommentCick: noop
 };
 
 export default SimpleAnnotation;

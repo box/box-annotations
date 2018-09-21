@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import noop from 'lodash/noop';
 
 import { TYPES } from '../../constants';
 import { isHighlightAnnotation } from '../../util';
@@ -55,6 +56,15 @@ const ActionControls = ({
             )}
         </div>
     );
+};
+
+ActionControls.defaultProps = {
+    canAnnotate: false,
+    canDelete: false,
+    canComment: false,
+    isPending: false,
+    onCommentClick: noop,
+    onDelete: noop
 };
 
 export default ActionControls;

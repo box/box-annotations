@@ -11,7 +11,7 @@ const USER = {
 
 const SimpleAnnotationContainer = (props) => (
     <div className='simple-annotation-container'>
-        <SimpleAnnotation canDelete={false} canAnnotate={false} onDelete={onDelete} onCreate={onCreate} {...props}/>
+        <SimpleAnnotation id='123' canDelete={false} canAnnotate={false} onDelete={onDelete} onCreate={onCreate} {...props}/>
     </div>
 );
 

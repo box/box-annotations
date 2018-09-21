@@ -27,7 +27,10 @@ type State = {
 const NULL_USER = {};
 
 class AnnotationPopover extends React.Component<Props, State> {
-    defaultProps = {
+    static defaultProps = {
+        canAnnotate: false,
+        canDelete: false,
+        canComment: false,
         isPending: false
     };
 
