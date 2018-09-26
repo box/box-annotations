@@ -73,17 +73,17 @@ type User = {
     avatarUrl?: string
 };
 
-type Comment = {
+type CommentProps = {
     id: string, 
     message: string,
     permissions: AnnotationPermissions,
-    createdBy: User, 
+    createdBy?: User, 
     createdAt: string,
-    modifiedAt: string,
-    isPending?: boolean
+    modifiedAt?: string,
+    isPending: boolean
 };
 
-type Comments = Array<Comment>;
+type Comments = Array<CommentProps>;
 
 type BoxFileVersion = {
     id: string,
@@ -93,10 +93,12 @@ type BoxFileVersion = {
 type Annotation = {
     id: string,
     item: BoxFileVersion,
-    type: string,
+    type: AnnotationType,
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
     threadNumber: string,
     comments?: Comments,
     createdBy: User, 
     createdAt: string,
+    canAnnotate: boolean,
+    canDelete: boolean,
 }

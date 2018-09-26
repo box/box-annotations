@@ -29,7 +29,7 @@ const HighlightControls = ({ canAnnotateAndDelete, canComment, onCreate, onComme
         )}
         {canComment && (
             <PlainButton type='button' className='ba-highlight-comment-btn' onClick={onCommentClick}>
-                <IconHighlightCommentAnnotation height={24} />
+                <IconHighlightCommentAnnotation height={24} width={24} />
             </PlainButton>
         )}
     </div>

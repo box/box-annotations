@@ -57,7 +57,7 @@ const comments = [
 
 const AnnotationPopoverContainer = (props) => (
     <div className='annotation-container'>
-        <AnnotationPopover onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} />
+        <AnnotationPopover type='point' isPending={false} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} />
     </div>
 );
 
@@ -65,19 +65,49 @@ const ListPopover = () => (
     <AnnotationPopoverContainer comments={comments} canAnnotate={true} />
 );
 
-const CreatePopover = () => (
-    <AnnotationPopoverContainer comments={{}} canAnnotate={true} />
+const PointCreatePopover = () => (
+    <AnnotationPopoverContainer isPending={true} canAnnotate={true} canDelete={true} />
+);
+
+const HighlightCreatePopover = () => (
+    <AnnotationPopoverContainer type='highlight' isPending={true} canAnnotate={true} canDelete={true} />
+);
+
+const HighlightCommentCreatePopover = () => (
+    <AnnotationPopoverContainer type='highlight-comment' isPending={true} canAnnotate={true} canDelete={true} />
+);
+
+const DrawCreatePopover = () => (
+    <AnnotationPopoverContainer type='draw' isPending={true} canAnnotate={true} canDelete={true} />
 );
 
 const CannotAnnotatePopover = () => (
     <AnnotationPopoverContainer comments={comments} />
 );
 
+const PlainHighlightAnnotation = () => (
+    <AnnotationPopoverContainer type='highlight' isPending={false} canAnnotate={true} canDelete={true} />
+);
+
+const HighlightCommentAnnotation = () => (
+    <AnnotationPopoverContainer type='highlight-comment' isPending={false} canAnnotate={true} canDelete={true} />
+);
+
+const DrawingAnnotation = () => (
+    <AnnotationPopoverContainer type='draw' isPending={false} canAnnotate={true} canDelete={true} />
+);
+
 const AnnotationPopoverExample = () => (
     <div className='ba'>
-        <CreatePopover />
+        <PointCreatePopover />
+        <HighlightCreatePopover />
+        <HighlightCommentCreatePopover />
+        <DrawCreatePopover />
         <CannotAnnotatePopover />
         <ListPopover />
+        <PlainHighlightAnnotation />
+        <HighlightCommentAnnotation />
+        <DrawingAnnotation />
     </div>
 );
 
