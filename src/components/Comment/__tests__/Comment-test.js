@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import Annotation from '../Annotation';
+import Comment from '../Comment';
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
@@ -20,10 +20,10 @@ const annotation = {
     permissions: {}
 };
 
-describe('components/Annotation', () => {
+describe('components/Comment', () => {
     beforeEach(() => {});
 
-    const render = (props = {}) => shallow(<Annotation {...annotation} {...props} />).dive();
+    const render = (props = {}) => shallow(<Comment {...annotation} {...props} />).dive();
 
     test('should correctly render annotation', () => {
         const wrapper = render();

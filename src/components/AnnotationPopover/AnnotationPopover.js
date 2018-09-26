@@ -5,12 +5,12 @@ import Overlay from 'box-react-ui/lib/components/flyout/Overlay';
 import ApprovalCommentForm from '../../../third-party/components/ApprovalCommentForm';
 
 import Internationalize from '../Internationalize';
-import AnnotationList from '../AnnotationList';
+import CommentList from '../CommentList';
 
 import './AnnotationPopover.scss';
 
 type Props = {
-    annotations: Annotations,
+    comments: Comments,
     canAnnotate: boolean,
     onDelete: Function,
     onCancel: Function,
@@ -27,8 +27,9 @@ type State = {
 const NULL_USER = {};
 
 class AnnotationPopover extends React.Component<Props, State> {
-    defaultProps = {
-        isPending: false
+    static defaultProps = {
+        isPending: false,
+        canAnnotate: false
     };
 
     state = {
@@ -43,18 +44,18 @@ class AnnotationPopover extends React.Component<Props, State> {
         this.setState({ isInputOpen: false });
     }
 
-    hasAnnotations = () => {
-        const { annotations } = this.props;
-        return annotations.length > 0;
+    hasCommentAnnotations = () => {
+        const { comments } = this.props;
+        return comments.length > 0;
     };
 
     render() {
-        const { annotations, canAnnotate, onDelete, onCancel, onCreate, language, messages: intlMessages } = this.props;
+        const { comments, canAnnotate, onDelete, onCancel, onCreate, language, messages: intlMessages } = this.props;
         const { isInputOpen } = this.state;
         return (
             <Internationalize language={language} messages={intlMessages}>
                 <Overlay className='ba-annotation-popover'>
-                    {this.hasAnnotations() && <AnnotationList annotations={annotations} onDelete={onDelete} />}
+                    {this.hasCommentAnnotations() && <CommentList comments={comments} onDelete={onDelete} />}
                     {canAnnotate && (
                         <ApprovalCommentForm
                             className='ba-annotation-input-container'

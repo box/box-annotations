@@ -5,14 +5,14 @@ import AnnotationPopover from 'box-annotations/lib/components/AnnotationPopover'
 
 const USER1 = {
     type: 'user',
-    id: '123abc',
+    id: '1',
     name: 'Dominic Toretto',
     email: 'fast@furious.com'
 };
 
 const USER2 = {
     type: 'user',
-    id: '789ghi',
+    id: '4',
     name: 'Mia Thermopolis',
     email: 'princess@genovia.gov'
 };
@@ -23,7 +23,7 @@ const onDelete = () => {};
 const onCreate = () => {};
 const onCancel = () => {};
 
-const annotations = [
+const comments = [
     {
         id: '123def',
         createdAt,
@@ -42,6 +42,16 @@ const annotations = [
         permissions: {},
         onDelete,
         isPending: true
+    },
+    {
+        id: '789ghi',
+        createdAt,
+        createdBy: USER1,
+        message: 'WASSUP',
+        permissions: {
+            can_delete: true
+        },
+        onDelete
     }
 ];
 
@@ -52,15 +62,15 @@ const AnnotationPopoverContainer = (props) => (
 );
 
 const ListPopover = () => (
-    <AnnotationPopoverContainer annotations={annotations} canAnnotate={true} />
+    <AnnotationPopoverContainer comments={comments} canAnnotate={true} />
 );
 
 const CreatePopover = () => (
-    <AnnotationPopoverContainer annotations={{}} canAnnotate={true} />
+    <AnnotationPopoverContainer comments={{}} canAnnotate={true} />
 );
 
 const CannotAnnotatePopover = () => (
-    <AnnotationPopoverContainer annotations={annotations} />
+    <AnnotationPopoverContainer comments={comments} />
 );
 
 const AnnotationPopoverExample = () => (

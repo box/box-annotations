@@ -5,7 +5,7 @@ exports[`components/AnnotationPopover should correctly render the list popover 1
   <Overlay
     className="ba-annotation-popover"
   >
-    <AnnotationList
+    <CommentList
       annotations={
         Array [
           Object {
@@ -76,7 +76,7 @@ exports[`components/AnnotationPopover should render the view-only list popover 1
   <Overlay
     className="ba-annotation-popover"
   >
-    <AnnotationList
+    <CommentList
       annotations={
         Array [
           Object {

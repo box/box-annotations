@@ -9,7 +9,7 @@ import AvatarComponent from 'box-react-ui/lib/components/avatar';
 type Props = {
     user: User,
     className?: string,
-    getAvatarUrl: string => Promise<?string>,
+    getAvatarUrl?: string => Promise<?string>,
 };
 
 type State = {
@@ -39,6 +39,10 @@ class Avatar extends React.PureComponent<Props, State> {
      */
     getAvatarUrl() {
         const { user, getAvatarUrl }: Props = this.props;
+        if (!getAvatarUrl) {
+            return Promise.resolve(user.avatarUrl);
+        }
+
         return getAvatarUrl(user.id).then(this.getAvatarUrlHandler);
     }
 
@@ -47,10 +51,10 @@ class Avatar extends React.PureComponent<Props, State> {
     }
 
     render() {
-        const { user, className }: Props = this.props;
+        const { user, className, getAvatarUrl }: Props = this.props;
         const { avatarUrl }: State = this.state;
 
-        if (!avatarUrl) {
+        if (getAvatarUrl && !avatarUrl) {
             return null;
         }
 

@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/AnnotationList should correctly render a list of annotation 1`] = `
+exports[`components/CommentList should correctly render a list of comments 1`] = `
 <IntlProvider
   locale="en"
   messages={Object {}}
 >
   <ul
-    className="ba-annotation-list"
+    className="ba-comment-list"
   >
     <li
-      className="ba-annotation-list-item"
+      className="ba-comment-list-item"
       key="annotation_123"
     >
-      <_class2
-        createdAt="2017-09-27T10:40:41-07:00"
-        createdBy={
+      <Comment
+        created_at="2017-09-27T10:40:41-07:00"
+        created_by={
           Object {
             "email": "princess@genovia.gov",
             "id": "789ghi",
@@ -23,18 +23,23 @@ exports[`components/AnnotationList should correctly render a list of annotation 
           }
         }
         id="123"
-        message="test"
+        isEditing={false}
         onDelete={[MockFunction]}
-        permissions={Object {}}
+        permissions={
+          Object {
+            "can_comment": false,
+          }
+        }
+        tagged_message="test"
       />
     </li>
     <li
-      className="ba-annotation-list-item"
+      className="ba-comment-list-item"
       key="annotation_456"
     >
-      <_class2
-        createdAt="2017-09-27T10:40:41-07:00"
-        createdBy={
+      <Comment
+        created_at="2017-09-27T10:40:41-07:00"
+        created_by={
           Object {
             "email": "princess@genovia.gov",
             "id": "789ghi",
@@ -43,9 +48,14 @@ exports[`components/AnnotationList should correctly render a list of annotation 
           }
         }
         id="456"
-        message="test"
+        isEditing={false}
         onDelete={[MockFunction]}
-        permissions={Object {}}
+        permissions={
+          Object {
+            "can_comment": false,
+          }
+        }
+        tagged_message="test"
       />
     </li>
   </ul>
