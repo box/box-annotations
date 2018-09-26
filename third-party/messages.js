@@ -41,6 +41,11 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         description:
             'Mentioning call to action displayed below the comment input'
     },
+    commentPostedFullDateTime: {
+        id: 'be.commentPostedFullDateTime',
+        defaultMessage: '{time, date, full} at {time, time, short}',
+        description: 'Comment posted full date time for title'
+    },
     commentCancel: {
         id: 'be.commentCancel',
         defaultMessage: 'Cancel',
@@ -55,6 +60,11 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         id: 'be.commentDeleteConfirm',
         defaultMessage: 'Yes',
         description: 'Button text to confirm comment deletion'
+    },
+    commentDeletePrompt: {
+        id: 'be.commentDeletePrompt',
+        defaultMessage: 'Delete comment?',
+        description: 'Confirmation prompt text to delete comment'
     },
     commentPost: {
         id: 'be.commentPost',

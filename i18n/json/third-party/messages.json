@@ -30,6 +30,11 @@
     "defaultMessage": "@mention users to notify them."
   },
   {
+    "id": "be.commentPostedFullDateTime",
+    "description": "Comment posted full date time for title",
+    "defaultMessage": "{time, date, full} at {time, time, short}"
+  },
+  {
     "id": "be.commentCancel",
     "description": "Text for cancel button",
     "defaultMessage": "Cancel"
@@ -43,6 +48,11 @@
     "id": "be.commentDeleteConfirm",
     "description": "Button text to confirm comment deletion",
     "defaultMessage": "Yes"
+  },
+  {
+    "id": "be.commentDeletePrompt",
+    "description": "Confirmation prompt text to delete comment",
+    "defaultMessage": "Delete comment?"
   },
   {
     "id": "be.commentPost",

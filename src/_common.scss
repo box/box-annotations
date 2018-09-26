@@ -1,9 +1,5 @@
 @import './variables';
 
-$highlight-yellow: #fed94e;
-$highlight-yellow-active-hover: #ffc900;
-$highlight-yellow-hover: #f5b31b;
-
 // Taken from Box React UI avatar
 $avatar-color-1: #18bbf7;
 $avatar-color-2: #0d67c7;
@@ -46,6 +42,7 @@ $tablet: '(min-width: 768px)';
     box-sizing: border-box !important;
     /* stylelint-enable declaration-no-important */
     color: $twos;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     height: 100%;
     letter-spacing: .3px;
     line-height: 20px;
@@ -54,7 +51,6 @@ $tablet: '(min-width: 768px)';
     overflow: hidden;
     padding: 0;
     user-select: none;
-    width: 100%;
 
     .ReactModal__Body--open & {
         position: relative;

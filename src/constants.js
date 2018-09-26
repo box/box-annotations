@@ -294,3 +294,9 @@ export const DRAW_RENDER_THRESHOLD = 16.67; // 60 FPS target using 16.667ms/fram
 export const DRAW_BASE_LINE_WIDTH = 3;
 export const BORDER_OFFSET = 5;
 export const DRAW_DASHED_SPACING = 5;
+
+export const PLACEHOLDER_USER = {
+    type: 'user',
+    id: '0',
+    email: ''
+};

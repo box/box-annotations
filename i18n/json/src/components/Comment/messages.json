@@ -1,0 +1,7 @@
+[
+  {
+    "id": "ba.anonymousUserName",
+    "description": "Placeholder when the current annotation's user information is unknown",
+    "defaultMessage": "Some User"
+  }
+]
