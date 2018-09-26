@@ -9,7 +9,10 @@ exports[`components/ActionControls/DrawingControls should correctly render the d
     onClick={[MockFunction]}
     type="button"
   >
-    <IconClose />
+    <IconTrash
+      height={16}
+      width={16}
+    />
   </PlainButton>
 </div>
 `;

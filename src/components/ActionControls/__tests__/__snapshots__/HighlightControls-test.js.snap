@@ -6,24 +6,14 @@ exports[`components/ActionControls/HighlightControls should correctly render the
 >
   <PlainButton
     className="ba-highlight-btn"
+    isDisabled={false}
     onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation
-      className=""
+      className="ba-saved-highlight"
       height={24}
       width={24}
-    />
-  </PlainButton>
-  <PlainButton
-    className="ba-highlight-comment-btn"
-    onClick={[MockFunction]}
-    type="button"
-  >
-    <IconHighlightCommentAnnotation
-      className=""
-      height={20}
-      width={20}
     />
   </PlainButton>
 </div>
@@ -35,11 +25,12 @@ exports[`components/ActionControls/HighlightControls should not render the highl
 >
   <PlainButton
     className="ba-highlight-btn"
+    isDisabled={false}
     onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation
-      className=""
+      className="ba-saved-highlight"
       height={24}
       width={24}
     />
@@ -50,17 +41,5 @@ exports[`components/ActionControls/HighlightControls should not render the highl
 exports[`components/ActionControls/HighlightControls should not render the highlight comment button if the user cannot annotate 1`] = `
 <div
   className="ba-action-controls-highlight"
->
-  <PlainButton
-    className="ba-highlight-comment-btn"
-    onClick={[MockFunction]}
-    type="button"
-  >
-    <IconHighlightCommentAnnotation
-      className=""
-      height={20}
-      width={20}
-    />
-  </PlainButton>
-</div>
+/>
 `;

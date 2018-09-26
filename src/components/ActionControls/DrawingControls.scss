@@ -1,22 +1,24 @@
 @import '../../variables';
 
 .ba {
-    .btn-plain.ba-drawing-delete-btn {
+    .ba-action-controls-draw .btn-plain {
         padding-left: 5px;
         padding-right: 5px;
 
-        svg,
-        .icon {
-            fill: lighten($better-black, 10%);
+        .fill-color {
+            fill: $sevens;
         }
     }
 
-    .btn-plain.ba-drawing-delete-btn:hover {
+    .icon-trash {
+        margin: 3px 0;
+    }
+
+    .ba-action-controls-draw .btn-plain:hover {
         padding-left: 5px;
         padding-right: 5px;
 
-        svg,
-        .icon {
+        .fill-color {
             fill: $better-black;
         }
     }

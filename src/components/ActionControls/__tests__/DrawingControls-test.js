@@ -7,7 +7,7 @@ const onDelete = jest.fn();
 
 describe('components/ActionControls/DrawingControls', () => {
     test('should correctly render the drawing controls', () => {
-        const wrapper = shallow(<DrawingControls canDelete={true} onDelete={onDelete} />);
+        const wrapper = shallow(<DrawingControls canAnnotate={false} canDelete={true} onDelete={onDelete} />);
         expect(wrapper).toMatchSnapshot();
     });
 
