@@ -10,7 +10,7 @@ import CommentList from '../CommentList';
 import './AnnotationPopover.scss';
 
 type Props = {
-    comments: Comments,
+    comments?: Comments,
     canAnnotate: boolean,
     onDelete: Function,
     onCancel: Function,
@@ -46,7 +46,7 @@ class AnnotationPopover extends React.Component<Props, State> {
 
     hasCommentAnnotations = () => {
         const { comments } = this.props;
-        return comments.length > 0;
+        return comments && comments.length > 0;
     };
 
     render() {

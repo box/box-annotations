@@ -96,7 +96,7 @@ type Annotation = {
     type: string,
     location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
     threadNumber: string,
-    comments: Comments,
+    comments?: Comments,
     createdBy: User, 
     createdAt: string,
 }

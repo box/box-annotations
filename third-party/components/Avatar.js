@@ -25,6 +25,7 @@ class Avatar extends React.PureComponent<Props, State> {
      * Success handler for getting avatar url
      *
      * @param {string} avatarUrl the user avatar url
+     * @return {void}
      */
     getAvatarUrlHandler = (avatarUrl: ?string) => {
         this.setState({
@@ -40,7 +41,7 @@ class Avatar extends React.PureComponent<Props, State> {
     getAvatarUrl() {
         const { user, getAvatarUrl }: Props = this.props;
         if (!getAvatarUrl) {
-            return Promise.resolve(user.avatarUrl);
+            return Promise.resolve(user.avatarUrl).then(this.getAvatarUrlHandler);
         }
 
         return getAvatarUrl(user.id).then(this.getAvatarUrlHandler);

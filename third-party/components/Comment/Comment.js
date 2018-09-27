@@ -30,7 +30,7 @@ import { PLACEHOLDER_USER } from '../../../src/constants';
 const ONE_HOUR_MS = 3600000; // 60 * 60 * 1000
 
 type Props = {
-    created_by: User,
+    created_by?: User,
     created_at: string | number,
     is_reply_comment?: boolean,
     modified_at?: string | number,

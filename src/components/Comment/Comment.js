@@ -30,15 +30,13 @@ class Comment extends React.PureComponent<Props> {
 
     render() {
         const { id, isPending, error, createdAt, modifiedAt, message, onDelete, permissions, createdBy } = this.props;
-        const createdByUser = createdBy && createdBy.name ? createdBy : PLACEHOLDER_USER;
-
         return (
             <CommentComponent
                 id={id}
                 currentUser={PLACEHOLDER_USER}
                 onDelete={onDelete}
                 created_at={createdAt}
-                created_by={createdByUser}
+                created_by={createdBy}
                 modified_at={modifiedAt}
                 tagged_message={message}
                 permissions={{ ...permissions }}
