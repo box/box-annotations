@@ -68,41 +68,35 @@ type DrawingLocationInfo = {
 type User = {
     type: 'user',
     id: string,
-    name: string,
     email: string,
-    avatarUrl: string
+    name?: string,
+    avatarUrl?: string
 };
 
-type AnnotationDetails = {
-    threadID: string,
-    type: string,
-    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo
-};
-
-type Annotation = {
+type Comment = {
     id: string, 
     message: string,
     permissions: AnnotationPermissions,
-    details: AnnotationDetails,
     createdBy: User, 
     createdAt: string,
-    modifiedBy?: string,
+    modifiedAt: string,
     isPending?: boolean
 };
 
-type Annotations = Array<Annotation>;
+type Comments = Array<Comment>;
 
 type BoxFileVersion = {
     id: string,
     type: 'file_version'
 };
 
-type AnnotationThread = {
+type Annotation = {
+    id: string,
     item: BoxFileVersion,
+    type: string,
+    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
     threadNumber: string,
-    annotations: Annotations
+    comments?: Comments,
+    createdBy: User, 
+    createdAt: string,
 }
-
-type PointAnnotation = PointLocationInfo & Annotation;
-type HighlightAnnotation = HighlightLocationInfo & Annotation;
-type DrawAnnotation = DrawingLocationInfo & Annotation;

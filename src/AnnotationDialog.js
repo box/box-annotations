@@ -4,7 +4,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import * as util from './util';
 import * as constants from './constants';
 
-import AnnotationList from './components/AnnotationList';
+import CommentList from './components/CommentList';
 import AnnotationForm from './components/AnnotationForm';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -70,9 +70,9 @@ class AnnotationDialog extends EventEmitter {
             this.unbindDOMListeners();
 
             const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
-            if (this.annotationListComponent && annotationContainerEl) {
+            if (this.commentListComponent && annotationContainerEl) {
                 unmountComponentAtNode(annotationContainerEl);
-                this.annotationListComponent = null;
+                this.commentListComponent = null;
             }
 
             this.unmountAnnotationForm();
@@ -120,8 +120,8 @@ class AnnotationDialog extends EventEmitter {
         const annotationContainerEl = this.dialogEl.querySelector(`.${CLASS_COMMENTS_CONTAINER}`);
         const annotationsWithComments = annotations.filter(({ type }) => type !== constants.TYPES.highlight);
 
-        this.annotationListComponent = render(
-            <AnnotationList annotations={annotationsWithComments} onDelete={this.emitAnnotationDelete} />,
+        this.commentListComponent = render(
+            <CommentList comments={annotationsWithComments} onDelete={this.emitAnnotationDelete} />,
             annotationContainerEl
         );
 
