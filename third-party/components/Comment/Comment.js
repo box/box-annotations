@@ -30,7 +30,7 @@ import { PLACEHOLDER_USER } from '../../../src/constants';
 const ONE_HOUR_MS = 3600000; // 60 * 60 * 1000
 
 type Props = {
-    created_by: User,
+    created_by?: User,
     created_at: string | number,
     is_reply_comment?: boolean,
     modified_at?: string | number,
@@ -48,7 +48,7 @@ type Props = {
     isDisabled?: boolean,
     mentionSelectorContacts?: SelectorItems,
     getMentionWithQuery?: Function,
-    getAvatarUrl: string => Promise<?string>,
+    getAvatarUrl?: string => Promise<?string>,
     getUserProfileUrl?: string => Promise<string>,
 };
 
@@ -119,6 +119,7 @@ class Comment extends React.Component<Props, State> {
         const canDelete = getProp(permissions, 'can_delete', false);
         const canEdit = getProp(permissions, 'can_edit', false);
         const createdByUser = created_by || PLACEHOLDER_USER;
+        const noopAvatarUrl = () => Promise.resolve();
 
         return (
             <div className="bcs-comment-container">
@@ -198,7 +199,7 @@ class Comment extends React.Component<Props, State> {
                                     true,
                                     getUserProfileUrl,
                                 )}
-                                getAvatarUrl={getAvatarUrl}
+                                getAvatarUrl={getAvatarUrl || noopAvatarUrl}
                                 mentionSelectorContacts={
                                     mentionSelectorContacts
                                 }

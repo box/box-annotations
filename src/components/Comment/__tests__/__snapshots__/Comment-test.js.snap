@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Comment should correctly render annotation 1`] = `
+<div
+  className="bcs-comment-container"
+>
+  <div
+    className="bcs-comment"
+    onBlur={[Function]}
+    onFocus={[Function]}
+  >
+    <Avatar
+      className="bcs-comment-avatar"
+      user={
+        Object {
+          "email": "princess@genovia.gov",
+          "id": "789ghi",
+          "name": "Mia Thermopolis",
+          "type": "user",
+        }
+      }
+    />
+    <div
+      className="bcs-comment-content"
+    >
+      <div
+        className="bcs-comment-headline"
+      >
+        <UserLink
+          className="bcs-comment-user-name"
+          data-resin-target="activityfeed-profilelink"
+          id="789ghi"
+          name="Mia Thermopolis"
+        />
+        <Tooltip
+          constrainToScrollParent={false}
+          constrainToWindow={true}
+          position="top-center"
+          text={
+            <FormattedMessage
+              defaultMessage="{time, date, full} at {time, time, short}"
+              id="be.commentPostedFullDateTime"
+              values={
+                Object {
+                  "time": 1506534041000,
+                }
+              }
+            />
+          }
+          theme="default"
+        >
+          <small
+            className="bcs-comment-created-at"
+          >
+            <ReadableTime
+              relativeThreshold={3600000}
+              timestamp={1506534041000}
+            />
+          </small>
+        </Tooltip>
+      </div>
+      <CommentText
+        id="123"
+        tagged_message="test"
+        translationEnabled={false}
+        translationFailed={null}
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`components/Comment should render an error when one is defined 1`] = `
+<div
+  className="bcs-comment-container"
+>
+  <div
+    className="bcs-comment bcs-is-pending"
+    onBlur={[Function]}
+    onFocus={[Function]}
+  >
+    <Avatar
+      className="bcs-comment-avatar"
+      user={
+        Object {
+          "email": "princess@genovia.gov",
+          "id": "789ghi",
+          "name": "Mia Thermopolis",
+          "type": "user",
+        }
+      }
+    />
+    <div
+      className="bcs-comment-content"
+    >
+      <div
+        className="bcs-comment-headline"
+      >
+        <UserLink
+          className="bcs-comment-user-name"
+          data-resin-target="activityfeed-profilelink"
+          id="789ghi"
+          name="Mia Thermopolis"
+        />
+        <Tooltip
+          constrainToScrollParent={false}
+          constrainToWindow={true}
+          position="top-center"
+          text={
+            <FormattedMessage
+              defaultMessage="{time, date, full} at {time, time, short}"
+              id="be.commentPostedFullDateTime"
+              values={
+                Object {
+                  "time": 1506534041000,
+                }
+              }
+            />
+          }
+          theme="default"
+        >
+          <small
+            className="bcs-comment-created-at"
+          >
+            <ReadableTime
+              relativeThreshold={3600000}
+              timestamp={1506534041000}
+            />
+          </small>
+        </Tooltip>
+      </div>
+      <CommentText
+        id="123"
+        tagged_message="test"
+        translationEnabled={false}
+        translationFailed={true}
+      />
+    </div>
+  </div>
+  <CommentInlineError
+    message="errorrrrr"
+    title="error"
+  />
+</div>
+`;

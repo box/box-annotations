@@ -583,7 +583,7 @@ describe('doc/DocHighlightDialog', () => {
             dialog.dialogEl = {
                 querySelector: jest.fn().mockReturnValue(textarea)
             };
-            dialog.annotationListComponent = null;
+            dialog.commentListComponent = null;
         });
 
         it('should focus the add comment area if it exists', () => {

@@ -1,0 +1,25 @@
+.ba {
+    @import '../../variables.scss';
+
+    .ba-comment-list {
+        width: 100%;
+    }
+
+    .ba-comment-list-item {
+        @import '~box-react-ui/lib/styles/common/inline-notifications';
+
+        list-style: none;
+        margin-bottom: 15px; // Matches spacing of activity feed items in UI Elements
+    }
+
+    // Spaces comment elements from each other and the dividing border
+    // Adds extra spacing above consecutive annotations as well
+    .ba-comment-list-item + .ba-comment-list-item {
+        border-top: 1px solid $seesee;
+        padding-top: 15px;
+    }
+
+    .bcs-comment {
+        margin: 0;
+    }
+}

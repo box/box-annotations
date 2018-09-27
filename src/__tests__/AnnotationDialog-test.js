@@ -123,7 +123,7 @@ describe('AnnotationDialog', () => {
                 })
             ];
             dialog.show(annotations);
-            expect(dialog.annotationListComponent).not.toBeUndefined();
+            expect(dialog.commentListComponent).not.toBeUndefined();
         });
     });
 

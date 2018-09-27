@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/AnnotationList should correctly render a list of annotation 1`] = `
+exports[`components/CommentList should correctly render a list of comments 1`] = `
 <IntlProvider
   locale="en"
   messages={Object {}}
 >
   <ul
-    className="ba-annotation-list"
+    className="ba-comment-list"
   >
     <li
-      className="ba-annotation-list-item"
+      className="ba-comment-list-item"
       key="annotation_123"
     >
-      <_class2
+      <Comment
         createdAt="2017-09-27T10:40:41-07:00"
         createdBy={
           Object {
@@ -23,16 +23,17 @@ exports[`components/AnnotationList should correctly render a list of annotation 
           }
         }
         id="123"
+        isPending={false}
         message="test"
         onDelete={[MockFunction]}
         permissions={Object {}}
       />
     </li>
     <li
-      className="ba-annotation-list-item"
+      className="ba-comment-list-item"
       key="annotation_456"
     >
-      <_class2
+      <Comment
         createdAt="2017-09-27T10:40:41-07:00"
         createdBy={
           Object {
@@ -43,6 +44,7 @@ exports[`components/AnnotationList should correctly render a list of annotation 
           }
         }
         id="456"
+        isPending={false}
         message="test"
         onDelete={[MockFunction]}
         permissions={Object {}}

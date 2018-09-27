@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import AnnotationList from '../AnnotationList';
+import CommentList from '../CommentList';
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
@@ -12,7 +12,7 @@ const USER = {
     email: 'princess@genovia.gov'
 };
 
-const annotations = [
+const comments = [
     {
         id: '123',
         createdAt: TIME_STRING_SEPT_27_2017,
@@ -31,10 +31,10 @@ const annotations = [
 
 const onDelete = jest.fn();
 
-describe('components/AnnotationList', () => {
-    test('should correctly render a list of annotation', () => {
-        const wrapper = shallow(<AnnotationList annotations={annotations} onDelete={onDelete} />).dive();
+describe('components/CommentList', () => {
+    test('should correctly render a list of comments', () => {
+        const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />).dive();
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-annotation-list-item').length).toEqual(2);
+        expect(wrapper.find('.ba-comment-list-item').length).toEqual(2);
     });
 });
