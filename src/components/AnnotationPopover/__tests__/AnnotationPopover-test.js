@@ -16,7 +16,7 @@ const USER = {
     email: 'princess@genovia.gov'
 };
 
-const annotations = [
+const comments = [
     {
         id: '123',
         createdAt: TIME_STRING_SEPT_27_2017,
@@ -49,7 +49,7 @@ describe('components/AnnotationPopover', () => {
     test('should correctly render the list popover', () => {
         const wrapper = render({
             canAnnotate: true,
-            annotations
+            comments
         });
         expect(wrapper).toMatchSnapshot();
     });
@@ -57,14 +57,14 @@ describe('components/AnnotationPopover', () => {
     test('should render the create popover', () => {
         const wrapper = render({
             canAnnotate: true,
-            annotations: []
+            comments: []
         });
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render the view-only list popover', () => {
         const wrapper = render({
-            annotations
+            comments
         });
         expect(wrapper).toMatchSnapshot();
     });

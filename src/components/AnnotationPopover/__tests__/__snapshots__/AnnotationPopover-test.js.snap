@@ -6,7 +6,7 @@ exports[`components/AnnotationPopover should correctly render the list popover 1
     className="ba-annotation-popover"
   >
     <CommentList
-      annotations={
+      comments={
         Array [
           Object {
             "createdAt": "2017-09-27T10:40:41-07:00",
@@ -77,7 +77,7 @@ exports[`components/AnnotationPopover should render the view-only list popover 1
     className="ba-annotation-popover"
   >
     <CommentList
-      annotations={
+      comments={
         Array [
           Object {
             "createdAt": "2017-09-27T10:40:41-07:00",

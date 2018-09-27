@@ -13,8 +13,8 @@ exports[`components/CommentList should correctly render a list of comments 1`] =
       key="annotation_123"
     >
       <Comment
-        created_at="2017-09-27T10:40:41-07:00"
-        created_by={
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
           Object {
             "email": "princess@genovia.gov",
             "id": "789ghi",
@@ -23,14 +23,10 @@ exports[`components/CommentList should correctly render a list of comments 1`] =
           }
         }
         id="123"
-        isEditing={false}
+        isPending={false}
+        message="test"
         onDelete={[MockFunction]}
-        permissions={
-          Object {
-            "can_comment": false,
-          }
-        }
-        tagged_message="test"
+        permissions={Object {}}
       />
     </li>
     <li
@@ -38,8 +34,8 @@ exports[`components/CommentList should correctly render a list of comments 1`] =
       key="annotation_456"
     >
       <Comment
-        created_at="2017-09-27T10:40:41-07:00"
-        created_by={
+        createdAt="2017-09-27T10:40:41-07:00"
+        createdBy={
           Object {
             "email": "princess@genovia.gov",
             "id": "789ghi",
@@ -48,14 +44,10 @@ exports[`components/CommentList should correctly render a list of comments 1`] =
           }
         }
         id="456"
-        isEditing={false}
+        isPending={false}
+        message="test"
         onDelete={[MockFunction]}
-        permissions={
-          Object {
-            "can_comment": false,
-          }
-        }
-        tagged_message="test"
+        permissions={Object {}}
       />
     </li>
   </ul>
