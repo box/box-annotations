@@ -25,9 +25,11 @@ const ActionControls = ({ type, canDelete, canComment, onCreate, onCommentClick,
 
     return (
         <div className='ba-action-controls'>
-            {isHighlight && (
+            {isHighlight &&
+                canComment &&
+                canDelete && (
                 <HighlightControls
-                    canDelete={canDelete}
+                    canAnnotateAndDelete={canDelete}
                     canComment={canComment}
                     isPending={isPending}
                     onCreate={onCreate}

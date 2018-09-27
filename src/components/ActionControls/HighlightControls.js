@@ -9,16 +9,16 @@ import IconHighlightCommentAnnotation from 'box-react-ui/lib/icons/annotations/I
 import './HighlightControls.scss';
 
 type Props = {
-    canDelete: boolean,
+    canAnnotateAndDelete: boolean,
     canComment: boolean,
     isPending?: boolean,
     onCreate: Function,
     onCommentClick: Function
 };
 
-const HighlightControls = ({ canDelete, canComment, onCreate, onCommentClick, isPending }: Props) => (
+const HighlightControls = ({ canAnnotateAndDelete, canComment, onCreate, onCommentClick, isPending }: Props) => (
     <div className='ba-action-controls-highlight'>
-        {canDelete && (
+        {canAnnotateAndDelete && (
             <PlainButton type='button' className='ba-highlight-btn' onClick={onCreate} isDisabled={isPending}>
                 <IconHighlightAnnotation
                     className={classNames({
@@ -36,7 +36,7 @@ const HighlightControls = ({ canDelete, canComment, onCreate, onCommentClick, is
 );
 
 HighlightControls.defaultProps = {
-    canDelete: false,
+    canAnnotateAndDelete: false,
     isPending: false
 };
 

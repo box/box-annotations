@@ -12,19 +12,19 @@ describe('components/ActionControls/HighlightControls', () => {
 
     test('should correctly render the drawing controls', () => {
         const wrapper = render({
-            canDelete: true,
-            canAnnotate: true
+            canAnnotateAndDelete: true,
+            canComment: true
         });
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should not render the highlight button if the user cannot delete', () => {
-        const wrapper = render({ canDelete: true });
+        const wrapper = render({ canComment: true });
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should not render the highlight comment button if the user cannot annotate', () => {
-        const wrapper = render({ canAnnotate: true });
+        const wrapper = render({ canAnnotateAndDelete: true });
         expect(wrapper).toMatchSnapshot();
     });
 });

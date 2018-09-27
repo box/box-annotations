@@ -16,10 +16,39 @@ exports[`components/ActionControls/HighlightControls should correctly render the
       width={24}
     />
   </PlainButton>
+  <PlainButton
+    className="ba-highlight-comment-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightCommentAnnotation
+      className=""
+      height={24}
+      width={20}
+    />
+  </PlainButton>
 </div>
 `;
 
 exports[`components/ActionControls/HighlightControls should not render the highlight button if the user cannot delete 1`] = `
+<div
+  className="ba-action-controls-highlight"
+>
+  <PlainButton
+    className="ba-highlight-comment-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightCommentAnnotation
+      className=""
+      height={24}
+      width={20}
+    />
+  </PlainButton>
+</div>
+`;
+
+exports[`components/ActionControls/HighlightControls should not render the highlight comment button if the user cannot annotate 1`] = `
 <div
   className="ba-action-controls-highlight"
 >
@@ -36,10 +65,4 @@ exports[`components/ActionControls/HighlightControls should not render the highl
     />
   </PlainButton>
 </div>
-`;
-
-exports[`components/ActionControls/HighlightControls should not render the highlight comment button if the user cannot annotate 1`] = `
-<div
-  className="ba-action-controls-highlight"
-/>
 `;

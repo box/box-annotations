@@ -16,27 +16,11 @@ exports[`components/ActionControls should correctly render controls for drawing 
 exports[`components/ActionControls should not render controls for highlight comment annotations 1`] = `
 <div
   className="ba-action-controls"
->
-  <HighlightControls
-    canComment={false}
-    canDelete={true}
-    isPending={false}
-    onCommentClick={[MockFunction]}
-    onCreate={[MockFunction]}
-  />
-</div>
+/>
 `;
 
 exports[`components/ActionControls should not render controls for plain highlight annotations 1`] = `
 <div
   className="ba-action-controls"
->
-  <HighlightControls
-    canComment={false}
-    canDelete={true}
-    isPending={false}
-    onCommentClick={[MockFunction]}
-    onCreate={[MockFunction]}
-  />
-</div>
+/>
 `;
