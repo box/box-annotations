@@ -95,8 +95,8 @@ describe('controllers/AnnotationModeController', () => {
         it('should return the annotation mode button', () => {
             const buttonEl = document.createElement('button');
             buttonEl.classList.add('class');
-            controller.container = document.createElement('div');
-            controller.container.appendChild(buttonEl);
+            controller.headerElement = document.createElement('div');
+            controller.headerElement.appendChild(buttonEl);
 
             expect(controller.getButton('.class')).not.toBeNull();
         });
@@ -178,7 +178,7 @@ describe('controllers/AnnotationModeController', () => {
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.exit, expect.any(Object));
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.emit).toBeCalledWith('binddomlisteners');
-            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
+            expect(util.replaceHeader).toBeCalledWith(controller.headerElement, SELECTOR_BOX_PREVIEW_BASE_HEADER);
         });
     });
 

@@ -106,6 +106,12 @@ class Annotator extends EventEmitter {
             this.container = document.querySelector(this.options.container);
         }
 
+        // Get the header dom element if selector was passed, in tests
+        this.headerElement = this.options.headerElement;
+        if (typeof this.options.headerElement === 'string') {
+            this.headerElement = document.querySelector(this.options.headerElement);
+        }
+
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
 
@@ -243,6 +249,7 @@ class Annotator extends EventEmitter {
             const controller = this.modeControllers[type];
             controller.init({
                 container: this.container,
+                headerElement: this.headerElement,
                 annotatedElement: this.annotatedElement,
                 mode: type,
                 modeButton: this.modeButtons[type],

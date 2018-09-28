@@ -38,6 +38,7 @@ class AnnotationModeController extends EventEmitter {
      */
     init(data) {
         this.container = data.container;
+        this.headerElement = data.headerElement;
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
         this.annotator = data.annotator;
@@ -78,7 +79,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
     getButton(annotatorSelector) {
-        return this.container.querySelector(annotatorSelector);
+        return this.headerElement.querySelector(annotatorSelector);
     }
 
     /**
@@ -126,7 +127,7 @@ class AnnotationModeController extends EventEmitter {
      */
     exit() {
         this.emit(CONTROLLER_EVENT.exit, { mode: this.mode });
-        replaceHeader(this.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
+        replaceHeader(this.headerElement, SELECTOR_BOX_PREVIEW_BASE_HEADER);
 
         this.destroyPendingThreads();
 
