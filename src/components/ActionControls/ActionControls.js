@@ -54,9 +54,40 @@ class ActionControls extends React.Component<Props, State> {
         const TypeControls = () => {
             switch (type) {
                 case TYPES.highlight:
+                    if (!canComment && !canDelete) {
+                        return null;
+                    }
+
+                    return (
+                        <HighlightControls
+                            canAnnotateAndDelete={canDelete}
+                            canComment={canComment}
+                            isPending={isPending}
+                            onCreate={onCreate}
+                            onCommentClick={onCommentClick}
+                        />
+                    );
                 case TYPES.highlight_comment:
                     if (!canComment && !canDelete) {
                         return null;
+                    }
+
+                    if (canComment && isPending) {
+                        return (
+                            <ApprovalCommentForm
+                                className='ba-annotation-input-container'
+                                // $FlowFixMe
+                                user={NULL_USER}
+                                isOpen={isInputOpen}
+                                isEditing={true}
+                                createComment={onCreate}
+                                onCancel={onCancel}
+                                onSubmit={noop}
+                                onFocus={noop}
+                                // $FlowFixMe
+                                getAvatarUrl={noop}
+                            />
+                        );
                     }
 
                     return (
