@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import classNames from 'classnames';
 import Overlay from 'box-react-ui/lib/components/flyout/Overlay';
 
 import Internationalize from '../Internationalize';
@@ -7,6 +8,7 @@ import CommentList from '../CommentList';
 
 import './AnnotationPopover.scss';
 import ActionControls from '../ActionControls';
+import AnnotatorLabel from './AnnotatorLabel';
 
 type Props = {
     onDelete: Function,
@@ -31,6 +33,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
 
     render() {
         const {
+            id,
             type,
             createdAt,
             createdBy,
@@ -46,9 +49,16 @@ class AnnotationPopover extends React.PureComponent<Props> {
         } = this.props;
         return (
             <Internationalize language={language} messages={intlMessages}>
-                <Overlay className='ba-annotation-popover'>
-                    {this.hasAnnotationComments() ? <CommentList comments={comments} onDelete={onDelete} /> : <div /> // Annotator label
-                    }
+                <Overlay
+                    className={classNames('ba-annotation-popover', {
+                        'ba-inline': !isPending && !this.hasAnnotationComments()
+                    })}
+                >
+                    {this.hasAnnotationComments() ? (
+                        <CommentList comments={comments} onDelete={onDelete} />
+                    ) : (
+                        <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
+                    )}
                     {canAnnotate && (
                         <ActionControls
                             type={type}

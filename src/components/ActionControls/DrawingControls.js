@@ -23,7 +23,7 @@ const DrawingControls = ({ isPending, canDelete, onCreate, onDelete }: Props) =>
         )}
         {canDelete && (
             <PlainButton type='button' className='ba-drawing-delete-btn' onClick={onDelete}>
-                <IconTrash height={16} width={16} />
+                <IconTrash height={20} width={20} />
             </PlainButton>
         )}
     </div>

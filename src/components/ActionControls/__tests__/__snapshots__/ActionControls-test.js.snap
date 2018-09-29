@@ -4,23 +4,22 @@ exports[`components/ActionControls should correctly render controls for drawing 
 <div
   className="ba-action-controls"
 >
-  <DrawingControls
-    canDelete={true}
-    isPending={false}
-    onCreate={[MockFunction]}
-    onDelete={[MockFunction]}
-  />
+  <TypeControls />
 </div>
 `;
 
 exports[`components/ActionControls should not render controls for highlight comment annotations 1`] = `
 <div
   className="ba-action-controls"
-/>
+>
+  <TypeControls />
+</div>
 `;
 
 exports[`components/ActionControls should not render controls for plain highlight annotations 1`] = `
 <div
   className="ba-action-controls"
-/>
+>
+  <TypeControls />
+</div>
 `;

@@ -3,7 +3,6 @@
 .ba {
     .ba-annotation-popover {
         cursor: auto; // Overrides cursor: none from annotation mode
-        width: 282px; // Hard-coded width to solve layout issues
     }
 
     .overlay {
@@ -14,6 +13,10 @@
         overflow-y: auto;
         padding: 15px;
         white-space: normal;
+    }
+
+    .ba-inline .overlay {
+        display: inline-flex;
     }
 
     .bcs-comment-input-container {
@@ -35,5 +38,15 @@
         ~ .bcs-comment-input-controls .btn {
             margin-bottom: 0;
         }
+    }
+
+    .ba-annotation-label {
+        line-height: 23px;
+        padding: 3px 0;
+    }
+
+    .ba-annotation-label ~ .ba-action-controls {
+        border-left: 1px solid $see-see;
+        margin-left: 10px;
     }
 }

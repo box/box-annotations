@@ -36,16 +36,13 @@ exports[`components/AnnotationPopover should correctly render the list popover 1
       }
       onDelete={[MockFunction]}
     />
-    <ApprovalCommentForm
-      className="ba-annotation-input-container"
-      createComment={[MockFunction]}
-      getAvatarUrl={[Function]}
-      isEditing={true}
-      isOpen={true}
+    <ActionControls
+      canDelete={false}
+      isPending={false}
       onCancel={[MockFunction]}
-      onFocus={[Function]}
-      onSubmit={[Function]}
-      user={Object {}}
+      onCommentClick={[Function]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
     />
   </Overlay>
 </Internationalize>
@@ -56,16 +53,16 @@ exports[`components/AnnotationPopover should render the create popover 1`] = `
   <Overlay
     className="ba-annotation-popover"
   >
-    <ApprovalCommentForm
-      className="ba-annotation-input-container"
-      createComment={[MockFunction]}
-      getAvatarUrl={[Function]}
-      isEditing={true}
-      isOpen={true}
+    <AnnotatorLabel
+      isPending={false}
+    />
+    <ActionControls
+      canDelete={false}
+      isPending={false}
       onCancel={[MockFunction]}
-      onFocus={[Function]}
-      onSubmit={[Function]}
-      user={Object {}}
+      onCommentClick={[Function]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
     />
   </Overlay>
 </Internationalize>

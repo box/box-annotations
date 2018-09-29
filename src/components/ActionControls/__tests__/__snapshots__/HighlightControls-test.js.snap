@@ -24,7 +24,7 @@ exports[`components/ActionControls/HighlightControls should correctly render the
     <IconHighlightCommentAnnotation
       className=""
       height={24}
-      width={20}
+      width={24}
     />
   </PlainButton>
 </div>
@@ -42,7 +42,7 @@ exports[`components/ActionControls/HighlightControls should not render the highl
     <IconHighlightCommentAnnotation
       className=""
       height={24}
-      width={20}
+      width={24}
     />
   </PlainButton>
 </div>

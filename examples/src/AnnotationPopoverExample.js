@@ -23,16 +23,20 @@ const onDelete = () => {};
 const onCreate = () => {};
 const onCancel = () => {};
 
+const annotationInfo = {
+    createdAt,
+    createdBy: USER1
+}
+
 const comments = [
     {
         id: '123def',
-        createdAt,
-        createdBy: USER1,
         message: 'FAMILY',
         permissions: {
             can_delete: true
         },
-        onDelete
+        onDelete,
+        ...annotationInfo
     },
     {
         id: '456def',
@@ -57,7 +61,7 @@ const comments = [
 
 const AnnotationPopoverContainer = (props) => (
     <div className='annotation-container'>
-        <AnnotationPopover type='point' isPending={false} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} />
+        <AnnotationPopover type='point' isPending={false} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} {...annotationInfo} />
     </div>
 );
 

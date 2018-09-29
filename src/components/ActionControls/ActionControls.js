@@ -49,30 +49,29 @@ class ActionControls extends React.Component<Props, State> {
     render() {
         const { type, canDelete, onCreate, onCommentClick, onDelete, onCancel, isPending } = this.props;
         const { isInputOpen } = this.state;
-        const canComment = type === TYPES.highlight_comment;
 
         const TypeControls = () => {
             switch (type) {
                 case TYPES.highlight:
-                    if (!canComment && !canDelete) {
+                    if (!canDelete) {
                         return null;
                     }
 
                     return (
                         <HighlightControls
                             canAnnotateAndDelete={canDelete}
-                            canComment={canComment}
+                            canComment={false}
                             isPending={isPending}
                             onCreate={onCreate}
                             onCommentClick={onCommentClick}
                         />
                     );
                 case TYPES.highlight_comment:
-                    if (!canComment && !canDelete) {
+                    if (!canDelete) {
                         return null;
                     }
 
-                    if (canComment && isPending) {
+                    if (isPending) {
                         return (
                             <ApprovalCommentForm
                                 className='ba-annotation-input-container'
@@ -93,7 +92,7 @@ class ActionControls extends React.Component<Props, State> {
                     return (
                         <HighlightControls
                             canAnnotateAndDelete={canDelete}
-                            canComment={canComment}
+                            canComment={true}
                             isPending={isPending}
                             onCreate={onCreate}
                             onCommentClick={onCommentClick}
