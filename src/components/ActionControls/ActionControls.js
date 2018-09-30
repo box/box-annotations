@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import noop from 'lodash/noop';
 
 import ApprovalCommentForm from '../../../third-party/components/ApprovalCommentForm';
@@ -31,7 +31,8 @@ class ActionControls extends React.Component<Props, State> {
         canDelete: false,
         isPending: false,
         onCommentClick: noop,
-        onDelete: noop
+        onDelete: noop,
+        onCancel: noop
     };
 
     state = {
@@ -46,68 +47,27 @@ class ActionControls extends React.Component<Props, State> {
         this.setState({ isInputOpen: false });
     }
 
-    render() {
-        const { type, canDelete, onCreate, onCommentClick, onDelete, onCancel, isPending } = this.props;
+    determineControls(type: string): ?React.Node {
+        const { canDelete, onCreate, onCommentClick, onDelete, onCancel, isPending } = this.props;
         const { isInputOpen } = this.state;
 
-        const TypeControls = () => {
-            switch (type) {
-                case TYPES.highlight:
-                    if (!canDelete) {
-                        return null;
-                    }
+        switch (type) {
+            case TYPES.highlight:
+                if (!canDelete) {
+                    return null;
+                }
 
-                    return (
-                        <HighlightControls
-                            canAnnotateAndDelete={canDelete}
-                            canComment={false}
-                            isPending={isPending}
-                            onCreate={onCreate}
-                            onCommentClick={onCommentClick}
-                        />
-                    );
-                case TYPES.highlight_comment:
-                    if (!canDelete) {
-                        return null;
-                    }
-
-                    if (isPending) {
-                        return (
-                            <ApprovalCommentForm
-                                className='ba-annotation-input-container'
-                                // $FlowFixMe
-                                user={NULL_USER}
-                                isOpen={isInputOpen}
-                                isEditing={true}
-                                createComment={onCreate}
-                                onCancel={onCancel}
-                                onSubmit={noop}
-                                onFocus={noop}
-                                // $FlowFixMe
-                                getAvatarUrl={noop}
-                            />
-                        );
-                    }
-
-                    return (
-                        <HighlightControls
-                            canAnnotateAndDelete={canDelete}
-                            canComment={true}
-                            isPending={isPending}
-                            onCreate={onCreate}
-                            onCommentClick={onCommentClick}
-                        />
-                    );
-                case TYPES.draw:
-                    return (
-                        <DrawingControls
-                            canDelete={canDelete}
-                            isPending={isPending}
-                            onCreate={onCreate}
-                            onDelete={onDelete}
-                        />
-                    );
-                case TYPES.point:
+                return (
+                    <HighlightControls
+                        canAnnotateAndDelete={canDelete}
+                        canComment={false}
+                        isPending={isPending}
+                        onCreate={onCreate}
+                        onCommentClick={onCommentClick}
+                    />
+                );
+            case TYPES.highlight_comment:
+                if (isPending) {
                     return (
                         <ApprovalCommentForm
                             className='ba-annotation-input-container'
@@ -123,16 +83,50 @@ class ActionControls extends React.Component<Props, State> {
                             getAvatarUrl={noop}
                         />
                     );
-                default:
-                    return null;
-            }
-        };
+                }
 
-        return (
-            <div className='ba-action-controls'>
-                <TypeControls />
-            </div>
-        );
+                return (
+                    <HighlightControls
+                        canAnnotateAndDelete={canDelete}
+                        canComment={true}
+                        isPending={isPending}
+                        onCreate={onCreate}
+                        onCommentClick={onCommentClick}
+                    />
+                );
+            case TYPES.draw:
+                return (
+                    <DrawingControls
+                        canDelete={canDelete}
+                        isPending={isPending}
+                        onCreate={onCreate}
+                        onDelete={onDelete}
+                    />
+                );
+            case TYPES.point:
+                return (
+                    <ApprovalCommentForm
+                        className='ba-annotation-input-container'
+                        // $FlowFixMe
+                        user={NULL_USER}
+                        isOpen={isInputOpen}
+                        isEditing={true}
+                        createComment={onCreate}
+                        onCancel={onCancel}
+                        onSubmit={noop}
+                        onFocus={noop}
+                        // $FlowFixMe
+                        getAvatarUrl={noop}
+                    />
+                );
+            default:
+                return null;
+        }
+    }
+
+    render() {
+        const { type } = this.props;
+        return <div className='ba-action-controls'>{this.determineControls(type)}</div>;
     }
 }
 

@@ -10,21 +10,39 @@ describe('components/ActionControls/HighlightControls', () => {
     const render = (props = {}) =>
         shallow(<HighlightControls onCreate={onCreate} onCommentClick={onCommentClick} {...props} />);
 
-    test('should correctly render the drawing controls', () => {
+    test('should correctly render pending plain highlight controls', () => {
+        const wrapper = render({
+            canAnnotateAndDelete: true,
+            canComment: false,
+            isPending: true
+        });
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should correctly render pending highlight comment controls', () => {
+        const wrapper = render({
+            canAnnotateAndDelete: true,
+            canComment: true,
+            isPending: true
+        });
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should correctly render saved plain highlight controls', () => {
+        const wrapper = render({
+            canAnnotateAndDelete: true,
+            canComment: false
+        });
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-saved-highlight').length).toEqual(1);
+    });
+
+    test('should correctly render saved highlight comment controls', () => {
         const wrapper = render({
             canAnnotateAndDelete: true,
             canComment: true
         });
         expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should not render the highlight button if the user cannot delete', () => {
-        const wrapper = render({ canComment: true });
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should not render the highlight comment button if the user cannot annotate', () => {
-        const wrapper = render({ canAnnotateAndDelete: true });
-        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-saved-highlight').length).toEqual(1);
     });
 });

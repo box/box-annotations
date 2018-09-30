@@ -21,7 +21,7 @@ class AnnotatorLabel extends React.PureComponent<Props> {
      * Return a string describes the action completed by the annotator
      * @return {string} Localized annotator label message
      */
-    getAnnotatorLabelMessage() {
+    getAnnotatorLabelMessage(): string {
         const { type, createdBy, intl } = this.props;
         const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
         const name = get(createdBy, 'name', anonymousUserName);
