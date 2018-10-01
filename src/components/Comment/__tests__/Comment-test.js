@@ -12,7 +12,7 @@ const USER = {
     email: 'princess@genovia.gov'
 };
 
-const annotation = {
+const comment = {
     id: '123',
     createdAt: TIME_STRING_SEPT_27_2017,
     createdBy: USER,
@@ -23,31 +23,10 @@ const annotation = {
 describe('components/Comment', () => {
     beforeEach(() => {});
 
-    const render = (props = {}) => shallow(<Comment {...annotation} {...props} />).dive();
+    const render = (props = {}) => shallow(<Comment {...comment} {...props} />).dive();
 
-    test('should correctly render annotation', () => {
+    test('should correctly render comment', () => {
         const wrapper = render();
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should not allow actions when annotation is pending', () => {
-        const wrapper = render({
-            onDelete: jest.fn(),
-            permissions: { can_delete: true },
-            isPending: true
-        });
-        expect(wrapper.find('InlineDelete').length).toEqual(0);
-    });
-
-    test('should render an error when one is defined', () => {
-        const wrapper = render({
-            onDelete: jest.fn(),
-            error: {
-                title: 'error',
-                message: 'errorrrrr'
-            }
-        });
-
         expect(wrapper).toMatchSnapshot();
     });
 });

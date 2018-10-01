@@ -7,16 +7,9 @@ import CommentComponent from '../../../third-party/components/Comment';
 import { PLACEHOLDER_USER } from '../../constants';
 
 type Props = {
-    id: string,
-    message: string,
-    createdAt: string,
-    createdBy?: User,
-    modifiedAt?: string,
-    permissions: AnnotationPermissions,
     onDelete: Function,
-    isPending: boolean,
     error?: ActionItemError
-};
+} & CommentProps;
 
 class Comment extends React.PureComponent<Props> {
     static defaultProps = {

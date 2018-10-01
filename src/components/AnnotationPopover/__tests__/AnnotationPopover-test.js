@@ -46,26 +46,43 @@ describe('components/AnnotationPopover', () => {
             />
         );
 
-    test('should correctly render the list popover', () => {
+    test('should correctly render a view-only popover with comments', () => {
+        const wrapper = render({
+            comments
+        });
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-inline').length).toEqual(0);
+    });
+
+    test('should render a view-only annotation with a annotator label and no comments', () => {
+        const wrapper = render();
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-inline').length).toEqual(1);
+    });
+
+    test('should correctly render an annotation with a annotator label and no comments', () => {
+        const wrapper = render({
+            canAnnotate: true
+        });
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-inline').length).toEqual(1);
+    });
+
+    test('should correctly render a popover with comments and reply textarea', () => {
         const wrapper = render({
             canAnnotate: true,
             comments
         });
         expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-inline').length).toEqual(0);
     });
 
-    test('should render the create popover', () => {
+    test('should correctly render a pending annotation', () => {
         const wrapper = render({
-            canAnnotate: true,
-            comments: []
+            isPending: true,
+            canAnnotate: true
         });
         expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should render the view-only list popover', () => {
-        const wrapper = render({
-            comments
-        });
-        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('.ba-inline').length).toEqual(0);
     });
 });

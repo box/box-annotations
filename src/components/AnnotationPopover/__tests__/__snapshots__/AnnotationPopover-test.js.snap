@@ -1,6 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/AnnotationPopover should correctly render the list popover 1`] = `
+exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover"
+  >
+    <AnnotatorLabel
+      isPending={true}
+    />
+    <ActionControls
+      canDelete={false}
+      isPending={true}
+      onCancel={[MockFunction]}
+      onCommentClick={[Function]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+    />
+  </Overlay>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should correctly render a popover with comments and reply textarea 1`] = `
 <Internationalize>
   <Overlay
     className="ba-annotation-popover"
@@ -36,42 +56,19 @@ exports[`components/AnnotationPopover should correctly render the list popover 1
       }
       onDelete={[MockFunction]}
     />
-    <ApprovalCommentForm
-      className="ba-annotation-input-container"
-      createComment={[MockFunction]}
-      getAvatarUrl={[Function]}
-      isEditing={true}
-      isOpen={true}
+    <ActionControls
+      canDelete={false}
+      isPending={false}
       onCancel={[MockFunction]}
-      onFocus={[Function]}
-      onSubmit={[Function]}
-      user={Object {}}
+      onCommentClick={[Function]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
     />
   </Overlay>
 </Internationalize>
 `;
 
-exports[`components/AnnotationPopover should render the create popover 1`] = `
-<Internationalize>
-  <Overlay
-    className="ba-annotation-popover"
-  >
-    <ApprovalCommentForm
-      className="ba-annotation-input-container"
-      createComment={[MockFunction]}
-      getAvatarUrl={[Function]}
-      isEditing={true}
-      isOpen={true}
-      onCancel={[MockFunction]}
-      onFocus={[Function]}
-      onSubmit={[Function]}
-      user={Object {}}
-    />
-  </Overlay>
-</Internationalize>
-`;
-
-exports[`components/AnnotationPopover should render the view-only list popover 1`] = `
+exports[`components/AnnotationPopover should correctly render a view-only popover with comments 1`] = `
 <Internationalize>
   <Overlay
     className="ba-annotation-popover"
@@ -106,6 +103,38 @@ exports[`components/AnnotationPopover should render the view-only list popover 1
         ]
       }
       onDelete={[MockFunction]}
+    />
+  </Overlay>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should correctly render an annotation with a annotator label and no comments 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover ba-inline"
+  >
+    <AnnotatorLabel
+      isPending={false}
+    />
+    <ActionControls
+      canDelete={false}
+      isPending={false}
+      onCancel={[MockFunction]}
+      onCommentClick={[Function]}
+      onCreate={[MockFunction]}
+      onDelete={[MockFunction]}
+    />
+  </Overlay>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should render a view-only annotation with a annotator label and no comments 1`] = `
+<Internationalize>
+  <Overlay
+    className="ba-annotation-popover ba-inline"
+  >
+    <AnnotatorLabel
+      isPending={false}
     />
   </Overlay>
 </Internationalize>
