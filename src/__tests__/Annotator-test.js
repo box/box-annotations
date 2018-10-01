@@ -112,6 +112,12 @@ describe('Annotator', () => {
             expect(annotator.loadAnnotations).toBeCalled();
         });
 
+        it('should set the headerElement to the container as a fallback', () => {
+            annotator.options.header = 'light';
+            annotator.init(5);
+            expect(annotator.headerElement).toEqual(document);
+        });
+
         it('should setup mobile dialog for mobile browsers', () => {
             annotator.isMobile = true;
             annotator.init();

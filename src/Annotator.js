@@ -112,6 +112,12 @@ class Annotator extends EventEmitter {
             this.headerElement = document.querySelector(this.options.headerElement);
         }
 
+        // If using box content preview header and no external header element was specified,
+        // fallback to the container element
+        if (this.options.header !== 'none' && !this.options.headerElement) {
+            this.headerElement = this.container;
+        }
+
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
 
