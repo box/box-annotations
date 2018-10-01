@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import Annotation from './Annotation';
-import AnnotationService from './AnnotationService';
+import AnnotationService from './api/AnnotationService';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
@@ -618,6 +618,7 @@ class AnnotationThread extends EventEmitter {
         if (this.annotationService.user && this.annotationService.user.id > 0) {
             threadData.userId = this.annotationService.user.id;
         }
+
         if (this.threadNumber) {
             threadData.threadNumber = this.threadNumber;
         }
