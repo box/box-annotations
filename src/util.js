@@ -31,7 +31,6 @@ const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
-const AVATAR_COLOR_COUNT = 9; // 9 colors defined in Box React UI avatar code
 const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
 const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
@@ -334,35 +333,6 @@ export function isElementInViewport(element) {
         dimensions.bottom <= window.innerHeight &&
         dimensions.right <= window.innerWidth
     );
-}
-
-/**
- * Returns avatar image HTML for annotation dialog. This will be either an
- * image with the supplied avatar URL as a source if there is a URL passed in
- * or one generated using the initials of the annotator.
- *
- * @param {string} avatarUrl URL of avatar photo
- * @param {string} userId User ID of annotator
- * @param {string} userName Username of annotator
- * @param {string} altText Alternate text if profile picture is not available
- * @return {string} HTML for profile image
- */
-export function getAvatarHtml(avatarUrl, userId, userName, altText) {
-    if (avatarUrl !== '') {
-        return `<img src="${avatarUrl}" alt="${altText}">`.trim();
-    }
-
-    let initials = '';
-    if (userId !== '0') {
-        // http://stackoverflow.com/questions/8133630/spliting-the-first-character-of-the-words
-        initials = userName
-            .replace(/\W*(\w)\w*/g, '$1')
-            .toUpperCase()
-            .substring(0, 3);
-    }
-
-    const index = parseInt(userId, 10) || 0;
-    return `<div class="ba-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
 }
 
 /**
