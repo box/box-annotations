@@ -22,6 +22,7 @@ const createdAt = '2017-08-27T10:40:41-07:00';
 const onDelete = () => {};
 const onCreate = () => {};
 const onCancel = () => {};
+const position = () => {};
 
 const annotationInfo = {
     createdAt,
@@ -61,7 +62,7 @@ const comments = [
 
 const AnnotationPopoverContainer = (props) => (
     <div className='annotation-container'>
-        <AnnotationPopover type='point' isPending={false} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} {...annotationInfo} />
+        <AnnotationPopover type='point' isPending={false} position={position} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} {...annotationInfo} />
     </div>
 );
 

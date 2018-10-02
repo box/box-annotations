@@ -11,8 +11,8 @@ The following methods are available for the annotation threads.
 | show | Shows the annotation indicator |  ||
 | hide | Hides the annotation indicator |  ||
 | reset | Resets thread state to 'inactive' |  ||
-| showDialog | Shows the appropriate dialog for this thread |  ||
-| hideDialog | Hides the appropriate indicator for this thread |  ||
+| renderAnnotationPopover | Shows the appropriate dialog for this thread |  ||
+| unmountPopover | Hides the appropriate indicator for this thread |  ||
 | saveAnnotation | Saves an annotation locally and on the server | {string} annotation type, {text} text of annotation to save ||
 | deleteAnnotation | Deletes an annotation | {string} annotation ID, {boolean} whether or not to delete on server, default true ||
 

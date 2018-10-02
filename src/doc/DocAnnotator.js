@@ -278,8 +278,8 @@ class DocAnnotator extends Annotator {
         this.scaleAnnotationCanvases(pageNum);
         super.renderPage(pageNum);
 
-        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
-            this.createHighlightDialog.hide();
+        if (this.createHighlightDialog) {
+            this.createHighlightDialog.unmountPopover();
         }
     }
 
@@ -398,10 +398,10 @@ class DocAnnotator extends Annotator {
             }
         }
 
-        if (this.hasTouch && this.drawEnabled) {
-            this.annotatedElement.addEventListener('touchstart', this.drawingSelectionHandler);
-        } else if (this.drawEnabled) {
-            this.annotatedElement.addEventListener('click', this.drawingSelectionHandler);
+        if (this.hasTouch) {
+            this.annotatedElement.addEventListener('touchstart', this.clickHandler);
+        } else {
+            this.annotatedElement.addEventListener('click', this.clickHandler);
         }
 
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
@@ -445,11 +445,39 @@ class DocAnnotator extends Annotator {
         if (this.hasTouch || this.isMobile) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
-            this.annotatedElement.removeEventListener('click', this.drawingSelectionHandler);
+            this.annotatedElement.removeEventListener('click', this.clickHandler);
             this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
         }
+    }
+
+    clickHandler(event) {
+        if (event.target && event.target.nodeName === 'BUTTON') {
+            return;
+        }
+
+        // NOTE: This assumes that only one dialog will ever exist within
+        // the annotatedElement at a time
+        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
+        if (util.isInDialog(event, popoverEl)) {
+            event.stopPropagation();
+            return;
+        }
+
+        if (this.highlightClickHandler(event)) {
+            return;
+        }
+
+        if (this.drawEnabled) {
+            const controller = this.modeControllers[TYPES.draw];
+            if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
+                controller.handleSelection(event);
+                return;
+            }
+        }
+
+        super.clickHandler(event);
     }
 
     /**
@@ -467,12 +495,11 @@ class DocAnnotator extends Annotator {
     }
 
     hideCreateDialog(event) {
-        const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
-        if (!isCreateDialogVisible || !event || util.isInDialog(event)) {
+        if (!event || util.isInDialog(event)) {
             return;
         }
 
-        this.createHighlightDialog.hide();
+        this.createHighlightDialog.unmountPopover();
     }
 
     /**
@@ -540,14 +567,12 @@ class DocAnnotator extends Annotator {
         }
 
         if (!commentText) {
-            thread.dialog.drawAnnotation();
-        } else {
-            thread.dialog.hasComments = true;
+            thread.show();
         }
 
         thread.state = STATES.hover;
         thread.show();
-        thread.dialog.postAnnotation(commentText);
+        thread.saveAnnotation(highlightType, commentText);
 
         const controller = this.modeControllers[highlightType];
         if (controller) {
@@ -599,7 +624,7 @@ class DocAnnotator extends Annotator {
 
         this.selectionEndTimeout = setTimeout(() => {
             if (this.createHighlightDialog) {
-                this.createHighlightDialog.show(this.container, selection);
+                this.createHighlightDialog.show(selection);
             }
         }, SELECTION_TIMEOUT);
 
@@ -699,6 +724,13 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMouseupHandler(event) {
+        this.isCreatingHighlight = false;
+
+        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
+        if (util.isInAnnotationOrMarker(event, popoverEl)) {
+            return;
+        }
+
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -712,8 +744,6 @@ class DocAnnotator extends Annotator {
         // we trigger the create handler instead of the click handler
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
-        } else {
-            this.highlightClickHandler(event);
         }
     }
 
@@ -729,6 +759,7 @@ class DocAnnotator extends Annotator {
      */
     highlightCreateHandler(event) {
         event.stopPropagation();
+        event.preventDefault();
 
         const selection = window.getSelection();
         if (!docUtil.isValidSelection(selection)) {
@@ -741,9 +772,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        const dialogParentEl = this.isMobile ? this.container : pageEl;
-        this.createHighlightDialog.show(dialogParentEl, selection);
-
+        this.createHighlightDialog.show(selection);
         this.isCreatingHighlight = true;
         this.lastHighlightEvent = event;
     }
@@ -757,6 +786,10 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightClickHandler(event) {
+        if (this.isCreatingHighlight || (!this.plainHighlightEnabled && !this.commentHighlightEnabled)) {
+            return false;
+        }
+
         this.activeThread = null;
         this.mouseEvent = event;
         this.consumed = false;
@@ -780,11 +813,16 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
-        } else if (this.isMobile) {
-            this.removeThreadFromSharedDialog();
-        } else {
-            this.resetHighlightSelection(event);
+            return true;
         }
+
+        if (this.isMobile) {
+            this.removeThreadFromSharedDialog();
+            return true;
+        }
+
+        this.resetHighlightSelection(event);
+        return false;
     }
 
     /**
@@ -814,7 +852,7 @@ class DocAnnotator extends Annotator {
 
             this.consumed = this.consumed || threadActive;
         } else {
-            thread.hideDialog();
+            thread.unmountPopover();
         }
     }
 
@@ -898,7 +936,7 @@ class DocAnnotator extends Annotator {
         if (index === 0) {
             thread.show();
         } else {
-            thread.hideDialog();
+            thread.unmountPopover();
         }
     }
 }

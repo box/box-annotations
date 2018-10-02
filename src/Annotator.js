@@ -75,6 +75,7 @@ class Annotator extends EventEmitter {
         this.handleControllerEvents = this.handleControllerEvents.bind(this);
         this.handleServicesErrors = this.handleServicesErrors.bind(this);
         this.hideAnnotations = this.hideAnnotations.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
     }
 
     /**
@@ -302,6 +303,10 @@ class Annotator extends EventEmitter {
         this.mobileDialogEl.removeChild(this.mobileDialogEl.lastChild);
     }
 
+    clickHandler(event) {
+        this.hideAnnotations(event);
+    }
+
     /**
      * Hides all non-pending annotations if mouse event occurs outside an
      * annotation dialog and click did not occur inside an annotation dialog
@@ -317,7 +322,7 @@ class Annotator extends EventEmitter {
         Object.keys(this.modeControllers).forEach((mode) => {
             this.modeControllers[mode].applyActionToThreads((thread) => {
                 if (!util.isPending(thread.state)) {
-                    thread.hideDialog();
+                    thread.unmountPopover();
                 }
             });
         });
@@ -514,10 +519,9 @@ class Annotator extends EventEmitter {
             return null;
         }
 
-        thread.dialog.hasComments = true;
         thread.state = STATES.hover;
-        thread.showDialog();
-        thread.dialog.postAnnotation(commentText);
+        thread.renderAnnotationPopover();
+        thread.saveAnnotation(TYPES.point, commentText);
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;

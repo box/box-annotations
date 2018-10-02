@@ -249,8 +249,17 @@ export function resetTextarea(element, clearText) {
  * @param {HTMLElement} [dialogEl] Optional annotation dialog element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInDialog(event, dialogEl) {
-    return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
+export function isInDialog(event, dialogEl = null) {
+    if (dialogEl) {
+        const dimensions = dialogEl.getBoundingClientRect();
+        return (
+            event.clientX > dimensions.left &&
+            event.clientX < dimensions.right &&
+            event.clientY > dimensions.top &&
+            event.clientY < dimensions.bottom
+        );
+    }
+    return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
 }
 
 /**
@@ -258,14 +267,12 @@ export function isInDialog(event, dialogEl) {
  *
  * @private
  * @param {Event} event Mouse event
+ * @param {HTMLElement} [dialogEl] Optional annotation dialog element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInAnnotationOrMarker(event) {
+export function isInAnnotationOrMarker(event, dialogEl) {
     const { target } = event;
-    return !!(
-        findClosestElWithClass(target, CLASS_ANNOTATION_DIALOG) ||
-        findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER)
-    );
+    return !!(isInDialog(event, dialogEl) || findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER));
 }
 
 /**
@@ -851,4 +858,11 @@ export function getDialogWidth(dialogEl) {
     showInvisibleElement(element);
 
     return dialogWidth;
+}
+
+export function findElement(parent, selector, finderMethod) {
+    if (!parent.querySelector(selector)) {
+        finderMethod();
+    }
+    return parent.querySelector(selector);
 }

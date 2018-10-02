@@ -13,13 +13,26 @@ type Props = {
     canComment: boolean,
     isPending?: boolean,
     onCreate: Function,
+    onDelete: Function,
     onCommentClick: Function
 };
 
-const HighlightControls = ({ canAnnotateAndDelete, canComment, onCreate, onCommentClick, isPending }: Props) => (
+const HighlightControls = ({
+    canAnnotateAndDelete,
+    canComment,
+    onCreate,
+    onDelete,
+    onCommentClick,
+    isPending
+}: Props) => (
     <div className='ba-action-controls-highlight'>
         {canAnnotateAndDelete && (
-            <PlainButton type='button' className='ba-highlight-btn' onClick={onCreate} isDisabled={isPending}>
+            <PlainButton
+                type='button'
+                className='ba-highlight-btn'
+                onClick={isPending ? onCreate : onDelete}
+                isDisabled={isPending}
+            >
                 <IconHighlightAnnotation
                     className={classNames({
                         'ba-saved-highlight': !isPending

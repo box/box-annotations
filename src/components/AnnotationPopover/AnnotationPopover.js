@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import classNames from 'classnames';
+import noop from 'lodash/noop';
 import Overlay from 'box-react-ui/lib/components/flyout/Overlay';
 
 import Internationalize from '../Internationalize';
@@ -11,60 +12,89 @@ import ActionControls from '../ActionControls';
 import AnnotatorLabel from './AnnotatorLabel';
 
 type Props = {
+    canComment: boolean,
+    position: Function,
     onDelete: Function,
     onCancel: Function,
     onCreate: Function,
+    onCommentClick: Function,
     isPending: boolean,
     language?: string,
     messages?: StringMap
 } & Annotation;
 
-const AnnotationPopover = ({
-    id,
-    type,
-    createdAt,
-    createdBy,
-    comments,
-    canAnnotate,
-    isPending,
-    canDelete,
-    onDelete,
-    onCancel,
-    onCreate,
-    language,
-    messages: intlMessages
-}: Props) => (
-    <Internationalize language={language} messages={intlMessages}>
-        <Overlay
-            className={classNames('ba-annotation-popover', {
-                'ba-inline': !isPending && !comments
-            })}
-        >
-            {comments ? (
-                <CommentList comments={comments} onDelete={onDelete} />
-            ) : (
-                <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
-            )}
-            {canAnnotate && (
-                <ActionControls
-                    type={type}
-                    isPending={isPending}
-                    canDelete={canDelete}
-                    createdBy={createdBy}
-                    createdAt={createdAt}
-                    onCreate={onCreate}
-                    onCancel={onCancel}
-                    onDelete={onDelete}
-                />
-            )}
-        </Overlay>
-    </Internationalize>
-);
+class AnnotationPopover extends React.PureComponent<Props> {
+    static defaultProps = {
+        isPending: false,
+        canAnnotate: false,
+        canComment: false,
+        canDelete: false,
+        onCommentClick: noop,
+        onDelete: noop,
+        onCancel: noop,
+        onCreate: noop
+    };
 
-AnnotationPopover.defaultProps = {
-    isPending: false,
-    canAnnotate: false,
-    canDelete: false
-};
+    componentDidMount() {
+        const { position } = this.props;
+        position();
+    }
+
+    render() {
+        const {
+            id,
+            type,
+            createdAt,
+            createdBy,
+            comments,
+            canComment,
+            canAnnotate,
+            isPending,
+            canDelete,
+            onDelete,
+            onCancel,
+            onCreate,
+            onCommentClick,
+            language,
+            messages: intlMessages
+        } = this.props;
+
+        return (
+            <Internationalize language={language} messages={intlMessages}>
+                <div className='ba-popover'>
+                    <span className='ba-popover-caret' />
+                    <Overlay
+                        className={classNames('ba-popover-content', {
+                            'ba-inline': !isPending && !comments,
+                            'ba-create-popover': isPending
+                        })}
+                    >
+                        {comments ? (
+                            <CommentList comments={comments} onDelete={onDelete} />
+                        ) : (
+                            <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
+                        )}
+                        {canAnnotate && (
+                            <ActionControls
+                                id={id}
+                                type={type}
+                                hasComments={!!comments}
+                                isPending={isPending}
+                                canComment={canComment}
+                                canDelete={canDelete}
+                                createdBy={createdBy}
+                                createdAt={createdAt}
+                                onCreate={onCreate}
+                                onCancel={onCancel}
+                                onDelete={onDelete}
+                                onCommentClick={onCommentClick}
+                            />
+                        )}
+                    </Overlay>
+                </div>
+            </Internationalize>
+        );
+    }
+}
 
 export default AnnotationPopover;

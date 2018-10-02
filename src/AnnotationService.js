@@ -68,7 +68,7 @@ class AnnotationService extends EventEmitter {
      * @param {Annotation} annotation - Annotation to save
      * @return {Promise} Promise that resolves with created annotation
      */
-    create(annotation) {
+    create = (annotation) => {
         return new Promise((resolve, reject) => {
             fetch(`${this.api}/2.0/annotations`, {
                 method: 'POST',
@@ -126,7 +126,7 @@ class AnnotationService extends EventEmitter {
                     });
                 });
         });
-    }
+    };
 
     /**
      * Reads annotations from file version ID.
@@ -153,7 +153,7 @@ class AnnotationService extends EventEmitter {
      * @param {string} id - Id of annotation to delete
      * @return {Promise} Promise to delete annotation
      */
-    delete(id) {
+    delete = (id) => {
         return new Promise((resolve, reject) => {
             fetch(`${this.api}/2.0/annotations/${id}`, {
                 method: 'DELETE',
@@ -180,7 +180,7 @@ class AnnotationService extends EventEmitter {
                     });
                 });
         });
-    }
+    };
 
     /**
      * Gets a map of thread ID to annotations in that thread.

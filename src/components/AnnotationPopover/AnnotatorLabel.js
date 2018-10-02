@@ -9,7 +9,7 @@ import { isHighlightAnnotation, isDrawingAnnotation } from '../../util';
 import messages from './messages';
 
 type Props = {
-    id: string,
+    id?: string,
     type: AnnotationType,
     createdBy: ?User,
     isPending: boolean,

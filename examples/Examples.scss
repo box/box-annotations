@@ -1,8 +1,16 @@
 @import '../src/common';
 
-.annotation-container {
+.ba .annotation-container {
     margin-top: 10px;
     padding-bottom: 10px;
+
+    .ba-popover {
+        width: fit-content;
+    }
+
+    .ba-popover-content {
+        position: relative;
+    }
 }
 
 .action-controls-container {

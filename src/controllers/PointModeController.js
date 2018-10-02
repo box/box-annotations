@@ -11,7 +11,7 @@ import {
     CLASS_ANNOTATION_POINT_MODE
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
+import { replaceHeader, isInAnnotationOrMarker } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
@@ -93,7 +93,7 @@ class PointModeController extends AnnotationModeController {
             pendingThreadID: this.pendingThreadID
         });
 
-        this.hideSharedDialog();
+        this.onDialogCancel();
     }
 
     /**
@@ -155,14 +155,18 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        if (!isInAnnotationOrMarker(event)) {
-            event.stopPropagation();
-            event.preventDefault();
+        const pendingThread = this.getThreadByID(this.pendingThreadID);
+        if (this.pendingThreadID && pendingThread) {
+            pendingThread.destroy();
         }
 
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        if (isInDialog(event)) {
+        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
+        if (!isInAnnotationOrMarker(event, popoverEl)) {
+            event.stopPropagation();
+            event.preventDefault();
+        } else {
             return;
         }
 
