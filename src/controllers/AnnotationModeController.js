@@ -70,6 +70,8 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
+
+        this.hideButton();
     }
 
     /**
@@ -99,6 +101,22 @@ class AnnotationModeController extends EventEmitter {
 
             this.toggleMode = this.toggleMode.bind(this);
             this.buttonEl.addEventListener('click', this.toggleMode);
+        }
+    }
+
+    /**
+     * Hides the annotate button for the specified mode
+     *
+     * @return {void}
+     */
+    hideButton() {
+        if (!this.permissions.canAnnotate) {
+            return;
+        }
+
+        this.buttonEl = this.getButton(this.modeButton.selector);
+        if (this.buttonEl) {
+            this.buttonEl.classList.add(CLASS_HIDDEN);
         }
     }
 

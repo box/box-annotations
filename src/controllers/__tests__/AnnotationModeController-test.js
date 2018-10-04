@@ -73,6 +73,10 @@ describe('controllers/AnnotationModeController', () => {
     });
 
     describe('destroy()', () => {
+        beforeEach(() => {
+            controller.hideButton = jest.fn();
+        });
+
         it('should destroy all the threads in controller', () => {
             // eslint-disable-next-line new-cap
             controller.threads = { 1: new rbush() };
@@ -88,6 +92,11 @@ describe('controllers/AnnotationModeController', () => {
             };
             controller.destroy();
             expect(controller.buttonEl.removeEventListener).toBeCalled();
+        });
+
+        it('should hide the button', () => {
+            controller.destroy();
+            expect(controller.hideButton).toBeCalled();
         });
     });
 
@@ -138,6 +147,44 @@ describe('controllers/AnnotationModeController', () => {
             controller.showButton();
             expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             expect(buttonEl.addEventListener).toBeCalledWith('click', controller.toggleMode);
+        });
+    });
+
+    describe('hideButton()', () => {
+        let buttonEl;
+
+        beforeEach(() => {
+            controller.modeButton = {
+                type: {
+                    title: 'Annotation Mode',
+                    selector: '.selector'
+                }
+            };
+            buttonEl = document.createElement('button');
+            buttonEl.title = controller.modeButton.title;
+            // buttonEl.classList.add(CLASS_HIDDEN);
+            buttonEl.classList.add('selector');
+            buttonEl.addEventListener = jest.fn();
+
+            controller.permissions = { canAnnotate: true };
+            controller.getButton = jest.fn().mockReturnValue(buttonEl);
+        });
+
+        it('should do nothing if user cannot annotate', () => {
+            controller.permissions.canAnnotate = false;
+            controller.hideButton();
+            expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
+        });
+
+        it('should do nothing if button is not found', () => {
+            controller.getButton = jest.fn();
+            controller.hideButton();
+            expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
+        });
+
+        it('should add the bp-is-hidden class to the button', () => {
+            controller.hideButton();
+            expect(buttonEl.classList).toContain(CLASS_HIDDEN);
         });
     });
 
