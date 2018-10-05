@@ -7,13 +7,15 @@ import {
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    SELECTOR_ANNOTATED_ELEMENT
+    SELECTOR_ANNOTATED_ELEMENT,
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
 
 let annotator;
 let controller;
 let thread;
-const html = `<button class="bp-btn-annotate"></button>
+const html = `<div class="bp-header-container"></div>
+<button class="bp-btn-annotate"></button>
 <div class="annotated-element"></div>`;
 
 describe('Annotator', () => {
@@ -115,7 +117,7 @@ describe('Annotator', () => {
         it('should set the headerElement to the container as a fallback', () => {
             annotator.options.header = 'light';
             annotator.init(5);
-            expect(annotator.headerElement).toEqual(document);
+            expect(annotator.headerElement).toEqual(document.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER));
         });
 
         it('should setup mobile dialog for mobile browsers', () => {

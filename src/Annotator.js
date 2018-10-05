@@ -14,7 +14,8 @@ import {
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
-    CLASS_ANNOTATIONS_LOADED
+    CLASS_ANNOTATIONS_LOADED,
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from './constants';
 
 class Annotator extends EventEmitter {
@@ -115,7 +116,7 @@ class Annotator extends EventEmitter {
         // If using box content preview header and no external header element was specified,
         // fallback to the container element
         if (this.options.header !== 'none' && !this.options.headerElement) {
-            this.headerElement = this.container;
+            this.headerElement = this.container.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER);
         }
 
         // Get annotated element from container
