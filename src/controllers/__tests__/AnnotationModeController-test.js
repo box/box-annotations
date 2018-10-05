@@ -109,6 +109,10 @@ describe('controllers/AnnotationModeController', () => {
 
             expect(controller.getButton('.class')).not.toBeNull();
         });
+
+        it('should return null if no headerElement', () => {
+            expect(controller.getButton('.class')).toBeNull();
+        });
     });
 
     describe('showButton()', () => {

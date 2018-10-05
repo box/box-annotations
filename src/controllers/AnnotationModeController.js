@@ -81,6 +81,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
     getButton(annotatorSelector) {
+        if (!this.headerElement) {
+            return null;
+        }
+
         return this.headerElement.querySelector(annotatorSelector);
     }
 
