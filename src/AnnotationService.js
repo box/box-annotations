@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
 import EventEmitter from 'events';
-import Annotation from '../Annotation';
+import Annotation from './Annotation';
 
 class AnnotationService extends EventEmitter {
     /**

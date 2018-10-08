@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import Annotation from './Annotation';
-import AnnotationService from './api/AnnotationService';
+import AnnotationService from './AnnotationService';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {

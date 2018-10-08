@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import AnnotationService from './api/AnnotationService';
+import AnnotationService from './AnnotationService';
 import * as util from './util';
 import './Annotator.scss';
 import {
