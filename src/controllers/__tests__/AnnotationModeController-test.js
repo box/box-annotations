@@ -94,9 +94,16 @@ describe('controllers/AnnotationModeController', () => {
             expect(controller.buttonEl.removeEventListener).toBeCalled();
         });
 
-        it('should hide the button', () => {
+        it('should hide the button if modeButton exists', () => {
+            controller.modeButton = {};
             controller.destroy();
             expect(controller.hideButton).toBeCalled();
+        });
+
+        it('should not hide the button if modeButton does not exist', () => {
+            controller.modeButton = undefined;
+            controller.destroy();
+            expect(controller.hideButton).not.toBeCalled();
         });
     });
 
@@ -152,6 +159,13 @@ describe('controllers/AnnotationModeController', () => {
             expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             expect(buttonEl.addEventListener).toBeCalledWith('click', controller.toggleMode);
         });
+
+        it('should do nothing if no modeButton', () => {
+            controller.modeButton = undefined;
+            controller.permissions.canAnnotate = false;
+            controller.showButton();
+            expect(buttonEl.classList).toContain(CLASS_HIDDEN);
+        });
     });
 
     describe('hideButton()', () => {
@@ -189,6 +203,13 @@ describe('controllers/AnnotationModeController', () => {
         it('should add the bp-is-hidden class to the button', () => {
             controller.hideButton();
             expect(buttonEl.classList).toContain(CLASS_HIDDEN);
+        });
+
+        it('should do nothing if no modeButton', () => {
+            controller.modeButton = undefined;
+            controller.permissions.canAnnotate = false;
+            controller.hideButton();
+            expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
         });
     });
 
