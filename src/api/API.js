@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import Annotation from '../Annotation';
 import { getHeaders } from '../util';
+import { PLACEHOLDER_USER } from '../constants';
 
 class API extends EventEmitter {
     /**
@@ -72,6 +73,17 @@ class API extends EventEmitter {
     }
 
     /**
+     * [destructor]
+     *
+     * @return {void}
+     */
+    destroy() {
+        if (this.axiosSource) {
+            this.axiosSource.cancel();
+        }
+    }
+
+    /**
      * Generic API CRUD operations
      *
      * @param {Promise} methodRequest - which REST method to execute (GET, POST, PUT, DELETE)
@@ -79,7 +91,7 @@ class API extends EventEmitter {
      * @param {Function} errorCallback - The error callback
      * @return {Promise} CRUD API Request Promise
      */
-    makeRequest(methodRequest: any, successCallback: Function, errorCallback: Function) {
+    makeRequest(methodRequest: any, successCallback: Function, errorCallback: Function): Promise<StringAnyMap> {
         // $FlowFixMe
         return new Promise((resolve: Function, reject: Function) => {
             methodRequest
@@ -129,7 +141,7 @@ class API extends EventEmitter {
             item,
             message,
             permissions,
-            created_by: createdBy,
+            created_by: createdBy = PLACEHOLDER_USER,
             created_at: createdAt,
             modified_at: modifiedAt,
             thread: threadNumber

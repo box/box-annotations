@@ -1,15 +1,47 @@
+// @flow
 import API from './API';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
+type Params = {
+    marker?: string,
+    limit?: string
+};
+
+type Data = {
+    type: string,
+    next_marker: string,
+    limit: number,
+    entries: Array<any>
+};
+
 class FileVersionAPI extends API {
+    /**
+     * @property {string}
+     */
+    fileVersionId: string;
+
+    /**
+     * @property {Array<Annotation>}
+     */
+    annotations: Array<Annotation>;
+
+    /**
+     * @property {string}
+     */
+    params: Params;
+
+    /**
+     * @property {Object}
+     */
+    data: Object;
+
     /**
      * Construct the URL to read annotations with a marker or limit added
      *
-     * @private
      * @return {string} Promise that resolves with fetched annotations
      */
-    getBaseUrl() {
+    getBaseUrl(): string {
         return `${this.apiHost}/2.0/files/${this.fileId}/annotations`;
     }
 
@@ -19,47 +51,39 @@ class FileVersionAPI extends API {
      * @param {string} version - File version ID
      * @return {Promise} Promise that resolves with thread map
      */
-    fetchVersionAnnotations(version) {
-        this.annotations = [];
-        this.apiAnnotations = [];
-        const params = {
-            version,
-            fields: FIELDS
-        };
-
-        return this.fetchFromMarker({ params }).then(this.createThreadMap);
+    fetchVersionAnnotations(version: string): Promise<AnnotationMap> {
+        this.fileVersionId = version;
+        return this.fetchFromMarker({ version, fields: FIELDS }).then(this.createAnnotationMap);
     }
 
     /**
      * Reads annotations from file version ID starting at a marker. The default
      * limit is 100 annotations per API call.
      *
-     * @private
-     * @param {string} marker - Marker to use if there are more than limit annotations
-     * @param {int} limit - The amout of annotations the API will return per call
-     * @return {void}
+     * @param {Params} [params] - Key-value map of querystring params
+     * @return {Promise<Data>} - Promise that resolves with annotation data
      */
-    fetchFromMarker = ({ params, marker = null, limit = null }) => {
-        this.limit = limit;
-        const apiUrl = this.getBaseUrl(marker);
-
-        const queryParams = {
-            ...params,
-            limit,
-            marker
-        };
+    fetchFromMarker = (params: Params): Promise<Data> => {
+        const apiUrl = this.getBaseUrl();
 
         const methodRequest = this.axios.get(apiUrl, {
             cancelToken: this.axiosSource.token,
             headers: this.headers,
             parsedUrl: this.getParsedUrl(apiUrl),
-            params: queryParams
+            params
         });
 
         return this.makeRequest(methodRequest, (data) => this.successHandler(data, params), this.errorHandler);
     };
 
-    successHandler = (data, params) => {
+    /**
+     * Success handler
+     *
+     * @param {Object} data - The response data
+     * @param {Params} queryParams - Key-value map of querystring params
+     * @return {void}
+     */
+    successHandler = (data: Data, queryParams: Params): void => {
         const entries = this.data ? this.data.entries : [];
         this.data = {
             ...data,
@@ -68,12 +92,16 @@ class FileVersionAPI extends API {
 
         const { next_marker } = data;
         if (next_marker) {
-            this.fetchFromMarker({ params, next_marker, limit: this.limit });
-            return;
+            const params = {
+                ...queryParams,
+                marker: next_marker
+            };
+
+            this.fetchFromMarker(params);
         }
 
         if (data.type === 'error' || !Array.isArray(data.entries)) {
-            const error = new Error(`Could not read annotations from file version with ID ${this.id}`);
+            const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
             this.emit('annotationerror', {
                 reason: 'read',
                 error: error.toString()
@@ -81,7 +109,13 @@ class FileVersionAPI extends API {
         }
     };
 
-    errorHandler = (error) => {
+    /**
+     * Error handler
+     *
+     * @param {$AxiosError} error - Response error
+     * @return {void}
+     */
+    errorHandler = (error: $AxiosError): void => {
         this.emit('annotationerror', {
             reason: 'authorization',
             error: error.toString()
@@ -92,14 +126,15 @@ class FileVersionAPI extends API {
      * Generates a map of thread ID to annotations in thread.
      *
      * @private
-     * @param {Annotations[]} annotations - Annotations to generate map from
-     * @return {Annotations[]} Map of thread ID to annotations in that thread
+     * @param {AnnotationData[]} annotations - Annotations to generate map from
+     * @return {AnnotationMap} Map of thread ID to annotations in that thread
      */
-    createThreadMap = (annotations) => {
+    createAnnotationMap = (): AnnotationMap => {
         const threadMap = {};
+        const { entries } = this.data;
 
         // Construct map of thread ID to annotations
-        annotations.entries.forEach((apiAnnotations) => {
+        entries.forEach((apiAnnotations) => {
             const annotation = this.formatAnnotation(apiAnnotations);
             const { threadID } = annotation;
             const threadAnnotations = threadMap[threadID] || [];

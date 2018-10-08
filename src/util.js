@@ -31,7 +31,7 @@ const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
-const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
+const THREAD_PARAMS = ['annotations', 'api', 'fileVersionId', 'locale', 'location', 'type'];
 const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
 //------------------------------------------------------------------------------

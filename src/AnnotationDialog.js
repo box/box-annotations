@@ -226,17 +226,7 @@ class AnnotationDialog extends EventEmitter {
      * @param {string} [textInput] Annotation text to post
      * @return {void}
      */
-    postAnnotation(textInput) {
-        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        const message = textInput || annotationTextEl.value;
-        if (message.trim() === '') {
-            annotationTextEl.classList.add(constants.CLASS_INVALID_INPUT);
-            return;
-        }
-
-        this.emit('annotationcreate', message);
-        annotationTextEl.value = '';
-    }
+    postAnnotation = (message) => this.emit('annotationcreate', message);
 
     //--------------------------------------------------------------------------
     // Abstract
@@ -437,9 +427,7 @@ class AnnotationDialog extends EventEmitter {
      * @private
      * @return {void}
      */
-    cancelAnnotation() {
-        this.emit('annotationcancel');
-    }
+    cancelAnnotation = () => this.emit('annotationcancel');
 
     /**
      * Posts a reply in the dialog.
@@ -447,7 +435,7 @@ class AnnotationDialog extends EventEmitter {
      * @private
      * @return {void}
      */
-    postReply() {
+    postReply = () => {
         const replyTextEl = this.element.querySelector(`.${CLASS_REPLY_TEXTAREA}`);
         const message = replyTextEl.value;
         if (message.trim() === '') {
@@ -458,7 +446,7 @@ class AnnotationDialog extends EventEmitter {
         this.emit('annotationcreate', message);
         replyTextEl.value = '';
         replyTextEl.focus();
-    }
+    };
 
     /**
      * Broadcasts message to delete an annotation.
@@ -467,9 +455,7 @@ class AnnotationDialog extends EventEmitter {
      * @param {Annotation} annotation annotation to delete
      * @return {void}
      */
-    emitAnnotationDelete(annotation) {
-        this.emit('annotationdelete', annotation);
-    }
+    emitAnnotationDelete = (annotation) => this.emit('annotationdelete', annotation.id);
 
     /**
      * Generates the annotation dialog DOM element

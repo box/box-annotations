@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import Annotation from './Annotation';
-import AnnotationService from './AnnotationService';
+import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
@@ -23,7 +23,7 @@ class AnnotationThread extends EventEmitter {
      * @property {HTMLElement} annotatedElement HTML element being annotated on
      * @property {Object} [annotations] Annotations in thread - none if
      * this is a new thread
-     * @property {AnnotationService} annotationService Annotations CRUD service
+     * @property {AnnotationAPI} api Annotations CRUD API
      * @property {string} fileVersionId File version ID
      * @property {Object} location Location object
      * @property {string} threadID Thread ID
@@ -45,11 +45,11 @@ class AnnotationThread extends EventEmitter {
         super();
 
         this.annotatedElement = data.annotatedElement;
-        this.annotationService = data.annotationService;
+        this.api = data.api;
         this.container = data.container;
         this.fileVersionId = data.fileVersionId;
         this.location = data.location;
-        this.threadID = data.threadID || AnnotationService.generateID();
+        this.threadID = data.threadID || AnnotationAPI.generateID();
         this.threadNumber = data.threadNumber || '';
         this.type = data.type;
         this.locale = data.locale;
@@ -161,7 +161,7 @@ class AnnotationThread extends EventEmitter {
         const annotationData = this.createAnnotationData(type, text);
 
         // Save annotation on client
-        const tempAnnotationID = AnnotationService.generateID();
+        const tempAnnotationID = AnnotationAPI.generateID();
         const tempAnnotationData = annotationData;
         tempAnnotationData.id = tempAnnotationID;
         tempAnnotationData.permissions = {
@@ -179,7 +179,7 @@ class AnnotationThread extends EventEmitter {
         this.state = STATES.inactive;
 
         // Save annotation on server
-        return this.annotationService
+        return this.api
             .create(annotationData)
             .then((savedAnnotation) => this.updateTemporaryAnnotation(tempAnnotation, savedAnnotation))
             .catch((error) => this.handleThreadSaveError(error, tempAnnotationID));
@@ -192,7 +192,7 @@ class AnnotationThread extends EventEmitter {
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation(annotationIDToRemove, useServer = true) {
+    deleteAnnotation = (annotationIDToRemove, useServer = true) => {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
         const annotation = this.annotations.find(({ id }) => id === annotationIDToRemove);
         if (!annotation) {
@@ -252,7 +252,7 @@ class AnnotationThread extends EventEmitter {
         }
 
         // Delete annotation on server
-        return this.annotationService
+        return this.api
             .delete(annotationIDToRemove)
             .then(() => {
                 // Ensures that blank highlight comment is also deleted when removing
@@ -261,7 +261,7 @@ class AnnotationThread extends EventEmitter {
                 canDeleteAnnotation =
                     firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
                 if (util.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
-                    this.annotationService.delete(firstAnnotation.id);
+                    this.api.delete(firstAnnotation.id);
                 }
 
                 // Broadcast thread cleanup if needed
@@ -280,7 +280,7 @@ class AnnotationThread extends EventEmitter {
                 console.error(THREAD_EVENT.deleteError, error.toString());
                 /* eslint-enable no-console */
             });
-    }
+    };
 
     //--------------------------------------------------------------------------
     // Abstract
@@ -495,11 +495,13 @@ class AnnotationThread extends EventEmitter {
      */
     updateTemporaryAnnotation(tempAnnotation, savedAnnotation) {
         this.annotations = this.annotations.filter(({ id }) => id !== tempAnnotation.id);
-        this.annotations.push(savedAnnotation);
+
+        const annotation = this.api.formatAnnotation(savedAnnotation);
+        this.annotations.push(annotation);
 
         // Set threadNumber if the savedAnnotation is the first annotation of the thread
-        if (!this.threadNumber && savedAnnotation && savedAnnotation.threadNumber) {
-            this.threadNumber = savedAnnotation.threadNumber;
+        if (!this.threadNumber && annotation && annotation.threadNumber) {
+            this.threadNumber = annotation.threadNumber;
         }
 
         if (this.dialog) {
@@ -544,13 +546,17 @@ class AnnotationThread extends EventEmitter {
      */
     createAnnotationData(type, message) {
         return {
-            fileVersionId: this.fileVersionId,
-            type,
+            item: {
+                id: this.fileVersionId,
+                type: 'file_version'
+            },
+            details: {
+                type,
+                location: this.location,
+                threadID: this.threadID
+            },
             message,
-            location: this.location,
-            createdBy: this.annotationService.user,
-            threadID: this.threadID,
-            threadNumber: this.threadNumber
+            createdBy: this.api.user
         };
     }
 
@@ -615,8 +621,8 @@ class AnnotationThread extends EventEmitter {
             threadID: this.threadID
         };
 
-        if (this.annotationService.user && this.annotationService.user.id > 0) {
-            threadData.userId = this.annotationService.user.id;
+        if (this.api.user && this.api.user.id > 0) {
+            threadData.userId = this.api.user.id;
         }
 
         if (this.threadNumber) {

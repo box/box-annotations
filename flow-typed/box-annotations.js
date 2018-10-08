@@ -103,6 +103,7 @@ type Annotation = {
     createdAt: string,
     canAnnotate: boolean,
     canDelete: boolean,
+    threadID: string
 }
 
 type Options = {
@@ -136,13 +137,5 @@ type AnnotationData = {
     thread: string
 };
 
-type API = {
-    apiHost: string,
-    fileId: string,
-    headers: StringMap,
-    axios: Axios,
-    axiosSource: CancelTokenSource,
-    makeRequest: Function,
-    getParsedUrl: Function,
-    formatAnnotation: Function
-}
+type StringAnyMap = { [string]: any };
+type AnnotationMap = { [string]: AnnotationData };

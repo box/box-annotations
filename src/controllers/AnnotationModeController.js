@@ -7,12 +7,12 @@ import {
     CLASS_ANNOTATION_MODE,
     CLASS_ANNNOTATION_MODE_BACKGROUND,
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
-    ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT,
     TYPES,
     BORDER_OFFSET
 } from '../constants';
+import AnnotationAPI from '../api/AnnotationAPI';
 
 class AnnotationModeController extends EventEmitter {
     /** @property {Object} - Object containing annotation threads */
@@ -46,6 +46,14 @@ class AnnotationModeController extends EventEmitter {
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
 
+        this.api = new AnnotationAPI({
+            apiHost: data.apiHost,
+            fileId: data.fileId,
+            token: data.token,
+            anonymousUserName: data.localized.anonymousUserName
+        });
+        this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
+
         if (data.modeButton && this.permissions.canAnnotate) {
             this.modeButton = data.modeButton;
             this.showButton();
@@ -69,6 +77,7 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
+        this.api.removeListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
     }
 
     /**
@@ -353,11 +362,11 @@ class AnnotationModeController extends EventEmitter {
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.deleteError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.deleteError);
+                this.emit(CONTROLLER_EVENT.error, this.localized.deleteError);
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.createError:
-                this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+                this.emit(CONTROLLER_EVENT.error, this.localized.createError);
                 this.emit(event, threadData);
                 break;
             default:
@@ -503,6 +512,43 @@ class AnnotationModeController extends EventEmitter {
 
         // Get the threads that correspond to the point that was clicked on
         return this.threads[location.page].search(eventBoundary);
+    }
+
+    /**
+     * Handle events emitted by the annotation service
+     *
+     * @private
+     * @param {Object} [data] - Annotation service event data
+     * @param {string} [data.event] - Annotation service event
+     * @param {string} [data.data] -
+     * @return {void}
+     */
+    handleAPIErrors(data) {
+        let errorMessage = '';
+        switch (data.reason) {
+            case 'create':
+                errorMessage = this.localized.createError;
+                this.loadAnnotations();
+                break;
+            case 'delete':
+                errorMessage = this.localized.deleteError;
+                this.loadAnnotations();
+                break;
+            case 'authorization':
+                errorMessage = this.localized.authError;
+                break;
+            default:
+        }
+
+        if (data.error) {
+            /* eslint-disable no-console */
+            console.error(CONTROLLER_EVENT.error, data.error);
+            /* eslint-enable no-console */
+        }
+
+        if (errorMessage) {
+            this.emit(CONTROLLER_EVENT.error, errorMessage);
+        }
     }
 
     /**
