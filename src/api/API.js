@@ -1,3 +1,4 @@
+// @flow
 import EventEmitter from 'events';
 import axios from 'axios';
 
@@ -6,56 +7,100 @@ import { getHeaders } from '../util';
 
 class API extends EventEmitter {
     /**
+     * @property {string}
+     */
+    apiHost: string;
+
+    /**
+     * @property {string}
+     */
+    fileId: string;
+
+    /**
+     * @property {User}
+     */
+    user: User;
+
+    /**
+     * @property {StringMap}
+     */
+    headers: StringMap = {};
+
+    /**
+     * @property {Axios}
+     */
+    axios: Axios = axios.create();
+
+    /**
+     * @property {CancelTokenSource}
+     */
+    axiosSource: CancelTokenSource = axios.CancelToken.source();
+
+    /**
      * Generates a rfc4122v4-compliant GUID, from
      * http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript.
      *
      * @return {string} UUID for annotation
      */
     static generateID() {
-        /* eslint-disable */
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-            var r = (Math.random() * 16) | 0,
-                v = c == 'x' ? r : (r & 0x3) | 0x8;
+            const r = Math.random() * 16 || 0;
+            /* eslint-disable no-bitwise */
+            const v = c === 'x' ? r : r & 0x3 || 0x8;
+            /* eslint-enable no-bitwise */
             return v.toString(16);
         });
-        /* eslint-enable */
     }
 
     /**
      * [constructor]
      *
-     * @param {Object} data - Annotation Service data
+     * @param {Options} data - Annotation Service data
      * @return {API} API instance
      */
-    constructor(data) {
+    constructor(data: Options) {
         super();
         this.apiHost = data.apiHost;
         this.fileId = data.fileId;
         this.headers = getHeaders({}, data.token);
         this.user = {
+            type: 'user',
             id: '0',
+            email: '',
             name: data.anonymousUserName
         };
-
-        this.axios = axios.create();
-        this.axiosSource = axios.CancelToken.source();
     }
 
-    makeRequest(methodRequest, successCallback, errorCallback) {
-        return new Promise((resolve, reject) => {
+    /**
+     * Generic API CRUD operations
+     *
+     * @param {Promise} methodRequest - which REST method to execute (GET, POST, PUT, DELETE)
+     * @param {Function} successCallback - The success callback
+     * @param {Function} errorCallback - The error callback
+     * @return {Promise} CRUD API Request Promise
+     */
+    makeRequest(methodRequest: any, successCallback: Function, errorCallback: Function) {
+        // $FlowFixMe
+        return new Promise((resolve: Function, reject: Function) => {
             methodRequest
-                .then((data) => {
+                .then((data: Object) => {
                     successCallback(data.data);
                     resolve(data.data);
                 })
-                .catch((error) => {
+                .catch((error: $AxiosError) => {
                     errorCallback(error);
-                    reject(errorCallback);
+                    reject(error);
                 });
         });
     }
 
-    getParsedUrl(url) {
+    /**
+     * Utility to parse a URL.
+     *
+     * @param {string} url - Url to parse
+     * @return {Object} parsed url
+     */
+    getParsedUrl(url: string): Object {
         const a = document.createElement('a');
         a.href = url;
         return {
@@ -74,10 +119,10 @@ class API extends EventEmitter {
      * Generates an Annotation object from an API response.
      *
      * @private
-     * @param {Object} data - API response data
+     * @param {AnnotationData} data - API response data
      * @return {Annotation} Created annotation
      */
-    createAnnotation(data) {
+    formatAnnotation(data: AnnotationData): Annotation {
         const {
             id,
             details,

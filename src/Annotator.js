@@ -60,7 +60,6 @@ class Annotator extends EventEmitter {
             apiHost,
             fileId: this.fileId,
             token,
-            canAnnotate: this.permissions.canAnnotate,
             anonymousUserName: this.localized.anonymousUserName
         });
 
@@ -68,7 +67,6 @@ class Annotator extends EventEmitter {
             apiHost,
             fileId: this.fileId,
             token,
-            canAnnotate: this.permissions.canAnnotate,
             anonymousUserName: this.localized.anonymousUserName
         });
 
@@ -165,7 +163,7 @@ class Annotator extends EventEmitter {
     loadAnnotations() {
         this.fetchPromise
             .then(() => {
-                this.generateAnnotationMap(this.apiAnnotations);
+                this.generateAnnotationMap(this.annotationMap);
                 this.render();
                 this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
@@ -351,7 +349,7 @@ class Annotator extends EventEmitter {
 
         return this.API.fetchVersionAnnotations(this.fileVersionId)
             .then((threads) => {
-                this.apiAnnotations = threads;
+                this.annotationMap = threads;
                 this.emit(ANNOTATOR_EVENT.fetch);
             })
             .catch((err) => {
@@ -363,18 +361,18 @@ class Annotator extends EventEmitter {
      * Generates a map of thread ID to annotations in thread by page.
      *
      * @private
-     * @param {Object} apiAnnotations - Annotations to generate map from
+     * @param {Object} annotationMap - Annotations to generate map from
      * @return {void}
      */
-    generateAnnotationMap(apiAnnotations) {
+    generateAnnotationMap(annotationMap) {
         const { annotator } = this.options;
         if (!annotator) {
             return;
         }
 
         // Generate map of page to annotations
-        Object.keys(apiAnnotations).forEach((threadID) => {
-            const annotations = apiAnnotations[threadID];
+        Object.keys(annotationMap).forEach((threadID) => {
+            const annotations = annotationMap[threadID];
 
             // NOTE: Using the last annotation to evaluate if the annotation type
             // is enabled because highlight comment annotations may have a plain
@@ -420,7 +418,7 @@ class Annotator extends EventEmitter {
      * @protected
      * @return {void}
      */
-    bindCustomListenersOnService() {
+    bindCustomListeners() {
         this.annotationService.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
         this.API.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
@@ -431,7 +429,7 @@ class Annotator extends EventEmitter {
      * @protected
      * @return {void}
      */
-    unbindCustomListenersOnService() {
+    unbindCustomListeners() {
         this.annotationService.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
         this.API.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }

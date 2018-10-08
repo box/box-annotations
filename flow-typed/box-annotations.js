@@ -4,6 +4,8 @@
  * @author Box
  */
 /* eslint-disable no-use-before-define */
+import type { $AxiosError, Axios, CancelTokenSource } from 'axios';
+
 type StringMap = { [string]: string };
 type AnnotationPermissions = {
     can_edit: boolean,
@@ -101,4 +103,46 @@ type Annotation = {
     createdAt: string,
     canAnnotate: boolean,
     canDelete: boolean,
+}
+
+type Options = {
+    apiHost: string,
+    fileId: string,
+    token: string,
+    anonymousUserName: string
+};
+
+type AnnotationDetails = {
+    threadID: string,
+    type: AnnotationType,
+    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
+};
+
+type BoxUser = {
+    id: string,
+    name: string,
+    profile_image: string
+}
+
+type AnnotationData = {
+    id: string,
+    details: AnnotationDetails,
+    item: BoxFileVersion,
+    message: string,
+    permissions: AnnotationPermissions,
+    created_by: BoxUser, 
+    created_at: string,
+    modified_at: string,
+    thread: string
+};
+
+type API = {
+    apiHost: string,
+    fileId: string,
+    headers: StringMap,
+    axios: Axios,
+    axiosSource: CancelTokenSource,
+    makeRequest: Function,
+    getParsedUrl: Function,
+    formatAnnotation: Function
 }

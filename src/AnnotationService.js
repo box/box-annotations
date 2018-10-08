@@ -41,7 +41,7 @@ class AnnotationService extends EventEmitter {
                             can_edit: true,
                             can_delete: true
                         };
-                        const createdAnnotation = this.createAnnotation(tempData);
+                        const createdAnnotation = this.formatAnnotation(tempData);
 
                         // Set user if not set already
                         if (this.user.id === '0') {
@@ -115,7 +115,7 @@ class AnnotationService extends EventEmitter {
      * @param {Object} data - API response data
      * @return {Annotation} Created annotation
      */
-    createAnnotation(data) {
+    formatAnnotation(data) {
         const {
             id,
             details,

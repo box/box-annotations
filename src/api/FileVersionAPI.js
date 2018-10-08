@@ -100,7 +100,7 @@ class FileVersionAPI extends API {
 
         // Construct map of thread ID to annotations
         annotations.entries.forEach((apiAnnotations) => {
-            const annotation = this.createAnnotation(apiAnnotations);
+            const annotation = this.formatAnnotation(apiAnnotations);
             const { threadID } = annotation;
             const threadAnnotations = threadMap[threadID] || [];
             threadAnnotations.push(annotation);
