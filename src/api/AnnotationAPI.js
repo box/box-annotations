@@ -1,5 +1,6 @@
 // @flow
 import API from './API';
+import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
 const HTTP_POST = 'POST';
 const HTTP_DELETE = 'DELETE';
@@ -27,11 +28,10 @@ class AnnotationAPI extends API {
             data: annotation,
             method: HTTP_POST,
             cancelToken: this.axiosSource.token,
-            headers: this.headers,
-            parsedUrl: this.getParsedUrl(url)
+            headers: this.headers
         });
 
-        return this.makeRequest(methodRequest, this.createSuccessHandler, this.errorHandler);
+        return this.makeRequest(methodRequest, this.createSuccessHandler);
     }
 
     /**
@@ -44,11 +44,10 @@ class AnnotationAPI extends API {
             url,
             method: HTTP_DELETE,
             cancelToken: this.axiosSource.token,
-            headers: this.headers,
-            parsedUrl: this.getParsedUrl(url)
+            headers: this.headers
         });
 
-        return this.makeRequest(methodRequest, (data) => this.deleteSuccessHandler(data, id), this.errorHandler);
+        return this.makeRequest(methodRequest, (data) => this.deleteSuccessHandler(data, id));
     }
 
     /**
@@ -58,8 +57,8 @@ class AnnotationAPI extends API {
     createSuccessHandler = (data: Object): AnnotationMap => {
         if (data.type === 'error' || !data.id) {
             const error = new Error('Could not create annotation');
-            this.emit('annotationerror', {
-                reason: 'create',
+            this.emit(ANNOTATOR_EVENT.error, {
+                reason: ERROR_TYPE.create,
                 error: error.toString()
             });
         }
@@ -75,24 +74,13 @@ class AnnotationAPI extends API {
     deleteSuccessHandler = (data: Object, id: string) => {
         if (data.type === 'error' || !data.id) {
             const error = new Error(`Could not delete annotation with ID ${id}`);
-            this.emit('annotationerror', {
-                reason: 'delete',
+            this.emit(ANNOTATOR_EVENT.error, {
+                reason: ERROR_TYPE.delete,
                 error: error.toString()
             });
         }
 
         return data;
-    };
-
-    /**
-     * @param {$AxiosError} error  - HTTP response data
-     * @return {void}
-     */
-    errorHandler = (error: $AxiosError) => {
-        this.emit('annotationerror', {
-            reason: 'authorization',
-            error: error.toString()
-        });
     };
 }
 

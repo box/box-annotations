@@ -1,5 +1,6 @@
 // @flow
 import API from './API';
+import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -69,11 +70,10 @@ class FileVersionAPI extends API {
         const methodRequest = this.axios.get(apiUrl, {
             cancelToken: this.axiosSource.token,
             headers: this.headers,
-            parsedUrl: this.getParsedUrl(apiUrl),
             params
         });
 
-        return this.makeRequest(methodRequest, (data) => this.successHandler(data, params), this.errorHandler);
+        return this.makeRequest(methodRequest, (data) => this.successHandler(data, params));
     };
 
     /**
@@ -102,24 +102,11 @@ class FileVersionAPI extends API {
 
         if (data.type === 'error' || !Array.isArray(data.entries)) {
             const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
-            this.emit('annotationerror', {
-                reason: 'read',
+            this.emit(ANNOTATOR_EVENT.error, {
+                reason: ERROR_TYPE.read,
                 error: error.toString()
             });
         }
-    };
-
-    /**
-     * Error handler
-     *
-     * @param {$AxiosError} error - Response error
-     * @return {void}
-     */
-    errorHandler = (error: $AxiosError): void => {
-        this.emit('annotationerror', {
-            reason: 'authorization',
-            error: error.toString()
-        });
     };
 
     /**

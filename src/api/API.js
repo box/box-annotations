@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import Annotation from '../Annotation';
 import { getHeaders } from '../util';
-import { PLACEHOLDER_USER } from '../constants';
+import { PLACEHOLDER_USER, ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
 class API extends EventEmitter {
     /**
@@ -65,9 +65,7 @@ class API extends EventEmitter {
         this.fileId = data.fileId;
         this.headers = getHeaders({}, data.token);
         this.user = {
-            type: 'user',
-            id: '0',
-            email: '',
+            ...PLACEHOLDER_USER,
             name: data.anonymousUserName
         };
     }
@@ -88,44 +86,24 @@ class API extends EventEmitter {
      *
      * @param {Promise} methodRequest - which REST method to execute (GET, POST, PUT, DELETE)
      * @param {Function} successCallback - The success callback
-     * @param {Function} errorCallback - The error callback
      * @return {Promise} CRUD API Request Promise
      */
-    makeRequest(methodRequest: any, successCallback: Function, errorCallback: Function): Promise<StringAnyMap> {
-        // $FlowFixMe
-        return new Promise((resolve: Function, reject: Function) => {
-            methodRequest
-                .then((data: Object) => {
-                    successCallback(data.data);
-                    resolve(data.data);
-                })
-                .catch((error: $AxiosError) => {
-                    errorCallback(error);
-                    reject(error);
-                });
-        });
+    makeRequest(methodRequest: any, successCallback: Function): Promise<StringAnyMap> {
+        return methodRequest.then((data: Object) => successCallback(data.data)).catch(this.errorHandler);
     }
 
     /**
-     * Utility to parse a URL.
+     * Error handler
      *
-     * @param {string} url - Url to parse
-     * @return {Object} parsed url
+     * @param {$AxiosError} error - Response error
+     * @return {void}
      */
-    getParsedUrl(url: string): Object {
-        const a = document.createElement('a');
-        a.href = url;
-        return {
-            api: url.replace(`${a.origin}/2.0`, ''),
-            host: a.host,
-            hostname: a.hostname,
-            pathname: a.pathname,
-            origin: a.origin,
-            protocol: a.protocol,
-            hash: a.hash,
-            port: a.port
-        };
-    }
+    errorHandler = (error: $AxiosError): void => {
+        this.emit(ANNOTATOR_EVENT.error, {
+            reason: ERROR_TYPE.auth,
+            error: error.toString()
+        });
+    };
 
     /**
      * Generates an Annotation object from an API response.

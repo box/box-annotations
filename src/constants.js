@@ -285,6 +285,13 @@ export const CREATE_EVENT = {
     comment: 'comment_highlight_edit'
 };
 
+export const ERROR_TYPE = {
+    auth: 'authorization',
+    read: 'read',
+    create: 'create',
+    delete: 'delete'
+};
+
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;
 

@@ -55,7 +55,7 @@ class Annotator extends EventEmitter {
 
         this.permissions = this.getAnnotationPermissions(this.options.file);
 
-        this.API = new FileVersionAPI({
+        this.api = new FileVersionAPI({
             apiHost,
             fileId: this.fileId,
             token,
@@ -337,7 +337,8 @@ class Annotator extends EventEmitter {
             return Promise.resolve({});
         }
 
-        return this.API.fetchVersionAnnotations(this.fileVersionId)
+        return this.api
+            .fetchVersionAnnotations(this.fileVersionId)
             .then((threads) => {
                 this.annotationMap = threads;
                 this.emit(ANNOTATOR_EVENT.fetch);
@@ -410,7 +411,7 @@ class Annotator extends EventEmitter {
      */
     bindCustomListeners() {
         this.addListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
-        this.API.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+        this.api.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -421,7 +422,7 @@ class Annotator extends EventEmitter {
      */
     unbindCustomListeners() {
         this.removeListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
-        this.API.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+        this.api.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
