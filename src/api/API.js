@@ -32,10 +32,9 @@ class API extends EventEmitter {
         this.apiHost = data.apiHost;
         this.fileId = data.fileId;
         this.headers = getHeaders({}, data.token);
-        this.canAnnotate = data.canAnnotate;
         this.user = {
             id: '0',
-            name: this.anonymousUserName
+            name: data.anonymousUserName
         };
 
         this.axios = axios.create();
