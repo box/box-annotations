@@ -221,9 +221,9 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Posts an annotation in the dialog.
+     * Broadcasts message to post an annotation.
      *
-     * @param {string} [textInput] Annotation text to post
+     * @param {string} message Annotation text to post
      * @return {void}
      */
     postAnnotation = (message) => this.emit('annotationcreate', message);
@@ -422,7 +422,7 @@ class AnnotationDialog extends EventEmitter {
     }
 
     /**
-     * Cancels posting an annotation.
+     * Broadcasts message to cancel an annotation.
      *
      * @private
      * @return {void}
