@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import rangy from 'rangy';
 import Annotator from '../../Annotator';
-import Annotation from '../../Annotation';
 import AnnotationThread from '../../AnnotationThread';
 import DocAnnotator from '../DocAnnotator';
 import DocHighlightThread from '../DocHighlightThread';
@@ -29,6 +28,11 @@ const html = '<div class="bp-doc annotated-element" id="doc-annotator-el"></div>
 
 const SELECTOR_DEFAULT_CURSOR = '.bp-use-default-cursor';
 
+const api = {
+    addListener: jest.fn(),
+    generateID: jest.fn().mockReturnValue('1')
+};
+
 describe('doc/DocAnnotator', () => {
     let rootElement;
 
@@ -46,10 +50,11 @@ describe('doc/DocAnnotator', () => {
                 CONTROLLERS: { something: controller }
             }
         };
+
         annotator = new DocAnnotator({
             canAnnotate: true,
             container: rootElement,
-            annotationService: {},
+            api,
             file: {
                 file_version: { id: 1 }
             },
@@ -64,8 +69,9 @@ describe('doc/DocAnnotator', () => {
                 loadError: 'loaderror'
             }
         });
+
         annotator.annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-        annotator.annotationService = {};
+        annotator.api = {};
         annotator.threads = {};
         annotator.modeControllers = {};
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
@@ -97,6 +103,11 @@ describe('doc/DocAnnotator', () => {
         };
 
         annotator.destroy = jest.fn();
+
+        util.getPageInfo = jest.fn().mockReturnValue({
+            page: 1,
+            pageEl: document.createElement('div')
+        });
     });
 
     afterEach(() => {
@@ -113,6 +124,7 @@ describe('doc/DocAnnotator', () => {
 
     describe('init()', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
+            annotator.setupAnnotations = jest.fn();
             annotator.init(1);
             expect(annotator.annotatedElement.id).not.toBeUndefined();
         });
@@ -257,7 +269,6 @@ describe('doc/DocAnnotator', () => {
 
         describe(TYPES.highlight, () => {
             beforeEach(() => {
-                annotator.setupAnnotations();
                 annotator.highlighter = {
                     highlights: []
                 };
@@ -297,7 +308,6 @@ describe('doc/DocAnnotator', () => {
 
         describe(TYPES.highlight_comment, () => {
             beforeEach(() => {
-                annotator.setupAnnotations();
                 annotator.highlighter = {
                     highlights: []
                 };
@@ -346,6 +356,13 @@ describe('doc/DocAnnotator', () => {
             annotator.notification = {
                 show: jest.fn()
             };
+            util.areThreadParamsValid = jest.fn().mockReturnValue(true);
+            annotator.getThreadParams = jest.fn().mockReturnValue({
+                permissions: { canAnnotate: false }
+            });
+            annotator.modeControllers.point = { api };
+            annotator.modeControllers.highlight = { api };
+            annotator.modeControllers['highlight-comment'] = { api };
         });
 
         afterEach(() => {
@@ -371,19 +388,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should create highlight thread with appropriate parameters', () => {
-            Object.defineProperty(AnnotationThread.prototype, 'setup', { value: jest.fn() });
-            const annotation = new Annotation({
-                fileVersionId: 2,
-                threadID: '1',
-                type: TYPES.point,
-                threadNumber: '1',
-                message: 'blah',
-                location: { x: 0, y: 0 }
-            });
-            thread = annotator.createAnnotationThread([annotation], {}, TYPES.highlight);
-
-            expect(thread.threadID).toEqual(annotation.threadID);
-            expect(thread.threadNumber).toEqual(annotation.threadNumber);
+            thread = annotator.createAnnotationThread([], {}, TYPES.highlight);
             expect(thread instanceof DocHighlightThread).toBeTruthy();
             expect(annotator.handleValidationError).not.toBeCalled();
         });
@@ -933,7 +938,6 @@ describe('doc/DocAnnotator', () => {
             annotator.highlighter = {
                 highlightSelection: jest.fn()
             };
-            annotator.setupAnnotations();
         });
 
         it('should invoke highlighter.highlightSelection()', () => {
@@ -1031,18 +1035,21 @@ describe('doc/DocAnnotator', () => {
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
 
-            annotator.setupAnnotations();
             annotator.mobileDialogEl = document.createElement('div');
             annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
             annotator.modeControllers = {
-                point: {},
+                point: {
+                    api
+                },
                 highlight: {
-                    applyActionToThreads: jest.fn()
+                    applyActionToThreads: jest.fn(),
+                    api
                 },
                 'highlight-comment': {
-                    applyActionToThreads: jest.fn()
+                    applyActionToThreads: jest.fn(),
+                    api
                 }
             };
             highlightController = annotator.modeControllers.highlight;

@@ -445,26 +445,9 @@ describe('AnnotationDialog', () => {
     });
 
     describe('postAnnotation()', () => {
-        let annotationTextEl;
-
-        beforeEach(() => {
-            annotationTextEl = document.createElement('textarea');
-            annotationTextEl.classList.add(constants.CLASS_ANNOTATION_TEXTAREA);
-            dialog.element = rootElement;
-            dialog.element.appendChild(annotationTextEl);
-        });
-
-        it('should not post an annotation to the dialog if it has no text', () => {
-            dialog.postAnnotation();
-            expect(dialog.emit).not.toBeCalled();
-            expect(annotationTextEl.classList).toContain(CLASS_INVALID_INPUT);
-        });
-
         it('should post an annotation to the dialog if it has text', () => {
-            annotationTextEl.innerHTML += 'the preview SDK is great!';
-            dialog.postAnnotation();
+            dialog.postAnnotation('the preview SDK is great!');
             expect(dialog.emit).toBeCalledWith('annotationcreate', 'the preview SDK is great!');
-            expect(annotationTextEl.value).toEqual('');
         });
     });
 
@@ -505,7 +488,7 @@ describe('AnnotationDialog', () => {
     describe('emitAnnotationDelete()', () => {
         it('should emit the annotationdelete message', () => {
             dialog.emitAnnotationDelete(annotation);
-            expect(dialog.emit).toBeCalledWith('annotationdelete', annotation);
+            expect(dialog.emit).toBeCalledWith('annotationdelete', annotation.id);
         });
     });
 

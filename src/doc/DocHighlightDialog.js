@@ -68,12 +68,6 @@ class DocHighlightDialog extends AnnotationDialog {
 
     /** @inheritdoc */
     postAnnotation(textInput) {
-        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
-        const text = textInput || annotationTextEl.value;
-        if (text.trim() === '') {
-            return;
-        }
-
         // Convert from plain highlight to comment
         const headerEl = this.element.querySelector(constants.SELECTOR_MOBILE_DIALOG_HEADER);
         if (headerEl) {
@@ -81,7 +75,9 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.classList.remove(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         }
 
-        super.postAnnotation(textInput);
+        const annotationTextEl = this.element.querySelector(constants.SELECTOR_ANNOTATION_TEXTAREA);
+        const text = textInput || annotationTextEl.value;
+        super.postAnnotation(text.trim());
     }
 
     /**
