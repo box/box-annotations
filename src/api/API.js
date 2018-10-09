@@ -7,34 +7,22 @@ import { getHeaders } from '../util';
 import { PLACEHOLDER_USER, ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
 class API extends EventEmitter {
-    /**
-     * @property {string}
-     */
+    /** @property {string} */
     apiHost: string;
 
-    /**
-     * @property {string}
-     */
+    /** @property {string} */
     fileId: string;
 
-    /**
-     * @property {User}
-     */
+    /** @property {User} */
     user: User;
 
-    /**
-     * @property {StringMap}
-     */
+    /** @property {StringMap} */
     headers: StringMap = {};
 
-    /**
-     * @property {Axios}
-     */
+    /** @property {Axios} */
     axios: Axios = axios.create();
 
-    /**
-     * @property {CancelTokenSource}
-     */
+    /** @property {CancelTokenSource} */
     axiosSource: CancelTokenSource = axios.CancelToken.source();
 
     /**

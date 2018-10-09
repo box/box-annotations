@@ -17,24 +17,16 @@ type Data = {
 };
 
 class FileVersionAPI extends API {
-    /**
-     * @property {string}
-     */
+    /** @property {string} */
     fileVersionId: string;
 
-    /**
-     * @property {Array<Annotation>}
-     */
+    /** @property {Array<Annotation>} */
     annotations: Array<Annotation>;
 
-    /**
-     * @property {string}
-     */
+    /** @property {Params} */
     params: Params;
 
-    /**
-     * @property {Object}
-     */
+    /** @property {Object} */
     data: Object;
 
     /**
