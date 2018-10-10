@@ -20,7 +20,7 @@ describe('doc/DocPointThread', () => {
         thread = new DocPointThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
-            annotationService: {},
+            api: {},
             fileVersionId: 1,
             location: {},
             threadID: 2,

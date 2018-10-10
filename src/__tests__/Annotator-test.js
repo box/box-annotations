@@ -10,6 +10,10 @@ import {
     SELECTOR_ANNOTATED_ELEMENT
 } from '../constants';
 
+const api = {
+    formatAnnotation: jest.fn()
+};
+
 describe('Annotator', () => {
     let rootElement;
     let annotator;
@@ -46,7 +50,7 @@ describe('Annotator', () => {
         annotator = new Annotator({
             canAnnotate: true,
             container: rootElement,
-            annotationService: {},
+            api,
             file: {
                 file_version: { id: 1 }
             },
@@ -193,16 +197,15 @@ describe('Annotator', () => {
     describe('setupAnnotations()', () => {
         it('should initialize thread map and bind DOM listeners', () => {
             annotator.bindDOMListeners = jest.fn();
-            annotator.bindCustomListenersOnService = jest.fn();
+            annotator.bindCustomListeners = jest.fn();
             annotator.addListener = jest.fn();
             annotator.setupControllers = jest.fn();
 
             annotator.setupAnnotations();
 
             expect(annotator.bindDOMListeners).toBeCalled();
-            expect(annotator.bindCustomListenersOnService).toBeCalled();
+            expect(annotator.bindCustomListeners).toBeCalled();
             expect(annotator.setupControllers).toBeCalled();
-            expect(annotator.addListener).toBeCalledWith(ANNOTATOR_EVENT.scale, expect.any(Function));
         });
     });
 
@@ -244,14 +247,13 @@ describe('Annotator', () => {
         describe('destroy()', () => {
             it('should unbind custom listeners on thread and unbind DOM listeners', () => {
                 annotator.unbindDOMListeners = jest.fn();
-                annotator.unbindCustomListenersOnService = jest.fn();
+                annotator.unbindCustomListeners = jest.fn();
                 annotator.removeListener = jest.fn();
 
                 annotator.destroy();
 
                 expect(annotator.unbindDOMListeners).toBeCalled();
-                expect(annotator.unbindCustomListenersOnService).toBeCalled();
-                expect(annotator.removeListener).toBeCalledWith(ANNOTATOR_EVENT.scale, expect.any(Function));
+                expect(annotator.unbindCustomListeners).toBeCalled();
             });
         });
 
@@ -320,7 +322,7 @@ describe('Annotator', () => {
             const threadPromise = Promise.resolve(threadMap);
 
             beforeEach(() => {
-                annotator.annotationService.getThreadMap = jest.fn();
+                annotator.api.getThreadMap = jest.fn();
 
                 annotator.permissions = {
                     canViewAllAnnotations: true,
@@ -338,12 +340,12 @@ describe('Annotator', () => {
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
                     expect(result).toBeTruthy();
-                    expect(annotator.annotationService.getThreadMap).not.toBeCalled();
+                    expect(annotator.api.getThreadMap).not.toBeCalled();
                 });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                annotator.annotationService.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: false,
                     canViewOwnAnnotations: true
@@ -358,7 +360,7 @@ describe('Annotator', () => {
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                annotator.annotationService.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
                     canViewAllAnnotations: true,
                     canViewOwnAnnotations: false
@@ -374,7 +376,8 @@ describe('Annotator', () => {
                 });
             });
         });
-        describe('generateThreadMap()', () => {
+
+        describe('generateAnnotationMap()', () => {
             let threadMap;
 
             beforeEach(() => {
@@ -384,14 +387,14 @@ describe('Annotator', () => {
 
             it('should do nothing if annotator conf does not exist in options', () => {
                 annotator.options = {};
-                annotator.generateThreadMap(threadMap);
+                annotator.generateAnnotationMap(threadMap);
                 expect(annotator.createAnnotationThread).not.toBeCalled();
             });
 
             it('should reset and create a new thread map by from annotations fetched from server', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
                 annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-                annotator.generateThreadMap(threadMap);
+                annotator.generateAnnotationMap(threadMap);
                 expect(annotator.createAnnotationThread).toBeCalled();
             });
 
@@ -399,26 +402,23 @@ describe('Annotator', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
                 annotator.modeControllers['highlight-comment'] = controller;
                 annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-                annotator.generateThreadMap(threadMap);
+                annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).toBeCalled();
             });
 
             it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
                 annotator.options.annotator = { NAME: 'name', TYPE: ['highlight'] };
                 annotator.modeControllers['highlight-comment'] = controller;
-                annotator.generateThreadMap(threadMap);
+                annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).not.toBeCalled();
             });
         });
 
-        describe('bindCustomListenersOnService()', () => {
+        describe('bindCustomListeners()', () => {
             it('should add an event listener', () => {
-                annotator.annotationService.addListener = jest.fn();
-                annotator.bindCustomListenersOnService();
-                expect(annotator.annotationService.addListener).toBeCalledWith(
-                    ANNOTATOR_EVENT.error,
-                    expect.any(Function)
-                );
+                annotator.api.addListener = jest.fn();
+                annotator.bindCustomListeners();
+                expect(annotator.api.addListener).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(Function));
             });
         });
 
@@ -427,31 +427,9 @@ describe('Annotator', () => {
                 annotator.emit = jest.fn();
             });
 
-            it('should emit annotatorerror on read error event', () => {
-                annotator.handleServicesErrors({ reason: 'read' });
-                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
-            });
-
-            it('should emit annotatorerror and show annotations on create error event', () => {
-                annotator.handleServicesErrors({ reason: 'create' });
-                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
-                expect(annotator.loadAnnotations).toBeCalled();
-            });
-
-            it('should emit annotatorerror and show annotations on delete error event', () => {
-                annotator.handleServicesErrors({ reason: 'delete' });
-                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
-                expect(annotator.loadAnnotations).toBeCalled();
-            });
-
-            it('should emit annotatorerror on authorization error event', () => {
-                annotator.handleServicesErrors({ reason: 'authorization' });
-                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
-            });
-
-            it('should not emit annotatorerror when event does not match', () => {
-                annotator.handleServicesErrors({ reason: 'no match' });
-                expect(annotator.emit).not.toBeCalled();
+            it('should emit annotatorerror on error event', () => {
+                annotator.handleServicesErrors({ error: {} });
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
             });
         });
 
@@ -501,11 +479,11 @@ describe('Annotator', () => {
             });
         });
 
-        describe('unbindCustomListenersOnService()', () => {
+        describe('unbindCustomListeners()', () => {
             it('should remove an event listener', () => {
-                annotator.annotationService.removeListener = jest.fn();
-                annotator.unbindCustomListenersOnService();
-                expect(annotator.annotationService.removeListener).toBeCalled();
+                annotator.api.removeListener = jest.fn();
+                annotator.unbindCustomListeners();
+                expect(annotator.api.removeListener).toBeCalled();
             });
         });
 

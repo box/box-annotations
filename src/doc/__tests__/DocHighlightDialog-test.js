@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import DocHighlightDialog from '../DocHighlightDialog';
 import Annotation from '../../Annotation';
-import AnnotationDialog from '../../AnnotationDialog';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
 import * as constants from '../../constants';
@@ -46,6 +45,7 @@ describe('doc/DocHighlightDialog', () => {
             canAnnotate: true,
             locale: 'en-US'
         });
+
         dialog.localized = {
             highlightToggle: 'highlight toggle',
             whoHighlighted: '{1} highlighted'
@@ -143,34 +143,32 @@ describe('doc/DocHighlightDialog', () => {
     });
 
     describe('postAnnotation()', () => {
-        const postFunc = AnnotationDialog.prototype.postAnnotation;
-
         beforeEach(() => {
-            Object.defineProperty(AnnotationDialog.prototype, 'postAnnotation', { value: jest.fn() });
             dialog.destroy = jest.fn();
             util.showElement = jest.fn();
-        });
-
-        afterEach(() => {
-            Object.defineProperty(AnnotationDialog.prototype, 'postAnnotation', { value: postFunc });
+            dialog.emit = jest.fn();
         });
 
         it('should do nothing if not text is present', () => {
-            dialog.postAnnotation(' ');
-            expect(AnnotationDialog.prototype.postAnnotation).not.toBeCalled();
+            dialog.postAnnotation('');
+            expect(dialog.emit).toBeCalledWith('annotationcreate', '');
         });
 
         it('should not modify mobile ui there is no mobile header present', () => {
             dialog.postAnnotation('This is the water and this is the well.');
             expect(util.showElement).not.toBeCalledWith(constants.CLASS_MOBILE_DIALOG_HEADER);
+            expect(dialog.emit).toBeCalled();
         });
 
         it('should show the mobile header and remove the plain highlight class from the dialog', () => {
+            const header = document.createElement('div');
+            header.innerHTML = mobileHeader;
+            dialog.element.appendChild(header);
             dialog.isMobile = true;
-            dialog.element.innerHTML = mobileHeader;
+
             dialog.postAnnotation('Drink full and descend.');
-            expect(util.showElement).toBeCalledWith(constants.CLASS_MOBILE_DIALOG_HEADER);
             expect(dialog.element.classList.contains(constants.CLASS_ANNOTATION_PLAIN_HIGHLIGHT)).toBeFalsy();
+            expect(dialog.emit).toBeCalled();
         });
     });
 
@@ -609,35 +607,6 @@ describe('doc/DocHighlightDialog', () => {
 
             dialog.getScaledPDFCoordinates({}, 100);
             expect(docUtil.getLowerRightCornerOfLastQuadPoint).toBeCalled();
-        });
-    });
-
-    describe('generateHighlightDialogEl()', () => {
-        it('should return a highlight annotation dialog DOM element', () => {
-            const highlightEl = dialog.generateHighlightDialogEl(true, true);
-            const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
-            expect(highlightBtnEl).not.toBeNull();
-        });
-
-        it('should not add any buttons if the user cannot annotate', () => {
-            dialog.canAnnotate = false;
-            const highlightEl = dialog.generateHighlightDialogEl(true, true);
-            const highlightBtnEl = highlightEl.querySelector(constants.SELECTOR_HIGHLIGHT_BTNS);
-            expect(highlightBtnEl).toBeNull();
-        });
-
-        it('should not add the add highlight button if the user cannot delete annotations', () => {
-            const canDeleteAnnotation = false;
-            const highlightEl = dialog.generateHighlightDialogEl(canDeleteAnnotation, true);
-            const addHighlightBtn = highlightEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_BTN);
-            expect(addHighlightBtn).toBeNull();
-        });
-
-        it('should not add the comment button if the user does not have highlight comments enabled', () => {
-            const showComment = false;
-            const highlightEl = dialog.generateHighlightDialogEl(true, showComment);
-            const addCommentBtn = highlightEl.querySelector(constants.SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-            expect(addCommentBtn).toBeNull();
         });
     });
 });

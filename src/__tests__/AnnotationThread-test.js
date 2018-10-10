@@ -17,6 +17,11 @@ const html = '<div class="annotated-element"></div>';
 describe('AnnotationThread', () => {
     let rootElement;
 
+    let api = {
+        user: { id: '1' },
+        formatAnnotation: jest.fn()
+    };
+
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
@@ -25,7 +30,7 @@ describe('AnnotationThread', () => {
         thread = new AnnotationThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
-            annotationService: { user: { id: '1' } },
+            api,
             fileVersionId: '1',
             isMobile: false,
             location: {},
@@ -143,61 +148,58 @@ describe('AnnotationThread', () => {
     describe('saveAnnotation()', () => {
         beforeEach(() => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
-            thread.annotationService.create = jest.fn();
+            thread.api.create = jest.fn();
             thread.handleThreadSaveError = jest.fn();
             thread.updateTemporaryAnnotation = jest.fn();
         });
 
         it('should save an annotation with the specified type and text', (done) => {
-            thread.annotationService.create = jest.fn().mockResolvedValue({});
+            thread.api.create = jest.fn().mockResolvedValue({});
 
             const promise = thread.saveAnnotation('point', 'blah');
             promise.then(() => {
                 expect(thread.updateTemporaryAnnotation).toBeCalled();
                 done();
             });
-            expect(thread.annotationService.create).toBeCalled();
+            expect(thread.api.create).toBeCalled();
         });
 
         it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {
-            thread.annotationService.create = jest.fn().mockRejectedValue({});
+            thread.api.create = jest.fn().mockRejectedValue({});
 
             const promise = thread.saveAnnotation('point', 'blah');
             promise.then(() => {
                 expect(thread.handleThreadSaveError).toBeCalled();
                 done();
             });
-            expect(thread.annotationService.create).toBeCalled();
+            expect(thread.api.create).toBeCalled();
             expect(thread.updateTemporaryAnnotation).not.toBeCalled();
         });
     });
 
     describe('updateTemporaryAnnotation()', () => {
+        const tempAnnotation = { id: 1 };
+        const serverAnnotation = { id: 456, threadNumber: 1 };
+
         beforeEach(() => {
-            thread.annotationService.create = jest.fn();
+            thread.api.create = jest.fn();
+            thread.api.formatAnnotation = jest.fn().mockReturnValue(serverAnnotation);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
+            thread.annotations = [tempAnnotation];
         });
 
         it('should save annotation to thread if it does not exist in annotations array', () => {
-            const serverAnnotation = 'real annotation';
-            const tempAnnotation = serverAnnotation;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.annotations).toContain(serverAnnotation);
         });
 
         it('should overwrite a local annotation to the thread if it does exist as an associated annotation', () => {
-            const serverAnnotation = { id: 123 };
-            const tempAnnotation = { id: 1 };
-
-            thread.annotations.push(tempAnnotation);
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.annotations).not.toContain(tempAnnotation);
             expect(thread.annotations).toContain(serverAnnotation);
         });
 
         it('should emit an annotationsaved event on success', () => {
-            const serverAnnotation = { threadNumber: 1 };
-            const tempAnnotation = serverAnnotation;
             thread.threadNumber = undefined;
             thread.emit = jest.fn();
 
@@ -206,9 +208,6 @@ describe('AnnotationThread', () => {
         });
 
         it('should update thread number and replace temporary annotation if dialog exists', () => {
-            const serverAnnotation = { id: 123 };
-            const tempAnnotation = { id: 1 };
-            thread.threadNumber = 'something';
             thread.dialog.element = document.createElement('div');
 
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
@@ -217,17 +216,15 @@ describe('AnnotationThread', () => {
             expect(thread.dialog.scrollToLastComment).toBeCalled();
         });
 
-        it('should only show dialog immediately on mobile devices', () => {
-            const serverAnnotation = { threadNumber: 1 };
-            const tempAnnotation = serverAnnotation;
+        it('should not show dialog on web browsers', () => {
             thread.showDialog = jest.fn();
-
-            // Don't show dialog on web browsers
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).not.toBeCalled();
             expect(thread.state).not.toEqual(STATES.hover);
+        });
 
-            // Only show dialog on mobile browsers
+        it('should only show dialog immediately on mobile devices', () => {
+            thread.showDialog = jest.fn();
             thread.isMobile = true;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).toBeCalled();
@@ -236,13 +233,12 @@ describe('AnnotationThread', () => {
     });
 
     describe('deleteAnnotation()', () => {
-        let annotationService;
         let annotation;
         let annotation2;
         const threadPromise = Promise.resolve();
 
         beforeEach(() => {
-            annotationService = {
+            api = {
                 user: { id: 1 },
                 delete: jest.fn().mockResolvedValue(threadPromise)
             };
@@ -266,7 +262,7 @@ describe('AnnotationThread', () => {
             thread = new AnnotationThread({
                 annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [annotation],
-                annotationService,
+                api,
                 fileVersionId: '1',
                 isMobile: false,
                 location: {},
@@ -335,7 +331,7 @@ describe('AnnotationThread', () => {
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
                 expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
-                expect(annotationService.delete).toBeCalledWith('someID');
+                expect(api.delete).toBeCalledWith('someID');
                 done();
             });
         });
@@ -347,7 +343,7 @@ describe('AnnotationThread', () => {
 
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
-                expect(annotationService.delete).toBeCalledWith('someID');
+                expect(api.delete).toBeCalledWith('someID');
                 done();
             });
         });
@@ -355,17 +351,17 @@ describe('AnnotationThread', () => {
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
-                expect(annotationService.delete).not.toBeCalled();
+                expect(api.delete).not.toBeCalled();
                 done();
             });
         });
 
         it('should broadcast an error if there was an error deleting from server', (done) => {
-            annotationService.delete = jest.fn().mockRejectedValue();
+            api.delete = jest.fn().mockRejectedValue();
 
             const promise = thread.deleteAnnotation('someID', true);
             promise.catch(() => {
-                expect(annotationService.delete).toBeCalled();
+                expect(api.delete).toBeCalled();
                 done();
             });
         });
@@ -509,7 +505,7 @@ describe('AnnotationThread', () => {
             thread = new AnnotationThread({
                 annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
                 annotations: [{}],
-                annotationService: {},
+                api,
                 fileVersionId: '1',
                 isMobile: false,
                 location: {},
@@ -621,7 +617,7 @@ describe('AnnotationThread', () => {
 
     describe('getThreadEventData()', () => {
         it('should return thread type and threadID', () => {
-            thread.annotationService.user = { id: -1 };
+            thread.api.user = { id: -1 };
             thread.threadNumber = undefined;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -631,7 +627,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should also return annotator\'s user id', () => {
-            thread.annotationService.user = { id: 1 };
+            thread.api.user = { id: 1 };
             thread.threadNumber = undefined;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -642,7 +638,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should return thread type and threadID', () => {
-            thread.annotationService.user = { id: -1 };
+            thread.api.user = { id: -1 };
             thread.threadNumber = 1;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -658,16 +654,6 @@ describe('AnnotationThread', () => {
             const element = thread.createElement();
             expect(element.classList).toContain(CLASS_ANNOTATION_POINT_MARKER);
             expect(element.dataset.type).toEqual(DATA_TYPE_ANNOTATION_INDICATOR);
-        });
-    });
-
-    describe('createAnnotationDialog()', () => {
-        it('should correctly create the annotation data object', () => {
-            const annotationData = thread.createAnnotationData('highlight', 'test');
-            expect(annotationData.location).toEqual(thread.location);
-            expect(annotationData.fileVersionId).toEqual(thread.fileVersionId);
-            expect(annotationData.thread).toEqual(thread.thread);
-            expect(annotationData.createdBy.id).toEqual('1');
         });
     });
 

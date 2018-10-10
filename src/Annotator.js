@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import AnnotationService from './AnnotationService';
 import * as util from './util';
 import './Annotator.scss';
 import {
@@ -16,6 +15,7 @@ import {
     CONTROLLER_EVENT,
     CLASS_ANNOTATIONS_LOADED
 } from './constants';
+import FileVersionAPI from './api/FileVersionAPI';
 
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -26,7 +26,6 @@ class Annotator extends EventEmitter {
      * The data object for constructing an Annotator.
      * @typedef {Object} AnnotatorData
      * @property {HTMLElement} annotatedElement HTML element to annotate on
-     * @property {AnnotationService} [annotationService] Annotations CRUD service
      * @property {string} fileVersionId File version ID
      */
 
@@ -55,11 +54,11 @@ class Annotator extends EventEmitter {
         this.fileId = file.id;
 
         this.permissions = this.getAnnotationPermissions(this.options.file);
-        this.annotationService = new AnnotationService({
+
+        this.api = new FileVersionAPI({
             apiHost,
             fileId: this.fileId,
             token,
-            canAnnotate: this.permissions.canAnnotate,
             anonymousUserName: this.localized.anonymousUserName
         });
 
@@ -89,8 +88,7 @@ class Annotator extends EventEmitter {
         });
 
         this.unbindDOMListeners();
-        this.unbindCustomListenersOnService();
-        this.removeListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
+        this.unbindCustomListeners();
     }
 
     /**
@@ -156,7 +154,7 @@ class Annotator extends EventEmitter {
     loadAnnotations() {
         this.fetchPromise
             .then(() => {
-                this.generateThreadMap(this.threadMap);
+                this.generateAnnotationMap(this.annotationMap);
                 this.render();
                 this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
@@ -225,8 +223,7 @@ class Annotator extends EventEmitter {
     setupAnnotations() {
         // Map of page => {threads on page}
         this.bindDOMListeners();
-        this.bindCustomListenersOnService(this.annotationService);
-        this.addListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
+        this.bindCustomListeners();
         this.setupControllers();
     }
 
@@ -254,6 +251,9 @@ class Annotator extends EventEmitter {
                 permissions: this.permissions,
                 annotator: this,
                 localized: this.localized,
+                fileId: this.fileId,
+                apiHost: this.options.apiHost,
+                token: this.options.token,
                 options
             });
 
@@ -337,10 +337,10 @@ class Annotator extends EventEmitter {
             return Promise.resolve({});
         }
 
-        return this.annotationService
-            .getThreadMap(this.fileVersionId)
+        return this.api
+            .fetchVersionAnnotations(this.fileVersionId)
             .then((threads) => {
-                this.threadMap = threads;
+                this.annotationMap = threads;
                 this.emit(ANNOTATOR_EVENT.fetch);
             })
             .catch((err) => {
@@ -352,35 +352,31 @@ class Annotator extends EventEmitter {
      * Generates a map of thread ID to annotations in thread by page.
      *
      * @private
-     * @param {Object} threadMap - Annotations to generate map from
+     * @param {Object} annotationMap - Annotations to generate map from
      * @return {void}
      */
-    generateThreadMap(threadMap) {
+    generateAnnotationMap(annotationMap) {
         const { annotator } = this.options;
         if (!annotator) {
             return;
         }
 
-        // Generate map of page to threads
-        Object.keys(threadMap).forEach((threadID) => {
-            const annotations = threadMap[threadID];
+        // Generate map of page to annotations
+        Object.keys(annotationMap).forEach((threadID) => {
+            const annotations = annotationMap[threadID];
 
             // NOTE: Using the last annotation to evaluate if the annotation type
             // is enabled because highlight comment annotations may have a plain
             // highlight as the first annotation in the thread.
             const lastAnnotation = annotations[annotations.length - 1];
-            if (!lastAnnotation || !this.isModeAnnotatable(lastAnnotation.type)) {
+            const { type, location } = lastAnnotation;
+            if (!lastAnnotation || !this.isModeAnnotatable(type)) {
                 return;
             }
 
             // Register a valid annotation thread
-            // NOTE: The first annotation in the thread is used to determine the
-            // annotation (which shouldn't change regardless of what is specified
-            // in later annotations in that specific thread) whereas the last
-            // annotation is used to determine the type as specified above
-            const firstAnnotation = annotations[0];
-            const thread = this.createAnnotationThread(annotations, firstAnnotation.location, lastAnnotation.type);
-            const controller = this.modeControllers[lastAnnotation.type];
+            const thread = this.createAnnotationThread(annotations, location, type);
+            const controller = this.modeControllers[type];
             if (controller) {
                 controller.registerThread(thread);
             }
@@ -413,14 +409,9 @@ class Annotator extends EventEmitter {
      * @protected
      * @return {void}
      */
-    bindCustomListenersOnService() {
-        const service = this.annotationService;
-        if (!service || !(service instanceof AnnotationService)) {
-            return;
-        }
-
-        /* istanbul ignore next */
-        service.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+    bindCustomListeners() {
+        this.addListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
+        this.api.addListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -429,12 +420,9 @@ class Annotator extends EventEmitter {
      * @protected
      * @return {void}
      */
-    unbindCustomListenersOnService() {
-        const service = this.annotationService;
-        if (!service || !(service instanceof AnnotationService)) {
-            return;
-        }
-        service.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+    unbindCustomListeners() {
+        this.removeListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
+        this.api.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
     }
 
     /**
@@ -446,10 +434,11 @@ class Annotator extends EventEmitter {
      * @return {AnnotationThread} Created annotation thread
      */
     getThreadParams(annotations, location, type) {
+        const { api } = this.modeControllers[type];
         const params = {
             annotatedElement: this.annotatedElement,
+            api,
             annotations,
-            annotationService: this.annotationService,
             container: this.container,
             fileVersionId: this.fileVersionId,
             isMobile: this.isMobile,
@@ -647,34 +636,13 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     handleServicesErrors(data) {
-        let errorMessage = '';
-        switch (data.reason) {
-            case 'read':
-                errorMessage = this.localized.loadError;
-                break;
-            case 'create':
-                errorMessage = this.localized.createError;
-                this.loadAnnotations();
-                break;
-            case 'delete':
-                errorMessage = this.localized.deleteError;
-                this.loadAnnotations();
-                break;
-            case 'authorization':
-                errorMessage = this.localized.authError;
-                break;
-            default:
-        }
-
         if (data.error) {
             /* eslint-disable no-console */
             console.error(ANNOTATOR_EVENT.error, data.error);
             /* eslint-enable no-console */
         }
 
-        if (errorMessage) {
-            this.emit(ANNOTATOR_EVENT.error, errorMessage);
-        }
+        this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
     }
 
     /**
@@ -704,6 +672,9 @@ class Annotator extends EventEmitter {
                 break;
             case CONTROLLER_EVENT.createThread:
                 this.createPointThread(data.data);
+                break;
+            case CONTROLLER_EVENT.error:
+                this.emit(ANNOTATOR_EVENT.error, data.data);
                 break;
             default:
                 this.emit(data.event, data.data);

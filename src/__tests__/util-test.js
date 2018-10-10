@@ -11,7 +11,6 @@ import {
     hideElementVisibility,
     resetTextarea,
     isElementInViewport,
-    getAvatarHtml,
     getScale,
     isPlainHighlight,
     isHighlightAnnotation,
@@ -297,18 +296,6 @@ describe('util', () => {
         });
     });
 
-    describe('getAvatarHtml()', () => {
-        it('should return avatar HTML with img if avatarUrl is provided', () => {
-            const expectedHtml = '<img src="https://example.com" alt="Avatar">';
-            expect(getAvatarHtml('https://example.com', '1', 'Some Name', 'Avatar')).toEqual(expectedHtml);
-        });
-
-        it('should return avatar HTML initials if no avatarUrl is provided', () => {
-            const expectedHtml = '<div class="ba-annotation-profile avatar-color-1">SN</div>'.trim();
-            expect(getAvatarHtml('', '1', 'Some Name')).toEqual(expectedHtml);
-        });
-    });
-
     describe('getScale()', () => {
         it('should return the zoom scale stored in the data-zoom attribute for the element', () => {
             childEl.setAttribute('data-scale', 3);
@@ -481,7 +468,7 @@ describe('util', () => {
             const threadParams = {
                 annotatedElement: {},
                 annotations: [],
-                annotationService: {},
+                api: {},
                 fileVersionId: 123,
                 location: {},
                 locale: 'en-US'
@@ -501,7 +488,7 @@ describe('util', () => {
             const threadParams = {
                 annotatedElement: {},
                 annotations: [],
-                annotationService: {},
+                api: {},
                 fileVersionId: 123,
                 location: { x: 1, y: 2 },
                 locale: 'en-US',
