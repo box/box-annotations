@@ -30,7 +30,7 @@ class FileVersionAPI extends API {
     data: Object;
 
     /**
-     * Construct the URL to read annotations with a marker or limit added
+     * Construct the URL to read annotations
      *
      * @return {string} Promise that resolves with fetched annotations
      */
