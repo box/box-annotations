@@ -27,12 +27,7 @@ const HighlightControls = ({
 }: Props) => (
     <div className='ba-action-controls-highlight'>
         {canAnnotateAndDelete && (
-            <PlainButton
-                type='button'
-                className='ba-highlight-btn'
-                onClick={isPending ? onCreate : onDelete}
-                isDisabled={isPending}
-            >
+            <PlainButton type='button' className='ba-highlight-btn' onClick={isPending ? onCreate : onDelete}>
                 <IconHighlightAnnotation
                     className={classNames({
                         'ba-saved-highlight': !isPending
