@@ -13,8 +13,6 @@ import {
     BORDER_OFFSET
 } from '../constants';
 
-const HIGHLIGHT_DIALOG_HEIGHT = 61;
-
 class DocHighlightThread extends AnnotationThread {
     /**
      * Cached page element for the document.
@@ -88,7 +86,6 @@ class DocHighlightThread extends AnnotationThread {
      */
     hide() {
         this.draw(HIGHLIGHT_FILL.erase);
-        // super.hide();
     }
 
     /**
@@ -506,6 +503,7 @@ class DocHighlightThread extends AnnotationThread {
         );
 
         const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverDimensions = popoverEl.getBoundingClientRect();
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         let dialogX = browserX - dialogWidth / 2; // Center dialog
@@ -518,12 +516,12 @@ class DocHighlightThread extends AnnotationThread {
 
         if (dialogY < 0) {
             dialogY = 0;
-        } else if (dialogY + HIGHLIGHT_DIALOG_HEIGHT > pageHeight) {
-            dialogY = pageHeight - HIGHLIGHT_DIALOG_HEIGHT;
+        } else if (dialogY + popoverDimensions.height > pageHeight) {
+            dialogY = pageHeight - popoverDimensions.height;
         }
 
         popoverEl.style.left = `${dialogX}px`;
-        popoverEl.style.top = `${dialogY + HIGHLIGHT_DIALOG_HEIGHT / 2 - BORDER_OFFSET}px`;
+        popoverEl.style.top = `${dialogY + popoverDimensions.height / 2 - BORDER_OFFSET}px`;
     };
 
     /**

@@ -8,8 +8,6 @@ import { repositionCaret, getPageInfo, findElement } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import { CREATE_EVENT, TYPES, PAGE_PADDING_TOP, PAGE_PADDING_BOTTOM } from '../constants';
 
-const HIGHLIGHT_DIALOG_HEIGHT = 61;
-
 class CreateHighlightDialog extends EventEmitter {
     /** @property {HTMLElement} - Container element for the dialog. */
     containerEl;
@@ -140,9 +138,11 @@ class CreateHighlightDialog extends EventEmitter {
         }
 
         this.pageNum = page;
+        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverDimensions = popoverEl.getBoundingClientRect();
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageLeft = pageDimensions.left;
-        const pageTop = pageDimensions.top - HIGHLIGHT_DIALOG_HEIGHT;
+        const pageTop = pageDimensions.top - popoverDimensions.height;
         this.position = {
             x: coords.x - pageLeft,
             y: coords.y - pageTop

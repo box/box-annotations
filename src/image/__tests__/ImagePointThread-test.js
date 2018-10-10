@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import ImagePointDialog from '../ImagePointDialog';
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
 import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';

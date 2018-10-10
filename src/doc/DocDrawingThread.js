@@ -5,13 +5,10 @@ import {
     DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
-    PAGE_PADDING_TOP,
-    TYPES
+    PAGE_PADDING_TOP
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
 import { createLocation, getScale, repositionCaret, findElement } from '../util';
-
-const DRAWING_DIALOG_HEIGHT = 61;
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
