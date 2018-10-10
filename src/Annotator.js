@@ -74,7 +74,6 @@ class Annotator extends EventEmitter {
         this.handleControllerEvents = this.handleControllerEvents.bind(this);
         this.handleServicesErrors = this.handleServicesErrors.bind(this);
         this.hideAnnotations = this.hideAnnotations.bind(this);
-        this.clickHandler = this.clickHandler.bind(this);
     }
 
     /**
@@ -301,10 +300,6 @@ class Annotator extends EventEmitter {
         util.hideElement(this.mobileDialogEl);
         util.showElement(`.${CLASS_MOBILE_DIALOG_HEADER}`);
         this.mobileDialogEl.removeChild(this.mobileDialogEl.lastChild);
-    }
-
-    clickHandler(event) {
-        this.hideAnnotations(event);
     }
 
     /**

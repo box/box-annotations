@@ -452,7 +452,7 @@ class DocAnnotator extends Annotator {
         }
     }
 
-    clickHandler(event) {
+    clickHandler = (event) => {
         if (event.target && event.target.nodeName === 'BUTTON') {
             return;
         }
@@ -477,8 +477,8 @@ class DocAnnotator extends Annotator {
             }
         }
 
-        super.clickHandler(event);
-    }
+        this.hideAnnotations(event);
+    };
 
     /**
      * Hides and resets the shared mobile dialog.

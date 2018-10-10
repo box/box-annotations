@@ -32,7 +32,8 @@ class AnnotationPopover extends React.PureComponent<Props> {
         onCommentClick: noop,
         onDelete: noop,
         onCancel: noop,
-        onCreate: noop
+        onCreate: noop,
+        comments: []
     };
 
     componentDidMount() {
@@ -69,7 +70,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                             'ba-create-popover': isPending
                         })}
                     >
-                        {comments ? (
+                        {comments.length > 0 ? (
                             <CommentList comments={comments} onDelete={onDelete} />
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />

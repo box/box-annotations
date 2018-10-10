@@ -1,16 +1,16 @@
 import React from 'react';
 import noop from 'lodash/noop';
-import { render } from 'react-dom';
+import { render, unmountComponentAtNode } from 'react-dom';
+import EventEmitter from 'events';
 
 import AnnotationPopover from '../components/AnnotationPopover';
-import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { repositionCaret, getPageInfo, findElement } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import { CREATE_EVENT, TYPES, PAGE_PADDING_TOP, PAGE_PADDING_BOTTOM } from '../constants';
 
 const HIGHLIGHT_DIALOG_HEIGHT = 61;
 
-class CreateHighlightDialog extends CreateAnnotationDialog {
+class CreateHighlightDialog extends EventEmitter {
     /** @property {HTMLElement} - Container element for the dialog. */
     containerEl;
 
@@ -43,17 +43,29 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
      *
      * [constructor]
      *
-     * @param {HTMLElement} parentEl - Parent element
+     * @param {HTMLElement} annotatedElement - Parent element
      * @param {Object} [config] - For configuring the dialog.
      * @param {boolean} [config.hasTouch] - True to add touch events.
      * @param {boolean} [config.isMobile] - True if on a mobile device.
      * @return {CreateHighlightDialog} CreateHighlightDialog instance
      */
-    constructor(parentEl, config = {}) {
-        super(parentEl, config);
+    constructor(annotatedElement, config = {}) {
+        super();
 
+        this.annotatedElement = annotatedElement;
+        this.isMobile = !!config.isMobile || false;
+        this.hasTouch = !!config.hasTouch || false;
+        this.localized = config.localized;
         this.allowHighlight = config.allowHighlight || false;
         this.allowComment = config.allowComment || false;
+    }
+
+    unmountPopover() {
+        if (this.createPopoverComponent && this.parentEl) {
+            unmountComponentAtNode(this.parentEl);
+            this.createPopoverComponent = null;
+            this.containerEl = null;
+        }
     }
 
     /**
@@ -93,7 +105,7 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.pageNum}"]`);
         this.parentEl = pageEl.querySelector('.ba-dialog-layer');
 
-        this.popoverComponent = render(
+        this.createPopoverComponent = render(
             <AnnotationPopover
                 type={type}
                 canAnnotate={true}
@@ -131,7 +143,11 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageLeft = pageDimensions.left;
         const pageTop = pageDimensions.top - HIGHLIGHT_DIALOG_HEIGHT;
-        super.setPosition(coords.x - pageLeft, coords.y - pageTop);
+        this.position = {
+            x: coords.x - pageLeft,
+            y: coords.y - pageTop
+        };
+        this.updatePosition();
     }
 
     //--------------------------------------------------------------------------

@@ -16,7 +16,8 @@ import {
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
     POINT_ANNOTATION_ICON_HEIGHT,
     SELECTOR_ANNOTATION_CARET,
-    CLASS_HIDDEN
+    CLASS_HIDDEN,
+    DATA_TYPE_MOBILE_CLOSE
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -159,10 +160,9 @@ class AnnotationThread extends EventEmitter {
             this.state = STATES.active;
         }
 
-        const hasComments = comments.length > 0;
         this.popoverComponent = render(
             <AnnotationPopover
-                id={hasComments || isPending ? this.threadID : firstAnnotation.id}
+                id={comments.length > 0 || isPending ? this.threadID : firstAnnotation.id}
                 type={this.type}
                 createdAt={get(firstAnnotation, 'createdAt', null)}
                 createdBy={get(firstAnnotation, 'createdBy', null)}
@@ -170,7 +170,7 @@ class AnnotationThread extends EventEmitter {
                 canAnnotate={this.permissions.canAnnotate}
                 canComment={this.canComment}
                 canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
-                comments={hasComments ? comments : null}
+                comments={comments}
                 position={this.position}
                 onDelete={this.deleteAnnotation}
                 onCancel={this.cancelUnsavedAnnotation}
@@ -650,7 +650,7 @@ class AnnotationThread extends EventEmitter {
         switch (dataType) {
             // Clicking 'Cancel' button to cancel the annotation OR
             // Clicking 'X' button on mobile dialog to close
-            case constants.DATA_TYPE_MOBILE_CLOSE:
+            case DATA_TYPE_MOBILE_CLOSE:
                 // @spramod: is the mobile close button still needed?
                 this.hide();
 
@@ -675,10 +675,10 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     flipDialog(yPos, containerHeight) {
-        let top = '';
-        let bottom = '';
         const iconPadding = POINT_ANNOTATION_ICON_HEIGHT - POINT_ANNOTATION_ICON_DOT_HEIGHT / 2;
         const annotationCaretEl = this.element.querySelector(SELECTOR_ANNOTATION_CARET);
+        let top = '';
+        let bottom = '';
 
         if (yPos <= containerHeight / 2) {
             // Keep dialog below the icon if in the top half of the viewport
