@@ -38,6 +38,7 @@ class AnnotationThread extends EventEmitter {
      * @property {string} threadID Thread ID
      * @property {string} threadNumber Thread number
      * @property {string} type Type of thread
+     * @property {boolean} canComment Whether or not the annotation allows the addition of comments
      */
 
     //--------------------------------------------------------------------------
