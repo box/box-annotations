@@ -1,4 +1,6 @@
 import AnnotationModeController from './AnnotationModeController';
+import DocPointThread from '../doc/DocPointThread';
+import ImagePointThread from '../image/ImagePointThread';
 import shell from './pointShell.html';
 import {
     TYPES,
@@ -8,7 +10,8 @@ import {
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
-    CLASS_ANNOTATION_POINT_MODE
+    CLASS_ANNOTATION_POINT_MODE,
+    ANNOTATOR_TYPE
 } from '../constants';
 import CreateAnnotationDialog from '../CreateAnnotationDialog';
 import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
@@ -181,7 +184,7 @@ class PointModeController extends AnnotationModeController {
         }
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.annotator.createAnnotationThread([], location, TYPES.point);
+        const thread = this.registerThread([], location, TYPES.point);
         if (!thread) {
             this.hideSharedDialog();
             return;
@@ -198,6 +201,18 @@ class PointModeController extends AnnotationModeController {
         thread.show();
         this.registerThread(thread);
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
+    }
+
+    /** @inheritdoc */
+    instantiateThread(params) {
+        switch (this.annotatorType) {
+            case ANNOTATOR_TYPE.document:
+                return new DocPointThread(params);
+            case ANNOTATOR_TYPE.image:
+                return new ImagePointThread(params);
+            default:
+                return null;
+        }
     }
 }
 

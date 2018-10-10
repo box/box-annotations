@@ -82,33 +82,6 @@ class ImageAnnotator extends Annotator {
     }
 
     /** @inheritdoc */
-    createAnnotationThread(annotations, location, type) {
-        let thread;
-
-        // Corrects any image annotation page number to 1 instead of -1
-        const fixedLocation = location;
-        if (!fixedLocation.page || fixedLocation.page < 0) {
-            fixedLocation.page = 1;
-        }
-
-        const threadParams = this.getThreadParams(annotations, location, type);
-        if (!util.areThreadParamsValid(threadParams)) {
-            this.handleValidationError();
-            return thread;
-        }
-
-        if (type === TYPES.point) {
-            thread = new ImagePointThread(threadParams);
-        }
-
-        if (!thread) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
-        }
-
-        return thread;
-    }
-
-    /** @inheritdoc */
     scaleAnnotations(data) {
         this.setScale(data.scale);
         this.rotateAnnotations(data.rotationAngle, data.pageNum);

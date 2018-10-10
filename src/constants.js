@@ -234,8 +234,8 @@ export const TYPES = {
 };
 
 export const ANNOTATOR_TYPE = {
-    doc: 'document',
-    image: 'image'
+    document: 'Document',
+    image: 'Image'
 };
 
 export const HIGHLIGHT_FILL = {

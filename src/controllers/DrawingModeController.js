@@ -1,4 +1,5 @@
 import AnnotationModeController from './AnnotationModeController';
+import DocDrawingThread from '../doc/DocDrawingThread';
 import shell from './drawingShell.html';
 import {
     replaceHeader,
@@ -19,7 +20,9 @@ import {
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_DRAW_MODE,
-    CLASS_ANNOTATION_POINT_MARKER
+    CLASS_ANNOTATION_POINT_MARKER,
+    ANNOTATOR_TYPE,
+    CONTROLLER_EVENT
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
@@ -225,7 +228,7 @@ class DrawingModeController extends AnnotationModeController {
         location.maxY = location.y;
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.annotator.createAnnotationThread([], location, TYPES.draw);
+        const thread = this.registerThread([], location, TYPES.draw);
         if (!thread) {
             return;
         }
@@ -422,6 +425,11 @@ class DrawingModeController extends AnnotationModeController {
 
         thread.saveAnnotation(TYPES.draw);
         this.registerThread(thread);
+    }
+
+    /** @inheritdoc */
+    instantiateThread(params) {
+        return this.annotatorType === ANNOTATOR_TYPE.document ? new DocDrawingThread(params) : null;
     }
 }
 

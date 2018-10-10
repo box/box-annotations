@@ -101,7 +101,9 @@ class BoxAnnotations {
         const annotatorTypes = this.getAnnotatorTypes(annotatorConfig);
         annotatorTypes.forEach((type) => {
             if (type in ANNOTATOR_TYPE_CONTROLLERS) {
-                annotatorConfig.CONTROLLERS[type] = new ANNOTATOR_TYPE_CONTROLLERS[type].CONSTRUCTOR();
+                annotatorConfig.CONTROLLERS[type] = new ANNOTATOR_TYPE_CONTROLLERS[type].CONSTRUCTOR(
+                    annotatorConfig.NAME
+                );
             }
         });
         /* eslint-enable no-param-reassign */

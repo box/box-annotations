@@ -6,9 +6,6 @@ import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 /* eslint-enable no-unused-vars */
 import Annotator from '../Annotator';
-import DocHighlightThread from './DocHighlightThread';
-import DocPointThread from './DocPointThread';
-import DocDrawingThread from './DocDrawingThread';
 import CreateHighlightDialog from './CreateHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
@@ -235,38 +232,6 @@ class DocAnnotator extends Annotator {
     }
 
     /**
-     * Creates the proper type of thread, adds it to in-memory map, and returns it.
-     *
-     * @override
-     * @param {Annotations[]} annotations Annotations in thread
-     * @param {Object} location Location object
-     * @param {string} [type] Optional annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    createAnnotationThread(annotations, location, type) {
-        let thread;
-        const threadParams = this.getThreadParams(annotations, location, type);
-        if (!util.areThreadParamsValid(threadParams)) {
-            this.handleValidationError();
-            return thread;
-        }
-
-        if (util.isHighlightAnnotation(type)) {
-            thread = new DocHighlightThread(threadParams, this.commentHighlightEnabled);
-        } else if (type === TYPES.draw) {
-            thread = new DocDrawingThread(threadParams);
-        } else if (type === TYPES.point) {
-            thread = new DocPointThread(threadParams);
-        }
-
-        if (!thread) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
-        }
-
-        return thread;
-    }
-
-    /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
      *
      * @override
@@ -313,11 +278,6 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     setupAnnotations() {
-        // Determine enabled annotation types before binding mode controller listeners
-        this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
-        this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
-        this.drawEnabled = !!this.modeControllers[TYPES.draw];
-
         // Don't bind to draw specific handlers if we cannot draw
         if (this.drawEnabled) {
             this.drawingSelectionHandler = this.drawingSelectionHandler.bind(this);
@@ -472,7 +432,9 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.createHighlightDialog.hide();
+        if (this.createHighlightDialog) {
+            this.createHighlightDialog.unmountPopover();
+        }
     }
 
     /**
@@ -531,11 +493,13 @@ class DocAnnotator extends Annotator {
         }
 
         const annotations = [];
-        const thread = this.createAnnotationThread(annotations, location, highlightType);
         this.lastHighlightEvent = null;
         this.lastSelection = null;
 
+        const controller = this.modeControllers[highlightType];
+        const thread = controller.registerThread(annotations, location, highlightType);
         if (!thread) {
+            this.handleValidationError();
             return null;
         }
 
@@ -548,11 +512,6 @@ class DocAnnotator extends Annotator {
         thread.state = STATES.hover;
         thread.show();
         thread.dialog.postAnnotation(commentText);
-
-        const controller = this.modeControllers[highlightType];
-        if (controller) {
-            controller.registerThread(thread);
-        }
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
@@ -616,6 +575,29 @@ class DocAnnotator extends Annotator {
 
         this.lastSelection = selection;
         this.lastHighlightEvent = event;
+    }
+
+    /**
+     * Mode controllers setup.
+     *
+     * @protected
+     * @return {void}
+     */
+    setupControllers() {
+        super.setupControllers();
+
+        // Determine enabled annotation types before binding mode controller listeners
+        this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
+        this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
+        this.drawEnabled = !!this.modeControllers[TYPES.draw];
+
+        if (this.commentHighlightEnabled) {
+            this.modeControllers[TYPES.highlight_comment].canComment = this.commentHighlightEnabled;
+
+            if (this.plainHighlightEnabled) {
+                this.modeControllers[TYPES.highlight].canComment = this.commentHighlightEnabled;
+            }
+        }
     }
 
     /**

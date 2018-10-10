@@ -1,6 +1,6 @@
 import rbush from 'rbush';
 import EventEmitter from 'events';
-import { insertTemplate, isPending, replaceHeader, hasValidBoundaryCoordinates } from '../util';
+import { insertTemplate, isPending, replaceHeader, areThreadParamsValid, hasValidBoundaryCoordinates } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -30,6 +30,11 @@ class AnnotationModeController extends EventEmitter {
     /** @property {string} - Mode for annotation controller */
     mode;
 
+    constructor(annotatorType) {
+        super();
+        this.annotatorType = annotatorType;
+    }
+
     /**
      * Initializes mode controller.
      *
@@ -41,14 +46,15 @@ class AnnotationModeController extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
         this.annotator = data.annotator;
+        this.fileVersionId = data.fileVersionId;
         this.permissions = data.permissions || {};
         this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
+        this.locale = data.options ? data.options.locale : 'en-US';
 
         this.api = new AnnotationAPI({
             apiHost: data.apiHost,
-            fileId: data.fileId,
             token: data.token,
             anonymousUserName: data.localized.anonymousUserName
         });
@@ -212,15 +218,80 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
+     * Gets thread params for the new annotation thread
+     *
+     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} location - Location object
+     * @param {string} [type] - Optional annotation type
+     * @return {AnnotationThread} Created annotation thread
+     */
+    getThreadParams(annotations, location, type) {
+        const params = {
+            annotatedElement: this.annotatedElement,
+            api: this.api,
+            annotations,
+            container: this.container,
+            fileVersionId: this.fileVersionId,
+            isMobile: this.isMobile,
+            hasTouch: this.hasTouch,
+            locale: this.locale,
+            location,
+            type,
+            permissions: this.permissions,
+            localized: this.localized
+        };
+
+        // Set existing thread ID if created with annotations
+        const firstAnnotation = annotations[0];
+        if (firstAnnotation) {
+            params.threadID = firstAnnotation.threadID;
+            params.threadNumber = firstAnnotation.threadNumber;
+        }
+
+        if (!areThreadParamsValid(params) || !location) {
+            return null;
+        }
+
+        return params;
+    }
+
+    /**
+     * Instantiates the appropriate annotation thread for the current viewer
+     *
+     * @param {Object} params - Annotation thread params
+     * @return {AnnotationThread|null} Annotation thread instance or null
+     */
+    /* eslint-disable no-unused-vars */
+    instantiateThread(params) {
+        /* eslint-enable no-unused-vars */
+        throw new Error('Implement me!');
+    }
+
+    /**
      * Register a thread with the controller so that the controller can keep track of relevant threads
      *
-     * @public
-     * @param {AnnotationThread} thread - The thread to register with the controller
-     * @return {void}
+     * @param {Annotation[]} annotations - Annotations in thread
+     * @param {Object} location - Location object
+     * @param {string} [type] - Optional annotation type
+     * @return {AnnotationThread} registered thread
      */
-    registerThread(thread) {
-        if (!thread || !thread.location || !hasValidBoundaryCoordinates(thread)) {
-            return;
+    registerThread(annotations, location, type) {
+        let thread;
+
+        // Corrects any annotation page number to 1 instead of -1
+        const fixedLocation = location;
+        if (!fixedLocation.page || fixedLocation.page < 0) {
+            fixedLocation.page = 1;
+        }
+
+        const threadParams = this.getThreadParams(annotations, location, type);
+        if (!threadParams) {
+            return thread;
+        }
+
+        thread = this.instantiateThread(threadParams);
+        if (!thread || !hasValidBoundaryCoordinates(thread)) {
+            return thread;
         }
 
         const page = thread.location.page || 1; // Defaults to page 1 if thread has no page'
@@ -233,6 +304,7 @@ class AnnotationModeController extends EventEmitter {
 
         this.emit(CONTROLLER_EVENT.register, thread);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
+        return thread;
     }
 
     /**

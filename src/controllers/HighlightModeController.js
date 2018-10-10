@@ -1,6 +1,8 @@
 import AnnotationModeController from './AnnotationModeController';
+import DocHighlightThread from '../doc/DocHighlightThread';
 import { clearCanvas } from '../util';
 import {
+    ANNOTATOR_TYPE,
     THREAD_EVENT,
     CONTROLLER_EVENT,
     TYPES,
@@ -99,6 +101,11 @@ class HighlightModeController extends AnnotationModeController {
         }
 
         super.renderPage(pageNum);
+    }
+
+    /** @inheritdoc */
+    instantiateThread(params) {
+        return this.annotatorType === ANNOTATOR_TYPE.document ? new DocHighlightThread(params, this.canComment) : null;
     }
 }
 

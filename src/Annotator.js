@@ -188,19 +188,6 @@ class Annotator extends EventEmitter {
     /* eslint-enable no-unused-vars */
 
     /**
-     * Must be implemented to create the appropriate new thread, add it to the
-     * in-memory map, and return the thread.
-     *
-     * @param {Annotations[]} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} type - Annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    /* eslint-disable no-unused-vars */
-    createAnnotationThread(annotations, location, type) {}
-    /* eslint-enable no-unused-vars */
-
-    /**
      * Must be implemented to determine the annotated element in the viewer.
      *
      * @param {HTMLElement} containerEl - Container element for the viewer
@@ -239,7 +226,8 @@ class Annotator extends EventEmitter {
         const options = {
             header: this.options.header,
             isMobile: this.isMobile,
-            hasTouch: this.hasTouch
+            hasTouch: this.hasTouch,
+            locale: this.locale
         };
         Object.keys(this.modeControllers).forEach((type) => {
             const controller = this.modeControllers[type];
@@ -252,6 +240,7 @@ class Annotator extends EventEmitter {
                 annotator: this,
                 localized: this.localized,
                 fileId: this.fileId,
+                fileVersionId: this.fileVersionId,
                 apiHost: this.options.apiHost,
                 token: this.options.token,
                 options
@@ -370,16 +359,13 @@ class Annotator extends EventEmitter {
             // highlight as the first annotation in the thread.
             const lastAnnotation = annotations[annotations.length - 1];
             const { type, location } = lastAnnotation;
-            if (!lastAnnotation || !this.isModeAnnotatable(type)) {
+            const controller = this.modeControllers[type];
+            if (!lastAnnotation || !this.isModeAnnotatable(type) || !controller) {
                 return;
             }
 
             // Register a valid annotation thread
-            const thread = this.createAnnotationThread(annotations, location, type);
-            const controller = this.modeControllers[type];
-            if (controller) {
-                controller.registerThread(thread);
-            }
+            controller.registerThread(annotations, location, type);
         });
     }
 
@@ -423,41 +409,6 @@ class Annotator extends EventEmitter {
     unbindCustomListeners() {
         this.removeListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
         this.api.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
-    }
-
-    /**
-     * Gets thread params for the new annotation thread
-     *
-     * @param {Annotation[]} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} [type] - Optional annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    getThreadParams(annotations, location, type) {
-        const { api } = this.modeControllers[type];
-        const params = {
-            annotatedElement: this.annotatedElement,
-            api,
-            annotations,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            locale: this.locale,
-            location,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
-        // Set existing thread ID if created with annotations
-        const firstAnnotation = annotations[0];
-        if (firstAnnotation) {
-            params.threadID = firstAnnotation.threadID;
-            params.threadNumber = firstAnnotation.threadNumber;
-        }
-
-        return params;
     }
 
     /**
