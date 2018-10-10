@@ -67,6 +67,8 @@ type DrawingLocationInfo = {
     paths: DrawingPaths
 } & LocationInfo;
 
+type Location = PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo;
+
 type User = {
     type: 'user',
     id: string,
@@ -96,7 +98,7 @@ type Annotation = {
     id: string,
     item: BoxFileVersion,
     type: AnnotationType,
-    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
+    location: Location,
     threadNumber: string,
     comments?: Comments,
     createdBy: User, 
@@ -116,7 +118,7 @@ type Options = {
 type AnnotationDetails = {
     threadID: string,
     type: AnnotationType,
-    location: PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo,
+    location: Location
 };
 
 type BoxUser = {

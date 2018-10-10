@@ -1,3 +1,4 @@
+// @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocPointThread from '../doc/DocPointThread';
 import ImagePointThread from '../image/ImagePointThread';
@@ -18,10 +19,10 @@ import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
-    exitButtonEl;
+    exitButtonEl: HTMLElement;
 
     /** @inheritdoc */
-    init(data) {
+    init(data: Object): void {
         super.init(data);
 
         // If the header coming from the preview options is not none (e.g.
@@ -34,12 +35,12 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    setupHeader(container, header) {
+    setupHeader(container: HTMLElement, header: HTMLElement): void {
         super.setupHeader(container, header);
 
         this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
 
-        // TODO(@spramod): Remove '||' string, once closeButton is properly localized within Preview
+        // TODO(@spramod): Remove '||' string, once closeButton is properly localized
         this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
     }
 
@@ -51,7 +52,7 @@ class PointModeController extends AnnotationModeController {
      * @param {Object} options - Controller options to pass into the create dialog
      * @return {void}
      */
-    setupSharedDialog(container, options) {
+    setupSharedDialog(container: HTMLElement, options: Object): void {
         this.createDialog = new CreateAnnotationDialog(container, {
             isMobile: options.isMobile,
             hasTouch: options.hasTouch,
@@ -74,7 +75,7 @@ class PointModeController extends AnnotationModeController {
      * @private
      * @return {void}
      */
-    onDialogCancel() {
+    onDialogCancel(): void {
         const thread = this.getThreadByID(this.pendingThreadID);
         this.unregisterThread(thread);
         thread.destroy();
@@ -89,7 +90,7 @@ class PointModeController extends AnnotationModeController {
      * @param {string} commentText Annotation comment text
      * @return {void}
      */
-    onDialogPost(commentText) {
+    onDialogPost(commentText: string): void {
         this.emit(CONTROLLER_EVENT.createThread, {
             commentText,
             lastPointEvent: this.lastPointEvent,
@@ -105,7 +106,7 @@ class PointModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    hideSharedDialog() {
+    hideSharedDialog(): void {
         this.lastPointEvent = null;
         this.pendingThreadID = null;
 
@@ -115,7 +116,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    setupHandlers() {
+    setupHandlers(): void {
         this.pointClickHandler = this.pointClickHandler.bind(this);
 
         // Get handlers
@@ -125,7 +126,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    exit() {
+    exit(): void {
         if (this.createDialog) {
             this.createDialog.hide();
         }
@@ -139,7 +140,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    enter() {
+    enter(): void {
         super.enter();
         replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
         this.annotatedElement.classList.add(CLASS_ANNOTATION_POINT_MODE);
@@ -157,7 +158,7 @@ class PointModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    pointClickHandler(event) {
+    pointClickHandler(event: Event): void {
         if (!isInAnnotationOrMarker(event)) {
             event.stopPropagation();
             event.preventDefault();
@@ -204,7 +205,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    instantiateThread(params) {
+    instantiateThread(params: Object): AnnotationThread {
         switch (this.annotatorType) {
             case ANNOTATOR_TYPE.document:
                 return new DocPointThread(params);
