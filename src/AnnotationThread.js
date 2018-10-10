@@ -3,7 +3,6 @@ import React from 'react';
 import get from 'lodash/get';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import Annotation from './Annotation';
 import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
@@ -19,7 +18,7 @@ import {
     SELECTOR_ANNOTATION_CARET,
     CLASS_HIDDEN
 } from './constants';
-import AnnotationPopover from './components/AnnotationPopover/AnnotationPopover';
+import AnnotationPopover from './components/AnnotationPopover';
 
 class AnnotationThread extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -74,10 +73,6 @@ class AnnotationThread extends EventEmitter {
 
         this.regenerateBoundary();
 
-        // Explicitly bind listeners
-        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
-        this.unmountPopover = this.unmountPopover.bind(this);
-
         this.setup();
     }
 
@@ -123,7 +118,10 @@ class AnnotationThread extends EventEmitter {
         this.state = STATES.inactive;
     }
 
-    position = () => {};
+    position = () => {
+        /* eslint-enable no-unused-vars */
+        throw new Error('Implement me!');
+    };
 
     /**
      * Shows the appropriate annotation dialog for this thread.
@@ -131,26 +129,25 @@ class AnnotationThread extends EventEmitter {
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    renderAnnotationPopover(event = null) {
+    renderAnnotationPopover = (event = null) => {
         if (event) {
             event.stopPropagation();
             event.preventDefault();
         }
 
         const firstAnnotation = this.annotations[0];
-        const commentAnnotations = this.annotations.filter(
-            (annotation) => annotation.message && annotation.message !== ''
-        );
-        const comments = commentAnnotations.map((comment) => {
-            const { id, message, permissions, createdBy, createdAt } = comment;
-            return {
-                id,
-                message,
-                permissions,
-                createdBy,
-                createdAt
-            };
-        });
+        const comments = this.annotations
+            .filter((annotation) => annotation.message && annotation.message !== '')
+            .map((comment) => {
+                const { id, message, permissions, createdBy, createdAt } = comment;
+                return {
+                    id,
+                    message,
+                    permissions,
+                    createdBy,
+                    createdAt
+                };
+            });
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
@@ -183,9 +180,9 @@ class AnnotationThread extends EventEmitter {
             annotationDialogLayer
         );
         this.position();
-    }
+    };
 
-    unmountPopover() {
+    unmountPopover = () => {
         this.state = STATES.inactive;
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
@@ -194,7 +191,7 @@ class AnnotationThread extends EventEmitter {
             unmountComponentAtNode(annotationDialogLayer);
             this.popoverComponent = null;
         }
-    }
+    };
 
     /**
      * Saves an annotation.
