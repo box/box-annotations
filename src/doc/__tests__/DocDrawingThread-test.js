@@ -20,12 +20,13 @@ describe('doc/DocDrawingThread', () => {
         document.body.appendChild(rootElement);
 
         thread = new DocDrawingThread({
-            annotationService: {
+            api: {
                 user: {
                     id: -1
                 }
             }
         });
+        thread.permissions = { canAnnotate: false };
         thread.location = {
             x: 0,
             y: 0,
@@ -453,7 +454,7 @@ describe('doc/DocDrawingThread', () => {
 
             thread.bindCustomListenersOnDialog = jest.fn();
             thread.dialog = existingDialog;
-            thread.annotationService = {
+            thread.api = {
                 canAnnotate: true,
                 user: { id: -1 }
             };

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import DocHighlightDialog from '../DocHighlightDialog';
 import DocHighlightThread from '../DocHighlightThread';
-import AnnotationService from '../../AnnotationService';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
 import { STATES, TYPES, HIGHLIGHT_FILL, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
@@ -20,6 +19,11 @@ jest.mock('../DocHighlightDialog');
 describe('doc/DocHighlightThread', () => {
     let rootElement;
 
+    const api = {
+        user: {},
+        formatAnnotation: jest.fn()
+    };
+
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
@@ -28,12 +32,7 @@ describe('doc/DocHighlightThread', () => {
         thread = new DocHighlightThread({
             annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
             annotations: [],
-            annotationService: new AnnotationService({
-                apiHost: 'https://app.box.com/api',
-                fileId: 1,
-                token: 'someToken',
-                canAnnotate: true
-            }),
+            api,
             fileVersionId: 1,
             location: {},
             threadID: 2,
@@ -68,7 +67,7 @@ describe('doc/DocHighlightThread', () => {
     describe('cancelFirstComment()', () => {
         it('should switch dialogs when cancelling the first comment on an existing plain highlight', () => {
             // Adding a plain highlight annotation to the thread
-            thread.annotationService.create = jest.fn().mockResolvedValue({});
+            thread.api.create = jest.fn().mockResolvedValue({});
             thread.saveAnnotation('highlight', '');
 
             // Cancel first comment on existing annotation
@@ -158,73 +157,6 @@ describe('doc/DocHighlightThread', () => {
             });
 
             thread.saveAnnotation(TYPES.highlight, 'bleh');
-        });
-    });
-
-    describe('deleteAnnotation()', () => {
-        it('should hide the add highlight button if the user does not have permissions', () => {
-            const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [{ permissions: { can_delete: false } }],
-                annotationService: new AnnotationService({
-                    apiHost: 'https://app.box.com/api',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true
-                }),
-                fileVersionId: 1,
-                location: {},
-                threadID: 2,
-                type: 'highlight',
-                permissions: {
-                    canAnnotate: true,
-                    canViewAllAnnotations: true
-                }
-            });
-            plainHighlightThread.dialog.localized = {
-                highlightToggle: 'highlight toggle'
-            };
-            plainHighlightThread.setup();
-            plainHighlightThread.dialog = {
-                element: document.createElement('div')
-            };
-
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: jest.fn()
-            });
-            util.hideElement = jest.fn();
-
-            plainHighlightThread.deleteAnnotation(1);
-            expect(util.hideElement).toBeCalled();
-        });
-
-        it('should display the add highlight button if the user has permissions', () => {
-            const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [{ permissions: { can_delete: true } }],
-                annotationService: new AnnotationService({
-                    apiHost: 'https://app.box.com/api',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true
-                }),
-                fileVersionId: 1,
-                location: {},
-                threadID: 2,
-                type: 'highlight',
-                permissions: {
-                    canAnnotate: true,
-                    canViewAllAnnotations: true
-                }
-            });
-
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: jest.fn()
-            });
-            util.hideElement = jest.fn();
-
-            plainHighlightThread.deleteAnnotation(1);
-            expect(util.hideElement).not.toBeCalled();
         });
     });
 

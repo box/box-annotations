@@ -290,6 +290,13 @@ export const CREATE_EVENT = {
     comment: 'comment_highlight_edit'
 };
 
+export const ERROR_TYPE = {
+    auth: 'authorization',
+    read: 'read',
+    create: 'create',
+    delete: 'delete'
+};
+
 export const POINT_ANNOTATION_ICON_HEIGHT = 31;
 export const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 

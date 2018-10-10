@@ -26,10 +26,11 @@ describe('image/ImageAnnotator', () => {
                 TYPE: [TYPES.point]
             }
         };
+
         annotator = new ImageAnnotator({
             canAnnotate: true,
             container: document,
-            annotationService: {},
+            api: {},
             file: {
                 file_version: { id: 1 }
             },
@@ -44,10 +45,21 @@ describe('image/ImageAnnotator', () => {
                 loadError: 'loaderror'
             }
         });
+
         annotator.annotatedElement = annotator.getAnnotatedEl(document);
-        annotator.annotationService = {};
+        annotator.api = {};
         annotator.threads = {};
-        annotator.modeControllers = {};
+
+        annotator.modeButtons = {
+            point: { selector: 'point_btn' }
+        };
+        annotator.modeControllers = {
+            point: {
+                api: {},
+                getButton: jest.fn()
+            }
+        };
+
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
 
         annotator.emit = jest.fn();
@@ -160,6 +172,10 @@ describe('image/ImageAnnotator', () => {
     describe('createAnnotationThread()', () => {
         beforeEach(() => {
             util.areThreadParamsValid = jest.fn().mockReturnValue(true);
+            annotator.getThreadParams = jest.fn().mockReturnValue({
+                location: { page: 1 },
+                permissions: { canAnnotate: true }
+            });
             annotator.handleValidationError = jest.fn();
         });
 
@@ -170,6 +186,10 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should create, add point thread to internal map, and return it', () => {
+            annotator.getThreadParams = jest.fn().mockReturnValue({
+                location: { page: 2 },
+                permissions: { canAnnotate: true }
+            });
             const thread = annotator.createAnnotationThread([], { page: 2 }, TYPES.point);
 
             expect(thread instanceof ImagePointThread).toBeTruthy();
@@ -211,14 +231,6 @@ describe('image/ImageAnnotator', () => {
             util.showElement = jest.fn();
             annotator.render = jest.fn();
             annotator.renderPage = jest.fn();
-
-            annotator.modeButtons = {
-                point: { selector: 'point_btn' }
-            };
-
-            annotator.modeControllers.point = {
-                getButton: jest.fn()
-            };
         });
 
         afterEach(() => {

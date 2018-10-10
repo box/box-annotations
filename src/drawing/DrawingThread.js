@@ -456,6 +456,31 @@ class DrawingThread extends AnnotationThread {
             boundaryEl.parentNode.removeChild(boundaryEl);
         }
     }
+
+    /**
+     * Create an annotation data object to pass to annotation service.
+     *
+     * @private
+     * @param {string} type - Type of annotation
+     * @param {string} message - Annotation text
+     * @return {Object} Annotation data
+     */
+    createAnnotationData(type, message) {
+        return {
+            item: {
+                id: this.fileVersionId,
+                type: 'file_version'
+            },
+            details: {
+                type,
+                location: this.location,
+                threadID: this.threadID,
+                drawingPaths: this.pathContainer
+            },
+            createdBy: this.api.user,
+            thread: this.threadNumber
+        };
+    }
 }
 
 export default DrawingThread;
