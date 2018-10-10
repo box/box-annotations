@@ -237,12 +237,12 @@ class Annotator extends EventEmitter {
                 mode: type,
                 modeButton: this.modeButtons[type],
                 permissions: this.permissions,
-                annotator: this,
                 localized: this.localized,
                 fileId: this.fileId,
                 fileVersionId: this.fileVersionId,
                 apiHost: this.options.apiHost,
                 token: this.options.token,
+                getLocation: this.getLocationFromEvent,
                 options
             });
 

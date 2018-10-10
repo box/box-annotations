@@ -180,7 +180,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     setupHandlers(): void {
         /* eslint-disable require-jsdoc */
-        this.locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
+        this.locationFunction = (event) => this.getLocationFromEvent(event, TYPES.point);
         /* eslint-enable require-jsdoc */
 
         this.stopPropagation = this.stopPropagation.bind(this);
@@ -211,7 +211,7 @@ class DrawingModeController extends AnnotationModeController {
         event.preventDefault();
 
         // Get annotation location from click event, ignore click if location is invalid
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        const location = this.getLocationFromEvent(event, TYPES.point);
         if (!location) {
             return;
         }

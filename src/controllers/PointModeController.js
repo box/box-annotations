@@ -178,7 +178,7 @@ class PointModeController extends AnnotationModeController {
         this.hadPendingThreads = this.destroyPendingThreads();
 
         // Get annotation location from click event, ignore click if location is invalid
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        const location = this.getLocationFromEvent(event, TYPES.point);
         if (!location) {
             this.hideSharedDialog();
             return;

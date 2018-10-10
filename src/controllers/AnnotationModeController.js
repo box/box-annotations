@@ -1,6 +1,7 @@
 // @flow
 import rbush from 'rbush';
 import EventEmitter from 'events';
+import noop from 'lodash/noop';
 import { insertTemplate, isPending, replaceHeader, areThreadParamsValid, hasValidBoundaryCoordinates } from '../util';
 import {
     CLASS_HIDDEN,
@@ -74,6 +75,7 @@ class AnnotationModeController extends EventEmitter {
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
         this.locale = data.options ? data.options.locale : 'en-US';
+        this.getLocationFromEvent = data.getLocation || noop;
 
         this.api = new AnnotationAPI({
             apiHost: data.apiHost,
@@ -597,7 +599,7 @@ class AnnotationModeController extends EventEmitter {
             return [];
         }
 
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        const location = this.getLocationFromEvent(event, TYPES.point);
         if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
             return [];
         }
