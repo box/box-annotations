@@ -607,6 +607,9 @@ class Annotator extends EventEmitter {
      */
     handleControllerEvents(data) {
         switch (data.event) {
+            case CONTROLLER_EVENT.load:
+                this.loadAnnotations();
+                break;
             case CONTROLLER_EVENT.resetMobileDialog:
                 this.removeThreadFromSharedDialog();
                 break;

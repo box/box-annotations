@@ -53,6 +53,21 @@ class AnnotationModeController extends EventEmitter {
     /** @property {AnnotationAPI} */
     api: AnnotationAPI;
 
+    /** @property {Function} */
+    getLocationFromEvent: Function;
+
+    /** @property {AnnotationType} */
+    annotationType: AnnotationType;
+
+    /** @property {boolean} */
+    hadPendingThreads: boolean;
+
+    /** @property {string} */
+    visibleThreadID: ?string;
+
+    /** @property {string} */
+    pendingThreadID: ?string;
+
     constructor(annotatorType): void {
         super();
         this.annotatorType = annotatorType;
@@ -418,7 +433,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {Array} An array where each element is an object containing the object that will emit the event,
      *                 the type of events to listen for, and the callback
      */
-    setupHandlers(): Array<Object> {}
+    setupHandlers(): void {}
 
     /**
      * Handles annotation thread events and emits them to the viewer
@@ -482,7 +497,7 @@ class AnnotationModeController extends EventEmitter {
      */
     pushElementHandler(
         element: HTMLElement,
-        type: AnnotationType,
+        type: Array<any> | string,
         handlerFn: Function,
         useCapture: boolean = false
     ): void {
@@ -531,10 +546,10 @@ class AnnotationModeController extends EventEmitter {
      * Renders annotations from memory for a specified page.
      *
      * @private
-     * @param {number} pageNum - Page number
+     * @param {string} pageNum - Page number
      * @return {void}
      */
-    renderPage(pageNum: Number): void {
+    renderPage(pageNum: string): void {
         if (!this.threads || !this.threads[pageNum]) {
             return;
         }
@@ -628,11 +643,11 @@ class AnnotationModeController extends EventEmitter {
         switch (data.reason) {
             case 'create':
                 errorMessage = this.localized.createError;
-                this.loadAnnotations();
+                this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'delete':
                 errorMessage = this.localized.deleteError;
-                this.loadAnnotations();
+                this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'authorization':
                 errorMessage = this.localized.authError;
@@ -657,10 +672,10 @@ class AnnotationModeController extends EventEmitter {
      * @private
      * @emits annotatorevent
      * @param {string} event - Event name
-     * @param {Object} data - Event data
+     * @param {Object} [data] - Event data
      * @return {void}
      */
-    emit(event: string, data: Object): void {
+    emit(event: string, data?: Object): void {
         super.emit(event, data);
         super.emit('annotationcontrollerevent', {
             event,

@@ -141,3 +141,19 @@ type AnnotationData = {
 
 type StringAnyMap = { [string]: any };
 type AnnotationMap = { [string]: AnnotationData };
+
+type AnnotationThread = {
+    annotatedElement: HTMLElement,
+    annotations: Array<AnnotationData>,
+    api: AnnotationAPI,
+    fileVersionId: string,
+    location: Location,
+    threadID: string,
+    threadNumber: string,
+    type: AnnotationType,
+    state: string,
+    cancelUnsavedAnnotation: Function,
+    undo: Function,
+    redo: Function,
+    handleStart: Function
+};

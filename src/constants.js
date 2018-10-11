@@ -265,6 +265,7 @@ export const THREAD_EVENT = {
 };
 
 export const CONTROLLER_EVENT = {
+    load: 'annotationload',
     toggleMode: 'togglemode',
     enter: 'annotationmodeenter',
     exit: 'annotationmodeexit',

@@ -26,8 +26,8 @@ import {
 } from '../constants';
 
 class DrawingModeController extends AnnotationModeController {
-    /** @property {DrawingThread} - The currently selected DrawingThread */
-    selectedThread: DrawingThread;
+    /** @property {AnnotationThread} - The currently selected DrawingThread */
+    selectedThread: AnnotationThread;
 
     /** @property {HTMLElement} - The button to cancel the pending drawing thread */
     cancelButtonEl: HTMLElement;
@@ -41,6 +41,12 @@ class DrawingModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to redo a stroke on the pending drawing thread */
     redoButtonEl: HTMLElement;
 
+    /** @property {AnnotationThread} */
+    currentThread: ?AnnotationThread;
+
+    /** @property {Function} */
+    locationFunction: Function;
+
     /** @inheritdoc */
     init(data: Object): void {
         super.init(data);
@@ -52,8 +58,6 @@ class DrawingModeController extends AnnotationModeController {
         if (data.options.header !== 'none') {
             this.setupHeader(this.container, shell);
         }
-
-        this.handleSelection = this.handleSelection.bind(this);
     }
 
     /** @inheritdoc */
@@ -116,12 +120,12 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    stopPropagation(event: Event): void {
+    stopPropagation = (event: Event): void => {
         const el = findClosestElWithClass(event.target, CLASS_ANNOTATION_POINT_MARKER);
         if (el) {
             event.stopPropagation();
         }
-    }
+    };
 
     /**
      * Cancels drawing annotation
@@ -129,14 +133,14 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    cancelDrawing(): void {
+    cancelDrawing = (): void => {
         if (this.currentThread) {
             this.currentThread.cancelUnsavedAnnotation();
         }
 
         this.currentThread = undefined;
         this.toggleMode();
-    }
+    };
 
     /**
      * Posts drawing annotation
@@ -144,14 +148,14 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    postDrawing(): void {
+    postDrawing = (): void => {
         if (this.currentThread && this.currentThread.state === STATES.pending) {
             this.saveThread(this.currentThread);
         }
 
         this.currentThread = undefined;
         this.toggleMode();
-    }
+    };
 
     /**
      * Undos last drawing
@@ -159,11 +163,11 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    undoDrawing(): void {
+    undoDrawing = (): void => {
         if (this.currentThread) {
             this.currentThread.undo();
         }
-    }
+    };
 
     /**
      * Redos last undone drawing annotation
@@ -171,24 +175,17 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    redoDrawing(): void {
+    redoDrawing = (): void => {
         if (this.currentThread) {
             this.currentThread.redo();
         }
-    }
+    };
 
     /** @inheritdoc */
     setupHandlers(): void {
         /* eslint-disable require-jsdoc */
         this.locationFunction = (event) => this.getLocationFromEvent(event, TYPES.point);
         /* eslint-enable require-jsdoc */
-
-        this.stopPropagation = this.stopPropagation.bind(this);
-        this.drawingStartHandler = this.drawingStartHandler.bind(this);
-        this.cancelDrawing = this.cancelDrawing.bind(this);
-        this.postDrawing = this.postDrawing.bind(this);
-        this.undoDrawing = this.undoDrawing.bind(this);
-        this.redoDrawing = this.redoDrawing.bind(this);
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
         this.pushElementHandler(this.cancelButtonEl, 'click', this.cancelDrawing);
@@ -206,7 +203,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    drawingStartHandler(event: Event): void {
+    drawingStartHandler = (event: Event): void => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -238,7 +235,7 @@ class DrawingModeController extends AnnotationModeController {
         thread.bindDrawingListeners(this.locationFunction);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
         thread.handleStart(location);
-    }
+    };
 
     /** @inheritdoc */
     exit(): void {
@@ -258,7 +255,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    handleThreadEvents(thread: DrawingThread, data: Object = {}): void {
+    handleThreadEvents(thread: AnnotationThread, data: Object = {}): void {
         const { eventData } = data;
         switch (data.event) {
             case 'softcommit':
@@ -317,7 +314,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Event} event - The event object containing the pointer information
      * @return {void}
      */
-    handleSelection(event: Event): void {
+    handleSelection = (event: Event): void => {
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
@@ -342,12 +339,12 @@ class DrawingModeController extends AnnotationModeController {
         const index = Math.floor(Math.random() * intersectingThreads.length);
         const selected = intersectingThreads[index];
         this.select(selected);
-    }
+    };
 
     /** @inheritdoc */
-    renderPage(pageNum: Number): void {
+    renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
         clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {
@@ -377,10 +374,10 @@ class DrawingModeController extends AnnotationModeController {
      * Select the indicated drawing thread. Deletes a drawing thread upon the second consecutive selection
      *
      * @private
-     * @param {DrawingThread} selectedDrawingThread - The drawing thread to select
+     * @param {AnnotationThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
-    select(selectedDrawingThread: DrawingThread): void {
+    select(selectedDrawingThread: AnnotationThread): void {
         selectedDrawingThread.drawBoundary();
         this.selectedThread = selectedDrawingThread;
     }
@@ -415,20 +412,20 @@ class DrawingModeController extends AnnotationModeController {
      * Save the original thread and create a new thread
      *
      * @private
-     * @param {DrawingThread} thread The thread that emitted the event
+     * @param {AnnotationThread} thread The thread that emitted the event
      * @return {void}
      */
-    saveThread(thread: DrawingThread): void {
+    saveThread(thread: AnnotationThread): void {
         if (!thread || !hasValidBoundaryCoordinates(thread)) {
             return;
         }
 
         thread.saveAnnotation(TYPES.draw);
-        this.registerThread(thread);
+        this.registerThread([], thread.location, thread.type);
     }
 
     /** @inheritdoc */
-    instantiateThread(params: Object): DrawingThread {
+    instantiateThread(params: Object): AnnotationThread {
         return this.annotatorType === ANNOTATOR_TYPE.document ? new DocDrawingThread(params) : null;
     }
 }
