@@ -70,7 +70,7 @@ export function isPointInPolyOpt(poly, x, y) {
     /* eslint-disable */
     for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
         ((poly[i][1] <= y && y < poly[j][1]) || (poly[j][1] <= y && y < poly[i][1])) &&
-            x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
+            x < ((poly[j][0] - poly[i][0]) * (y - poly[i][1])) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
             (c = !c);
     return c;
     /* eslint-enable */
@@ -176,7 +176,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
         pdfCoordinates = [x1, pageHeight - y1, x2, pageHeight - y2, x3, pageHeight - y3, x4, pageHeight - y4];
     }
 
-    return pdfCoordinates.map((val) => (val * CSS_PIXEL_TO_PDF_UNIT / scale).toFixed(4));
+    return pdfCoordinates.map((val) => ((val * CSS_PIXEL_TO_PDF_UNIT) / scale).toFixed(4));
 }
 
 /**
@@ -316,9 +316,8 @@ export function isValidSelection(selection) {
  * @param {HTMLElement} annotationLayerEl - The annotation canvas layer
  * @return {HTMLElement} The scaled annotation canvas layer
  */
-export function scaleCanvas(pageEl, annotationLayerEl) {
+export function scaleCanvas(pageEl, annotationLayerEl, pxRatio = window.devicePixelRatio || 1) {
     const pageDimensions = pageEl.getBoundingClientRect();
-    const pxRatio = window.devicePixelRatio || 1;
     const { width } = pageDimensions;
     const height = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
 
@@ -342,11 +341,10 @@ export function scaleCanvas(pageEl, annotationLayerEl) {
  *
  * @param {HTMLElement} pageEl - The DOM element for the current page
  * @param {string} annotationLayerClass - The class name for the annotation layer
- * @param {number} [paddingTop] - The top padding of each page element
- * @param {number} [paddingBottom] - The bottom padding of each page element
+ * @param {number} [pixelRatio] - The pixel ratio to scale the canvas to. By default, uses devicePixelRatio
  * @return {RenderingContext|null} Context or null if no page element was given
  */
-export function getContext(pageEl, annotationLayerClass) {
+export function getContext(pageEl, annotationLayerClass, pixelRatio) {
     if (!pageEl) {
         return null;
     }
@@ -360,7 +358,7 @@ export function getContext(pageEl, annotationLayerClass) {
     // Create annotation layer (e.g. first load or page resize)
     annotationLayerEl = document.createElement('canvas');
     annotationLayerEl.classList.add(annotationLayerClass);
-    annotationLayerEl = scaleCanvas(pageEl, annotationLayerEl);
+    annotationLayerEl = scaleCanvas(pageEl, annotationLayerEl, pixelRatio);
 
     const textLayerEl = pageEl.querySelector('.textLayer');
     const canvasWrapperEl = pageEl.querySelector('.canvasWrapper');
