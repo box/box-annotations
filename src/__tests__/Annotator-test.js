@@ -300,9 +300,9 @@ describe('Annotator', () => {
                     }
                 };
                 const permissions = annotator.getAnnotationPermissions(file);
-                expect(permissions.canAnnotate).toBeFalsy();
-                expect(permissions.canViewOwnAnnotations).toBeTruthy();
-                expect(permissions.canViewAllAnnotations).toBeFalsy();
+                expect(permissions.can_annotate).toBeFalsy();
+                expect(permissions.can_view_annotations_self).toBeTruthy();
+                expect(permissions.can_view_annotations_all).toBeFalsy();
             });
         });
 
@@ -325,16 +325,16 @@ describe('Annotator', () => {
                 annotator.api.getThreadMap = jest.fn();
 
                 annotator.permissions = {
-                    canViewAllAnnotations: true,
-                    canViewOwnAnnotations: true
+                    can_view_annotations_all: true,
+                    can_view_annotations_self: true
                 };
                 annotator.emit = jest.fn();
             });
 
             it('should not fetch existing annotations if the user does not have correct permissions', () => {
                 annotator.permissions = {
-                    canViewAllAnnotations: false,
-                    canViewOwnAnnotations: false
+                    can_view_annotations_all: false,
+                    can_view_annotations_self: false
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -347,8 +347,8 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
-                    canViewAllAnnotations: false,
-                    canViewOwnAnnotations: true
+                    can_view_annotations_all: false,
+                    can_view_annotations_self: true
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -362,8 +362,8 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
-                    canViewAllAnnotations: true,
-                    canViewOwnAnnotations: false
+                    can_view_annotations_all: true,
+                    can_view_annotations_self: false
                 };
 
                 const result = annotator.fetchAnnotations();

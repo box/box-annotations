@@ -267,7 +267,7 @@ class AnnotationDialog extends EventEmitter {
             this.element.innerHTML = `<div class="${constants.CLASS_ANNOTATION_CARET}"></div>`;
             this.element.appendChild(this.dialogEl);
 
-            // Adding thread number to dialog
+            // Adding thread Number to dialog
             const firstAnnotation = annotations[0];
             if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;

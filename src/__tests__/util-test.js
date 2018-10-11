@@ -66,7 +66,7 @@ const html = `<div class="wrapper" data-name="someName">
 
 <textarea class="textarea"></textarea>
 
-<div class="page" data-page-number="2">
+<div class="page" data-page-Number="2">
 <div class="foo"></div>
 </div>
 
@@ -122,7 +122,7 @@ describe('util', () => {
     });
 
     describe('getPageInfo()', () => {
-        it('should return page element and page number that the specified element is on', () => {
+        it('should return page element and page Number that the specified element is on', () => {
             const fooEl = rootElement.querySelector('.foo');
             const pageEl = rootElement.querySelector('.page');
             const result = getPageInfo(fooEl);
@@ -130,7 +130,7 @@ describe('util', () => {
             expect(result.page).toEqual(2);
         });
 
-        it('should return no page element and -1 page number if no page is found', () => {
+        it('should return no page element and -1 page Number if no page is found', () => {
             const barEl = rootElement.querySelector('.bar');
             const result = getPageInfo(barEl);
             expect(result.pageEl).toBeNull();

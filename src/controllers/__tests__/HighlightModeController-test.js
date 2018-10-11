@@ -11,7 +11,7 @@ describe('controllers/HighlightModeController', () => {
         controller = new HighlightModeController();
         controller.emit = jest.fn();
         controller.registerThread = jest.fn();
-        controller.getLocationFromEvent = jest.fn();
+        controller.getLocation = jest.fn();
 
         thread = {
             annotations: {},
@@ -39,7 +39,7 @@ describe('controllers/HighlightModeController', () => {
             expect(controller.renderPage).toBeCalledWith(1);
         });
 
-        it('should emit annotationsrenderpage with page number on threadCleanup', () => {
+        it('should emit annotationsrenderpage with page Number on threadCleanup', () => {
             controller.unregisterThread = jest.fn();
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
             expect(controller.unregisterThread).toBeCalled();
@@ -104,7 +104,7 @@ describe('controllers/HighlightModeController', () => {
     describe('renderPage()', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
+            controller.annotatedElement.setAttribute('data-page-Number', 1);
             util.clearCanvas = jest.fn();
         });
 

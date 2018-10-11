@@ -53,7 +53,7 @@ describe('doc/DocPointThread', () => {
         });
 
         it('should call parent showDialog if user can\'t annotate', () => {
-            thread.permissions.canAnnotate = false;
+            thread.permissions.can_annotate = false;
             Object.defineProperty(Object.getPrototypeOf(DocPointThread.prototype), 'showDialog', {
                 value: jest.fn()
             });

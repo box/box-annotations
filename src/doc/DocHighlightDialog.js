@@ -129,7 +129,7 @@ class DocHighlightDialog extends AnnotationDialog {
         // Position it below lower right corner or center of the highlight - we need
         // to reposition every time since the DOM could have changed from
         // zooming
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`);
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
 
@@ -281,7 +281,7 @@ class DocHighlightDialog extends AnnotationDialog {
             this.element.innerHTML = `<div class="${constants.CLASS_ANNOTATION_CARET}"></div>`;
             this.element.appendChild(this.dialogEl);
 
-            // Adding thread number to dialog
+            // Adding thread Number to dialog
             if (firstAnnotation) {
                 this.element.dataset.threadNumber = firstAnnotation.threadNumber;
             }

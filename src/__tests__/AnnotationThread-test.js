@@ -207,7 +207,7 @@ describe('AnnotationThread', () => {
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.save);
         });
 
-        it('should update thread number and replace temporary annotation if dialog exists', () => {
+        it('should update thread Number and replace temporary annotation if dialog exists', () => {
             thread.dialog.element = document.createElement('div');
 
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);

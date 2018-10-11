@@ -12,7 +12,7 @@ const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
 const PAGE_PADDING_TOP = 15;
 
 const html = `<div class="annotated-element">
-<div data-page-number="1"></div>
+<div data-page-Number="1"></div>
 <div data-type="annotation-dialog" class="ba-annotation-dialog">
   <div class="ba-annotation-caret"></div>
   <div class="ba-annotation-highlight-dialog">
@@ -360,7 +360,7 @@ describe('doc/DocHighlightDialog', () => {
             expect(dialog.element.classList.contains(constants.CLASS_HIDDEN)).toBeTruthy();
         });
 
-        it('should set hasComments according to the number of annotations in the thread', () => {
+        it('should set hasComments according to the Number of annotations in the thread', () => {
             dialog.hasComments = null;
             dialog.setup([annotation]);
             expect(dialog.hasComments).toBeTruthy();
@@ -392,12 +392,12 @@ describe('doc/DocHighlightDialog', () => {
             expect(dialog.commentsDialogEl.classList.contains(constants.CLASS_HIDDEN)).toBeTruthy();
         });
 
-        it('should setup the dialog element and add thread number to the dialog', () => {
+        it('should setup the dialog element and add thread Number to the dialog', () => {
             dialog.setup([annotation]);
             expect(dialog.element.dataset.threadNumber).toEqual('1');
         });
 
-        it('should not set the thread number when using a mobile browser', () => {
+        it('should not set the thread Number when using a mobile browser', () => {
             dialog.isMobile = true;
             dialog.setup([annotation], false);
             expect(dialog.element.dataset.threadNumber).toBeUndefined();

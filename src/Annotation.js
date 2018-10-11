@@ -10,14 +10,14 @@ class Annotation {
      * @property {string} id Annotation ID
      * @property {string} fileVersionId File version ID for this annotation
      * @property {string} threadID Thread ID
-     * @property {string} thread Thread number
+     * @property {string} thread Thread Number
      * @property {string} type Annotation type, e.g. 'point' or 'highlight'
      * @property {string} message Annotation text
      * @property {Object} location Location object
      * @property {Object} createdBy User creating/that created this annotation
      * @property {Object} permissions Permissions user has
-     * @property {number} createdAt Created timestamp
-     * @property {number} modifiedAt Modified timestamp
+     * @property {Number} createdAt Created timestamp
+     * @property {Number} modifiedAt Modified timestamp
      */
 
     //--------------------------------------------------------------------------

@@ -153,7 +153,7 @@ class DocDrawingDialog extends AnnotationDialog {
      */
     position(x, y) {
         if (!this.pageEl) {
-            this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+            this.pageEl = this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`);
         }
 
         if (!this.element) {

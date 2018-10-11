@@ -22,7 +22,7 @@ class DocPointThread extends AnnotationThread {
      */
     showDialog() {
         // Don't show dialog if user can annotate and there is a current selection
-        if (this.permissions.canAnnotate && docUtil.isSelectionPresent()) {
+        if (this.permissions.can_annotate && docUtil.isSelectionPresent()) {
             return;
         }
 
@@ -41,7 +41,7 @@ class DocPointThread extends AnnotationThread {
      */
     show() {
         const pageEl =
-            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+            this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`) || this.annotatedElement;
         const [browserX, browserY] = docUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to page
@@ -77,7 +77,7 @@ class DocPointThread extends AnnotationThread {
             location: this.location,
             isMobile: this.isMobile,
             hasTouch: this.hasTouch,
-            canAnnotate: this.permissions.canAnnotate
+            canAnnotate: this.permissions.can_annotate
         });
     }
 }

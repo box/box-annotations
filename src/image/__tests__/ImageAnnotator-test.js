@@ -6,7 +6,7 @@ import { TYPES } from '../../constants';
 
 let annotator;
 const html = `<div class="bp-image annotated-element">
-    <img class="page" width="100px" height="200px" data-page-number="1">
+    <img class="page" width="100px" height="200px" data-page-Number="1">
     <button class="ba-point-annotation-marker"></button>
 </div>
 `;
@@ -170,7 +170,7 @@ describe('image/ImageAnnotator', () => {
 
     describe('rotateAnnotations()', () => {
         beforeEach(() => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             util.hideElement = jest.fn();
             util.showElement = jest.fn();
             annotator.render = jest.fn();
@@ -182,7 +182,7 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should only render annotations if user cannot annotate', () => {
-            annotator.permissions.canAnnotate = false;
+            annotator.permissions.can_annotate = false;
             annotator.rotateAnnotations();
             expect(util.hideElement).not.toBeCalled();
             expect(util.showElement).not.toBeCalled();

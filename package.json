@@ -146,7 +146,7 @@
     "commitmsg": "commitlint -e",
     "prepush": "./build/prepush.sh",
     "pre-build": "yarn install && yarn run clean && yarn run build-locales",
-    "flow": "flow",
+    "flow": "flow check",
     "flow-typed": "flow-typed",
     "flow-typed-update": "yarn add flow-typed && yarn run flow-typed update -i dev",
     "prettier": "prettier-eslint \"src/**/*.js\" --print-width 120 --single-quote --tab-width 4 --write",

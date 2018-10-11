@@ -61,14 +61,14 @@ export function getLocationWithoutRotation(x, y, rotation, imageDimensions, scal
 }
 
 /**
- * Returns number of pixels above the image when it's not rotated
+ * Returns Number of pixels above the image when it's not rotated
  *
  * @param {HTMLElement} imageEl - HTML element for image
  * @param {boolean} isRotated - Whether or not image is rotated
  * @return {number} Number of pixels above the image
  */
 export function getRotatedPadding(imageEl, isRotated) {
-    return isRotated ? imageEl.offsetLeft - IMAGE_PADDING * 3 / 2 : imageEl.offsetTop;
+    return isRotated ? imageEl.offsetLeft - (IMAGE_PADDING * 3) / 2 : imageEl.offsetTop;
 }
 
 /**
@@ -81,7 +81,7 @@ export function getRotatedPadding(imageEl, isRotated) {
  */
 export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
     const imageEl =
-        annotatedElement.querySelector(`[data-page-number="${location.page || 1}"]`) ||
+        annotatedElement.querySelector(`[data-page-Number="${location.page || 1}"]`) ||
         annotatedElement.querySelector('img');
     const wrapperDimensions = annotatedElement.getBoundingClientRect();
     const imageDimensions = imageEl.getBoundingClientRect();

@@ -258,7 +258,7 @@ class DocHighlightThread extends AnnotationThread {
             location: this.location,
             isMobile: this.isMobile,
             hasTouch: this.hasTouch,
-            canAnnotate: this.permissions.canAnnotate
+            canAnnotate: this.permissions.can_annotate
         });
 
         // Ensures that previously created annotations have the right type

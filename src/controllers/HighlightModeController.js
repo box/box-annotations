@@ -1,4 +1,3 @@
-// @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocHighlightThread from '../doc/DocHighlightThread';
 import { clearCanvas } from '../util';
@@ -13,7 +12,7 @@ import {
 
 class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
-    handleThreadEvents(thread: AnnotationThread, data: Object): void {
+    handleThreadEvents = (thread: AnnotationThread, data: Object): void => {
         let firstAnnotation;
         switch (data.event) {
             case THREAD_EVENT.save:
@@ -34,7 +33,7 @@ class HighlightModeController extends AnnotationModeController {
         }
 
         super.handleThreadEvents(thread, data);
-    }
+    };
 
     /** @inheritdoc */
     exit(): void {
@@ -59,7 +58,7 @@ class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-Number="${pageNum.toString()}"]`);
         const layerClass =
             this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
         clearCanvas(pageEl, layerClass);

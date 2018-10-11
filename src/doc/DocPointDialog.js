@@ -18,7 +18,7 @@ class DocPointDialog extends AnnotationDialog {
      */
     position() {
         const pageEl =
-            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+            this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`) || this.annotatedElement;
 
         // Show dialog so we can get width
         pageEl.appendChild(this.element);

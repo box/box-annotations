@@ -10,7 +10,7 @@ const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
 const html = `<div class="mock-header-bar" height="30px" width="100px"></div>
 <div class="annotated-element ba-annotated">
-    <img width="100px" height="200px" data-page-number="1">
+    <img width="100px" height="200px" data-page-Number="1">
     <button class="ba-point-annotation-marker"></button>
 </div
 `;

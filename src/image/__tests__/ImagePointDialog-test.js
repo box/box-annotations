@@ -4,7 +4,7 @@ import * as util from '../../util';
 
 let dialog;
 const html = `<div class="annotated-element ba-annotated">
-    <img width="400px" height="600px" data-page-number="1">
+    <img width="400px" height="600px" data-page-Number="1">
     <div data-type="annotation-dialog" class="ba-annotation-dialog">
         <div class="ba-annotation-caret"></div>
     </div>

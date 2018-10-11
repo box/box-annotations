@@ -184,7 +184,7 @@ class Annotator extends EventEmitter {
      * @return {Object} Location object
      */
     /* eslint-disable no-unused-vars */
-    getLocationFromEvent(event, annotationType) {}
+    getLocationFromEvent = (event, annotationType) => {};
     /* eslint-enable no-unused-vars */
 
     /**
@@ -209,9 +209,9 @@ class Annotator extends EventEmitter {
      */
     setupAnnotations() {
         // Map of page => {threads on page}
+        this.setupControllers();
         this.bindDOMListeners();
         this.bindCustomListeners();
-        this.setupControllers();
     }
 
     /**
@@ -322,7 +322,7 @@ class Annotator extends EventEmitter {
     fetchAnnotations() {
         // Do not load any pre-existing annotations if the user does not have
         // the correct permissions
-        if (!this.permissions.canViewAllAnnotations && !this.permissions.canViewOwnAnnotations) {
+        if (!this.permissions.can_view_annotations_all && !this.permissions.can_view_annotations_self) {
             return Promise.resolve({});
         }
 
@@ -484,7 +484,7 @@ class Annotator extends EventEmitter {
      * Renders annotations from memory for a specified page.
      *
      * @private
-     * @param {number} pageNum - Page number
+     * @param {number} pageNum - Page Number
      * @return {void}
      */
     renderPage(pageNum) {
@@ -500,10 +500,15 @@ class Annotator extends EventEmitter {
      */
     getAnnotationPermissions(file) {
         const permissions = file.permissions || {};
+        const {
+            can_annotate = false,
+            can_view_annotations_all = false,
+            can_view_annotations_self = false
+        } = permissions;
         return {
-            canAnnotate: permissions.can_annotate || false,
-            canViewAllAnnotations: permissions.can_view_annotations_all || false,
-            canViewOwnAnnotations: permissions.can_view_annotations_self || false
+            can_annotate,
+            can_view_annotations_all,
+            can_view_annotations_self
         };
     }
 

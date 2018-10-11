@@ -6,7 +6,7 @@ import DocDrawingDialog from '../DocDrawingDialog';
 let dialog;
 
 const html = `<div class="annotated-element">
-  <div data-page-number="1"></div>
+  <div data-page-Number="1"></div>
   </div>
 </div>
 <div class="ba-annotation-drawing-dialog"><span class="ba-annotation-drawing-btns">

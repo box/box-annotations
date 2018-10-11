@@ -234,7 +234,7 @@ class DocDrawingThread extends DrawingThread {
             annotations: this.annotations,
             locale: this.locale,
             location: this.location,
-            canAnnotate: this.permissions.canAnnotate,
+            canAnnotate: this.permissions.can_annotate,
             isMobile: this.isMobile,
             hasTouch: this.hasTouch
         });

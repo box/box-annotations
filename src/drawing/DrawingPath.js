@@ -10,16 +10,16 @@ class DrawingPath {
     /** @property {Array} - The path coordinates translated into browser space */
     browserPath = [];
 
-    /** @property {number} - The maximum X position of all coordinates */
+    /** @property {Number} - The maximum X position of all coordinates */
     maxX = -Infinity;
 
-    /** @property {number} - The maximum Y position of all coordinates */
+    /** @property {Number} - The maximum Y position of all coordinates */
     maxY = -Infinity;
 
-    /** @property {number} - The minimum X position of all coordinates */
+    /** @property {Number} - The minimum X position of all coordinates */
     minX = Infinity;
 
-    /** @property {number} - The minimum Y position of all coordinates */
+    /** @property {Number} - The minimum Y position of all coordinates */
     minY = Infinity;
 
     /**
@@ -57,7 +57,7 @@ class DrawingPath {
             return;
         }
 
-        // OPTIMIZE (@minhnguyen): We convert a number to a string using toFixed and then back a number.
+        // OPTIMIZE (@minhnguyen): We convert a Number to a string using toFixed and then back a Number.
         //           As a result, it might be better to truncate only on annotation save.
         const x = round(documentLocation.x, 2);
         const y = round(documentLocation.y, 2);

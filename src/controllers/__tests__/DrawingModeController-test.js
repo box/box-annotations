@@ -237,7 +237,7 @@ describe('controllers/DrawingModeController', () => {
         const location = {};
 
         beforeEach(() => {
-            controller.getLocationFromEvent = jest.fn();
+            controller.getLocation = jest.fn();
             controller.currentThread = undefined;
             controller.locationFunction = jest.fn();
             controller.registerThread = jest.fn().mockReturnValue(thread);
@@ -250,13 +250,13 @@ describe('controllers/DrawingModeController', () => {
 
         it('should do nothing if drawing start is invalid', () => {
             controller.drawingStartHandler(event);
-            expect(controller.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocation).toBeCalled();
             expect(controller.registerThread).not.toBeCalled();
         });
 
         it('should continue drawing if in the middle of creating a new drawing', () => {
             controller.currentThread = thread;
-            controller.getLocationFromEvent = jest.fn().mockReturnValue(location);
+            controller.getLocation = jest.fn().mockReturnValue(location);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
             controller.drawingStartHandler(event);
@@ -265,7 +265,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should begin a new drawing thread if none exist already', () => {
-            controller.getLocationFromEvent = jest.fn().mockReturnValue(location);
+            controller.getLocation = jest.fn().mockReturnValue(location);
             controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
@@ -453,7 +453,7 @@ describe('controllers/DrawingModeController', () => {
     describe('renderPage()', () => {
         beforeEach(() => {
             controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
+            controller.annotatedElement.setAttribute('data-page-Number', 1);
             util.clearCanvas = jest.fn();
         });
 

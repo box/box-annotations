@@ -80,17 +80,17 @@ export function findClosestElWithClass(element, className) {
 }
 
 /**
- * Returns the page element and page number that the element is on.
+ * Returns the page element and page Number that the element is on.
  *
- * @param {HTMLElement} element Element to find page and page number for
- * @return {Object} Page element/page number if found or null/-1 if not
+ * @param {HTMLElement} element Element to find page and page Number for
+ * @return {Object} Page element/page Number if found or null/-1 if not
  */
 export function getPageInfo(element) {
     const pageEl = findClosestElWithClass(element, 'page') || null;
     let page = 1;
 
     if (pageEl) {
-        page = parseInt(pageEl.getAttribute('data-page-number'), 10);
+        page = parseInt(pageEl.getAttribute('data-page-Number'), 10);
     }
 
     return { pageEl, page };
@@ -654,15 +654,15 @@ export function getHeaders(headers = {}, token = '', sharedLink = '', password =
 }
 
 /**
- * Round a number to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
+ * Round a Number to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
  *
- * @param {number} number The number to be rounded
+ * @param {number} Number The Number to be rounded
  * @param {number} precision The amount of decimal places to keep
- * @return {number} The rounded number
+ * @return {number} The rounded Number
  */
-export function round(number, precision) {
+export function round(Number, precision) {
     /* eslint-disable prefer-template */
-    let pair = (number + 'e').split('e');
+    let pair = (Number + 'e').split('e');
     const value = Math.round(pair[0] + 'e' + (+pair[1] + precision));
     pair = (value + 'e').split('e');
     return +(pair[0] + 'e' + (+pair[1] - precision));
@@ -708,10 +708,10 @@ export function canLoadAnnotations(permissions) {
     }
 
     const canAnnotate = permissions[PERMISSION_ANNOTATE];
-    const canViewAllAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
-    const canViewOwnAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
+    const can_view_annotations_all = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
+    const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
-    return !!canAnnotate || !!canViewAllAnnotations || !!canViewOwnAnnotations;
+    return !!canAnnotate || !!can_view_annotations_all || !!can_view_annotations_self;
 }
 
 /**

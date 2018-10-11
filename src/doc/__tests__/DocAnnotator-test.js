@@ -533,7 +533,7 @@ describe('doc/DocAnnotator', () => {
 
             // Add pageEl
             pageEl = document.createElement('div');
-            pageEl.setAttribute('data-page-number', 1);
+            pageEl.setAttribute('data-page-Number', 1);
             annotator.annotatedElement.appendChild(pageEl);
         });
 
@@ -605,7 +605,7 @@ describe('doc/DocAnnotator', () => {
                 removeEventListener: jest.fn()
             };
 
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.plainHighlightEnabled = true;
             annotator.drawEnabled = true;
         });
@@ -640,7 +640,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should bind draw selection handlers regardless of if the user can annotate ', () => {
-            annotator.permissions.canAnnotate = false;
+            annotator.permissions.can_annotate = false;
 
             // Desktop draw selection handlers
             annotator.bindDOMListeners();
@@ -660,7 +660,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should bind highlight mouse move handlers regardless of if the user can annotate only on desktop', () => {
-            annotator.permissions.canAnnotate = false;
+            annotator.permissions.can_annotate = false;
             annotator.plainHighlightEnabled = true;
             annotator.commentHighlightEnabled = true;
             annotator.drawEnabled = false;
@@ -745,7 +745,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should unbind DOM listeners if user can annotate', () => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
 
             annotator.unbindDOMListeners();
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
@@ -777,7 +777,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should stop and destroy the requestAnimationFrame handle created by getHighlightMousemoveHandler()', () => {
             const rafHandle = 12; // RAF handles are integers
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.highlightThrottleHandle = rafHandle;
 
             window.cancelAnimationFrame = jest.fn();
@@ -788,7 +788,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should unbind selectionchange event, on the document, if on a mobile OR touch-enabled device and can annotate', () => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.isMobile = true;
             annotator.hasTouch = false;
             document.removeEventListener = jest.fn();
@@ -803,7 +803,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should tell controllers to clean up selections', () => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.modeControllers = {
                 test: {
                     removeSelection: jest.fn()

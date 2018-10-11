@@ -27,7 +27,7 @@ class ImageAnnotator extends Annotator {
      * @param {Event} event - DOM event
      * @return {Object|null} Location object
      */
-    getLocationFromEvent(event) {
+    getLocationFromEvent = (event) => {
         let location = null;
 
         let clientEvent = event;
@@ -44,7 +44,7 @@ class ImageAnnotator extends Annotator {
             return location;
         }
 
-        // If no image page was selected, ignore, as all images have a page number.
+        // If no image page was selected, ignore, as all images have a page Number.
         const { page } = util.getPageInfo(imageEl);
 
         // Location based only on image position
@@ -78,7 +78,7 @@ class ImageAnnotator extends Annotator {
         };
 
         return location;
-    }
+    };
 
     /** @inheritdoc */
     scaleAnnotations(data) {
@@ -91,11 +91,11 @@ class ImageAnnotator extends Annotator {
      *
      * @private
      * @param {number} [rotationAngle] - current angle image is rotated
-     * @param {number} [pageNum] - Page number
+     * @param {number} [pageNum] - Page Number
      * @return {void}
      */
     rotateAnnotations(rotationAngle = 0, pageNum = 0) {
-        // Only render a specific page's annotations unless no page number
+        // Only render a specific page's annotations unless no page Number
         // is specified
         if (pageNum) {
             this.renderPage(pageNum);
@@ -106,7 +106,7 @@ class ImageAnnotator extends Annotator {
         // Only show/hide point annotation button if user has the
         // appropriate permissions
         const controller = this.modeControllers[TYPES.point];
-        if (!this.permissions.canAnnotate || !controller) {
+        if (!this.permissions.can_annotate || !controller) {
             return;
         }
 

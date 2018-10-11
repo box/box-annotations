@@ -2,6 +2,8 @@
 import rbush from 'rbush';
 import EventEmitter from 'events';
 import noop from 'lodash/noop';
+import get from 'lodash/get';
+
 import { insertTemplate, isPending, replaceHeader, areThreadParamsValid, hasValidBoundaryCoordinates } from '../util';
 import {
     CLASS_HIDDEN,
@@ -32,8 +34,17 @@ class AnnotationModeController extends EventEmitter {
     /** @property {HTMLElement} - Annotated HTML DOM element */
     annotatedElement: HTMLElement;
 
-    /** @property {string} - Mode for annotation controller */
+    /** @property {HTMLElement} - Annotation mode button HTML DOM element */
+    buttonEl: HTMLElement;
+
+    /** @property {Object} - Annotation mode button selector and title */
+    modeButton: Object;
+
+    /** @property {AnnotationType} - Mode for annotation controller */
     mode: AnnotationType;
+
+    /** @property {string} - Mode for annotation controller */
+    annotatorType: string;
 
     /** @property {Object} */
     permissions: BoxItemPermissions;
@@ -54,7 +65,7 @@ class AnnotationModeController extends EventEmitter {
     api: AnnotationAPI;
 
     /** @property {Function} */
-    getLocationFromEvent: Function;
+    getLocation: Function = noop;
 
     /** @property {AnnotationType} */
     annotationType: AnnotationType;
@@ -68,7 +79,7 @@ class AnnotationModeController extends EventEmitter {
     /** @property {string} */
     pendingThreadID: ?string;
 
-    constructor(annotatorType): void {
+    constructor(annotatorType: string): void {
         super();
         this.annotatorType = annotatorType;
     }
@@ -84,27 +95,25 @@ class AnnotationModeController extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
         this.fileVersionId = data.fileVersionId;
-        this.permissions = data.permissions || {};
+        this.permissions = data.permissions;
         this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.isMobile = data.options ? data.options.isMobile : false;
         this.locale = data.options ? data.options.locale : 'en-US';
-        this.getLocationFromEvent = data.getLocation || noop;
+        this.getLocation = data.getLocation;
 
         this.api = new AnnotationAPI({
             apiHost: data.apiHost,
+            fileId: data.fileId,
             token: data.token,
             anonymousUserName: data.localized.anonymousUserName
         });
         this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
 
-        if (data.modeButton && this.permissions.canAnnotate) {
+        if (data.modeButton && this.permissions.can_annotate) {
             this.modeButton = data.modeButton;
             this.showButton();
         }
-
-        this.handleThreadEvents = this.handleThreadEvents.bind(this);
-        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
     }
 
     /**
@@ -115,7 +124,7 @@ class AnnotationModeController extends EventEmitter {
     destroy(): void {
         Object.keys(this.threads).forEach((pageNum) => {
             const pageThreads = this.threads[pageNum].all() || [];
-            pageThreads.forEach(this.unregisterThread.bind(this));
+            pageThreads.forEach(this.unregisterThread);
         });
 
         if (this.buttonEl) {
@@ -131,7 +140,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
     getButton(annotatorSelector: string): HTMLElement {
-        return this.container.querySelector(annotatorSelector);
+        return this.container.querySelector(annotatorSelector) || this.container;
     }
 
     /**
@@ -140,7 +149,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     showButton(): void {
-        if (!this.permissions.canAnnotate) {
+        if (!this.permissions.can_annotate) {
             return;
         }
 
@@ -148,8 +157,6 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.title = this.modeButton.title;
             this.buttonEl.classList.remove(CLASS_HIDDEN);
-
-            this.toggleMode = this.toggleMode.bind(this);
             this.buttonEl.addEventListener('click', this.toggleMode);
         }
     }
@@ -160,7 +167,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    toggleMode(): void {
+    toggleMode = (): void => {
         this.destroyPendingThreads();
 
         // No specific mode available for annotation type
@@ -170,7 +177,7 @@ class AnnotationModeController extends EventEmitter {
 
         // Exit any other annotation mode
         this.emit(CONTROLLER_EVENT.toggleMode);
-    }
+    };
 
     /**
      * Disables the specified annotation mode
@@ -263,7 +270,8 @@ class AnnotationModeController extends EventEmitter {
      * @param {AnnotationType} [type] - Optional annotation type
      * @return {Object} Params to create annotation thread
      */
-    getThreadParams(annotations: Array<Annotation>, location: Location, type: AnnotationType): Object {
+    getThreadParams(annotations: Array<Annotation>, location: Location, type: AnnotationType): ?Object {
+        const firstAnnotation = annotations[0];
         const params = {
             annotatedElement: this.annotatedElement,
             api: this.api,
@@ -276,15 +284,10 @@ class AnnotationModeController extends EventEmitter {
             location,
             type,
             permissions: this.permissions,
-            localized: this.localized
+            localized: this.localized,
+            threadID: get(firstAnnotation, 'id', null),
+            threadNumber: get(firstAnnotation, 'threadNumber', null)
         };
-
-        // Set existing thread ID if created with annotations
-        const firstAnnotation = annotations[0];
-        if (firstAnnotation) {
-            params.threadID = firstAnnotation.threadID;
-            params.threadNumber = firstAnnotation.threadNumber;
-        }
 
         if (!areThreadParamsValid(params) || !location) {
             return null;
@@ -316,7 +319,7 @@ class AnnotationModeController extends EventEmitter {
     registerThread(annotations: Array<Annotation>, location: Location, type: AnnotationType): AnnotationThread {
         let thread;
 
-        // Corrects any annotation page number to 1 instead of -1
+        // Corrects any annotation page Number to 1 instead of -1
         const fixedLocation = location;
         if (!fixedLocation.page || fixedLocation.page < 0) {
             fixedLocation.page = 1;
@@ -367,10 +370,10 @@ class AnnotationModeController extends EventEmitter {
      *
      * @private
      * @param {Function} func Predicate method to apply on threads
-     * @param {number} pageNum Page number
+     * @param {string} pageNum Page Number
      * @return {void}
      */
-    applyActionToPageThreads(func: Function, pageNum: Number): void {
+    applyActionToPageThreads(func: Function, pageNum: string): void {
         if (!this.threads[pageNum]) {
             return;
         }
@@ -397,7 +400,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {string} threadID - Thread ID
      * @return {AnnotationThread} Annotation thread specified by threadID
      */
-    getThreadByID(threadID: string): AnnotationThread {
+    getThreadByID = (threadID: string): ?AnnotationThread => {
         let thread = null;
         if (!threadID) {
             return thread;
@@ -417,7 +420,7 @@ class AnnotationModeController extends EventEmitter {
         });
 
         return thread;
-    }
+    };
 
     /**
      * Clean up any selected annotations
@@ -445,7 +448,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {Object} [data.data] - Annotation thread event data
      * @return {void}
      */
-    handleThreadEvents(thread: AnnotationThread, data: Object): void {
+    handleThreadEvents = (thread: AnnotationThread, data: Object): void => {
         const { event, data: threadData } = data;
 
         switch (event) {
@@ -482,7 +485,7 @@ class AnnotationModeController extends EventEmitter {
             default:
                 this.emit(event, threadData);
         }
-    }
+    };
 
     /**
      * Creates a handler description object and adds its to the internal handler container.
@@ -546,7 +549,7 @@ class AnnotationModeController extends EventEmitter {
      * Renders annotations from memory for a specified page.
      *
      * @private
-     * @param {string} pageNum - Page number
+     * @param {string} pageNum - Page Number
      * @return {void}
      */
     renderPage(pageNum: string): void {
@@ -582,7 +585,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {boolean} Whether or not any pending threads existed on the
      * current file
      */
-    destroyPendingThreads(): boolean {
+    destroyPendingThreads = (): boolean => {
         let hadPendingThreads = false;
 
         Object.keys(this.threads).forEach((pageNum) => {
@@ -599,7 +602,7 @@ class AnnotationModeController extends EventEmitter {
             });
         });
         return hadPendingThreads;
-    }
+    };
 
     /**
      * Find the intersecting threads given a pointer event
@@ -608,13 +611,14 @@ class AnnotationModeController extends EventEmitter {
      * @param {Event} event The event object containing the pointer information
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
-    getIntersectingThreads(event: Event): Array<AnnotationThread> {
-        if (!event || !this.threads) {
-            return [];
-        }
-
-        const location = this.getLocationFromEvent(event, TYPES.point);
-        if (!location || Object.keys(this.threads).length === 0 || !this.threads[location.page]) {
+    getIntersectingThreads(event: Event, location): Array<AnnotationThread> {
+        if (
+            !event ||
+            !this.threads ||
+            !location ||
+            Object.keys(this.threads).length === 0 ||
+            !this.threads[location.page]
+        ) {
             return [];
         }
 
@@ -675,13 +679,13 @@ class AnnotationModeController extends EventEmitter {
      * @param {Object} [data] - Event data
      * @return {void}
      */
-    emit(event: string, data?: Object): void {
-        super.emit(event, data);
+    emit(event: string, data?: Object): boolean {
         super.emit('annotationcontrollerevent', {
             event,
             data,
             mode: this.mode
         });
+        return super.emit(event, data);
     }
 }
 

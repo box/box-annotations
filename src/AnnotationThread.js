@@ -27,7 +27,7 @@ class AnnotationThread extends EventEmitter {
      * @property {string} fileVersionId File version ID
      * @property {Object} location Location object
      * @property {string} threadID Thread ID
-     * @property {string} threadNumber Thread number
+     * @property {string} threadNumber Thread Number
      * @property {string} type Type of thread
      */
 
@@ -464,7 +464,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`);
         pageEl.scrollIntoView();
     }
 
@@ -505,7 +505,7 @@ class AnnotationThread extends EventEmitter {
         }
 
         if (this.dialog) {
-            // Add thread number to associated dialog and thread
+            // Add thread Number to associated dialog and thread
             if (this.dialog.element && this.dialog.element.dataset) {
                 this.dialog.element.dataset.threadNumber = this.threadNumber;
             }

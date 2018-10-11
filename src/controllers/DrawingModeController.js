@@ -1,4 +1,3 @@
-// @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
 import shell from './drawingShell.html';
@@ -184,7 +183,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     setupHandlers(): void {
         /* eslint-disable require-jsdoc */
-        this.locationFunction = (event) => this.getLocationFromEvent(event, TYPES.point);
+        this.locationFunction = (event) => this.getLocation(event, TYPES.point);
         /* eslint-enable require-jsdoc */
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
@@ -208,7 +207,7 @@ class DrawingModeController extends AnnotationModeController {
         event.preventDefault();
 
         // Get annotation location from click event, ignore click if location is invalid
-        const location = this.getLocationFromEvent(event, TYPES.point);
+        const location = this.getLocation(event, TYPES.point);
         if (!location) {
             return;
         }
@@ -344,7 +343,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-Number="${pageNum.toString()}"]`);
         clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {
@@ -383,11 +382,11 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /**
-     * Toggle the undo and redo buttons based on the number of actions available
+     * Toggle the undo and redo buttons based on the Number of actions available
      *
      * @private
-     * @param {number} undoCount - The number of objects that can be undone
-     * @param {number} redoCount - The number of objects that can be redone
+     * @param {number} undoCount - The Number of objects that can be undone
+     * @param {number} redoCount - The Number of objects that can be redone
      * @return {void}
      */
     updateUndoRedoButtonEls(undoCount: Number, redoCount: Number): void {

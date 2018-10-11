@@ -6,7 +6,7 @@ import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 import * as imageUtil from '../imageUtil';
 
 let thread;
-const html = `<div class="annotated-element" data-page-number="1">
+const html = `<div class="annotated-element" data-page-Number="1">
     <img width="100px" height="200px">
     <button class="ba-point-annotation-marker"></button>
 </div>

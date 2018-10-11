@@ -5,6 +5,8 @@
  */
 /* eslint-disable no-use-before-define */
 import type { $AxiosError, Axios, CancelTokenSource } from 'axios';
+import AnnotationThread from '../src/AnnotationThread';
+import DrawingThread from '../src/draw/DrawingThread';
 
 type StringMap = { [string]: string };
 type AnnotationPermissions = {
@@ -21,20 +23,20 @@ type BoxItemPermissions = {
 type AnnotationType = 'point' | 'plain-highlight' | 'highlight-comment' | 'draw';
 
 type Coordinates = {
-    x: Number,
-    y: Number
+    x: number,
+    y: number
 };
 
 // [x1, x2, x3, x4, y1, y2, y3 ,y4]
 type QuadPoint = {
-    x1: Number,
-    y1: Number,
-    x2: Number,
-    y2: Number,
-    x3: Number,
-    y3: Number,
-    x4: Number,
-    y4: Number
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    x3: number,
+    y3: number,
+    x4: number,
+    y4: number
 };
 type QuadPoints = Array<QuadPoint>;
 
@@ -44,13 +46,13 @@ type Path = {
 type DrawingPaths = Array<Path>;
 
 type OriginalDimensions = {
-    width: Number,
-    height: Number
+    width: number,
+    height: number
 }
 
 type LocationInfo = {
     dimensions: OriginalDimensions,
-    pageNumber: Number
+    page: number
 };
 
 type PointLocationInfo = Coordinates & LocationInfo;
@@ -60,10 +62,10 @@ type HighlightLocationInfo = {
 } & LocationInfo;
 
 type DrawingLocationInfo = {
-    minX: Number,
-    minY: Number,
-    maxX: Number, 
-    maxY: Number,
+    minX: number,
+    minY: number,
+    maxX: number, 
+    maxY: number,
     paths: DrawingPaths
 } & LocationInfo;
 
@@ -99,7 +101,7 @@ type Annotation = {
     item: BoxFileVersion,
     type: AnnotationType,
     location: Location,
-    threadNumber: string,
+    threadnumber: string,
     comments?: Comments,
     createdBy: User, 
     createdAt: string,
@@ -141,19 +143,3 @@ type AnnotationData = {
 
 type StringAnyMap = { [string]: any };
 type AnnotationMap = { [string]: AnnotationData };
-
-type AnnotationThread = {
-    annotatedElement: HTMLElement,
-    annotations: Array<AnnotationData>,
-    api: AnnotationAPI,
-    fileVersionId: string,
-    location: Location,
-    threadID: string,
-    threadNumber: string,
-    type: AnnotationType,
-    state: string,
-    cancelUnsavedAnnotation: Function,
-    undo: Function,
-    redo: Function,
-    handleStart: Function
-};

@@ -13,7 +13,7 @@ import {
 } from '../constants';
 
 class DrawingThread extends AnnotationThread {
-    /** @property {number} - Drawing state */
+    /** @property {Number} - Drawing state */
     drawingFlag = DRAW_STATES.idle;
 
     /** @property {DrawingContainer} - The path container supporting undo and redo */
@@ -28,25 +28,25 @@ class DrawingThread extends AnnotationThread {
     /** @property {CanvasContext} - The context to draw saved drawings on on */
     concreteContext;
 
-    /** @property {number} - Timestamp of the last render */
+    /** @property {Number} - Timestamp of the last render */
     lastRenderTimestamp;
 
-    /** @property {number} - The the last animation frame request id */
+    /** @property {Number} - The the last animation frame request id */
     lastAnimationRequestId;
 
-    /** @property {number} - The scale factor that the drawing thread was last rendered at */
+    /** @property {Number} - The scale factor that the drawing thread was last rendered at */
     lastScaleFactor;
 
-    /** @property {number} - The minimum X coordinate occupied by the contained drawing paths */
+    /** @property {Number} - The minimum X coordinate occupied by the contained drawing paths */
     minX;
 
-    /** @property {number} - The minimum Y coordinate occupied by the contained drawing paths */
+    /** @property {Number} - The minimum Y coordinate occupied by the contained drawing paths */
     minY;
 
-    /** @property {number} - The maximum X coordinate occupied by the contained drawing paths */
+    /** @property {Number} - The maximum X coordinate occupied by the contained drawing paths */
     maxX;
 
-    /** @property {number} - The maximum Y coordinate occupied by the contained drawing paths */
+    /** @property {Number} - The maximum Y coordinate occupied by the contained drawing paths */
     maxY;
 
     /**
@@ -256,7 +256,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Overturns the last drawing stroke if it exists. Emits the number of undo and redo
+     * Overturns the last drawing stroke if it exists. Emits the Number of undo and redo
      * actions available if an undo was executed.
      *
      * @public
@@ -279,7 +279,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Replays the last undone drawing stroke if it exists. Emits the number of undo and redo
+     * Replays the last undone drawing stroke if it exists. Emits the Number of undo and redo
      * actions available if a redraw was executed.
      *
      * @public
@@ -358,7 +358,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Emit an event containing the number of undo and redo actions that can be done.
+     * Emit an event containing the Number of undo and redo actions that can be done.
      *
      * @protected
      * @return {void}

@@ -39,7 +39,7 @@ describe('doc/DocHighlightThread', () => {
             type: 'highlight',
             permissions: {
                 canAnnotate: true,
-                canViewAllAnnotations: true
+                can_view_annotations_all: true
             },
             minX: 1,
             maxX: 10,

@@ -70,7 +70,7 @@ export function isPointInPolyOpt(poly, x, y) {
     /* eslint-disable */
     for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
         ((poly[i][1] <= y && y < poly[j][1]) || (poly[j][1] <= y && y < poly[i][1])) &&
-            x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
+            x < ((poly[j][0] - poly[i][0]) * (y - poly[i][1])) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
             (c = !c);
     return c;
     /* eslint-enable */
@@ -176,7 +176,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
         pdfCoordinates = [x1, pageHeight - y1, x2, pageHeight - y2, x3, pageHeight - y3, x4, pageHeight - y4];
     }
 
-    return pdfCoordinates.map((val) => (val * CSS_PIXEL_TO_PDF_UNIT / scale).toFixed(4));
+    return pdfCoordinates.map((val) => ((val * CSS_PIXEL_TO_PDF_UNIT) / scale).toFixed(4));
 }
 
 /**
@@ -188,7 +188,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
  * @return {number[]} [x,y] browser coordinates
  */
 export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
-    const pageEl = annotatedElement.querySelector(`[data-page-number="${location.page}"]`) || annotatedElement;
+    const pageEl = annotatedElement.querySelector(`[data-page-Number="${location.page}"]`) || annotatedElement;
     const pageDimensions = pageEl.getBoundingClientRect();
     const pageHeight = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
     const zoomScale = util.getScale(annotatedElement);
@@ -378,11 +378,11 @@ export function getContext(pageEl, annotationLayerClass) {
  *
  * @private
  * @param {HTMLElement} annotatedEl - HTML Element being annotated on
- * @param {number} pageNum - Page number
+ * @param {number} pageNum - Page Number
  * @return {HTMLElement|null} Page element if it exists, otherwise null
  */
 export function getPageEl(annotatedEl, pageNum) {
-    return annotatedEl.querySelector(`[data-page-number="${pageNum}"]`);
+    return annotatedEl.querySelector(`[data-page-Number="${pageNum}"]`);
 }
 
 /**
