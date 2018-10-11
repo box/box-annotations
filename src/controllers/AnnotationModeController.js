@@ -68,7 +68,6 @@ class AnnotationModeController extends EventEmitter {
         this.container = data.container;
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
-        this.annotator = data.annotator;
         this.fileVersionId = data.fileVersionId;
         this.permissions = data.permissions || {};
         this.localized = data.localized || {};
@@ -595,7 +594,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
     getIntersectingThreads(event: Event): Array<AnnotationThread> {
-        if (!event || !this.threads || !this.annotator) {
+        if (!event || !this.threads) {
             return [];
         }
 

@@ -455,7 +455,7 @@ class Annotator extends EventEmitter {
         }
 
         thread.dialog.hasComments = true;
-        thread.state = STATES.hover;
+        thread.state = STATES.active;
         thread.showDialog();
         thread.dialog.postAnnotation(commentText);
 

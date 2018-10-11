@@ -10,6 +10,8 @@ describe('controllers/HighlightModeController', () => {
     beforeEach(() => {
         controller = new HighlightModeController();
         controller.emit = jest.fn();
+        controller.registerThread = jest.fn();
+        controller.getLocationFromEvent = jest.fn();
 
         thread = {
             annotations: {},
@@ -113,7 +115,11 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.registerThread(thread);
+            controller.threads = {
+                1: {
+                    all: jest.fn().mockReturnValue([thread])
+                }
+            };
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalled();
             expect(thread.show).toBeCalled();

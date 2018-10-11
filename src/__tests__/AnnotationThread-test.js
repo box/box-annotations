@@ -220,7 +220,7 @@ describe('AnnotationThread', () => {
             thread.showDialog = jest.fn();
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).not.toBeCalled();
-            expect(thread.state).not.toEqual(STATES.hover);
+            expect(thread.state).not.toEqual(STATES.active);
         });
 
         it('should only show dialog immediately on mobile devices', () => {
@@ -228,7 +228,7 @@ describe('AnnotationThread', () => {
             thread.isMobile = true;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.showDialog).toBeCalled();
-            expect(thread.state).toEqual(STATES.hover);
+            expect(thread.state).toEqual(STATES.active);
         });
     });
 

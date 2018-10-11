@@ -1,5 +1,4 @@
 import Annotator from '../Annotator';
-import ImagePointThread from './ImagePointThread';
 import * as util from '../util';
 import * as imageUtil from './imageUtil';
 import { ANNOTATOR_EVENT, TYPES } from '../constants';

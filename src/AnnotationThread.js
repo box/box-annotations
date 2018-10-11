@@ -516,7 +516,7 @@ class AnnotationThread extends EventEmitter {
 
         if (this.isMobile) {
             // Changing state from pending
-            this.state = STATES.hover;
+            this.state = STATES.active;
             this.showDialog();
         }
         this.emit(THREAD_EVENT.save);

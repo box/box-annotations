@@ -27,10 +27,8 @@ describe('controllers/PointModeController', () => {
         };
 
         controller.annotatedElement = {};
-        controller.annotator = {
-            getLocationFromEvent: jest.fn(),
-            createAnnotationThread: jest.fn()
-        };
+        controller.registerThread = jest.fn();
+        controller.getLocationFromEvent = jest.fn();
     });
 
     afterEach(() => {
@@ -209,7 +207,6 @@ describe('controllers/PointModeController', () => {
         beforeEach(() => {
             controller.destroyPendingThreads = jest.fn().mockReturnValue(false);
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
-            controller.registerThread = jest.fn();
             controller.hideSharedDialog = jest.fn();
             controller.modeButton = {
                 title: 'Point Annotation Mode',
@@ -244,7 +241,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.resetMobileDialog);
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocationFromEvent).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
@@ -257,12 +254,12 @@ describe('controllers/PointModeController', () => {
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocationFromEvent).toBeCalled();
         });
 
         it('should not create a thread if a location object cannot be inferred from the event', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
-            controller.annotator.createAnnotationThread = jest.fn();
+            controller.getLocationFromEvent = jest.fn().mockReturnValue(null);
+            controller.registerThread = jest.fn();
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();
@@ -270,13 +267,13 @@ describe('controllers/PointModeController', () => {
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.createAnnotationThread).not.toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.getLocationFromEvent).toBeCalled();
         });
 
         it('should create, show, and bind listeners to a thread', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
-            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            controller.getLocationFromEvent = jest.fn().mockReturnValue({});
+            controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue('data');
 
             controller.pointClickHandler(event);
@@ -287,12 +284,12 @@ describe('controllers/PointModeController', () => {
             expect(thread.show).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocationFromEvent).toBeCalled();
         });
 
         it('should show the create dialog', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
-            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            controller.getLocationFromEvent = jest.fn().mockReturnValue({});
+            controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue('data');
 
             controller.isMobile = true;
@@ -310,7 +307,7 @@ describe('controllers/PointModeController', () => {
             expect(controller.createDialog.showCommentBox).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocationFromEvent).toBeCalled();
         });
     });
 });

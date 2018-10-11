@@ -171,7 +171,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('onClick()', () => {
         it('should set annotation to inactive if event has already been consumed', () => {
-            thread.state = STATES.hover;
+            thread.state = STATES.active;
             thread.type = TYPES.highlight_comment;
 
             const isHighlightPending = thread.onClick({}, true);
@@ -192,7 +192,7 @@ describe('doc/DocHighlightThread', () => {
 
             expect(isHighlightPending).toBeTruthy();
             expect(thread.reset).not.toBeCalled();
-            expect(thread.state).toEqual(STATES.hover);
+            expect(thread.state).toEqual(STATES.active);
             expect(thread.show).toBeCalled();
         });
     });
@@ -240,7 +240,7 @@ describe('doc/DocHighlightThread', () => {
         });
 
         it('should show the dialog if the state is not pending and redraw the highlight as active', () => {
-            thread.state = STATES.hover;
+            thread.state = STATES.active;
             thread.show();
             expect(thread.showDialog).toBeCalled();
             expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.active);

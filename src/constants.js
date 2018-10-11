@@ -219,7 +219,7 @@ export const DRAW_STATES = {
 };
 
 export const STATES = {
-    hover: 'hover', // mouse is over
+    active: 'active', // mouse is over
     inactive: 'inactive', // not clicked and mouse is not over
     pending: 'pending', // not saved
     pending_active: 'pending-active' // not saved and pending comment

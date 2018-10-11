@@ -27,10 +27,25 @@ describe('Annotator', () => {
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
+        thread = {
+            threadID: '123abc',
+            show: jest.fn(),
+            hide: jest.fn(),
+            addListener: jest.fn(),
+            unbindCustomListenersOnThread: jest.fn(),
+            removeListener: jest.fn(),
+            scrollIntoView: jest.fn(),
+            getThreadEventData: jest.fn(),
+            showDialog: jest.fn(),
+            type: 'something',
+            location: { page: 1 },
+            annotations: []
+        };
+
         controller = {
             init: jest.fn(),
             addListener: jest.fn(),
-            registerThread: jest.fn(),
+            registerThread: jest.fn().mockReturnValue(thread),
             isEnabled: jest.fn(),
             getButton: jest.fn(),
             enter: jest.fn(),
@@ -65,21 +80,6 @@ describe('Annotator', () => {
                 authError: 'auth error'
             }
         });
-
-        thread = {
-            threadID: '123abc',
-            show: jest.fn(),
-            hide: jest.fn(),
-            addListener: jest.fn(),
-            unbindCustomListenersOnThread: jest.fn(),
-            removeListener: jest.fn(),
-            scrollIntoView: jest.fn(),
-            getThreadEventData: jest.fn(),
-            showDialog: jest.fn(),
-            type: 'something',
-            location: { page: 1 },
-            annotations: []
-        };
     });
 
     afterEach(() => {
@@ -381,34 +381,26 @@ describe('Annotator', () => {
             let threadMap;
 
             beforeEach(() => {
-                threadMap = { '123abc': [{ type: 'highlight-comment' }] };
-                annotator.createAnnotationThread = jest.fn();
+                annotator.options = { annotator: {} };
+                threadMap = { '123abc': [{ type: 'highlight-comment', location: {} }] };
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
                 annotator.options = {};
                 annotator.generateAnnotationMap(threadMap);
-                expect(annotator.createAnnotationThread).not.toBeCalled();
-            });
-
-            it('should reset and create a new thread map by from annotations fetched from server', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-                annotator.generateAnnotationMap(threadMap);
-                expect(annotator.createAnnotationThread).toBeCalled();
+                expect(controller.registerThread).not.toBeCalled();
             });
 
             it('should register thread if controller exists', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                annotator.modeControllers['highlight-comment'] = controller;
-                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
+                annotator.modeControllers = { 'highlight-comment': controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).toBeCalled();
             });
 
             it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight'] };
-                annotator.modeControllers['highlight-comment'] = controller;
+                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
+                annotator.modeControllers = { highlight: controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).not.toBeCalled();
             });
@@ -578,7 +570,7 @@ describe('Annotator', () => {
                 });
 
                 expect(thread.dialog.hasComments).toBeTruthy();
-                expect(thread.state).toEqual(STATES.hover);
+                expect(thread.state).toEqual(STATES.active);
                 expect(thread.dialog.postAnnotation).toBeCalledWith('text');
                 expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
                 expect(result).not.toBeNull();

@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-expressions */
 import ImageAnnotator from '../ImageAnnotator';
-import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
 import * as imageUtil from '../imageUtil';
-import { TYPES, ANNOTATOR_EVENT } from '../../constants';
+import { TYPES } from '../../constants';
 
 let annotator;
 const html = `<div class="bp-image annotated-element">
@@ -166,61 +165,6 @@ describe('image/ImageAnnotator', () => {
                 dimensions,
                 page: 1
             });
-        });
-    });
-
-    describe('createAnnotationThread()', () => {
-        beforeEach(() => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(true);
-            annotator.getThreadParams = jest.fn().mockReturnValue({
-                location: { page: 1 },
-                permissions: { canAnnotate: true }
-            });
-            annotator.handleValidationError = jest.fn();
-        });
-
-        it('should emit error and return undefined if thread fails to create', () => {
-            const thread = annotator.createAnnotationThread([], {}, 'random');
-            expect(thread).toBeUndefined();
-            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should create, add point thread to internal map, and return it', () => {
-            annotator.getThreadParams = jest.fn().mockReturnValue({
-                location: { page: 2 },
-                permissions: { canAnnotate: true }
-            });
-            const thread = annotator.createAnnotationThread([], { page: 2 }, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(2);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should emit error and return undefined if thread params are invalid', () => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(false);
-            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
-            expect(thread instanceof ImagePointThread).toBeFalsy();
-            expect(annotator.handleValidationError).toBeCalled();
-        });
-
-        it('should force page number 1 if the annotation was created without one', () => {
-            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(1);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should force page number 1 if the annotation was created wit page number -1', () => {
-            const thread = annotator.createAnnotationThread([], { page: -1 }, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(1);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
         });
     });
 

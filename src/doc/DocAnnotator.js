@@ -487,8 +487,9 @@ class DocAnnotator extends Annotator {
 
         const highlightType = commentText ? TYPES.highlight_comment : TYPES.highlight;
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
+        const controller = this.modeControllers[highlightType];
         this.highlighter.removeAllHighlights();
-        if (!location) {
+        if (!location || !controller) {
             return null;
         }
 
@@ -496,21 +497,20 @@ class DocAnnotator extends Annotator {
         this.lastHighlightEvent = null;
         this.lastSelection = null;
 
-        const controller = this.modeControllers[highlightType];
         const thread = controller.registerThread(annotations, location, highlightType);
         if (!thread) {
             this.handleValidationError();
             return null;
         }
 
-        if (!commentText) {
-            thread.dialog.drawAnnotation();
-        } else {
-            thread.dialog.hasComments = true;
-        }
-
-        thread.state = STATES.hover;
+        thread.state = STATES.active;
         thread.show();
+
+        if (commentText) {
+            thread.dialog.hasComments = true;
+        } else {
+            thread.dialog.drawAnnotation();
+        }
         thread.dialog.postAnnotation(commentText);
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());

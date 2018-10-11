@@ -168,7 +168,7 @@ class DocHighlightThread extends AnnotationThread {
         // If state is in hover, it means mouse is already over this highlight
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
-            this.state = STATES.hover;
+            this.state = STATES.active;
             this.show();
             return true;
         }
@@ -213,7 +213,7 @@ class DocHighlightThread extends AnnotationThread {
                 this.hideDialog();
                 this.draw(HIGHLIGHT_FILL.normal);
                 break;
-            case STATES.hover:
+            case STATES.active:
             case STATES.pending_active:
                 this.showDialog();
                 this.draw(HIGHLIGHT_FILL.active);
