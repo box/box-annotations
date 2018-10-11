@@ -10,6 +10,8 @@ import {
 import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
 import { createLocation, getScale } from '../util';
 
+const IN_PROGRESS_CANVAS_SCALE = 1;
+
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
     pageEl;
@@ -259,7 +261,11 @@ class DocDrawingThread extends DrawingThread {
         // Set the scale and in-memory context for the pending thread
         this.lastScaleFactor = scale;
         this.pageEl = getPageEl(this.annotatedElement, this.location.page);
-        this.drawingContext = getContext(this.pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
+        this.drawingContext = getContext(
+            this.pageEl,
+            CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
+            IN_PROGRESS_CANVAS_SCALE
+        );
 
         const config = { scale };
         this.setContextStyles(config);
