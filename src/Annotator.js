@@ -14,7 +14,8 @@ import {
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
-    CLASS_ANNOTATIONS_LOADED
+    CLASS_ANNOTATIONS_LOADED,
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from './constants';
 
 class Annotator extends EventEmitter {
@@ -103,7 +104,19 @@ class Annotator extends EventEmitter {
         // Get the container dom element if selector was passed, in tests
         this.container = this.options.container;
         if (typeof this.options.container === 'string') {
-            this.container = document.querySelector(this.options.container);
+            this.container = document.querySelector(this.container);
+        }
+
+        // Get the header dom element if selector was passed, in tests
+        this.headerElement = this.options.headerElement;
+        if (typeof this.headerElement === 'string') {
+            this.headerElement = document.querySelector(this.headerElement);
+        }
+
+        // If using box content preview header and no external header element was specified,
+        // fallback to the container element
+        if (this.options.header !== 'none' && !this.headerElement) {
+            this.headerElement = this.container.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER);
         }
 
         // Get annotated element from container
@@ -243,6 +256,7 @@ class Annotator extends EventEmitter {
             const controller = this.modeControllers[type];
             controller.init({
                 container: this.container,
+                headerElement: this.headerElement,
                 annotatedElement: this.annotatedElement,
                 mode: type,
                 modeButton: this.modeButtons[type],

@@ -38,6 +38,7 @@ class AnnotationModeController extends EventEmitter {
      */
     init(data) {
         this.container = data.container;
+        this.headerElement = data.headerElement;
         this.annotatedElement = data.annotatedElement;
         this.mode = data.mode;
         this.annotator = data.annotator;
@@ -69,6 +70,10 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
+
+        if (this.modeButton) {
+            this.hideButton();
+        }
     }
 
     /**
@@ -78,7 +83,11 @@ class AnnotationModeController extends EventEmitter {
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
     getButton(annotatorSelector) {
-        return this.container.querySelector(annotatorSelector);
+        if (!this.headerElement) {
+            return null;
+        }
+
+        return this.headerElement.querySelector(annotatorSelector);
     }
 
     /**
@@ -87,7 +96,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     showButton() {
-        if (!this.permissions.canAnnotate) {
+        if (!this.permissions.canAnnotate || !this.modeButton) {
             return;
         }
 
@@ -98,6 +107,22 @@ class AnnotationModeController extends EventEmitter {
 
             this.toggleMode = this.toggleMode.bind(this);
             this.buttonEl.addEventListener('click', this.toggleMode);
+        }
+    }
+
+    /**
+     * Hides the annotate button for the specified mode
+     *
+     * @return {void}
+     */
+    hideButton() {
+        if (!this.permissions.canAnnotate || !this.modeButton) {
+            return;
+        }
+
+        this.buttonEl = this.getButton(this.modeButton.selector);
+        if (this.buttonEl) {
+            this.buttonEl.classList.add(CLASS_HIDDEN);
         }
     }
 
@@ -126,7 +151,7 @@ class AnnotationModeController extends EventEmitter {
      */
     exit() {
         this.emit(CONTROLLER_EVENT.exit, { mode: this.mode });
-        replaceHeader(this.container, SELECTOR_BOX_PREVIEW_BASE_HEADER);
+        replaceHeader(this.headerElement, SELECTOR_BOX_PREVIEW_BASE_HEADER);
 
         this.destroyPendingThreads();
 
