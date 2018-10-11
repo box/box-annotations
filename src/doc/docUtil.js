@@ -314,6 +314,7 @@ export function isValidSelection(selection) {
  *
  * @param {HTMLElement} pageEl - The DOM element for the current page
  * @param {HTMLElement} annotationLayerEl - The annotation canvas layer
+ * @param {number} [pxRatio] - Pixel ratio to scale the canvas by. Defaults to DVP or 1
  * @return {HTMLElement} The scaled annotation canvas layer
  */
 export function scaleCanvas(pageEl, annotationLayerEl, pxRatio = window.devicePixelRatio || 1) {
