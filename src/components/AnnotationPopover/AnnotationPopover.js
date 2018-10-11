@@ -65,8 +65,8 @@ class AnnotationPopover extends React.PureComponent<Props> {
                 <div className='ba-popover'>
                     <span className='ba-popover-caret' />
                     <Overlay
-                        className={classNames('ba-popover-content', {
-                            'ba-inline': !isPending && !comments,
+                        className={classNames('ba-popover-overlay', {
+                            'ba-inline': !isPending && comments.length === 0,
                             'ba-create-popover': isPending
                         })}
                     >

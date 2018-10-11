@@ -3,7 +3,7 @@
 exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
 <Internationalize>
   <Overlay
-    className="ba-popover-content"
+    className="ba-popover-overlay"
   >
     <AnnotatorLabel
       isPending={true}
@@ -23,7 +23,7 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
 exports[`components/AnnotationPopover should correctly render a popover with comments and reply textarea 1`] = `
 <Internationalize>
   <Overlay
-    className="ba-popover-content"
+    className="ba-popover-overlay"
   >
     <CommentList
       comments={
@@ -71,7 +71,7 @@ exports[`components/AnnotationPopover should correctly render a popover with com
 exports[`components/AnnotationPopover should correctly render a view-only popover with comments 1`] = `
 <Internationalize>
   <Overlay
-    className="ba-popover-content"
+    className="ba-popover-overlay"
   >
     <CommentList
       comments={
