@@ -18,6 +18,8 @@ import {
 } from './constants';
 import FileVersionAPI from './api/FileVersionAPI';
 
+const DESKTOP_MIN_WIDTH = 1025;
+
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -46,7 +48,6 @@ class Annotator extends EventEmitter {
         this.options = options;
         this.locale = options.location.locale || 'en-US';
         this.validationErrorEmitted = false;
-        this.isMobile = options.isMobile || false;
         this.hasTouch = options.hasTouch || false;
         this.localized = options.localizedStrings;
 
@@ -123,6 +124,9 @@ class Annotator extends EventEmitter {
         }
 
         this.container.classList.add('ba');
+
+        const containerRect = this.container.getBoundingClientRect();
+        this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
 
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
@@ -262,15 +266,6 @@ class Annotator extends EventEmitter {
 
             controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
         });
-
-        const pointController = this.modeControllers[TYPES.point];
-        if (pointController && this.isMobile) {
-            pointController.setupSharedDialog(this.container, {
-                isMobile: this.isMobile,
-                hasTouch: this.hasTouch,
-                localized: this.localized
-            });
-        }
     }
 
     /**
@@ -313,7 +308,8 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     hideAnnotations(event) {
-        if (event && util.isInDialog(event)) {
+        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
+        if (event && util.isInDialog(event, popoverEl)) {
             return;
         }
 

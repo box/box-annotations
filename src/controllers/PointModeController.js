@@ -78,21 +78,6 @@ class PointModeController extends AnnotationModeController {
         this.onDialogCancel();
     }
 
-    /**
-     * Hides the shared mobile dialog and clears associated data
-     *
-     * @protected
-     * @return {void}
-     */
-    hideSharedDialog() {
-        this.lastPointEvent = null;
-        this.pendingThreadID = null;
-
-        if (this.createDialog && this.createDialog.isVisible) {
-            this.createDialog.hide();
-        }
-    }
-
     /** @inheritdoc */
     setupHandlers(): void {
         this.pointClickHandler = this.pointClickHandler.bind(this);

@@ -83,7 +83,20 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
-        if (!this.isMobile) {
+        // Select page of first node selected
+        const pageInfo = getPageInfo(selection.anchorNode);
+        if (!pageInfo.pageEl) {
+            return;
+        }
+
+        if (this.isMobile) {
+            this.pageInfo = getPageInfo(selection.anchorNode);
+            this.pageNum = this.pageInfo.page;
+            this.position = {
+                x: 0,
+                y: 0
+            };
+        } else {
             this.setPosition(selection);
         }
 
@@ -98,7 +111,9 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     renderAnnotationPopover = (type = TYPES.highlight) => {
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.pageNum}"]`);
+        const pageEl = this.isMobile
+            ? this.annotatedElement
+            : this.annotatedElement.querySelector(`[data-page-number="${this.pageNum}"]`);
         this.popoverLayerEl = pageEl.querySelector('.ba-dialog-layer');
         if (!this.popoverLayerEl) {
             this.popoverLayerEl = document.createElement('span');

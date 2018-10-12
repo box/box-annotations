@@ -79,7 +79,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                             <ActionControls
                                 id={id}
                                 type={type}
-                                hasComments={!!comments}
+                                hasComments={comments.length > 0}
                                 isPending={isPending}
                                 canComment={canComment}
                                 canDelete={canDelete}

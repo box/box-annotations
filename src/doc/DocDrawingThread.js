@@ -317,6 +317,10 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     position = () => {
+        if (this.isMobile) {
+            return;
+        }
+
         if (!this.pageEl) {
             this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         }

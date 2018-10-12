@@ -151,7 +151,9 @@ class AnnotationThread extends EventEmitter {
                 };
             });
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.isMobile
+            ? this.annotatedElement
+            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (!popoverLayer) {
             popoverLayer = document.createElement('span');
@@ -191,7 +193,9 @@ class AnnotationThread extends EventEmitter {
     unmountPopover = () => {
         this.reset();
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.isMobile
+            ? this.annotatedElement
+            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (this.popoverComponent && popoverLayer) {
             unmountComponentAtNode(popoverLayer);

@@ -297,7 +297,7 @@ class DocAnnotator extends Annotator {
             this.onSelectionChange = this.onSelectionChange.bind(this);
         }
 
-        this.createHighlightDialog = new CreateHighlightDialog(this.container, {
+        this.createHighlightDialog = new CreateHighlightDialog(this.annotatedElement, {
             isMobile: this.isMobile,
             hasTouch: this.hasTouch,
             allowComment: this.commentHighlightEnabled,
@@ -411,10 +411,16 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        let mouseEvent = event;
+        if (this.hasTouch && event.targetTouches) {
+            mouseEvent = event.targetTouches[0];
+        }
+
         // NOTE: This assumes that only one dialog will ever exist within
         // the annotatedElement at a time
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (util.isInDialog(event, popoverEl)) {
+        const overlayEl = this.annotatedElement.querySelector('.overlay');
+        const controlsEl = this.annotatedElement.querySelector('.ba-action-controls');
+        if (util.isInDialog(mouseEvent, overlayEl) || util.isInDialog(mouseEvent, controlsEl)) {
             event.stopPropagation();
             return;
         }
@@ -425,8 +431,7 @@ class DocAnnotator extends Annotator {
 
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
-                controller.handleSelection(event);
+            if (!this.isCreatingAnnotation() && controller.handleSelection(event)) {
                 return;
             }
         }
@@ -669,7 +674,7 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
-        return isPending;
+        return isPending || this.isCreatingHighlight;
     }
 
     /**
@@ -749,8 +754,6 @@ class DocAnnotator extends Annotator {
         }
 
         this.activeThread = null;
-        this.mouseEvent = event;
-        this.consumed = false;
 
         let plainThreads = [];
         let commentThreads = [];
@@ -775,11 +778,6 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
-            return true;
-        }
-
-        if (this.isMobile) {
-            this.removeThreadFromSharedDialog();
             return true;
         }
 

@@ -49,6 +49,10 @@ class DocPointThread extends AnnotationThread {
      * @return {void}
      */
     position = () => {
+        if (this.isMobile) {
+            return;
+        }
+
         const pageEl =
             this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
 

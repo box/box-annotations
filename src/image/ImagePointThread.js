@@ -42,6 +42,10 @@ class ImagePointThread extends AnnotationThread {
      * @return {void}
      */
     position() {
+        if (this.isMobile) {
+            return;
+        }
+
         const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;

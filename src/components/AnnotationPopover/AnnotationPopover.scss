@@ -85,4 +85,54 @@
         border-left: 1px solid $see-see;
         margin-left: 10px;
     }
+
+    // MOBILE & TABLET CSS
+    @media #{$mobile}, #{$tablet} {
+        .ba-popover-caret {
+            display: none;
+        }
+
+        .ba-popover {
+            height: 100%;
+            left: 0;
+            max-width: unset;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
+        .ba-popover-overlay {
+            background: white;
+            height: 100%;
+        }
+
+        .ba-popover-overlay.ba-inline,
+        .ba-popover-overlay.ba-create-popover,
+        .ba-create-popover .overlay {
+            background: transparent;
+        }
+
+        .ba-popover .overlay {
+            border: none;
+            box-shadow: unset;
+            display: block;
+            overflow: unset;
+        }
+
+        .ba-inline .overlay, {
+            border-bottom: 1px solid #bdc3c7;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    // TABLET-SPECIFIC CSS
+    @media #{$tablet} {
+        .ba-popover {
+            left: auto;
+            padding: 15px 0;
+            width: 415px;
+        }
+    }
 }

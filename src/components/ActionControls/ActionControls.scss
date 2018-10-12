@@ -5,4 +5,27 @@
         color: $fours;
         white-space: normal;
     }
+
+    // MOBILE & TABLET CSS
+    @media #{$mobile}, #{$tablet} {    
+        .ba-action-controls {
+            bottom: 0;
+            left: 0;
+            padding: 15px;
+            position: absolute;
+            width: 100%;
+        }
+
+        .ba-inline .ba-action-controls,
+        .ba-create-popover .ba-action-controls {
+            background: white;
+            border-top: 1px solid #bdc3c7;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            margin: 0;
+        }
+
+        .bcs-comment-input-container {
+            width: 100%;
+        }
+    }
 }
