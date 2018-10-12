@@ -61,7 +61,7 @@ class DocDrawingThread extends DrawingThread {
         }
 
         // If the current path is being buffered, don't create redundant points
-        if (!this.isBuffering || this.pendingPath) {
+        if (!this.isBuffering && this.pendingPath) {
             const [x, y] = getBrowserCoordinatesFromLocation(location, this.pageEl);
             const browserLocation = createLocation(x, y);
             this.pendingPath.addCoordinate(location, browserLocation);
