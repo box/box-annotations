@@ -35,12 +35,12 @@ class DocDrawingThread extends DrawingThread {
     }
 
     /**
-     * Resets current buffering state.
+     * Toggles current buffering state.
      *
      * @return {void}
      */
-    resetBufferingState = () => {
-        this.isBuffering = false;
+    toggleBufferingState = () => {
+        this.isBuffering = !this.isBuffering;
     };
 
     /**
@@ -67,8 +67,8 @@ class DocDrawingThread extends DrawingThread {
             this.pendingPath.addCoordinate(location, browserLocation);
 
             // On next browser frame, reset to allow for another point to be added to the path
-            this.isBuffering = true;
-            window.requestAnimationFrame(this.resetBufferingState);
+            this.toggleBufferingState();
+            window.requestAnimationFrame(this.toggleBufferingState);
         }
     }
 
