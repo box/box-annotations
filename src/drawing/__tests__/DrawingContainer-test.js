@@ -77,7 +77,7 @@ describe('drawing/DrawingContainer', () => {
     });
 
     describe('getNumberOfItems()', () => {
-        it('should return the Number of items on the undo stack and redo stack', () => {
+        it('should return thenumber of items on the undo stack and redo stack', () => {
             drawingContainer.undoStack = [1, 2, 3, 4];
             drawingContainer.redoStack = [1, 2];
             const val = drawingContainer.getNumberOfItems();

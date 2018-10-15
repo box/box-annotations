@@ -63,7 +63,6 @@ describe('Annotator', () => {
         };
 
         annotator = new Annotator({
-            canAnnotate: true,
             container: rootElement,
             api,
             file: {
@@ -105,7 +104,7 @@ describe('Annotator', () => {
             annotator.setupMobileDialog = jest.fn();
             annotator.getAnnotationPermissions = jest.fn();
 
-            annotator.permissions = { canAnnotate: true };
+            annotator.permissions = { can_annotate: true };
         });
 
         it('should set scale and setup annotations', () => {
@@ -502,11 +501,6 @@ describe('Annotator', () => {
             beforeEach(() => {
                 annotator.getLocationFromEvent = jest.fn().mockReturnValue({ page: 1 });
                 annotator.emit = jest.fn();
-                thread.dialog = {
-                    postAnnotation: jest.fn(),
-                    hasComments: false
-                };
-
                 annotator.modeControllers = {
                     point: controller
                 };
@@ -562,6 +556,8 @@ describe('Annotator', () => {
             it('should create a point annotation thread using lastPointEvent', () => {
                 thread.getThreadEventData = jest.fn().mockReturnValue({});
                 controller.getThreadByID = jest.fn().mockReturnValue(thread);
+                thread.renderAnnotationPopover = jest.fn();
+                thread.saveAnnotation = jest.fn();
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
@@ -569,12 +565,11 @@ describe('Annotator', () => {
                     commentText: 'text'
                 });
 
-                expect(thread.dialog.hasComments).toBeTruthy();
                 expect(thread.state).toEqual(STATES.active);
-                expect(thread.dialog.postAnnotation).toBeCalledWith('text');
+                expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'text');
                 expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
                 expect(result).not.toBeNull();
-                expect(thread.showDialog).toBeCalled();
+                expect(thread.renderAnnotationPopover).toBeCalled();
             });
         });
 

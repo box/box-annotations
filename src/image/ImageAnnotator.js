@@ -44,7 +44,7 @@ class ImageAnnotator extends Annotator {
             return location;
         }
 
-        // If no image page was selected, ignore, as all images have a page Number.
+        // If no image page was selected, ignore, as all images have a page number
         const { page } = util.getPageInfo(imageEl);
 
         // Location based only on image position
@@ -91,11 +91,11 @@ class ImageAnnotator extends Annotator {
      *
      * @private
      * @param {number} [rotationAngle] - current angle image is rotated
-     * @param {number} [pageNum] - Page Number
+     * @param {number} [pageNum] - Page number
      * @return {void}
      */
     rotateAnnotations(rotationAngle = 0, pageNum = 0) {
-        // Only render a specific page's annotations unless no page Number
+        // Only render a specific page's annotations unless no page number
         // is specified
         if (pageNum) {
             this.renderPage(pageNum);

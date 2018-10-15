@@ -21,11 +21,23 @@ const api = {
     removeListener: jest.fn()
 };
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('controllers/AnnotationModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         controller = new AnnotationModeController();
         controller.container = document;
         thread = {
+            annotatedElement: rootElement,
             threadID: '123abc',
             location: { page: 1 },
             type: 'type',
@@ -36,8 +48,9 @@ describe('controllers/AnnotationModeController', () => {
             handleStart: jest.fn(),
             destroy: jest.fn(),
             deleteThread: jest.fn(),
-            hideDialog: jest.fn(),
             isDialogVisible: jest.fn(),
+            unmountPopover: jest.fn(),
+            renderAnnotationPopover: jest.fn(),
             show: jest.fn(),
             minX: 1,
             minY: 2,
@@ -45,6 +58,7 @@ describe('controllers/AnnotationModeController', () => {
             maxY: 2
         };
         controller.getLocation = jest.fn();
+        controller.annotatedElement = rootElement;
     });
 
     afterEach(() => {
@@ -56,7 +70,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.showButton = jest.fn();
             controller.init({
                 modeButton: {},
-                permissions: { canAnnotate: true },
+                permissions: { can_annotate: true },
                 localized: { anonymousUserName: '' }
             });
             expect(controller.showButton).toBeCalled();
@@ -74,7 +88,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.showButton = jest.fn();
             controller.init({
                 modeButton: {},
-                permissions: { canAnnotate: false },
+                permissions: { can_annotate: false },
                 localized: { anonymousUserName: '' }
             });
             expect(controller.showButton).not.toBeCalled();
@@ -131,7 +145,7 @@ describe('controllers/AnnotationModeController', () => {
                 buttonEl.classList.add('selector');
                 buttonEl.addEventListener = jest.fn();
 
-                controller.permissions = { canAnnotate: true };
+                controller.permissions = { can_annotate: true };
                 controller.getButton = jest.fn().mockReturnValue(buttonEl);
             });
 
@@ -180,7 +194,6 @@ describe('controllers/AnnotationModeController', () => {
                 util.replaceHeader = jest.fn();
 
                 // Set up annotation mode
-                controller.annotatedElement = document.createElement('div');
                 controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
                 controller.annotatedElement.classList.add(CLASS_ANNNOTATION_MODE_BACKGROUND);
 
@@ -201,7 +214,6 @@ describe('controllers/AnnotationModeController', () => {
                 controller.emit = jest.fn();
 
                 // Set up annotation mode
-                controller.annotatedElement = document.createElement('div');
                 controller.buttonEl = document.createElement('button');
 
                 controller.enter();
@@ -485,10 +497,6 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         describe('renderPage()', () => {
-            beforeEach(() => {
-                controller.annotatedElement = 'el';
-            });
-
             it('should do nothing if no threads exist', () => {
                 controller.renderPage(1);
                 expect(thread.show).not.toBeCalled();
@@ -506,10 +514,9 @@ describe('controllers/AnnotationModeController', () => {
                 controller.threads[2].insert(thread);
 
                 controller.renderPage(1);
-                expect(thread.annotatedElement).toEqual('el');
                 expect(thread.show).toHaveBeenCalledTimes(1);
                 expect(thread.destroy).not.toBeCalled();
-                expect(thread.hideDialog).toBeCalled();
+                expect(thread.unmountPopover).toBeCalled();
             });
 
             it('should destroy any pending annotations on re-render', () => {
@@ -523,7 +530,7 @@ describe('controllers/AnnotationModeController', () => {
                 controller.renderPage(1);
                 expect(thread.show).not.toBeCalled();
                 expect(thread.destroy).toHaveBeenCalledTimes(1);
-                expect(thread.hideDialog).not.toBeCalled();
+                expect(thread.unmountPopover).not.toBeCalled();
             });
         });
 
@@ -558,18 +565,6 @@ describe('controllers/AnnotationModeController', () => {
                 expect(destroyed).toBeFalsy();
                 expect(controller.unregisterThread).not.toBeCalled();
                 expect(thread.destroy).not.toBeCalled();
-                expect(thread.hideDialog).not.toBeCalled();
-            });
-
-            it('should hide non-pending thread dialogs that are visible', () => {
-                thread.state = 'NOT_PENDING';
-                controller.threads[1].all = jest.fn().mockReturnValue([thread]);
-                thread.isDialogVisible = jest.fn().mockReturnValue(true);
-                const destroyed = controller.destroyPendingThreads();
-                expect(destroyed).toBeFalsy();
-                expect(controller.unregisterThread).not.toBeCalled();
-                expect(thread.destroy).not.toBeCalled();
-                expect(thread.hideDialog).toBeCalled();
             });
 
             it('should destroy only pending threads, and return true', () => {

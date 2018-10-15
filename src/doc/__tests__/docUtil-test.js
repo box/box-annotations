@@ -9,7 +9,7 @@ const html = `<div class="annotated-element">
     </div>
 </div>
 
-<div class="page" data-page-Number="2">
+<div class="page" data-page-number="2">
     <div class="foo"></div>
 </div>
 
@@ -283,7 +283,7 @@ describe('doc/docUtil', () => {
         it('should return the result of querySelector', () => {
             const page = 2;
             const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const truePageEl = document.querySelector(`.page[data-page-Number="${page}"]`);
+            const truePageEl = document.querySelector(`.page[data-page-number="${page}"]`);
             docEl.appendChild(truePageEl);
 
             const pageEl = docUtil.getPageEl(docEl, page);

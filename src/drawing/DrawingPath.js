@@ -57,7 +57,7 @@ class DrawingPath {
             return;
         }
 
-        // OPTIMIZE (@minhnguyen): We convert a Number to a string using toFixed and then back a Number.
+        // OPTIMIZE (@minhnguyen): We convert anumber to a string using toFixed and then back anumber.
         //           As a result, it might be better to truncate only on annotation save.
         const x = round(documentLocation.x, 2);
         const y = round(documentLocation.y, 2);

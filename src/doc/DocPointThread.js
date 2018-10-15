@@ -1,5 +1,4 @@
 import AnnotationThread from '../AnnotationThread';
-import DocPointDialog from './DocPointDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
 import { STATES } from '../constants';
@@ -10,25 +9,6 @@ const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
 
 class DocPointThread extends AnnotationThread {
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
-
-    /**
-     * Shows the appropriate annotation dialog for this thread.
-     *
-     * @override
-     * @return {void}
-     */
-    showDialog() {
-        // Don't show dialog if user can annotate and there is a current selection
-        if (this.permissions.can_annotate && docUtil.isSelectionPresent()) {
-            return;
-        }
-
-        super.showDialog();
-    }
-
     //--------------------------------------------------------------------------
     // Abstract Implementations
     //--------------------------------------------------------------------------
@@ -41,7 +21,7 @@ class DocPointThread extends AnnotationThread {
      */
     show() {
         const pageEl =
-            this.annotatedElement.querySelector(`[data-page-Number="${this.location.page}"]`) || this.annotatedElement;
+            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
         const [browserX, browserY] = docUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to page
@@ -59,27 +39,41 @@ class DocPointThread extends AnnotationThread {
             return;
         }
 
-        this.showDialog();
+        this.renderAnnotationPopover();
     }
 
     /**
-     * Creates the document point annotation dialog for the thread.
+     * Positions the dialog.
      *
      * @override
      * @return {void}
      */
-    createDialog() {
-        this.dialog = new DocPointDialog({
-            annotatedElement: this.annotatedElement,
-            container: this.container,
-            annotations: this.annotations,
-            locale: this.locale,
-            location: this.location,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            canAnnotate: this.permissions.can_annotate
-        });
-    }
+    position = () => {
+        const pageEl =
+            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+
+        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const dialogDimensions = popoverEl.getBoundingClientRect();
+        const dialogWidth = dialogDimensions.width;
+        const pageDimensions = pageEl.getBoundingClientRect();
+
+        // Center middle of dialog with point - this coordinate is with respect to the page
+        const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
+        let dialogLeftX = threadIconLeftX - dialogWidth / 2;
+
+        // Adjusts Y position for transparent top border
+        const dialogTopY = this.element.offsetTop + POINT_ANNOTATION_ICON_HEIGHT;
+
+        // Only reposition if one side is past page boundary - if both are,
+        // just center the dialog and cause scrolling since there is nothing
+        // else we can do
+        dialogLeftX = util.repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageDimensions.width);
+
+        // Position the dialog
+        popoverEl.style.left = `${dialogLeftX}px`;
+
+        popoverEl.style.top = dialogTopY;
+    };
 }
 
 export default DocPointThread;

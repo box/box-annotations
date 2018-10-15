@@ -33,7 +33,7 @@ const onDelete = jest.fn();
 
 describe('components/CommentList', () => {
     test('should correctly render a list of comments', () => {
-        const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />).dive();
+        const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />);
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-comment-list-item').length).toEqual(2);
     });

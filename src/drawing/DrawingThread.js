@@ -8,7 +8,6 @@ import {
     DRAW_RENDER_THRESHOLD,
     DRAW_BASE_LINE_WIDTH,
     BORDER_OFFSET,
-    DRAW_DASHED_SPACING,
     THREAD_EVENT
 } from '../constants';
 
@@ -68,13 +67,14 @@ class DrawingThread extends AnnotationThread {
         this.handleStop = this.handleStop.bind(this);
         this.undo = this.undo.bind(this);
         this.redo = this.redo.bind(this);
+        this.canComment = false;
 
         // Recreate stored paths
         if (this.location && this.location.paths) {
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.location.paths.forEach((drawingPathData) => {
@@ -96,10 +96,7 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        if (this.dialog) {
-            this.dialog.destroy();
-            this.dialog = null;
-        }
+        this.unmountPopover();
 
         super.destroy();
 
@@ -256,7 +253,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Overturns the last drawing stroke if it exists. Emits the Number of undo and redo
+     * Overturns the last drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if an undo was executed.
      *
      * @public
@@ -269,8 +266,8 @@ class DrawingThread extends AnnotationThread {
             this.updateBoundary();
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.drawBoundary();
@@ -279,7 +276,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Replays the last undone drawing stroke if it exists. Emits the Number of undo and redo
+     * Replays the last undone drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if a redraw was executed.
      *
      * @public
@@ -293,8 +290,8 @@ class DrawingThread extends AnnotationThread {
             this.updateBoundary();
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.drawBoundary();
@@ -321,7 +318,6 @@ class DrawingThread extends AnnotationThread {
         } else {
             // Saved thread, load boundary dialog
             this.state = STATES.inactive;
-            this.createDialog();
         }
     }
 
@@ -358,7 +354,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Emit an event containing the Number of undo and redo actions that can be done.
+     * Emit an event containing thenumber of undo and redo actions that can be done.
      *
      * @protected
      * @return {void}
@@ -371,39 +367,7 @@ class DrawingThread extends AnnotationThread {
         });
     }
 
-    /**
-     * Draw the boundary on a drawing thread that has been saved
-     *
-     * @protected
-     * @return {void}
-     */
-    drawBoundary() {
-        if (!this.location.page) {
-            return;
-        }
-
-        const [x, y, width, height] = this.getBrowserRectangularBoundary();
-
-        // Save context style
-        this.drawingContext.save();
-
-        this.drawingContext.beginPath();
-        this.drawingContext.lineWidth = this.drawingContext.lineWidth / 2;
-        this.drawingContext.setLineDash([DRAW_DASHED_SPACING, DRAW_DASHED_SPACING * 2]);
-        this.drawingContext.rect(x, y, width, height);
-        this.drawingContext.stroke();
-
-        // Restore context style
-        this.drawingContext.restore();
-
-        if (this.dialog) {
-            if (!this.dialog.isVisible() && !this.pathContainer.isEmpty()) {
-                this.showDialog();
-            }
-
-            this.dialog.position(x + width, y);
-        }
-    }
+    drawBoundary() {}
 
     /**
      * Draw the pending path onto the DrawingThread CanvasContext. Should be used
@@ -419,7 +383,6 @@ class DrawingThread extends AnnotationThread {
         const elapsed = timestamp - (this.lastRenderTimestamp || 0);
         if (elapsed >= DRAW_RENDER_THRESHOLD) {
             this.draw(this.drawingContext, true);
-            this.drawBoundary();
 
             this.lastRenderTimestamp = timestamp;
             renderAgain = this.drawingFlag === DRAW_STATES.drawing;
@@ -487,16 +450,10 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     clearBoundary() {
-        if (this.drawingContext) {
-            const { canvas } = this.drawingContext;
-            this.drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+        const boundaryEl = this.annotatedElement.querySelector('.ba-drawing-boundary');
+        if (boundaryEl) {
+            boundaryEl.parentNode.removeChild(boundaryEl);
         }
-
-        if (!this.dialog || !this.dialog.isVisible()) {
-            return;
-        }
-
-        this.dialog.hide();
     }
 
     /**

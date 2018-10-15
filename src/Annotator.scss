@@ -149,7 +149,7 @@
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     text-align: left;
-    z-index: 130; // Annotation dialog should be above other content
+    z-index: 2; // Annotation dialog should be above other content
 
     .annotation-container {
         background-color: $white;
@@ -193,10 +193,6 @@
     padding: 0;
     position: absolute;
     width: 24px;
-
-    &:hover {
-        z-index: 130; // Ensure activated point annotation icon is above dialog
-    }
 
     svg {
         fill: fade-out($box-blue, .35);
@@ -386,6 +382,11 @@
     top: 15px; // Match 15px padding top on page
 }
 
+.ba-drawing-boundary {
+    border: 2px dashed $sevens;
+    position: absolute;
+}
+
 //------------------------------------------------------------------------------
 // Annotation mode
 //------------------------------------------------------------------------------
@@ -415,4 +416,3 @@
 }
 
 @import './MobileAnnotator';
-

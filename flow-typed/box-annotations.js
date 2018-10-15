@@ -102,7 +102,7 @@ type Annotation = {
     type: AnnotationType,
     location: Location,
     threadnumber: string,
-    comments?: Comments,
+    comments: Comments,
     createdBy: User, 
     createdAt: string,
     canAnnotate: boolean,

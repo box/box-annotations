@@ -15,10 +15,18 @@ let controller;
 let thread;
 
 describe('controllers/PointModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = document.createElement('div');
+        document.body.appendChild(rootElement);
+
         controller = new PointModeController();
         controller.container = document;
         controller.emit = jest.fn();
+        controller.registerThread = jest.fn();
+        controller.getLocation = jest.fn();
 
         thread = {
             show: jest.fn(),
@@ -26,9 +34,11 @@ describe('controllers/PointModeController', () => {
             destroy: jest.fn()
         };
 
-        controller.annotatedElement = {};
-        controller.registerThread = jest.fn();
-        controller.getLocation = jest.fn();
+        controller.annotatedElement = rootElement;
+        controller.annotator = {
+            getLocationFromEvent: jest.fn(),
+            createAnnotationThread: jest.fn()
+        };
     });
 
     afterEach(() => {
@@ -53,64 +63,6 @@ describe('controllers/PointModeController', () => {
 
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
-        });
-    });
-
-    describe('setupSharedDialog()', () => {
-        it('should create a shared annotation dialog', () => {
-            const options = {
-                isMobile: true,
-                hasTouch: false,
-                localized: { cancelButton: 'cancel' }
-            };
-
-            controller.setupSharedDialog(document.createElement('div'), options);
-            expect(controller.createDialog).not.toBeUndefined();
-        });
-    });
-
-    describe('onDialogCancel()', () => {
-        it('should unregister/destroy the pending thread and clear the create dialog', () => {
-            controller.getThreadByID = jest.fn().mockReturnValue(thread);
-            controller.unregisterThread = jest.fn();
-            controller.hideSharedDialog = jest.fn();
-
-            controller.onDialogCancel();
-            expect(controller.unregisterThread).toBeCalledWith(thread);
-            expect(controller.hideSharedDialog).toBeCalled();
-            expect(thread.destroy).toBeCalled();
-        });
-    });
-
-    describe('onDialogPost()', () => {
-        it('should notify listeners of post event and clear the create dialog', () => {
-            controller.hideSharedDialog = jest.fn();
-            controller.lastPointEvent = {};
-            controller.pendingThreadID = '123abc';
-
-            controller.onDialogPost('text');
-            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.createThread, {
-                commentText: 'text',
-                lastPointEvent: {},
-                pendingThreadID: '123abc'
-            });
-            expect(controller.hideSharedDialog).toBeCalled();
-        });
-    });
-
-    describe('hideSharedDialog', () => {
-        it('should not hide the shared annotation dialog if already hidden', () => {
-            controller.createDialog = { hide: jest.fn() };
-            controller.createDialog.isVisible = false;
-            controller.hideSharedDialog();
-            expect(controller.createDialog.hide).not.toBeCalled();
-        });
-
-        it('should hide the shared annotation dialog', () => {
-            controller.createDialog = { hide: jest.fn() };
-            controller.createDialog.isVisible = true;
-            controller.hideSharedDialog();
-            expect(controller.createDialog.hide).toBeCalled();
         });
     });
 
@@ -145,14 +97,6 @@ describe('controllers/PointModeController', () => {
 
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
-        });
-
-        it('should hide the createDialog if it exists', () => {
-            controller.createDialog = {
-                hide: jest.fn()
-            };
-            controller.exit();
-            expect(controller.createDialog.hide).toBeCalled();
         });
 
         it('should exit annotation mode', () => {
@@ -212,7 +156,6 @@ describe('controllers/PointModeController', () => {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
             };
-            util.isInDialog = jest.fn().mockReturnValue(false);
         });
 
         afterEach(() => {
@@ -225,13 +168,11 @@ describe('controllers/PointModeController', () => {
             controller.pointClickHandler(event);
             expect(event.stopPropagation).not.toBeCalled();
             expect(event.preventDefault).not.toBeCalled();
+            expect(controller.destroyPendingThreads).not.toBeCalled();
         });
 
-        it('should not destroy the pending thread if click was in the dialog', () => {
-            controller.destroyPendingThreads = jest.fn().mockReturnValue(true);
-            util.isInDialog = jest.fn().mockReturnValue(true);
+        it('should not destroy the pending thread if click was in an annotation or marker', () => {
             controller.pointClickHandler(event);
-            expect(controller.destroyPendingThreads).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
         });
@@ -282,29 +223,6 @@ describe('controllers/PointModeController', () => {
             expect(controller.registerThread).toBeCalledWith(thread);
             expect(controller.hideSharedDialog).not.toBeCalled();
             expect(thread.show).toBeCalled();
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).toBeCalled();
-            expect(controller.getLocation).toBeCalled();
-        });
-
-        it('should show the create dialog', () => {
-            controller.getLocation = jest.fn().mockReturnValue({});
-            controller.registerThread = jest.fn().mockReturnValue(thread);
-            thread.getThreadEventData = jest.fn().mockReturnValue('data');
-
-            controller.isMobile = true;
-            controller.container = document.createElement('div');
-            controller.createDialog = {
-                containerEl: document.createElement('div'),
-                show: jest.fn(),
-                showCommentBox: jest.fn()
-            };
-
-            controller.pointClickHandler(event);
-            expect(controller.hideSharedDialog).not.toBeCalled();
-            expect(thread.show).toBeCalled();
-            expect(controller.createDialog.show).toBeCalledWith(controller.container);
-            expect(controller.createDialog.showCommentBox).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
             expect(controller.getLocation).toBeCalled();

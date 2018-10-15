@@ -80,17 +80,17 @@ export function findClosestElWithClass(element, className) {
 }
 
 /**
- * Returns the page element and page Number that the element is on.
+ * Returns the page element and page number that the element is on.
  *
- * @param {HTMLElement} element Element to find page and page Number for
- * @return {Object} Page element/page Number if found or null/-1 if not
+ * @param {HTMLElement} element Element to find page and page number for
+ * @return {Object} Page element/page number if found or null/-1 if not
  */
 export function getPageInfo(element) {
     const pageEl = findClosestElWithClass(element, 'page') || null;
     let page = 1;
 
     if (pageEl) {
-        page = parseInt(pageEl.getAttribute('data-page-Number'), 10);
+        page = parseInt(pageEl.getAttribute('data-page-number'), 10);
     }
 
     return { pageEl, page };
@@ -249,8 +249,17 @@ export function resetTextarea(element, clearText) {
  * @param {HTMLElement} [dialogEl] Optional annotation dialog element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInDialog(event, dialogEl) {
-    return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
+export function isInDialog(event, dialogEl = null) {
+    if (dialogEl) {
+        const dimensions = dialogEl.getBoundingClientRect();
+        return (
+            event.clientX > dimensions.left &&
+            event.clientX < dimensions.right &&
+            event.clientY > dimensions.top &&
+            event.clientY < dimensions.bottom
+        );
+    }
+    return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
 }
 
 /**
@@ -258,14 +267,12 @@ export function isInDialog(event, dialogEl) {
  *
  * @private
  * @param {Event} event Mouse event
+ * @param {HTMLElement} [dialogEl] Optional annotation dialog element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInAnnotationOrMarker(event) {
+export function isInAnnotationOrMarker(event, dialogEl) {
     const { target } = event;
-    return !!(
-        findClosestElWithClass(target, CLASS_ANNOTATION_DIALOG) ||
-        findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER)
-    );
+    return !!(isInDialog(event, dialogEl) || findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER));
 }
 
 /**
@@ -654,15 +661,15 @@ export function getHeaders(headers = {}, token = '', sharedLink = '', password =
 }
 
 /**
- * Round a Number to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
+ * Round anumber to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
  *
- * @param {number} Number The Number to be rounded
+ * @param {number} number Thenumber to be rounded
  * @param {number} precision The amount of decimal places to keep
- * @return {number} The rounded Number
+ * @return {number} The roundednumber
  */
-export function round(Number, precision) {
+export function round(number, precision) {
     /* eslint-disable prefer-template */
-    let pair = (Number + 'e').split('e');
+    let pair = (number + 'e').split('e');
     const value = Math.round(pair[0] + 'e' + (+pair[1] + precision));
     pair = (value + 'e').split('e');
     return +(pair[0] + 'e' + (+pair[1] - precision));
@@ -707,11 +714,11 @@ export function canLoadAnnotations(permissions) {
         return false;
     }
 
-    const canAnnotate = permissions[PERMISSION_ANNOTATE];
+    const can_annotate = permissions[PERMISSION_ANNOTATE];
     const can_view_annotations_all = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
     const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
-    return !!canAnnotate || !!can_view_annotations_all || !!can_view_annotations_self;
+    return !!can_annotate || !!can_view_annotations_all || !!can_view_annotations_self;
 }
 
 /**
@@ -851,4 +858,11 @@ export function getDialogWidth(dialogEl) {
     showInvisibleElement(element);
 
     return dialogWidth;
+}
+
+export function findElement(parent, selector, finderMethod) {
+    if (!parent.querySelector(selector)) {
+        finderMethod();
+    }
+    return parent.querySelector(selector);
 }

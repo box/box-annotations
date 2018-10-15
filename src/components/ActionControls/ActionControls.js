@@ -11,8 +11,11 @@ import DrawingControls from './DrawingControls';
 import './ActionControls.scss';
 
 type Props = {
+    id?: string,
     type: AnnotationType,
+    canComment: boolean,
     canDelete: boolean,
+    hasComments: boolean,
     isPending: boolean,
     onCreate: Function,
     onCommentClick: Function,
@@ -28,27 +31,53 @@ const NULL_USER = {};
 
 class ActionControls extends React.Component<Props, State> {
     static defaultProps = {
+        canComment: false,
         canDelete: false,
-        isPending: false,
-        onCommentClick: noop,
-        onDelete: noop,
-        onCancel: noop
+        isPending: false
     };
 
     state = {
         isInputOpen: true
     };
 
-    componentWillMount() {
-        this.setState({ isInputOpen: true });
+    componentDidMount() {
+        this.onFocus();
     }
 
     componentWillUnmount() {
         this.setState({ isInputOpen: false });
     }
 
+    onFocus = () => {
+        this.setState({ isInputOpen: true });
+    };
+
+    onCancel = (event: Event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        this.setState({ isInputOpen: false });
+
+        const { onCancel } = this.props;
+        onCancel();
+    };
+
+    onCreate = ({ text }: { text: string }) => {
+        const { onCreate, type } = this.props;
+        onCreate(type, text);
+    };
+
+    onDelete = (event: Event) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const { onDelete, id } = this.props;
+        if (id) {
+            onDelete(id);
+        }
+    };
+
     determineControls(type: string): ?React.Node {
-        const { canDelete, onCreate, onCommentClick, onDelete, onCancel, isPending } = this.props;
+        const { canComment, canDelete, onCommentClick, isPending, hasComments } = this.props;
         const { isInputOpen } = this.state;
 
         switch (type) {
@@ -60,14 +89,15 @@ class ActionControls extends React.Component<Props, State> {
                 return (
                     <HighlightControls
                         canAnnotateAndDelete={canDelete}
-                        canComment={false}
+                        canComment={canComment}
                         isPending={isPending}
-                        onCreate={onCreate}
+                        onDelete={this.onDelete}
+                        onCreate={this.onCreate}
                         onCommentClick={onCommentClick}
                     />
                 );
             case TYPES.highlight_comment:
-                if (isPending) {
+                if (isPending || hasComments) {
                     return (
                         <ApprovalCommentForm
                             className='ba-annotation-input-container'
@@ -75,10 +105,10 @@ class ActionControls extends React.Component<Props, State> {
                             user={NULL_USER}
                             isOpen={isInputOpen}
                             isEditing={true}
-                            createComment={onCreate}
-                            onCancel={onCancel}
+                            createComment={this.onCreate}
+                            onCancel={this.onCancel}
                             onSubmit={noop}
-                            onFocus={noop}
+                            onFocus={this.onFocus}
                             // $FlowFixMe
                             getAvatarUrl={noop}
                         />
@@ -90,7 +120,8 @@ class ActionControls extends React.Component<Props, State> {
                         canAnnotateAndDelete={canDelete}
                         canComment={true}
                         isPending={isPending}
-                        onCreate={onCreate}
+                        onDelete={this.onDelete}
+                        onCreate={this.onCreate}
                         onCommentClick={onCommentClick}
                     />
                 );
@@ -99,8 +130,8 @@ class ActionControls extends React.Component<Props, State> {
                     <DrawingControls
                         canDelete={canDelete}
                         isPending={isPending}
-                        onCreate={onCreate}
-                        onDelete={onDelete}
+                        onCreate={this.onCreate}
+                        onDelete={this.onDelete}
                     />
                 );
             case TYPES.point:
@@ -111,10 +142,10 @@ class ActionControls extends React.Component<Props, State> {
                         user={NULL_USER}
                         isOpen={isInputOpen}
                         isEditing={true}
-                        createComment={onCreate}
-                        onCancel={onCancel}
+                        createComment={this.onCreate}
+                        onCancel={this.onCancel}
                         onSubmit={noop}
-                        onFocus={noop}
+                        onFocus={this.onFocus}
                         // $FlowFixMe
                         getAvatarUrl={noop}
                     />

@@ -1,3 +1,4 @@
+// @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
 import shell from './drawingShell.html';
@@ -134,11 +135,10 @@ class DrawingModeController extends AnnotationModeController {
      */
     cancelDrawing = (): void => {
         if (this.currentThread) {
-            this.currentThread.cancelUnsavedAnnotation();
+            this.currentThread.destroy();
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
+        this.exit();
     };
 
     /**
@@ -147,14 +147,13 @@ class DrawingModeController extends AnnotationModeController {
      * @protected
      * @return {void}
      */
-    postDrawing = (): void => {
+    postDrawing() {
         if (this.currentThread && this.currentThread.state === STATES.pending) {
             this.saveThread(this.currentThread);
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
-    };
+        this.exit();
+    }
 
     /**
      * Undos last drawing
@@ -202,7 +201,11 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    drawingStartHandler = (event: Event): void => {
+    drawingStartHandler(event: Event): void {
+        if (event.target && event.target.nodeName === 'BUTTON') {
+            return;
+        }
+
         event.stopPropagation();
         event.preventDefault();
 
@@ -234,10 +237,15 @@ class DrawingModeController extends AnnotationModeController {
         thread.bindDrawingListeners(this.locationFunction);
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
         thread.handleStart(location);
-    };
+    }
 
     /** @inheritdoc */
-    exit(): void {
+    exit() {
+        this.currentThread = undefined;
+
+        const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
+        boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
+
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
         super.exit();
     }
@@ -257,12 +265,12 @@ class DrawingModeController extends AnnotationModeController {
     handleThreadEvents(thread: AnnotationThread, data: Object = {}): void {
         const { eventData } = data;
         switch (data.event) {
-            case 'softcommit':
+            case THREAD_EVENT.save:
                 thread.removeListener('threadevent', this.handleThreadEvents);
                 thread.unbindDrawingListeners();
 
                 this.currentThread = undefined;
-                this.saveThread(thread);
+                this.registerThread(thread);
                 this.unbindListeners();
                 this.bindListeners();
 
@@ -272,8 +280,8 @@ class DrawingModeController extends AnnotationModeController {
                 }
 
                 break;
-            case 'dialogdelete':
-                if (!thread || !thread.dialog) {
+            case THREAD_EVENT.threadCleanup:
+                if (!thread) {
                     return;
                 }
 
@@ -288,12 +296,15 @@ class DrawingModeController extends AnnotationModeController {
                     this.unbindListeners();
                     this.bindListeners();
                 } else {
-                    thread.deleteThread();
                     this.unregisterThread(thread);
 
-                    // Redraw any threads that the deleted thread could have been overlapping
                     const { page } = thread.location;
-                    this.threads[page].all().forEach((drawingThread) => drawingThread.show());
+                    const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
+                    clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+
+                    // Redraw any threads that the deleted thread could have been overlapping
+                    const pageThreads = this.threads[page].all() || [];
+                    pageThreads.forEach((pageThread) => pageThread.show());
                 }
 
                 break;
@@ -343,7 +354,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-Number="${pageNum.toString()}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
         clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {
@@ -365,7 +376,7 @@ class DrawingModeController extends AnnotationModeController {
             return;
         }
 
-        this.selectedThread.clearBoundary();
+        this.selectedThread.hide();
         this.selectedThread = undefined;
     }
 
@@ -376,20 +387,22 @@ class DrawingModeController extends AnnotationModeController {
      * @param {AnnotationThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
-    select(selectedDrawingThread: AnnotationThread): void {
+    select(selectedDrawingThread) {
+        selectedDrawingThread.show();
         selectedDrawingThread.drawBoundary();
+        selectedDrawingThread.renderAnnotationPopover();
         this.selectedThread = selectedDrawingThread;
     }
 
     /**
-     * Toggle the undo and redo buttons based on the Number of actions available
+     * Toggle the undo and redo buttons based on thenumber of actions available
      *
      * @private
-     * @param {number} undoCount - The Number of objects that can be undone
-     * @param {number} redoCount - The Number of objects that can be redone
+     * @param {number} undoCount - Thenumber of objects that can be undone
+     * @param {number} redoCount - Thenumber of objects that can be redone
      * @return {void}
      */
-    updateUndoRedoButtonEls(undoCount: Number, redoCount: Number): void {
+    updateUndoRedoButtonEls(undoCount: number, redoCount: number): void {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
                 enableElement(this.undoButtonEl);

@@ -1,14 +1,14 @@
 import DrawingPath from '../drawing/DrawingPath';
 import DrawingThread from '../drawing/DrawingThread';
-import DocDrawingDialog from './DocDrawingDialog';
 import {
     STATES,
     DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
+    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
+    PAGE_PADDING_TOP
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
-import { createLocation, getScale } from '../util';
+import { createLocation, getScale, repositionCaret, findElement } from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
@@ -88,9 +88,7 @@ class DocDrawingThread extends DrawingThread {
             this.pendingPath = new DrawingPath();
         }
 
-        if (this.dialog && this.dialog.isVisible()) {
-            this.dialog.hide();
-        }
+        this.unmountPopover();
 
         // Start drawing rendering
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
@@ -114,21 +112,19 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
-        if (!this.dialog) {
-            this.createDialog();
-        }
-
         this.pathContainer.insert(this.pendingPath);
         this.updateBoundary(this.pendingPath);
         this.regenerateBoundary();
 
-        if (this.dialog && this.pathContainer.isEmpty()) {
-            this.dialog.hide();
+        if (this.pathContainer.isEmpty()) {
+            this.unmountPopover();
         }
 
         this.render();
+        this.renderAnnotationPopover();
         this.emitAvailableActions();
         this.pendingPath = null;
+        this.state = STATES.pending;
     }
 
     /**
@@ -140,35 +136,6 @@ class DocDrawingThread extends DrawingThread {
      */
     hasPageChanged(location) {
         return !!(location && !!this.location && !!this.location.page && this.location.page !== location.page);
-    }
-
-    /**
-     * Saves a drawing annotation to the drawing annotation layer canvas.
-     *
-     * @public
-     * @param {string} type - Type of annotation
-     * @param {string} text - Text of annotation to save
-     * @return {void}
-     */
-    saveAnnotation(type, text) {
-        this.reset();
-
-        // Only make save request to server if there exist paths to save
-        if (this.pathContainer.isEmpty()) {
-            return;
-        }
-
-        this.regenerateBoundary();
-
-        if (this.dialog && this.pathContainer.isEmpty()) {
-            this.dialog.hide();
-        }
-
-        super.saveAnnotation(type, text);
-
-        // Move the in-progress drawing to the concrete context
-        this.createDialog();
-        this.show();
     }
 
     /**
@@ -184,10 +151,6 @@ class DocDrawingThread extends DrawingThread {
 
         // Get the annotation layer context to draw with
         const context = this.selectContext();
-        if (this.dialog && this.dialog.isVisible()) {
-            this.drawBoundary();
-            this.dialog.show(this.annotations);
-        }
 
         // Generate the paths and draw to the annotation layer canvas
         this.pathContainer.applyToItems((drawing) =>
@@ -201,46 +164,9 @@ class DocDrawingThread extends DrawingThread {
         this.draw(context, false);
     }
 
-    /**
-     * Binds custom event listeners for the dialog.
-     *
-     * @protected
-     * @return {void}
-     */
-    bindCustomListenersOnDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        this.dialog.addListener('annotationcreate', () => this.emit('softcommit'));
-        this.dialog.addListener('annotationdelete', () => this.emit('dialogdelete'));
-    }
-
-    /**
-     * Creates the document drawing annotation dialog for the thread.
-     *
-     * @protected
-     * @override
-     * @return {void}
-     */
-    createDialog() {
-        if (this.dialog) {
-            this.dialog.destroy();
-        }
-
-        this.dialog = new DocDrawingDialog({
-            annotatedElement: this.annotatedElement,
-            container: this.container,
-            annotations: this.annotations,
-            locale: this.locale,
-            location: this.location,
-            canAnnotate: this.permissions.can_annotate,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch
-        });
-        this.dialog.localized = this.localized;
-
-        this.bindCustomListenersOnDialog();
+    hide() {
+        this.clearBoundary();
+        this.unmountPopover();
     }
 
     /**
@@ -334,6 +260,84 @@ class DocDrawingThread extends DrawingThread {
 
         return [x1, y1, width, height];
     }
+
+    /**
+     * Retrieve the lower right corner of the drawing annotation
+     *
+     * @private
+     * @return {Array|null} An array of length 2 with the first item being the x coordinate, the second item
+     *                      being the y coordinate
+     */
+    getLowerRightCornerOfBoundary() {
+        if (!this.location || !this.location.dimensions || !this.pageEl) {
+            return null;
+        }
+
+        const l1 = createLocation(this.minX, this.minY, this.location.dimensions);
+        const l2 = createLocation(this.maxX, this.maxY, this.location.dimensions);
+        const [x1, y1] = getBrowserCoordinatesFromLocation(l1, this.pageEl);
+        const [x2, y2] = getBrowserCoordinatesFromLocation(l2, this.pageEl);
+
+        return [Math.max(x1, x2), Math.max(y1, y2)];
+    }
+
+    /**
+     * Draw the boundary on a drawing thread that has been saved
+     *
+     * @protected
+     * @return {void}
+     */
+    drawBoundary = () => {
+        if (!this.location.page) {
+            return;
+        }
+
+        const boundaryEl = document.createElement('div');
+        boundaryEl.classList.add('ba-drawing-boundary');
+
+        const l1 = createLocation(this.minX, this.minY, this.location.dimensions);
+        const l2 = createLocation(this.maxX, this.maxY, this.location.dimensions);
+        const [x1, y1] = getBrowserCoordinatesFromLocation(l1, this.pageEl);
+        const [x2, y2] = getBrowserCoordinatesFromLocation(l2, this.pageEl);
+
+        const BOUNDARY_PADDING = 10;
+        boundaryEl.style.left = `${Math.min(x1, x2) - BOUNDARY_PADDING}px`;
+        boundaryEl.style.top = `${Math.min(y1, y2) + BOUNDARY_PADDING / 2}px`;
+        boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
+        boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
+
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        pageEl.appendChild(boundaryEl);
+    };
+
+    /**
+     * Position the drawing dialog with an x,y browser coordinate
+     *
+     * @protected
+     * @return {void}
+     */
+    position = () => {
+        if (!this.pageEl) {
+            this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        }
+
+        // Render popover so we can get width
+        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const boundaryEl = findElement(this.annotatedElement, '.ba-drawing-boundary', this.drawBoundary);
+        const pageEl =
+            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+        const pageDimensions = pageEl.getBoundingClientRect();
+        const boundaryDimensions = boundaryEl.getBoundingClientRect();
+        const popoverDimensions = popoverEl.getBoundingClientRect();
+
+        const popoverWidth = popoverDimensions.width;
+        const popoverY = boundaryEl.offsetTop + boundaryDimensions.height + PAGE_PADDING_TOP;
+        let popoverX = boundaryEl.offsetLeft + boundaryDimensions.width / 2 - popoverWidth / 2;
+        popoverX = repositionCaret(popoverEl, popoverX, popoverWidth, popoverX, pageDimensions.width);
+
+        popoverEl.style.left = `${popoverX}px`;
+        popoverEl.style.top = `${popoverY}px`;
+    };
 }
 
 export default DocDrawingThread;

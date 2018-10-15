@@ -1,17 +1,16 @@
 import AnnotationThread from '../AnnotationThread';
-import DocHighlightDialog from './DocHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
 import {
     THREAD_EVENT,
     STATES,
     TYPES,
-    SELECTOR_ADD_HIGHLIGHT_BTN,
     HIGHLIGHT_FILL,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     PAGE_PADDING_TOP,
-    PAGE_PADDING_BOTTOM
+    PAGE_PADDING_BOTTOM,
+    BORDER_OFFSET
 } from '../constants';
 
 class DocHighlightThread extends AnnotationThread {
@@ -30,13 +29,13 @@ class DocHighlightThread extends AnnotationThread {
      * [constructor]
      *
      * @param {AnnotationDialogData} data Data for constructing thread
-     * @param {boolean} showComment Whether or not show comment highlight UI
+     * @param {boolean} canComment Whether or not show comment highlight UI
      * @return {AnnotationDialog} Annotation dialog instance
      */
-    constructor(data, showComment) {
+    constructor(data, canComment) {
         super(data);
 
-        this.showComment = showComment;
+        this.canComment = canComment;
     }
 
     /**
@@ -54,9 +53,9 @@ class DocHighlightThread extends AnnotationThread {
 
         // Clear and reset mobile annotations dialog
         if (this.isMobile) {
-            this.hideDialog();
+            this.unmountPopover();
         } else if (util.isPlainHighlight(this.annotations)) {
-            this.dialog.toggleHighlightDialogs();
+            this.renderAnnotationPopover();
         } else {
             this.destroy();
         }
@@ -130,11 +129,7 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const hasComments = firstAnnotation.message !== '' || this.annotations.length > 1;
-        if (hasComments && firstAnnotation.permissions && !firstAnnotation.permissions.can_delete) {
-            const addHighlightBtn = this.dialog.element.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN);
-            util.hideElement(addHighlightBtn);
-        }
+        this.renderAnnotationPopover();
     }
 
     /**
@@ -165,7 +160,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {boolean} Whether click was in a non-pending highlight
      */
     onClick(event, consumed) {
-        // If state is in hover, it means mouse is already over this highlight
+        // If state is in active, it means mouse is already over this highlight
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
             this.state = STATES.active;
@@ -207,70 +202,22 @@ class DocHighlightThread extends AnnotationThread {
     show() {
         switch (this.state) {
             case STATES.pending:
-                this.showDialog();
+                this.renderAnnotationPopover();
                 break;
             case STATES.inactive:
-                this.hideDialog();
+                this.unmountPopover();
                 this.draw(HIGHLIGHT_FILL.normal);
                 break;
             case STATES.active:
             case STATES.pending_active:
-                this.showDialog();
+                this.renderAnnotationPopover();
                 this.draw(HIGHLIGHT_FILL.active);
                 break;
             default:
                 break;
         }
-    }
 
-    /** Overridden to hide UI elements depending on whether or not comments or plain
-     * are allowed. Note: This will be deprecated upon proper refactor or comment highlight
-     * and plain highlights.
-     *
-     * @override
-     * @return {void}
-     */
-    showDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        // Prevents the annotations dialog from being created each mousemove
-        if (!this.dialog.element) {
-            this.dialog.setup(this.annotations, this.showComment);
-        }
-
-        this.dialog.show(this.annotations);
-    }
-
-    /**
-     * Creates the document highlight annotation dialog for the thread.
-     *
-     * @override
-     * @return {void}
-     */
-    createDialog() {
-        this.dialog = new DocHighlightDialog({
-            annotatedElement: this.annotatedElement,
-            container: this.container,
-            annotations: this.annotations,
-            locale: this.locale,
-            location: this.location,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            canAnnotate: this.permissions.can_annotate
-        });
-
-        // Ensures that previously created annotations have the right type
-        const firstAnnotation = this.annotations[0];
-        if (!firstAnnotation) {
-            return;
-        }
-
-        const hasComments = firstAnnotation.message !== '' || this.annotations.length > 1;
-        if (hasComments && this.type === TYPES.highlight) {
-            this.type = TYPES.highlight_comment;
-        }
+        super.show();
     }
 
     //--------------------------------------------------------------------------
@@ -320,7 +267,7 @@ class DocHighlightThread extends AnnotationThread {
     handleCreate(message) {
         if (message) {
             this.type = TYPES.highlight_comment;
-            this.dialog.toggleHighlightCommentsReply(this.annotations.length);
+            this.renderAnnotationPopover();
         } else {
             this.type = TYPES.highlight;
         }
@@ -346,44 +293,6 @@ class DocHighlightThread extends AnnotationThread {
         if (firstAnnotation) {
             this.deleteAnnotation(firstAnnotation.id);
         }
-    }
-
-    /**
-     * Binds custom event listeners for the dialog.
-     *
-     * @protected
-     * @override
-     * @return {void}
-     */
-    /* istanbul ignore next */
-    bindCustomListenersOnDialog() {
-        // Explicitly bind listeners
-        this.handleDraw = this.handleDraw.bind(this);
-        this.handleCommentPending = this.handleCommentPending.bind(this);
-        this.handleCreate = this.handleCreate.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.cancelFirstComment = this.cancelFirstComment.bind(this);
-
-        this.dialog.addListener('annotationdraw', this.handleDraw);
-        this.dialog.addListener('annotationcommentpending', this.handleCommentPending);
-        this.dialog.addListener('annotationcreate', this.handleCreate);
-        this.dialog.addListener('annotationcancel', this.cancelFirstComment);
-        this.dialog.addListener('annotationdelete', this.handleDelete);
-    }
-
-    /**
-     * Unbinds custom event listeners for the dialog.
-     *
-     * @protected
-     * @override
-     * @return {void}
-     */
-    unbindCustomListenersOnDialog() {
-        this.dialog.removeAllListeners('annotationdraw');
-        this.dialog.removeAllListeners('annotationcommentpending');
-        this.dialog.removeAllListeners('annotationcreate');
-        this.dialog.removeAllListeners('annotationcancel');
-        this.dialog.removeAllListeners('annotationdelete');
     }
 
     //--------------------------------------------------------------------------
@@ -465,11 +374,6 @@ class DocHighlightThread extends AnnotationThread {
             // Draw actual highlight rectangle if needed
             if (fillStyle !== HIGHLIGHT_FILL.erase) {
                 context.fill();
-
-                // Update highlight icon hover to appropriate color
-                if (this.dialog && this.dialog.element) {
-                    this.dialog.toggleHighlightIcon(fillStyle);
-                }
             }
         });
     }
@@ -576,6 +480,64 @@ class DocHighlightThread extends AnnotationThread {
             this.minY = Math.min(y1, y2, y3, y4, this.minY);
             this.maxY = Math.max(y1, y2, y3, y4, this.maxY);
         });
+    }
+
+    /**
+     * Positions the dialog.
+     *
+     * @override
+     * @return {void}
+     */
+    position = () => {
+        // Position it below lower right corner or center of the highlight - we need
+        // to reposition every time since the DOM could have changed from
+        // zooming
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageDimensions = pageEl.getBoundingClientRect();
+        const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+        const [browserX, browserY] = docUtil.getScaledPDFCoordinates(
+            this.annotatedElement,
+            this.location,
+            pageDimensions,
+            pageHeight
+        );
+
+        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverDimensions = popoverEl.getBoundingClientRect();
+        const dialogDimensions = popoverEl.getBoundingClientRect();
+        const dialogWidth = dialogDimensions.width;
+        let dialogX = browserX - dialogWidth / 2; // Center dialog
+        let dialogY = browserY;
+
+        // Only reposition if one side is past page boundary - if both are,
+        // just center the dialog and cause scrolling since there is nothing
+        // else we can do
+        dialogX = util.repositionCaret(popoverEl, dialogX, dialogWidth, browserX, pageDimensions.width);
+
+        if (dialogY < 0) {
+            dialogY = 0;
+        } else if (dialogY + popoverDimensions.height > pageHeight) {
+            dialogY = pageHeight - popoverDimensions.height;
+        }
+
+        popoverEl.style.left = `${dialogX}px`;
+        popoverEl.style.top = `${dialogY + popoverDimensions.height / 2 - BORDER_OFFSET}px`;
+    };
+
+    /**
+     * Keydown handler on dialog. Needed since we are binding to 'mousedown'
+     * instead of 'click'.
+     *
+     * @override
+     * @private
+     * @return {void}
+     */
+    keydownHandler(event) {
+        event.stopPropagation();
+        if (util.decodeKeydown(event) === 'Enter') {
+            this.mousedownHandler(event);
+        }
+        super.keydownHandler(event);
     }
 }
 

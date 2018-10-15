@@ -5,8 +5,8 @@ class DrawingContainer {
 
     /**
      * @typedef {Object} AvailableItemData
-     * @property {Number} undo Number of undoable items
-     * @property {Number} redo Number of redoable items
+     * @property {Number} undonumber of undoable items
+     * @property {Number} redonumber of redoable items
      */
 
     //--------------------------------------------------------------------------
@@ -80,9 +80,9 @@ class DrawingContainer {
     }
 
     /**
-     * Retrieve a JSON blob containing the Number of undo and redo in each stack.
+     * Retrieve a JSON blob containing thenumber of undo and redo in each stack.
      *
-     * @return {AvailableItemData} The Number of undo and redo items available.
+     * @return {AvailableItemData} Thenumber of undo and redo items available.
      */
     getNumberOfItems() {
         return {

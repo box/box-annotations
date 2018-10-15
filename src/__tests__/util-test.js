@@ -47,14 +47,16 @@ import {
     TYPES,
     CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ANNOTATION_CARET,
+    CLASS_ANNOTATION_CARET,
     CLASS_ACTIVE,
     SELECTOR_MOBILE_DIALOG_HEADER,
     SELECTOR_DIALOG_CLOSE,
     SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT,
     SELECTOR_ANIMATE_DIALOG,
     CLASS_HIDDEN,
-    SELECTOR_ANNOTATION_POINT_MARKER
+    SELECTOR_ANNOTATION_POINT_MARKER,
+    CLASS_ANNOTATION_DIALOG,
+    CLASS_ANNOTATION_POINT_MARKER
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -66,15 +68,15 @@ const html = `<div class="wrapper" data-name="someName">
 
 <textarea class="textarea"></textarea>
 
-<div class="page" data-page-Number="2">
+<div class="page" data-page-number="2">
 <div class="foo"></div>
 </div>
 
-<div class="ba-annotation-dialog">
-<div class="ba-annotation-caret"></div>
+<div class="${CLASS_ANNOTATION_DIALOG}">
+<div class="${CLASS_ANNOTATION_CARET}"></div>
 </div>
 
-<div class="ba-point-annotation-marker"></div>
+<div class="${CLASS_ANNOTATION_POINT_MARKER}"></div>
 
 <div class="container"></div>
 `;
@@ -122,7 +124,7 @@ describe('util', () => {
     });
 
     describe('getPageInfo()', () => {
-        it('should return page element and page Number that the specified element is on', () => {
+        it('should return page element and page number that the specified element is on', () => {
             const fooEl = rootElement.querySelector('.foo');
             const pageEl = rootElement.querySelector('.page');
             const result = getPageInfo(fooEl);
@@ -130,7 +132,7 @@ describe('util', () => {
             expect(result.page).toEqual(2);
         });
 
-        it('should return no page element and -1 page Number if no page is found', () => {
+        it('should return no page element and -1 page number if no page is found', () => {
             const barEl = rootElement.querySelector('.bar');
             const result = getPageInfo(barEl);
             expect(result.pageEl).toBeNull();
@@ -249,6 +251,12 @@ describe('util', () => {
 
         it('should return true if the event is in the given dialog', () => {
             const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            dialogEl.getBoundingClientRect = jest.fn().mockReturnValue({
+                left: 0,
+                right: 10,
+                top: 0,
+                bottom: 10
+            });
             expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).toBeTruthy();
         });
     });
@@ -389,39 +397,27 @@ describe('util', () => {
             const browserX = 1;
             const pageWidth = 100;
             const initX = browserX - DIALOG_WIDTH / 2;
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
 
-            const dialogX = repositionCaret(dialogEl, initX, DIALOG_WIDTH, browserX, pageWidth);
-
-            const annotationCaretEl = dialogEl.querySelector(SELECTOR_ANNOTATION_CARET);
+            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(0); // dialog aligned to the left
-            expect(annotationCaretEl.style.left).toEqual('10px'); // caret aligned to the left
         });
 
         it('should position the dialog on the right edge of the page and adjust caret location accordingly', () => {
             const browserX = 400;
             const pageWidth = 100;
             const initX = browserX - DIALOG_WIDTH / 2;
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
 
-            const dialogX = repositionCaret(dialogEl, initX, DIALOG_WIDTH, browserX, pageWidth);
-
-            const annotationCaretEl = dialogEl.querySelector(SELECTOR_ANNOTATION_CARET);
+            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(19); // dialog aligned to the right
-            expect(annotationCaretEl.style.left).toEqual('71px'); // caret aligned to the right
         });
 
         it('should position the caret in the center of the dialog and return top left corner coordinate', () => {
             const browserX = 100;
             const pageWidth = 1000;
             const initX = browserX - DIALOG_WIDTH / 2;
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
 
-            const dialogX = repositionCaret(dialogEl, initX, DIALOG_WIDTH, browserX, pageWidth);
-
-            const annotationCaretEl = dialogEl.querySelector(SELECTOR_ANNOTATION_CARET);
+            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(initX); // dialog x unchanged
-            expect(annotationCaretEl.style.left).toEqual('50%'); // caret centered with dialog
         });
     });
 

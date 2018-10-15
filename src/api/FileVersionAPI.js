@@ -12,7 +12,7 @@ type Params = {
 type Data = {
     type: string,
     next_marker: string,
-    limit: Number,
+    limit: number,
     entries: Array<any>
 };
 

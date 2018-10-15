@@ -7,8 +7,8 @@ exports[`components/ActionControls should correctly render controls for drawing 
   <DrawingControls
     canDelete={false}
     isPending={false}
-    onCreate={[MockFunction]}
-    onDelete={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
   />
 </div>
 `;
@@ -22,7 +22,8 @@ exports[`components/ActionControls should correctly render controls for highligh
     canComment={true}
     isPending={false}
     onCommentClick={[MockFunction]}
-    onCreate={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
   />
 </div>
 `;
@@ -36,7 +37,8 @@ exports[`components/ActionControls should correctly render controls for highligh
     canComment={true}
     isPending={false}
     onCommentClick={[MockFunction]}
-    onCreate={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
   />
 </div>
 `;
@@ -47,11 +49,11 @@ exports[`components/ActionControls should correctly render controls for pending 
 >
   <ApprovalCommentForm
     className="ba-annotation-input-container"
-    createComment={[MockFunction]}
+    createComment={[Function]}
     getAvatarUrl={[Function]}
     isEditing={true}
     isOpen={true}
-    onCancel={[MockFunction]}
+    onCancel={[Function]}
     onFocus={[Function]}
     onSubmit={[Function]}
     user={Object {}}
@@ -68,7 +70,8 @@ exports[`components/ActionControls should correctly render controls for plain hi
     canComment={false}
     isPending={false}
     onCommentClick={[MockFunction]}
-    onCreate={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
   />
 </div>
 `;
@@ -85,11 +88,11 @@ exports[`components/ActionControls should correctly render controls for point an
 >
   <ApprovalCommentForm
     className="ba-annotation-input-container"
-    createComment={[MockFunction]}
+    createComment={[Function]}
     getAvatarUrl={[Function]}
     isEditing={true}
     isOpen={true}
-    onCancel={[MockFunction]}
+    onCancel={[Function]}
     onFocus={[Function]}
     onSubmit={[Function]}
     user={Object {}}

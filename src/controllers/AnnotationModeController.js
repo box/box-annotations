@@ -13,7 +13,6 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    TYPES,
     BORDER_OFFSET
 } from '../constants';
 import AnnotationAPI from '../api/AnnotationAPI';
@@ -319,7 +318,7 @@ class AnnotationModeController extends EventEmitter {
     registerThread(annotations: Array<Annotation>, location: Location, type: AnnotationType): AnnotationThread {
         let thread;
 
-        // Corrects any annotation page Number to 1 instead of -1
+        // Corrects any annotation page number to 1 instead of -1
         const fixedLocation = location;
         if (!fixedLocation.page || fixedLocation.page < 0) {
             fixedLocation.page = 1;
@@ -370,7 +369,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @private
      * @param {Function} func Predicate method to apply on threads
-     * @param {string} pageNum Page Number
+     * @param {string} pageNum Page number
      * @return {void}
      */
     applyActionToPageThreads(func: Function, pageNum: string): void {
@@ -540,19 +539,25 @@ class AnnotationModeController extends EventEmitter {
             return;
         }
 
-        Object.keys(this.threads).forEach((pageNum) => {
-            this.renderPage(pageNum);
-        });
+        Object.keys(this.threads).forEach((pageNum) => this.renderPage(pageNum));
     }
 
     /**
      * Renders annotations from memory for a specified page.
      *
      * @private
-     * @param {string} pageNum - Page Number
+     * @param {string} pageNum - Page number
      * @return {void}
      */
-    renderPage(pageNum: string): void {
+    renderPage(pageNum: string) {
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        let dialogLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (!dialogLayer) {
+            dialogLayer = document.createElement('span');
+            dialogLayer.classList.add('ba-dialog-layer');
+            pageEl.appendChild(dialogLayer);
+        }
+
         if (!this.threads || !this.threads[pageNum]) {
             return;
         }
@@ -566,7 +571,7 @@ class AnnotationModeController extends EventEmitter {
                 return;
             }
 
-            thread.hideDialog();
+            thread.unmountPopover();
 
             // Sets the annotatedElement if the thread was fetched before the
             // dependent document/viewer finished loading
@@ -596,8 +601,6 @@ class AnnotationModeController extends EventEmitter {
                     hadPendingThreads = true;
                     this.pendingThreadID = null;
                     thread.destroy();
-                } else if (thread.isDialogVisible()) {
-                    thread.hideDialog();
                 }
             });
         });
@@ -609,6 +612,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @protected
      * @param {Event} event The event object containing the pointer information
+     * @param {Object} location Annotation location object
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
     getIntersectingThreads(event: Event, location): Array<AnnotationThread> {

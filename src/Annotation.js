@@ -10,7 +10,7 @@ class Annotation {
      * @property {string} id Annotation ID
      * @property {string} fileVersionId File version ID for this annotation
      * @property {string} threadID Thread ID
-     * @property {string} thread Thread Number
+     * @property {string} thread Threadnumber
      * @property {string} type Annotation type, e.g. 'point' or 'highlight'
      * @property {string} message Annotation text
      * @property {Object} location Location object

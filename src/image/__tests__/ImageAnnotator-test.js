@@ -6,7 +6,7 @@ import { TYPES } from '../../constants';
 
 let annotator;
 const html = `<div class="bp-image annotated-element">
-    <img class="page" width="100px" height="200px" data-page-Number="1">
+    <img class="page" width="100px" height="200px" data-page-number="1">
     <button class="ba-point-annotation-marker"></button>
 </div>
 `;
@@ -27,7 +27,6 @@ describe('image/ImageAnnotator', () => {
         };
 
         annotator = new ImageAnnotator({
-            canAnnotate: true,
             container: document,
             api: {},
             file: {

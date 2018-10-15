@@ -2,6 +2,8 @@
     @import '../../variables.scss';
 
     .ba-comment-list {
+        max-height: 282px;
+        overflow-y: scroll;
         width: 100%;
     }
 

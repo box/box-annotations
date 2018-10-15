@@ -306,7 +306,7 @@ class Annotator extends EventEmitter {
         Object.keys(this.modeControllers).forEach((mode) => {
             this.modeControllers[mode].applyActionToThreads((thread) => {
                 if (!util.isPending(thread.state)) {
-                    thread.hideDialog();
+                    thread.unmountPopover();
                 }
             });
         });
@@ -454,10 +454,9 @@ class Annotator extends EventEmitter {
             return null;
         }
 
-        thread.dialog.hasComments = true;
         thread.state = STATES.active;
-        thread.showDialog();
-        thread.dialog.postAnnotation(commentText);
+        thread.renderAnnotationPopover();
+        thread.saveAnnotation(TYPES.point, commentText);
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
@@ -484,7 +483,7 @@ class Annotator extends EventEmitter {
      * Renders annotations from memory for a specified page.
      *
      * @private
-     * @param {number} pageNum - Page Number
+     * @param {number} pageNum - Page number
      * @return {void}
      */
     renderPage(pageNum) {
