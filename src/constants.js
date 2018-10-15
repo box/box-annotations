@@ -48,7 +48,7 @@ export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTO
 // Dialog CSS constants
 export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
 export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
-export const CLASS_ANNOTATION_CARET = 'ba-annotation-caret';
+export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
 
 export const CLASS_TEXTAREA = 'ba-textarea';
@@ -96,6 +96,11 @@ export const SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
 
 export const CLASS_CREATE_COMMENT = 'ba-create-comment';
 export const SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
+
+export const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
+
+export const CLASS_COMMENT = 'annotation-comment';
+export const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 
 // Highlight dialog CSS constants
 export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
@@ -291,6 +296,9 @@ export const ERROR_TYPE = {
     create: 'create',
     delete: 'delete'
 };
+
+export const POINT_ANNOTATION_ICON_HEIGHT = 31;
+export const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;

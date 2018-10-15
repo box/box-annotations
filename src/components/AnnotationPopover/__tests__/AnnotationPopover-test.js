@@ -3,9 +3,7 @@ import { shallow } from 'enzyme';
 
 import AnnotationPopover from '../AnnotationPopover';
 
-const onDelete = jest.fn();
-const onCreate = jest.fn();
-const onCancel = jest.fn();
+const fnMock = jest.fn();
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
@@ -39,9 +37,10 @@ describe('components/AnnotationPopover', () => {
             <AnnotationPopover
                 canAnnotate={false}
                 canDelete={false}
-                onCreate={onCreate}
-                onCancel={onCancel}
-                onDelete={onDelete}
+                onCreate={fnMock}
+                onCancel={fnMock}
+                onDelete={fnMock}
+                position={fnMock}
                 {...props}
             />
         );

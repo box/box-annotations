@@ -128,11 +128,10 @@ class DrawingModeController extends AnnotationModeController {
      */
     cancelDrawing() {
         if (this.currentThread) {
-            this.currentThread.cancelUnsavedAnnotation();
+            this.currentThread.destroy();
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
+        this.exit();
     }
 
     /**
@@ -142,12 +141,15 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     postDrawing() {
-        if (this.currentThread && this.currentThread.state === STATES.pending) {
-            this.saveThread(this.currentThread);
+        if (this.currentThread) {
+            if (this.currentThread.state === STATES.pending) {
+                this.saveThread(this.currentThread);
+            }
+
+            this.currentThread.hide();
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
+        this.exit();
     }
 
     /**
@@ -204,6 +206,10 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     drawingStartHandler(event) {
+        if (event.target && event.target.nodeName === 'BUTTON') {
+            return;
+        }
+
         event.stopPropagation();
         event.preventDefault();
 
@@ -224,7 +230,7 @@ class DrawingModeController extends AnnotationModeController {
         location.minY = location.y;
         location.maxY = location.y;
 
-        // Create new thread with no annotations, show indicator, and show dialog
+        // Create new thread with no annotations, show indicator, and render popover
         const thread = this.annotator.createAnnotationThread([], location, TYPES.draw);
         if (!thread) {
             return;
@@ -239,6 +245,11 @@ class DrawingModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     exit() {
+        this.currentThread = undefined;
+
+        const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
+        boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
+
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
         super.exit();
     }
@@ -258,12 +269,12 @@ class DrawingModeController extends AnnotationModeController {
     handleThreadEvents(thread, data = {}) {
         const { eventData } = data;
         switch (data.event) {
-            case 'softcommit':
+            case THREAD_EVENT.save:
                 thread.removeListener('threadevent', this.handleThreadEvents);
                 thread.unbindDrawingListeners();
 
                 this.currentThread = undefined;
-                this.saveThread(thread);
+                this.registerThread(thread);
                 this.unbindListeners();
                 this.bindListeners();
 
@@ -273,8 +284,8 @@ class DrawingModeController extends AnnotationModeController {
                 }
 
                 break;
-            case 'dialogdelete':
-                if (!thread || !thread.dialog) {
+            case THREAD_EVENT.threadCleanup:
+                if (!thread) {
                     return;
                 }
 
@@ -289,12 +300,15 @@ class DrawingModeController extends AnnotationModeController {
                     this.unbindListeners();
                     this.bindListeners();
                 } else {
-                    thread.deleteThread();
                     this.unregisterThread(thread);
 
-                    // Redraw any threads that the deleted thread could have been overlapping
                     const { page } = thread.location;
-                    this.threads[page].all().forEach((drawingThread) => drawingThread.show());
+                    const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
+                    clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+
+                    // Redraw any threads that the deleted thread could have been overlapping
+                    const pageThreads = this.threads[page].all() || [];
+                    pageThreads.forEach((pageThread) => pageThread.show());
                 }
 
                 break;
@@ -366,7 +380,7 @@ class DrawingModeController extends AnnotationModeController {
             return;
         }
 
-        this.selectedThread.clearBoundary();
+        this.selectedThread.hide();
         this.selectedThread = undefined;
     }
 
@@ -378,7 +392,9 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     select(selectedDrawingThread) {
+        selectedDrawingThread.show();
         selectedDrawingThread.drawBoundary();
+        selectedDrawingThread.renderAnnotationPopover();
         this.selectedThread = selectedDrawingThread;
     }
 

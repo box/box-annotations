@@ -6,18 +6,31 @@ import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '..
 let controller;
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('controllers/HighlightModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         controller = new HighlightModeController();
         controller.emit = jest.fn();
+        controller.annotatedElement = rootElement;
 
         thread = {
+            annotatedElement: rootElement,
             annotations: {},
             location: { page: 1 },
             type: TYPES.highlight,
             show: jest.fn(),
             addListener: jest.fn(),
-            hideDialog: jest.fn()
+            unmountPopover: jest.fn()
         };
     });
 
@@ -101,8 +114,6 @@ describe('controllers/HighlightModeController', () => {
 
     describe('renderPage()', () => {
         beforeEach(() => {
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
             util.clearCanvas = jest.fn();
         });
 

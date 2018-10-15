@@ -4,14 +4,12 @@ import {
     TYPES,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    CREATE_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     CLASS_ANNOTATION_POINT_MODE
 } from '../constants';
-import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { isInDialog, replaceHeader, isInAnnotationOrMarker } from '../util';
+import { replaceHeader, isInAnnotationOrMarker } from '../util';
 
 class PointModeController extends AnnotationModeController {
     /** @property {HTMLElement} - The button to exit point annotation mode */
@@ -38,31 +36,6 @@ class PointModeController extends AnnotationModeController {
 
         // TODO(@spramod): Remove '||' string, once closeButton is properly localized within Preview
         this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
-    }
-
-    /**
-     * Set up the shared mobile dialog and associated listeners
-     *
-     * @protected
-     * @param {HTMLElement} container - The container element for the file
-     * @param {Object} options - Controller options to pass into the create dialog
-     * @return {void}
-     */
-    setupSharedDialog(container, options) {
-        this.createDialog = new CreateAnnotationDialog(container, {
-            isMobile: options.isMobile,
-            hasTouch: options.hasTouch,
-            localized: options.localized
-        });
-        this.createDialog.createElement();
-
-        this.onDialogCancel = this.onDialogCancel.bind(this);
-        this.onDialogPost = this.onDialogPost.bind(this);
-        this.destroyPendingThreads = this.destroyPendingThreads.bind(this);
-
-        this.createDialog.addListener(CREATE_EVENT.init, () => this.emit(THREAD_EVENT.pending, TYPES.point));
-        this.createDialog.addListener(CREATE_EVENT.cancel, this.onDialogCancel);
-        this.createDialog.addListener(CREATE_EVENT.post, this.onDialogPost);
     }
 
     /**
@@ -93,7 +66,7 @@ class PointModeController extends AnnotationModeController {
             pendingThreadID: this.pendingThreadID
         });
 
-        this.hideSharedDialog();
+        this.onDialogCancel();
     }
 
     /**
@@ -155,14 +128,18 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        if (!isInAnnotationOrMarker(event)) {
-            event.stopPropagation();
-            event.preventDefault();
+        const pendingThread = this.getThreadByID(this.pendingThreadID);
+        if (this.pendingThreadID && pendingThread) {
+            pendingThread.destroy();
         }
 
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        if (isInDialog(event)) {
+        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
+        if (!isInAnnotationOrMarker(event, popoverEl)) {
+            event.stopPropagation();
+            event.preventDefault();
+        } else {
             return;
         }
 
@@ -180,7 +157,7 @@ class PointModeController extends AnnotationModeController {
             return;
         }
 
-        // Create new thread with no annotations, show indicator, and show dialog
+        // Create new thread with no annotations, show indicator, and render popover
         const thread = this.annotator.createAnnotationThread([], location, TYPES.point);
         if (!thread) {
             this.hideSharedDialog();
@@ -189,9 +166,6 @@ class PointModeController extends AnnotationModeController {
 
         if (this.isMobile) {
             this.lastPointEvent = event;
-            this.container.appendChild(this.createDialog.containerEl);
-            this.createDialog.show(this.container);
-            this.createDialog.showCommentBox();
         }
 
         this.pendingThreadID = thread.threadID;

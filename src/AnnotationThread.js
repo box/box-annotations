@@ -1,5 +1,8 @@
 import EventEmitter from 'events';
-import Annotation from './Annotation';
+import React from 'react';
+import get from 'lodash/get';
+import { render, unmountComponentAtNode } from 'react-dom';
+
 import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
@@ -9,8 +12,14 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     THREAD_EVENT,
-    CLASS_HIDDEN
+    CLASS_FLIPPED_DIALOG,
+    POINT_ANNOTATION_ICON_DOT_HEIGHT,
+    POINT_ANNOTATION_ICON_HEIGHT,
+    SELECTOR_ANNOTATION_CARET,
+    CLASS_HIDDEN,
+    DATA_TYPE_MOBILE_CLOSE
 } from './constants';
+import AnnotationPopover from './components/AnnotationPopover';
 
 class AnnotationThread extends EventEmitter {
     //--------------------------------------------------------------------------
@@ -29,6 +38,7 @@ class AnnotationThread extends EventEmitter {
      * @property {string} threadID Thread ID
      * @property {string} threadNumber Thread number
      * @property {string} type Type of thread
+     * @property {boolean} canComment Whether or not the annotation allows the addition of comments
      */
 
     //--------------------------------------------------------------------------
@@ -58,14 +68,12 @@ class AnnotationThread extends EventEmitter {
         this.permissions = data.permissions;
         this.localized = data.localized;
         this.state = STATES.inactive;
+        this.canComment = true;
 
         this.annotations = data.annotations || [];
         this.annotations = this.annotations.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         this.regenerateBoundary();
-
-        // Explicitly bind listeners
-        this.showDialog = this.showDialog.bind(this);
 
         this.setup();
     }
@@ -76,11 +84,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     destroy() {
-        if (this.dialog && !this.isMobile) {
-            this.unbindCustomListenersOnDialog();
-            this.dialog.destroy();
-            this.dialog = null;
-        }
+        this.unmountPopover();
 
         if (this.element) {
             this.unbindDOMListeners();
@@ -103,7 +107,8 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     hide() {
-        util.hideElement(this.element);
+        this.state = STATES.inactive;
+        this.unmountPopover();
     }
 
     /**
@@ -115,66 +120,106 @@ class AnnotationThread extends EventEmitter {
         this.state = STATES.inactive;
     }
 
-    /**
-     * Whether or not thread dialog is visible
-     *
-     * @return {void}
-     */
-    isDialogVisible() {
-        return !!(this.dialog && this.dialog.element && !this.dialog.element.classList.contains(CLASS_HIDDEN));
-    }
+    position = () => {
+        /* eslint-enable no-unused-vars */
+        throw new Error('Implement me!');
+    };
 
     /**
      * Shows the appropriate annotation dialog for this thread.
      *
+     * @param {Event} event - Mouse event
      * @return {void}
      */
-    showDialog() {
-        // Prevents the annotations dialog from being set up on every call
-        if (!this.dialog.element) {
-            this.dialog.setup(this.annotations, this.element);
+    renderAnnotationPopover = (event = null) => {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
         }
 
-        this.dialog.show(this.annotations);
-    }
+        const firstAnnotation = this.annotations[0];
+        const comments = this.annotations
+            .filter((annotation) => annotation.message && annotation.message !== '')
+            .map((comment) => {
+                const { id, message, permissions, createdBy, createdAt } = comment;
+                return {
+                    id,
+                    message,
+                    permissions,
+                    createdBy,
+                    createdAt
+                };
+            });
 
-    /**
-     * Hides the appropriate annotation dialog for this thread.
-     *
-     * @return {void}
-     */
-    hideDialog() {
-        if (this.dialog) {
-            this.state = STATES.inactive;
-            this.dialog.hide();
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
+
+        const isPending = !firstAnnotation;
+        if (isPending) {
+            this.state = STATES.pending;
+        } else {
+            this.state = STATES.active;
         }
-    }
+
+        this.popoverComponent = render(
+            <AnnotationPopover
+                id={comments.length > 0 || isPending ? this.threadID : firstAnnotation.id}
+                type={this.type}
+                createdAt={get(firstAnnotation, 'createdAt', null)}
+                createdBy={get(firstAnnotation, 'createdBy', null)}
+                modifiedBy={get(firstAnnotation, 'modifiedBy', null)}
+                canAnnotate={this.permissions.canAnnotate}
+                canComment={this.canComment}
+                canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
+                comments={comments}
+                position={this.position}
+                onDelete={this.deleteAnnotation}
+                onCancel={this.cancelUnsavedAnnotation}
+                onCreate={this.saveAnnotation}
+                isPending={isPending}
+            />,
+            annotationDialogLayer
+        );
+        this.position();
+    };
+
+    unmountPopover = () => {
+        this.state = STATES.inactive;
+
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (this.popoverComponent && annotationDialogLayer) {
+            unmountComponentAtNode(annotationDialogLayer);
+            this.popoverComponent = null;
+        }
+    };
 
     /**
      * Saves an annotation.
      *
      * @param {string} type - Type of annotation
-     * @param {string} text - Text of annotation to save
+     * @param {string} message - Text of annotation to save
      * @return {Promise} - Annotation create promise
      */
-    saveAnnotation(type, text) {
-        const annotationData = this.createAnnotationData(type, text);
+    saveAnnotation = (type, message) => {
+        const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client
         const tempAnnotationID = AnnotationAPI.generateID();
-        const tempAnnotationData = annotationData;
-        tempAnnotationData.id = tempAnnotationID;
-        tempAnnotationData.permissions = {
-            can_edit: true,
-            can_delete: true
+        const tempAnnotation = {
+            id: tempAnnotationID,
+            permissions: {
+                can_edit: true,
+                can_delete: true
+            },
+            message,
+            location: this.location,
+            created_at: new Date().toLocaleString(),
+            created_by: this.api.user,
+            isPending: true
         };
-        const tempAnnotation = new Annotation(tempAnnotationData);
-        tempAnnotation.isPending = true;
         this.annotations.push(tempAnnotation);
-
-        if (this.dialog) {
-            this.dialog.show(this.annotations);
-        }
+        this.renderAnnotationPopover();
 
         this.state = STATES.inactive;
 
@@ -183,7 +228,7 @@ class AnnotationThread extends EventEmitter {
             .create(annotationData)
             .then((savedAnnotation) => this.updateTemporaryAnnotation(tempAnnotation, savedAnnotation))
             .catch((error) => this.handleThreadSaveError(error, tempAnnotationID));
-    }
+    };
 
     /**
      * Deletes an annotation.
@@ -219,26 +264,19 @@ class AnnotationThread extends EventEmitter {
         // Delete annotation on client
         this.annotations = this.annotations.filter(({ id }) => id !== annotationIDToRemove);
 
-        // If the user doesn't have permission to delete the entire highlight
-        // annotation, display the annotation as a plain highlight
         let firstAnnotation = this.annotations[0];
         let canDeleteAnnotation =
             firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
         if (util.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
+            // If the user doesn't have permission to delete the entire highlight
+            // annotation, display the annotation as a plain highlight
             this.cancelFirstComment();
-
-            // If this annotation was the last one in the thread, destroy the thread
         } else if (!firstAnnotation || util.isPlainHighlight(this.annotations)) {
-            if (this.isMobile && this.dialog) {
-                this.dialog.hideMobileDialog();
-                this.dialog.show(this.annotations);
-            }
+            // If this annotation was the last one in the thread, destroy the thread
             this.destroy();
-
+        } else {
             // Otherwise, remove deleted annotation from dialog
-        } else if (this.dialog) {
-            this.dialog.show(this.annotations);
-            this.showDialog();
+            this.renderAnnotationPopover();
         }
 
         if (!useServer) {
@@ -268,10 +306,10 @@ class AnnotationThread extends EventEmitter {
                 firstAnnotation = this.annotations[0];
                 if (!firstAnnotation) {
                     this.emit(THREAD_EVENT.threadCleanup);
+                } else {
+                    // Broadcast annotation deletion event
+                    this.emit(THREAD_EVENT.delete);
                 }
-
-                // Broadcast annotation deletion event
-                this.emit(THREAD_EVENT.delete);
             })
             .catch((error) => {
                 // Broadcast error
@@ -300,14 +338,6 @@ class AnnotationThread extends EventEmitter {
      */
     show() {}
 
-    /**
-     * Must be implemented to create the appropriate annotation dialog and save
-     * as a property on the thread.
-     *
-     * @return {void}
-     */
-    createDialog() {}
-
     //--------------------------------------------------------------------------
     // Protected
     //--------------------------------------------------------------------------
@@ -325,14 +355,6 @@ class AnnotationThread extends EventEmitter {
             this.state = STATES.pending;
         } else {
             this.state = STATES.inactive;
-        }
-
-        this.createDialog();
-        this.bindCustomListenersOnDialog();
-
-        if (this.dialog) {
-            this.dialog.isMobile = this.isMobile;
-            this.dialog.localized = this.localized;
         }
 
         this.setupElement();
@@ -360,7 +382,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.element.addEventListener('click', this.showDialog);
+        this.element.addEventListener('click', this.renderAnnotationPopover);
     }
 
     /**
@@ -374,50 +396,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.element.removeEventListener('click', this.showDialog);
-    }
-
-    /**
-     * Binds custom event listeners for the dialog.
-     *
-     * @protected
-     * @return {void}
-     */
-    bindCustomListenersOnDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        // Explicitly bind listeners to the dialog
-        this.createAnnotation = this.createAnnotation.bind(this);
-        this.cancelUnsavedAnnotation = this.cancelUnsavedAnnotation.bind(this);
-        this.deleteAnnotation = this.deleteAnnotation.bind(this);
-
-        this.dialog.addListener('annotationcreate', this.createAnnotation);
-        this.dialog.addListener('annotationcancel', this.cancelUnsavedAnnotation);
-        this.dialog.addListener('annotationdelete', this.deleteAnnotation);
-        this.dialog.addListener('annotationshow', () => this.emit(THREAD_EVENT.show));
-        this.dialog.addListener('annotationhide', () => this.emit(THREAD_EVENT.hide));
-    }
-
-    /**
-     * Unbinds custom event listeners for the dialog.
-     *
-     * @protected
-     * @return {void}
-     */
-    unbindCustomListenersOnDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        this.dialog.removeAllListeners([
-            'annotationcreate',
-            'annotationcancel',
-            'annotationdelete',
-            'annotationshow',
-            'annotationhide'
-        ]);
+        this.element.removeEventListener('click', this.renderAnnotationPopover);
     }
 
     /**
@@ -426,15 +405,15 @@ class AnnotationThread extends EventEmitter {
      * @protected
      * @return {void}
      */
-    cancelUnsavedAnnotation() {
+    cancelUnsavedAnnotation = () => {
         if (!util.isPending(this.state)) {
-            this.hideDialog();
+            this.unmountPopover();
             return;
         }
 
         this.emit(THREAD_EVENT.cancel);
         this.destroy();
-    }
+    };
 
     //--------------------------------------------------------------------------
     // Private
@@ -504,21 +483,12 @@ class AnnotationThread extends EventEmitter {
             this.threadNumber = annotation.threadNumber;
         }
 
-        if (this.dialog) {
-            // Add thread number to associated dialog and thread
-            if (this.dialog.element && this.dialog.element.dataset) {
-                this.dialog.element.dataset.threadNumber = this.threadNumber;
-            }
-
-            this.dialog.show(this.annotations);
-            this.dialog.scrollToLastComment();
-        }
-
         if (this.isMobile) {
             // Changing state from pending
             this.state = STATES.hover;
-            this.showDialog();
         }
+
+        this.renderAnnotationPopover();
         this.emit(THREAD_EVENT.save);
     }
 
@@ -645,6 +615,120 @@ class AnnotationThread extends EventEmitter {
         const threadData = this.getThreadEventData();
         super.emit(event, { data: threadData, eventData });
         super.emit('threadevent', { event, data: threadData, eventData });
+    }
+
+    /**
+     * Keydown handler for dialog.
+     *
+     * @private
+     * @param {Event} event DOM event
+     * @return {void}
+     */
+    keydownHandler(event) {
+        event.stopPropagation();
+
+        const key = util.decodeKeydown(event);
+        if (key === 'Escape') {
+            if (this.hasAnnotations()) {
+                this.hide();
+            } else {
+                this.cancelAnnotation();
+            }
+        }
+    }
+
+    /**
+     * Click handler on dialog.
+     *
+     * @private
+     * @param {Event} event DOM event
+     * @return {void}
+     */
+    clickHandler(event) {
+        const eventTarget = event.target;
+        const dataType = util.findClosestDataType(eventTarget);
+
+        switch (dataType) {
+            // Clicking 'Cancel' button to cancel the annotation OR
+            // Clicking 'X' button on mobile dialog to close
+            case DATA_TYPE_MOBILE_CLOSE:
+                // @spramod: is the mobile close button still needed?
+                this.hide();
+
+                if (!this.isMobile) {
+                    // Cancels + destroys the annotation thread
+                    this.cancelAnnotation();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Flip the annotations dialog if the dialog would appear in the lower
+     * half of the viewer
+     *
+     * @private
+     * @param {number} yPos y coordinate for the top of the dialog
+     * @param {number} containerHeight height of the current annotation
+     * container/page
+     * @return {void}
+     */
+    flipDialog(yPos, containerHeight) {
+        const iconPadding = POINT_ANNOTATION_ICON_HEIGHT - POINT_ANNOTATION_ICON_DOT_HEIGHT / 2;
+        const annotationCaretEl = this.element.querySelector(SELECTOR_ANNOTATION_CARET);
+        let top = '';
+        let bottom = '';
+
+        if (yPos <= containerHeight / 2) {
+            // Keep dialog below the icon if in the top half of the viewport
+            top = `${yPos - POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
+            bottom = '';
+
+            this.element.classList.remove(CLASS_FLIPPED_DIALOG);
+
+            annotationCaretEl.style.bottom = '';
+        } else {
+            // Flip dialog to above the icon if in the lower half of the viewport
+            const flippedY = containerHeight - yPos - iconPadding;
+            top = '';
+            bottom = `${flippedY}px`;
+
+            this.element.classList.add(CLASS_FLIPPED_DIALOG);
+
+            // Adjust dialog caret
+            annotationCaretEl.style.top = '';
+            annotationCaretEl.style.bottom = '0px';
+        }
+
+        this.fitDialogHeightInPage();
+        this.toggleFlippedThreadEl();
+        return { top, bottom };
+    }
+
+    /**
+     * Show/hide the top portion of the annotations icon based on if the
+     * entire dialog is flipped
+     *
+     * @private
+     * @return {void}
+     */
+    toggleFlippedThreadEl() {
+        if (!this.element || !this.threadEl) {
+            return;
+        }
+
+        const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_DIALOG);
+        if (!isDialogFlipped) {
+            return;
+        }
+
+        if (this.element.classList.contains(CLASS_HIDDEN)) {
+            this.threadEl.classList.remove(CLASS_FLIPPED_DIALOG);
+        } else {
+            this.threadEl.classList.add(CLASS_FLIPPED_DIALOG);
+        }
     }
 }
 

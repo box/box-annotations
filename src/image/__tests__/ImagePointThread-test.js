@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import ImagePointDialog from '../ImagePointDialog';
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
 import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
@@ -43,7 +42,7 @@ describe('image/ImagePointThread', () => {
     describe('show', () => {
         beforeEach(() => {
             util.showElement = jest.fn();
-            thread.showDialog = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
             imageUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([1, 2]);
         });
 
@@ -56,31 +55,24 @@ describe('image/ImagePointThread', () => {
             expect(util.showElement).toBeCalledWith(thread.element);
         });
 
-        it('should show the dialog if the state is pending', () => {
+        it('should render the popover if the state is pending', () => {
             thread.state = STATES.pending;
             thread.show();
-            expect(thread.showDialog).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
         });
 
-        it('should not show the dialog if the state is not pending', () => {
+        it('should not render the popover if the state is not pending', () => {
             thread.state = STATES.inactive;
             thread.show();
-            expect(thread.showDialog).not.toBeCalled();
+            expect(thread.renderAnnotationPopover).not.toBeCalled();
         });
 
-        it('should not show dialog if user is on a mobile device and the thread has no annotations yet', () => {
+        it('should not render the popover if user is on a mobile device and the thread has no annotations yet', () => {
             thread.isMobile = true;
             thread.annotations = [];
             thread.state = STATES.inactive;
             thread.show();
-            expect(thread.showDialog).not.toBeCalled();
-        });
-    });
-
-    describe('createDialog', () => {
-        it('should initialize an appropriate dialog', () => {
-            thread.createDialog();
-            expect(thread.dialog instanceof ImagePointDialog).toBeTruthy();
+            expect(thread.renderAnnotationPopover).not.toBeCalled();
         });
     });
 });

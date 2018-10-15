@@ -6,7 +6,6 @@ exports[`components/ActionControls/HighlightControls should correctly render pen
 >
   <PlainButton
     className="ba-highlight-btn"
-    isDisabled={true}
     onClick={[MockFunction]}
     type="button"
   >
@@ -36,7 +35,6 @@ exports[`components/ActionControls/HighlightControls should correctly render pen
 >
   <PlainButton
     className="ba-highlight-btn"
-    isDisabled={true}
     onClick={[MockFunction]}
     type="button"
   >
@@ -55,8 +53,6 @@ exports[`components/ActionControls/HighlightControls should correctly render sav
 >
   <PlainButton
     className="ba-highlight-btn"
-    isDisabled={false}
-    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation
@@ -85,8 +81,6 @@ exports[`components/ActionControls/HighlightControls should correctly render sav
 >
   <PlainButton
     className="ba-highlight-btn"
-    isDisabled={false}
-    onClick={[MockFunction]}
     type="button"
   >
     <IconHighlightAnnotation

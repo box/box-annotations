@@ -422,9 +422,7 @@ class AnnotationModeController extends EventEmitter {
             return;
         }
 
-        Object.keys(this.threads).forEach((pageNum) => {
-            this.renderPage(pageNum);
-        });
+        Object.keys(this.threads).forEach((pageNum) => this.renderPage(pageNum));
     }
 
     /**
@@ -435,6 +433,14 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum) {
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        let dialogLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (!dialogLayer) {
+            dialogLayer = document.createElement('span');
+            dialogLayer.classList.add('ba-dialog-layer');
+            pageEl.appendChild(dialogLayer);
+        }
+
         if (!this.threads || !this.threads[pageNum]) {
             return;
         }
@@ -448,7 +454,7 @@ class AnnotationModeController extends EventEmitter {
                 return;
             }
 
-            thread.hideDialog();
+            thread.unmountPopover();
 
             // Sets the annotatedElement if the thread was fetched before the
             // dependent document/viewer finished loading
@@ -478,8 +484,6 @@ class AnnotationModeController extends EventEmitter {
                     hadPendingThreads = true;
                     this.pendingThreadID = null;
                     thread.destroy();
-                } else if (thread.isDialogVisible()) {
-                    thread.hideDialog();
                 }
             });
         });
