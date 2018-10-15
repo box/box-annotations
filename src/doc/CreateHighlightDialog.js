@@ -58,6 +58,10 @@ class CreateHighlightDialog extends EventEmitter {
         this.allowComment = config.allowComment || false;
     }
 
+    destroy() {
+        this.unmountPopover();
+    }
+
     unmountPopover() {
         if (this.createPopoverComponent && this.parentEl) {
             unmountComponentAtNode(this.parentEl);
@@ -67,7 +71,7 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     /**
-     * Show the dialog. Adds to the parent container if it isn't already there.
+     * Render the popover
      *
      * @public
      * @param {HTMLElement} selection Current text selection
@@ -76,12 +80,6 @@ class CreateHighlightDialog extends EventEmitter {
      */
     show(selection, type = TYPES.highlight) {
         if (!selection) {
-            return;
-        }
-
-        // Select page of first node selected
-        const pageInfo = getPageInfo(selection.anchorNode);
-        if (!pageInfo.pageEl) {
             return;
         }
 

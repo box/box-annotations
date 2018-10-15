@@ -92,7 +92,6 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     destroy() {
-        // this.emit('dialogdelete');
         if (this.lastAnimationRequestId) {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }

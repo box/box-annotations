@@ -19,8 +19,19 @@ import {
 let controller;
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('controllers/DrawingModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         controller = new DrawingModeController();
         thread = {
             minX: 10,
@@ -31,6 +42,7 @@ describe('controllers/DrawingModeController', () => {
                 page: 1
             },
             info: 'I am a thread',
+            annotatedElement: rootElement,
             addListener: jest.fn(),
             removeListener: jest.fn(),
             saveAnnotation: jest.fn(),
@@ -42,9 +54,12 @@ describe('controllers/DrawingModeController', () => {
             bindDrawingListeners: jest.fn(),
             unbindDrawingListeners: jest.fn(),
             getThreadEventData: jest.fn(),
-            show: jest.fn()
+            show: jest.fn(),
+            hide: jest.fn(),
+            renderAnnotationPopover: jest.fn()
         };
         controller.emit = jest.fn();
+        controller.annotatedElement = rootElement;
     });
 
     afterEach(() => {
@@ -83,9 +98,7 @@ describe('controllers/DrawingModeController', () => {
 
     describe('bindDOMListeners()', () => {
         beforeEach(() => {
-            controller.annotatedElement = {
-                addEventListener: jest.fn()
-            };
+            controller.annotatedElement.addEventListener = jest.fn();
         });
 
         it('should bind DOM listeners for desktop devices', () => {
@@ -115,9 +128,7 @@ describe('controllers/DrawingModeController', () => {
 
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
-            controller.annotatedElement = {
-                removeEventListener: jest.fn()
-            };
+            controller.annotatedElement.removeEventListener = jest.fn();
         });
 
         it('should unbind DOM listeners for desktop devices', () => {
@@ -298,25 +309,22 @@ describe('controllers/DrawingModeController', () => {
 
     describe('handleThreadEvents()', () => {
         beforeEach(() => {
-            thread.dialog = {};
-
             controller.unbindListeners = jest.fn();
             controller.bindListeners = jest.fn();
-            controller.saveThread = jest.fn();
             controller.registerThread = jest.fn();
             controller.updateUndoRedoButtonEls = jest.fn();
             controller.unregisterThread = jest.fn();
-
-            controller.annotatedElement = document.createElement('div');
+            util.clearCanvas = jest.fn();
+            controller.threads = {};
         });
 
-        it('should save thread on softcommit', () => {
+        it('should save thread on annotationsaved', () => {
             controller.handleThreadEvents(thread, {
-                event: 'softcommit'
+                event: THREAD_EVENT.save
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
-            expect(controller.saveThread).toBeCalled();
+            expect(controller.registerThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
             expect(thread.handleStart).not.toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
@@ -349,7 +357,7 @@ describe('controllers/DrawingModeController', () => {
                 handleStart: jest.fn()
             };
             const data = {
-                event: 'softcommit',
+                event: THREAD_EVENT.save,
                 eventData: {
                     location: 'not empty'
                 }
@@ -359,7 +367,7 @@ describe('controllers/DrawingModeController', () => {
             });
 
             controller.handleThreadEvents(thread1, data);
-            expect(controller.saveThread).toBeCalled();
+            expect(controller.registerThread).toBeCalled();
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
             expect(thread2.handleStart).toBeCalledWith(data.eventData.location);
@@ -369,7 +377,7 @@ describe('controllers/DrawingModeController', () => {
         it('should soft delete a pending thread and restart mode listeners', () => {
             thread.state = 'pending';
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.threadCleanup
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -380,33 +388,30 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should delete a non-pending thread', () => {
-            thread.state = 'idle';
+            thread.state = 'inactive';
             // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
-            controller.registerThread(thread);
 
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.threadCleanup
             });
             expect(controller.unregisterThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
-            expect(thread.deleteThread).toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
         });
 
         it('should not delete a thread if the dialog no longer exists', () => {
-            thread.dialog = null;
             // eslint-disable-next-line new-cap
             controller.threads[1] = new rbush();
-            controller.registerThread(thread);
+            thread.state = 'pending';
 
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.threadCleanup
             });
-            expect(controller.unregisterThread).not.toBeCalled();
-            expect(thread.removeListener).not.toBeCalled();
-            expect(thread.unbindDrawingListeners).not.toBeCalled();
+            expect(controller.unbindListeners).toBeCalled();
+            expect(controller.bindListeners).toBeCalled();
+            expect(thread.destroy).toBeCalled();
         });
     });
 
@@ -455,8 +460,6 @@ describe('controllers/DrawingModeController', () => {
 
     describe('renderPage()', () => {
         beforeEach(() => {
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
             util.clearCanvas = jest.fn();
         });
 

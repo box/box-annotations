@@ -2,50 +2,74 @@
 import * as docUtil from '../docUtil';
 import * as util from '../../util';
 import DocDrawingThread from '../DocDrawingThread';
-import DocDrawingDialog from '../DocDrawingDialog';
 import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
 import { DRAW_STATES, STATES } from '../../constants';
 
 let thread;
 
-const html = '<div class="page-element" id="doc-page-el" data-page=1></div>';
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
 
 describe('doc/DocDrawingThread', () => {
     let rootElement;
+    let api;
 
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
-        thread = new DocDrawingThread({
-            api: {
-                user: {
-                    id: -1
-                }
-            }
-        });
-        thread.permissions = { canAnnotate: false };
-        thread.location = {
-            x: 0,
-            y: 0,
-            page: thread.page
+        api = {
+            user: {},
+            create: jest.fn().mockResolvedValue({}),
+            delete: jest.fn().mockResolvedValue({}),
+            formatAnnotation: jest.fn()
         };
+
+        thread = new DocDrawingThread({
+            annotatedElement: rootElement,
+            annotations: [],
+            api,
+            fileVersionId: 1,
+            location: {
+                x: 0,
+                y: 0,
+                page: 1
+            },
+            threadID: 2,
+            type: 'draw',
+            permissions: {
+                canAnnotate: false,
+                canViewAllAnnotations: true
+            },
+            minX: 1,
+            maxX: 10,
+            minY: 1,
+            maxY: 10
+        });
         thread.getThreadEventData = jest.fn();
+        thread.renderAnnotationPopover = jest.fn();
+        thread.unmountPopover = jest.fn();
+        expect(thread.state).toEqual(STATES.inactive);
     });
 
     afterEach(() => {
         document.body.removeChild(rootElement);
-        thread.destroy();
-        thread = null;
+
+        if (thread) {
+            thread.destroy();
+            thread = null;
+        }
     });
 
     describe('handleMove()', () => {
         beforeEach(() => {
             thread.drawingFlag = DRAW_STATES.drawing;
-            thread.pageEl = document.querySelector('.page-element');
-            thread.page = thread.pageEl.getAttribute('page');
+            thread.pageEl = rootElement;
+            thread.page = 1;
             thread.pendingPath = {
                 addCoordinate: jest.fn(),
                 isEmpty: jest.fn()
@@ -138,7 +162,6 @@ describe('doc/DocDrawingThread', () => {
             thread.updateBoundary = jest.fn();
             thread.regenerateBoundary = jest.fn();
             thread.render = jest.fn();
-            thread.createDialog = jest.fn();
             thread.drawingFlag = DRAW_STATES.drawing;
             thread.pendingPath = {
                 isEmpty: () => false
@@ -156,22 +179,9 @@ describe('doc/DocDrawingThread', () => {
             expect(thread.updateBoundary).toBeCalled();
             expect(thread.regenerateBoundary).toBeCalled();
             expect(thread.render).toBeCalled();
-            expect(thread.createDialog).toBeCalled();
             expect(thread.pathContainer.insert).toBeCalled();
             expect(thread.drawingFlag).toEqual(DRAW_STATES.idle);
             expect(thread.pendingPath).toBeNull();
-        });
-
-        it('should not create a dialog if one already exists', () => {
-            thread.dialog = {
-                value: 'non-empty',
-                removeAllListeners: jest.fn(),
-                destroy: jest.fn(),
-                isVisible: jest.fn().mockReturnValue(false)
-            };
-
-            thread.handleStop();
-            expect(thread.createDialog).not.toBeCalled();
         });
     });
 
@@ -237,60 +247,6 @@ describe('doc/DocDrawingThread', () => {
         });
     });
 
-    describe('saveAnnotation()', () => {
-        const resetValue = AnnotationThread.prototype.saveAnnotation;
-
-        beforeEach(() => {
-            thread.regenerateBoundary = jest.fn();
-            thread.show = jest.fn();
-            thread.createDialog = jest.fn();
-            Object.defineProperty(AnnotationThread.prototype, 'saveAnnotation', { value: jest.fn() });
-        });
-
-        afterEach(() => {
-            Object.defineProperty(AnnotationThread.prototype, 'saveAnnotation', { value: resetValue });
-        });
-
-        it('should clean up without committing when there are no paths to be saved', () => {
-            thread.reset = jest.fn();
-            thread.pathContainer = {
-                isEmpty: jest.fn().mockReturnValue(true)
-            };
-
-            thread.saveAnnotation('draw');
-            expect(thread.pathContainer.isEmpty).toBeCalled();
-            expect(AnnotationThread.prototype.saveAnnotation).not.toBeCalled();
-            expect(thread.reset).toBeCalled();
-            expect(thread.show).not.toBeCalled();
-            expect(thread.createDialog).not.toBeCalled();
-        });
-
-        it('should clean up and commit in-progress drawings when there are paths to be saved', () => {
-            thread.drawingContext = {
-                canvas: {
-                    style: {
-                        width: 10,
-                        height: 15
-                    }
-                },
-                width: 20,
-                height: 30,
-                clearRect: jest.fn()
-            };
-            thread.pathContainer = {
-                isEmpty: jest.fn().mockReturnValue(false)
-            };
-
-            thread.saveAnnotation('draw');
-            expect(thread.pathContainer.isEmpty).toBeCalled();
-            expect(thread.drawingContext.clearRect).toBeCalled();
-            expect(AnnotationThread.prototype.saveAnnotation).toBeCalled();
-            expect(thread.show).toBeCalled();
-            expect(thread.regenerateBoundary).toBeCalled();
-            expect(thread.createDialog).toBeCalled();
-        });
-    });
-
     describe('hasPageChanged()', () => {
         it('should return false when there is no location', () => {
             const value = thread.hasPageChanged();
@@ -301,17 +257,16 @@ describe('doc/DocDrawingThread', () => {
             const location = {
                 page: undefined
             };
+            thread.location = location;
             const value = thread.hasPageChanged(location);
             expect(value).toBeFalsy();
         });
 
         it('should return false when the given location page is the same as the thread location', () => {
-            thread.location = {
+            const location = {
                 page: 2
             };
-            const location = {
-                page: thread.location.page
-            };
+            thread.location = location;
             const value = thread.hasPageChanged(location);
             expect(value).toBeFalsy();
         });
@@ -332,12 +287,10 @@ describe('doc/DocDrawingThread', () => {
         beforeEach(() => {
             thread.selectContext = jest.fn();
             thread.draw = jest.fn();
+            thread.destroy = jest.fn();
             thread.pathContainer = {
                 applyToItems: jest.fn()
             };
-
-            thread.annotatedElement = 'annotatedEl';
-            thread.location = 'loc';
         });
 
         it('should do nothing when no element is assigned to the DocDrawingThread', () => {
@@ -357,22 +310,6 @@ describe('doc/DocDrawingThread', () => {
             thread.show();
             expect(thread.selectContext).toBeCalled();
             expect(thread.draw).toBeCalled();
-        });
-
-        it('should draw the boundary when a dialog exists and is visible', () => {
-            thread.drawBoundary = jest.fn();
-            thread.dialog = {
-                isVisible: jest.fn().mockReturnValue(true),
-                destroy: jest.fn(),
-                removeAllListeners: jest.fn(),
-                hide: jest.fn(),
-                show: jest.fn()
-            };
-
-            thread.show();
-            expect(thread.dialog.isVisible).toBeCalled();
-            expect(thread.drawBoundary).toBeCalled();
-            expect(thread.dialog.show).toBeCalled();
         });
     });
 
@@ -422,64 +359,27 @@ describe('doc/DocDrawingThread', () => {
     describe('getBrowserRectangularBoundary()', () => {
         it('should return null when no thread has not been assigned a location', () => {
             thread.location = undefined;
-
-            const value = thread.getBrowserRectangularBoundary();
-            expect(value).toBeNull();
+            expect(thread.getBrowserRectangularBoundary()).toBeNull();
         });
 
         it('should return a starting coordinate along with a height and width', () => {
-            thread.pageEl = 'page';
+            thread.annotatedElement = rootElement;
             thread.location = {
-                dimensions: 'not empty'
+                page: 1,
+                dimensions: {}
             };
+            thread.pageEl = {};
 
-            util.createLocation = jest.fn();
+            util.createLocation = jest.fn().mockReturnValue({});
             docUtil.getBrowserCoordinatesFromLocation = jest
                 .fn()
                 .mockReturnValueOnce([5, 5])
                 .mockReturnValueOnce([50, 45]);
 
             const value = thread.getBrowserRectangularBoundary();
-            expect(util.createLocation).toBeCalled.twice;
+            expect(util.createLocation).toBeCalledTimes(2);
             expect(docUtil.getBrowserCoordinatesFromLocation).toHaveBeenCalledTimes(2);
             expect(value).toStrictEqual([5, 5, 45, 40]);
-        });
-    });
-
-    describe('createDialog()', () => {
-        it('should create a new doc drawing dialog', () => {
-            const existingDialog = {
-                destroy: jest.fn()
-            };
-
-            thread.bindCustomListenersOnDialog = jest.fn();
-            thread.dialog = existingDialog;
-            thread.api = {
-                canAnnotate: true,
-                user: { id: -1 }
-            };
-
-            thread.createDialog();
-
-            expect(existingDialog.destroy).toBeCalled();
-            expect(thread.dialog instanceof DocDrawingDialog).toBeTruthy();
-            expect(thread.bindCustomListenersOnDialog).toBeCalled();
-        });
-    });
-
-    describe('bindCustomListenersOnDialog', () => {
-        it('should bind listeners on the dialog', () => {
-            thread.dialog = {
-                addListener: jest.fn(),
-                removeAllListeners: jest.fn(),
-                hide: jest.fn(),
-                destroy: jest.fn(),
-                isVisible: jest.fn()
-            };
-
-            thread.bindCustomListenersOnDialog();
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcreate', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationdelete', expect.any(Function));
         });
     });
 });

@@ -215,7 +215,7 @@ class AnnotationThread extends EventEmitter {
             message,
             location: this.location,
             created_at: new Date().toLocaleString(),
-            created_by: this.annotationService.user,
+            created_by: this.api.user,
             isPending: true
         };
         this.annotations.push(tempAnnotation);

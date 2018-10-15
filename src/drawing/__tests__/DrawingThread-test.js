@@ -1,13 +1,24 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
-import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
+import { STATES } from '../../constants';
 
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('drawing/DrawingThread', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         thread = new DrawingThread({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             annotations: [],
             api: {},
             fileVersionId: 1,
@@ -31,15 +42,10 @@ describe('drawing/DrawingThread', () => {
             window.cancelAnimationFrame = jest.fn();
             thread.reset = jest.fn();
             thread.emit = jest.fn();
+            thread.unmountPopover = jest.fn();
 
+            thread.location.page = 1;
             thread.lastAnimationRequestId = 1;
-            thread.drawingContext = {
-                clearRect: jest.fn(),
-                canvas: {
-                    width: 100,
-                    height: 100
-                }
-            };
             thread.destroy();
 
             expect(window.cancelAnimationFrame).toBeCalledWith(1);
@@ -164,14 +170,12 @@ describe('drawing/DrawingThread', () => {
     describe('render()', () => {
         beforeEach(() => {
             thread.draw = jest.fn();
-            thread.drawBoundary = jest.fn();
         });
 
         it('should draw the pending path when the context is not empty', () => {
             const timeStamp = 20000;
             thread.render(timeStamp);
             expect(thread.draw).toBeCalled();
-            expect(thread.drawBoundary).toBeCalled();
         });
 
         it('should do nothing when the timeElapsed is less than the refresh rate', () => {
@@ -179,27 +183,20 @@ describe('drawing/DrawingThread', () => {
             thread.lastRenderTimestamp = 100;
             thread.render(timeStamp);
             expect(thread.draw).not.toBeCalled();
-            expect(thread.drawBoundary).not.toBeCalled();
         });
     });
 
     describe('setup()', () => {
-        beforeEach(() => {
-            thread.createDialog = jest.fn();
-        });
-
         it('should set the state to be pending when there are no saved annotations', () => {
             thread.annotations = [];
             thread.setup();
             expect(thread.state).toEqual(STATES.pending);
-            expect(thread.createDialog).not.toBeCalled();
         });
 
-        it('should set the state to be inactive and create a dialog when there are saved annotations', () => {
+        it('should set the state to be inactive when there are saved annotations', () => {
             thread.annotations = ['not empty'];
             thread.setup();
             expect(thread.state).toEqual(STATES.inactive);
-            expect(thread.createDialog).toBeCalled();
         });
     });
 
@@ -211,6 +208,7 @@ describe('drawing/DrawingThread', () => {
             thread.drawBoundary = jest.fn();
             thread.emitAvailableActions = jest.fn();
             thread.pathContainer = {
+                isEmpty: jest.fn(),
                 undo: jest.fn().mockReturnValue(false)
             };
         });
@@ -242,6 +240,7 @@ describe('drawing/DrawingThread', () => {
             thread.draw = jest.fn();
             thread.emitAvailableActions = jest.fn();
             thread.pathContainer = {
+                isEmpty: jest.fn(),
                 redo: jest.fn().mockReturnValue(false),
                 getAxisAlignedBoundingBox: jest.fn()
             };
@@ -339,41 +338,6 @@ describe('drawing/DrawingThread', () => {
         });
     });
 
-    describe('drawBoundary()', () => {
-        it('should do nothing when the location has no page', () => {
-            thread.location = {
-                page: undefined
-            };
-            thread.getBrowserRectangularBoundary = jest.fn();
-
-            thread.drawBoundary();
-            expect(thread.getBrowserRectangularBoundary).not.toBeCalled();
-        });
-
-        it('should draw the boundary of the saved path', () => {
-            thread.drawingContext = {
-                save: jest.fn(),
-                beginPath: jest.fn(),
-                setLineDash: jest.fn(),
-                rect: jest.fn(),
-                stroke: jest.fn(),
-                restore: jest.fn()
-            };
-
-            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue([1, 2, 5, 6]);
-            thread.location = { page: 1 };
-
-            thread.drawBoundary();
-            expect(thread.getBrowserRectangularBoundary).toBeCalled();
-            expect(thread.drawingContext.save).toBeCalled();
-            expect(thread.drawingContext.beginPath).toBeCalled();
-            expect(thread.drawingContext.setLineDash).toBeCalled();
-            expect(thread.drawingContext.rect).toBeCalled();
-            expect(thread.drawingContext.stroke).toBeCalled();
-            expect(thread.drawingContext.restore).toBeCalled();
-        });
-    });
-
     describe('regenerateBoundary()', () => {
         it('should do nothing when no drawingPaths have been saved', () => {
             thread.location = {};
@@ -402,26 +366,14 @@ describe('drawing/DrawingThread', () => {
     });
 
     describe('clearBoundary()', () => {
-        it('should clear the drawing context and hide any dialog', () => {
-            thread.drawingContext = {
-                canvas: {
-                    width: 100,
-                    height: 100
-                },
-                clearRect: jest.fn()
-            };
-
-            thread.dialog = {
-                isVisible: jest.fn().mockReturnValue(true),
-                hide: jest.fn(),
-                destroy: jest.fn(),
-                removeAllListeners: jest.fn()
-            };
+        it('should clear the drawing context', () => {
+            const boundaryEl = document.createElement('div');
+            boundaryEl.classList.add('ba-drawing-boundary');
+            rootElement.appendChild(boundaryEl);
+            rootElement.removeChild = jest.fn();
 
             thread.clearBoundary();
-            expect(thread.drawingContext.clearRect).toBeCalled();
-            expect(thread.dialog.isVisible).toBeCalled();
-            expect(thread.dialog.hide).toBeCalled();
+            expect(rootElement.removeChild).toBeCalled();
         });
     });
 });

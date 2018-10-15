@@ -157,7 +157,7 @@ class PointModeController extends AnnotationModeController {
             return;
         }
 
-        // Create new thread with no annotations, show indicator, and show dialog
+        // Create new thread with no annotations, show indicator, and render popover
         const thread = this.annotator.createAnnotationThread([], location, TYPES.point);
         if (!thread) {
             this.hideSharedDialog();

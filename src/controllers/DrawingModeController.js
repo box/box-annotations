@@ -230,7 +230,7 @@ class DrawingModeController extends AnnotationModeController {
         location.minY = location.y;
         location.maxY = location.y;
 
-        // Create new thread with no annotations, show indicator, and show dialog
+        // Create new thread with no annotations, show indicator, and render popover
         const thread = this.annotator.createAnnotationThread([], location, TYPES.draw);
         if (!thread) {
             return;

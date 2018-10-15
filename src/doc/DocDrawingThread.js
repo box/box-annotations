@@ -261,7 +261,18 @@ class DocDrawingThread extends DrawingThread {
         return [x1, y1, width, height];
     }
 
+    /**
+     * Retrieve the lower right corner of the drawing annotation
+     *
+     * @private
+     * @return {Array|null} An array of length 2 with the first item being the x coordinate, the second item
+     *                      being the y coordinate
+     */
     getLowerRightCornerOfBoundary() {
+        if (!this.location || !this.location.dimensions || !this.pageEl) {
+            return null;
+        }
+
         const l1 = createLocation(this.minX, this.minY, this.location.dimensions);
         const l2 = createLocation(this.maxX, this.maxY, this.location.dimensions);
         const [x1, y1] = getBrowserCoordinatesFromLocation(l1, this.pageEl);
@@ -310,7 +321,7 @@ class DocDrawingThread extends DrawingThread {
             this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         }
 
-        // Show dialog so we can get width
+        // Render popover so we can get width
         const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const boundaryEl = findElement(this.annotatedElement, '.ba-drawing-boundary', this.drawBoundary);
         const pageEl =

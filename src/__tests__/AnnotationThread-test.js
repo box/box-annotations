@@ -7,8 +7,7 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     CLASS_HIDDEN,
-    THREAD_EVENT,
-    SELECTOR_ANNOTATED_ELEMENT
+    THREAD_EVENT
 } from '../constants';
 
 let thread;
@@ -28,7 +27,7 @@ describe('AnnotationThread', () => {
         document.body.appendChild(rootElement);
 
         thread = new AnnotationThread({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             annotations: [],
             api,
             fileVersionId: '1',
@@ -38,17 +37,6 @@ describe('AnnotationThread', () => {
             threadNumber: '1',
             type: 'point'
         });
-
-        thread.dialog = {
-            addListener: jest.fn(),
-            annotations: [],
-            destroy: jest.fn(),
-            setup: jest.fn(),
-            removeAllListeners: jest.fn(),
-            show: jest.fn(),
-            hide: jest.fn(),
-            scrollToLastComment: jest.fn()
-        };
 
         thread.emit = jest.fn();
     });
@@ -61,39 +49,32 @@ describe('AnnotationThread', () => {
     describe('destroy()', () => {
         beforeEach(() => {
             thread.state = STATES.pending;
-            thread.unbindCustomListenersOnDialog = jest.fn();
             thread.unbindDOMListeners = jest.fn();
+            thread.unmountPopover = jest.fn();
         });
 
         it('should unbind listeners and remove thread element and broadcast that the thread was deleted', () => {
             thread.destroy();
-            expect(thread.unbindCustomListenersOnDialog).toBeCalled();
             expect(thread.unbindDOMListeners).toBeCalled();
             expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadDelete);
+            expect(thread.unmountPopover).toBeCalled();
         });
 
         it('should emit annotationthreaddeleted only if thread is not in a pending state', () => {
             thread.state = STATES.inactive;
             thread.destroy();
-            expect(thread.unbindCustomListenersOnDialog).toBeCalled();
             expect(thread.unbindDOMListeners).toBeCalled();
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.threadDelete);
-        });
-
-        it('should not destroy the dialog on mobile', () => {
-            thread.element = null;
-            thread.isMobile = true;
-
-            thread.destroy();
-            expect(thread.unbindCustomListenersOnDialog).not.toBeCalled();
-            expect(thread.dialog.destroy).not.toBeCalled();
+            expect(thread.unmountPopover).toBeCalled();
         });
     });
 
     describe('hide()', () => {
         it('should hide the thread element', () => {
+            thread.unmountPopover = jest.fn();
             thread.hide();
-            expect(thread.element.classList).toContain(CLASS_HIDDEN);
+            expect(thread.unmountPopover).toBeCalled();
+            expect(thread.state).toEqual(STATES.inactive);
         });
     });
 
@@ -104,53 +85,12 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('isDialogVisible()', () => {
-        beforeEach(() => {
-            thread.dialog = {
-                element: document.createElement('div')
-            };
-        });
-
-        it('returns true if thread\'s dialog is visible', () => {
-            expect(thread.isDialogVisible()).toBeTruthy();
-        });
-
-        it('returns false if thread\'s dialog is hidden', () => {
-            thread.dialog.element.classList.add(CLASS_HIDDEN);
-            expect(thread.isDialogVisible()).toBeFalsy();
-        });
-    });
-
-    describe('showDialog()', () => {
-        it('should setup the thread dialog if the dialog element does not already exist', () => {
-            thread.dialog.element = null;
-            thread.showDialog();
-            expect(thread.dialog.setup).toBeCalled();
-            expect(thread.dialog.show).toBeCalled();
-        });
-
-        it('should not setup the thread dialog if the dialog element already exists', () => {
-            thread.dialog.element = {};
-            thread.showDialog();
-            expect(thread.dialog.setup).not.toBeCalled();
-            expect(thread.dialog.show).toBeCalled();
-        });
-    });
-
-    describe('hideDialog()', () => {
-        it('should hide the thread dialog', () => {
-            thread.hideDialog();
-            expect(thread.state).toEqual(STATES.inactive);
-            expect(thread.dialog.hide).toBeCalled();
-        });
-    });
-
     describe('saveAnnotation()', () => {
         beforeEach(() => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
-            thread.api.create = jest.fn();
             thread.handleThreadSaveError = jest.fn();
             thread.updateTemporaryAnnotation = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
         });
 
         it('should save an annotation with the specified type and text', (done) => {
@@ -185,6 +125,7 @@ describe('AnnotationThread', () => {
             thread.api.create = jest.fn();
             thread.api.formatAnnotation = jest.fn().mockReturnValue(serverAnnotation);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
+            thread.renderAnnotationPopover = jest.fn();
             thread.annotations = [tempAnnotation];
         });
 
@@ -201,33 +142,20 @@ describe('AnnotationThread', () => {
 
         it('should emit an annotationsaved event on success', () => {
             thread.threadNumber = undefined;
-            thread.emit = jest.fn();
-
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.save);
         });
 
-        it('should update thread number and replace temporary annotation if dialog exists', () => {
-            thread.dialog.element = document.createElement('div');
-
+        it('should only render popover on desktop', () => {
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.dialog.element.dataset.threadNumber).not.toBeUndefined();
-            expect(thread.dialog.show).toBeCalledWith([serverAnnotation]);
-            expect(thread.dialog.scrollToLastComment).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+            expect(thread.state).toEqual(STATES.pending);
         });
 
-        it('should not show dialog on web browsers', () => {
-            thread.showDialog = jest.fn();
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.showDialog).not.toBeCalled();
-            expect(thread.state).not.toEqual(STATES.hover);
-        });
-
-        it('should only show dialog immediately on mobile devices', () => {
-            thread.showDialog = jest.fn();
+        it('should only render popover on mobile', () => {
             thread.isMobile = true;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.showDialog).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.state).toEqual(STATES.hover);
         });
     });
@@ -259,33 +187,12 @@ describe('AnnotationThread', () => {
                 threadID: 1
             };
 
-            thread = new AnnotationThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [annotation],
-                api,
-                fileVersionId: '1',
-                isMobile: false,
-                location: {},
-                threadID: '2',
-                threadNumber: '1',
-                type: 'point'
-            });
-
-            thread.dialog = {
-                addListener: jest.fn(),
-                annotations: [annotation],
-                destroy: jest.fn(),
-                removeAllListeners: jest.fn(),
-                show: jest.fn(),
-                hide: jest.fn(),
-                hideMobileDialog: jest.fn(),
-                setup: jest.fn()
-            };
-
+            thread.api = api;
+            thread.annotations = [annotation];
             util.isPlainHighlight = jest.fn();
             thread.cancelFirstComment = jest.fn();
             thread.destroy = jest.fn();
-            thread.showDialog = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({
                 threadNumber: 1
             });
@@ -299,21 +206,9 @@ describe('AnnotationThread', () => {
             promise.then(() => {
                 threadPromise.then(() => {
                     expect(thread.destroy).toBeCalled();
-                    expect(thread.dialog.show).not.toBeCalled();
-                    expect(thread.dialog.hideMobileDialog).not.toBeCalled();
+                    expect(thread.renderAnnotationPopover).not.toBeCalled();
                     done();
                 });
-            });
-        });
-
-        it('should destroy the thread and hide the mobile dialog if the deleted annotation was the last annotation in the thread on mobile', (done) => {
-            thread.isMobile = true;
-
-            const promise = thread.deleteAnnotation('someID', false);
-            promise.then(() => {
-                expect(thread.dialog.show).toBeCalled();
-                expect(thread.dialog.hideMobileDialog).toBeCalled();
-                done();
             });
         });
 
@@ -321,7 +216,7 @@ describe('AnnotationThread', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
-                expect(thread.dialog.show).toBeCalledWith([annotation2]);
+                expect(thread.renderAnnotationPopover).toBeCalled();
                 done();
             });
         });
@@ -339,7 +234,7 @@ describe('AnnotationThread', () => {
         it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', (done) => {
             annotation2.permissions.can_delete = false;
             thread.annotations.push(annotation2);
-            util.isPlain = jest.fn().mockReturnValue(true);
+            util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
@@ -358,17 +253,18 @@ describe('AnnotationThread', () => {
 
         it('should broadcast an error if there was an error deleting from server', (done) => {
             api.delete = jest.fn().mockRejectedValue();
+            thread.api = api;
 
             const promise = thread.deleteAnnotation('someID', true);
+            expect(api.delete).toBeCalled();
             promise.catch(() => {
-                expect(api.delete).toBeCalled();
                 done();
             });
         });
 
         it('should toggle highlight dialogs with the delete of the last comment if user does not have permission to delete the entire annotation', () => {
             thread.annotations.push(annotation2);
-            util.isPlain = jest.fn().mockReturnValue(true);
+            util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
             const promise = thread.deleteAnnotation('someID');
             promise.then(() => {
@@ -380,7 +276,7 @@ describe('AnnotationThread', () => {
         it('should destroy the annotation with the delete of the last comment if the user has permissions', () => {
             annotation2.permissions.can_delete = true;
             thread.annotations.push(annotation2);
-            util.isPlain = jest.fn().mockReturnValue(true);
+            util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
             const promise = thread.deleteAnnotation('someID');
             promise.then(() => {
@@ -481,19 +377,8 @@ describe('AnnotationThread', () => {
 
     describe('setup()', () => {
         beforeEach(() => {
-            thread.createDialog = jest.fn();
-            thread.bindCustomListenersOnDialog = jest.fn();
             thread.setupElement = jest.fn();
             thread.destroy = jest.fn();
-        });
-
-        it('should setup dialog', () => {
-            thread.dialog = {};
-            thread.setup();
-            expect(thread.createDialog).toBeCalled();
-            expect(thread.bindCustomListenersOnDialog).toBeCalled();
-            expect(thread.setupElement).toBeCalled();
-            expect(thread.dialog.isMobile).toEqual(thread.isMobile);
         });
 
         it('should set state to pending if thread is initialized with no annotations', () => {
@@ -502,19 +387,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should set state to inactive if thread is initialized with annotations', () => {
-            thread = new AnnotationThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [{}],
-                api,
-                fileVersionId: '1',
-                isMobile: false,
-                location: {},
-                threadID: '2',
-                threadNumber: '1',
-                type: 'point'
-            });
-            thread.destroy = jest.fn();
-
+            thread.annotations = [{}];
             thread.setup();
             expect(thread.state).toEqual(STATES.inactive);
         });
@@ -568,34 +441,10 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('bindCustomListenersOnDialog()', () => {
-        it('should bind custom listeners on dialog', () => {
-            thread.bindCustomListenersOnDialog();
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcreate', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcancel', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationdelete', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationshow', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationhide', expect.any(Function));
-        });
-    });
-
-    describe('unbindCustomListenersOnDialog()', () => {
-        it('should unbind custom listeners from dialog', () => {
-            thread.unbindCustomListenersOnDialog();
-            expect(thread.dialog.removeAllListeners).toBeCalledWith([
-                'annotationcreate',
-                'annotationcancel',
-                'annotationdelete',
-                'annotationshow',
-                'annotationhide'
-            ]);
-        });
-    });
-
     describe('cancelUnsavedAnnotation()', () => {
         beforeEach(() => {
             thread.destroy = jest.fn();
-            thread.hideDialog = jest.fn();
+            thread.unmountPopover = jest.fn();
         });
 
         it('should destroy thread if in a pending/pending-active state', () => {
@@ -603,7 +452,7 @@ describe('AnnotationThread', () => {
             thread.cancelUnsavedAnnotation();
             expect(thread.destroy).toBeCalled();
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.cancel);
-            expect(thread.hideDialog).not.toBeCalled();
+            expect(thread.unmountPopover).not.toBeCalled();
         });
 
         it('should not destroy thread if not in a pending/pending-active state', () => {
@@ -611,7 +460,7 @@ describe('AnnotationThread', () => {
             thread.cancelUnsavedAnnotation();
             expect(thread.destroy).not.toBeCalled();
             expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.cancel);
-            expect(thread.hideDialog).toBeCalled();
+            expect(thread.unmountPopover).toBeCalled();
         });
     });
 

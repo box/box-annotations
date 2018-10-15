@@ -545,7 +545,7 @@ class DocAnnotator extends Annotator {
 
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
         if (isCreateDialogVisible) {
-            this.createHighlightDialog.hide();
+            this.createHighlightDialog.unmountPopover();
         }
 
         this.isCreatingHighlight = false;
@@ -617,7 +617,7 @@ class DocAnnotator extends Annotator {
         // Bail if mid highlight and tapping on the screen
         if (!docUtil.isValidSelection(selection)) {
             this.lastHighlightEvent = null;
-            this.createHighlightDialog.hide();
+            this.createHighlightDialog.unmountPopover();
             this.highlighter.removeAllHighlights();
             return;
         }
