@@ -2,140 +2,313 @@
 
 exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
 <Internationalize>
-  <Overlay
-    className="ba-popover-overlay"
+  <div
+    className="ba-popover"
   >
-    <AnnotatorLabel
-      isPending={true}
+    <span
+      className="ba-popover-caret"
     />
-    <ActionControls
-      canDelete={false}
-      isPending={true}
-      onCancel={[MockFunction]}
-      onCommentClick={[Function]}
-      onCreate={[MockFunction]}
-      onDelete={[MockFunction]}
-    />
-  </Overlay>
+    <Overlay
+      className="ba-popover-overlay ba-create-popover"
+    >
+      <AnnotatorLabel
+        isPending={true}
+      />
+      <ActionControls
+        canComment={false}
+        canDelete={false}
+        hasComments={true}
+        isPending={true}
+        onCancel={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onCommentClick={[Function]}
+        onCreate={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
 </Internationalize>
 `;
 
 exports[`components/AnnotationPopover should correctly render a popover with comments and reply textarea 1`] = `
 <Internationalize>
-  <Overlay
-    className="ba-popover-overlay"
+  <div
+    className="ba-popover"
   >
-    <CommentList
-      comments={
-        Array [
-          Object {
-            "createdAt": "2017-09-27T10:40:41-07:00",
-            "createdBy": Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            },
-            "id": "123",
-            "message": "test",
-            "permissions": Object {},
-          },
-          Object {
-            "createdAt": "2017-09-27T10:40:41-07:00",
-            "createdBy": Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            },
-            "id": "456",
-            "message": "test",
-            "permissions": Object {},
-          },
-        ]
-      }
-      onDelete={[MockFunction]}
+    <span
+      className="ba-popover-caret"
     />
-    <ActionControls
-      canDelete={false}
-      isPending={false}
-      onCancel={[MockFunction]}
-      onCommentClick={[Function]}
-      onCreate={[MockFunction]}
-      onDelete={[MockFunction]}
-    />
-  </Overlay>
+    <Overlay
+      className="ba-popover-overlay"
+    >
+      <CommentList
+        comments={
+          Array [
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "123",
+              "message": "test",
+              "permissions": Object {},
+            },
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "456",
+              "message": "test",
+              "permissions": Object {},
+            },
+          ]
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+      <ActionControls
+        canComment={false}
+        canDelete={false}
+        hasComments={true}
+        isPending={false}
+        onCancel={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onCommentClick={[Function]}
+        onCreate={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
 </Internationalize>
 `;
 
 exports[`components/AnnotationPopover should correctly render a view-only popover with comments 1`] = `
 <Internationalize>
-  <Overlay
-    className="ba-popover-overlay"
+  <div
+    className="ba-popover"
   >
-    <CommentList
-      comments={
-        Array [
-          Object {
-            "createdAt": "2017-09-27T10:40:41-07:00",
-            "createdBy": Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            },
-            "id": "123",
-            "message": "test",
-            "permissions": Object {},
-          },
-          Object {
-            "createdAt": "2017-09-27T10:40:41-07:00",
-            "createdBy": Object {
-              "email": "princess@genovia.gov",
-              "id": "789ghi",
-              "name": "Mia Thermopolis",
-              "type": "user",
-            },
-            "id": "456",
-            "message": "test",
-            "permissions": Object {},
-          },
-        ]
-      }
-      onDelete={[MockFunction]}
+    <span
+      className="ba-popover-caret"
     />
-  </Overlay>
+    <Overlay
+      className="ba-popover-overlay"
+    >
+      <CommentList
+        comments={
+          Array [
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "123",
+              "message": "test",
+              "permissions": Object {},
+            },
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "456",
+              "message": "test",
+              "permissions": Object {},
+            },
+          ]
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
 </Internationalize>
 `;
 
 exports[`components/AnnotationPopover should correctly render an annotation with a annotator label and no comments 1`] = `
 <Internationalize>
-  <Overlay
-    className="ba-popover ba-inline"
+  <div
+    className="ba-popover"
   >
-    <AnnotatorLabel
-      isPending={false}
+    <span
+      className="ba-popover-caret"
     />
-    <ActionControls
-      canDelete={false}
-      isPending={false}
-      onCancel={[MockFunction]}
-      onCommentClick={[Function]}
-      onCreate={[MockFunction]}
-      onDelete={[MockFunction]}
-    />
-  </Overlay>
+    <Overlay
+      className="ba-popover-overlay ba-inline"
+    >
+      <AnnotatorLabel
+        isPending={false}
+      />
+      <ActionControls
+        canComment={false}
+        canDelete={false}
+        hasComments={true}
+        isPending={false}
+        onCancel={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onCommentClick={[Function]}
+        onCreate={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
 </Internationalize>
 `;
 
 exports[`components/AnnotationPopover should render a view-only annotation with a annotator label and no comments 1`] = `
 <Internationalize>
-  <Overlay
-    className="ba-popover ba-inline"
+  <div
+    className="ba-popover"
   >
-    <AnnotatorLabel
-      isPending={false}
+    <span
+      className="ba-popover-caret"
     />
-  </Overlay>
+    <Overlay
+      className="ba-popover-overlay ba-inline"
+    >
+      <AnnotatorLabel
+        isPending={false}
+      />
+    </Overlay>
+  </div>
 </Internationalize>
 `;
