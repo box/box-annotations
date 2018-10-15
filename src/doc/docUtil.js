@@ -451,6 +451,8 @@ export function getDialogCoordsFromRange(range) {
  * plain highlights
  *
  * @private
+ * @param  {HTMLElement} annotatedElement Annotated element
+ * @param  {Object} location Annotation location
  * @param  {DOMRect} pageDimensions Dimensions of the highlight annotations dialog element
  * @param  {number} pageHeight Document page height
  * @return {number[]} [x,y] coordinates in DOM space in CSS

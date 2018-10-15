@@ -6,7 +6,6 @@ import {
     TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
-    CLASS_HIDDEN,
     THREAD_EVENT
 } from '../constants';
 

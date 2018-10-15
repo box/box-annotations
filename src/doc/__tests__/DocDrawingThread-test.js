@@ -2,7 +2,6 @@
 import * as docUtil from '../docUtil';
 import * as util from '../../util';
 import DocDrawingThread from '../DocDrawingThread';
-import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
 import { DRAW_STATES, STATES } from '../../constants';
 
