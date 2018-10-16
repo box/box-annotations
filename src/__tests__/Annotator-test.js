@@ -27,10 +27,25 @@ describe('Annotator', () => {
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
+        thread = {
+            threadID: '123abc',
+            show: jest.fn(),
+            hide: jest.fn(),
+            addListener: jest.fn(),
+            unbindCustomListenersOnThread: jest.fn(),
+            removeListener: jest.fn(),
+            scrollIntoView: jest.fn(),
+            getThreadEventData: jest.fn(),
+            showDialog: jest.fn(),
+            type: 'something',
+            location: { page: 1 },
+            annotations: []
+        };
+
         controller = {
             init: jest.fn(),
             addListener: jest.fn(),
-            registerThread: jest.fn(),
+            registerThread: jest.fn().mockReturnValue(thread),
             isEnabled: jest.fn(),
             getButton: jest.fn(),
             enter: jest.fn(),
@@ -48,7 +63,6 @@ describe('Annotator', () => {
         };
 
         annotator = new Annotator({
-            canAnnotate: true,
             container: rootElement,
             api,
             file: {
@@ -65,21 +79,6 @@ describe('Annotator', () => {
                 authError: 'auth error'
             }
         });
-
-        thread = {
-            threadID: '123abc',
-            show: jest.fn(),
-            hide: jest.fn(),
-            addListener: jest.fn(),
-            unbindCustomListenersOnThread: jest.fn(),
-            removeListener: jest.fn(),
-            scrollIntoView: jest.fn(),
-            getThreadEventData: jest.fn(),
-            showDialog: jest.fn(),
-            type: 'something',
-            location: { page: 1 },
-            annotations: []
-        };
     });
 
     afterEach(() => {
@@ -105,7 +104,7 @@ describe('Annotator', () => {
             annotator.setupMobileDialog = jest.fn();
             annotator.getAnnotationPermissions = jest.fn();
 
-            annotator.permissions = { canAnnotate: true };
+            annotator.permissions = { can_annotate: true };
         });
 
         it('should set scale and setup annotations', () => {
@@ -300,9 +299,9 @@ describe('Annotator', () => {
                     }
                 };
                 const permissions = annotator.getAnnotationPermissions(file);
-                expect(permissions.canAnnotate).toBeFalsy();
-                expect(permissions.canViewOwnAnnotations).toBeTruthy();
-                expect(permissions.canViewAllAnnotations).toBeFalsy();
+                expect(permissions.can_annotate).toBeFalsy();
+                expect(permissions.can_view_annotations_self).toBeTruthy();
+                expect(permissions.can_view_annotations_all).toBeFalsy();
             });
         });
 
@@ -325,16 +324,16 @@ describe('Annotator', () => {
                 annotator.api.getThreadMap = jest.fn();
 
                 annotator.permissions = {
-                    canViewAllAnnotations: true,
-                    canViewOwnAnnotations: true
+                    can_view_annotations_all: true,
+                    can_view_annotations_self: true
                 };
                 annotator.emit = jest.fn();
             });
 
             it('should not fetch existing annotations if the user does not have correct permissions', () => {
                 annotator.permissions = {
-                    canViewAllAnnotations: false,
-                    canViewOwnAnnotations: false
+                    can_view_annotations_all: false,
+                    can_view_annotations_self: false
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -347,8 +346,8 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
-                    canViewAllAnnotations: false,
-                    canViewOwnAnnotations: true
+                    can_view_annotations_all: false,
+                    can_view_annotations_self: true
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -362,8 +361,8 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
                 annotator.permissions = {
-                    canViewAllAnnotations: true,
-                    canViewOwnAnnotations: false
+                    can_view_annotations_all: true,
+                    can_view_annotations_self: false
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -381,34 +380,26 @@ describe('Annotator', () => {
             let threadMap;
 
             beforeEach(() => {
-                threadMap = { '123abc': [{ type: 'highlight-comment' }] };
-                annotator.createAnnotationThread = jest.fn();
+                annotator.options = { annotator: {} };
+                threadMap = { '123abc': [{ type: 'highlight-comment', location: {} }] };
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
                 annotator.options = {};
                 annotator.generateAnnotationMap(threadMap);
-                expect(annotator.createAnnotationThread).not.toBeCalled();
-            });
-
-            it('should reset and create a new thread map by from annotations fetched from server', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-                annotator.generateAnnotationMap(threadMap);
-                expect(annotator.createAnnotationThread).toBeCalled();
+                expect(controller.registerThread).not.toBeCalled();
             });
 
             it('should register thread if controller exists', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight-comment'] };
-                annotator.modeControllers['highlight-comment'] = controller;
-                annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
+                annotator.modeControllers = { 'highlight-comment': controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).toBeCalled();
             });
 
             it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
-                annotator.options.annotator = { NAME: 'name', TYPE: ['highlight'] };
-                annotator.modeControllers['highlight-comment'] = controller;
+                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
+                annotator.modeControllers = { highlight: controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).not.toBeCalled();
             });
@@ -574,7 +565,7 @@ describe('Annotator', () => {
                     commentText: 'text'
                 });
 
-                expect(thread.state).toEqual(STATES.hover);
+                expect(thread.state).toEqual(STATES.active);
                 expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'text');
                 expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
                 expect(result).not.toBeNull();

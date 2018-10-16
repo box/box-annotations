@@ -318,7 +318,7 @@ describe('drawing/DrawingThread', () => {
             thread.removeAllListeners('threadevent');
         });
 
-        it('should trigger an annotationevent with the number of available undo and redo actions', (done) => {
+        it('should trigger an annotationevent with thenumber of available undo and redo actions', (done) => {
             const numItems = {
                 undoCount: 3,
                 redoCount: 2

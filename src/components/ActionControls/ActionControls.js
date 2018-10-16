@@ -71,9 +71,7 @@ class ActionControls extends React.Component<Props, State> {
         event.preventDefault();
 
         const { onDelete, id } = this.props;
-        if (id) {
-            onDelete(id);
-        }
+        onDelete({ id });
     };
 
     determineControls(type: string): ?React.Node {

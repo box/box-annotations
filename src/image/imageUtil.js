@@ -61,14 +61,14 @@ export function getLocationWithoutRotation(x, y, rotation, imageDimensions, scal
 }
 
 /**
- * Returns number of pixels above the image when it's not rotated
+ * Returnsnumber of pixels above the image when it's not rotated
  *
  * @param {HTMLElement} imageEl - HTML element for image
  * @param {boolean} isRotated - Whether or not image is rotated
- * @return {number} Number of pixels above the image
+ * @return {number}number of pixels above the image
  */
 export function getRotatedPadding(imageEl, isRotated) {
-    return isRotated ? imageEl.offsetLeft - IMAGE_PADDING * 3 / 2 : imageEl.offsetTop;
+    return isRotated ? imageEl.offsetLeft - (IMAGE_PADDING * 3) / 2 : imageEl.offsetTop;
 }
 
 /**

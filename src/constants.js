@@ -224,7 +224,7 @@ export const DRAW_STATES = {
 };
 
 export const STATES = {
-    hover: 'hover', // mouse is over
+    active: 'active', // mouse is over
     inactive: 'inactive', // not clicked and mouse is not over
     pending: 'pending', // not saved
     pending_active: 'pending-active' // not saved and pending comment
@@ -239,8 +239,8 @@ export const TYPES = {
 };
 
 export const ANNOTATOR_TYPE = {
-    doc: 'document',
-    image: 'image'
+    document: 'Document',
+    image: 'Image'
 };
 
 export const HIGHLIGHT_FILL = {
@@ -270,6 +270,7 @@ export const THREAD_EVENT = {
 };
 
 export const CONTROLLER_EVENT = {
+    load: 'annotationload',
     toggleMode: 'togglemode',
     enter: 'annotationmodeenter',
     exit: 'annotationmodeexit',

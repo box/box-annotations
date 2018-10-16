@@ -25,8 +25,12 @@ describe('controllers/PointModeController', () => {
         controller = new PointModeController();
         controller.container = document;
         controller.emit = jest.fn();
+        controller.registerThread = jest.fn();
+        controller.getLocation = jest.fn();
 
         thread = {
+            type: 'point',
+            location: {},
             show: jest.fn(),
             getThreadEventData: jest.fn(),
             destroy: jest.fn()
@@ -149,8 +153,6 @@ describe('controllers/PointModeController', () => {
         beforeEach(() => {
             controller.destroyPendingThreads = jest.fn().mockReturnValue(false);
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
-            controller.registerThread = jest.fn();
-            controller.hideSharedDialog = jest.fn();
             controller.modeButton = {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
@@ -181,7 +183,7 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.resetMobileDialog);
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocation).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
@@ -190,41 +192,38 @@ describe('controllers/PointModeController', () => {
         it('should not do anything if thread is invalid', () => {
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();
-            expect(controller.hideSharedDialog).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocation).toBeCalled();
         });
 
         it('should not create a thread if a location object cannot be inferred from the event', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
-            controller.annotator.createAnnotationThread = jest.fn();
+            controller.getLocation = jest.fn().mockReturnValue(null);
+            controller.registerThread = jest.fn();
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();
-            expect(controller.hideSharedDialog).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.createAnnotationThread).not.toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.getLocation).toBeCalled();
         });
 
         it('should create, show, and bind listeners to a thread', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
-            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            controller.getLocation = jest.fn().mockReturnValue({});
+            controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue('data');
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).toBeCalled();
             expect(controller.emit).toBeCalledWith(THREAD_EVENT.pending, 'data');
-            expect(controller.registerThread).toBeCalledWith(thread);
-            expect(controller.hideSharedDialog).not.toBeCalled();
+            expect(controller.registerThread).toBeCalledWith([], thread.location, 'point');
             expect(thread.show).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
+            expect(controller.getLocation).toBeCalled();
         });
     });
 });

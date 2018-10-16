@@ -184,20 +184,7 @@ class Annotator extends EventEmitter {
      * @return {Object} Location object
      */
     /* eslint-disable no-unused-vars */
-    getLocationFromEvent(event, annotationType) {}
-    /* eslint-enable no-unused-vars */
-
-    /**
-     * Must be implemented to create the appropriate new thread, add it to the
-     * in-memory map, and return the thread.
-     *
-     * @param {Annotations[]} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} type - Annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    /* eslint-disable no-unused-vars */
-    createAnnotationThread(annotations, location, type) {}
+    getLocationFromEvent = (event, annotationType) => {};
     /* eslint-enable no-unused-vars */
 
     /**
@@ -222,9 +209,9 @@ class Annotator extends EventEmitter {
      */
     setupAnnotations() {
         // Map of page => {threads on page}
+        this.setupControllers();
         this.bindDOMListeners();
         this.bindCustomListeners();
-        this.setupControllers();
     }
 
     /**
@@ -239,7 +226,8 @@ class Annotator extends EventEmitter {
         const options = {
             header: this.options.header,
             isMobile: this.isMobile,
-            hasTouch: this.hasTouch
+            hasTouch: this.hasTouch,
+            locale: this.locale
         };
         Object.keys(this.modeControllers).forEach((type) => {
             const controller = this.modeControllers[type];
@@ -249,11 +237,12 @@ class Annotator extends EventEmitter {
                 mode: type,
                 modeButton: this.modeButtons[type],
                 permissions: this.permissions,
-                annotator: this,
                 localized: this.localized,
                 fileId: this.fileId,
+                fileVersionId: this.fileVersionId,
                 apiHost: this.options.apiHost,
                 token: this.options.token,
+                getLocation: this.getLocationFromEvent,
                 options
             });
 
@@ -333,7 +322,7 @@ class Annotator extends EventEmitter {
     fetchAnnotations() {
         // Do not load any pre-existing annotations if the user does not have
         // the correct permissions
-        if (!this.permissions.canViewAllAnnotations && !this.permissions.canViewOwnAnnotations) {
+        if (!this.permissions.can_view_annotations_all && !this.permissions.can_view_annotations_self) {
             return Promise.resolve({});
         }
 
@@ -370,16 +359,13 @@ class Annotator extends EventEmitter {
             // highlight as the first annotation in the thread.
             const lastAnnotation = annotations[annotations.length - 1];
             const { type, location } = lastAnnotation;
-            if (!lastAnnotation || !this.isModeAnnotatable(type)) {
+            const controller = this.modeControllers[type];
+            if (!lastAnnotation || !this.isModeAnnotatable(type) || !controller) {
                 return;
             }
 
             // Register a valid annotation thread
-            const thread = this.createAnnotationThread(annotations, location, type);
-            const controller = this.modeControllers[type];
-            if (controller) {
-                controller.registerThread(thread);
-            }
+            controller.registerThread(annotations, location, type);
         });
     }
 
@@ -426,41 +412,6 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Gets thread params for the new annotation thread
-     *
-     * @param {Annotation[]} annotations - Annotations in thread
-     * @param {Object} location - Location object
-     * @param {string} [type] - Optional annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    getThreadParams(annotations, location, type) {
-        const { api } = this.modeControllers[type];
-        const params = {
-            annotatedElement: this.annotatedElement,
-            api,
-            annotations,
-            container: this.container,
-            fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
-            hasTouch: this.hasTouch,
-            locale: this.locale,
-            location,
-            type,
-            permissions: this.permissions,
-            localized: this.localized
-        };
-
-        // Set existing thread ID if created with annotations
-        const firstAnnotation = annotations[0];
-        if (firstAnnotation) {
-            params.threadID = firstAnnotation.threadID;
-            params.threadNumber = firstAnnotation.threadNumber;
-        }
-
-        return params;
-    }
-
-    /**
      * Returns the current annotation mode
      *
      * @protected
@@ -503,7 +454,7 @@ class Annotator extends EventEmitter {
             return null;
         }
 
-        thread.state = STATES.hover;
+        thread.state = STATES.active;
         thread.renderAnnotationPopover();
         thread.saveAnnotation(TYPES.point, commentText);
 
@@ -548,10 +499,15 @@ class Annotator extends EventEmitter {
      */
     getAnnotationPermissions(file) {
         const permissions = file.permissions || {};
+        const {
+            can_annotate = false,
+            can_view_annotations_all = false,
+            can_view_annotations_self = false
+        } = permissions;
         return {
-            canAnnotate: permissions.can_annotate || false,
-            canViewAllAnnotations: permissions.can_view_annotations_all || false,
-            canViewOwnAnnotations: permissions.can_view_annotations_self || false
+            can_annotate,
+            can_view_annotations_all,
+            can_view_annotations_self
         };
     }
 
@@ -655,6 +611,9 @@ class Annotator extends EventEmitter {
      */
     handleControllerEvents(data) {
         switch (data.event) {
+            case CONTROLLER_EVENT.load:
+                this.loadAnnotations();
+                break;
             case CONTROLLER_EVENT.resetMobileDialog:
                 this.removeThreadFromSharedDialog();
                 break;

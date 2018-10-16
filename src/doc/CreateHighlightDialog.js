@@ -63,8 +63,8 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     unmountPopover() {
-        if (this.createPopoverComponent && this.parentEl) {
-            unmountComponentAtNode(this.parentEl);
+        if (this.createPopoverComponent && this.popoverLayerEl) {
+            unmountComponentAtNode(this.popoverLayerEl);
             this.createPopoverComponent = null;
             this.containerEl = null;
         }
@@ -99,7 +99,12 @@ class CreateHighlightDialog extends EventEmitter {
      */
     renderAnnotationPopover = (type = TYPES.highlight) => {
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.pageNum}"]`);
-        this.parentEl = pageEl.querySelector('.ba-dialog-layer');
+        this.popoverLayerEl = pageEl.querySelector('.ba-dialog-layer');
+        if (!this.popoverLayerEl) {
+            this.popoverLayerEl = document.createElement('span');
+            this.popoverLayerEl.classList.add('ba-dialog-layer');
+            pageEl.appendChild(this.popoverLayerEl);
+        }
 
         this.createPopoverComponent = render(
             <AnnotationPopover
@@ -114,9 +119,9 @@ class CreateHighlightDialog extends EventEmitter {
                 onCommentClick={this.onCommentClick}
                 isPending={true}
             />,
-            this.parentEl
+            this.popoverLayerEl
         );
-        this.containerEl = this.parentEl.querySelector('.ba-create-popover');
+        this.containerEl = this.popoverLayerEl.querySelector('.ba-create-popover');
     };
 
     /** @inheritdoc */

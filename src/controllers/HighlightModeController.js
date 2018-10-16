@@ -1,6 +1,9 @@
+// @flow
 import AnnotationModeController from './AnnotationModeController';
+import DocHighlightThread from '../doc/DocHighlightThread';
 import { clearCanvas } from '../util';
 import {
+    ANNOTATOR_TYPE,
     THREAD_EVENT,
     CONTROLLER_EVENT,
     TYPES,
@@ -9,18 +12,8 @@ import {
 } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
-    /**
-     * Handles annotation thread events and emits them to the viewer
-     *
-     * @inheritdoc
-     * @private
-     * @param {AnnotationThread} thread - The thread that emitted the event
-     * @param {Object} [data] - Annotation thread event data
-     * @param {string} [data.event] - Annotation thread event
-     * @param {string} [data.data] - Annotation thread event data
-     * @return {void}
-     */
-    handleThreadEvents(thread, data) {
+    /** @inheritdoc */
+    handleThreadEvents(thread: AnnotationThread, data: Object): void {
         let firstAnnotation;
         switch (data.event) {
             case THREAD_EVENT.save:
@@ -43,53 +36,30 @@ class HighlightModeController extends AnnotationModeController {
         super.handleThreadEvents(thread, data);
     }
 
-    /**
-     * Disables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    exit() {
+    /** @inheritdoc */
+    exit(): void {
         this.destroyPendingThreads();
         window.getSelection().removeAllRanges();
         this.unbindListeners(); // Disable mode
         this.emit(CONTROLLER_EVENT.bindDOMListeners);
     }
 
-    /**
-     * Enables the specified annotation mode
-     *
-     * @inheritdoc
-     * @return {void}
-     */
-    enter() {
+    /** @inheritdoc */
+    enter(): void {
         this.emit(CONTROLLER_EVENT.unbindDOMListeners); // Disable other annotations
         this.bindListeners(); // Enable mode
     }
 
-    /**
-     * Renders annotations from memory.
-     *
-     * @inheritdoc
-     * @private
-     * @return {void}
-     */
-    render() {
+    /** @inheritdoc */
+    render(): void {
         super.render();
         this.destroyPendingThreads();
     }
 
-    /**
-     * Renders annotations from memory for a specified page.
-     *
-     * @inheritdoc
-     * @private
-     * @param {number} pageNum - Page number
-     * @return {void}
-     */
-    renderPage(pageNum) {
+    /** @inheritdoc */
+    renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
         const layerClass =
             this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
         clearCanvas(pageEl, layerClass);
@@ -99,6 +69,11 @@ class HighlightModeController extends AnnotationModeController {
         }
 
         super.renderPage(pageNum);
+    }
+
+    /** @inheritdoc */
+    instantiateThread(params: Object): AnnotationThread {
+        return this.annotatorType === ANNOTATOR_TYPE.document ? new DocHighlightThread(params, this.canComment) : null;
     }
 }
 

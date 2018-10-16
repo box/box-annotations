@@ -428,7 +428,7 @@ describe('util', () => {
         });
 
         it('should return false if thread is notpending', () => {
-            expect(isPending(STATES.hover)).toBeFalsy();
+            expect(isPending(STATES.active)).toBeFalsy();
             expect(isPending(STATES.inactive)).toBeFalsy();
         });
     });

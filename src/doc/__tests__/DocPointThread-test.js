@@ -24,7 +24,7 @@ describe('doc/DocPointThread', () => {
             threadID: 2,
             type: 'point',
             permissions: {
-                canAnnotate: true
+                can_annotate: true
             }
         });
     });

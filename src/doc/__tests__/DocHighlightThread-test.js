@@ -34,8 +34,8 @@ describe('doc/DocHighlightThread', () => {
             threadID: 2,
             type: 'highlight',
             permissions: {
-                canAnnotate: true,
-                canViewAllAnnotations: true
+                can_annotate: true,
+                can_view_annotations_all: true
             },
             minX: 1,
             maxX: 10,
@@ -123,9 +123,9 @@ describe('doc/DocHighlightThread', () => {
 
     describe('reset()', () => {
         it('should set highlight to inactive and redraw', () => {
-            thread.show = jest.fn();
+            thread.draw = jest.fn();
             thread.reset();
-            expect(thread.show).toBeCalled();
+            expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.normal);
             expect(thread.state).toEqual(STATES.inactive);
         });
     });
@@ -141,7 +141,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('onClick()', () => {
         it('should set annotation to inactive if event has already been consumed', () => {
-            thread.state = STATES.hover;
+            thread.state = STATES.active;
             thread.type = TYPES.highlight_comment;
 
             const isHighlightPending = thread.onClick({}, true);
@@ -150,7 +150,7 @@ describe('doc/DocHighlightThread', () => {
             expect(thread.state).toEqual(STATES.inactive);
         });
 
-        it('should set annotation to hover if mouse is hovering over highlight or dialog', () => {
+        it('should set annotation to active if mouse is activeing over highlight or dialog', () => {
             thread.state = STATES.pending;
             thread.type = TYPES.highlight_comment;
 
@@ -162,7 +162,7 @@ describe('doc/DocHighlightThread', () => {
 
             expect(isHighlightPending).toBeTruthy();
             expect(thread.reset).not.toBeCalled();
-            expect(thread.state).toEqual(STATES.hover);
+            expect(thread.state).toEqual(STATES.active);
             expect(thread.show).toBeCalled();
         });
     });
@@ -210,7 +210,7 @@ describe('doc/DocHighlightThread', () => {
         });
 
         it('should render the popover if the state is not pending and redraw the highlight as active', () => {
-            thread.state = STATES.hover;
+            thread.state = STATES.active;
             thread.show();
             expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.active);

@@ -661,11 +661,11 @@ export function getHeaders(headers = {}, token = '', sharedLink = '', password =
 }
 
 /**
- * Round a number to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
+ * Round anumber to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
  *
- * @param {number} number The number to be rounded
+ * @param {number} number Thenumber to be rounded
  * @param {number} precision The amount of decimal places to keep
- * @return {number} The rounded number
+ * @return {number} The roundednumber
  */
 export function round(number, precision) {
     /* eslint-disable prefer-template */
@@ -714,11 +714,11 @@ export function canLoadAnnotations(permissions) {
         return false;
     }
 
-    const canAnnotate = permissions[PERMISSION_ANNOTATE];
-    const canViewAllAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
-    const canViewOwnAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
+    const can_annotate = permissions[PERMISSION_ANNOTATE];
+    const can_view_annotations_all = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
+    const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
-    return !!canAnnotate || !!canViewAllAnnotations || !!canViewOwnAnnotations;
+    return !!can_annotate || !!can_view_annotations_all || !!can_view_annotations_self;
 }
 
 /**

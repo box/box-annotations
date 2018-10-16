@@ -96,7 +96,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     reset() {
         this.state = STATES.inactive;
-        this.show();
+        this.draw(HIGHLIGHT_FILL.normal);
     }
 
     /**
@@ -160,10 +160,10 @@ class DocHighlightThread extends AnnotationThread {
      * @return {boolean} Whether click was in a non-pending highlight
      */
     onClick(event, consumed) {
-        // If state is in hover, it means mouse is already over this highlight
+        // If state is in active, it means mouse is already over this highlight
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
-            this.state = STATES.hover;
+            this.state = STATES.active;
             this.show();
             return true;
         }
@@ -208,7 +208,7 @@ class DocHighlightThread extends AnnotationThread {
                 this.unmountPopover();
                 this.draw(HIGHLIGHT_FILL.normal);
                 break;
-            case STATES.hover:
+            case STATES.active:
             case STATES.pending_active:
                 this.renderAnnotationPopover();
                 this.draw(HIGHLIGHT_FILL.active);

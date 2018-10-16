@@ -28,7 +28,7 @@ describe('image/ImagePointThread', () => {
             threadID: 2,
             type: 'point',
             permissions: {
-                canAnnotate: true
+                can_annotate: true
             }
         });
 

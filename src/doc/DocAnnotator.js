@@ -6,9 +6,6 @@ import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 /* eslint-enable no-unused-vars */
 import Annotator from '../Annotator';
-import DocHighlightThread from './DocHighlightThread';
-import DocPointThread from './DocPointThread';
-import DocDrawingThread from './DocDrawingThread';
 import CreateHighlightDialog from './CreateHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
@@ -125,7 +122,7 @@ class DocAnnotator extends Annotator {
      * @param {string} annotationType Type of annotation
      * @return {Object|null} Location object
      */
-    getLocationFromEvent(event, annotationType) {
+    getLocationFromEvent = (event, annotationType) => {
         let location = null;
         const zoomScale = util.getScale(this.annotatedElement);
 
@@ -232,39 +229,7 @@ class DocAnnotator extends Annotator {
         }
 
         return location;
-    }
-
-    /**
-     * Creates the proper type of thread, adds it to in-memory map, and returns it.
-     *
-     * @override
-     * @param {Annotations[]} annotations Annotations in thread
-     * @param {Object} location Location object
-     * @param {string} [type] Optional annotation type
-     * @return {AnnotationThread} Created annotation thread
-     */
-    createAnnotationThread(annotations, location, type) {
-        let thread;
-        const threadParams = this.getThreadParams(annotations, location, type);
-        if (!util.areThreadParamsValid(threadParams)) {
-            this.handleValidationError();
-            return thread;
-        }
-
-        if (util.isHighlightAnnotation(type)) {
-            thread = new DocHighlightThread(threadParams, this.commentHighlightEnabled);
-        } else if (type === TYPES.draw) {
-            thread = new DocDrawingThread(threadParams);
-        } else if (type === TYPES.point) {
-            thread = new DocPointThread(threadParams);
-        }
-
-        if (!thread) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
-        }
-
-        return thread;
-    }
+    };
 
     /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
@@ -313,15 +278,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     setupAnnotations() {
-        // Determine enabled annotation types before binding mode controller listeners
-        this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
-        this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
-        this.drawEnabled = !!this.modeControllers[TYPES.draw];
-
-        // Don't bind to draw specific handlers if we cannot draw
-        if (this.drawEnabled) {
-            this.drawingSelectionHandler = this.drawingSelectionHandler.bind(this);
-        }
+        super.setupAnnotations();
 
         // Don't bind to highlight specific handlers if we cannot highlight
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
@@ -374,8 +331,6 @@ class DocAnnotator extends Annotator {
                 tagNames: ['span', 'a']
             })
         );
-
-        super.setupAnnotations();
     }
 
     /**
@@ -405,7 +360,7 @@ class DocAnnotator extends Annotator {
         }
 
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
-        if (!this.permissions.canAnnotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
+        if (!this.permissions.can_annotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
             return;
         }
 
@@ -465,7 +420,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (this.highlightClickHandler(event)) {
+        if (!this.isCreatingAnnotation() && this.highlightClickHandler(event)) {
             return;
         }
 
@@ -495,7 +450,7 @@ class DocAnnotator extends Annotator {
     }
 
     hideCreateDialog(event) {
-        if (!event || util.isInDialog(event)) {
+        if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
             return;
         }
 
@@ -552,33 +507,28 @@ class DocAnnotator extends Annotator {
 
         const highlightType = commentText ? TYPES.highlight_comment : TYPES.highlight;
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
+        const controller = this.modeControllers[highlightType];
+
         this.highlighter.removeAllHighlights();
-        if (!location) {
+        this.resetHighlightSelection(this.lastHighlightEvent);
+
+        if (!location || !controller) {
             return null;
         }
 
         const annotations = [];
-        const thread = this.createAnnotationThread(annotations, location, highlightType);
         this.lastHighlightEvent = null;
         this.lastSelection = null;
 
+        const thread = controller.registerThread(annotations, location, highlightType);
         if (!thread) {
+            this.handleValidationError();
             return null;
         }
 
-        if (!commentText) {
-            thread.show();
-        }
-
-        thread.state = STATES.hover;
+        thread.state = STATES.active;
         thread.show();
         thread.saveAnnotation(highlightType, commentText);
-
-        const controller = this.modeControllers[highlightType];
-        if (controller) {
-            controller.registerThread(thread);
-        }
-
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
     }
@@ -590,7 +540,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onSelectionChange(event) {
+    onSelectionChange = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -630,7 +580,7 @@ class DocAnnotator extends Annotator {
 
         const { page } = util.getPageInfo(event.target);
 
-        // Set all annotations on current page that are in the 'hover' state to 'inactive'
+        // Set all annotations on current page that are in the 'active' state to 'inactive'
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.reset(), page);
         }
@@ -641,6 +591,29 @@ class DocAnnotator extends Annotator {
 
         this.lastSelection = selection;
         this.lastHighlightEvent = event;
+    };
+
+    /**
+     * Mode controllers setup.
+     *
+     * @protected
+     * @return {void}
+     */
+    setupControllers() {
+        super.setupControllers();
+
+        // Determine enabled annotation types before binding mode controller listeners
+        this.plainHighlightEnabled = !!this.modeControllers[TYPES.highlight];
+        this.commentHighlightEnabled = !!this.modeControllers[TYPES.highlight_comment];
+        this.drawEnabled = !!this.modeControllers[TYPES.draw];
+
+        if (this.commentHighlightEnabled) {
+            this.modeControllers[TYPES.highlight_comment].canComment = this.commentHighlightEnabled;
+
+            if (this.plainHighlightEnabled) {
+                this.modeControllers[TYPES.highlight].canComment = this.commentHighlightEnabled;
+            }
+        }
     }
 
     /**
@@ -667,7 +640,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightMousedownHandler(event) {
+    highlightMousedownHandler = (event) => {
         this.isCreatingHighlight = true;
         this.mouseX = event.clientX;
         this.mouseY = event.clientY;
@@ -679,21 +652,7 @@ class DocAnnotator extends Annotator {
         if (this.commentHighlightEnabled) {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.onMousedown());
         }
-    }
-
-    /**
-     * Drawing selection handler. Delegates to the drawing controller
-     *
-     * @private
-     * @param {Event} event DOM event
-     * @return {void}
-     */
-    drawingSelectionHandler(event) {
-        const controller = this.modeControllers[TYPES.draw];
-        if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
-            controller.handleSelection(event);
-        }
-    }
+    };
 
     /**
      * Returns whether any mode controller is currently creating an
@@ -723,7 +682,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightMouseupHandler(event) {
+    highlightMouseupHandler = (event) => {
         this.isCreatingHighlight = false;
 
         const popoverEl = this.annotatedElement.querySelector('.ba-popover');
@@ -745,7 +704,7 @@ class DocAnnotator extends Annotator {
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
         }
-    }
+    };
 
     /**
      * Handler for creating a pending highlight thread from the current
@@ -757,7 +716,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightCreateHandler(event) {
+    highlightCreateHandler = (event) => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -775,7 +734,7 @@ class DocAnnotator extends Annotator {
         this.createHighlightDialog.show(selection);
         this.isCreatingHighlight = true;
         this.lastHighlightEvent = event;
-    }
+    };
 
     /**
      * Highlight click handler. Delegates click event to click handlers for
@@ -797,12 +756,16 @@ class DocAnnotator extends Annotator {
         let plainThreads = [];
         let commentThreads = [];
 
+        const location = this.getLocationFromEvent(event, TYPES.point);
         if (this.plainHighlightEnabled) {
-            plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseEvent);
+            plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseEvent, location);
         }
 
         if (this.commentHighlightEnabled) {
-            commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(this.mouseEvent);
+            commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(
+                this.mouseEvent,
+                location
+            );
         }
 
         this.hideAnnotations(event);
@@ -832,7 +795,7 @@ class DocAnnotator extends Annotator {
      * @param {AnnotationThread} thread Highlight thread to check
      * @return {void}
      */
-    clickThread(thread) {
+    clickThread = (thread) => {
         if (util.isPending(thread.state)) {
             // Destroy any pending highlights on click outside the highlight
             if (thread.type === TYPES.point) {
@@ -854,7 +817,7 @@ class DocAnnotator extends Annotator {
         } else {
             thread.unmountPopover();
         }
-    }
+    };
 
     /**
      * Show normal cursor instead of text cursor.

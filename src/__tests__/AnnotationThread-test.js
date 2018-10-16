@@ -16,7 +16,9 @@ describe('AnnotationThread', () => {
     let rootElement;
 
     let api = {
-        user: { id: '1' },
+        user: {
+            id: '1'
+        },
         formatAnnotation: jest.fn()
     };
 
@@ -117,8 +119,13 @@ describe('AnnotationThread', () => {
     });
 
     describe('updateTemporaryAnnotation()', () => {
-        const tempAnnotation = { id: 1 };
-        const serverAnnotation = { id: 456, threadNumber: 1 };
+        const tempAnnotation = {
+            id: 1
+        };
+        const serverAnnotation = {
+            id: 456,
+            threadNumber: 1
+        };
 
         beforeEach(() => {
             thread.api.create = jest.fn();
@@ -154,8 +161,8 @@ describe('AnnotationThread', () => {
         it('should only render popover on mobile', () => {
             thread.isMobile = true;
             thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            expect(thread.state).toEqual(STATES.active);
             expect(thread.renderAnnotationPopover).toBeCalled();
-            expect(thread.state).toEqual(STATES.hover);
         });
     });
 
@@ -166,7 +173,9 @@ describe('AnnotationThread', () => {
 
         beforeEach(() => {
             api = {
-                user: { id: 1 },
+                user: {
+                    id: 1
+                },
                 delete: jest.fn().mockResolvedValue(threadPromise)
             };
 
@@ -198,7 +207,7 @@ describe('AnnotationThread', () => {
             thread.emit = jest.fn();
         });
 
-        it('should destroy the thread if the deleted annotation was the last annotation in the thread', (done) => {
+        it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
             thread.isMobile = false;
 
             const promise = thread.deleteAnnotation('someID', false);
@@ -206,31 +215,28 @@ describe('AnnotationThread', () => {
                 threadPromise.then(() => {
                     expect(thread.destroy).toBeCalled();
                     expect(thread.renderAnnotationPopover).not.toBeCalled();
-                    done();
                 });
             });
         });
 
-        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', (done) => {
+        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
                 expect(thread.renderAnnotationPopover).toBeCalled();
-                done();
             });
         });
 
-        it('should make a server call to delete an annotation with the specified ID if useServer is true', (done) => {
+        it('should make a server call to delete an annotation with the specified ID if useServer is true', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
                 expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
                 expect(api.delete).toBeCalledWith('someID');
-                done();
             });
         });
 
-        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', (done) => {
+        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', () => {
             annotation2.permissions.can_delete = false;
             thread.annotations.push(annotation2);
             util.isPlainHighlight = jest.fn().mockReturnValue(true);
@@ -238,26 +244,23 @@ describe('AnnotationThread', () => {
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
                 expect(api.delete).toBeCalledWith('someID');
-                done();
             });
         });
 
-        it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
+        it('should not make a server call to delete an annotation with the specified ID if useServer is false', () => {
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
                 expect(api.delete).not.toBeCalled();
-                done();
             });
         });
 
-        it('should broadcast an error if there was an error deleting from server', (done) => {
+        it('should broadcast an error if there was an error deleting from server', () => {
             api.delete = jest.fn().mockRejectedValue();
             thread.api = api;
 
             const promise = thread.deleteAnnotation('someID', true);
-            expect(api.delete).toBeCalled();
             promise.catch(() => {
-                done();
+                expect(api.delete).toBeCalled();
             });
         });
 
@@ -312,7 +315,9 @@ describe('AnnotationThread', () => {
         });
 
         it('should scroll annotation\'s page into view', () => {
-            thread.location = { page: 1 };
+            thread.location = {
+                page: 1
+            };
             const pageEl = {
                 scrollIntoView: jest.fn()
             };
@@ -465,7 +470,9 @@ describe('AnnotationThread', () => {
 
     describe('getThreadEventData()', () => {
         it('should return thread type and threadID', () => {
-            thread.api.user = { id: -1 };
+            thread.api.user = {
+                id: -1
+            };
             thread.threadNumber = undefined;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -475,7 +482,9 @@ describe('AnnotationThread', () => {
         });
 
         it('should also return annotator\'s user id', () => {
-            thread.api.user = { id: 1 };
+            thread.api.user = {
+                id: 1
+            };
             thread.threadNumber = undefined;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -486,7 +495,9 @@ describe('AnnotationThread', () => {
         });
 
         it('should return thread type and threadID', () => {
-            thread.api.user = { id: -1 };
+            thread.api.user = {
+                id: -1
+            };
             thread.threadNumber = 1;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
@@ -521,10 +532,14 @@ describe('AnnotationThread', () => {
             thread.location = {};
             thread.regenerateBoundary();
 
-            thread.location = { x: 'something' };
+            thread.location = {
+                x: 'something'
+            };
             thread.regenerateBoundary();
 
-            thread.location = { y: 'something' };
+            thread.location = {
+                y: 'something'
+            };
             thread.regenerateBoundary();
 
             expect(thread.minX).toBeUndefined();
@@ -532,7 +547,10 @@ describe('AnnotationThread', () => {
         });
 
         it('should set the min/max x/y values to the thread location', () => {
-            thread.location = { x: 1, y: 2 };
+            thread.location = {
+                x: 1,
+                y: 2
+            };
             thread.regenerateBoundary();
             expect(thread.minX).toEqual(1);
             expect(thread.minY).toEqual(2);

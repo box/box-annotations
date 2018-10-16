@@ -63,7 +63,14 @@ class AnnotationAPI extends API {
             });
         }
 
-        return data;
+        // Default permissions to true for created annotations
+        return {
+            ...data,
+            permissions: {
+                can_delete: true,
+                can_edit: true
+            }
+        };
     };
 
     /**

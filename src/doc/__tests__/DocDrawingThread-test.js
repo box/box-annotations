@@ -41,8 +41,8 @@ describe('doc/DocDrawingThread', () => {
             threadID: 2,
             type: 'draw',
             permissions: {
-                canAnnotate: false,
-                canViewAllAnnotations: true
+                can_annotate: false,
+                can_view_annotations_all: true
             },
             minX: 1,
             maxX: 10,

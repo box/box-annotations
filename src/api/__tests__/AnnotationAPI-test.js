@@ -71,7 +71,12 @@ describe('api/AnnotationAPI', () => {
         });
 
         it('should return the created annotation', () => {
-            expect(api.createSuccessHandler({})).toEqual({});
+            expect(api.createSuccessHandler({})).toEqual({
+                permissions: {
+                    can_delete: true,
+                    can_edit: true
+                }
+            });
         });
     });
 

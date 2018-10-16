@@ -36,7 +36,7 @@ class AnnotationThread extends EventEmitter {
      * @property {string} fileVersionId File version ID
      * @property {Object} location Location object
      * @property {string} threadID Thread ID
-     * @property {string} threadNumber Thread number
+     * @property {string} threadNumber Threadnumber
      * @property {string} type Type of thread
      * @property {boolean} canComment Whether or not the annotation allows the addition of comments
      */
@@ -152,7 +152,12 @@ class AnnotationThread extends EventEmitter {
             });
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
-        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
+        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (!popoverLayer) {
+            popoverLayer = document.createElement('span');
+            popoverLayer.classList.add('ba-dialog-layer');
+            pageEl.appendChild(popoverLayer);
+        }
 
         const isPending = !firstAnnotation;
         if (isPending) {
@@ -168,7 +173,7 @@ class AnnotationThread extends EventEmitter {
                 createdAt={get(firstAnnotation, 'createdAt', null)}
                 createdBy={get(firstAnnotation, 'createdBy', null)}
                 modifiedBy={get(firstAnnotation, 'modifiedBy', null)}
-                canAnnotate={this.permissions.canAnnotate}
+                canAnnotate={this.permissions.can_annotate}
                 canComment={this.canComment}
                 canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
                 comments={comments}
@@ -178,18 +183,18 @@ class AnnotationThread extends EventEmitter {
                 onCreate={this.saveAnnotation}
                 isPending={isPending}
             />,
-            annotationDialogLayer
+            popoverLayer
         );
         this.position();
     };
 
     unmountPopover = () => {
-        this.state = STATES.inactive;
+        this.reset();
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
-        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (this.popoverComponent && annotationDialogLayer) {
-            unmountComponentAtNode(annotationDialogLayer);
+        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (this.popoverComponent && popoverLayer) {
+            unmountComponentAtNode(popoverLayer);
             this.popoverComponent = null;
         }
     };
@@ -233,12 +238,13 @@ class AnnotationThread extends EventEmitter {
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationIDToRemove - ID of annotation to delete
+     * @param {string} annotationToRemove - ID of annotation to delete
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation = (annotationIDToRemove, useServer = true) => {
+    deleteAnnotation = (annotationToRemove, useServer = true) => {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
+        const { id: annotationIDToRemove } = annotationToRemove;
         const annotation = this.annotations.find(({ id }) => id === annotationIDToRemove);
         if (!annotation) {
             // Broadcast error
@@ -485,7 +491,7 @@ class AnnotationThread extends EventEmitter {
 
         if (this.isMobile) {
             // Changing state from pending
-            this.state = STATES.hover;
+            this.state = STATES.active;
         }
 
         this.renderAnnotationPopover();
