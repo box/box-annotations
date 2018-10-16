@@ -42,7 +42,7 @@ function gracefulShutdown() {
 }
 
 function errorCallback(err) {
-    console.log(err.response.body);
+    console.log(err);
     gracefulShutdown();
 }
 

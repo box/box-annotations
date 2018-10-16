@@ -13,3 +13,12 @@
 3) Start Selenium `selenium-standalone start`
 4) In a separate terminal, build BoxAnnotations `yarn run selenium-build`
 5) Run functional tests `FILE_ID="285568802145" FILE_VERSION_ID="300497533713" yarn run functional-tests`
+
+### Running Specific Tests
+1) Start Selenium `selenium-standalone start`
+2) In a separate terminal, run `FILE_ID="<file-id>" FILE_VERSION_ID="<file-version-id>" ACCESS_TOKEN="<access-token>" CLIENT_ID="<client-id>" node functional-tests/app.js`
+    * You can find existing `file-id` and `file-version-id` in the .travis.yml file
+3) In yet another separate terminal, run `FILE_ID="<file-id>" FILE_VERSION_ID="file-version-id>" ACCESS_TOKEN="<access-token>" CLIENT_ID="<client-id>" node ./node_modules/codeceptjs/bin/codecept.js run --grep "<regex>" --verbose`
+    * Make sure the `file-id` and `file-version-id` values are the same between these two terminals :)
+    * an example of `<regex>` would be "@doc" to run all the tests with "@doc" in the name
+4) You should see a separate Chrome browser instance appear and run the tests

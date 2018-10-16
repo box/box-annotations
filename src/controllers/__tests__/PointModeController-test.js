@@ -96,6 +96,7 @@ describe('controllers/PointModeController', () => {
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+            controller.headerElement = document.createElement('div');
 
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
@@ -124,6 +125,7 @@ describe('controllers/PointModeController', () => {
 
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
+            controller.headerElement = document.createElement('div');
 
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
@@ -133,14 +135,14 @@ describe('controllers/PointModeController', () => {
             controller.enter();
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.enter, expect.any(Object));
             expect(controller.bindListeners).toBeCalled();
-            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
+            expect(util.replaceHeader).toBeCalledWith(controller.headerElement, SELECTOR_POINT_MODE_HEADER);
         });
 
         it('should activate mode button if available', () => {
             controller.buttonEl = document.createElement('button');
             controller.enter();
             expect(controller.buttonEl.classList).toContain(CLASS_ACTIVE);
-            expect(util.replaceHeader).toBeCalledWith(controller.container, SELECTOR_POINT_MODE_HEADER);
+            expect(util.replaceHeader).toBeCalledWith(controller.headerElement, SELECTOR_POINT_MODE_HEADER);
         });
     });
 
