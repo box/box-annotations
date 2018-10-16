@@ -278,6 +278,8 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     setupAnnotations() {
+        super.setupAnnotations();
+
         // Don't bind to highlight specific handlers if we cannot highlight
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             super.setupAnnotations();
@@ -329,8 +331,6 @@ class DocAnnotator extends Annotator {
                 tagNames: ['span', 'a']
             })
         );
-
-        super.setupAnnotations();
     }
 
     /**
@@ -420,7 +420,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (this.highlightClickHandler(event)) {
+        if (!this.isCreatingAnnotation() && this.highlightClickHandler(event)) {
             return;
         }
 
@@ -450,7 +450,7 @@ class DocAnnotator extends Annotator {
     }
 
     hideCreateDialog(event) {
-        if (!event || util.isInDialog(event)) {
+        if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
             return;
         }
 
@@ -508,7 +508,10 @@ class DocAnnotator extends Annotator {
         const highlightType = commentText ? TYPES.highlight_comment : TYPES.highlight;
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
         const controller = this.modeControllers[highlightType];
+
         this.highlighter.removeAllHighlights();
+        this.resetHighlightSelection(this.lastHighlightEvent);
+
         if (!location || !controller) {
             return null;
         }
@@ -679,7 +682,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightMouseupHandler(event) {
+    highlightMouseupHandler = (event) => {
         this.isCreatingHighlight = false;
 
         const popoverEl = this.annotatedElement.querySelector('.ba-popover');
@@ -701,7 +704,7 @@ class DocAnnotator extends Annotator {
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
         }
-    }
+    };
 
     /**
      * Handler for creating a pending highlight thread from the current

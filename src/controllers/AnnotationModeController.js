@@ -156,6 +156,8 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.title = this.modeButton.title;
             this.buttonEl.classList.remove(CLASS_HIDDEN);
+
+            this.toggleMode = this.toggleMode.bind(this);
             this.buttonEl.addEventListener('click', this.toggleMode);
         }
     }
@@ -166,7 +168,7 @@ class AnnotationModeController extends EventEmitter {
      *
      * @return {void}
      */
-    toggleMode = (): void => {
+    toggleMode(): void {
         this.destroyPendingThreads();
 
         // No specific mode available for annotation type
@@ -176,7 +178,7 @@ class AnnotationModeController extends EventEmitter {
 
         // Exit any other annotation mode
         this.emit(CONTROLLER_EVENT.toggleMode);
-    };
+    }
 
     /**
      * Disables the specified annotation mode
@@ -343,7 +345,10 @@ class AnnotationModeController extends EventEmitter {
         this.threads[page].insert(thread);
 
         this.emit(CONTROLLER_EVENT.register, thread);
-        thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
+
+        let threadEventHandler = (data) => this.handleThreadEvents(thread, data);
+        threadEventHandler = threadEventHandler.bind(this);
+        thread.addListener('threadevent', threadEventHandler);
         return thread;
     }
 
@@ -397,29 +402,43 @@ class AnnotationModeController extends EventEmitter {
      *
      * @private
      * @param {string} threadID - Thread ID
+     * @param {string} [pageNum] - Optional page number
      * @return {AnnotationThread} Annotation thread specified by threadID
      */
-    getThreadByID = (threadID: string): ?AnnotationThread => {
+    getThreadByID(threadID: string, pageNum: string): ?AnnotationThread {
         let thread = null;
         if (!threadID) {
             return thread;
         }
 
-        Object.keys(this.threads).some((pageNum) => {
-            const pageThreads = this.threads[pageNum];
-            if (!pageThreads) {
-                return !!thread;
-            }
-
-            thread = pageThreads.all().filter((t) => {
-                return t.threadID === threadID;
-            })[0];
-
-            return !!thread;
-        });
+        if (pageNum) {
+            thread = this.doesThreadMatch(threadID, pageNum);
+        } else {
+            Object.keys(this.threads).some((page) => {
+                const matchingThread = this.doesThreadMatch(threadID, page);
+                if (matchingThread) {
+                    thread = matchingThread;
+                }
+                return !!matchingThread;
+            });
+        }
 
         return thread;
-    };
+    }
+
+    doesThreadMatch(threadID: string, pageNum: string): ?AnnotationThread {
+        let thread = null;
+        const pageThreads = this.threads[pageNum];
+        if (!pageThreads) {
+            return thread;
+        }
+
+        thread = pageThreads.all().filter((t) => {
+            return t.threadID === threadID;
+        })[0];
+
+        return thread;
+    }
 
     /**
      * Clean up any selected annotations
@@ -447,13 +466,14 @@ class AnnotationModeController extends EventEmitter {
      * @param {Object} [data.data] - Annotation thread event data
      * @return {void}
      */
-    handleThreadEvents = (thread: AnnotationThread, data: Object): void => {
+    handleThreadEvents(thread: AnnotationThread, data: Object): void {
         const { event, data: threadData } = data;
 
         switch (event) {
             case THREAD_EVENT.save:
             case THREAD_EVENT.cancel:
                 this.hadPendingThreads = false;
+                this.pendingThreadID = null;
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.show:
@@ -484,7 +504,7 @@ class AnnotationModeController extends EventEmitter {
             default:
                 this.emit(event, threadData);
         }
-    };
+    }
 
     /**
      * Creates a handler description object and adds its to the internal handler container.
@@ -551,11 +571,11 @@ class AnnotationModeController extends EventEmitter {
      */
     renderPage(pageNum: string) {
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        let dialogLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (!dialogLayer) {
-            dialogLayer = document.createElement('span');
-            dialogLayer.classList.add('ba-dialog-layer');
-            pageEl.appendChild(dialogLayer);
+        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (!popoverLayer) {
+            popoverLayer = document.createElement('span');
+            popoverLayer.classList.add('ba-dialog-layer');
+            pageEl.appendChild(popoverLayer);
         }
 
         if (!this.threads || !this.threads[pageNum]) {
@@ -590,13 +610,13 @@ class AnnotationModeController extends EventEmitter {
      * @return {boolean} Whether or not any pending threads existed on the
      * current file
      */
-    destroyPendingThreads = (): boolean => {
+    destroyPendingThreads(): boolean {
         let hadPendingThreads = false;
 
         Object.keys(this.threads).forEach((pageNum) => {
             const pageThreads = this.threads[pageNum].all() || [];
             pageThreads.forEach((thread) => {
-                if (isPending(thread.state)) {
+                if (isPending(thread.state) || thread.id === this.pendingThreadID) {
                     this.unregisterThread(thread);
                     hadPendingThreads = true;
                     this.pendingThreadID = null;
@@ -605,7 +625,7 @@ class AnnotationModeController extends EventEmitter {
             });
         });
         return hadPendingThreads;
-    };
+    }
 
     /**
      * Find the intersecting threads given a pointer event

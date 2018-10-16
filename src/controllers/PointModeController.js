@@ -49,9 +49,14 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     onDialogCancel() {
+        this.pendingThreadID = null;
+        this.lastPointEvent = null;
+
         const thread = this.getThreadByID(this.pendingThreadID);
-        this.unregisterThread(thread);
-        thread.destroy();
+        if (thread) {
+            this.unregisterThread(thread);
+            thread.destroy();
+        }
 
         this.hideSharedDialog();
     }
@@ -90,9 +95,11 @@ class PointModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     setupHandlers(): void {
+        this.pointClickHandler = this.pointClickHandler.bind(this);
+        this.toggleMode = this.toggleMode.bind(this);
+
         // Get handlers
         this.pushElementHandler(this.annotatedElement, ['click', 'touchstart'], this.pointClickHandler, true);
-
         this.pushElementHandler(this.exitButtonEl, 'click', this.toggleMode);
     }
 
@@ -103,6 +110,7 @@ class PointModeController extends AnnotationModeController {
         }
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
+        this.onDialogCancel();
         super.exit();
     }
 
@@ -126,11 +134,6 @@ class PointModeController extends AnnotationModeController {
      * @return {void}
      */
     pointClickHandler(event) {
-        const pendingThread = this.getThreadByID(this.pendingThreadID);
-        if (this.pendingThreadID && pendingThread) {
-            pendingThread.destroy();
-        }
-
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
         const popoverEl = this.annotatedElement.querySelector('.ba-popover');
@@ -139,6 +142,11 @@ class PointModeController extends AnnotationModeController {
             event.preventDefault();
         } else {
             return;
+        }
+
+        const pendingThread = this.getThreadByID(this.pendingThreadID);
+        if (this.pendingThreadID && pendingThread) {
+            pendingThread.destroy();
         }
 
         // Clears and hides the mobile annotation dialog if visible

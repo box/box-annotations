@@ -152,7 +152,12 @@ class AnnotationThread extends EventEmitter {
             });
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
-        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
+        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (!popoverLayer) {
+            popoverLayer = document.createElement('span');
+            popoverLayer.classList.add('ba-dialog-layer');
+            pageEl.appendChild(popoverLayer);
+        }
 
         const isPending = !firstAnnotation;
         if (isPending) {
@@ -178,18 +183,18 @@ class AnnotationThread extends EventEmitter {
                 onCreate={this.saveAnnotation}
                 isPending={isPending}
             />,
-            annotationDialogLayer
+            popoverLayer
         );
         this.position();
     };
 
     unmountPopover = () => {
-        this.state = STATES.inactive;
+        this.reset();
 
         const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
-        const annotationDialogLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (this.popoverComponent && annotationDialogLayer) {
-            unmountComponentAtNode(annotationDialogLayer);
+        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (this.popoverComponent && popoverLayer) {
+            unmountComponentAtNode(popoverLayer);
             this.popoverComponent = null;
         }
     };
@@ -233,12 +238,13 @@ class AnnotationThread extends EventEmitter {
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationIDToRemove - ID of annotation to delete
+     * @param {string} annotationToRemove - ID of annotation to delete
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation = (annotationIDToRemove, useServer = true) => {
+    deleteAnnotation = (annotationToRemove, useServer = true) => {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
+        const { id: annotationIDToRemove } = annotationToRemove;
         const annotation = this.annotations.find(({ id }) => id === annotationIDToRemove);
         if (!annotation) {
             // Broadcast error

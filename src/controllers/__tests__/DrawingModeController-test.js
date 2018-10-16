@@ -4,7 +4,6 @@ import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
 import * as util from '../../util';
 import {
-    TYPES,
     STATES,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
@@ -13,7 +12,8 @@ import {
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CLASS_ANNOTATION_DRAW_MODE
 } from '../../constants';
 
 let controller;
@@ -314,6 +314,7 @@ describe('controllers/DrawingModeController', () => {
             controller.unregisterThread = jest.fn();
             util.clearCanvas = jest.fn();
             controller.threads = {};
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
         });
 
         it('should save thread on annotationsaved', () => {
@@ -529,23 +530,6 @@ describe('controllers/DrawingModeController', () => {
             controller.updateUndoRedoButtonEls(1, 2);
             expect(util.enableElement).toBeCalledWith(controller.undoButtonEl);
             expect(util.disableElement).not.toBeCalled();
-        });
-    });
-
-    describe('saveThread()', () => {
-        it('should do nothing if thread has invalid boundary', () => {
-            controller.registerThread = jest.fn();
-            controller.saveThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
-            controller.saveThread({ type: TYPES.draw });
-            expect(controller.registerThread).not.toBeCalled();
-            expect(thread.saveAnnotation).not.toBeCalledWith(TYPES.draw);
-        });
-
-        it('should save and register the annotation thread', () => {
-            controller.registerThread = jest.fn();
-            controller.saveThread(thread);
-            expect(controller.registerThread).toBeCalled();
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.draw);
         });
     });
 });

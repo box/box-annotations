@@ -29,6 +29,8 @@ describe('controllers/PointModeController', () => {
         controller.getLocation = jest.fn();
 
         thread = {
+            type: 'point',
+            location: {},
             show: jest.fn(),
             getThreadEventData: jest.fn(),
             destroy: jest.fn()
@@ -151,7 +153,6 @@ describe('controllers/PointModeController', () => {
         beforeEach(() => {
             controller.destroyPendingThreads = jest.fn().mockReturnValue(false);
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
-            controller.hideSharedDialog = jest.fn();
             controller.modeButton = {
                 title: 'Point Annotation Mode',
                 selector: '.bp-btn-annotate'
@@ -191,7 +192,6 @@ describe('controllers/PointModeController', () => {
         it('should not do anything if thread is invalid', () => {
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();
-            expect(controller.hideSharedDialog).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
@@ -204,7 +204,6 @@ describe('controllers/PointModeController', () => {
 
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();
-            expect(controller.hideSharedDialog).toBeCalled();
             expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
@@ -220,8 +219,7 @@ describe('controllers/PointModeController', () => {
             controller.pointClickHandler(event);
             expect(controller.registerThread).toBeCalled();
             expect(controller.emit).toBeCalledWith(THREAD_EVENT.pending, 'data');
-            expect(controller.registerThread).toBeCalledWith(thread);
-            expect(controller.hideSharedDialog).not.toBeCalled();
+            expect(controller.registerThread).toBeCalledWith([], thread.location, 'point');
             expect(thread.show).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();

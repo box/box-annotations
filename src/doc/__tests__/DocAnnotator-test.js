@@ -381,7 +381,9 @@ describe('doc/DocAnnotator', () => {
     describe('createHighlightThread()', () => {
         beforeEach(() => {
             annotator.getLocationFromEvent = jest.fn();
+            annotator.resetHighlightSelection = jest.fn();
             annotator.renderPage = jest.fn();
+            annotator.lastHighlightEvent = {};
 
             annotator.highlighter = {
                 removeAllHighlights: jest.fn()
@@ -390,92 +392,58 @@ describe('doc/DocAnnotator', () => {
             thread.type = 'highlight';
 
             controller.registerThread = jest.fn().mockReturnValue(thread);
+            annotator.modeControllers = {
+                highlight: controller,
+                highlight_comment: controller
+            };
         });
 
         it('should do nothing and return null if empty string passed in', () => {
-            annotator.lastHighlightEvent = {};
-            annotator.createHighlightThread('');
+            expect(annotator.createHighlightThread('')).toBeNull();
             expect(annotator.createHighlightDialog.unmountPopover).not.toBeCalled();
         });
 
         it('should hide the dialog if it exists and is visible', () => {
-            annotator.lastHighlightEvent = {};
             annotator.createHighlightDialog.isVisible = true;
-            annotator.createHighlightThread('some text');
+            expect(annotator.createHighlightThread('some text')).toBeNull();
             expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
 
         it('should do nothing and return null if there was no highlight event on the previous action', () => {
             annotator.lastHighlightEvent = null;
-            annotator.createHighlightThread('some text');
+            expect(annotator.createHighlightThread('some text')).toBeNull();
             expect(annotator.createHighlightDialog.unmountPopover).not.toBeCalled();
         });
 
         it('should do nothing and return null if not a valid annotation location', () => {
-            annotator.lastHighlightEvent = {};
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
-
-            annotator.createHighlightThread('some text');
+            expect(annotator.createHighlightThread('some text')).toBeNull();
             expect(controller.registerThread).not.toBeCalled();
-        });
-
-        it('should create an annotation thread off of the highlight selection by invoking controller.registerThread with correct type', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-
-            annotator.createHighlightThread('some text with severe passive agression');
-            expect(controller.registerThread).toBeCalledWith([], location, TYPES.highlight_comment);
         });
 
         it('should bail out of making an annotation if thread is null', () => {
             const location = { page: 1 };
-            annotator.lastHighlightEvent = {};
             controller.registerThread = jest.fn().mockReturnValue(null);
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-
-            annotator.createHighlightThread('some text');
-        });
-
-        it('should show the annotation', () => {
-            const location = { page: 1 };
-            annotator.lastHighlightEvent = {};
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-
-            annotator.createHighlightThread();
-            expect(thread.show).toBeCalled();
-        });
-
-        it('should post the annotation via the dialog', () => {
-            const location = { page: 1 };
-            const text = 'This is an annotation pointing out a mistake in the document!';
-            annotator.lastHighlightEvent = {};
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-
-            annotator.createHighlightThread(text);
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, text);
+            expect(annotator.createHighlightThread('some text')).toBeNull();
         });
 
         it('should not register the thread if there is no appropriate controller', () => {
             const location = { page: 1 };
-            annotator.lastHighlightEvent = {};
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
             annotator.modeControllers = { random: controller };
-
             expect(annotator.createHighlightThread()).toBeNull();
             expect(controller.registerThread).not.toBeCalled();
         });
 
-        it('should return an annotation thread', () => {
+        it('should register, show and return an annotation thread', () => {
             const page = 999999999;
             const location = { page };
-            annotator.lastHighlightEvent = {};
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-
             annotator.modeControllers = { highlight: controller };
-
             expect(annotator.createHighlightThread()).toStrictEqual(thread);
-            expect(controller.registerThread).toBeCalled();
+            expect(controller.registerThread).toBeCalledWith([], location, TYPES.highlight);
+            expect(thread.show).toBeCalled();
         });
     });
 
@@ -1264,40 +1232,6 @@ describe('doc/DocAnnotator', () => {
 
             annotator.removeRangyHighlight({ id: 1 });
             expect(annotator.highlighter.removeHighlights).toBeCalled();
-        });
-    });
-
-    describe('drawingSelectionHandler()', () => {
-        let drawController;
-
-        beforeEach(() => {
-            drawController = {
-                handleSelection: jest.fn(),
-                removeSelection: jest.fn()
-            };
-            annotator.modeControllers = {
-                [TYPES.draw]: drawController
-            };
-
-            annotator.isCreatingAnnotation = jest.fn().mockReturnValue(false);
-        });
-
-        it('should use the controller to select with the event', () => {
-            const evt = 'event';
-            annotator.drawingSelectionHandler(evt);
-            expect(drawController.handleSelection).toBeCalledWith(evt);
-        });
-
-        it('should do nothing if a mode is creating an annotation', () => {
-            annotator.isCreatingAnnotation = jest.fn().mockReturnValue(true);
-            annotator.drawingSelectionHandler('irrelevant');
-            expect(drawController.handleSelection).not.toBeCalled();
-        });
-
-        it('should do nothing if a highlight is being created', () => {
-            annotator.isCreatingHighlight = true;
-            annotator.drawingSelectionHandler('irrelevant');
-            expect(drawController.handleSelection).not.toBeCalled();
         });
     });
 

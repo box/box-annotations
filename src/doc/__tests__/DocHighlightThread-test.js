@@ -123,9 +123,9 @@ describe('doc/DocHighlightThread', () => {
 
     describe('reset()', () => {
         it('should set highlight to inactive and redraw', () => {
-            thread.show = jest.fn();
+            thread.draw = jest.fn();
             thread.reset();
-            expect(thread.show).toBeCalled();
+            expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.normal);
             expect(thread.state).toEqual(STATES.inactive);
         });
     });

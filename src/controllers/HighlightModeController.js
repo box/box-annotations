@@ -13,7 +13,7 @@ import {
 
 class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
-    handleThreadEvents = (thread: AnnotationThread, data: Object): void => {
+    handleThreadEvents(thread: AnnotationThread, data: Object): void {
         let firstAnnotation;
         switch (data.event) {
             case THREAD_EVENT.save:
@@ -34,7 +34,7 @@ class HighlightModeController extends AnnotationModeController {
         }
 
         super.handleThreadEvents(thread, data);
-    };
+    }
 
     /** @inheritdoc */
     exit(): void {

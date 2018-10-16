@@ -207,7 +207,7 @@ describe('AnnotationThread', () => {
             thread.emit = jest.fn();
         });
 
-        it('should destroy the thread if the deleted annotation was the last annotation in the thread', (done) => {
+        it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
             thread.isMobile = false;
 
             const promise = thread.deleteAnnotation('someID', false);
@@ -215,31 +215,28 @@ describe('AnnotationThread', () => {
                 threadPromise.then(() => {
                     expect(thread.destroy).toBeCalled();
                     expect(thread.renderAnnotationPopover).not.toBeCalled();
-                    done();
                 });
             });
         });
 
-        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', (done) => {
+        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
                 expect(thread.renderAnnotationPopover).toBeCalled();
-                done();
             });
         });
 
-        it('should make a server call to delete an annotation with the specified ID if useServer is true', (done) => {
+        it('should make a server call to delete an annotation with the specified ID if useServer is true', () => {
             thread.annotations.push(annotation2);
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
                 expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
                 expect(api.delete).toBeCalledWith('someID');
-                done();
             });
         });
 
-        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', (done) => {
+        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', () => {
             annotation2.permissions.can_delete = false;
             thread.annotations.push(annotation2);
             util.isPlainHighlight = jest.fn().mockReturnValue(true);
@@ -247,26 +244,23 @@ describe('AnnotationThread', () => {
             const promise = thread.deleteAnnotation('someID', true);
             promise.then(() => {
                 expect(api.delete).toBeCalledWith('someID');
-                done();
             });
         });
 
-        it('should not make a server call to delete an annotation with the specified ID if useServer is false', (done) => {
+        it('should not make a server call to delete an annotation with the specified ID if useServer is false', () => {
             const promise = thread.deleteAnnotation('someID', false);
             promise.then(() => {
                 expect(api.delete).not.toBeCalled();
-                done();
             });
         });
 
-        it('should broadcast an error if there was an error deleting from server', (done) => {
+        it('should broadcast an error if there was an error deleting from server', () => {
             api.delete = jest.fn().mockRejectedValue();
             thread.api = api;
 
             const promise = thread.deleteAnnotation('someID', true);
-            expect(api.delete).toBeCalled();
             promise.catch(() => {
-                done();
+                expect(api.delete).toBeCalled();
             });
         });
 

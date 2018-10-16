@@ -365,7 +365,7 @@ describe('controllers/AnnotationModeController', () => {
                         all: jest.fn().mockReturnValue([])
                     }
                 };
-                expect(controller.getThreadByID(thread.threadID)).toBeUndefined();
+                expect(controller.getThreadByID(thread.threadID)).toBeNull();
             });
 
             it('should find and return annotation thread specified by threadID', () => {
@@ -383,7 +383,7 @@ describe('controllers/AnnotationModeController', () => {
                         all: jest.fn().mockReturnValue([thread])
                     }
                 };
-                expect(controller.getThreadByID('random')).toBeUndefined();
+                expect(controller.getThreadByID('random')).toBeNull();
             });
         });
 
@@ -548,6 +548,7 @@ describe('controllers/AnnotationModeController', () => {
                         all: jest.fn()
                     }
                 };
+                controller.pendingThreadID = null;
             });
 
             it('should not destroy and return false if there are no threads', () => {
@@ -603,25 +604,21 @@ describe('controllers/AnnotationModeController', () => {
 
                 controller.threads = null;
                 expect(controller.getIntersectingThreads({})).toEqual([]);
-                expect(controller.getLocation).not.toBeCalled();
             });
 
             it('should return an empty array if no location is found for the mouse event', () => {
                 expect(controller.getIntersectingThreads({})).toEqual([]);
-                expect(controller.getLocation).toBeCalled();
             });
 
             it('should return an empty array if the mouse location is on a page without threads', () => {
                 controller.getLocation = jest.fn().mockReturnValue({ page: 2 });
-                expect(controller.getIntersectingThreads({})).toEqual([]);
-                expect(controller.getLocation).toBeCalled();
+                expect(controller.getIntersectingThreads({}, { page: 1 })).toEqual([]);
             });
 
             it('should return an array with the intersecting thread', () => {
                 controller.threads[1].search = jest.fn().mockReturnValue([thread]);
                 controller.getLocation = jest.fn().mockReturnValue({ page: 1 });
-                expect(controller.getIntersectingThreads({})).toContain(thread);
-                expect(controller.getLocation).toBeCalled();
+                expect(controller.getIntersectingThreads({}, { page: 1 })).toContain(thread);
             });
         });
 

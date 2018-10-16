@@ -96,7 +96,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     reset() {
         this.state = STATES.inactive;
-        this.show();
+        this.draw(HIGHLIGHT_FILL.normal);
     }
 
     /**
