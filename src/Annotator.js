@@ -14,7 +14,7 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
     CLASS_ANNOTATIONS_LOADED,
-    SELECTOR_BOX_PREVIEW_HEADER
+    SELECTOR_BOX_PREVIEW_BASE_HEADER
 } from './constants';
 import FileVersionAPI from './api/FileVersionAPI';
 
@@ -114,7 +114,7 @@ class Annotator extends EventEmitter {
         // If using box content preview header and no external header element was specified,
         // fallback to the container element
         if (this.options.header !== 'none' && !this.headerElement) {
-            this.headerElement = this.container.querySelector(SELECTOR_BOX_PREVIEW_HEADER);
+            this.headerElement = this.container.querySelector(SELECTOR_BOX_PREVIEW_BASE_HEADER);
         }
 
         if (!this.container) {

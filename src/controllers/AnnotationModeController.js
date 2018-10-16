@@ -157,7 +157,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     showButton(): void {
-        if (!this.permissions.canAnnotate || !this.modeButton) {
+        if (!this.permissions.can_annotate || !this.modeButton) {
             return;
         }
 
@@ -177,7 +177,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     hideButton() {
-        if (!this.permissions.canAnnotate || !this.modeButton) {
+        if (!this.permissions.can_annotate || !this.modeButton) {
             return;
         }
 
