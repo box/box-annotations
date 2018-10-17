@@ -111,8 +111,8 @@ class CommentBox extends EventEmitter {
      * @return {void}
      */
     blur() {
-        if (document.activeElement) {
-            document.activeElement.blur();
+        if (this.textAreaEl) {
+            this.textAreaEl.blur();
         }
     }
 
@@ -135,6 +135,7 @@ class CommentBox extends EventEmitter {
     hide() {
         if (this.containerEl) {
             hideElement(this.containerEl);
+            this.blur();
         }
     }
 

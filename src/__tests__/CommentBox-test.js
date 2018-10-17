@@ -97,8 +97,10 @@ describe('CommentBox', () => {
         it('should add the hidden class to the comment box element', () => {
             util.hideElement = jest.fn();
             commentBox.containerEl = document.createElement('div');
+            commentBox.blur = jest.fn();
             commentBox.hide();
             expect(util.hideElement).toBeCalled();
+            expect(commentBox.blur).toBeCalled();
         });
     });
 
