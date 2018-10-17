@@ -16,3 +16,4 @@ test/dev.html
 lib
 *~~bak
 functional-tests/output
+build/rsync.json
