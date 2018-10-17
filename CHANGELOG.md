@@ -1,3 +1,27 @@
+## 2.3.0 (2018-10-16)
+
+* Chore: Add supported excel types. Remove greenkeeper badge (#227) ([8bd1bb9](https://github.com/box/box-annotations/commit/8bd1bb9)), closes [#227](https://github.com/box/box-annotations/issues/227)
+* Chore: break text to fit into dialog (#230) ([3a5cc86](https://github.com/box/box-annotations/commit/3a5cc86)), closes [#230](https://github.com/box/box-annotations/issues/230)
+* Chore: Remove unused thread.mouseoutHandler() (#206) ([1017082](https://github.com/box/box-annotations/commit/1017082)), closes [#206](https://github.com/box/box-annotations/issues/206)
+* Chore: Replace Karma with Jest for testing framework (#199) ([a847b01](https://github.com/box/box-annotations/commit/a847b01)), closes [#199](https://github.com/box/box-annotations/issues/199)
+* Chore: Update preview version to 1.54.0 in functional tests (#239) ([6de2cf4](https://github.com/box/box-annotations/commit/6de2cf4)), closes [#239](https://github.com/box/box-annotations/issues/239)
+* Fix: Cursor type in annotation dialog (#195) ([b568288](https://github.com/box/box-annotations/commit/b568288)), closes [#195](https://github.com/box/box-annotations/issues/195)
+* Fix: Functional tests scripts ([2dfc22e](https://github.com/box/box-annotations/commit/2dfc22e))
+* Fix: travis.yml config (#203) ([a71ecb6](https://github.com/box/box-annotations/commit/a71ecb6)), closes [#203](https://github.com/box/box-annotations/issues/203)
+* Update: Annotations with header (#233) ([91cdce3](https://github.com/box/box-annotations/commit/91cdce3)), closes [#233](https://github.com/box/box-annotations/issues/233)
+* Update: box-react-ui to v25.6.0 (#204) ([398b4c3](https://github.com/box/box-annotations/commit/398b4c3)), closes [#204](https://github.com/box/box-annotations/issues/204)
+* Update: Filter multi-image functional tests separately from image tests ([b15a007](https://github.com/box/box-annotations/commit/b15a007))
+* Update: Test yaml changes ([bb58296](https://github.com/box/box-annotations/commit/bb58296))
+* Update: Webpack 4 + dependencies (#208) ([b2ba5df](https://github.com/box/box-annotations/commit/b2ba5df)), closes [#208](https://github.com/box/box-annotations/issues/208)
+* Update .travis.yml ([9c09e8e](https://github.com/box/box-annotations/commit/9c09e8e))
+* Update .travis.yml ([236c383](https://github.com/box/box-annotations/commit/236c383))
+* Update add-annotation-type.md ([fcceb3e](https://github.com/box/box-annotations/commit/fcceb3e))
+* Update add-annotation-type.md ([ca5c6f0](https://github.com/box/box-annotations/commit/ca5c6f0))
+* Update webpack.selenium.config.js ([e008f68](https://github.com/box/box-annotations/commit/e008f68))
+* New: Add functional tests for image files (#197) ([7c7b39e](https://github.com/box/box-annotations/commit/7c7b39e)), closes [#197](https://github.com/box/box-annotations/issues/197)
+
+
+
 <a name="2.2.0"></a>
 ## 2.2.0 (2018-06-05)
 

@@ -27,8 +27,8 @@ class PointModeController extends AnnotationModeController {
         // light, dark, or no value given), then we want to use our draw
         // header. Otherwise we expect header UI to be handled by Preview’s
         // consumer
-        if (data.options.header !== 'none') {
-            this.setupHeader(this.container, shell);
+        if (data.options.header !== 'none' || this.headerElement) {
+            this.setupHeader(this.headerElement, shell);
         }
     }
 
@@ -117,7 +117,7 @@ class PointModeController extends AnnotationModeController {
     /** @inheritdoc */
     enter(): void {
         super.enter();
-        replaceHeader(this.container, SELECTOR_POINT_MODE_HEADER);
+        replaceHeader(this.headerElement, SELECTOR_POINT_MODE_HEADER);
         this.annotatedElement.classList.add(CLASS_ANNOTATION_POINT_MODE);
 
         if (this.buttonEl) {

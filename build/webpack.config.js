@@ -2,17 +2,28 @@ require('babel-polyfill');
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const fs = require('fs');
+
 const license = require('./license');
 const commonConfig = require('./webpack.common.config');
 const TranslationsPlugin = require('./TranslationsPlugin');
+const RsyncPlugin = require('./RsyncPlugin');
 
 const isRelease = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'dev';
 const language = process.env.LANGUAGE;
 const locale = language.substr(0, language.indexOf('-'));
+
+let rsyncLocation = '';
+if (fs.existsSync('build/rsync.json')) {
+    /* eslint-disable */
+    const rsyncConf = require('./rsync.json');
+    rsyncLocation = rsyncConf.location;
+    /* eslint-enable */
+}
 
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
@@ -35,6 +46,11 @@ const config = Object.assign(commonConfig(), {
 });
 
 if (isDev) {
+    // If build/rsync.json exists, rsync bundled files to specified directory
+    if (rsyncLocation) {
+        config.plugins.push(new RsyncPlugin('lib/.', rsyncLocation));
+    }
+
     // Add inline source map
     config.devtool = 'inline-source-map';
     config.plugins.push(new TranslationsPlugin());

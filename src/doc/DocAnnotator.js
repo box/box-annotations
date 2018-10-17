@@ -282,7 +282,6 @@ class DocAnnotator extends Annotator {
 
         // Don't bind to highlight specific handlers if we cannot highlight
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
-            super.setupAnnotations();
             return;
         }
 

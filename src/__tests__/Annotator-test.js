@@ -7,7 +7,8 @@ import {
     ANNOTATOR_EVENT,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    SELECTOR_ANNOTATED_ELEMENT
+    SELECTOR_ANNOTATED_ELEMENT,
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
 
 const api = {
@@ -113,6 +114,12 @@ describe('Annotator', () => {
             expect(annotator.setScale).toBeCalledWith(5);
             expect(annotator.setupAnnotations).toBeCalled();
             expect(annotator.loadAnnotations).toBeCalled();
+        });
+
+        it('should set the headerElement to the container as a fallback', () => {
+            annotator.options.header = 'light';
+            annotator.init(5);
+            expect(annotator.headerElement).toEqual(document.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER));
         });
 
         it('should setup mobile dialog for mobile browsers', () => {
