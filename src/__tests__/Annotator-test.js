@@ -11,15 +11,12 @@ import {
     SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
 
-const api = {
-    formatAnnotation: jest.fn()
-};
-
 describe('Annotator', () => {
     let rootElement;
     let annotator;
     let controller;
     let thread;
+    const api = {};
     const html = `<button class="bp-btn-annotate"></button>
     <div class="annotated-element"></div>`;
 

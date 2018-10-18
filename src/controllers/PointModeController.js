@@ -2,6 +2,7 @@
 import AnnotationModeController from './AnnotationModeController';
 import DocPointThread from '../doc/DocPointThread';
 import ImagePointThread from '../image/ImagePointThread';
+import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     THREAD_EVENT,
@@ -13,6 +14,8 @@ import {
     ANNOTATOR_TYPE
 } from '../constants';
 import { replaceHeader, isInAnnotationOrMarker } from '../util';
+
+// $FlowFixMe
 import shell from './pointShell.html';
 
 class PointModeController extends AnnotationModeController {
@@ -42,60 +45,11 @@ class PointModeController extends AnnotationModeController {
         this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
     }
 
-    /**
-     * Unregister/destroy the pending thread and then clear the create dialog
-     *
-     * @private
-     * @return {void}
-     */
-    onDialogCancel() {
-        this.pendingThreadID = null;
-        this.lastPointEvent = null;
-
-        const thread = this.getThreadByID(this.pendingThreadID);
-        if (thread) {
-            this.unregisterThread(thread);
-            thread.destroy();
-        }
-
-        this.hideSharedDialog();
-    }
-
-    /**
-     * Notify listeners of post event and then clear the create dialog
-     *
-     * @private
-     * @param {string} commentText Annotation comment text
-     * @return {void}
-     */
-    onDialogPost(commentText) {
-        this.emit(CONTROLLER_EVENT.createThread, {
-            commentText,
-            lastPointEvent: this.lastPointEvent,
-            pendingThreadID: this.pendingThreadID
-        });
-
-        this.onDialogCancel();
-    }
-
-    /**
-     * Hides the shared mobile dialog and clears associated data
-     *
-     * @protected
-     * @return {void}
-     */
-    hideSharedDialog() {
-        this.lastPointEvent = null;
-        this.pendingThreadID = null;
-
-        if (this.createDialog && this.createDialog.isVisible) {
-            this.createDialog.hide();
-        }
-    }
-
     /** @inheritdoc */
     setupHandlers(): void {
+        // $FlowFixMe
         this.pointClickHandler = this.pointClickHandler.bind(this);
+        // $FlowFixMe
         this.toggleMode = this.toggleMode.bind(this);
 
         // Get handlers
@@ -110,7 +64,13 @@ class PointModeController extends AnnotationModeController {
         }
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
-        this.onDialogCancel();
+        const thread = this.getThreadByID(this.pendingThreadID);
+        if (thread) {
+            this.unregisterThread(thread);
+            thread.destroy();
+        }
+
+        this.pendingThreadID = null;
         super.exit();
     }
 
@@ -133,7 +93,7 @@ class PointModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    pointClickHandler(event) {
+    pointClickHandler(event: Event): void {
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
         const popoverEl = this.annotatedElement.querySelector('.ba-popover');
@@ -163,7 +123,18 @@ class PointModeController extends AnnotationModeController {
         }
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.registerThread([], location, TYPES.point);
+        const thread = this.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: this.mode,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString(),
+            isPending: true,
+            comments: []
+        });
+
         if (!thread) {
             return;
         }

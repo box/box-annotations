@@ -68,12 +68,12 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     destroy() {
+        this.emit(THREAD_EVENT.render, this.location.page);
         super.destroy();
 
         if (this.state === STATES.pending) {
             window.getSelection().removeAllRanges();
         }
-        this.emit(THREAD_EVENT.threadCleanup);
     }
 
     /**
@@ -115,17 +115,14 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Deletes an annotation.
      *
-     * @param {string} id ID of annotation to delete
+     * @param {Object} annotation annotation to delete
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    deleteAnnotation(id, useServer = true) {
-        super.deleteAnnotation(id, useServer);
+    deleteAnnotation(annotation, useServer = true) {
+        super.deleteAnnotation(annotation, useServer);
 
-        // Hide delete button on plain highlights if user doesn't have
-        // permissions
-        const firstAnnotation = this.annotations[0];
-        if (!firstAnnotation) {
+        if (!this.threadID) {
             return;
         }
 
@@ -285,13 +282,13 @@ class DocHighlightThread extends AnnotationThread {
      */
     handleDelete(data) {
         if (data) {
-            this.deleteAnnotation(data.id);
+            this.deleteAnnotation(data);
             return;
         }
 
         const firstAnnotation = this.annotations[0];
         if (firstAnnotation) {
-            this.deleteAnnotation(firstAnnotation.id);
+            this.deleteAnnotation(firstAnnotation);
         }
     }
 

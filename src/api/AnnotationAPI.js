@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER } from '../constants';
 
 const HTTP_POST = 'POST';
 const HTTP_DELETE = 'DELETE';
@@ -52,9 +52,9 @@ class AnnotationAPI extends API {
 
     /**
      * @param {Object} data  - HTTP response data
-     * @return {AnnotationMap} Formatted HTTP response data
+     * @return {Annotation} Formatted HTTP response data
      */
-    createSuccessHandler = (data: Object): AnnotationMap => {
+    createSuccessHandler = (data: Object): CommentProps => {
         if (data.type === 'error' || !data.id) {
             const error = new Error('Could not create annotation');
             this.emit(ANNOTATOR_EVENT.error, {
@@ -63,9 +63,21 @@ class AnnotationAPI extends API {
             });
         }
 
-        // Default permissions to true for created annotations
+        const { details, thread: threadNumber } = data;
+        const { threadID, location, type } = details;
+
+        // Corrects any annotation page number to 1 instead of -1
+        const fixedLocation = location;
+        if (!fixedLocation.page || fixedLocation.page < 0) {
+            fixedLocation.page = 1;
+        }
+
         return {
-            ...data,
+            ...this.formatComment(data),
+            type,
+            threadID,
+            threadNumber,
+            canAnnotate: true,
             permissions: {
                 can_delete: true,
                 can_edit: true

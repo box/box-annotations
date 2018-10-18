@@ -24,8 +24,7 @@ describe('doc/DocDrawingThread', () => {
         api = {
             user: {},
             create: jest.fn().mockResolvedValue({}),
-            delete: jest.fn().mockResolvedValue({}),
-            formatAnnotation: jest.fn()
+            delete: jest.fn().mockResolvedValue({})
         };
 
         thread = new DocDrawingThread({

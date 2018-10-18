@@ -6,6 +6,7 @@ import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 /* eslint-enable no-unused-vars */
 import Annotator from '../Annotator';
+import AnnotationAPI from '../api/AnnotationAPI';
 import CreateHighlightDialog from './CreateHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
@@ -411,6 +412,8 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        this.hideAnnotations(event);
+
         // NOTE: This assumes that only one dialog will ever exist within
         // the annotatedElement at a time
         const popoverEl = this.annotatedElement.querySelector('.ba-popover');
@@ -427,11 +430,8 @@ class DocAnnotator extends Annotator {
             const controller = this.modeControllers[TYPES.draw];
             if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
                 controller.handleSelection(event);
-                return;
             }
         }
-
-        this.hideAnnotations(event);
     };
 
     /**
@@ -515,11 +515,18 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const annotations = [];
         this.lastHighlightEvent = null;
         this.lastSelection = null;
 
-        const thread = controller.registerThread(annotations, location, highlightType);
+        const thread = controller.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: highlightType,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString()
+        });
         if (!thread) {
             this.handleValidationError();
             return null;

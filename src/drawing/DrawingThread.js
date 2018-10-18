@@ -96,15 +96,13 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        this.unmountPopover();
-
-        super.destroy();
-
         if (this.state !== STATES.pending) {
-            this.emit(THREAD_EVENT.threadCleanup);
+            this.emit(THREAD_EVENT.render, this.location.page);
         }
 
+        this.unmountPopover();
         this.reset();
+        super.destroy();
     }
 
     /**
@@ -206,7 +204,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     deleteThread() {
-        this.annotations.forEach(({ id }) => this.deleteAnnotation(id));
+        this.annotations.forEach((annotation) => this.deleteAnnotation(annotation));
 
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
@@ -311,13 +309,12 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     setup() {
-        const firstAnnotation = this.annotations[0];
-        if (!firstAnnotation) {
-            // Newly created thread
-            this.state = STATES.pending;
-        } else {
+        if (this.threadNumber) {
             // Saved thread, load boundary dialog
             this.state = STATES.inactive;
+        } else {
+            // Newly created thread
+            this.state = STATES.pending;
         }
     }
 
@@ -393,6 +390,11 @@ class DrawingThread extends AnnotationThread {
         }
 
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
+    }
+
+    renderAnnotationPopover() {
+        this.drawBoundary();
+        super.renderAnnotationPopover();
     }
 
     //--------------------------------------------------------------------------

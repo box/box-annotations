@@ -18,8 +18,7 @@ describe('AnnotationThread', () => {
     let api = {
         user: {
             id: '1'
-        },
-        formatAnnotation: jest.fn()
+        }
     };
 
     beforeEach(() => {
@@ -129,7 +128,6 @@ describe('AnnotationThread', () => {
 
         beforeEach(() => {
             thread.api.create = jest.fn();
-            thread.api.formatAnnotation = jest.fn().mockReturnValue(serverAnnotation);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
             thread.renderAnnotationPopover = jest.fn();
             thread.annotations = [tempAnnotation];

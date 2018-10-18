@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -109,19 +109,50 @@ class FileVersionAPI extends API {
      * @return {AnnotationMap} Map of thread ID to annotations in that thread
      */
     createAnnotationMap = (): AnnotationMap => {
-        const threadMap = {};
+        const annotations = {};
         const { entries } = this.data;
 
         // Construct map of thread ID to annotations
-        entries.forEach((apiAnnotations) => {
-            const annotation = this.formatAnnotation(apiAnnotations);
-            const { threadID } = annotation;
-            const threadAnnotations = threadMap[threadID] || [];
-            threadAnnotations.push(annotation);
-            threadMap[threadID] = threadAnnotations;
+        entries.forEach((entry) => {
+            const {
+                id,
+                details,
+                permissions,
+                created_by = PLACEHOLDER_USER,
+                created_at: createdAt,
+                modified_at: modifiedAt,
+                thread: threadNumber
+            } = entry;
+            const { threadID, location, type } = details;
+
+            // Corrects any annotation page number to 1 instead of -1
+            const fixedLocation = location;
+            if (!fixedLocation.page || fixedLocation.page < 0) {
+                fixedLocation.page = 1;
+            }
+
+            if (!annotations[threadID]) {
+                annotations[threadID] = {};
+            }
+
+            const annotation: Annotation = {
+                id,
+                threadID,
+                type,
+                location: fixedLocation,
+                threadNumber,
+                createdAt,
+                createdBy: this.formatUserInfo(created_by),
+                modifiedAt,
+                canAnnotate: this.permissions.can_annotate,
+                canDelete: permissions.can_delete,
+                comments: this.appendComments(entry, annotations[threadID].comments)
+            };
+
+            annotations[threadID] = annotation;
         });
 
-        return threadMap;
+        return annotations;
     };
 }
 

@@ -16,7 +16,6 @@ describe('doc/DocHighlightThread', () => {
 
     const api = {
         user: {},
-        formatAnnotation: jest.fn(),
         create: jest.fn().mockResolvedValue({})
     };
 

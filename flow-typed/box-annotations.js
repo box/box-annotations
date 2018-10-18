@@ -7,6 +7,7 @@
 import type { $AxiosError, Axios, CancelTokenSource } from 'axios';
 import AnnotationThread from '../src/AnnotationThread';
 import DrawingThread from '../src/draw/DrawingThread';
+import DocHighlightThread from '../src/doc/DocHighlightThread';
 
 type StringMap = { [string]: string };
 type AnnotationPermissions = {
@@ -98,23 +99,22 @@ type BoxFileVersion = {
 
 type Annotation = {
     id: string,
-    item: BoxFileVersion,
     type: AnnotationType,
     location: Location,
-    threadnumber: string,
+    threadNumber?: string,
     comments: Comments,
     createdBy: User, 
     createdAt: string,
     canAnnotate: boolean,
-    canDelete: boolean,
-    threadID: string
+    canDelete: boolean
 }
 
 type Options = {
     apiHost: string,
     fileId: string,
     token: string,
-    anonymousUserName: string
+    anonymousUserName: string,
+    permissions: BoxItemPermissions
 };
 
 type AnnotationDetails = {
@@ -124,7 +124,9 @@ type AnnotationDetails = {
 };
 
 type BoxUser = {
+    type: 'user',
     id: string,
+    login: string,
     name: string,
     profile_image: string
 }
