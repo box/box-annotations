@@ -1,7 +1,7 @@
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg?style=flat-square)](http://opensource.box.com/badges/)
 [![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
-[![version](https://img.shields.io/badge/version-v2.2.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
+[![version](https://img.shields.io/badge/version-v2.3.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
 
 # [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
@@ -83,6 +83,12 @@ Supported image file extensions: `ai, bmp, dcm, eps, gif, png, ps, psd, svs, tga
 9.  Test your first build! `yarn run build`
 10. To test only local annotation changes, see [instantiating a custom instance of Box Annotations](https://github.com/box/box-annotations/#passing-an-instance-of-box-annotations-into-box-content-preview).
 11. To link and test your local code changes along with your local Preview changes, run `yarn link` in this repository and `yarn link box-annotations` wherever [Box Content Preview](github.com/box/box-content-preview/) is cloned locally.
+12. To automatically rsync files after a Webpack build, add a build/rsync.json file with a `location` field. This file should look like:
+```
+{
+    "location": "YOUR_DESIRED_RSYNC_LOCATION_HERE"
+}
+```
 
 For more information on contributing see [Contributing](docs/contributing.md).
 

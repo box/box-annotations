@@ -5,11 +5,21 @@ const isDev = process.env.NODE_ENV === 'dev';
 
 const path = require('path');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const RsyncPlugin = require('./RsyncPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const commonConfig = require('./webpack.common.config');
 const license = require('./license');
+const fs = require('fs');
+
+let rsyncLocation = '';
+if (fs.existsSync('build/rsync.json')) {
+    /* eslint-disable */
+    const rsyncConf = require('./rsync.json');
+    rsyncLocation = rsyncConf.location;
+    /* eslint-enable */
+}
 
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
@@ -23,6 +33,11 @@ const config = Object.assign(commonConfig(), {
 });
 
 if (isDev) {
+    // If build/rsync.json exists, rsync bundled files to specified directory
+    if (rsyncLocation) {
+        config.plugins.push(new RsyncPlugin('lib/.', rsyncLocation));
+    }
+
     // Add inline source map
     config.devtool = 'inline-source-map';
 }
