@@ -63,10 +63,15 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     describe('show()', () => {
+        const selection = { anchorNode: {} };
+        const pageInfo = { page: 1, pageEl: {} };
+
         beforeEach(() => {
+            dialog.pageInfo = null;
             dialog.isMobile = false;
             dialog.setPosition = jest.fn();
             dialog.renderAnnotationPopover = jest.fn();
+            util.getPageInfo = jest.fn().mockReturnValue(pageInfo);
         });
 
         it('should do nothing if no selection is passed in', () => {
@@ -75,14 +80,16 @@ describe('doc/CreateHighlightDialog', () => {
         });
 
         it('should set the position and render the popover on desktop', () => {
-            dialog.show({});
+            dialog.show(selection);
+            expect(dialog.pageInfo).toEqual(pageInfo);
             expect(dialog.setPosition).toBeCalled();
             expect(dialog.renderAnnotationPopover).toBeCalled();
         });
 
         it('should only render the popover on mobile', () => {
             dialog.isMobile = true;
-            dialog.show({});
+            dialog.show(selection);
+            expect(dialog.pageInfo).toEqual(pageInfo);
             expect(dialog.setPosition).not.toBeCalled();
             expect(dialog.renderAnnotationPopover).toBeCalled();
         });

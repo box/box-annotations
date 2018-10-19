@@ -224,19 +224,6 @@ describe('Annotator', () => {
             expect(controller.init).toBeCalled();
             expect(controller.addListener).toBeCalledWith('annotationcontrollerevent', expect.any(Function));
         });
-
-        it('should setup shared point dialog in the point controller', () => {
-            annotator.modeControllers = { point: controller };
-            annotator.isMobile = true;
-
-            annotator.setupControllers();
-            expect(controller.init).toBeCalled();
-            expect(controller.setupSharedDialog).toBeCalledWith(annotator.container, {
-                isMobile: annotator.isMobile,
-                hasTouch: annotator.hasTouch,
-                localized: annotator.localized
-            });
-        });
     });
 
     describe('once annotator is initialized', () => {

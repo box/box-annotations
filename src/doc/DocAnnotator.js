@@ -439,20 +439,6 @@ class DocAnnotator extends Annotator {
         this.hideAnnotations(event);
     };
 
-    /**
-     * Hides and resets the shared mobile dialog.
-     *
-     * @return {void}
-     */
-    removeThreadFromSharedDialog() {
-        if (!this.mobileDialogEl) {
-            return;
-        }
-
-        this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-        super.removeThreadFromSharedDialog();
-    }
-
     hideCreateDialog(event) {
         if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
             return;

@@ -57,8 +57,6 @@ class PointModeController extends AnnotationModeController {
             this.unregisterThread(thread);
             thread.destroy();
         }
-
-        this.hideSharedDialog();
     }
 
     /**

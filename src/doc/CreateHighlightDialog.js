@@ -84,18 +84,13 @@ class CreateHighlightDialog extends EventEmitter {
         }
 
         // Select page of first node selected
-        const pageInfo = getPageInfo(selection.anchorNode);
-        if (!pageInfo.pageEl) {
+        this.pageInfo = getPageInfo(selection.anchorNode);
+        if (!this.pageInfo.pageEl) {
             return;
         }
 
         if (this.isMobile) {
-            this.pageInfo = getPageInfo(selection.anchorNode);
-            this.pageNum = this.pageInfo.page;
-            this.position = {
-                x: 0,
-                y: 0
-            };
+            this.position = { x: 0, y: 0 };
         } else {
             this.setPosition(selection);
         }
@@ -113,7 +108,7 @@ class CreateHighlightDialog extends EventEmitter {
     renderAnnotationPopover = (type = TYPES.highlight) => {
         const pageEl = this.isMobile
             ? this.annotatedElement
-            : this.annotatedElement.querySelector(`[data-page-number="${this.pageNum}"]`);
+            : this.annotatedElement.querySelector(`[data-page-number="${this.pageInfo.page}"]`);
         this.popoverLayerEl = pageEl.querySelector('.ba-dialog-layer');
         if (!this.popoverLayerEl) {
             this.popoverLayerEl = document.createElement('span');
@@ -150,12 +145,11 @@ class CreateHighlightDialog extends EventEmitter {
 
         // Select page of first node selected
         this.pageInfo = getPageInfo(selection.anchorNode);
-        const { pageEl, page } = this.pageInfo;
+        const { pageEl } = this.pageInfo;
         if (!pageEl) {
             return;
         }
 
-        this.pageNum = page;
         const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const popoverDimensions = popoverEl.getBoundingClientRect();
         const pageDimensions = pageEl.getBoundingClientRect();

@@ -17,7 +17,7 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
       <ActionControls
         canComment={false}
         canDelete={false}
-        hasComments={true}
+        hasComments={false}
         isPending={true}
         onCancel={
           [MockFunction] {
@@ -246,7 +246,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
       <ActionControls
         canComment={false}
         canDelete={false}
-        hasComments={true}
+        hasComments={false}
         isPending={false}
         onCancel={
           [MockFunction] {
