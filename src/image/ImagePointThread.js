@@ -51,7 +51,7 @@ class ImagePointThread extends AnnotationThread {
         const dialogWidth = dialogDimensions.width;
 
         // Get image tag inside viewer, based on page number. All images are page 1 by default.
-        const imageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const imageEl = this.getPopoverParent();
 
         // Center middle of dialog with point - this coordinate is with respect to the page
         const threadIconLeftX = this.threadEl.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;

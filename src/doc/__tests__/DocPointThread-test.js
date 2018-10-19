@@ -27,6 +27,7 @@ describe('doc/DocPointThread', () => {
                 can_annotate: true
             }
         });
+        thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
     });
 
     afterEach(() => {

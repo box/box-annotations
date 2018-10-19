@@ -20,8 +20,7 @@ class DocPointThread extends AnnotationThread {
      * @return {void}
      */
     show() {
-        const pageEl =
-            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+        const pageEl = this.getPopoverParent();
         const [browserX, browserY] = docUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to page
@@ -53,8 +52,7 @@ class DocPointThread extends AnnotationThread {
             return;
         }
 
-        const pageEl =
-            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
+        const pageEl = this.getPopoverParent();
 
         const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const dialogDimensions = popoverEl.getBoundingClientRect();
