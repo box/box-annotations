@@ -534,7 +534,7 @@ class DocAnnotator extends Annotator {
 
         thread.state = STATES.active;
         thread.show();
-        thread.saveAnnotation(highlightType, commentText);
+        thread.save(highlightType, commentText);
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
     }

@@ -107,8 +107,8 @@ class DocHighlightThread extends AnnotationThread {
      * @param {string} text Text of annotation to save
      * @return {void}
      */
-    saveAnnotation(type, text) {
-        super.saveAnnotation(type, text);
+    save(type, text) {
+        super.save(type, text);
         window.getSelection().removeAllRanges();
     }
 
@@ -119,8 +119,8 @@ class DocHighlightThread extends AnnotationThread {
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    deleteAnnotation(annotation, useServer = true) {
-        super.deleteAnnotation(annotation, useServer);
+    delete(annotation, useServer = true) {
+        super.delete(annotation, useServer);
 
         if (!this.threadID) {
             return;
@@ -269,7 +269,7 @@ class DocHighlightThread extends AnnotationThread {
             this.type = TYPES.highlight;
         }
 
-        this.saveAnnotation(this.type, message || '');
+        this.save(this.type, message || '');
     }
 
     /**
@@ -282,12 +282,12 @@ class DocHighlightThread extends AnnotationThread {
      */
     handleDelete(data) {
         if (data) {
-            this.deleteAnnotation(data);
+            this.delete(data);
             return;
         }
 
         if (this.comments.length <= 0) {
-            this.deleteAnnotation({ id: this.id });
+            this.delete({ id: this.id });
         }
     }
 

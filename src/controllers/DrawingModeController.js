@@ -148,7 +148,7 @@ class DrawingModeController extends AnnotationModeController {
      */
     postDrawing(): void {
         if (this.currentThread && this.currentThread.state === STATES.pending) {
-            this.currentThread.saveAnnotation(TYPES.draw);
+            this.currentThread.save(TYPES.draw);
         }
 
         this.exit();

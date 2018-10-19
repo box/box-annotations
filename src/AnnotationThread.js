@@ -156,9 +156,9 @@ class AnnotationThread extends EventEmitter {
             this.state = STATES.active;
         }
 
-        this.saveAnnotation = this.saveAnnotation.bind(this);
+        this.save = this.save.bind(this);
         this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
-        this.deleteAnnotation = this.deleteAnnotation.bind(this);
+        this.delete = this.delete.bind(this);
         this.popoverComponent = render(
             <AnnotationPopover
                 id={this.id}
@@ -171,9 +171,9 @@ class AnnotationThread extends EventEmitter {
                 canComment={this.canComment}
                 comments={this.comments}
                 position={this.position}
-                onDelete={this.deleteAnnotation}
+                onDelete={this.delete}
                 onCancel={this.cancelUnsavedAnnotation}
-                onCreate={this.saveAnnotation}
+                onCreate={this.save}
                 isPending={isPending}
             />,
             popoverLayer
@@ -199,7 +199,7 @@ class AnnotationThread extends EventEmitter {
      * @param {string} message - Text of annotation to save
      * @return {Promise} - Annotation create promise
      */
-    saveAnnotation(type, message) {
+    save(type, message) {
         const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client
@@ -252,7 +252,7 @@ class AnnotationThread extends EventEmitter {
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation(annotationToRemove, useServer = true) {
+    delete(annotationToRemove, useServer = true) {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
         const { id: annotationIDToRemove } = annotationToRemove;
         const annotation =
@@ -550,7 +550,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     createAnnotation(message) {
-        this.saveAnnotation(TYPES.point, message);
+        this.save(TYPES.point, message);
     }
 
     /**
@@ -580,7 +580,7 @@ class AnnotationThread extends EventEmitter {
      */
     handleThreadSaveError(error, tempAnnotationID) {
         // Remove temporary annotation
-        this.deleteAnnotation({ id: tempAnnotationID }, /* useServer */ false);
+        this.delete({ id: tempAnnotationID }, /* useServer */ false);
 
         // Broadcast error
         this.emit(THREAD_EVENT.createError);
