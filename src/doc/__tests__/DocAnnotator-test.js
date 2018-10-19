@@ -7,9 +7,7 @@ import * as docUtil from '../docUtil';
 import {
     STATES,
     TYPES,
-    CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
     CREATE_EVENT,
@@ -750,32 +748,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('removeThreadFromSharedDialog()', () => {
-        beforeEach(() => {
-            util.hideElement = jest.fn();
-            util.showElement = jest.fn();
-        });
-
-        it('should do nothing if the mobile dialog does not exist', () => {
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-        });
-
-        it('should remove the plain highlight dialog class on reset', () => {
-            annotator.mobileDialogEl = {
-                classList: {
-                    contains: jest.fn().mockReturnValue(true),
-                    remove: jest.fn()
-                },
-                removeChild: jest.fn(),
-                lastChild: {}
-            };
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-            expect(annotator.mobileDialogEl.classList.remove).toBeCalledWith(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-        });
-    });
-
     describe('resetHighlightSelection()', () => {
         it('should hide the visible createHighlightDialog and clear the text selection', () => {
             const selection = {
@@ -881,9 +853,6 @@ describe('doc/DocAnnotator', () => {
 
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
-
-            annotator.mobileDialogEl = document.createElement('div');
-            annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
             annotator.modeControllers = {
@@ -1064,7 +1033,6 @@ describe('doc/DocAnnotator', () => {
             thread = { show: jest.fn() };
             util.getPageInfo = jest.fn().mockReturnValue({ pageEl: {}, page: 1 });
 
-            annotator.removeThreadFromSharedDialog = jest.fn();
             annotator.clickThread = jest.fn();
             annotator.hideAnnotations = jest.fn();
             annotator.resetHighlightSelection = jest.fn();
@@ -1114,9 +1082,9 @@ describe('doc/DocAnnotator', () => {
             annotator.plainHighlightEnabled = true;
             annotator.commentHighlightEnabled = false;
             annotator.isMobile = true;
+            annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
             annotator.highlightClickHandler(event);
-            expect(annotator.removeThreadFromSharedDialog).toBeCalled();
             expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
@@ -1131,7 +1099,6 @@ describe('doc/DocAnnotator', () => {
             annotator.isMobile = false;
 
             annotator.highlightClickHandler(event);
-            expect(annotator.removeThreadFromSharedDialog).not.toBeCalled();
             expect(annotator.resetHighlightSelection).toBeCalled();
         });
     });

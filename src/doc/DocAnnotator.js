@@ -19,7 +19,6 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
@@ -298,7 +297,7 @@ class DocAnnotator extends Annotator {
             this.onSelectionChange = this.onSelectionChange.bind(this);
         }
 
-        this.createHighlightDialog = new CreateHighlightDialog(this.container, {
+        this.createHighlightDialog = new CreateHighlightDialog(this.annotatedElement, {
             isMobile: this.isMobile,
             hasTouch: this.hasTouch,
             allowComment: this.commentHighlightEnabled,
@@ -412,15 +411,22 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.hideAnnotations(event);
+        let mouseEvent = event;
+        if (this.hasTouch && event.targetTouches) {
+            mouseEvent = event.targetTouches[0];
+        }
 
         // NOTE: This assumes that only one dialog will ever exist within
         // the annotatedElement at a time
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (util.isInDialog(event, popoverEl)) {
-            event.stopPropagation();
+        const overlayEl = this.container.querySelector('.overlay');
+        const controlsEl = this.container.querySelector('.ba-action-controls');
+        if (util.isInDialog(mouseEvent, overlayEl) || util.isInDialog(mouseEvent, controlsEl)) {
+            mouseEvent.stopPropagation();
+            mouseEvent.preventDefault();
             return;
         }
+
+        this.hideAnnotations(event);
 
         if (!this.isCreatingAnnotation() && this.highlightClickHandler(event)) {
             return;
@@ -428,25 +434,11 @@ class DocAnnotator extends Annotator {
 
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            if (controller && !this.isCreatingAnnotation() && !this.isCreatingHighlight) {
+            if (!this.isCreatingAnnotation()) {
                 controller.handleSelection(event);
             }
         }
     };
-
-    /**
-     * Hides and resets the shared mobile dialog.
-     *
-     * @return {void}
-     */
-    removeThreadFromSharedDialog() {
-        if (!this.mobileDialogEl) {
-            return;
-        }
-
-        this.mobileDialogEl.classList.remove(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
-        super.removeThreadFromSharedDialog();
-    }
 
     hideCreateDialog(event) {
         if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
@@ -676,7 +668,7 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
-        return isPending;
+        return isPending || this.isCreatingHighlight;
     }
 
     /**
@@ -756,8 +748,6 @@ class DocAnnotator extends Annotator {
         }
 
         this.activeThread = null;
-        this.mouseEvent = event;
-        this.consumed = false;
 
         let plainThreads = [];
         let commentThreads = [];
@@ -782,11 +772,6 @@ class DocAnnotator extends Annotator {
         // Show active thread last
         if (this.activeThread) {
             this.activeThread.show();
-            return true;
-        }
-
-        if (this.isMobile) {
-            this.removeThreadFromSharedDialog();
             return true;
         }
 

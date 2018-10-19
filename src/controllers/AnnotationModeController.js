@@ -583,7 +583,9 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: string) {
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = this.isMobile
+            ? this.container
+            : this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
 
         // $FlowFixMe
         let popoverLayer = pageEl.querySelector('.ba-dialog-layer');

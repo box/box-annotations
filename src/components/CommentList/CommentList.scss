@@ -24,4 +24,20 @@
     .bcs-comment {
         margin: 0;
     }
+
+    // MOBILE CSS
+    @media #{$mobile}, #{$tablet} {
+        .ba-comment-list {
+            max-height: unset;
+        }
+
+        .ba-comment-list-item {
+            margin-bottom: 30px;
+            padding-top: 15px;
+        }
+
+        .ba-comment-list-item + .ba-comment-list-item {
+            padding-top: 30px;
+        }
+    }
 }

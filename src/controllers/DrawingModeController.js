@@ -371,15 +371,17 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @protected
      * @param {Event} event - The event object containing the pointer information
-     * @return {void}
+     * @return {DrawingThread} Selected drawing annotation
      */
-    handleSelection(event: Event): void {
+    handleSelection(event: Event): DrawingThread {
+        let selected;
+
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
 
         // $FlowFixMe
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
-            return;
+            return selected;
         }
 
         event.stopPropagation();
@@ -394,13 +396,14 @@ class DrawingModeController extends AnnotationModeController {
         // Selected a region with no drawing threads, remove the reference to the previously selected thread
         if (intersectingThreads.length === 0) {
             this.selectedThread = undefined;
-            return;
+            return selected;
         }
 
         // Randomly select a thread in case there are multiple overlapping threads (use canvas hitmap to avoid this)
         const index = Math.floor(Math.random() * intersectingThreads.length);
-        const selected = intersectingThreads[index];
+        selected = intersectingThreads[index];
         this.select(selected);
+        return selected;
     }
 
     /**

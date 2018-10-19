@@ -485,10 +485,14 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     position = () => {
+        if (this.isMobile) {
+            return;
+        }
+
         // Position it below lower right corner or center of the highlight - we need
         // to reposition every time since the DOM could have changed from
         // zooming
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         const [browserX, browserY] = docUtil.getScaledPDFCoordinates(

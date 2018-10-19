@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import Annotator from '../Annotator';
-import * as util from '../util';
 import {
     STATES,
     TYPES,
@@ -99,7 +98,6 @@ describe('Annotator', () => {
             annotator.setScale = jest.fn();
             annotator.setupAnnotations = jest.fn();
             annotator.loadAnnotations = jest.fn();
-            annotator.setupMobileDialog = jest.fn();
             annotator.getAnnotationPermissions = jest.fn();
 
             annotator.permissions = { can_annotate: true };
@@ -117,55 +115,6 @@ describe('Annotator', () => {
             annotator.options.header = 'light';
             annotator.init(5);
             expect(annotator.headerElement).toEqual(document.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER));
-        });
-
-        it('should setup mobile dialog for mobile browsers', () => {
-            annotator.isMobile = true;
-            annotator.init();
-            expect(annotator.setupMobileDialog).toBeCalled();
-        });
-    });
-
-    describe('setupMobileDialog()', () => {
-        it('should generate mobile annotations dialog and append to container', () => {
-            annotator.container = {
-                appendChild: jest.fn()
-            };
-            annotator.setupMobileDialog();
-            expect(annotator.container.appendChild).toBeCalled();
-            expect(annotator.mobileDialogEl.children.length).toEqual(1);
-        });
-    });
-
-    describe('removeThreadFromSharedDialog()', () => {
-        beforeEach(() => {
-            util.hideElement = jest.fn();
-            util.showElement = jest.fn();
-        });
-
-        it('should do nothing if the mobile dialog does not exist or is hidden', () => {
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-
-            annotator.mobileDialogEl = {
-                classList: {
-                    contains: jest.fn().mockReturnValue(true)
-                },
-                removeChild: jest.fn(),
-                lastChild: {}
-            };
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-        });
-
-        it('should generate mobile annotations dialog and append to container', () => {
-            annotator.mobileDialogEl = document.createElement('div');
-            annotator.mobileDialogEl.appendChild(document.createElement('div'));
-
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).toBeCalled();
-            expect(util.showElement).toBeCalled();
-            expect(annotator.mobileDialogEl.children.length).toEqual(0);
         });
     });
 
