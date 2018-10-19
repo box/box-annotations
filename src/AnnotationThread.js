@@ -497,6 +497,8 @@ class AnnotationThread extends EventEmitter {
         if (this.isMobile) {
             // Changing state from pending
             this.state = STATES.active;
+        } else {
+            this.state = STATES.inactive;
         }
 
         this.show();

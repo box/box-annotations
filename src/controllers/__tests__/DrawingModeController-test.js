@@ -45,7 +45,7 @@ describe('controllers/DrawingModeController', () => {
             annotatedElement: rootElement,
             addListener: jest.fn(),
             removeListener: jest.fn(),
-            saveAnnotation: jest.fn(),
+            save: jest.fn(),
             handleStart: jest.fn(),
             destroy: jest.fn(),
             deleteThread: jest.fn(),
@@ -61,6 +61,7 @@ describe('controllers/DrawingModeController', () => {
         };
         controller.emit = jest.fn();
         controller.annotatedElement = rootElement;
+        controller.api = { user: {} };
     });
 
     afterEach(() => {
@@ -331,53 +332,10 @@ describe('controllers/DrawingModeController', () => {
             expect(thread.unbindDrawingListeners).toBeCalled();
         });
 
-        it('should start a new thread on pagechanged', () => {
-            const thread1 = {
-                minX: 10,
-                minY: 10,
-                maxX: 20,
-                maxY: 20,
-                location: {
-                    page: 1
-                },
-                info: 'I am a thread',
-                saveAnnotation: jest.fn(),
-                removeListener: jest.fn(),
-                unbindDrawingListeners: jest.fn()
-            };
-            const thread2 = {
-                minX: 10,
-                minY: 10,
-                maxX: 20,
-                maxY: 20,
-                location: {
-                    page: 1
-                },
-                info: 'I am a thread',
-                handleStart: jest.fn()
-            };
-            const data = {
-                event: THREAD_EVENT.save,
-                eventData: {
-                    location: 'not empty'
-                }
-            };
-            controller.bindListeners = jest.fn(() => {
-                controller.currentThread = thread2;
-            });
-
-            controller.handleThreadEvents(thread1, data);
-            expect(controller.registerThread).toBeCalled();
-            expect(controller.unbindListeners).toBeCalled();
-            expect(controller.bindListeners).toBeCalled();
-            expect(thread2.handleStart).toBeCalledWith(data.eventData.location);
-            expect(controller.currentThread).not.toBeUndefined();
-        });
-
         it('should soft delete a pending thread and restart mode listeners', () => {
             thread.state = 'pending';
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.threadCleanup
+                event: THREAD_EVENT.delete
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -393,7 +351,7 @@ describe('controllers/DrawingModeController', () => {
             controller.annotations[1] = new rbush();
 
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.threadCleanup
+                event: THREAD_EVENT.delete
             });
             expect(controller.unregisterThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
@@ -407,7 +365,7 @@ describe('controllers/DrawingModeController', () => {
             thread.state = 'pending';
 
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.threadCleanup
+                event: THREAD_EVENT.delete
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();

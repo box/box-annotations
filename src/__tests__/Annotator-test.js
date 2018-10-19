@@ -540,7 +540,7 @@ describe('Annotator', () => {
                 thread.getThreadEventData = jest.fn().mockReturnValue({});
                 controller.getThreadByID = jest.fn().mockReturnValue(thread);
                 thread.renderAnnotationPopover = jest.fn();
-                thread.saveAnnotation = jest.fn();
+                thread.save = jest.fn();
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
@@ -549,7 +549,7 @@ describe('Annotator', () => {
                 });
 
                 expect(thread.state).toEqual(STATES.active);
-                expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'text');
+                expect(thread.save).toBeCalledWith(TYPES.point, 'text');
                 expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
                 expect(result).not.toBeNull();
                 expect(thread.renderAnnotationPopover).toBeCalled();

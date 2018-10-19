@@ -20,7 +20,7 @@ class HighlightModeController extends AnnotationModeController {
         switch (data.event) {
             case THREAD_EVENT.save:
                 // Re-render plain highlight canvas when a plain highlight is converted to a highlight comment
-                if (thread.type === TYPES.highlight && thread.comments > 0) {
+                if (thread.type === TYPES.highlight && thread.comments.length > 0) {
                     this.renderPage(thread.location.page);
                 }
                 break;

@@ -42,20 +42,19 @@ describe('controllers/HighlightModeController', () => {
 
     describe('handleThreadEvents()', () => {
         it('should render page on save only if plain highlight was converted to a highlight comment', () => {
-            thread.annotations = [{ type: 'highlight' }];
+            thread.comments = [];
             controller.renderPage = jest.fn();
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).not.toBeCalled();
 
-            thread.annotations = [{ type: 'highlight' }, { type: 'highlight-comment' }];
+            thread.comments = [{ type: 'highlight-comment' }];
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).toBeCalledWith(1);
         });
 
-        it('should emit annotationsrenderpage with page number on threadCleanup', () => {
+        it('should emit annotationsrenderpage with page number on delete', () => {
             controller.unregisterThread = jest.fn();
-            controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
-            expect(controller.unregisterThread).toBeCalled();
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.delete, data: {} });
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.renderPage, thread.location.page);
         });
     });

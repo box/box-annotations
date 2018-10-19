@@ -322,12 +322,6 @@ class DrawingModeController extends AnnotationModeController {
 
                 this.bindListeners();
 
-                // // Given a location (page change) start drawing at the provided location
-                // if (eventData && eventData.location) {
-                //     // $FlowFixMe
-                //     this.drawingStartHandler(eventData);
-                // }
-
                 break;
             case THREAD_EVENT.delete:
                 if (!thread) {

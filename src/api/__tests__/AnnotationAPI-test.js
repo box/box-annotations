@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import AnnotationAPI from '../AnnotationAPI';
-import { ANNOTATOR_EVENT, ERROR_TYPE, TYPES } from '../../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
 const HTTP_POST = 'POST';
@@ -11,6 +11,7 @@ const promise = new Promise(jest.fn());
 
 describe('api/AnnotationAPI', () => {
     const annotationData = {
+        id: '',
         details: {
             location: { page: 1 }
         }

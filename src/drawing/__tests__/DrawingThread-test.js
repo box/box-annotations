@@ -64,7 +64,7 @@ describe('drawing/DrawingThread', () => {
     describe('deleteThread()', () => {
         it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
             thread.clearBoundary = jest.fn();
-            thread.deleteAnnotation = jest.fn();
+            thread.delete = jest.fn();
             thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
             thread.concreteContext = {
                 clearRect: jest.fn()
@@ -80,7 +80,7 @@ describe('drawing/DrawingThread', () => {
             expect(thread.getBrowserRectangularBoundary).toBeCalled();
             expect(thread.concreteContext.clearRect).toBeCalled();
             expect(thread.clearBoundary).toBeCalled();
-            expect(thread.deleteAnnotation).toBeCalledWith({ id: '123abc' });
+            expect(thread.delete).toBeCalledWith({ id: '123abc' });
             expect(thread.pathContainer).toEqual(null);
         });
     });

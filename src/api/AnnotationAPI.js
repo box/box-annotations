@@ -55,7 +55,7 @@ class AnnotationAPI extends API {
      * @return {Annotation} Formatted HTTP response data
      */
     createSuccessHandler = (data: Object): CommentProps => {
-        if (data.type === 'error' || !data.id) {
+        if (data.type === 'error') {
             const error = new Error('Could not create annotation');
             this.emit(ANNOTATOR_EVENT.error, {
                 reason: ERROR_TYPE.create,

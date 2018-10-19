@@ -44,7 +44,7 @@ describe('controllers/AnnotationModeController', () => {
             state: STATES.pending,
             addListener: jest.fn(),
             removeListener: jest.fn(),
-            saveAnnotation: jest.fn(),
+            save: jest.fn(),
             handleStart: jest.fn(),
             destroy: jest.fn(),
             deleteThread: jest.fn(),
@@ -198,16 +198,23 @@ describe('controllers/AnnotationModeController', () => {
                 };
                 buttonEl = document.createElement('button');
                 buttonEl.title = controller.modeButton.title;
-                buttonEl.classList.add(CLASS_HIDDEN);
+                buttonEl.classList.remove(CLASS_HIDDEN);
                 buttonEl.classList.add('selector');
                 buttonEl.addEventListener = jest.fn();
 
-                controller.permissions = { canAnnotate: true };
+                controller.permissions = { can_annotate: true };
                 controller.getButton = jest.fn().mockReturnValue(buttonEl);
             });
 
             it('should do nothing if user cannot annotate', () => {
-                controller.permissions.canAnnotate = false;
+                controller.permissions.can_annotate = false;
+                controller.hideButton();
+                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
+            });
+
+            it('should do nothing if no modeButton', () => {
+                controller.modeButton = undefined;
+                controller.permissions.can_annotate = false;
                 controller.hideButton();
                 expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
@@ -221,13 +228,6 @@ describe('controllers/AnnotationModeController', () => {
             it('should add the bp-is-hidden class to the button', () => {
                 controller.hideButton();
                 expect(buttonEl.classList).toContain(CLASS_HIDDEN);
-            });
-
-            it('should do nothing if no modeButton', () => {
-                controller.modeButton = undefined;
-                controller.permissions.canAnnotate = false;
-                controller.hideButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
         });
 
@@ -455,6 +455,8 @@ describe('controllers/AnnotationModeController', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
                 controller.renderPage = jest.fn();
+                controller.registerThread = jest.fn();
+                controller.unregisterThread = jest.fn();
                 controller.localized = {
                     deleteError: 'delete error',
                     createError: 'create error'
@@ -472,8 +474,8 @@ describe('controllers/AnnotationModeController', () => {
                 expect(controller.hadPendingThreads).toBeFalsy();
             });
 
-            it('should re-render the page on reset', () => {
-                controller.handleThreadEvents(thread, { event: THREAD_EVENT.reset, data: {} });
+            it('should re-render the page on render', () => {
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, data: {} });
                 expect(controller.renderPage).toBeCalled();
             });
 
