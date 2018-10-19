@@ -125,13 +125,19 @@ class AnnotationThread extends EventEmitter {
         throw new Error('Implement me!');
     };
 
+    getPopoverParent() {
+        return this.isMobile
+            ? this.container
+            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+    }
+
     /**
      * Shows the appropriate annotation dialog for this thread.
      *
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    renderAnnotationPopover = (event = null) => {
+    renderAnnotationPopover(event = null) {
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -151,7 +157,7 @@ class AnnotationThread extends EventEmitter {
                 };
             });
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (!popoverLayer) {
             popoverLayer = document.createElement('span');
@@ -173,6 +179,7 @@ class AnnotationThread extends EventEmitter {
                 createdAt={get(firstAnnotation, 'createdAt', null)}
                 createdBy={get(firstAnnotation, 'createdBy', null)}
                 modifiedBy={get(firstAnnotation, 'modifiedBy', null)}
+                isMobile={this.isMobile}
                 canAnnotate={this.permissions.can_annotate}
                 canComment={this.canComment}
                 canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
@@ -186,18 +193,18 @@ class AnnotationThread extends EventEmitter {
             popoverLayer
         );
         this.position();
-    };
+    }
 
-    unmountPopover = () => {
+    unmountPopover() {
         this.reset();
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (this.popoverComponent && popoverLayer) {
             unmountComponentAtNode(popoverLayer);
             this.popoverComponent = null;
         }
-    };
+    }
 
     /**
      * Saves an annotation.
@@ -388,6 +395,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
+        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
         this.element.addEventListener('click', this.renderAnnotationPopover);
     }
 
@@ -449,7 +457,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         pageEl.scrollIntoView();
     }
 

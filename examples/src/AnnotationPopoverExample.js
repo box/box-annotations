@@ -31,6 +31,33 @@ const annotationInfo = {
 
 const comments = [
     {
+        id: '123defg',
+        message: 'FAMILY',
+        permissions: {
+            can_delete: true
+        },
+        onDelete,
+        ...annotationInfo
+    },
+    {
+        id: '123defh',
+        message: 'FAMILY',
+        permissions: {
+            can_delete: true
+        },
+        onDelete,
+        ...annotationInfo
+    },
+    {
+        id: '123defi',
+        message: 'FAMILY',
+        permissions: {
+            can_delete: true
+        },
+        onDelete,
+        ...annotationInfo
+    },
+    {
         id: '123def',
         message: 'FAMILY',
         permissions: {
@@ -62,7 +89,7 @@ const comments = [
 
 const AnnotationPopoverContainer = (props) => (
     <div className='annotation-container'>
-        <AnnotationPopover type='point' isPending={false} position={position} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} {...annotationInfo} />
+        <AnnotationPopover type='point' comments={[]} isPending={false} position={position} onDelete={onDelete} onCancel={onCancel} onCreate={onCreate} {...props} {...annotationInfo} />
     </div>
 );
 
@@ -95,7 +122,7 @@ const PlainHighlightAnnotation = () => (
 );
 
 const HighlightCommentAnnotation = () => (
-    <AnnotationPopoverContainer type='highlight-comment' isPending={false} canAnnotate={true} canDelete={true} />
+    <AnnotationPopoverContainer type='highlight-comment' isPending={false} canAnnotate={true} canDelete={true} canComment={true} />
 );
 
 const DrawingAnnotation = () => (

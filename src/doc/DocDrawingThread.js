@@ -306,7 +306,7 @@ class DocDrawingThread extends DrawingThread {
         boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
         boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         pageEl.appendChild(boundaryEl);
     };
 
@@ -317,16 +317,18 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     position = () => {
+        if (this.isMobile) {
+            return;
+        }
+
         if (!this.pageEl) {
-            this.pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+            this.pageEl = this.getPopoverParent();
         }
 
         // Render popover so we can get width
         const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const boundaryEl = findElement(this.annotatedElement, '.ba-drawing-boundary', this.drawBoundary);
-        const pageEl =
-            this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`) || this.annotatedElement;
-        const pageDimensions = pageEl.getBoundingClientRect();
+        const pageDimensions = this.pageEl.getBoundingClientRect();
         const boundaryDimensions = boundaryEl.getBoundingClientRect();
         const popoverDimensions = popoverEl.getBoundingClientRect();
 

@@ -5,11 +5,18 @@
     padding-bottom: 10px;
 
     .ba-popover {
+        position: relative;
         width: fit-content;
     }
 
-    .ba-popover-overlay {
-        position: relative;
+    @media #{$mobile}, #{$tablet} {
+        border: 1px solid $seesee;
+        height: 400px;
+        overflow: hidden;
+
+        .ba-popover {
+            width: 100%;
+        }
     }
 }
 

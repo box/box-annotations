@@ -86,7 +86,7 @@ export function findClosestElWithClass(element, className) {
  * @return {Object} Page element/page number if found or null/-1 if not
  */
 export function getPageInfo(element) {
-    const pageEl = findClosestElWithClass(element, 'page') || null;
+    const pageEl = findClosestElWithClass(element, 'page');
     let page = 1;
 
     if (pageEl) {

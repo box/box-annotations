@@ -57,8 +57,6 @@ class PointModeController extends AnnotationModeController {
             this.unregisterThread(thread);
             thread.destroy();
         }
-
-        this.hideSharedDialog();
     }
 
     /**
@@ -76,21 +74,6 @@ class PointModeController extends AnnotationModeController {
         });
 
         this.onDialogCancel();
-    }
-
-    /**
-     * Hides the shared mobile dialog and clears associated data
-     *
-     * @protected
-     * @return {void}
-     */
-    hideSharedDialog() {
-        this.lastPointEvent = null;
-        this.pendingThreadID = null;
-
-        if (this.createDialog && this.createDialog.isVisible) {
-            this.createDialog.hide();
-        }
     }
 
     /** @inheritdoc */

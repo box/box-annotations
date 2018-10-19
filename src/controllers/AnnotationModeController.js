@@ -587,7 +587,9 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: string) {
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = this.isMobile
+            ? this.container
+            : this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
         let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (!popoverLayer) {
             popoverLayer = document.createElement('span');
