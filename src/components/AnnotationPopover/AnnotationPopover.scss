@@ -106,8 +106,8 @@
             height: 100%;
         }
 
-        .ba-popover-overlay.ba-inline,
-        .ba-popover-overlay.ba-create-popover,
+        .ba-inline .ba-popover-overlay,
+        .ba-create-popover,
         .ba-create-popover .overlay {
             background: transparent;
         }
@@ -119,20 +119,31 @@
             overflow: unset;
         }
 
-        .ba-inline .overlay, {
+        .ba-inline .overlay {
             border-bottom: 1px solid #bdc3c7;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
             margin: 0;
             text-align: center;
+        }
+
+        .ba-inline .ba-create-popover .overlay {
+            border: none;
+            box-shadow: none;
         }
     }
 
     // TABLET-SPECIFIC CSS
     @media #{$tablet} {
         .ba-popover {
+            border-left: 1px solid $seesee;
             left: auto;
-            padding: 15px 0;
-            width: 415px;
+            right: 0;
+            width: 375px;
+        }
+
+        .ba-popover.ba-inline {
+            border: none;
+            width: 100%;
         }
     }
 }

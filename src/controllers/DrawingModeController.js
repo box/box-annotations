@@ -339,9 +339,9 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @protected
      * @param {Event} event - The event object containing the pointer information
-     * @return {DrawingThread}
+     * @return {DrawingThread} Selected drawing annotation
      */
-    handleSelection(event: Event): void {
+    handleSelection(event: Event): DrawingThread {
         let selected;
 
         // NOTE: This is a workaround when buttons are not given precedence in the event chain

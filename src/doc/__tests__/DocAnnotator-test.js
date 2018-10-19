@@ -7,9 +7,7 @@ import * as docUtil from '../docUtil';
 import {
     STATES,
     TYPES,
-    CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
     CREATE_EVENT,
@@ -855,9 +853,6 @@ describe('doc/DocAnnotator', () => {
 
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
-
-            annotator.mobileDialogEl = document.createElement('div');
-            annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
             annotator.modeControllers = {

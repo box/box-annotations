@@ -39,11 +39,10 @@
     padding: 0;
     user-select: none;
 
-
     @media #{$mobile}, #{$tablet} {
         font-size: 16px;
         line-height: 16px;
-        
+
         .btn {
             font-size: 16px;
             line-height: 16px;

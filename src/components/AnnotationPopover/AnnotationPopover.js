@@ -12,6 +12,7 @@ import ActionControls from '../ActionControls';
 import AnnotatorLabel from './AnnotatorLabel';
 
 type Props = {
+    isMobile: boolean,
     canComment: boolean,
     position: Function,
     onDelete: Function,
@@ -25,6 +26,7 @@ type Props = {
 
 class AnnotationPopover extends React.PureComponent<Props> {
     static defaultProps = {
+        isMobile: false,
         isPending: false,
         canAnnotate: false,
         canComment: false,
@@ -48,6 +50,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
             createdAt,
             createdBy,
             comments,
+            isMobile,
             canComment,
             canAnnotate,
             isPending,
@@ -59,18 +62,22 @@ class AnnotationPopover extends React.PureComponent<Props> {
             language,
             messages: intlMessages
         } = this.props;
+        const hasComments = comments.length > 0;
 
         return (
             <Internationalize language={language} messages={intlMessages}>
-                <div className='ba-popover'>
+                <div
+                    className={classNames('ba-popover', {
+                        'ba-inline': isMobile || (!isPending && !hasComments)
+                    })}
+                >
                     <span className='ba-popover-caret' />
                     <Overlay
                         className={classNames('ba-popover-overlay', {
-                            'ba-inline': !isPending && comments.length === 0,
                             'ba-create-popover': isPending
                         })}
                     >
-                        {comments.length > 0 ? (
+                        {hasComments ? (
                             <CommentList comments={comments} onDelete={onDelete} />
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
@@ -79,7 +86,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                             <ActionControls
                                 id={id}
                                 type={type}
-                                hasComments={comments.length > 0}
+                                hasComments={hasComments}
                                 isPending={isPending}
                                 canComment={canComment}
                                 canDelete={canDelete}

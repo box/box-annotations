@@ -18,7 +18,6 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
     CLASS_ANNOTATION_LAYER_DRAW,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
@@ -418,12 +417,15 @@ class DocAnnotator extends Annotator {
 
         // NOTE: This assumes that only one dialog will ever exist within
         // the annotatedElement at a time
-        const overlayEl = this.annotatedElement.querySelector('.overlay');
-        const controlsEl = this.annotatedElement.querySelector('.ba-action-controls');
+        const overlayEl = this.container.querySelector('.overlay');
+        const controlsEl = this.container.querySelector('.ba-action-controls');
         if (util.isInDialog(mouseEvent, overlayEl) || util.isInDialog(mouseEvent, controlsEl)) {
-            event.stopPropagation();
+            mouseEvent.stopPropagation();
+            mouseEvent.preventDefault();
             return;
         }
+
+        this.hideAnnotations(event);
 
         if (!this.isCreatingAnnotation() && this.highlightClickHandler(event)) {
             return;
@@ -431,12 +433,10 @@ class DocAnnotator extends Annotator {
 
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            if (!this.isCreatingAnnotation() && controller.handleSelection(event)) {
-                return;
+            if (!this.isCreatingAnnotation()) {
+                controller.handleSelection(event);
             }
         }
-
-        this.hideAnnotations(event);
     };
 
     hideCreateDialog(event) {

@@ -2,12 +2,6 @@ import EventEmitter from 'events';
 import * as util from './util';
 import './Annotator.scss';
 import {
-    CLASS_HIDDEN,
-    DATA_TYPE_ANNOTATION_DIALOG,
-    CLASS_MOBILE_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_DIALOG,
-    CLASS_MOBILE_DIALOG_HEADER,
-    ID_MOBILE_ANNOTATION_DIALOG,
     TYPES,
     STATES,
     THREAD_EVENT,
@@ -89,6 +83,10 @@ class Annotator extends EventEmitter {
             this.modeControllers[mode].destroy();
         });
 
+        if (this.container) {
+            this.container.removeEventListener('click', this.clickHandler);
+        }
+
         this.unbindDOMListeners();
         this.unbindCustomListeners();
     }
@@ -130,11 +128,6 @@ class Annotator extends EventEmitter {
 
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
-
-        // Set up mobile annotations dialog
-        if (this.isMobile) {
-            this.setupMobileDialog();
-        }
 
         this.setScale(initialScale);
         this.setupAnnotations();
@@ -266,38 +259,6 @@ class Annotator extends EventEmitter {
 
             controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
         });
-    }
-
-    /**
-     * Sets up the shared mobile dialog element.
-     *
-     * @protected
-     * @return {void}
-     */
-    setupMobileDialog() {
-        this.mobileDialogEl = util.generateMobileDialogEl();
-        this.mobileDialogEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_DIALOG);
-        this.mobileDialogEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
-        this.mobileDialogEl.classList.add(CLASS_ANNOTATION_DIALOG);
-        this.mobileDialogEl.classList.add(CLASS_HIDDEN);
-        this.mobileDialogEl.id = ID_MOBILE_ANNOTATION_DIALOG;
-        this.container.appendChild(this.mobileDialogEl);
-    }
-
-    /**
-     * Hides and resets the shared mobile dialog.
-     *
-     * @return {void}
-     */
-    removeThreadFromSharedDialog() {
-        if (!this.mobileDialogEl || this.mobileDialogEl.classList.contains(CLASS_HIDDEN)) {
-            return;
-        }
-
-        // Resets the mobile dialog
-        util.hideElement(this.mobileDialogEl);
-        util.showElement(`.${CLASS_MOBILE_DIALOG_HEADER}`);
-        this.mobileDialogEl.removeChild(this.mobileDialogEl.lastChild);
     }
 
     /**
@@ -529,6 +490,15 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     scaleAnnotations(data) {
+        const containerRect = this.container.getBoundingClientRect();
+        this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
+
+        if (this.isMobile) {
+            this.container.addEventListener('click', this.clickHandler);
+        } else {
+            this.container.removeEventListener('click', this.clickHandler);
+        }
+
         this.setScale(data.scale);
         this.render();
     }

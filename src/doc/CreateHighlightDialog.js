@@ -107,7 +107,7 @@ class CreateHighlightDialog extends EventEmitter {
      */
     renderAnnotationPopover = (type = TYPES.highlight) => {
         const pageEl = this.isMobile
-            ? this.annotatedElement
+            ? this.container
             : this.annotatedElement.querySelector(`[data-page-number="${this.pageInfo.page}"]`);
         this.popoverLayerEl = pageEl.querySelector('.ba-dialog-layer');
         if (!this.popoverLayerEl) {
@@ -128,6 +128,7 @@ class CreateHighlightDialog extends EventEmitter {
                 onCreate={this.onCreate}
                 onCommentClick={this.onCommentClick}
                 isPending={true}
+                isMobile={this.isMobile}
             />,
             this.popoverLayerEl
         );
