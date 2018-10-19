@@ -308,21 +308,21 @@ class AnnotationThread extends EventEmitter {
         return this.api
             .delete(annotationIDToRemove)
             .then(() => {
-                // // Ensures that blank highlight comment is also deleted when removing
-                // // the last comment on a highlight
-                // if (this.type === TYPES.highlight && this.canDelete) {
-                //     this.api.delete(this.id).then(() => {
-                //         this.threadID = null;
+                // Ensures that blank highlight comment is also deleted when removing
+                // the last comment on a highlight
+                if (this.type === TYPES.highlight && this.canDelete) {
+                    this.api.delete(this.id).then(() => {
+                        // Broadcast thread cleanup if needed
+                        if (!this.threadID) {
+                            this.emit(THREAD_EVENT.reset);
+                        } else {
+                            // Broadcast annotation deletion event
+                            this.emit(THREAD_EVENT.delete);
+                        }
 
-                //         // Broadcast thread cleanup if needed
-                //         if (!this.threadID) {
-                //             this.emit(THREAD_EVENT.threadCleanup);
-                //         } else {
-                //             // Broadcast annotation deletion event
-                //             this.emit(THREAD_EVENT.delete);
-                //         }
-                //     });
-                // }
+                        this.threadID = null;
+                    });
+                }
 
                 // Broadcast annotation deletion event
                 this.emit(THREAD_EVENT.delete);
