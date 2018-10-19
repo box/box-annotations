@@ -56,7 +56,7 @@ class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
         const layerClass =
             this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
         clearCanvas(pageEl, layerClass);

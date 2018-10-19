@@ -356,6 +356,7 @@ describe('doc/DocDrawingThread', () => {
 
     describe('getBrowserRectangularBoundary()', () => {
         it('should return null when no thread has not been assigned a location', () => {
+            thread.destroy = jest.fn();
             thread.location = undefined;
             expect(thread.getBrowserRectangularBoundary()).toBeNull();
         });

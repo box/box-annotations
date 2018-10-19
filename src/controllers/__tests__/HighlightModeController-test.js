@@ -107,7 +107,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on every page', () => {
-            controller.threads = { 1: {}, 2: {} };
+            controller.annotations = { 1: {}, 2: {} };
             controller.render();
             expect(controller.renderPage).toBeCalledTwice;
             expect(controller.destroyPendingThreads).toBeCalled();
@@ -126,7 +126,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.threads = {
+            controller.annotations = {
                 1: {
                     all: jest.fn().mockReturnValue([thread])
                 }

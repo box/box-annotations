@@ -45,7 +45,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     cancelFirstComment() {
         // Reset type from highlight-comment to highlight
-        if (util.isPlainHighlight(this.annotations)) {
+        if (util.isPlainHighlight(this.comments)) {
             this.type = TYPES.highlight;
         }
 
@@ -54,7 +54,7 @@ class DocHighlightThread extends AnnotationThread {
         // Clear and reset mobile annotations dialog
         if (this.isMobile) {
             this.unmountPopover();
-        } else if (util.isPlainHighlight(this.annotations)) {
+        } else if (util.isPlainHighlight(this.comments)) {
             this.renderAnnotationPopover();
         } else {
             this.destroy();
@@ -286,9 +286,8 @@ class DocHighlightThread extends AnnotationThread {
             return;
         }
 
-        const firstAnnotation = this.annotations[0];
-        if (firstAnnotation) {
-            this.deleteAnnotation(firstAnnotation);
+        if (this.comments.length <= 0) {
+            this.deleteAnnotation({ id: this.id });
         }
     }
 

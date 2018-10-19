@@ -2,7 +2,7 @@
 import DocHighlightThread from '../DocHighlightThread';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import { STATES, TYPES, HIGHLIGHT_FILL } from '../../constants';
+import { STATES, TYPES, HIGHLIGHT_FILL, THREAD_EVENT } from '../../constants';
 
 let thread;
 
@@ -71,7 +71,7 @@ describe('doc/DocHighlightThread', () => {
             expect(thread.reset).toBeCalled();
 
             // only plain highlight annotation should still exist
-            expect(Object.keys(thread.annotations).length).toEqual(1);
+            expect(Object.keys(thread.comments).length).toEqual(1);
         });
 
         it('should destroy the annotation when cancelling a new highlight comment annotation', () => {
@@ -85,7 +85,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should reset the thread if on mobile and a comment-highlight', () => {
             thread.reset = jest.fn();
-            thread.annotations = [{}, {}, {}];
+            thread.comments = [{}, {}, {}];
             thread.isMobile = true;
 
             thread.cancelFirstComment();
@@ -108,7 +108,7 @@ describe('doc/DocHighlightThread', () => {
 
             thread.destroy();
             expect(thread.element).toBeUndefined();
-            expect(thread.emit).toBeCalledWith('annotationthreadcleanup');
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, 1);
         });
     });
 
@@ -254,7 +254,7 @@ describe('doc/DocHighlightThread', () => {
 
         it('should create a highlight comment and save', () => {
             thread.saveAnnotation = jest.fn();
-            thread.annotations = [{}, {}, {}];
+            thread.comments = [{}, {}, {}];
 
             thread.handleCreate('something');
             expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, 'something');
@@ -264,17 +264,19 @@ describe('doc/DocHighlightThread', () => {
     describe('handleDelete()', () => {
         beforeEach(() => {
             thread.deleteAnnotation = jest.fn();
-            thread.annotations = [{ id: 1 }, { id: 2 }, {}];
+            thread.comments = [{ id: 1 }, { id: 2 }, {}];
         });
 
         it('should delete the specified id', () => {
             thread.handleDelete({ id: 2 });
-            expect(thread.deleteAnnotation).toBeCalledWith(2);
+            expect(thread.deleteAnnotation).toBeCalledWith({ id: 2 });
         });
 
         it('should delete the first annotation in the thread if no id is provided', () => {
+            thread.comments = [];
+            thread.id = 1;
             thread.handleDelete();
-            expect(thread.deleteAnnotation).toBeCalledWith(1);
+            expect(thread.deleteAnnotation).toBeCalledWith({ id: 1 });
         });
     });
 

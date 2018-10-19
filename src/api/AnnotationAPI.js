@@ -61,6 +61,7 @@ class AnnotationAPI extends API {
                 reason: ERROR_TYPE.create,
                 error: error.toString()
             });
+            return data;
         }
 
         const { details, thread: threadNumber } = data;

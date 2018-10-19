@@ -221,19 +221,6 @@ describe('Annotator', () => {
             expect(controller.init).toBeCalled();
             expect(controller.addListener).toBeCalledWith('annotationcontrollerevent', expect.any(Function));
         });
-
-        it('should setup shared point dialog in the point controller', () => {
-            annotator.modeControllers = { point: controller };
-            annotator.isMobile = true;
-
-            annotator.setupControllers();
-            expect(controller.init).toBeCalled();
-            expect(controller.setupSharedDialog).toBeCalledWith(annotator.container, {
-                isMobile: annotator.isMobile,
-                hasTouch: annotator.hasTouch,
-                localized: annotator.localized
-            });
-        });
     });
 
     describe('once annotator is initialized', () => {
@@ -385,7 +372,7 @@ describe('Annotator', () => {
 
             beforeEach(() => {
                 annotator.options = { annotator: {} };
-                threadMap = { '123abc': [{ type: 'highlight-comment', location: {} }] };
+                threadMap = { '123abc': { type: 'highlight-comment', location: {} } };
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
@@ -395,17 +382,9 @@ describe('Annotator', () => {
             });
 
             it('should register thread if controller exists', () => {
-                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
                 annotator.modeControllers = { 'highlight-comment': controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).toBeCalled();
-            });
-
-            it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
-                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
-                annotator.modeControllers = { highlight: controller };
-                annotator.generateAnnotationMap(threadMap);
-                expect(controller.registerThread).not.toBeCalled();
             });
         });
 

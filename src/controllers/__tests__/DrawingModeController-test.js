@@ -56,7 +56,8 @@ describe('controllers/DrawingModeController', () => {
             getThreadEventData: jest.fn(),
             show: jest.fn(),
             hide: jest.fn(),
-            renderAnnotationPopover: jest.fn()
+            renderAnnotationPopover: jest.fn(),
+            unmountPopover: jest.fn()
         };
         controller.emit = jest.fn();
         controller.annotatedElement = rootElement;
@@ -313,7 +314,7 @@ describe('controllers/DrawingModeController', () => {
             controller.updateUndoRedoButtonEls = jest.fn();
             controller.unregisterThread = jest.fn();
             util.clearCanvas = jest.fn();
-            controller.threads = {};
+            controller.annotations = {};
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
         });
 
@@ -389,7 +390,7 @@ describe('controllers/DrawingModeController', () => {
         it('should delete a non-pending thread', () => {
             thread.state = 'inactive';
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush();
+            controller.annotations[1] = new rbush();
 
             controller.handleThreadEvents(thread, {
                 event: THREAD_EVENT.threadCleanup
@@ -402,7 +403,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should not delete a thread if the dialog no longer exists', () => {
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush();
+            controller.annotations[1] = new rbush();
             thread.state = 'pending';
 
             controller.handleThreadEvents(thread, {
@@ -419,7 +420,7 @@ describe('controllers/DrawingModeController', () => {
 
         beforeEach(() => {
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush(thread);
+            controller.annotations[1] = new rbush(thread);
             controller.removeSelection = jest.fn();
             controller.select = jest.fn();
             controller.getIntersectingThreads = jest.fn().mockReturnValue([thread]);
@@ -463,7 +464,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should do nothing if no threads exist or none are on the specified page', () => {
             controller.renderPage(1);
-            controller.threads = {
+            controller.annotations = {
                 1: {
                     all: jest.fn()
                 }
@@ -475,7 +476,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should render the annotations on every page', () => {
-            controller.threads = {
+            controller.annotations = {
                 1: {
                     all: jest.fn().mockReturnValue([thread])
                 }
