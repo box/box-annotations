@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER } from '../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
 const HTTP_POST = 'POST';
 const HTTP_DELETE = 'DELETE';

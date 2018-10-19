@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import API from '../API';
-import Annotation from '../../Annotation';
 import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
