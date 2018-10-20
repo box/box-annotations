@@ -29,6 +29,7 @@
     @media #{$mobile}, #{$tablet} {
         .ba-comment-list {
             max-height: unset;
+            flex-grow: 1;
         }
 
         .ba-comment-list-item {

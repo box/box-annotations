@@ -4,17 +4,11 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import EventEmitter from 'events';
 
 import AnnotationPopover from '../components/AnnotationPopover';
-import { repositionCaret, getPageInfo, findElement } from '../util';
+import { repositionCaret, getPageInfo, findElement, getPopoverLayer, isInElement } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import { CREATE_EVENT, TYPES, PAGE_PADDING_TOP, PAGE_PADDING_BOTTOM } from '../constants';
 
 class CreateHighlightDialog extends EventEmitter {
-    /** @property {HTMLElement} - Container element for the dialog. */
-    containerEl;
-
-    /** @property {HTMLElement} - The parent container to nest the dialog element in. */
-    parentEl;
-
     /** @property {Object} - Position, on the DOM, to align the dialog to the end of a highlight. */
     position = {
         x: 0,
@@ -36,6 +30,9 @@ class CreateHighlightDialog extends EventEmitter {
     /** @property {Object} - Translated strings for dialog */
     localized;
 
+    /** @property {HTMLElement} - Preview container DOM element */
+    container;
+
     /**
      * A dialog used to create plain and comment highlights.
      *
@@ -51,6 +48,7 @@ class CreateHighlightDialog extends EventEmitter {
         super();
 
         this.annotatedElement = annotatedElement;
+        this.container = config.container;
         this.isMobile = !!config.isMobile || false;
         this.hasTouch = !!config.hasTouch || false;
         this.localized = config.localized;
@@ -63,10 +61,13 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     unmountPopover() {
-        if (this.createPopoverComponent && this.popoverLayerEl) {
-            unmountComponentAtNode(this.popoverLayerEl);
+        const pageEl = this.isMobile
+            ? this.container
+            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (this.createPopoverComponent && popoverLayer) {
+            unmountComponentAtNode(popoverLayer);
             this.createPopoverComponent = null;
-            this.containerEl = null;
         }
     }
 
@@ -84,7 +85,8 @@ class CreateHighlightDialog extends EventEmitter {
         }
 
         // Select page of first node selected
-        this.pageInfo = getPageInfo(selection.anchorNode);
+        this.selection = selection;
+        this.pageInfo = getPageInfo(this.selection.anchorNode);
         if (!this.pageInfo.pageEl) {
             return;
         }
@@ -92,7 +94,7 @@ class CreateHighlightDialog extends EventEmitter {
         if (this.isMobile) {
             this.position = { x: 0, y: 0 };
         } else {
-            this.setPosition(selection);
+            this.setPosition();
         }
 
         this.renderAnnotationPopover(type);
@@ -109,12 +111,7 @@ class CreateHighlightDialog extends EventEmitter {
         const pageEl = this.isMobile
             ? this.container
             : this.annotatedElement.querySelector(`[data-page-number="${this.pageInfo.page}"]`);
-        this.popoverLayerEl = pageEl.querySelector('.ba-dialog-layer');
-        if (!this.popoverLayerEl) {
-            this.popoverLayerEl = document.createElement('span');
-            this.popoverLayerEl.classList.add('ba-dialog-layer');
-            pageEl.appendChild(this.popoverLayerEl);
-        }
+        const popoverLayer = getPopoverLayer(pageEl);
 
         this.createPopoverComponent = render(
             <AnnotationPopover
@@ -130,22 +127,30 @@ class CreateHighlightDialog extends EventEmitter {
                 isPending={true}
                 isMobile={this.isMobile}
             />,
-            this.popoverLayerEl
+            popoverLayer
         );
-        this.containerEl = this.popoverLayerEl.querySelector('.ba-create-popover');
     };
 
-    /** @inheritdoc */
-    setPosition(selection) {
-        if (!selection || !selection.rangeCount) {
+    isInHighlight = (event) => {
+        if (!this.selection || !this.selection.rangeCount) {
             return;
         }
 
-        const lastRange = selection.getRangeAt(selection.rangeCount - 1);
+        const lastRange = this.selection.getRangeAt(this.selection.rangeCount - 1);
+        return isInElement(event, lastRange);
+    };
+
+    /** @inheritdoc */
+    setPosition() {
+        if (!this.selection || !this.selection.rangeCount) {
+            return;
+        }
+
+        const lastRange = this.selection.getRangeAt(this.selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 
         // Select page of first node selected
-        this.pageInfo = getPageInfo(selection.anchorNode);
+        this.pageInfo = getPageInfo(this.selection.anchorNode);
         const { pageEl } = this.pageInfo;
         if (!pageEl) {
             return;

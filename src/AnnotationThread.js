@@ -69,6 +69,7 @@ class AnnotationThread extends EventEmitter {
         this.localized = data.localized;
         this.state = STATES.inactive;
         this.canComment = true;
+        this.headerHeight = data.headerHeight;
 
         this.annotations = data.annotations || [];
         this.annotations = this.annotations.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -157,21 +158,15 @@ class AnnotationThread extends EventEmitter {
                 };
             });
 
-        const pageEl = this.getPopoverParent();
-        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (!popoverLayer) {
-            popoverLayer = document.createElement('span');
-            popoverLayer.classList.add('ba-dialog-layer');
-            pageEl.appendChild(popoverLayer);
-        }
-
-        const isPending = !firstAnnotation;
+        const isPending = !firstAnnotation || (comments.length > 0 && this.type === TYPES.highlight_comment);
         if (isPending) {
             this.state = STATES.pending;
         } else {
             this.state = STATES.active;
         }
 
+        this.onCommentClick = this.onCommentClick.bind(this);
+        const pageEl = this.getPopoverParent();
         this.popoverComponent = render(
             <AnnotationPopover
                 id={comments.length > 0 || isPending ? this.threadID : firstAnnotation.id}
@@ -188,9 +183,11 @@ class AnnotationThread extends EventEmitter {
                 onDelete={this.deleteAnnotation}
                 onCancel={this.cancelUnsavedAnnotation}
                 onCreate={this.saveAnnotation}
+                onCommentClick={this.onCommentClick}
                 isPending={isPending}
+                headerHeight={this.headerHeight}
             />,
-            popoverLayer
+            util.getPopoverLayer(pageEl)
         );
         this.position();
     }
@@ -241,6 +238,21 @@ class AnnotationThread extends EventEmitter {
             .then((savedAnnotation) => this.updateTemporaryAnnotation(tempAnnotation, savedAnnotation))
             .catch((error) => this.handleThreadSaveError(error, tempAnnotationID));
     };
+
+    /**
+     * Fire an event notifying that the comment button has been clicked. Also
+     * show the comment box, and give focus to the text area conatined by it.
+     *
+     * @param {Event} event - The DOM event coming from interacting with the element.
+     * @return {void}
+     */
+    onCommentClick() {
+        if (!this.threadNumber) {
+            this.saveAnnotation(TYPES.highlight);
+        }
+        this.type = TYPES.highlight_comment;
+        this.renderAnnotationPopover();
+    }
 
     /**
      * Deletes an annotation.

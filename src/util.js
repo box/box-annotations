@@ -96,6 +96,16 @@ export function getPageInfo(element) {
     return { pageEl, page };
 }
 
+export function getPopoverLayer(pageEl) {
+    let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+    if (!popoverLayer) {
+        popoverLayer = document.createElement('span');
+        popoverLayer.classList.add('ba-dialog-layer');
+        pageEl.appendChild(popoverLayer);
+    }
+    return popoverLayer;
+}
+
 /**
  * Finds the closest element with a data type and returns that data type. If
  * an attributeName is provided, search for that data atttribute instead of
@@ -242,24 +252,44 @@ export function resetTextarea(element, clearText) {
 }
 
 /**
- * Checks whether mouse is inside the dialog represented by this thread.
+ * Checks whether mouse is inside the specified DOM element
  *
  * @private
  * @param {Event} event Mouse event
- * @param {HTMLElement} [dialogEl] Optional annotation dialog element
+ * @param {HTMLElement} el DOM element
+ * @return {boolean} Whether or not mouse is inside element
+ */
+export function isInElement(event, el) {
+    if (!el) {
+        return false;
+    }
+
+    const dimensions = el.getBoundingClientRect();
+    return (
+        event.clientX > dimensions.left &&
+        event.clientX < dimensions.right &&
+        event.clientY > dimensions.top &&
+        event.clientY < dimensions.bottom
+    );
+}
+
+/**
+ * Checks whether mouse is inside the dialog represented by this annotation.
+ *
+ * @private
+ * @param {Event} event Mouse event
+ * @param {HTMLElement} [container] Optional annotation dialog container element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInDialog(event, dialogEl = null) {
-    if (dialogEl) {
-        const dimensions = dialogEl.getBoundingClientRect();
-        return (
-            event.clientX > dimensions.left &&
-            event.clientX < dimensions.right &&
-            event.clientY > dimensions.top &&
-            event.clientY < dimensions.bottom
-        );
+export function isInDialog(event, container = null) {
+    if (!container) {
+        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
     }
-    return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
+
+    const annotatorLabelEl = container.querySelector('.ba-annotator-label');
+    const commentListEl = container.querySelector('.ba-comment-list');
+    const controlsEl = container.querySelector('.ba-action-controls');
+    return isInElement(event, annotatorLabelEl) || isInElement(event, commentListEl) || isInElement(event, controlsEl);
 }
 
 /**
@@ -267,12 +297,12 @@ export function isInDialog(event, dialogEl = null) {
  *
  * @private
  * @param {Event} event Mouse event
- * @param {HTMLElement} [dialogEl] Optional annotation dialog element
+ * @param {HTMLElement} [containerEl] Optional annotation dialog container element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInAnnotationOrMarker(event, dialogEl) {
+export function isInAnnotationOrMarker(event, containerEl) {
     const { target } = event;
-    return !!(isInDialog(event, dialogEl) || findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER));
+    return !!(isInDialog(event, containerEl) || findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER));
 }
 
 /**

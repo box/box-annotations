@@ -50,7 +50,6 @@ describe('Annotator', () => {
             getButton: jest.fn(),
             enter: jest.fn(),
             exit: jest.fn(),
-            setupSharedDialog: jest.fn(),
             getThreadByID: jest.fn()
         };
 
@@ -373,13 +372,6 @@ describe('Annotator', () => {
 
             beforeEach(() => {
                 annotator.emit = jest.fn();
-            });
-
-            it('should reset mobile annotation dialog on resetMobileDialog', () => {
-                annotator.removeThreadFromSharedDialog = jest.fn();
-                data.event = CONTROLLER_EVENT.resetMobileDialog;
-                annotator.handleControllerEvents(data);
-                expect(annotator.removeThreadFromSharedDialog).toBeCalled();
             });
 
             it('should toggle annotation mode on togglemode', () => {

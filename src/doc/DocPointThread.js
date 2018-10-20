@@ -20,7 +20,7 @@ class DocPointThread extends AnnotationThread {
      * @return {void}
      */
     show() {
-        const pageEl = this.getPopoverParent();
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         const [browserX, browserY] = docUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to page

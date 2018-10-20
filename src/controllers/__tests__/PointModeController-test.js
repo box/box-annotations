@@ -180,17 +180,6 @@ describe('controllers/PointModeController', () => {
             expect(event.preventDefault).toBeCalled();
         });
 
-        it('should reset the mobile annotations dialog if the user is on a mobile device', () => {
-            controller.isMobile = true;
-
-            controller.pointClickHandler(event);
-            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.resetMobileDialog);
-            expect(controller.getLocation).toBeCalled();
-            expect(thread.show).not.toBeCalled();
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).toBeCalled();
-        });
-
         it('should not do anything if thread is invalid', () => {
             controller.pointClickHandler(event);
             expect(controller.registerThread).not.toBeCalled();

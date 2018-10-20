@@ -119,8 +119,7 @@ class PointModeController extends AnnotationModeController {
     pointClickHandler(event) {
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (!isInAnnotationOrMarker(event, popoverEl)) {
+        if (!isInAnnotationOrMarker(event, this.container)) {
             event.stopPropagation();
             event.preventDefault();
         } else {
@@ -130,11 +129,6 @@ class PointModeController extends AnnotationModeController {
         const pendingThread = this.getThreadByID(this.pendingThreadID);
         if (this.pendingThreadID && pendingThread) {
             pendingThread.destroy();
-        }
-
-        // Clears and hides the mobile annotation dialog if visible
-        if (this.isMobile) {
-            this.emit(CONTROLLER_EVENT.resetMobileDialog);
         }
 
         this.hadPendingThreads = this.destroyPendingThreads();

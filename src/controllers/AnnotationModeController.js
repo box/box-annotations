@@ -4,7 +4,14 @@ import EventEmitter from 'events';
 import noop from 'lodash/noop';
 import get from 'lodash/get';
 
-import { insertTemplate, isPending, replaceHeader, areThreadParamsValid, hasValidBoundaryCoordinates } from '../util';
+import {
+    insertTemplate,
+    isPending,
+    replaceHeader,
+    areThreadParamsValid,
+    hasValidBoundaryCoordinates,
+    getPopoverLayer
+} from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -304,7 +311,8 @@ class AnnotationModeController extends EventEmitter {
             permissions: this.permissions,
             localized: this.localized,
             threadID: get(firstAnnotation, 'id', null),
-            threadNumber: get(firstAnnotation, 'threadNumber', null)
+            threadNumber: get(firstAnnotation, 'threadNumber', null),
+            headerHeight: this.headerElement.clientHeight
         };
 
         if (!areThreadParamsValid(params) || !location) {
@@ -590,12 +598,7 @@ class AnnotationModeController extends EventEmitter {
         const pageEl = this.isMobile
             ? this.container
             : this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (!popoverLayer) {
-            popoverLayer = document.createElement('span');
-            popoverLayer.classList.add('ba-dialog-layer');
-            pageEl.appendChild(popoverLayer);
-        }
+        getPopoverLayer(pageEl);
 
         if (!this.threads || !this.threads[pageNum]) {
             return;
@@ -610,6 +613,7 @@ class AnnotationModeController extends EventEmitter {
                 return;
             }
 
+            thread.reset();
             thread.unmountPopover();
 
             // Sets the annotatedElement if the thread was fetched before the
@@ -654,7 +658,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {Object} location Annotation location object
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
-    getIntersectingThreads(event: Event, location): Array<AnnotationThread> {
+    getIntersectingThreads(event: Event, location: Location): Array<AnnotationThread> {
         if (
             !event ||
             !this.threads ||

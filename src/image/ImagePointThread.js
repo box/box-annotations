@@ -41,7 +41,7 @@ class ImagePointThread extends AnnotationThread {
      * @override
      * @return {void}
      */
-    position() {
+    position = () => {
         if (this.isMobile) {
             return;
         }
@@ -75,7 +75,7 @@ class ImagePointThread extends AnnotationThread {
         const dialogPos = this.flipDialog(dialogTopY, this.container.clientHeight);
         popoverEl.style.top = dialogPos.top;
         popoverEl.style.bottom = dialogPos.bottom;
-    }
+    };
 }
 
 export default ImagePointThread;

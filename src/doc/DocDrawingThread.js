@@ -306,7 +306,7 @@ class DocDrawingThread extends DrawingThread {
         boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
         boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
 
-        const pageEl = this.getPopoverParent();
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
         pageEl.appendChild(boundaryEl);
     };
 

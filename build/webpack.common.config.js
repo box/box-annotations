@@ -46,6 +46,7 @@ module.exports = () => {
         },
         plugins: [
             new DefinePlugin({
+                __NAME__: JSON.stringify(packageJSON.name),
                 __LANGUAGE__: JSON.stringify(language),
                 __VERSION__: JSON.stringify(version),
                 'process.env': {

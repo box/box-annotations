@@ -269,16 +269,14 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     hideAnnotations(event) {
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (event && util.isInDialog(event, popoverEl)) {
+        if (event && util.isInDialog(event, this.container)) {
             return;
         }
 
         Object.keys(this.modeControllers).forEach((mode) => {
+            this.modeControllers[mode].destroyPendingThreads();
             this.modeControllers[mode].applyActionToThreads((thread) => {
-                if (!util.isPending(thread.state)) {
-                    thread.unmountPopover();
-                }
+                thread.unmountPopover();
             });
         });
     }
@@ -593,9 +591,6 @@ class Annotator extends EventEmitter {
         switch (data.event) {
             case CONTROLLER_EVENT.load:
                 this.loadAnnotations();
-                break;
-            case CONTROLLER_EVENT.resetMobileDialog:
-                this.removeThreadFromSharedDialog();
                 break;
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);
