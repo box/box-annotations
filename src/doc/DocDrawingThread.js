@@ -7,8 +7,8 @@ import {
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
     PAGE_PADDING_TOP
 } from '../constants';
-import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
-import { createLocation, getScale, repositionCaret, findElement } from '../util';
+import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
+import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
@@ -322,7 +322,7 @@ class DocDrawingThread extends DrawingThread {
         boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
         boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = getPageEl(this.annotatedElement, this.location.page);
         pageEl.appendChild(boundaryEl);
     };
 
@@ -333,7 +333,7 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     position = () => {
-        if (this.isMobile) {
+        if (shouldDisplayMobileUI(this.container)) {
             return;
         }
 

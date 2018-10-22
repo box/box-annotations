@@ -76,14 +76,23 @@
         }
     }
 
-    .ba-mobile-padding {
+    .ba-buffer {
         display: none;
     }
 
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
+        .ba-popover {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: flex-start;
+            max-width: unset;
+            top: 0;
+            width: 100%;
+        }
+
         .ba-mobile-header {
-            align-self: flex-start;
             background: white;
             border-bottom: 1px solid #ccc;
             display: flex;
@@ -94,15 +103,6 @@
 
         .ba-inline .ba-mobile-header {
             display: none;
-        }
-
-        .ba-popover {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-width: unset;
-            top: 0;
-            width: 100%;
         }
 
         .ba-popover-overlay {
@@ -143,7 +143,7 @@
             flex-direction: column;
         }
 
-        .ba-inline .ba-mobile-padding {
+        .ba-inline .ba-buffer {
             display: unset;
             flex-grow: 1;
         }

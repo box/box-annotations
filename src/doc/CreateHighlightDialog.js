@@ -4,7 +4,15 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import EventEmitter from 'events';
 
 import AnnotationPopover from '../components/AnnotationPopover';
-import { repositionCaret, getPageInfo, findElement, getPopoverLayer, isInElement } from '../util';
+import {
+    repositionCaret,
+    getPageInfo,
+    findElement,
+    getPopoverLayer,
+    isInElement,
+    getPageEl,
+    shouldDisplayMobileUI
+} from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import { CREATE_EVENT, TYPES, PAGE_PADDING_TOP, PAGE_PADDING_BOTTOM } from '../constants';
 
@@ -49,7 +57,6 @@ class CreateHighlightDialog extends EventEmitter {
 
         this.annotatedElement = annotatedElement;
         this.container = config.container;
-        this.isMobile = !!config.isMobile || false;
         this.hasTouch = !!config.hasTouch || false;
         this.localized = config.localized;
         this.allowHighlight = config.allowHighlight || false;
@@ -61,9 +68,10 @@ class CreateHighlightDialog extends EventEmitter {
     }
 
     unmountPopover() {
-        const pageEl = this.isMobile
+        this.isVisible = false;
+        const pageEl = shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+            : getPageEl(this.annotatedElement, this.location.page);
         const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (this.createPopoverComponent && popoverLayer) {
             unmountComponentAtNode(popoverLayer);
@@ -91,10 +99,10 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
-        if (this.isMobile) {
+        if (shouldDisplayMobileUI(this.container)) {
             this.position = { x: 0, y: 0 };
         } else {
-            this.setPosition();
+            this.setPosition(this.selection);
         }
 
         this.renderAnnotationPopover(type);
@@ -108,9 +116,9 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     renderAnnotationPopover = (type = TYPES.highlight) => {
-        const pageEl = this.isMobile
+        const pageEl = shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${this.pageInfo.page}"]`);
+            : getPageEl(this.annotatedElement, this.pageInfo.page);
         const popoverLayer = getPopoverLayer(pageEl);
 
         this.createPopoverComponent = render(
@@ -125,14 +133,19 @@ class CreateHighlightDialog extends EventEmitter {
                 onCreate={this.onCreate}
                 onCommentClick={this.onCommentClick}
                 isPending={true}
-                isMobile={this.isMobile}
+                isMobile={shouldDisplayMobileUI(this.container)}
             />,
             popoverLayer
         );
+        this.isVisible = true;
     };
 
+    /**
+     * @param {Event} event - Mouse event
+     * @return {boolean} Whether or not the click event occured over a highlight in the canvas
+     */
     isInHighlight = (event) => {
-        if (this.selection || !this.selection.rangeCount) {
+        if (!this.selection || !this.selection.rangeCount) {
             return false;
         }
 
@@ -141,16 +154,12 @@ class CreateHighlightDialog extends EventEmitter {
     };
 
     /** @inheritdoc */
-    setPosition() {
-        if (!this.selection || !this.selection.rangeCount) {
-            return;
-        }
-
-        const lastRange = this.selection.getRangeAt(this.selection.rangeCount - 1);
+    setPosition(selection) {
+        const lastRange = selection.getRangeAt(selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 
         // Select page of first node selected
-        this.pageInfo = getPageInfo(this.selection.anchorNode);
+        this.pageInfo = getPageInfo(selection.anchorNode);
         const { pageEl } = this.pageInfo;
         if (!pageEl) {
             return;
@@ -168,10 +177,6 @@ class CreateHighlightDialog extends EventEmitter {
         this.updatePosition();
     }
 
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
-
     /**
      * Update the position styling for the dialog so that the chevron points to
      * the desired location.
@@ -179,7 +184,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     updatePosition = () => {
-        if (this.isMobile) {
+        if (shouldDisplayMobileUI(this.container)) {
             return;
         }
 

@@ -34,6 +34,8 @@ const CLIENT_VERSION = __VERSION__;
 const THREAD_PARAMS = ['annotations', 'api', 'fileVersionId', 'locale', 'location', 'type'];
 const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
+const DESKTOP_MIN_WIDTH = 1025;
+
 //------------------------------------------------------------------------------
 // DOM Utils
 //------------------------------------------------------------------------------
@@ -96,6 +98,37 @@ export function getPageInfo(element) {
     return { pageEl, page };
 }
 
+/**
+ * Determines whether or not the user's browser is mobile-sized
+ * so they see the appropriate UI
+ *
+ * @param {HTMLElement} container Preview container
+ * @return {boolean} Whether or not to display the mobile UI
+ */
+export function shouldDisplayMobileUI(container) {
+    const containerRect = container.getBoundingClientRect();
+    this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
+}
+
+/**
+ * Gets the current page element.
+ *
+ * @private
+ * @param {HTMLElement} annotatedEl - HTML Element being annotated on
+ * @param {number} pageNum - Page number
+ * @return {HTMLElement|null} Page element if it exists, otherwise null
+ */
+export function getPageEl(annotatedEl, pageNum) {
+    return annotatedEl.querySelector(`[data-page-number="${pageNum}"]`);
+}
+
+/**
+ * Finds an existing annotation popover layer or creates one if it does
+ * not already exist and appends the layer to the page.
+ *
+ * @param {HTMLElement} pageEl Page DOM Element
+ * @return {HTMLElement} Annotation Popover layer DOM Element
+ */
 export function getPopoverLayer(pageEl) {
     let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
     if (!popoverLayer) {
@@ -606,21 +639,6 @@ export function eventToLocationHandler(locationFunction, callback) {
         const location = locationFunction(evt);
         callback(location);
     };
-}
-
-/**
- * Call preventDefault and stopPropagation on an event
- *
- * @param {event} event Event object to stop event bubbling
- * @return {void}
- */
-export function prevDefAndStopProp(event) {
-    if (!event) {
-        return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
 }
 
 /**

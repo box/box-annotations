@@ -1,6 +1,6 @@
 import AnnotationThread from '../AnnotationThread';
-import * as util from '../util';
-import * as imageUtil from './imageUtil';
+import { showElement, shouldDisplayMobileUI, repositionCaret, findElement } from '../util';
+import { getBrowserCoordinatesFromLocation } from './imageUtil';
 import { STATES } from '../constants';
 
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -19,16 +19,16 @@ class ImagePointThread extends AnnotationThread {
      * @return {void}
      */
     show() {
-        const [browserX, browserY] = imageUtil.getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
+        const [browserX, browserY] = getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
         // Position and append to image
         this.element.style.left = `${browserX - POINT_ANNOTATION_ICON_WIDTH / 2}px`;
         this.element.style.top = `${browserY - POINT_ANNOTATION_ICON_HEIGHT + POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
         this.annotatedElement.appendChild(this.element);
 
-        util.showElement(this.element);
+        showElement(this.element);
 
-        if (this.state !== STATES.pending || (this.isMobile && this.annotations.length === 0)) {
+        if (this.state !== STATES.pending) {
             return;
         }
 
@@ -42,11 +42,11 @@ class ImagePointThread extends AnnotationThread {
      * @return {void}
      */
     position = () => {
-        if (this.isMobile) {
+        if (shouldDisplayMobileUI(this.container)) {
             return;
         }
 
-        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
 
@@ -67,7 +67,7 @@ class ImagePointThread extends AnnotationThread {
             imageEl.clientWidth > this.annotatedElement.clientWidth
                 ? imageEl.clientWidth
                 : this.annotatedElement.clientWidth;
-        dialogLeftX = util.repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth);
+        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth);
 
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;

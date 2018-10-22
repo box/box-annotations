@@ -9,7 +9,7 @@
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
         .ba-action-controls {
-            align-self: flex-end;
+            justify-content: flex-end;
             width: 100%;
         }
 

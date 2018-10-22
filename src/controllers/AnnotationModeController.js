@@ -10,7 +10,9 @@ import {
     replaceHeader,
     areThreadParamsValid,
     hasValidBoundaryCoordinates,
-    getPopoverLayer
+    getPopoverLayer,
+    getPageEl,
+    shouldDisplayMobileUI
 } from '../util';
 import {
     CLASS_HIDDEN,
@@ -108,7 +110,6 @@ class AnnotationModeController extends EventEmitter {
         this.permissions = data.permissions;
         this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
-        this.isMobile = data.options ? data.options.isMobile : false;
         this.locale = data.options ? data.options.locale : 'en-US';
         this.getLocation = data.getLocation;
 
@@ -308,7 +309,7 @@ class AnnotationModeController extends EventEmitter {
             annotations,
             container: this.container,
             fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
+            isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
             locale: this.locale,
             location,
@@ -431,7 +432,7 @@ class AnnotationModeController extends EventEmitter {
      * Gets thread specified by threadID
      *
      * @private
-     * @param {string} threadID - Thread ID
+     * @param {string} [threadID] - Thread ID
      * @param {string} [pageNum] - Optional page number
      * @return {AnnotationThread} Annotation thread specified by threadID
      */
@@ -456,7 +457,14 @@ class AnnotationModeController extends EventEmitter {
         return thread;
     }
 
-    doesThreadMatch(threadID: ?string, pageNum: string): ?AnnotationThread {
+    /**
+     * Determines whether a thread matches the specified threadID
+     *
+     * @param {string} [threadID] - Thread ID
+     * @param {string} [pageNum] - Page number
+     * @return {AnnotationThread|null} Matching annotation thread or null
+     */
+    doesThreadMatch(threadID: ?string, pageNum: ?string): ?AnnotationThread {
         let thread = null;
         const pageThreads = this.threads[pageNum];
         if (!pageThreads) {
@@ -600,9 +608,9 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: string) {
-        const pageEl = this.isMobile
+        const pageEl = shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+            : getPageEl(this.annotatedElement, pageNum);
         getPopoverLayer(pageEl);
 
         if (!this.threads || !this.threads[pageNum]) {

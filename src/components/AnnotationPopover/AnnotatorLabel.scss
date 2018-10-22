@@ -14,9 +14,9 @@
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
         .ba-annotation-label {
-            align-self: flex-start;
             background: white;
             border-bottom: 1px solid #ccc;
+            justify-content: flex-start;
             padding: 15px;
             width: 100%;
         }

@@ -28,7 +28,6 @@ import {
     replacePlaceholders,
     createLocation,
     round,
-    prevDefAndStopProp,
     canLoadAnnotations,
     insertTemplate,
     generateBtn,
@@ -528,19 +527,6 @@ describe('util', () => {
             };
             locationHandler(event);
             expect(callback).not.toBeCalled();
-        });
-    });
-
-    describe('prevDefAndStopProp()', () => {
-        it('should prevent default and stop propagation on an event', () => {
-            const event = {
-                preventDefault: jest.fn(),
-                stopPropagation: jest.fn()
-            };
-
-            prevDefAndStopProp(event);
-            expect(event.preventDefault).toBeCalled();
-            expect(event.stopPropagation).toBeCalled();
         });
     });
 

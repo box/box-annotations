@@ -1,7 +1,15 @@
 // @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import { replaceHeader, enableElement, disableElement, clearCanvas, findClosestElWithClass } from '../util';
+import {
+    replaceHeader,
+    enableElement,
+    disableElement,
+    clearCanvas,
+    findClosestElWithClass,
+    getPageEl,
+    shouldDisplayMobileUI
+} from '../util';
 import {
     TYPES,
     STATES,
@@ -80,7 +88,7 @@ class DrawingModeController extends AnnotationModeController {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
         }
 
-        if (!this.isMobile) {
+        if (!shouldDisplayMobileUI(this.container)) {
             this.annotatedElement.addEventListener('click', this.handleSelection);
         }
     }
@@ -91,7 +99,7 @@ class DrawingModeController extends AnnotationModeController {
             this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
         }
 
-        if (!this.isMobile) {
+        if (!shouldDisplayMobileUI(this.container)) {
             this.annotatedElement.removeEventListener('click', this.handleSelection);
         }
     }
@@ -328,7 +336,7 @@ class DrawingModeController extends AnnotationModeController {
                     this.unregisterThread(thread);
 
                     const { page } = thread.location;
-                    const pageEl = this.annotatedElement.querySelector(`[data-page-number="${page}"]`);
+                    const pageEl = getPageEl(this.annotatedElement, page);
                     clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
                     // Redraw any threads that the deleted thread could have been overlapping
@@ -388,7 +396,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
+        const pageEl = getPageEl(this.annotatedElement, pageNum);
         clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
 
         if (!this.threads || !this.threads[pageNum]) {

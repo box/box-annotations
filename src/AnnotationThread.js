@@ -63,7 +63,6 @@ class AnnotationThread extends EventEmitter {
         this.threadNumber = data.threadNumber || '';
         this.type = data.type;
         this.locale = data.locale;
-        this.isMobile = data.isMobile || false;
         this.hasTouch = data.hasTouch || false;
         this.permissions = data.permissions;
         this.localized = data.localized;
@@ -127,9 +126,9 @@ class AnnotationThread extends EventEmitter {
     };
 
     getPopoverParent() {
-        return this.isMobile
+        return util.shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+            : util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
@@ -174,7 +173,7 @@ class AnnotationThread extends EventEmitter {
                 createdAt={get(firstAnnotation, 'createdAt', null)}
                 createdBy={get(firstAnnotation, 'createdBy', null)}
                 modifiedBy={get(firstAnnotation, 'modifiedBy', null)}
-                isMobile={this.isMobile}
+                isMobile={util.shouldDisplayMobileUI(this.container)}
                 canAnnotate={this.permissions.can_annotate}
                 canComment={this.canComment}
                 canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
@@ -509,7 +508,7 @@ class AnnotationThread extends EventEmitter {
             this.threadNumber = annotation.threadNumber;
         }
 
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             // Changing state from pending
             this.state = STATES.active;
         }
@@ -681,7 +680,7 @@ class AnnotationThread extends EventEmitter {
                 // @spramod: is the mobile close button still needed?
                 this.hide();
 
-                if (!this.isMobile) {
+                if (!util.shouldDisplayMobileUI(this.container)) {
                     // Cancels + destroys the annotation thread
                     this.cancelAnnotation();
                 }
