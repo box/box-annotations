@@ -40,6 +40,7 @@ describe('doc/DocPointThread', () => {
             util.showElement = jest.fn();
             thread.renderAnnotationPopover = jest.fn();
             docUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([1, 2]);
+            thread.annotatedElement.querySelector = jest.fn().mockReturnValue(rootElement);
         });
 
         it('should show the thread', () => {

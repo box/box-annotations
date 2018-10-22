@@ -12,14 +12,14 @@ import {
     STATES,
     CONTROLLER_EVENT
 } from '../../constants';
+import AnnotationThread from '../../AnnotationThread';
+import AnnotationAPI from '../../api/AnnotationAPI';
+
+jest.mock('../../AnnotationThread');
+jest.mock('../../api/AnnotationAPI');
 
 let controller;
 let thread;
-
-const api = {
-    addListener: jest.fn(),
-    removeListener: jest.fn()
-};
 
 const html = `<div class="annotated-element">
   <div data-page-number="1"></div>
@@ -36,27 +36,16 @@ describe('controllers/AnnotationModeController', () => {
 
         controller = new AnnotationModeController();
         controller.container = document;
-        thread = {
-            annotatedElement: rootElement,
-            threadID: '123abc',
-            location: { page: 1 },
-            type: 'type',
-            state: STATES.pending,
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-            saveAnnotation: jest.fn(),
-            handleStart: jest.fn(),
-            destroy: jest.fn(),
-            deleteThread: jest.fn(),
-            isDialogVisible: jest.fn(),
-            unmountPopover: jest.fn(),
-            renderAnnotationPopover: jest.fn(),
-            show: jest.fn(),
-            minX: 1,
-            minY: 2,
-            maxX: 1,
-            maxY: 2
-        };
+        thread = new AnnotationThread();
+        thread.annotatedElement = rootElement;
+        thread.threadID = '123abc';
+        thread.location = { page: 1 };
+        thread.state = STATES.pending;
+        thread.type = 'type';
+        thread.minX = 1;
+        thread.minY = 2;
+        thread.maxX = 1;
+        thread.maxY = 2;
         controller.getLocation = jest.fn();
         controller.annotatedElement = rootElement;
     });
@@ -97,7 +86,7 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('After init', () => {
         beforeEach(() => {
-            controller.api = api;
+            controller.api = new AnnotationAPI();
             controller.localized = {
                 anonymouseUserName: ''
             };
@@ -198,16 +187,15 @@ describe('controllers/AnnotationModeController', () => {
                 };
                 buttonEl = document.createElement('button');
                 buttonEl.title = controller.modeButton.title;
-                // buttonEl.classList.add(CLASS_HIDDEN);
                 buttonEl.classList.add('selector');
                 buttonEl.addEventListener = jest.fn();
 
-                controller.permissions = { canAnnotate: true };
+                controller.permissions = { can_annotate: true };
                 controller.getButton = jest.fn().mockReturnValue(buttonEl);
             });
 
             it('should do nothing if user cannot annotate', () => {
-                controller.permissions.canAnnotate = false;
+                controller.permissions.can_annotate = false;
                 controller.hideButton();
                 expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
@@ -225,7 +213,7 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should do nothing if no modeButton', () => {
                 controller.modeButton = undefined;
-                controller.permissions.canAnnotate = false;
+                controller.permissions.can_annotate = false;
                 controller.hideButton();
                 expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
@@ -634,16 +622,11 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should destroy only pending threads, and return true', () => {
                 thread.state = 'NOT_PENDING';
-                const pendingThread = {
-                    threadID: '456def',
-                    location: { page: 1 },
-                    type: 'type',
-                    state: STATES.pending,
-                    destroy: jest.fn(),
-                    unbindCustomListenersOnThread: jest.fn(),
-                    addListener: jest.fn(),
-                    removeAllListeners: jest.fn()
-                };
+                const pendingThread = new AnnotationThread();
+                pendingThread.threadID = '456def';
+                pendingThread.location = { page: 1 };
+                pendingThread.type = 'type';
+                pendingThread.state = STATES.pending;
                 controller.threads[1].all = jest.fn().mockReturnValue([thread, pendingThread]);
 
                 const destroyed = controller.destroyPendingThreads();

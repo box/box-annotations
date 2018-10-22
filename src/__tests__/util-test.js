@@ -250,14 +250,16 @@ describe('util', () => {
         });
 
         it('should return true if the event is in the given dialog', () => {
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            dialogEl.getBoundingClientRect = jest.fn().mockReturnValue({
+            const actionControls = document.createElement('div');
+            actionControls.classList.add('ba-action-controls');
+            rootElement.appendChild(actionControls);
+            actionControls.getBoundingClientRect = jest.fn().mockReturnValue({
                 left: 0,
                 right: 10,
                 top: 0,
                 bottom: 10
             });
-            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).toBeTruthy();
+            expect(isInDialog({ clientX: 8, clientY: 8 }, rootElement)).toBeTruthy();
         });
     });
 

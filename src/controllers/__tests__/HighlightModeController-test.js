@@ -2,6 +2,9 @@
 import HighlightModeController from '../HighlightModeController';
 import * as util from '../../util';
 import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '../../constants';
+import DocHighlightThread from '../../doc/DocHighlightThread';
+
+jest.mock('../../doc/DocHighlightThread');
 
 let controller;
 let thread;
@@ -25,15 +28,11 @@ describe('controllers/HighlightModeController', () => {
         controller.getLocation = jest.fn();
         controller.annotatedElement = rootElement;
 
-        thread = {
-            annotatedElement: rootElement,
-            annotations: {},
-            location: { page: 1 },
-            type: TYPES.highlight,
-            show: jest.fn(),
-            addListener: jest.fn(),
-            unmountPopover: jest.fn()
-        };
+        thread = new DocHighlightThread();
+        thread.annotatedElement = rootElement;
+        thread.location = { page: 1 };
+        thread.annotations = {};
+        thread.type = TYPES.highlight;
     });
 
     afterEach(() => {

@@ -15,6 +15,9 @@ import {
     THREAD_EVENT,
     CLASS_ANNOTATION_DRAW_MODE
 } from '../../constants';
+import DrawingThread from '../../drawing/DrawingThread';
+
+jest.mock('../../drawing/DrawingThread');
 
 let controller;
 let thread;
@@ -33,31 +36,15 @@ describe('controllers/DrawingModeController', () => {
         document.body.appendChild(rootElement);
 
         controller = new DrawingModeController();
-        thread = {
-            minX: 10,
-            minY: 10,
-            maxX: 20,
-            maxY: 20,
-            location: {
-                page: 1
-            },
-            info: 'I am a thread',
-            annotatedElement: rootElement,
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-            saveAnnotation: jest.fn(),
-            handleStart: jest.fn(),
-            destroy: jest.fn(),
-            deleteThread: jest.fn(),
-            clearBoundary: jest.fn(),
-            drawBoundary: jest.fn(),
-            bindDrawingListeners: jest.fn(),
-            unbindDrawingListeners: jest.fn(),
-            getThreadEventData: jest.fn(),
-            show: jest.fn(),
-            hide: jest.fn(),
-            renderAnnotationPopover: jest.fn()
-        };
+        thread = new DrawingThread();
+        thread.minX = 10;
+        thread.minY = 10;
+        thread.maxX = 20;
+        thread.maxY = 20;
+        thread.location = { page: 1 };
+        thread.info = 'I am a thread';
+        thread.annotatedElement = rootElement;
+
         controller.emit = jest.fn();
         controller.annotatedElement = rootElement;
     });
@@ -443,7 +430,8 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should do nothing with while drawing a new annotation event', () => {
-            controller.currentThread = { state: STATES.pending };
+            controller.currentThread = new DrawingThread();
+            controller.currentThread.state = STATES.pending;
             controller.handleSelection(event);
             expect(controller.getIntersectingThreads).not.toBeCalled();
         });

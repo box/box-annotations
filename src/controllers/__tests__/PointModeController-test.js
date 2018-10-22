@@ -10,6 +10,11 @@ import {
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     SELECTOR_POINT_MODE_HEADER
 } from '../../constants';
+import AnnotationThread from '../../AnnotationThread';
+import Annotator from '../../Annotator';
+
+jest.mock('../../AnnotationThread');
+jest.mock('../../Annotator');
 
 let controller;
 let thread;
@@ -28,19 +33,12 @@ describe('controllers/PointModeController', () => {
         controller.registerThread = jest.fn();
         controller.getLocation = jest.fn();
 
-        thread = {
-            type: 'point',
-            location: {},
-            show: jest.fn(),
-            getThreadEventData: jest.fn(),
-            destroy: jest.fn()
-        };
+        thread = new AnnotationThread();
+        thread.type = 'point';
+        thread.location = {};
 
         controller.annotatedElement = rootElement;
-        controller.annotator = {
-            getLocationFromEvent: jest.fn(),
-            createAnnotationThread: jest.fn()
-        };
+        controller.annotator = new Annotator();
     });
 
     afterEach(() => {

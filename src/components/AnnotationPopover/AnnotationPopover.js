@@ -95,7 +95,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
                         )}
-                        <span className='ba-buffer' />
+                        {isMobile && <span className='ba-mobile-padding' />}
                         {canAnnotate && (
                             <ActionControls
                                 id={id}
