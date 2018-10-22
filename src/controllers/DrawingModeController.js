@@ -1,7 +1,6 @@
 // @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import shell from './drawingShell.html';
 import { replaceHeader, enableElement, disableElement, clearCanvas, findClosestElWithClass } from '../util';
 import {
     TYPES,
@@ -18,6 +17,9 @@ import {
     ANNOTATOR_TYPE,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
 } from '../constants';
+
+// $FlowFixMe
+import shell from './drawingShell.html';
 
 class DrawingModeController extends AnnotationModeController {
     /** @property {AnnotationThread} - The currently selected DrawingThread */
@@ -72,6 +74,7 @@ class DrawingModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     bindDOMListeners(): void {
+        // $FlowFixMe
         this.handleSelection = this.handleSelection.bind(this);
         if (this.hasTouch) {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
@@ -181,10 +184,15 @@ class DrawingModeController extends AnnotationModeController {
         this.locationFunction = this.locationFunction.bind(this);
         /* eslint-enable require-jsdoc */
 
+        // $FlowFixMe
         this.stopPropagation = this.stopPropagation.bind(this);
+        // $FlowFixMe
         this.cancelDrawing = this.cancelDrawing.bind(this);
+        // $FlowFixMe
         this.postDrawing = this.postDrawing.bind(this);
+        // $FlowFixMe
         this.undoDrawing = this.undoDrawing.bind(this);
+        // $FlowFixMe
         this.redoDrawing = this.redoDrawing.bind(this);
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
@@ -194,6 +202,7 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
         // Mobile & Desktop listeners are bound for touch-enabled laptop edge cases
+        // $FlowFixMe
         this.drawingStartHandler = this.drawingStartHandler.bind(this);
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
     }
@@ -205,6 +214,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     drawingStartHandler(event: Event): void {
+        // $FlowFixMe
         if (event.target && event.target.nodeName === 'BUTTON') {
             return;
         }
@@ -251,6 +261,7 @@ class DrawingModeController extends AnnotationModeController {
 
         // Remove any visible boundaries
         const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
+        // $FlowFixMe
         boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
 
         // Clear the in progress drawing canvases
@@ -293,6 +304,7 @@ class DrawingModeController extends AnnotationModeController {
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
+                    // $FlowFixMe
                     this.currentThread.handleStart(eventData.location);
                 }
 
@@ -346,6 +358,7 @@ class DrawingModeController extends AnnotationModeController {
 
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
+        // $FlowFixMe
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
             return selected;
         }
@@ -405,10 +418,10 @@ class DrawingModeController extends AnnotationModeController {
      * Select the indicated drawing thread. Deletes a drawing thread upon the second consecutive selection
      *
      * @private
-     * @param {AnnotationThread} selectedDrawingThread - The drawing thread to select
+     * @param {DrawingThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
-    select(selectedDrawingThread) {
+    select(selectedDrawingThread: DrawingThread): void {
         selectedDrawingThread.show();
         selectedDrawingThread.drawBoundary();
         selectedDrawingThread.renderAnnotationPopover();
@@ -442,7 +455,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    instantiateThread(params: Object): AnnotationThread {
+    instantiateThread(params: Object): DrawingThread {
         return this.annotatorType === ANNOTATOR_TYPE.document ? new DocDrawingThread(params) : null;
     }
 }

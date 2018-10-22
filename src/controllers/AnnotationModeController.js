@@ -85,6 +85,9 @@ class AnnotationModeController extends EventEmitter {
     /** @property {string} */
     pendingThreadID: ?string;
 
+    /** @property {HTMLElement} */
+    headerElement: HTMLElement;
+
     constructor(annotatorType: string): void {
         super();
         this.annotatorType = annotatorType;
@@ -147,6 +150,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {HTMLElement|null} Annotate button element or null if the selector did not find an element.
      */
     getButton(annotatorSelector: string): HTMLElement {
+        // $FlowFixMe
         return this.container.querySelector(annotatorSelector);
     }
 
@@ -165,6 +169,7 @@ class AnnotationModeController extends EventEmitter {
             this.buttonEl.title = this.modeButton.title;
             this.buttonEl.classList.remove(CLASS_HIDDEN);
 
+            // $FlowFixMe
             this.toggleMode = this.toggleMode.bind(this);
             this.buttonEl.addEventListener('click', this.toggleMode);
         }
@@ -176,7 +181,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     hideButton() {
-        if (!this.permissions.canAnnotate || !this.modeButton) {
+        if (!this.permissions.can_annotate || !this.modeButton) {
             return;
         }
 
@@ -430,7 +435,7 @@ class AnnotationModeController extends EventEmitter {
      * @param {string} [pageNum] - Optional page number
      * @return {AnnotationThread} Annotation thread specified by threadID
      */
-    getThreadByID(threadID: string, pageNum: string): ?AnnotationThread {
+    getThreadByID(threadID: ?string, pageNum?: string): ?AnnotationThread {
         let thread = null;
         if (!threadID) {
             return thread;
@@ -451,7 +456,7 @@ class AnnotationModeController extends EventEmitter {
         return thread;
     }
 
-    doesThreadMatch(threadID: string, pageNum: string): ?AnnotationThread {
+    doesThreadMatch(threadID: ?string, pageNum: string): ?AnnotationThread {
         let thread = null;
         const pageThreads = this.threads[pageNum];
         if (!pageThreads) {
@@ -655,10 +660,10 @@ class AnnotationModeController extends EventEmitter {
      *
      * @protected
      * @param {Event} event The event object containing the pointer information
-     * @param {Object} location Annotation location object
+     * @param {PointLocationInfo} location Annotation location object
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
-    getIntersectingThreads(event: Event, location: Location): Array<AnnotationThread> {
+    getIntersectingThreads(event: Event, location: PointLocationInfo): Array<AnnotationThread> {
         if (
             !event ||
             !this.threads ||

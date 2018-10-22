@@ -28,8 +28,8 @@
     // MOBILE CSS
     @media #{$mobile}, #{$tablet} {
         .ba-comment-list {
-            max-height: unset;
             flex-grow: 1;
+            max-height: unset;
         }
 
         .ba-comment-list-item {

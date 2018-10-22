@@ -132,8 +132,8 @@ class CreateHighlightDialog extends EventEmitter {
     };
 
     isInHighlight = (event) => {
-        if (!this.selection || !this.selection.rangeCount) {
-            return;
+        if (this.selection || !this.selection.rangeCount) {
+            return false;
         }
 
         const lastRange = this.selection.getRangeAt(this.selection.rangeCount - 1);

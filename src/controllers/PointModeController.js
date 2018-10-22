@@ -13,6 +13,8 @@ import {
     ANNOTATOR_TYPE
 } from '../constants';
 import { replaceHeader, isInAnnotationOrMarker } from '../util';
+
+// $FlowFixMe
 import shell from './pointShell.html';
 
 class PointModeController extends AnnotationModeController {
@@ -48,15 +50,13 @@ class PointModeController extends AnnotationModeController {
      * @private
      * @return {void}
      */
-    onDialogCancel() {
-        this.pendingThreadID = null;
-        this.lastPointEvent = null;
-
+    onDialogCancel(): void {
         const thread = this.getThreadByID(this.pendingThreadID);
         if (thread) {
             this.unregisterThread(thread);
             thread.destroy();
         }
+        this.pendingThreadID = null;
     }
 
     /**
@@ -66,10 +66,9 @@ class PointModeController extends AnnotationModeController {
      * @param {string} commentText Annotation comment text
      * @return {void}
      */
-    onDialogPost(commentText) {
+    onDialogPost(commentText: string): void {
         this.emit(CONTROLLER_EVENT.createThread, {
             commentText,
-            lastPointEvent: this.lastPointEvent,
             pendingThreadID: this.pendingThreadID
         });
 
@@ -78,7 +77,9 @@ class PointModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     setupHandlers(): void {
+        // $FlowFixMe
         this.pointClickHandler = this.pointClickHandler.bind(this);
+        // $FlowFixMe
         this.toggleMode = this.toggleMode.bind(this);
 
         // Get handlers
@@ -116,7 +117,7 @@ class PointModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    pointClickHandler(event) {
+    pointClickHandler(event: Event): void {
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
         if (!isInAnnotationOrMarker(event, this.container)) {

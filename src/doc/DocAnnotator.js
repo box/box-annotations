@@ -777,8 +777,8 @@ class DocAnnotator extends Annotator {
      * Delegates click event to click handlers for threads on the page.
      *
      * @private
-     * @param {AnnotationThread} thread Highlight thread to check
      * @param {Event} event Mouse event
+     * @param {AnnotationThread} thread Highlight thread to check
      * @return {void}
      */
     clickThread = (event, thread) => {

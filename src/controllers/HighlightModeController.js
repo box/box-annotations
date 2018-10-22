@@ -12,6 +12,9 @@ import {
 } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
+    /** @property {boolean} */
+    canComment: boolean;
+
     /** @inheritdoc */
     handleThreadEvents(thread: AnnotationThread, data: Object): void {
         let firstAnnotation;
