@@ -389,14 +389,7 @@ class DocAnnotator extends Annotator {
         }
 
         // Don't do anything if the click is in a popover
-        // if (util.isInDialog(mouseEvent, this.container)) {
-        //     mouseEvent.stopPropagation();
-        //     mouseEvent.preventDefault();
-        // NOTE: This assumes that only one dialog will ever exist within
-        // the annotatedElement at a time
-        const overlayEl = this.container.querySelector('.overlay');
-        const controlsEl = this.container.querySelector('.ba-action-controls');
-        if (util.isInDialog(mouseEvent, overlayEl) || util.isInDialog(mouseEvent, controlsEl)) {
+        if (util.isInDialog(mouseEvent, this.container)) {
             return;
         }
 
