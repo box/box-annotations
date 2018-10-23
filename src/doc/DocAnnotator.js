@@ -383,10 +383,6 @@ class DocAnnotator extends Annotator {
     }
 
     clickHandler = (event) => {
-        if (event.target && event.target.nodeName === 'BUTTON') {
-            return;
-        }
-
         let mouseEvent = event;
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
@@ -394,8 +390,6 @@ class DocAnnotator extends Annotator {
 
         // Don't do anything if the click is in a popover
         if (util.isInDialog(mouseEvent, this.container)) {
-            mouseEvent.stopPropagation();
-            mouseEvent.preventDefault();
             return;
         }
 
