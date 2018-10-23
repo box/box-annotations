@@ -7,12 +7,15 @@ import {
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
     PAGE_PADDING_TOP
 } from '../constants';
-import { getBrowserCoordinatesFromLocation, getContext, getPageEl } from './docUtil';
-import { createLocation, getScale, repositionCaret, findElement } from '../util';
+import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
+import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
     pageEl;
+
+    /** @property {boolean} - Whether or not to wait until next frame to create another point in the drawing */
+    isBuffering = false;
 
     //--------------------------------------------------------------------------
     // Public
@@ -32,6 +35,15 @@ class DocDrawingThread extends DrawingThread {
     }
 
     /**
+     * Toggles current buffering state.
+     *
+     * @return {void}
+     */
+    toggleBufferingState = () => {
+        this.isBuffering = !this.isBuffering;
+    };
+
+    /**
      * Handle a pointer movement
      *
      * @public
@@ -48,11 +60,15 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
-        const [x, y] = getBrowserCoordinatesFromLocation(location, this.pageEl);
-        const browserLocation = createLocation(x, y);
-
-        if (this.pendingPath) {
+        // If the current path is being buffered, don't create redundant points
+        if (!this.isBuffering && this.pendingPath) {
+            const [x, y] = getBrowserCoordinatesFromLocation(location, this.pageEl);
+            const browserLocation = createLocation(x, y);
             this.pendingPath.addCoordinate(location, browserLocation);
+
+            // On next browser frame, reset to allow for another point to be added to the path
+            this.toggleBufferingState();
+            window.requestAnimationFrame(this.toggleBufferingState);
         }
     }
 
@@ -308,7 +324,7 @@ class DocDrawingThread extends DrawingThread {
         boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
         boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
 
-        const pageEl = this.getPopoverParent();
+        const pageEl = getPageEl(this.annotatedElement, this.location.page);
         pageEl.appendChild(boundaryEl);
     };
 
@@ -319,7 +335,7 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     position = () => {
-        if (this.isMobile) {
+        if (shouldDisplayMobileUI(this.container)) {
             return;
         }
 

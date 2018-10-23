@@ -53,56 +53,7 @@ export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
 
-export const CLASS_TEXTAREA = 'ba-textarea';
-export const SELECTOR_TEXTAREA = `.${CLASS_TEXTAREA}`;
-export const CLASS_ANNOTATION_TEXTAREA = 'annotation-textarea';
-export const SELECTOR_ANNOTATION_TEXTAREA = `.${CLASS_ANNOTATION_TEXTAREA}`;
-export const CLASS_INVALID_INPUT = 'ba-invalid-input';
-export const SELECTOR_INVALID_INPUT = `.${CLASS_INVALID_INPUT}`;
-
-export const CLASS_BUTTON_CONTAINER = 'button-container';
-export const SELECTOR_BUTTON_CONTAINER = `.${CLASS_BUTTON_CONTAINER}`;
-export const CLASS_ANNOTATION_BUTTON_CANCEL = 'cancel-annotation-btn';
-export const SELECTOR_ANNOTATION_BUTTON_CANCEL = `.${CLASS_ANNOTATION_BUTTON_CANCEL}`;
-export const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
-export const SELECTOR_ANNOTATION_BUTTON_POST = `.${CLASS_ANNOTATION_BUTTON_POST}`;
-export const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
-export const SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
-
-export const CLASS_DELETE_CONFIRM_MESSAGE = 'delete-confirmation-message';
-export const SELECTOR_DELETE_CONFIRM_MESSAGE = `.${CLASS_DELETE_CONFIRM_MESSAGE}`;
-export const CLASS_CANCEL_DELETE_BTN = 'cancel-delete-btn';
-export const SELECTOR_CANCEL_DELETE_BTN = `.${CLASS_CANCEL_DELETE_BTN}`;
-export const CLASS_CONFIRM_DELETE_BTN = 'confirm-delete-btn';
-export const SELECTOR_CONFIRM_DELETE_BTN = `.${CLASS_CONFIRM_DELETE_BTN}`;
-
-export const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
-export const SELECTOR_ANNOTATION_CONTAINER = `.${CLASS_ANNOTATION_CONTAINER}`;
-export const CLASS_ANNOTATION_COMMENT = 'annotation-comment';
-export const SELECTOR_ANNOTATION_COMMENT = `.${CLASS_ANNOTATION_COMMENT}`;
-export const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
-export const SELECTOR_ANNOTATION_COMMENT_TEXT = `.${CLASS_ANNOTATION_COMMENT_TEXT}`;
-export const CLASS_PROFILE_CONTAINER = 'profile-container';
-export const SELECTOR_PROFILE_CONTAINER = `.${CLASS_PROFILE_CONTAINER}`;
-export const CLASS_PROFILE_IMG_CONTAINER = 'profile-image-container';
-export const SELECTOR_PROFILE_IMG_CONTAINER = `.${CLASS_PROFILE_IMG_CONTAINER}`;
-export const CLASS_USER_NAME = 'user-name';
-export const SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
-export const CLASS_COMMENT_DATE = 'comment-date';
-export const SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
-
-export const CLASS_REPLY_CONTAINER = 'reply-container';
-export const SELECTOR_REPLY_CONTAINER = `.${CLASS_REPLY_CONTAINER}`;
-export const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-export const SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
-
-export const CLASS_CREATE_COMMENT = 'ba-create-comment';
-export const SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
-
 export const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
-
-export const CLASS_COMMENT = 'annotation-comment';
-export const CLASS_COMMENTS_CONTAINER = 'annotation-comments';
 
 // Highlight dialog CSS constants
 export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
@@ -198,22 +149,7 @@ export const CLASS_ANNOTATION_BUTTON_DRAW_CANCEL = 'ba-btn-annotate-draw-cancel'
 export const SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL = `.${CLASS_ANNOTATION_BUTTON_DRAW_CANCEL}`;
 
 // Data types
-export const DATA_TYPE_ANNOTATION_DIALOG = 'annotation-dialog';
 export const DATA_TYPE_ANNOTATION_INDICATOR = 'annotation-indicator';
-export const DATA_TYPE_HIGHLIGHT = 'highlight-btn';
-export const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
-export const DATA_TYPE_POST = 'post-annotation-btn';
-export const DATA_TYPE_CANCEL = 'cancel-annotation-btn';
-export const DATA_TYPE_REPLY_TEXTAREA = 'reply-textarea';
-export const DATA_TYPE_CANCEL_REPLY = 'cancel-reply-btn';
-export const DATA_TYPE_POST_REPLY = 'post-reply-btn';
-export const DATA_TYPE_DELETE = 'delete-btn';
-export const DATA_TYPE_CANCEL_DELETE = 'cancel-delete-btn';
-export const DATA_TYPE_CONFIRM_DELETE = 'confirm-delete-btn';
-export const DATA_TYPE_MOBILE_CLOSE = 'mobile-dialog-close-btn';
-
-export const SECTION_CREATE = '[data-section="create"]';
-export const SECTION_SHOW = '[data-section="show"]';
 
 export const PERMISSION_ANNOTATE = 'can_annotate';
 export const PERMISSION_CAN_VIEW_ANNOTATIONS_ALL = 'can_view_annotations_all';
@@ -228,10 +164,8 @@ export const DRAW_STATES = {
 export const STATES = {
     active: 'active', // mouse is over
     inactive: 'inactive', // not clicked and mouse is not over
-    pending: 'pending', // not saved
-    pending_active: 'pending-active' // not saved and pending comment
+    pending: 'pending' // not saved
 };
-export const PENDING_STATES = [STATES.pending, STATES.pending_active];
 
 export const TYPES = {
     point: 'point',
@@ -281,14 +215,10 @@ export const CONTROLLER_EVENT = {
     unregister: 'unregisterthread',
     bindDOMListeners: 'binddomlisteners',
     unbindDOMListeners: 'unbinddomlisteners',
-    renderPage: 'annotationsrenderpage',
-    resetMobileDialog: 'annotationsmobiledialogreset'
+    renderPage: 'annotationsrenderpage'
 };
 
 export const CREATE_EVENT = {
-    init: 'init',
-    post: 'post_comment',
-    cancel: 'cancel',
     plain: 'plain_highlight_create',
     comment: 'comment_highlight_edit'
 };
@@ -305,8 +235,6 @@ export const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;
-
-export const ID_MOBILE_ANNOTATION_DIALOG = 'mobile-annotation-dialog';
 
 export const DRAW_RENDER_THRESHOLD = 16.67; // 60 FPS target using 16.667ms/frame
 export const DRAW_BASE_LINE_WIDTH = 3;

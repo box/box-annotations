@@ -40,6 +40,7 @@ describe('doc/DocPointThread', () => {
             util.showElement = jest.fn();
             thread.renderAnnotationPopover = jest.fn();
             docUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([1, 2]);
+            thread.annotatedElement.querySelector = jest.fn().mockReturnValue(rootElement);
         });
 
         it('should show the thread', () => {
@@ -61,7 +62,7 @@ describe('doc/DocPointThread', () => {
         });
 
         it('should not render popover if user is on a mobile device and the thread has no annotations yet', () => {
-            thread.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.comments = [];
             thread.state = STATES.inactive;
             thread.show();

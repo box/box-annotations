@@ -12,8 +12,6 @@ import {
 } from './constants';
 import FileVersionAPI from './api/FileVersionAPI';
 
-const DESKTOP_MIN_WIDTH = 1025;
-
 class Annotator extends EventEmitter {
     //--------------------------------------------------------------------------
     // Typedef
@@ -124,9 +122,6 @@ class Annotator extends EventEmitter {
 
         this.container.classList.add('ba');
 
-        const containerRect = this.container.getBoundingClientRect();
-        this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
-
         // Get annotated element from container
         this.annotatedElement = this.getAnnotatedEl(this.container);
 
@@ -236,7 +231,6 @@ class Annotator extends EventEmitter {
 
         const options = {
             header: this.options.header,
-            isMobile: this.isMobile,
             hasTouch: this.hasTouch,
             locale: this.locale
         };
@@ -270,16 +264,14 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     hideAnnotations(event) {
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (event && util.isInDialog(event, popoverEl)) {
+        if (event && util.isInDialog(event, this.container)) {
             return;
         }
 
         Object.keys(this.modeControllers).forEach((mode) => {
+            this.modeControllers[mode].destroyPendingThreads();
             this.modeControllers[mode].applyActionToThreads((thread) => {
-                if (!util.isPending(thread.state)) {
-                    thread.unmountPopover();
-                }
+                thread.unmountPopover();
             });
         });
     }
@@ -485,10 +477,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     scaleAnnotations(data) {
-        const containerRect = this.container.getBoundingClientRect();
-        this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
-
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             this.container.addEventListener('click', this.clickHandler);
         } else {
             this.container.removeEventListener('click', this.clickHandler);
@@ -588,9 +577,6 @@ class Annotator extends EventEmitter {
         switch (data.event) {
             case CONTROLLER_EVENT.load:
                 this.loadAnnotations();
-                break;
-            case CONTROLLER_EVENT.resetMobileDialog:
-                this.removeThreadFromSharedDialog();
                 break;
             case CONTROLLER_EVENT.toggleMode:
                 this.toggleAnnotationMode(data.mode);

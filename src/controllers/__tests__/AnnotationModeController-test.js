@@ -12,14 +12,14 @@ import {
     STATES,
     CONTROLLER_EVENT
 } from '../../constants';
+import AnnotationThread from '../../AnnotationThread';
+import AnnotationAPI from '../../api/AnnotationAPI';
+
+jest.mock('../../AnnotationThread');
+jest.mock('../../api/AnnotationAPI');
 
 let controller;
 let thread;
-
-const api = {
-    addListener: jest.fn(),
-    removeListener: jest.fn()
-};
 
 const html = `<div class="annotated-element">
   <div data-page-number="1"></div>
@@ -36,29 +36,21 @@ describe('controllers/AnnotationModeController', () => {
 
         controller = new AnnotationModeController();
         controller.container = document;
-        thread = {
-            annotatedElement: rootElement,
-            threadID: '123abc',
-            location: { page: 1 },
-            type: 'type',
-            state: STATES.pending,
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-            save: jest.fn(),
-            handleStart: jest.fn(),
-            destroy: jest.fn(),
-            deleteThread: jest.fn(),
-            isDialogVisible: jest.fn(),
-            unmountPopover: jest.fn(),
-            renderAnnotationPopover: jest.fn(),
-            show: jest.fn(),
-            minX: 1,
-            minY: 2,
-            maxX: 1,
-            maxY: 2
-        };
+        thread = new AnnotationThread();
+        thread.annotatedElement = rootElement;
+        thread.threadID = '123abc';
+        thread.location = { page: 1 };
+        thread.state = STATES.pending;
+        thread.type = 'type';
+        thread.minX = 1;
+        thread.minY = 2;
+        thread.maxX = 1;
+        thread.maxY = 2;
         controller.getLocation = jest.fn();
         controller.annotatedElement = rootElement;
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -97,7 +89,7 @@ describe('controllers/AnnotationModeController', () => {
 
     describe('After init', () => {
         beforeEach(() => {
-            controller.api = api;
+            controller.api = new AnnotationAPI();
             controller.localized = {
                 anonymouseUserName: ''
             };
@@ -212,13 +204,6 @@ describe('controllers/AnnotationModeController', () => {
                 expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
 
-            it('should do nothing if no modeButton', () => {
-                controller.modeButton = undefined;
-                controller.permissions.can_annotate = false;
-                controller.hideButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
-            });
-
             it('should do nothing if button is not found', () => {
                 controller.getButton = jest.fn();
                 controller.hideButton();
@@ -228,6 +213,13 @@ describe('controllers/AnnotationModeController', () => {
             it('should add the bp-is-hidden class to the button', () => {
                 controller.hideButton();
                 expect(buttonEl.classList).toContain(CLASS_HIDDEN);
+            });
+
+            it('should do nothing if no modeButton', () => {
+                controller.modeButton = undefined;
+                controller.permissions.can_annotate = false;
+                controller.hideButton();
+                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
         });
 
@@ -569,7 +561,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should render the annotations on every page', () => {
-                util.isPending = jest.fn().mockReturnValue(false);
+                thread.state = STATES.inactive;
                 controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush(),
@@ -586,7 +578,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should destroy any pending annotations on re-render', () => {
-                util.isPending = jest.fn().mockReturnValue(true);
+                thread.state = STATES.pending;
                 controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush()
@@ -602,12 +594,6 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('destroyPendingThreads()', () => {
             beforeEach(() => {
-                util.isPending = jest.fn((state) => {
-                    if (state === STATES.pending) {
-                        return true;
-                    }
-                    return false;
-                });
                 controller.unregisterThread = jest.fn();
                 controller.annotations = {
                     1: {
@@ -626,7 +612,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should not destroy and return false if the threads are not pending', () => {
-                thread.state = 'NOT_PENDING';
+                thread.state = STATES.inactive;
                 thread.isDialogVisible = jest.fn().mockReturnValue(false);
                 const destroyed = controller.destroyPendingThreads();
                 expect(destroyed).toBeFalsy();
@@ -635,17 +621,14 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should destroy only pending threads, and return true', () => {
-                thread.state = 'NOT_PENDING';
-                const pendingThread = {
-                    threadID: '456def',
-                    location: { page: 1 },
-                    type: 'type',
-                    state: STATES.pending,
-                    destroy: jest.fn(),
-                    unbindCustomListenersOnThread: jest.fn(),
-                    addListener: jest.fn(),
-                    removeAllListeners: jest.fn()
-                };
+                thread.state = STATES.inactive;
+
+                const pendingThread = new AnnotationThread();
+                pendingThread.threadID = '456def';
+                pendingThread.location = { page: 1 };
+                pendingThread.type = 'type';
+                pendingThread.state = STATES.pending;
+
                 controller.annotations[1].all = jest.fn().mockReturnValue([thread, pendingThread]);
 
                 const destroyed = controller.destroyPendingThreads();

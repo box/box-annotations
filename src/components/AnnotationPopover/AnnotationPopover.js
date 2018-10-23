@@ -3,6 +3,8 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import Overlay from 'box-react-ui/lib/components/flyout/Overlay';
+import PlainButton from 'box-react-ui/lib/components/plain-button';
+import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 
 import Internationalize from '../Internationalize';
 import CommentList from '../CommentList';
@@ -21,7 +23,8 @@ type Props = {
     onCommentClick: Function,
     isPending: boolean,
     language?: string,
-    messages?: StringMap
+    messages?: StringMap,
+    headerHeight?: string
 } & Annotation;
 
 class AnnotationPopover extends React.PureComponent<Props> {
@@ -60,7 +63,8 @@ class AnnotationPopover extends React.PureComponent<Props> {
             onCreate,
             onCommentClick,
             language,
-            messages: intlMessages
+            messages: intlMessages,
+            headerHeight
         } = this.props;
         const hasComments = comments.length > 0;
 
@@ -68,10 +72,20 @@ class AnnotationPopover extends React.PureComponent<Props> {
             <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames('ba-popover', {
-                        'ba-inline': isMobile || (!isPending && !hasComments)
+                        'ba-inline': !hasComments && (isMobile || !isPending),
+                        'ba-animate-popover': isMobile
                     })}
                 >
-                    <span className='ba-popover-caret' />
+                    {isMobile ? (
+                        <span className='ba-mobile-header' style={{ height: headerHeight }}>
+                            <PlainButton className='ba-mobile-close-btn' onClick={onCancel}>
+                                <IconClose height={24} width={24} />
+                            </PlainButton>
+                        </span>
+                    ) : (
+                        <span className='ba-popover-caret' />
+                    )}
+
                     <Overlay
                         className={classNames('ba-popover-overlay', {
                             'ba-create-popover': isPending
@@ -82,6 +96,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
                         )}
+                        {isMobile && <span className='ba-buffer' />}
                         {canAnnotate && (
                             <ActionControls
                                 id={id}

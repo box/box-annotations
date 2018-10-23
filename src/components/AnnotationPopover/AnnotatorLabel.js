@@ -8,6 +8,8 @@ import CommentText from '../../../third-party/components/Comment/CommentText';
 import { isHighlightAnnotation, isDrawingAnnotation } from '../../util';
 import messages from './messages';
 
+import './AnnotatorLabel.scss';
+
 type Props = {
     id?: string,
     type: AnnotationType,

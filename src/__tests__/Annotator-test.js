@@ -9,13 +9,20 @@ import {
     SELECTOR_ANNOTATED_ELEMENT,
     SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
+import AnnotationThread from '../AnnotationThread';
+import FileVersionAPI from '../api/FileVersionAPI';
+import AnnotationModeController from '../controllers/AnnotationModeController';
+
+jest.mock('../AnnotationThread');
+jest.mock('../api/FileVersionAPI');
+jest.mock('../controllers/AnnotationModeController');
 
 describe('Annotator', () => {
     let rootElement;
     let annotator;
     let controller;
     let thread;
-    const api = {};
+    let api;
     const html = `<button class="bp-btn-annotate"></button>
     <div class="annotated-element"></div>`;
 
@@ -24,32 +31,16 @@ describe('Annotator', () => {
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
-        thread = {
-            threadID: '123abc',
-            show: jest.fn(),
-            hide: jest.fn(),
-            addListener: jest.fn(),
-            unbindCustomListenersOnThread: jest.fn(),
-            removeListener: jest.fn(),
-            scrollIntoView: jest.fn(),
-            getThreadEventData: jest.fn(),
-            showDialog: jest.fn(),
-            type: 'something',
-            location: { page: 1 },
-            annotations: []
-        };
+        thread = new AnnotationThread();
+        thread.threadID = '123abc';
+        thread.location = { page: 1 };
+        thread.type = 'something';
+        thread.annotations = [];
 
-        controller = {
-            init: jest.fn(),
-            addListener: jest.fn(),
-            registerThread: jest.fn().mockReturnValue(thread),
-            isEnabled: jest.fn(),
-            getButton: jest.fn(),
-            enter: jest.fn(),
-            exit: jest.fn(),
-            setupSharedDialog: jest.fn(),
-            getThreadByID: jest.fn()
-        };
+        controller = new AnnotationModeController();
+        controller.registerThread = jest.fn().mockReturnValue(thread);
+
+        api = new FileVersionAPI();
 
         const options = {
             annotator: {
@@ -104,7 +95,6 @@ describe('Annotator', () => {
         });
 
         it('should set scale and setup annotations', () => {
-            annotator.isMobile = false;
             annotator.init(5);
             expect(annotator.setScale).toBeCalledWith(5);
             expect(annotator.setupAnnotations).toBeCalled();
@@ -284,7 +274,9 @@ describe('Annotator', () => {
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                // api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                api.fetchVersionAnnotations = jest.fn().mockResolvedValue({});
+                annotator.api = api;
                 annotator.permissions = {
                     can_view_annotations_all: false,
                     can_view_annotations_self: true
@@ -299,7 +291,9 @@ describe('Annotator', () => {
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                annotator.api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                // api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
+                api.fetchVersionAnnotations = jest.fn().mockResolvedValue({});
+                annotator.api = api;
                 annotator.permissions = {
                     can_view_annotations_all: true,
                     can_view_annotations_self: false
@@ -362,13 +356,6 @@ describe('Annotator', () => {
 
             beforeEach(() => {
                 annotator.emit = jest.fn();
-            });
-
-            it('should reset mobile annotation dialog on resetMobileDialog', () => {
-                annotator.removeThreadFromSharedDialog = jest.fn();
-                data.event = CONTROLLER_EVENT.resetMobileDialog;
-                annotator.handleControllerEvents(data);
-                expect(annotator.removeThreadFromSharedDialog).toBeCalled();
             });
 
             it('should toggle annotation mode on togglemode', () => {

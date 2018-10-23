@@ -1,7 +1,7 @@
 // @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocHighlightThread from '../doc/DocHighlightThread';
-import { clearCanvas } from '../util';
+import { clearCanvas, getPageEl } from '../util';
 import {
     ANNOTATOR_TYPE,
     THREAD_EVENT,
@@ -56,7 +56,7 @@ class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = getPageEl(this.annotatedElement, pageNum);
         const layerClass =
             this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
         clearCanvas(pageEl, layerClass);

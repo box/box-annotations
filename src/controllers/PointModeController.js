@@ -6,7 +6,6 @@ import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     THREAD_EVENT,
-    CONTROLLER_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
@@ -96,8 +95,7 @@ class PointModeController extends AnnotationModeController {
     pointClickHandler(event: Event): void {
         // Determine if a point annotation dialog is already open and close the
         // current open dialog
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (!isInAnnotationOrMarker(event, popoverEl)) {
+        if (!isInAnnotationOrMarker(event, this.container)) {
             event.stopPropagation();
             event.preventDefault();
         } else {
@@ -107,11 +105,6 @@ class PointModeController extends AnnotationModeController {
         const pendingThread = this.getThreadByID(this.pendingThreadID);
         if (this.pendingThreadID && pendingThread) {
             pendingThread.destroy();
-        }
-
-        // Clears and hides the mobile annotation dialog if visible
-        if (this.isMobile) {
-            this.emit(CONTROLLER_EVENT.resetMobileDialog);
         }
 
         this.hadPendingThreads = this.destroyPendingThreads();

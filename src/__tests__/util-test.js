@@ -1,59 +1,9 @@
 /* eslint-disable no-unused-expressions */
+import * as util from '../util';
 import {
-    findClosestElWithClass,
-    findClosestDataType,
-    getPageInfo,
-    showElement,
-    hideElement,
-    enableElement,
-    disableElement,
-    showInvisibleElement,
-    hideElementVisibility,
-    resetTextarea,
-    isElementInViewport,
-    getScale,
-    isPlainHighlight,
-    isHighlightAnnotation,
-    getDimensionScale,
-    htmlEscape,
-    repositionCaret,
-    isPending,
-    isPointLocationValid,
-    isHighlightLocationValid,
-    isDrawLocationValid,
-    areThreadParamsValid,
-    eventToLocationHandler,
-    decodeKeydown,
-    getHeaders,
-    replacePlaceholders,
-    createLocation,
-    round,
-    prevDefAndStopProp,
-    canLoadAnnotations,
-    insertTemplate,
-    generateBtn,
-    createCommentTextNode,
-    clearCanvas,
-    replaceHeader,
-    isInDialog,
-    isInAnnotationOrMarker,
-    focusTextArea,
-    hasValidBoundaryCoordinates,
-    generateMobileDialogEl,
-    getDialogWidth
-} from '../util';
-import {
-    STATES,
     TYPES,
-    CLASS_ANNOTATION_COMMENT_TEXT,
     SELECTOR_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_CARET,
-    CLASS_ACTIVE,
-    SELECTOR_MOBILE_DIALOG_HEADER,
-    SELECTOR_DIALOG_CLOSE,
-    SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT,
-    SELECTOR_ANIMATE_DIALOG,
-    CLASS_HIDDEN,
     SELECTOR_ANNOTATION_POINT_MARKER,
     CLASS_ANNOTATION_DIALOG,
     CLASS_ANNOTATION_POINT_MARKER
@@ -101,25 +51,25 @@ describe('util', () => {
 
     describe('findClosestElWithClass()', () => {
         it('should return closest ancestor element with the specified class', () => {
-            expect(findClosestElWithClass(childEl, 'parent')).toEqual(parentEl);
+            expect(util.findClosestElWithClass(childEl, 'parent')).toEqual(parentEl);
         });
 
         it('should return null if no matching ancestor is found', () => {
-            expect(findClosestElWithClass(childEl, 'otherParent')).toBeNull();
+            expect(util.findClosestElWithClass(childEl, 'otherParent')).toBeNull();
         });
     });
 
     describe('findClosestDataType()', () => {
         it('should return the data type of the closest ancestor with a data type when no attributeName is provided', () => {
-            expect(findClosestDataType(childEl)).toEqual('someType');
+            expect(util.findClosestDataType(childEl)).toEqual('someType');
         });
 
         it('should return the attribute name of the closest ancestor with the specified attributeName', () => {
-            expect(findClosestDataType(childEl, 'data-name')).toEqual('someName');
+            expect(util.findClosestDataType(childEl, 'data-name')).toEqual('someName');
         });
 
         it('should return empty string if no matching ancestor is found', () => {
-            expect(findClosestDataType(childEl, 'data-foo')).toEqual('');
+            expect(util.findClosestDataType(childEl, 'data-foo')).toEqual('');
         });
     });
 
@@ -127,14 +77,14 @@ describe('util', () => {
         it('should return page element and page number that the specified element is on', () => {
             const fooEl = rootElement.querySelector('.foo');
             const pageEl = rootElement.querySelector('.page');
-            const result = getPageInfo(fooEl);
+            const result = util.getPageInfo(fooEl);
             expect(result.pageEl).toEqual(pageEl);
             expect(result.page).toEqual(2);
         });
 
         it('should return no page element and -1 page number if no page is found', () => {
             const barEl = rootElement.querySelector('.bar');
-            const result = getPageInfo(barEl);
+            const result = util.getPageInfo(barEl);
             expect(result.pageEl).toBeNull();
             expect(result.page).toEqual(1);
         });
@@ -144,26 +94,26 @@ describe('util', () => {
         it('should remove hidden class from element with matching selector', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-hidden');
-            showElement('.child');
+            util.showElement('.child');
             expect(childEl.classList).not.toContain('bp-is-hidden');
         });
 
         it('should remove hidden class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('bp-is-hidden');
-            showElement(childEl);
+            util.showElement(childEl);
             expect(childEl.classList).not.toContain('bp-is-hidden');
         });
     });
 
     describe('hideElement()', () => {
         it('should add hidden class to matching element', () => {
-            hideElement('.child');
+            util.hideElement('.child');
             expect(childEl.classList).toContain('bp-is-hidden');
         });
 
         it('should add hidden class to provided element', () => {
-            hideElement(childEl);
+            util.hideElement(childEl);
             expect(childEl.classList).toContain('bp-is-hidden');
         });
     });
@@ -172,92 +122,46 @@ describe('util', () => {
         it('should remove disabled class from matching element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
-            enableElement('.child');
+            util.enableElement('.child');
             expect(childEl.classList).not.toContain('is-disabled');
         });
 
         it('should remove disabled class from provided element', () => {
             // Hide element before testing show function
             childEl.classList.add('is-disabled');
-            enableElement(childEl);
+            util.enableElement(childEl);
             expect(childEl.classList).not.toContain('is-disabled');
         });
     });
 
     describe('disableElement()', () => {
         it('should add disabled class to matching element', () => {
-            disableElement('.child');
+            util.disableElement('.child');
             expect(childEl.classList).toContain('is-disabled');
         });
 
         it('should add disabled class to provided element', () => {
-            disableElement(childEl);
+            util.disableElement(childEl);
             expect(childEl.classList).toContain('is-disabled');
-        });
-    });
-
-    describe('showInvisibleElement()', () => {
-        it('should remove invisible class from element with matching selector', () => {
-            // Hide element before testing show function
-            childEl.classList.add('bp-is-invisible');
-            showInvisibleElement('.child');
-            expect(childEl.classList).not.toContain('bp-is-invisible');
-        });
-
-        it('should remove invisible class from provided element', () => {
-            // Hide element before testing show function
-            childEl.classList.add('bp-is-invisible');
-            showInvisibleElement(childEl);
-            expect(childEl.classList).not.toContain('bp-is-invisible');
-        });
-    });
-
-    describe('hideElementVisibility()', () => {
-        it('should add invisible class to matching element', () => {
-            hideElementVisibility('.child');
-            expect(childEl.classList).toContain('bp-is-invisible');
-        });
-
-        it('should add invisible class to provided element', () => {
-            hideElementVisibility(childEl);
-            expect(childEl.classList).toContain('bp-is-invisible');
-        });
-    });
-
-    describe('resetTextarea()', () => {
-        it('should reset text area', () => {
-            const textAreaEl = rootElement.querySelector('.textarea');
-
-            // Fake making text area 'active'
-            textAreaEl.classList.add(CLASS_ACTIVE);
-            textAreaEl.value = 'test';
-            textAreaEl.style.width = '10px';
-            textAreaEl.style.height = '10px';
-
-            resetTextarea(textAreaEl);
-
-            expect(textAreaEl.classList).not.toContain(CLASS_ACTIVE);
-            expect(textAreaEl.classList).not.toContain('ba-invalid-input');
-            expect(textAreaEl.value).toEqual('test');
-            expect(textAreaEl.style.width).toEqual('');
-            expect(textAreaEl.style.height).toEqual('');
         });
     });
 
     describe('isInDialog()', () => {
         it('should return false if no dialog element exists', () => {
-            expect(isInDialog({ clientX: 8, clientY: 8 })).toBeFalsy();
+            expect(util.isInDialog({ clientX: 8, clientY: 8 })).toBeFalsy();
         });
 
         it('should return true if the event is in the given dialog', () => {
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            dialogEl.getBoundingClientRect = jest.fn().mockReturnValue({
+            const actionControls = document.createElement('div');
+            actionControls.classList.add('ba-action-controls');
+            rootElement.appendChild(actionControls);
+            actionControls.getBoundingClientRect = jest.fn().mockReturnValue({
                 left: 0,
                 right: 10,
                 top: 0,
                 bottom: 10
             });
-            expect(isInDialog({ clientX: 8, clientY: 8 }, dialogEl)).toBeTruthy();
+            expect(util.isInDialog({ clientX: 8, clientY: 8 }, rootElement)).toBeTruthy();
         });
     });
 
@@ -265,9 +169,9 @@ describe('util', () => {
         it('should return false if no dialog element exists', () => {
             const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
             const markerEl = rootElement.querySelector(SELECTOR_ANNOTATION_POINT_MARKER);
-            expect(isInAnnotationOrMarker({ target: dialogEl })).toBeTruthy();
-            expect(isInAnnotationOrMarker({ target: markerEl })).toBeTruthy();
-            expect(isInAnnotationOrMarker({ target: document.createElement('div') })).toBeFalsy();
+            expect(util.isInAnnotationOrMarker({ target: dialogEl })).toBeTruthy();
+            expect(util.isInAnnotationOrMarker({ target: markerEl })).toBeTruthy();
+            expect(util.isInAnnotationOrMarker({ target: document.createElement('div') })).toBeFalsy();
         });
     });
 
@@ -281,37 +185,19 @@ describe('util', () => {
                 createContextualFragment: jest.fn()
             });
 
-            insertTemplate(node, '<div class="foo"></div>');
+            util.insertTemplate(node, '<div class="foo"></div>');
             expect(node.insertBefore).toBeCalled();
-        });
-    });
-
-    describe('generateBtn()', () => {
-        it('should return button node from specified details', () => {
-            const btn = generateBtn(['class', 'bp-btn-plain'], 'title', document.createElement('div'), 'type');
-            expect(btn.classList).not.toContain('nope');
-            expect(btn.classList).toContain('bp-btn-plain');
-            expect(btn.classList).toContain('class');
-            expect(btn.dataset.type).toEqual('type');
-            expect(btn.title).toEqual('title');
-            expect(btn.innerHTML).toContain(document.createElement('div'));
-        });
-    });
-
-    describe('isElementInViewport()', () => {
-        it('should return true for an element fully in the viewport', () => {
-            expect(isElementInViewport(childEl)).toBeTruthy();
         });
     });
 
     describe('getScale()', () => {
         it('should return the zoom scale stored in the data-zoom attribute for the element', () => {
             childEl.setAttribute('data-scale', 3);
-            expect(getScale(childEl)).toEqual(3);
+            expect(util.getScale(childEl)).toEqual(3);
         });
 
         it('should return a zoom scale of 1 if no stored zoom is found on the element', () => {
-            expect(getScale(childEl)).toEqual(1);
+            expect(util.getScale(childEl)).toEqual(1);
         });
     });
 
@@ -319,33 +205,33 @@ describe('util', () => {
         it('should return true if highlight annotation is a plain highlight', () => {
             const annotations = [{ message: '' }];
 
-            expect(isPlainHighlight(annotations)).toBeTruthy();
+            expect(util.isPlainHighlight(annotations)).toBeTruthy();
         });
 
         it('should return false if a plain highlight annotation had comments added to it', () => {
             const annotations = [{ message: '' }, { message: 'bleh' }];
 
-            expect(isPlainHighlight(annotations)).toBeFalsy();
+            expect(util.isPlainHighlight(annotations)).toBeFalsy();
         });
 
         it('should return false if highlight annotation has comments', () => {
             const annotations = [{ message: 'bleh' }];
 
-            expect(isPlainHighlight(annotations)).toBeFalsy();
+            expect(util.isPlainHighlight(annotations)).toBeFalsy();
         });
     });
 
     describe('isHighlightAnnotation()', () => {
         it('should return true if annotation is a plain highlight annotation', () => {
-            expect(isHighlightAnnotation(TYPES.highlight)).toBeTruthy();
+            expect(util.isHighlightAnnotation(TYPES.highlight)).toBeTruthy();
         });
 
         it('should return true if annotation is a highlight comment annotation', () => {
-            expect(isHighlightAnnotation(TYPES.highlight_comment)).toBeTruthy();
+            expect(util.isHighlightAnnotation(TYPES.highlight_comment)).toBeTruthy();
         });
 
         it('should return false if annotation is a point annotation', () => {
-            expect(isHighlightAnnotation(TYPES.point)).toBeFalsy();
+            expect(util.isHighlightAnnotation(TYPES.point)).toBeFalsy();
         });
     });
 
@@ -361,7 +247,7 @@ describe('util', () => {
             };
 
             const HEIGHT_PADDING = 30;
-            const result = getDimensionScale(dimensions, pageDimensions, 1, HEIGHT_PADDING);
+            const result = util.getDimensionScale(dimensions, pageDimensions, 1, HEIGHT_PADDING);
             expect(result).toBeNull();
         });
 
@@ -376,19 +262,9 @@ describe('util', () => {
             };
 
             const HEIGHT_PADDING = 30;
-            const result = getDimensionScale(dimensions, pageDimensions, 1, HEIGHT_PADDING);
+            const result = util.getDimensionScale(dimensions, pageDimensions, 1, HEIGHT_PADDING);
             expect(result.x).toEqual(2);
             expect(result.y).toEqual(2);
-        });
-    });
-
-    describe('htmlEscape()', () => {
-        it('should return HTML-escaped text', () => {
-            expect(htmlEscape('test&file=what')).toEqual('test&amp;file=what');
-            expect(htmlEscape('<script>')).toEqual('&lt;script&gt;');
-            expect(htmlEscape('"string"')).toEqual('&quot;string&quot;');
-            expect(htmlEscape('\'string\'')).toEqual('&#39;string&#39;');
-            expect(htmlEscape('`string`')).toEqual('&#96;string&#96;');
         });
     });
 
@@ -398,7 +274,7 @@ describe('util', () => {
             const pageWidth = 100;
             const initX = browserX - DIALOG_WIDTH / 2;
 
-            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
+            const dialogX = util.repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(0); // dialog aligned to the left
         });
 
@@ -407,7 +283,7 @@ describe('util', () => {
             const pageWidth = 100;
             const initX = browserX - DIALOG_WIDTH / 2;
 
-            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
+            const dialogX = util.repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(19); // dialog aligned to the right
         });
 
@@ -416,81 +292,19 @@ describe('util', () => {
             const pageWidth = 1000;
             const initX = browserX - DIALOG_WIDTH / 2;
 
-            const dialogX = repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
+            const dialogX = util.repositionCaret(rootElement, initX, DIALOG_WIDTH, browserX, pageWidth);
             expect(dialogX).toEqual(initX); // dialog x unchanged
         });
     });
 
-    describe('isPending()', () => {
-        it('should return true if thread is pending or pending-active', () => {
-            expect(isPending(STATES.pending)).toBeTruthy();
-            expect(isPending(STATES.pending_active)).toBeTruthy();
-        });
+    describe('getPageEl()', () => {
+        it('should return the result of querySelector', () => {
+            const page = 2;
+            const truePageEl = document.querySelector(`.page[data-page-number="${page}"]`);
+            rootElement.appendChild(truePageEl);
 
-        it('should return false if thread is notpending', () => {
-            expect(isPending(STATES.active)).toBeFalsy();
-            expect(isPending(STATES.inactive)).toBeFalsy();
-        });
-    });
-
-    describe('isPointLocationValid()', () => {
-        it('should return false if the thread is null or missing any expected params', () => {
-            expect(isPointLocationValid({})).toBeFalsy();
-            expect(isPointLocationValid({ x: 1, y: 2 })).toBeTruthy();
-        });
-    });
-
-    describe('isHighlightLocationValid()', () => {
-        it('should return false if the thread is null or missing any expected params', () => {
-            expect(isHighlightLocationValid({})).toBeFalsy();
-            expect(isHighlightLocationValid({ quadPoints: {} })).toBeTruthy();
-        });
-    });
-
-    describe('isDrawLocationValid()', () => {
-        it('should return false if the thread is null or missing any expected params', () => {
-            expect(isDrawLocationValid({})).toBeFalsy();
-            expect(isDrawLocationValid({ minX: 1, minY: 1, maxX: 2, maxY: 2 })).toBeTruthy();
-        });
-    });
-
-    describe('areThreadParamsValid()', () => {
-        it('should return false if the thread is null or missing any expected params', () => {
-            expect(areThreadParamsValid(null)).toBeFalsy();
-            expect(areThreadParamsValid({ fileVersionId: 123 })).toBeFalsy();
-        });
-
-        it('should return false if thread has invalid location', () => {
-            const threadParams = {
-                annotatedElement: {},
-                comments: [],
-                api: {},
-                fileVersionId: 123,
-                location: {},
-                locale: 'en-US'
-            };
-
-            threadParams.type = TYPES.point;
-            expect(areThreadParamsValid(threadParams)).toBeFalsy();
-
-            threadParams.type = TYPES.highlight;
-            expect(areThreadParamsValid(threadParams)).toBeFalsy();
-
-            threadParams.type = TYPES.draw;
-            expect(areThreadParamsValid(threadParams)).toBeFalsy();
-        });
-
-        it('should return true if the thread is has all expected params', () => {
-            const threadParams = {
-                annotatedElement: {},
-                comments: [],
-                api: {},
-                fileVersionId: 123,
-                location: { x: 1, y: 2 },
-                locale: 'en-US',
-                type: TYPES.point
-            };
-            expect(areThreadParamsValid(threadParams)).toBeTruthy();
+            const pageEl = util.getPageEl(rootElement, page);
+            expect(pageEl).toEqual(truePageEl);
         });
     });
 
@@ -503,7 +317,7 @@ describe('util', () => {
         beforeEach(() => {
             getLocation = () => 'location';
             callback = jest.fn();
-            locationHandler = eventToLocationHandler(getLocation, callback);
+            locationHandler = util.eventToLocationHandler(getLocation, callback);
             event = {
                 preventDefault: jest.fn(),
                 stopPropagation: jest.fn()
@@ -529,22 +343,9 @@ describe('util', () => {
         });
     });
 
-    describe('prevDefAndStopProp()', () => {
-        it('should prevent default and stop propagation on an event', () => {
-            const event = {
-                preventDefault: jest.fn(),
-                stopPropagation: jest.fn()
-            };
-
-            prevDefAndStopProp(event);
-            expect(event.preventDefault).toBeCalled();
-            expect(event.stopPropagation).toBeCalled();
-        });
-    });
-
     describe('createLocation()', () => {
         it('should create a location object without dimensions', () => {
-            const location = createLocation(1, 2, undefined);
+            const location = util.createLocation(1, 2, undefined);
             expect(location).toStrictEqual({
                 x: 1,
                 y: 2
@@ -553,7 +354,7 @@ describe('util', () => {
 
         it('should create a location object with dimensions', () => {
             const dimensionalObj = 'dimensional object';
-            const location = createLocation(1, 2, dimensionalObj);
+            const location = util.createLocation(1, 2, dimensionalObj);
             expect(location).toStrictEqual({
                 x: 1,
                 y: 2,
@@ -564,51 +365,51 @@ describe('util', () => {
 
     describe('decodeKeydown()', () => {
         it('should return empty when no key', () => {
-            expect(decodeKeydown({ key: '' })).toEqual('');
+            expect(util.decodeKeydown({ key: '' })).toEqual('');
         });
 
         it('should return empty when modifier and key are same', () => {
-            expect(decodeKeydown({ key: 'Control', ctrlKey: true })).toEqual('');
+            expect(util.decodeKeydown({ key: 'Control', ctrlKey: true })).toEqual('');
         });
 
         it('should return correct with ctrl modifier', () => {
-            expect(decodeKeydown({ key: '1', ctrlKey: true })).toEqual('Control+1');
+            expect(util.decodeKeydown({ key: '1', ctrlKey: true })).toEqual('Control+1');
         });
 
         it('should return correct with shift modifier', () => {
-            expect(decodeKeydown({ key: '1', shiftKey: true })).toEqual('Shift+1');
+            expect(util.decodeKeydown({ key: '1', shiftKey: true })).toEqual('Shift+1');
         });
 
         it('should return correct with meta modifier', () => {
-            expect(decodeKeydown({ key: '1', metaKey: true })).toEqual('Meta+1');
+            expect(util.decodeKeydown({ key: '1', metaKey: true })).toEqual('Meta+1');
         });
 
         it('should return space key', () => {
-            expect(decodeKeydown({ key: ' ' })).toEqual('Space');
+            expect(util.decodeKeydown({ key: ' ' })).toEqual('Space');
         });
 
         it('should return right arrow key', () => {
-            expect(decodeKeydown({ key: 'Right' })).toEqual('ArrowRight');
+            expect(util.decodeKeydown({ key: 'Right' })).toEqual('ArrowRight');
         });
 
         it('should return left arrow key', () => {
-            expect(decodeKeydown({ key: 'Left' })).toEqual('ArrowLeft');
+            expect(util.decodeKeydown({ key: 'Left' })).toEqual('ArrowLeft');
         });
 
         it('should return up arrow key', () => {
-            expect(decodeKeydown({ key: 'Up' })).toEqual('ArrowUp');
+            expect(util.decodeKeydown({ key: 'Up' })).toEqual('ArrowUp');
         });
 
         it('should return down arrow key', () => {
-            expect(decodeKeydown({ key: 'Down' })).toEqual('ArrowDown');
+            expect(util.decodeKeydown({ key: 'Down' })).toEqual('ArrowDown');
         });
 
         it('should return esc key', () => {
-            expect(decodeKeydown({ key: 'U+001B' })).toEqual('Escape');
+            expect(util.decodeKeydown({ key: 'U+001B' })).toEqual('Escape');
         });
 
         it('should decode correct UTF8 key', () => {
-            expect(decodeKeydown({ key: 'U+0041' })).toEqual('A');
+            expect(util.decodeKeydown({ key: 'U+0041' })).toEqual('A');
         });
     });
 
@@ -618,7 +419,7 @@ describe('util', () => {
             const sharedLink = 'https://sharename';
             const fooHeader = 'bar';
             const token = 'someToken';
-            const headers = getHeaders({ foo: fooHeader }, token, sharedLink);
+            const headers = util.getHeaders({ foo: fooHeader }, token, sharedLink);
             expect(headers.foo).toEqual(fooHeader);
             expect(headers.Authorization).toEqual(`Bearer ${token}`);
             expect(headers.BoxApi).toEqual(`shared_link=${sharedLink}`);
@@ -627,7 +428,7 @@ describe('util', () => {
         });
 
         it('should return correct headers with password', () => {
-            const headers = getHeaders({ foo: 'bar' }, 'token', 'https://sharename', 'password');
+            const headers = util.getHeaders({ foo: 'bar' }, 'token', 'https://sharename', 'password');
             expect(headers.foo).toEqual('bar');
             expect(headers.Authorization).toEqual('Bearer token');
             expect(headers.BoxApi).toEqual('shared_link=https://sharename&shared_link_password=password');
@@ -639,32 +440,11 @@ describe('util', () => {
     describe('round()', () => {
         it('should round to the correct decimal precision', () => {
             const floatNum = 123456789.887654321;
-            expect(round(floatNum, 0)).toEqual(Math.ceil(floatNum));
-            expect(round(floatNum, 1)).toEqual(123456789.9);
-            expect(round(floatNum, 2)).toEqual(123456789.89);
-            expect(round(floatNum, 3)).toEqual(123456789.888);
-            expect(round(floatNum, 4)).toEqual(123456789.8877);
-        });
-    });
-    describe('replacePlaceholders()', () => {
-        it('should replace only the placeholder with the custom value in the given string', () => {
-            expect(replacePlaceholders('{1} highlighted', ['Bob'])).toEqual('Bob highlighted');
-        });
-
-        it('should replace all placeholders with the custom value in the given string', () => {
-            expect(replacePlaceholders('{1} highlighted {2}', ['Bob', 'Suzy'])).toEqual('Bob highlighted Suzy');
-        });
-
-        it('should replace only placeholders that have custom value in the given string', () => {
-            expect(replacePlaceholders('{1} highlighted {2}', ['Bob'])).toEqual('Bob highlighted {2}');
-        });
-
-        it('should respect the order of placeholders when given an arbitrary order', () => {
-            expect(replacePlaceholders('{2} highlighted {1}', ['Bob', 'Suzy'])).toEqual('Suzy highlighted Bob');
-        });
-
-        it('should replace with the same value if the placeholder is repeated', () => {
-            expect(replacePlaceholders('{2} highlighted {2}', ['Bob', 'Suzy'])).toEqual('Suzy highlighted Suzy');
+            expect(util.round(floatNum, 0)).toEqual(Math.ceil(floatNum));
+            expect(util.round(floatNum, 1)).toEqual(123456789.9);
+            expect(util.round(floatNum, 2)).toEqual(123456789.89);
+            expect(util.round(floatNum, 3)).toEqual(123456789.888);
+            expect(util.round(floatNum, 4)).toEqual(123456789.8877);
         });
     });
 
@@ -680,60 +460,22 @@ describe('util', () => {
         });
 
         it('should return false if permissions do not exist', () => {
-            expect(canLoadAnnotations()).toBeFalsy();
+            expect(util.canLoadAnnotations()).toBeFalsy();
         });
 
         it('should return true if user has at least can_annotate permissions', () => {
             permissions.can_annotate = true;
-            expect(canLoadAnnotations(permissions)).toBeTruthy();
+            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
         });
 
         it('should return true if user has at least can_view_annotations_all permissions', () => {
             permissions.can_view_annotations_all = true;
-            expect(canLoadAnnotations(permissions)).toBeTruthy();
+            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
         });
 
         it('should return true if user has at least can_view_annotations_self permissions', () => {
             permissions.can_view_annotations_self = true;
-            expect(canLoadAnnotations(permissions)).toBeTruthy();
-        });
-    });
-
-    describe('createCommentTextNode()', () => {
-        it('should add a <br> for each newline', () => {
-            const text = `
-
-
-            yay, three breaks!`;
-
-            const textEl = createCommentTextNode(text);
-
-            const breaks = textEl.querySelectorAll('br');
-            expect(breaks.length === 3).toBeTruthy();
-        });
-
-        it('should add a <p> containing text for mixed newline/text', () => {
-            const text = 'some breaks \n and \n text';
-            const textEl = createCommentTextNode(text);
-
-            const paras = textEl.querySelectorAll('p');
-            expect(paras.length === 3).toBeTruthy();
-        });
-
-        it('should use the text as textContent if no newlines', () => {
-            const text = 'no breaks and some text';
-            const textEl = createCommentTextNode(text);
-
-            const paras = textEl.querySelectorAll('p');
-            expect(paras.length === 0).toBeTruthy();
-            expect(textEl.textContent).toEqual(text);
-        });
-
-        it('should add the comment text class to the element created', () => {
-            const text = 'no breaks and some text';
-            const textEl = createCommentTextNode(text);
-
-            expect(textEl.classList.contains(CLASS_ANNOTATION_COMMENT_TEXT)).toBeTruthy();
+            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
         });
     });
 
@@ -754,7 +496,7 @@ describe('util', () => {
         });
 
         it('should do nothing if the annotation layer does not exist', () => {
-            clearCanvas(document.createElement('div'), 'anything');
+            util.clearCanvas(document.createElement('div'), 'anything');
             expect(context.clearRect).not.toBeCalled();
         });
 
@@ -763,7 +505,7 @@ describe('util', () => {
                 querySelector: jest.fn().mockReturnValue(layerEl)
             };
             layerEl.getContext = jest.fn().mockReturnValue(context);
-            clearCanvas(pageEl, 'anything');
+            util.clearCanvas(pageEl, 'anything');
             expect(context.clearRect).toHaveBeenCalledTimes(1);
         });
     });
@@ -782,30 +524,23 @@ describe('util', () => {
         });
 
         it('should do nothing if no valid header is specified', () => {
-            replaceHeader(containerEl, '.bp-invalid-header');
+            util.replaceHeader(containerEl, '.bp-invalid-header');
             expect(baseHeader.classList).not.toContain('bp-is-hidden');
             expect(newHeader.classList).toContain('bp-is-hidden');
         });
 
         it('should hide all headers and then show the specified header', () => {
-            replaceHeader(containerEl, '.bp-mode-header');
+            util.replaceHeader(containerEl, '.bp-mode-header');
             expect(baseHeader.classList).toContain('bp-is-hidden');
             expect(newHeader.classList).not.toContain('bp-is-hidden');
         });
     });
 
-    describe('focusTextArea()', () => {
-        it('should activate the textarea', () => {
-            const el = document.createElement('div');
-            expect(focusTextArea(el).classList).toContain(CLASS_ACTIVE);
-        });
-    });
-
     describe('hasValidBoundaryCoordinates()', () => {
         it('return true only if boundary coordinates are valid', () => {
-            expect(hasValidBoundaryCoordinates({})).toBeFalsy();
+            expect(util.hasValidBoundaryCoordinates({})).toBeFalsy();
             expect(
-                hasValidBoundaryCoordinates({
+                util.hasValidBoundaryCoordinates({
                     minX: NaN,
                     minY: 1,
                     maxX: 1,
@@ -813,7 +548,7 @@ describe('util', () => {
                 })
             ).toBeFalsy();
             expect(
-                hasValidBoundaryCoordinates({
+                util.hasValidBoundaryCoordinates({
                     minX: 1,
                     minY: 1,
                     maxX: 1,
@@ -823,28 +558,7 @@ describe('util', () => {
         });
 
         it('should return true for highlight annotations', () => {
-            expect(hasValidBoundaryCoordinates({ type: TYPES.highlight })).toBeTruthy();
-        });
-    });
-
-    describe('generateMobileDialogEl()', () => {
-        it('should return a blank mobile dialog', () => {
-            const el = generateMobileDialogEl();
-            expect(el.querySelector(SELECTOR_MOBILE_DIALOG_HEADER)).not.toBeNull();
-            expect(el.querySelector(SELECTOR_DIALOG_CLOSE)).not.toBeNull();
-            expect(el.querySelector(SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT)).toBeNull();
-            expect(el.querySelector(SELECTOR_ANIMATE_DIALOG)).toBeNull();
-        });
-    });
-
-    describe('getDialogWidth', () => {
-        it('should calculate dialog width without displaying the dialog', () => {
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
-            dialogEl.getBoundingClientRect = jest.fn().mockReturnValue({
-                width: 100
-            });
-            expect(getDialogWidth(dialogEl)).toEqual(100);
-            expect(dialogEl.classList).toContain(CLASS_HIDDEN);
+            expect(util.hasValidBoundaryCoordinates({ type: TYPES.highlight })).toBeTruthy();
         });
     });
 });

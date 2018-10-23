@@ -15,8 +15,7 @@ import {
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
     POINT_ANNOTATION_ICON_HEIGHT,
     SELECTOR_ANNOTATION_CARET,
-    CLASS_HIDDEN,
-    DATA_TYPE_MOBILE_CLOSE
+    CLASS_HIDDEN
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -56,10 +55,17 @@ class AnnotationThread extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.api = data.api;
         this.container = data.container;
-        this.isMobile = data.isMobile || false;
+        this.fileVersionId = data.fileVersionId;
+        this.location = data.location;
+        this.threadID = data.threadID || AnnotationAPI.generateID();
+        this.threadNumber = data.threadNumber || '';
+        this.type = data.type;
+        this.locale = data.locale;
         this.hasTouch = data.hasTouch || false;
         this.permissions = data.permissions;
         this.state = STATES.inactive;
+        this.canComment = true;
+        this.headerHeight = data.headerHeight;
 
         this.id = data.id;
         this.type = data.type;
@@ -130,9 +136,9 @@ class AnnotationThread extends EventEmitter {
     };
 
     getPopoverParent() {
-        return this.isMobile
+        return util.shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+            : util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
@@ -147,14 +153,6 @@ class AnnotationThread extends EventEmitter {
             event.preventDefault();
         }
 
-        const pageEl = this.getPopoverParent();
-        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (!popoverLayer) {
-            popoverLayer = document.createElement('span');
-            popoverLayer.classList.add('ba-dialog-layer');
-            pageEl.appendChild(popoverLayer);
-        }
-
         const isPending = !this.threadNumber;
         if (isPending) {
             this.state = STATES.pending;
@@ -162,28 +160,33 @@ class AnnotationThread extends EventEmitter {
             this.state = STATES.active;
         }
 
+        this.onCommentClick = this.onCommentClick.bind(this);
         this.save = this.save.bind(this);
         this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
         this.delete = this.delete.bind(this);
+
+        const pageEl = this.getPopoverParent();
         this.popoverComponent = render(
             <AnnotationPopover
                 id={this.id}
                 type={this.type}
+                isMobile={util.shouldDisplayMobileUI(this.container)}
                 createdAt={this.createdAt}
                 createdBy={this.createdBy}
                 modifiedAt={this.modifiedAt}
                 canAnnotate={this.canAnnotate}
                 canDelete={this.canDelete}
-                isMobile={this.isMobile}
                 canComment={this.canComment}
                 comments={this.comments}
                 position={this.position}
                 onDelete={this.delete}
                 onCancel={this.cancelUnsavedAnnotation}
                 onCreate={this.save}
+                onCommentClick={this.onCommentClick}
                 isPending={isPending}
+                headerHeight={this.headerHeight}
             />,
-            popoverLayer
+            util.getPopoverLayer(pageEl)
         );
         this.position();
     }
@@ -250,6 +253,21 @@ class AnnotationThread extends EventEmitter {
             this.createdBy = data.createdBy;
             this.modifiedAt = data.modifiedAt;
         }
+    }
+
+    /**
+     * Fire an event notifying that the comment button has been clicked. Also
+     * show the comment box, and give focus to the text area conatined by it.
+     *
+     * @param {Event} event - The DOM event coming from interacting with the element.
+     * @return {void}
+     */
+    onCommentClick() {
+        if (!this.threadNumber) {
+            this.saveAnnotation(TYPES.highlight);
+        }
+        this.type = TYPES.highlight_comment;
+        this.renderAnnotationPopover();
     }
 
     /**
@@ -429,7 +447,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     cancelUnsavedAnnotation = () => {
-        if (!util.isPending(this.state)) {
+        if (this.state !== STATES.pending) {
             this.unmountPopover();
             return;
         }
@@ -502,7 +520,7 @@ class AnnotationThread extends EventEmitter {
 
         this.updateAnnotationThread(savedAnnotation);
 
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             // Changing state from pending
             this.state = STATES.active;
         } else {
@@ -656,34 +674,6 @@ class AnnotationThread extends EventEmitter {
             } else {
                 this.cancelAnnotation();
             }
-        }
-    }
-
-    /**
-     * Click handler on dialog.
-     *
-     * @private
-     * @param {Event} event DOM event
-     * @return {void}
-     */
-    clickHandler(event) {
-        const eventTarget = event.target;
-        const dataType = util.findClosestDataType(eventTarget);
-
-        switch (dataType) {
-            // Clicking 'Cancel' button to cancel the annotation OR
-            // Clicking 'X' button on mobile dialog to close
-            case DATA_TYPE_MOBILE_CLOSE:
-                // @spramod: is the mobile close button still needed?
-                this.hide();
-
-                if (!this.isMobile) {
-                    // Cancels + destroys the annotation thread
-                    this.cancelAnnotation();
-                }
-                break;
-            default:
-                break;
         }
     }
 

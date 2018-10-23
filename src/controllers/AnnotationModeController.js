@@ -3,7 +3,14 @@ import rbush from 'rbush';
 import EventEmitter from 'events';
 import noop from 'lodash/noop';
 
-import { insertTemplate, isPending, replaceHeader, hasValidBoundaryCoordinates } from '../util';
+import {
+    insertTemplate,
+    replaceHeader,
+    hasValidBoundaryCoordinates,
+    getPopoverLayer,
+    getPageEl,
+    shouldDisplayMobileUI
+} from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -12,7 +19,8 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    BORDER_OFFSET
+    BORDER_OFFSET,
+    STATES
 } from '../constants';
 import AnnotationAPI from '../api/AnnotationAPI';
 
@@ -80,6 +88,9 @@ class AnnotationModeController extends EventEmitter {
     /** @property {string} */
     pendingThreadID: ?string;
 
+    /** @property {HTMLElement} */
+    headerElement: HTMLElement;
+
     /** @property {AnnotationThread} */
     currentThread: ?AnnotationThread;
 
@@ -103,7 +114,6 @@ class AnnotationModeController extends EventEmitter {
         this.permissions = data.permissions;
         this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
-        this.isMobile = data.options ? data.options.isMobile : false;
         this.locale = data.options ? data.options.locale : 'en-US';
         this.getLocation = data.getLocation;
 
@@ -307,8 +317,9 @@ class AnnotationModeController extends EventEmitter {
             api: this.api,
             container: this.container,
             fileVersionId: this.fileVersionId,
-            isMobile: this.isMobile,
+            isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
+            headerHeight: this.headerElement.clientHeight,
             ...annotation
         };
     }
@@ -436,7 +447,14 @@ class AnnotationModeController extends EventEmitter {
         return thread;
     }
 
-    doesThreadMatch(threadID: string, pageNum: string): ?AnnotationThread {
+    /**
+     * Determines whether a thread matches the specified threadID
+     *
+     * @param {string} [threadID] - Thread ID
+     * @param {string} [pageNum] - Page number
+     * @return {AnnotationThread|null} Matching annotation thread or null
+     */
+    doesThreadMatch(threadID: ?string, pageNum: ?string): ?AnnotationThread {
         let thread = null;
         const pageThreads = this.annotations[pageNum];
         if (!pageThreads) {
@@ -583,18 +601,10 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: string) {
-        const pageEl = this.isMobile
+        const pageEl = shouldDisplayMobileUI(this.container)
             ? this.container
-            : this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-
-        // $FlowFixMe
-        let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (!popoverLayer) {
-            popoverLayer = document.createElement('span');
-            popoverLayer.classList.add('ba-dialog-layer');
-            // $FlowFixMe
-            pageEl.appendChild(popoverLayer);
-        }
+            : getPageEl(this.annotatedElement, pageNum);
+        getPopoverLayer(pageEl);
 
         if (!this.annotations || !this.annotations[pageNum]) {
             return;
@@ -603,12 +613,13 @@ class AnnotationModeController extends EventEmitter {
         const pageThreads = this.annotations[pageNum].all() || [];
         pageThreads.forEach((thread, index) => {
             // Destroy any pending threads that may exist on re-render
-            if (isPending(thread.state)) {
+            if (thread.state === STATES.pending) {
                 this.unregisterThread(thread);
                 thread.destroy();
                 return;
             }
 
+            thread.reset();
             thread.unmountPopover();
 
             // Sets the annotatedElement if the thread was fetched before the
@@ -634,7 +645,7 @@ class AnnotationModeController extends EventEmitter {
         Object.keys(this.annotations).forEach((pageNum) => {
             const pageThreads = this.annotations[pageNum].all() || [];
             pageThreads.forEach((thread) => {
-                if (isPending(thread.state) || thread.id === this.pendingThreadID) {
+                if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
                     this.unregisterThread(thread);
                     hadPendingThreads = true;
                     this.pendingThreadID = null;
@@ -650,10 +661,10 @@ class AnnotationModeController extends EventEmitter {
      *
      * @protected
      * @param {Event} event The event object containing the pointer information
-     * @param {Object} location Annotation location object
+     * @param {PointLocationInfo} location Annotation location object
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
      */
-    getIntersectingThreads(event: Event, location: Location): Array<AnnotationThread> {
+    getIntersectingThreads(event: Event, location: PointLocationInfo): Array<AnnotationThread> {
         if (
             !event ||
             !this.annotations ||

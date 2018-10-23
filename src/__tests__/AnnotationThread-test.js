@@ -39,6 +39,7 @@ describe('AnnotationThread', () => {
         });
 
         thread.emit = jest.fn();
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -156,7 +157,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should only render popover on mobile', () => {
-            thread.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.state).toEqual(STATES.active);
             expect(thread.renderAnnotationPopover).toBeCalled();
@@ -205,8 +206,6 @@ describe('AnnotationThread', () => {
         });
 
         it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
-            thread.isMobile = false;
-
             const promise = thread.delete('someID', false);
             promise.then(() => {
                 threadPromise.then(() => {
@@ -298,11 +297,15 @@ describe('AnnotationThread', () => {
     });
 
     describe('scrollToPage()', () => {
-        it('should do nothing if annotation does not have a location or page', () => {
-            const pageEl = {
+        let pageEl;
+        beforeEach(() => {
+            pageEl = {
                 scrollIntoView: jest.fn()
             };
+            thread.getPopoverParent = jest.fn().mockReturnValue(pageEl);
+        });
 
+        it('should do nothing if annotation does not have a location or page', () => {
             thread.location = {};
             thread.scrollToPage();
 
@@ -314,12 +317,6 @@ describe('AnnotationThread', () => {
         it('should scroll annotation\'s page into view', () => {
             thread.location = {
                 page: 1
-            };
-            const pageEl = {
-                scrollIntoView: jest.fn()
-            };
-            thread.annotatedElement = {
-                querySelector: jest.fn().mockReturnValue(pageEl)
             };
             thread.scrollToPage();
             expect(pageEl.scrollIntoView).toBeCalled();
@@ -408,7 +405,6 @@ describe('AnnotationThread', () => {
         beforeEach(() => {
             thread.element = document.createElement('div');
             thread.element.addEventListener = jest.fn();
-            thread.isMobile = false;
         });
 
         it('should bind DOM listeners', () => {
@@ -417,7 +413,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
-            thread.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.bindDOMListeners();
             expect(thread.element.addEventListener).toBeCalledWith('click', expect.any(Function));
         });
@@ -427,7 +423,6 @@ describe('AnnotationThread', () => {
         beforeEach(() => {
             thread.element = document.createElement('div');
             thread.element.removeEventListener = jest.fn();
-            thread.isMobile = false;
         });
 
         it('should unbind DOM listeners', () => {
@@ -436,7 +431,7 @@ describe('AnnotationThread', () => {
         });
 
         it('should not add mouseleave listener for mobile browsers', () => {
-            thread.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.unbindDOMListeners();
             expect(thread.element.removeEventListener).toBeCalledWith('click', expect.any(Function));
         });
@@ -448,16 +443,16 @@ describe('AnnotationThread', () => {
             thread.unmountPopover = jest.fn();
         });
 
-        it('should destroy thread if in a pending/pending-active state', () => {
-            util.isPending = jest.fn().mockReturnValue(true);
+        it('should destroy thread if in a pending state', () => {
+            thread.state = STATES.pending;
             thread.cancelUnsavedAnnotation();
             expect(thread.destroy).toBeCalled();
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.cancel);
             expect(thread.unmountPopover).not.toBeCalled();
         });
 
-        it('should not destroy thread if not in a pending/pending-active state', () => {
-            util.isPending = jest.fn().mockReturnValue(false);
+        it('should not destroy thread if not in a pending state', () => {
+            thread.state = STATES.inactive;
             thread.cancelUnsavedAnnotation();
             expect(thread.destroy).not.toBeCalled();
             expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.cancel);

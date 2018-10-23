@@ -13,7 +13,6 @@ import * as docUtil from './docUtil';
 import {
     STATES,
     TYPES,
-    DATA_TYPE_ANNOTATION_INDICATOR,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
@@ -76,7 +75,6 @@ class DocAnnotator extends Annotator {
 
         if (this.commentHighlightEnabled) {
             this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-            this.createHighlightDialog.removeListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -138,9 +136,7 @@ class DocAnnotator extends Annotator {
             // If click isn't on a page, ignore
             const eventTarget = clientEvent.target;
             const pageInfo = util.getPageInfo(eventTarget);
-            const pageEl = pageInfo.pageEl
-                ? pageInfo.pageEl
-                : this.annotatedElement.querySelector(`[data-page-number="${pageInfo.page}"]`);
+            const pageEl = pageInfo.pageEl ? pageInfo.pageEl : util.getPageEl(this.annotatedElement, pageInfo.page);
             if (!pageEl) {
                 return location;
             }
@@ -151,8 +147,7 @@ class DocAnnotator extends Annotator {
             }
 
             // If click is inside an annotation dialog, ignore
-            const dataType = util.findClosestDataType(eventTarget);
-            if (util.isInDialog(event) || dataType === DATA_TYPE_ANNOTATION_INDICATOR) {
+            if (util.isInAnnotationOrMarker(event)) {
                 return location;
             }
 
@@ -256,7 +251,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     scaleAnnotationCanvases(pageNum) {
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = util.getPageEl(this.annotatedElement, pageNum);
 
         ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
             const annotationLayerEl = pageEl.querySelector(`canvas.${annotationLayerClass}`);
@@ -285,36 +280,17 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        // Explicit scoping
-        this.highlightCreateHandler = this.highlightCreateHandler.bind(this);
-        this.highlightMouseupHandler = this.highlightMouseupHandler.bind(this);
-        this.highlightMousedownHandler = this.highlightMousedownHandler.bind(this);
-        this.hideCreateDialog = this.hideCreateDialog.bind(this);
-
-        this.clickThread = this.clickThread.bind(this);
-
-        if (this.isMobile || this.hasTouch) {
-            this.onSelectionChange = this.onSelectionChange.bind(this);
-        }
-
         this.createHighlightDialog = new CreateHighlightDialog(this.annotatedElement, {
-            isMobile: this.isMobile,
             hasTouch: this.hasTouch,
             allowComment: this.commentHighlightEnabled,
             allowHighlight: this.plainHighlightEnabled,
-            localized: this.localized
+            localized: this.localized,
+            container: this.container
         });
-
-        this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
-            this.emit(THREAD_EVENT.pending, TYPES.highlight)
-        );
 
         if (this.commentHighlightEnabled) {
             this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
             this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-
-            this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -344,7 +320,6 @@ class DocAnnotator extends Annotator {
 
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
-            this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('wheel', this.hideCreateDialog);
 
             if (this.hasTouch) {
@@ -363,9 +338,10 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (this.hasTouch || this.isMobile) {
+        if (this.hasTouch) {
             document.addEventListener('selectionchange', this.onSelectionChange);
         } else {
+            this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.addEventListener('contextmenu', this.highlightMousedownHandler);
@@ -382,7 +358,6 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
-        this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
 
@@ -396,10 +371,11 @@ class DocAnnotator extends Annotator {
             controller.removeSelection();
         });
 
-        if (this.hasTouch || this.isMobile) {
+        if (this.hasTouch) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
             this.annotatedElement.removeEventListener('click', this.clickHandler);
+            this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
@@ -416,27 +392,30 @@ class DocAnnotator extends Annotator {
             mouseEvent = event.targetTouches[0];
         }
 
-        // NOTE: This assumes that only one dialog will ever exist within
-        // the annotatedElement at a time
-        const overlayEl = this.container.querySelector('.overlay');
-        const controlsEl = this.container.querySelector('.ba-action-controls');
-        if (util.isInDialog(mouseEvent, overlayEl) || util.isInDialog(mouseEvent, controlsEl)) {
+        // Don't do anything if the click is in a popover
+        if (util.isInDialog(mouseEvent, this.container)) {
             mouseEvent.stopPropagation();
             mouseEvent.preventDefault();
             return;
         }
 
-        this.hideAnnotations(event);
-
-        if (!this.isCreatingAnnotation() && this.highlightClickHandler(event)) {
+        // Hide the create dialog if click was not in the popover
+        if (this.createHighlightDialog.isVisible && !this.createHighlightDialog.isInHighlight(mouseEvent)) {
+            mouseEvent.stopPropagation();
+            mouseEvent.preventDefault();
+            this.resetHighlightSelection(mouseEvent);
             return;
         }
 
+        if (this.highlightClickHandler(event)) {
+            return;
+        }
+
+        this.hideAnnotations(event);
+
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            if (!this.isCreatingAnnotation()) {
-                controller.handleSelection(event);
-            }
+            controller.handleSelection(event);
         }
     };
 
@@ -455,7 +434,6 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     resetHighlightSelection(event) {
-        this.isCreatingHighlight = false;
         this.hideCreateDialog(event);
         document.getSelection().removeAllRanges();
     }
@@ -493,8 +471,6 @@ class DocAnnotator extends Annotator {
         if (isCreateDialogVisible) {
             this.createHighlightDialog.unmountPopover();
         }
-
-        this.isCreatingHighlight = false;
 
         const highlightType = commentText ? TYPES.highlight_comment : TYPES.highlight;
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
@@ -587,8 +563,12 @@ class DocAnnotator extends Annotator {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
+        let mouseEvent = event;
+        if (this.hasTouch && event.targetTouches) {
+            mouseEvent = event.targetTouches[0];
+        }
+        this.lastHighlightEvent = mouseEvent;
         this.lastSelection = selection;
-        this.lastHighlightEvent = event;
     };
 
     /**
@@ -639,9 +619,10 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMousedownHandler = (event) => {
-        this.isCreatingHighlight = true;
-        this.mouseX = event.clientX;
-        this.mouseY = event.clientY;
+        this.mouseDownEvent = event;
+        if (this.hasTouch && event.targetTouches) {
+            this.mouseDownEvent = event.targetTouches[0];
+        }
 
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
@@ -668,7 +649,7 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
-        return isPending || this.isCreatingHighlight;
+        return isPending || this.createHighlightDialog.isVisible;
     }
 
     /**
@@ -681,10 +662,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMouseupHandler = (event) => {
-        this.isCreatingHighlight = false;
-
-        const popoverEl = this.annotatedElement.querySelector('.ba-popover');
-        if (util.isInAnnotationOrMarker(event, popoverEl)) {
+        if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }
 
@@ -692,8 +670,14 @@ class DocAnnotator extends Annotator {
             this.highlighter.removeAllHighlights();
         }
 
+        let mouseUpEvent = event;
+        if (this.hasTouch && event.targetTouches) {
+            mouseUpEvent = event.targetTouches[0];
+        }
+
+        const { clientX, clientY } = this.mouseDownEvent;
         const hasMouseMoved =
-            (this.mouseX && this.mouseX !== event.clientX) || (this.mouseY && this.mouseY !== event.clientY);
+            (clientX && clientX !== mouseUpEvent.clientX) || (clientY && clientY !== mouseUpEvent.clientY);
 
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and
@@ -730,7 +714,6 @@ class DocAnnotator extends Annotator {
         }
 
         this.createHighlightDialog.show(selection);
-        this.isCreatingHighlight = true;
         this.lastHighlightEvent = event;
     };
 
@@ -743,31 +726,29 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightClickHandler(event) {
-        if (this.isCreatingHighlight || (!this.plainHighlightEnabled && !this.commentHighlightEnabled)) {
+        if (this.createHighlightDialog.isVisible || (!this.plainHighlightEnabled && !this.commentHighlightEnabled)) {
             return false;
         }
 
         this.activeThread = null;
+        this.consumed = false;
 
         let plainThreads = [];
         let commentThreads = [];
 
         const location = this.getLocationFromEvent(event, TYPES.point);
         if (this.plainHighlightEnabled) {
-            plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(this.mouseEvent, location);
+            plainThreads = this.modeControllers[TYPES.highlight].getIntersectingThreads(event, location);
         }
 
         if (this.commentHighlightEnabled) {
-            commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(
-                this.mouseEvent,
-                location
-            );
+            commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(event, location);
         }
 
         this.hideAnnotations(event);
 
         const intersectingThreads = [].concat(plainThreads, commentThreads);
-        intersectingThreads.forEach(this.clickThread);
+        intersectingThreads.forEach((thread) => this.clickThread(event, thread));
 
         // Show active thread last
         if (this.activeThread) {
@@ -783,11 +764,12 @@ class DocAnnotator extends Annotator {
      * Delegates click event to click handlers for threads on the page.
      *
      * @private
+     * @param {Event} event Mouse event
      * @param {AnnotationThread} thread Highlight thread to check
      * @return {void}
      */
-    clickThread = (thread) => {
-        if (util.isPending(thread.state)) {
+    clickThread = (event, thread) => {
+        if (thread.state === STATES.pending) {
             // Destroy any pending highlights on click outside the highlight
             if (thread.type === TYPES.point) {
                 thread.destroy();
@@ -799,7 +781,7 @@ class DocAnnotator extends Annotator {
             // highlights at the same time - this tracks whether a delegated
             // mousedown activated some highlight, and then informs the other
             // keydown handlers to not activate
-            const threadActive = thread.onClick(this.mouseEvent, this.consumed);
+            const threadActive = thread.onClick(event, this.consumed);
             if (threadActive) {
                 this.activeThread = thread;
             }

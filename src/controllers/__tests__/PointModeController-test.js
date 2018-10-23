@@ -10,6 +10,11 @@ import {
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     SELECTOR_POINT_MODE_HEADER
 } from '../../constants';
+import AnnotationThread from '../../AnnotationThread';
+import Annotator from '../../Annotator';
+
+jest.mock('../../AnnotationThread');
+jest.mock('../../Annotator');
 
 let controller;
 let thread;
@@ -29,19 +34,15 @@ describe('controllers/PointModeController', () => {
         controller.getLocation = jest.fn();
         controller.api = { user: {} };
 
-        thread = {
-            type: 'point',
-            location: {},
-            show: jest.fn(),
-            getThreadEventData: jest.fn(),
-            destroy: jest.fn()
-        };
+        thread = new AnnotationThread();
+        thread.type = 'point';
+        thread.location = {};
 
         controller.annotatedElement = rootElement;
-        controller.annotator = {
-            getLocationFromEvent: jest.fn(),
-            createAnnotationThread: jest.fn()
-        };
+        controller.annotator = new Annotator();
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -177,17 +178,6 @@ describe('controllers/PointModeController', () => {
 
         it('should not destroy the pending thread if click was in an annotation or marker', () => {
             controller.pointClickHandler(event);
-            expect(event.stopPropagation).toBeCalled();
-            expect(event.preventDefault).toBeCalled();
-        });
-
-        it('should reset the mobile annotations dialog if the user is on a mobile device', () => {
-            controller.isMobile = true;
-
-            controller.pointClickHandler(event);
-            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.resetMobileDialog);
-            expect(controller.getLocation).toBeCalled();
-            expect(thread.show).not.toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
         });

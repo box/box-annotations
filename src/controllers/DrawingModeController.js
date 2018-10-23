@@ -1,8 +1,16 @@
 // @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
+import {
+    replaceHeader,
+    enableElement,
+    disableElement,
+    clearCanvas,
+    findClosestElWithClass,
+    getPageEl,
+    shouldDisplayMobileUI
+} from '../util';
 import AnnotationAPI from '../api/AnnotationAPI';
-import { replaceHeader, enableElement, disableElement, clearCanvas, findClosestElWithClass } from '../util';
 import {
     TYPES,
     STATES,
@@ -81,7 +89,7 @@ class DrawingModeController extends AnnotationModeController {
             this.annotatedElement.addEventListener('touchstart', this.handleSelection);
         }
 
-        if (!this.isMobile) {
+        if (!shouldDisplayMobileUI(this.container)) {
             this.annotatedElement.addEventListener('click', this.handleSelection);
         }
     }
@@ -92,7 +100,7 @@ class DrawingModeController extends AnnotationModeController {
             this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
         }
 
-        if (!this.isMobile) {
+        if (!shouldDisplayMobileUI(this.container)) {
             this.annotatedElement.removeEventListener('click', this.handleSelection);
         }
     }
@@ -205,6 +213,8 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
         // Mobile & Desktop listeners are bound for touch-enabled laptop edge cases
+        // $FlowFixMe
+        this.drawingStartHandler = this.drawingStartHandler.bind(this);
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
     }
 
@@ -322,6 +332,12 @@ class DrawingModeController extends AnnotationModeController {
 
                 this.bindListeners();
 
+                // Given a location (page change) start drawing at the provided location
+                if (eventData && eventData.location) {
+                    // $FlowFixMe
+                    this.currentThread.handleStart(eventData.location);
+                }
+
                 break;
             case THREAD_EVENT.delete:
                 if (!thread) {
@@ -357,7 +373,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear existing canvases
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
+        const pageEl = getPageEl(this.annotatedElement, pageNum);
         if (pageEl) {
             clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
             clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
@@ -428,7 +444,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {DrawingThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
-    select(selectedDrawingThread: DrawingThread) {
+    select(selectedDrawingThread: DrawingThread): void {
         selectedDrawingThread.show();
         selectedDrawingThread.drawBoundary();
         selectedDrawingThread.renderAnnotationPopover();
@@ -462,7 +478,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    instantiateThread(params: Object): AnnotationThread {
+    instantiateThread(params: Object): DrawingThread {
         return this.annotatorType === ANNOTATOR_TYPE.document ? new DocDrawingThread(params) : null;
     }
 }

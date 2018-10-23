@@ -52,7 +52,7 @@ class DocHighlightThread extends AnnotationThread {
         this.reset();
 
         // Clear and reset mobile annotations dialog
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             this.unmountPopover();
         } else if (util.isPlainHighlight(this.comments)) {
             this.renderAnnotationPopover();
@@ -206,7 +206,6 @@ class DocHighlightThread extends AnnotationThread {
                 this.draw(HIGHLIGHT_FILL.normal);
                 break;
             case STATES.active:
-            case STATES.pending_active:
                 this.renderAnnotationPopover();
                 this.draw(HIGHLIGHT_FILL.active);
                 break;
@@ -238,7 +237,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     handleDraw() {
-        this.state = STATES.pending_active;
+        this.state = STATES.pending;
         window.getSelection().removeAllRanges();
         this.show();
     }
@@ -250,7 +249,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     handleCommentPending() {
-        this.state = STATES.pending_active;
+        this.state = STATES.pending;
     }
 
     /**
@@ -447,7 +446,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     getPageEl() {
         if (!this.pageEl) {
-            this.pageEl = docUtil.getPageEl(this.annotatedElement, this.location.page);
+            this.pageEl = util.getPageEl(this.annotatedElement, this.location.page);
         }
         return this.pageEl;
     }
@@ -485,7 +484,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     position = () => {
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             return;
         }
 

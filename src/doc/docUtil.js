@@ -6,21 +6,6 @@ const HEIGHT_PADDING = 30;
 const PDF_UNIT_TO_CSS_PIXEL = 4 / 3;
 const CSS_PIXEL_TO_PDF_UNIT = 3 / 4;
 
-const DIALOG_DATATYPES = [
-    constants.DATA_TYPE_ANNOTATION_DIALOG,
-    constants.DATA_TYPE_ANNOTATION_INDICATOR,
-    constants.DATA_TYPE_HIGHLIGHT,
-    constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT,
-    constants.DATA_TYPE_POST,
-    constants.DATA_TYPE_CANCEL,
-    constants.DATA_TYPE_REPLY_TEXTAREA,
-    constants.DATA_TYPE_CANCEL_REPLY,
-    constants.DATA_TYPE_POST_REPLY,
-    constants.DATA_TYPE_DELETE,
-    constants.DATA_TYPE_CANCEL_DELETE,
-    constants.DATA_TYPE_CONFIRM_DELETE
-];
-
 /**
  * Checks whether this annotator is on a presentation (PPT) or not.
  *
@@ -188,7 +173,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
  * @return {number[]} [x,y] browser coordinates
  */
 export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
-    const pageEl = annotatedElement.querySelector(`[data-page-number="${location.page}"]`) || annotatedElement;
+    const pageEl = util.getPageEl(annotatedElement, location.page) || annotatedElement;
     const pageDimensions = pageEl.getBoundingClientRect();
     const pageHeight = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
     const zoomScale = util.getScale(annotatedElement);
@@ -371,30 +356,6 @@ export function getContext(pageEl, annotationLayerClass) {
         canvasWrapperEl.appendChild(annotationLayerEl);
     }
     return annotationLayerEl.getContext('2d');
-}
-
-/**
- * Gets the current page element.
- *
- * @private
- * @param {HTMLElement} annotatedEl - HTML Element being annotated on
- * @param {number} pageNum - Page number
- * @return {HTMLElement|null} Page element if it exists, otherwise null
- */
-export function getPageEl(annotatedEl, pageNum) {
-    return annotatedEl.querySelector(`[data-page-number="${pageNum}"]`);
-}
-
-/**
- * Checks whether the mouse event occured in a highlight dialog
- *
- * @private
- * @param {HTMLElement} eventTarget mouse event target element
- * @return {boolean} Whether mouse event occured in a highlight dialog
- */
-export function isDialogDataType(eventTarget) {
-    const dataType = util.findClosestDataType(eventTarget);
-    return DIALOG_DATATYPES.indexOf(dataType) !== -1;
 }
 
 /**

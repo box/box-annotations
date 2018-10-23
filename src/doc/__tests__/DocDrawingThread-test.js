@@ -116,7 +116,7 @@ describe('doc/DocDrawingThread', () => {
             thread.hasPageChanged = jest.fn();
 
             const context = 'I\'m a real context';
-            docUtil.getPageEl = jest.fn().mockReturnValue(context);
+            util.getPageEl = jest.fn().mockReturnValue(context);
         });
 
         it('should do nothing if no location is provided', () => {
@@ -200,7 +200,7 @@ describe('doc/DocDrawingThread', () => {
         it('should update the drawing information when the scale has changed', () => {
             thread.setContextStyles = jest.fn();
             util.getScale = jest.fn().mockReturnValue(1.4);
-            docUtil.getPageEl = jest.fn();
+            util.getPageEl = jest.fn();
             docUtil.getContext = jest.fn();
             thread.lastScaleFactor = 1.1;
             thread.location = {
@@ -209,18 +209,18 @@ describe('doc/DocDrawingThread', () => {
             thread.checkAndHandleScaleUpdate();
             expect(thread.lastScaleFactor).toEqual(1.4);
             expect(util.getScale).toBeCalled();
-            expect(docUtil.getPageEl).toBeCalled();
+            expect(util.getPageEl).toBeCalled();
             expect(docUtil.getContext).toBeCalled();
             expect(thread.setContextStyles).toBeCalled();
         });
 
         it('should do nothing when the scale has not changed', () => {
             util.getScale = jest.fn().mockReturnValue(1.4);
-            docUtil.getPageEl = jest.fn();
+            util.getPageEl = jest.fn();
             thread.lastScaleFactor = 1.4;
             thread.checkAndHandleScaleUpdate();
             expect(util.getScale).toBeCalled();
-            expect(docUtil.getPageEl).not.toBeCalled();
+            expect(util.getPageEl).not.toBeCalled();
         });
     });
 
