@@ -613,7 +613,7 @@ class AnnotationModeController extends EventEmitter {
         const pageThreads = this.annotations[pageNum].all() || [];
         pageThreads.forEach((thread, index) => {
             // Destroy any pending threads that may exist on re-render
-            if (thread.state === STATES.pending) {
+            if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
                 this.unregisterThread(thread);
                 thread.destroy();
                 return;

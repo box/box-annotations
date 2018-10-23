@@ -238,7 +238,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     onCommentClick = () => {
-        this.onCreate(TYPES.highlight);
+        // this.onCreate(TYPES.highlight);
         this.emit(CREATE_EVENT.comment);
         this.renderAnnotationPopover(TYPES.highlight_comment);
     };

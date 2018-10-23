@@ -112,9 +112,7 @@
             height: 100%;
         }
 
-        .ba-inline .ba-popover-overlay,
-        .ba-create-popover,
-        .ba-create-popover .overlay {
+        .ba-inline .ba-popover-overlay {
             background: transparent;
         }
 
@@ -125,6 +123,10 @@
             flex-direction: column;
             height: 100%;
             overflow: unset;
+        }
+
+        .ba-create-popover .overlay {
+            justify-content: flex-end;
         }
 
         .ba-inline .overlay {

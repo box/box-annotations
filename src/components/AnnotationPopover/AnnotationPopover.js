@@ -8,6 +8,7 @@ import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 
 import Internationalize from '../Internationalize';
 import CommentList from '../CommentList';
+import { TYPES } from '../../constants';
 
 import './AnnotationPopover.scss';
 import ActionControls from '../ActionControls';
@@ -72,7 +73,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
             <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames('ba-popover', {
-                        'ba-inline': !hasComments && (isMobile || !isPending),
+                        'ba-inline': !hasComments && (type === TYPES.highlight || type === TYPES.draw),
                         'ba-animate-popover': isMobile
                     })}
                 >
