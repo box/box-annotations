@@ -10,6 +10,13 @@ let api;
 const promise = new Promise(jest.fn());
 
 describe('api/AnnotationAPI', () => {
+    const annotationData = {
+        id: '',
+        details: {
+            location: { page: 1 }
+        }
+    };
+
     beforeEach(() => {
         api = new AnnotationAPI({
             apiHost: API_HOST,
@@ -63,7 +70,7 @@ describe('api/AnnotationAPI', () => {
             api.emit = jest.fn();
             const error = new Error('Could not create annotation');
 
-            api.createSuccessHandler({ type: 'error' }, '123');
+            api.createSuccessHandler({ type: 'error' });
             expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
                 reason: ERROR_TYPE.create,
                 error: error.toString()
@@ -71,11 +78,9 @@ describe('api/AnnotationAPI', () => {
         });
 
         it('should return the created annotation', () => {
-            expect(api.createSuccessHandler({})).toEqual({
-                permissions: {
-                    can_delete: true,
-                    can_edit: true
-                }
+            expect(api.createSuccessHandler(annotationData).permissions).toEqual({
+                can_delete: true,
+                can_edit: true
             });
         });
     });

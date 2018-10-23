@@ -10,6 +10,7 @@ import {
     getPageEl,
     shouldDisplayMobileUI
 } from '../util';
+import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     STATES,
@@ -46,7 +47,7 @@ class DrawingModeController extends AnnotationModeController {
     redoButtonEl: HTMLElement;
 
     /** @property {AnnotationThread} */
-    currentThread: ?AnnotationThread;
+    currentThread: AnnotationThread;
 
     /** @property {Function} */
     locationFunction: Function;
@@ -155,7 +156,7 @@ class DrawingModeController extends AnnotationModeController {
      */
     postDrawing(): void {
         if (this.currentThread && this.currentThread.state === STATES.pending) {
-            this.currentThread.saveAnnotation(TYPES.draw);
+            this.currentThread.save(TYPES.draw);
         }
 
         this.exit();
@@ -202,6 +203,8 @@ class DrawingModeController extends AnnotationModeController {
         this.undoDrawing = this.undoDrawing.bind(this);
         // $FlowFixMe
         this.redoDrawing = this.redoDrawing.bind(this);
+        // $FlowFixMe
+        this.drawingStartHandler = this.drawingStartHandler.bind(this);
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
         this.pushElementHandler(this.cancelButtonEl, 'click', this.cancelDrawing);
@@ -248,7 +251,18 @@ class DrawingModeController extends AnnotationModeController {
         location.maxY = location.y;
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.registerThread([], location, TYPES.draw);
+        const thread = this.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: this.mode,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString(),
+            isPending: true,
+            comments: []
+        });
+
         if (!thread) {
             return;
         }
@@ -265,10 +279,13 @@ class DrawingModeController extends AnnotationModeController {
 
     /** @inheritdoc */
     exit() {
-        this.currentThread = undefined;
+        if (this.currentThread) {
+            this.currentThread.clearBoundary();
+        }
 
         // Remove any visible boundaries
         const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
+
         // $FlowFixMe
         boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
 
@@ -300,8 +317,13 @@ class DrawingModeController extends AnnotationModeController {
                 thread.unbindDrawingListeners();
 
                 this.currentThread = undefined;
-                this.registerThread([], thread.location, TYPES.draw);
+                this.registerThread(thread);
                 this.unbindListeners();
+
+                // Clear existing canvases
+                // eslint-disable-next-line
+                const pageEl = this.annotatedElement.querySelector(`[data-page-number="${thread.location.page}"]`);
+                clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
 
                 // Do not bind when mode is exited
                 if (!this.annotatedElement.classList.contains(CLASS_ANNOTATION_DRAW_MODE)) {
@@ -317,7 +339,7 @@ class DrawingModeController extends AnnotationModeController {
                 }
 
                 break;
-            case THREAD_EVENT.threadCleanup:
+            case THREAD_EVENT.delete:
                 if (!thread) {
                     return;
                 }
@@ -334,14 +356,8 @@ class DrawingModeController extends AnnotationModeController {
                     this.bindListeners();
                 } else {
                     this.unregisterThread(thread);
-
-                    const { page } = thread.location;
-                    const pageEl = getPageEl(this.annotatedElement, page);
-                    clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
-
-                    // Redraw any threads that the deleted thread could have been overlapping
-                    const pageThreads = this.threads[page].all() || [];
-                    pageThreads.forEach((pageThread) => pageThread.show());
+                    thread.destroy();
+                    this.renderPage(thread.location.page);
                 }
 
                 break;
@@ -352,6 +368,18 @@ class DrawingModeController extends AnnotationModeController {
         }
 
         super.handleThreadEvents(thread, data);
+    }
+
+    /** @inheritdoc */
+    renderPage(pageNum: string): void {
+        // Clear existing canvases
+        const pageEl = getPageEl(this.annotatedElement, pageNum);
+        if (pageEl) {
+            clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+            clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
+        }
+
+        super.renderPage(pageNum);
     }
 
     /**
@@ -366,6 +394,7 @@ class DrawingModeController extends AnnotationModeController {
 
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
+
         // $FlowFixMe
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
             return selected;
@@ -391,20 +420,6 @@ class DrawingModeController extends AnnotationModeController {
         selected = intersectingThreads[index];
         this.select(selected);
         return selected;
-    }
-
-    /** @inheritdoc */
-    renderPage(pageNum: string): void {
-        // Clear context if needed
-        const pageEl = getPageEl(this.annotatedElement, pageNum);
-        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
-
-        if (!this.threads || !this.threads[pageNum]) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum].all() || [];
-        pageThreads.forEach((thread) => thread.show());
     }
 
     /**

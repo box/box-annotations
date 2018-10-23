@@ -18,8 +18,7 @@ describe('AnnotationThread', () => {
     let api = {
         user: {
             id: '1'
-        },
-        formatAnnotation: jest.fn()
+        }
     };
 
     beforeEach(() => {
@@ -86,7 +85,7 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('saveAnnotation()', () => {
+    describe('save()', () => {
         beforeEach(() => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
             thread.handleThreadSaveError = jest.fn();
@@ -97,7 +96,7 @@ describe('AnnotationThread', () => {
         it('should save an annotation with the specified type and text', (done) => {
             thread.api.create = jest.fn().mockResolvedValue({});
 
-            const promise = thread.saveAnnotation('point', 'blah');
+            const promise = thread.save('point', 'blah');
             promise.then(() => {
                 expect(thread.updateTemporaryAnnotation).toBeCalled();
                 done();
@@ -108,7 +107,7 @@ describe('AnnotationThread', () => {
         it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {
             thread.api.create = jest.fn().mockRejectedValue({});
 
-            const promise = thread.saveAnnotation('point', 'blah');
+            const promise = thread.save('point', 'blah');
             promise.then(() => {
                 expect(thread.handleThreadSaveError).toBeCalled();
                 done();
@@ -119,54 +118,52 @@ describe('AnnotationThread', () => {
     });
 
     describe('updateTemporaryAnnotation()', () => {
-        const tempAnnotation = {
-            id: 1
-        };
+        const tempAnnotation = { id: 1 };
         const serverAnnotation = {
             id: 456,
-            threadNumber: 1
+            threadNumber: 1,
+            message: 'comment'
         };
 
         beforeEach(() => {
             thread.api.create = jest.fn();
-            thread.api.formatAnnotation = jest.fn().mockReturnValue(serverAnnotation);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
             thread.renderAnnotationPopover = jest.fn();
-            thread.annotations = [tempAnnotation];
+            thread.comments = [tempAnnotation];
         });
 
         it('should save annotation to thread if it does not exist in annotations array', () => {
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.annotations).toContain(serverAnnotation);
+            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
+            expect(thread.comments).toContain(serverAnnotation);
         });
 
         it('should overwrite a local annotation to the thread if it does exist as an associated annotation', () => {
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
-            expect(thread.annotations).not.toContain(tempAnnotation);
-            expect(thread.annotations).toContain(serverAnnotation);
+            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
+            expect(thread.comments).not.toContain(tempAnnotation);
+            expect(thread.comments).toContain(serverAnnotation);
         });
 
         it('should emit an annotationsaved event on success', () => {
             thread.threadNumber = undefined;
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.save);
         });
 
         it('should only render popover on desktop', () => {
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.renderAnnotationPopover).toBeCalled();
-            expect(thread.state).toEqual(STATES.pending);
+            expect(thread.state).toEqual(STATES.inactive);
         });
 
         it('should only render popover on mobile', () => {
             thread.isMobile = true;
-            thread.updateTemporaryAnnotation(tempAnnotation, serverAnnotation);
+            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.state).toEqual(STATES.active);
             expect(thread.renderAnnotationPopover).toBeCalled();
         });
     });
 
-    describe('deleteAnnotation()', () => {
+    describe('delete()', () => {
         let annotation;
         let annotation2;
         const threadPromise = Promise.resolve();
@@ -196,7 +193,7 @@ describe('AnnotationThread', () => {
             };
 
             thread.api = api;
-            thread.annotations = [annotation];
+            thread.comments = [annotation];
             util.isPlainHighlight = jest.fn();
             thread.cancelFirstComment = jest.fn();
             thread.destroy = jest.fn();
@@ -210,7 +207,7 @@ describe('AnnotationThread', () => {
         it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
             thread.isMobile = false;
 
-            const promise = thread.deleteAnnotation('someID', false);
+            const promise = thread.delete('someID', false);
             promise.then(() => {
                 threadPromise.then(() => {
                     expect(thread.destroy).toBeCalled();
@@ -220,16 +217,16 @@ describe('AnnotationThread', () => {
         });
 
         it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', () => {
-            thread.annotations.push(annotation2);
-            const promise = thread.deleteAnnotation('someID', false);
+            thread.comments.push(annotation2);
+            const promise = thread.delete('someID', false);
             promise.then(() => {
                 expect(thread.renderAnnotationPopover).toBeCalled();
             });
         });
 
         it('should make a server call to delete an annotation with the specified ID if useServer is true', () => {
-            thread.annotations.push(annotation2);
-            const promise = thread.deleteAnnotation('someID', true);
+            thread.comments.push(annotation2);
+            const promise = thread.delete('someID', true);
             promise.then(() => {
                 expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
                 expect(api.delete).toBeCalledWith('someID');
@@ -238,17 +235,17 @@ describe('AnnotationThread', () => {
 
         it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', () => {
             annotation2.permissions.can_delete = false;
-            thread.annotations.push(annotation2);
+            thread.comments.push(annotation2);
             util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
-            const promise = thread.deleteAnnotation('someID', true);
+            const promise = thread.delete('someID', true);
             promise.then(() => {
                 expect(api.delete).toBeCalledWith('someID');
             });
         });
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', () => {
-            const promise = thread.deleteAnnotation('someID', false);
+            const promise = thread.delete('someID', false);
             promise.then(() => {
                 expect(api.delete).not.toBeCalled();
             });
@@ -258,17 +255,17 @@ describe('AnnotationThread', () => {
             api.delete = jest.fn().mockRejectedValue();
             thread.api = api;
 
-            const promise = thread.deleteAnnotation('someID', true);
+            const promise = thread.delete('someID', true);
             promise.catch(() => {
                 expect(api.delete).toBeCalled();
             });
         });
 
         it('should toggle highlight dialogs with the delete of the last comment if user does not have permission to delete the entire annotation', () => {
-            thread.annotations.push(annotation2);
+            thread.comments.push(annotation2);
             util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
-            const promise = thread.deleteAnnotation('someID');
+            const promise = thread.delete('someID');
             promise.then(() => {
                 expect(thread.cancelFirstComment).toBeCalled();
                 expect(thread.destroy).not.toBeCalled();
@@ -277,10 +274,10 @@ describe('AnnotationThread', () => {
 
         it('should destroy the annotation with the delete of the last comment if the user has permissions', () => {
             annotation2.permissions.can_delete = true;
-            thread.annotations.push(annotation2);
+            thread.comments.push(annotation2);
             util.isPlainHighlight = jest.fn().mockReturnValue(true);
 
-            const promise = thread.deleteAnnotation('someID');
+            const promise = thread.delete('someID');
             promise.then(() => {
                 expect(thread.emit).toBeCalledWith(THREAD_EVENT.threadCleanup);
                 expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
@@ -382,16 +379,16 @@ describe('AnnotationThread', () => {
     describe('setup()', () => {
         beforeEach(() => {
             thread.setupElement = jest.fn();
-            thread.destroy = jest.fn();
         });
 
-        it('should set state to pending if thread is initialized with no annotations', () => {
+        it('should set state to pending for unsaved annotations', () => {
+            thread.threadNumber = undefined;
             thread.setup();
             expect(thread.state).toEqual(STATES.pending);
         });
 
-        it('should set state to inactive if thread is initialized with annotations', () => {
-            thread.annotations = [{}];
+        it('should set state to inactive for saved annotations', () => {
+            thread.threadNumber = 1;
             thread.setup();
             expect(thread.state).toEqual(STATES.inactive);
         });
@@ -518,9 +515,9 @@ describe('AnnotationThread', () => {
 
     describe('createAnnotation()', () => {
         it('should create a new point annotation', () => {
-            thread.saveAnnotation = jest.fn();
+            thread.save = jest.fn();
             thread.createAnnotation('bleh');
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'bleh');
+            expect(thread.save).toBeCalledWith(TYPES.point, 'bleh');
         });
     });
 
@@ -561,9 +558,9 @@ describe('AnnotationThread', () => {
 
     describe('handleThreadSaveError()', () => {
         it('should delete temp annotation and emit event', () => {
-            thread.deleteAnnotation = jest.fn();
+            thread.delete = jest.fn();
             thread.handleThreadSaveError(new Error(), 1);
-            expect(thread.deleteAnnotation).toBeCalledWith(1, false);
+            expect(thread.delete).toBeCalledWith({ id: 1 }, false);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.createError);
         });
     });

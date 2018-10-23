@@ -2,6 +2,7 @@
 import AnnotationModeController from './AnnotationModeController';
 import DocPointThread from '../doc/DocPointThread';
 import ImagePointThread from '../image/ImagePointThread';
+import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     THREAD_EVENT,
@@ -44,37 +45,6 @@ class PointModeController extends AnnotationModeController {
         this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
     }
 
-    /**
-     * Unregister/destroy the pending thread and then clear the create dialog
-     *
-     * @private
-     * @return {void}
-     */
-    onDialogCancel(): void {
-        const thread = this.getThreadByID(this.pendingThreadID);
-        if (thread) {
-            this.unregisterThread(thread);
-            thread.destroy();
-        }
-        this.pendingThreadID = null;
-    }
-
-    /**
-     * Notify listeners of post event and then clear the create dialog
-     *
-     * @private
-     * @param {string} commentText Annotation comment text
-     * @return {void}
-     */
-    onDialogPost(commentText: string): void {
-        this.emit(CONTROLLER_EVENT.createThread, {
-            commentText,
-            pendingThreadID: this.pendingThreadID
-        });
-
-        this.onDialogCancel();
-    }
-
     /** @inheritdoc */
     setupHandlers(): void {
         // $FlowFixMe
@@ -94,7 +64,13 @@ class PointModeController extends AnnotationModeController {
         }
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
-        this.onDialogCancel();
+        const thread = this.getThreadByID(this.pendingThreadID);
+        if (thread) {
+            this.unregisterThread(thread);
+            thread.destroy();
+        }
+
+        this.pendingThreadID = null;
         super.exit();
     }
 
@@ -141,7 +117,18 @@ class PointModeController extends AnnotationModeController {
         }
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.registerThread([], location, TYPES.point);
+        const thread = this.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: this.mode,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString(),
+            isPending: true,
+            comments: []
+        });
+
         if (!thread) {
             return;
         }

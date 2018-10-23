@@ -64,7 +64,7 @@ describe('drawing/DrawingThread', () => {
     describe('deleteThread()', () => {
         it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
             thread.clearBoundary = jest.fn();
-            thread.deleteAnnotation = jest.fn();
+            thread.delete = jest.fn();
             thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
             thread.concreteContext = {
                 clearRect: jest.fn()
@@ -74,13 +74,13 @@ describe('drawing/DrawingThread', () => {
                 destroy: jest.fn()
             };
 
-            thread.annotations = [{ id: '123abc' }];
+            thread.comments = [{ id: '123abc' }];
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).toBeCalled();
             expect(thread.concreteContext.clearRect).toBeCalled();
             expect(thread.clearBoundary).toBeCalled();
-            expect(thread.deleteAnnotation).toBeCalledWith('123abc');
+            expect(thread.delete).toBeCalledWith({ id: '123abc' });
             expect(thread.pathContainer).toEqual(null);
         });
     });
@@ -188,13 +188,12 @@ describe('drawing/DrawingThread', () => {
 
     describe('setup()', () => {
         it('should set the state to be pending when there are no saved annotations', () => {
-            thread.annotations = [];
             thread.setup();
             expect(thread.state).toEqual(STATES.pending);
         });
 
         it('should set the state to be inactive when there are saved annotations', () => {
-            thread.annotations = ['not empty'];
+            thread.threadNumber = '123';
             thread.setup();
             expect(thread.state).toEqual(STATES.inactive);
         });

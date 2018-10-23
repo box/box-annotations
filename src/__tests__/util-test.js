@@ -464,7 +464,7 @@ describe('util', () => {
         it('should return false if thread has invalid location', () => {
             const threadParams = {
                 annotatedElement: {},
-                annotations: [],
+                comments: [],
                 api: {},
                 fileVersionId: 123,
                 location: {},
@@ -484,7 +484,7 @@ describe('util', () => {
         it('should return true if the thread is has all expected params', () => {
             const threadParams = {
                 annotatedElement: {},
-                annotations: [],
+                comments: [],
                 api: {},
                 fileVersionId: 123,
                 location: { x: 1, y: 2 },

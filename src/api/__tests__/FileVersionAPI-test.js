@@ -12,7 +12,8 @@ describe('api/FileVersionAPI', () => {
         api = new FileVersionAPI({
             apiHost: API_HOST,
             fileId: 1,
-            token: 'someToken'
+            token: 'someToken',
+            permissions: {}
         });
         api.axios = {
             get: jest.fn().mockReturnValue(promise)
@@ -88,8 +89,16 @@ describe('api/FileVersionAPI', () => {
 
     describe('createAnnotationMap()', () => {
         it('should create a map of thread IDs to annotations', () => {
+            const annotationData = {
+                threadID: 1,
+                item: {},
+                permissions: {},
+                details: {
+                    location: { page: 1 }
+                }
+            };
             api.data = {
-                entries: [{ id: 1, threadID: 1, item: {}, details: {} }, { id: 2, threadID: 1, item: {}, details: {} }]
+                entries: [{ id: 1, ...annotationData }, { id: 2, ...annotationData }]
             };
             const threadMap = api.createAnnotationMap();
             expect(Object.keys(threadMap).length).toEqual(1);

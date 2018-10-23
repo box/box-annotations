@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import API from '../API';
-import Annotation from '../../Annotation';
 import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
@@ -53,26 +52,6 @@ describe('api/API', () => {
                 reason: ERROR_TYPE.auth,
                 error: error.toString()
             });
-        });
-    });
-
-    describe('formatAnnotation()', () => {
-        it('should call the Annotation constructor', () => {
-            const data = {
-                fileVersionId: 2,
-                threadID: 1,
-                type: 'point',
-                text: 'blah3',
-                threadNumber: '1',
-                location: { x: 0, y: 0 },
-                created: Date.now(),
-                item: { id: 1 },
-                details: { threadID: 1 },
-                created_by: { id: 1 }
-            };
-            const annotation1 = api.formatAnnotation(data);
-
-            expect(annotation1 instanceof Annotation).toBeTruthy();
         });
     });
 });

@@ -31,7 +31,7 @@ const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
-const THREAD_PARAMS = ['annotations', 'api', 'fileVersionId', 'locale', 'location', 'type'];
+const THREAD_PARAMS = ['comments', 'api', 'fileVersionId', 'locale', 'location', 'type'];
 const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
 const DESKTOP_MIN_WIDTH = 1025;
@@ -107,7 +107,7 @@ export function getPageInfo(element) {
  */
 export function shouldDisplayMobileUI(container) {
     const containerRect = container.getBoundingClientRect();
-    this.isMobile = containerRect.width < DESKTOP_MIN_WIDTH;
+    return containerRect.width < DESKTOP_MIN_WIDTH;
 }
 
 /**

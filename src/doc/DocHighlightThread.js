@@ -45,7 +45,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     cancelFirstComment() {
         // Reset type from highlight-comment to highlight
-        if (util.isPlainHighlight(this.annotations)) {
+        if (util.isPlainHighlight(this.comments)) {
             this.type = TYPES.highlight;
         }
 
@@ -54,7 +54,7 @@ class DocHighlightThread extends AnnotationThread {
         // Clear and reset mobile annotations dialog
         if (util.shouldDisplayMobileUI(this.container)) {
             this.unmountPopover();
-        } else if (util.isPlainHighlight(this.annotations)) {
+        } else if (util.isPlainHighlight(this.comments)) {
             this.renderAnnotationPopover();
         } else {
             this.destroy();
@@ -68,12 +68,12 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     destroy() {
+        this.emit(THREAD_EVENT.render, this.location.page);
         super.destroy();
 
         if (this.state === STATES.pending) {
             window.getSelection().removeAllRanges();
         }
-        this.emit(THREAD_EVENT.threadCleanup);
     }
 
     /**
@@ -107,25 +107,22 @@ class DocHighlightThread extends AnnotationThread {
      * @param {string} text Text of annotation to save
      * @return {void}
      */
-    saveAnnotation(type, text) {
-        super.saveAnnotation(type, text);
+    save(type, text) {
+        super.save(type, text);
         window.getSelection().removeAllRanges();
     }
 
     /**
      * Deletes an annotation.
      *
-     * @param {string} id ID of annotation to delete
+     * @param {Object} annotation annotation to delete
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    deleteAnnotation(id, useServer = true) {
-        super.deleteAnnotation(id, useServer);
+    delete(annotation, useServer = true) {
+        super.delete(annotation, useServer);
 
-        // Hide delete button on plain highlights if user doesn't have
-        // permissions
-        const firstAnnotation = this.annotations[0];
-        if (!firstAnnotation) {
+        if (!this.threadID) {
             return;
         }
 
@@ -272,7 +269,7 @@ class DocHighlightThread extends AnnotationThread {
             this.type = TYPES.highlight;
         }
 
-        this.saveAnnotation(this.type, message || '');
+        this.save(this.type, message || '');
     }
 
     /**
@@ -285,13 +282,12 @@ class DocHighlightThread extends AnnotationThread {
      */
     handleDelete(data) {
         if (data) {
-            this.deleteAnnotation(data.id);
+            this.delete(data);
             return;
         }
 
-        const firstAnnotation = this.annotations[0];
-        if (firstAnnotation) {
-            this.deleteAnnotation(firstAnnotation.id);
+        if (this.comments.length <= 0) {
+            this.delete({ id: this.id });
         }
     }
 

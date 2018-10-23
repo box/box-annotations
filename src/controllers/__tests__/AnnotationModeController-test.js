@@ -100,8 +100,8 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should destroy all the threads in controller', () => {
                 // eslint-disable-next-line new-cap
-                controller.threads = { 1: new rbush() };
-                controller.threads[1].insert(thread);
+                controller.annotations = { 1: new rbush() };
+                controller.annotations[1].insert(thread);
 
                 controller.destroy();
                 expect(controller.buttonEl).toBeUndefined();
@@ -187,6 +187,7 @@ describe('controllers/AnnotationModeController', () => {
                 };
                 buttonEl = document.createElement('button');
                 buttonEl.title = controller.modeButton.title;
+                buttonEl.classList.remove(CLASS_HIDDEN);
                 buttonEl.classList.add('selector');
                 buttonEl.addEventListener = jest.fn();
 
@@ -329,7 +330,7 @@ describe('controllers/AnnotationModeController', () => {
         describe('registerThread()', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
-                controller.threads = {};
+                controller.annotations = {};
                 controller.getThreadParams = jest.fn().mockReturnValue({});
                 controller.instantiateThread = jest.fn();
             });
@@ -363,7 +364,7 @@ describe('controllers/AnnotationModeController', () => {
         describe('unregisterThread()', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
-                controller.threads = {};
+                controller.annotations = {};
             });
 
             it('should do nothing if thread does not have location', () => {
@@ -380,7 +381,7 @@ describe('controllers/AnnotationModeController', () => {
                     remove: jest.fn()
                 };
 
-                controller.threads = { 1: pageThreads };
+                controller.annotations = { 1: pageThreads };
 
                 controller.unregisterThread(thread);
                 expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.unregister, thread);
@@ -390,7 +391,7 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('applyActionToPageThreads()', () => {
             it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
-                controller.threads = {
+                controller.annotations = {
                     1: { all: jest.fn().mockReturnValue([thread]) }
                 };
                 controller.applyActionToPageThreads(thread.addListener, 2); // func not called
@@ -401,7 +402,7 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('applyActionToThreads()', () => {
             it('should apply the predicate function to all of the controller\'s threads', () => {
-                controller.threads = {
+                controller.annotations = {
                     1: { all: jest.fn().mockReturnValue([thread]) },
                     2: { all: jest.fn().mockReturnValue([thread]) }
                 };
@@ -412,7 +413,7 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('getThreadByID()', () => {
             it('should return null if no page threads exist', () => {
-                controller.threads = {
+                controller.annotations = {
                     1: {
                         all: jest.fn().mockReturnValue([])
                     }
@@ -421,7 +422,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should find and return annotation thread specified by threadID', () => {
-                controller.threads = {
+                controller.annotations = {
                     1: {
                         all: jest.fn().mockReturnValue([thread])
                     }
@@ -430,7 +431,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should return null if specified annotation thread is not found', () => {
-                controller.threads = {
+                controller.annotations = {
                     1: {
                         all: jest.fn().mockReturnValue([thread])
                     }
@@ -442,6 +443,8 @@ describe('controllers/AnnotationModeController', () => {
         describe('handleThreadEvents()', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
+                controller.renderPage = jest.fn();
+                controller.registerThread = jest.fn();
                 controller.unregisterThread = jest.fn();
                 controller.localized = {
                     deleteError: 'delete error',
@@ -460,9 +463,9 @@ describe('controllers/AnnotationModeController', () => {
                 expect(controller.hadPendingThreads).toBeFalsy();
             });
 
-            it('should unregister thread on threadCleanup', () => {
-                controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
-                expect(controller.unregisterThread).toBeCalled();
+            it('should re-render the page on render', () => {
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, data: {} });
+                expect(controller.renderPage).toBeCalled();
             });
 
             it('should unregister thread on threadDelete', () => {
@@ -542,7 +545,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should render the annotations on every page', () => {
-                controller.threads = { 1: {}, 2: {} };
+                controller.annotations = { 1: {}, 2: {} };
                 controller.render();
                 expect(controller.renderPage).toBeCalledTwice;
             });
@@ -556,14 +559,14 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should render the annotations on every page', () => {
                 util.isPending = jest.fn().mockReturnValue(false);
-                controller.threads = {
+                controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush(),
                     // eslint-disable-next-line new-cap
                     2: new rbush()
                 };
-                controller.threads[1].insert(thread);
-                controller.threads[2].insert(thread);
+                controller.annotations[1].insert(thread);
+                controller.annotations[2].insert(thread);
 
                 controller.renderPage(1);
                 expect(thread.show).toHaveBeenCalledTimes(1);
@@ -573,11 +576,11 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should destroy any pending annotations on re-render', () => {
                 util.isPending = jest.fn().mockReturnValue(true);
-                controller.threads = {
+                controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush()
                 };
-                controller.threads[1].insert(thread);
+                controller.annotations[1].insert(thread);
 
                 controller.renderPage(1);
                 expect(thread.show).not.toBeCalled();
@@ -595,7 +598,7 @@ describe('controllers/AnnotationModeController', () => {
                     return false;
                 });
                 controller.unregisterThread = jest.fn();
-                controller.threads = {
+                controller.annotations = {
                     1: {
                         all: jest.fn()
                     }
@@ -604,7 +607,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should not destroy and return false if there are no threads', () => {
-                controller.threads = {};
+                controller.annotations = {};
                 const destroyed = controller.destroyPendingThreads();
                 expect(destroyed).toBeFalsy();
                 expect(controller.unregisterThread).not.toBeCalled();
@@ -639,7 +642,7 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('getIntersectingThreads()', () => {
             beforeEach(() => {
-                controller.threads = {
+                controller.annotations = {
                     1: {
                         search: jest.fn().mockReturnValue([])
                     }
@@ -649,7 +652,7 @@ describe('controllers/AnnotationModeController', () => {
             it('should return an empty array if event or threads do not exist', () => {
                 expect(controller.getIntersectingThreads()).toEqual([]);
 
-                controller.threads = null;
+                controller.annotations = null;
                 expect(controller.getIntersectingThreads({})).toEqual([]);
             });
 
@@ -663,7 +666,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should return an array with the intersecting thread', () => {
-                controller.threads[1].search = jest.fn().mockReturnValue([thread]);
+                controller.annotations[1].search = jest.fn().mockReturnValue([thread]);
                 controller.getLocation = jest.fn().mockReturnValue({ page: 1 });
                 expect(controller.getIntersectingThreads({}, { page: 1 })).toContain(thread);
             });

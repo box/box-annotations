@@ -126,7 +126,7 @@ class CreateHighlightDialog extends EventEmitter {
                 type={type}
                 canAnnotate={true}
                 canComment={this.allowComment}
-                canDelete={this.allowHighlight}
+                canDelete={true}
                 position={this.updatePosition}
                 onDelete={noop}
                 onCancel={this.onCancel}

@@ -2,7 +2,6 @@
 import EventEmitter from 'events';
 import axios from 'axios';
 
-import Annotation from '../Annotation';
 import { getHeaders } from '../util';
 import { PLACEHOLDER_USER, ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
 
@@ -21,6 +20,13 @@ class API extends EventEmitter {
 
     /** @property {Axios} */
     axios: Axios = axios.create();
+
+    /** @property {BoxItemPermissions} */
+    permissions: BoxItemPermissions = {
+        can_annotate: false,
+        can_view_annotations_all: false,
+        can_view_annotations_self: false
+    };
 
     /** @property {CancelTokenSource} */
     axiosSource: CancelTokenSource = axios.CancelToken.source();
@@ -49,6 +55,7 @@ class API extends EventEmitter {
      */
     constructor(data: Options) {
         super();
+        this.permissions = data.permissions;
         this.apiHost = data.apiHost;
         this.fileId = data.fileId;
         this.headers = getHeaders({}, data.token);
@@ -93,43 +100,42 @@ class API extends EventEmitter {
         });
     };
 
-    /**
-     * Generates an Annotation object from an API response.
-     *
-     * @private
-     * @param {AnnotationData} data - API response data
-     * @return {Annotation} Created annotation
-     */
-    formatAnnotation(data: AnnotationData): Annotation {
+    formatUserInfo(user: BoxUser): User {
+        const { profile_image, login, ...rest } = user;
+        return {
+            ...rest,
+            email: login,
+            avatarUrl: profile_image
+        };
+    }
+
+    formatComment(entry: AnnotationData): CommentProps {
         const {
             id,
-            details,
-            item,
             message,
             permissions,
-            created_by: createdBy = PLACEHOLDER_USER,
+            created_by = PLACEHOLDER_USER,
             created_at: createdAt,
-            modified_at: modifiedAt,
-            thread: threadNumber
-        } = data;
-
-        return new Annotation({
+            modified_at: modifiedAt
+        } = entry;
+        return {
             id,
-            fileVersionId: item.id,
-            threadID: details.threadID,
-            type: details.type,
-            threadNumber,
             message,
-            location: details.location,
-            createdBy: {
-                id: createdBy.id,
-                name: createdBy.name,
-                avatarUrl: createdBy.profile_image
-            },
             permissions,
+            createdBy: this.formatUserInfo(created_by),
             createdAt,
-            modifiedAt
-        });
+            modifiedAt,
+            isPending: false
+        };
+    }
+
+    appendComments(entry: AnnotationData, comments: Comments = []): Comments {
+        const { message } = entry;
+        if (message && message.trim() !== '') {
+            comments.push(this.formatComment(entry));
+        }
+
+        return comments;
     }
 }
 
