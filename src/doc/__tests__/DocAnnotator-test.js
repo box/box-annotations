@@ -99,7 +99,7 @@ describe('doc/DocAnnotator', () => {
             onMousemove: jest.fn(),
             unmountPopover: jest.fn(),
             renderAnnotationPopover: jest.fn(),
-            saveAnnotation: jest.fn(),
+            save: jest.fn(),
             getThreadEventData: jest.fn()
         };
 
@@ -440,7 +440,7 @@ describe('doc/DocAnnotator', () => {
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
             annotator.modeControllers = { highlight: controller };
             expect(annotator.createHighlightThread()).toStrictEqual(thread);
-            expect(controller.registerThread).toBeCalledWith([], location, TYPES.highlight);
+            expect(controller.registerThread).toBeCalled();
             expect(thread.show).toBeCalled();
         });
     });

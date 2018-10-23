@@ -10,15 +10,12 @@ import {
     SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
 
-const api = {
-    formatAnnotation: jest.fn()
-};
-
 describe('Annotator', () => {
     let rootElement;
     let annotator;
     let controller;
     let thread;
+    const api = {};
     const html = `<button class="bp-btn-annotate"></button>
     <div class="annotated-element"></div>`;
 
@@ -324,7 +321,7 @@ describe('Annotator', () => {
 
             beforeEach(() => {
                 annotator.options = { annotator: {} };
-                threadMap = { '123abc': [{ type: 'highlight-comment', location: {} }] };
+                threadMap = { '123abc': { type: 'highlight-comment', location: {} } };
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
@@ -334,17 +331,9 @@ describe('Annotator', () => {
             });
 
             it('should register thread if controller exists', () => {
-                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
                 annotator.modeControllers = { 'highlight-comment': controller };
                 annotator.generateAnnotationMap(threadMap);
                 expect(controller.registerThread).toBeCalled();
-            });
-
-            it('should not register a highlight comment thread with a plain highlight for the first annotation', () => {
-                annotator.isModeAnnotatable = jest.fn().mockReturnValue(true);
-                annotator.modeControllers = { highlight: controller };
-                annotator.generateAnnotationMap(threadMap);
-                expect(controller.registerThread).not.toBeCalled();
             });
         });
 
@@ -500,7 +489,7 @@ describe('Annotator', () => {
                 thread.getThreadEventData = jest.fn().mockReturnValue({});
                 controller.getThreadByID = jest.fn().mockReturnValue(thread);
                 thread.renderAnnotationPopover = jest.fn();
-                thread.saveAnnotation = jest.fn();
+                thread.save = jest.fn();
 
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
@@ -509,7 +498,7 @@ describe('Annotator', () => {
                 });
 
                 expect(thread.state).toEqual(STATES.active);
-                expect(thread.saveAnnotation).toBeCalledWith(TYPES.point, 'text');
+                expect(thread.save).toBeCalledWith(TYPES.point, 'text');
                 expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
                 expect(result).not.toBeNull();
                 expect(thread.renderAnnotationPopover).toBeCalled();

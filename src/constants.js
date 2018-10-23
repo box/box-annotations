@@ -261,7 +261,7 @@ export const THREAD_EVENT = {
     pending: 'annotationpending',
     threadSave: 'annotationthreadsaved',
     threadDelete: 'annotationthreaddeleted',
-    threadCleanup: 'annotationthreadcleanup',
+    render: 'annotationrender',
     save: 'annotationsaved',
     delete: 'annotationdeleted',
     deleteError: 'annotationdeleteerror',

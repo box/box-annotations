@@ -68,6 +68,8 @@ class DocDrawingThread extends DrawingThread {
             return;
         }
 
+        this.unmountPopover();
+
         const pageChanged = this.hasPageChanged(location);
         if (pageChanged) {
             this.onPageChange(location);

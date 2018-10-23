@@ -6,6 +6,7 @@ import rangyHighlight from 'rangy/lib/rangy-highlighter';
 import rangySaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 /* eslint-enable no-unused-vars */
 import Annotator from '../Annotator';
+import AnnotationAPI from '../api/AnnotationAPI';
 import CreateHighlightDialog from './CreateHighlightDialog';
 import * as util from '../util';
 import * as docUtil from './docUtil';
@@ -506,11 +507,18 @@ class DocAnnotator extends Annotator {
             return null;
         }
 
-        const annotations = [];
         this.lastHighlightEvent = null;
         this.lastSelection = null;
 
-        const thread = controller.registerThread(annotations, location, highlightType);
+        const thread = controller.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: highlightType,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString()
+        });
         if (!thread) {
             this.handleValidationError();
             return null;
@@ -518,7 +526,7 @@ class DocAnnotator extends Annotator {
 
         thread.state = STATES.active;
         thread.show();
-        thread.saveAnnotation(highlightType, commentText);
+        thread.save(highlightType, commentText);
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;
     }

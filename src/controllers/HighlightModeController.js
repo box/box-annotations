@@ -12,22 +12,19 @@ import {
 } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {
+    /** @property {boolean} */
+    canComment: boolean;
+
     /** @inheritdoc */
     handleThreadEvents(thread: AnnotationThread, data: Object): void {
-        let firstAnnotation;
         switch (data.event) {
             case THREAD_EVENT.save:
                 // Re-render plain highlight canvas when a plain highlight is converted to a highlight comment
-                firstAnnotation = thread.annotations[0];
-                if (
-                    firstAnnotation &&
-                    firstAnnotation.type === TYPES.highlight &&
-                    Object.keys(thread.annotations).length === 2
-                ) {
+                if (thread.type === TYPES.highlight && thread.comments.length > 0) {
                     this.renderPage(thread.location.page);
                 }
                 break;
-            case THREAD_EVENT.threadCleanup:
+            case THREAD_EVENT.delete:
                 this.emit(CONTROLLER_EVENT.renderPage, thread.location.page);
                 break;
             default:
@@ -59,12 +56,12 @@ class HighlightModeController extends AnnotationModeController {
     /** @inheritdoc */
     renderPage(pageNum: string): void {
         // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum.toString()}"]`);
+        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
         const layerClass =
             this.mode === TYPES.highlight ? CLASS_ANNOTATION_LAYER_HIGHLIGHT : CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT;
         clearCanvas(pageEl, layerClass);
 
-        if (!this.threads) {
+        if (!this.annotations) {
             return;
         }
 
@@ -72,7 +69,7 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    instantiateThread(params: Object): AnnotationThread {
+    instantiateThread(params: Object): DocHighlightThread {
         return this.annotatorType === ANNOTATOR_TYPE.document ? new DocHighlightThread(params, this.canComment) : null;
     }
 }

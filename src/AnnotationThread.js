@@ -1,6 +1,5 @@
 import EventEmitter from 'events';
 import React from 'react';
-import get from 'lodash/get';
 import { render, unmountComponentAtNode } from 'react-dom';
 
 import AnnotationAPI from './api/AnnotationAPI';
@@ -57,21 +56,26 @@ class AnnotationThread extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.api = data.api;
         this.container = data.container;
-        this.fileVersionId = data.fileVersionId;
-        this.location = data.location;
-        this.threadID = data.threadID || AnnotationAPI.generateID();
-        this.threadNumber = data.threadNumber || '';
-        this.type = data.type;
-        this.locale = data.locale;
         this.isMobile = data.isMobile || false;
         this.hasTouch = data.hasTouch || false;
         this.permissions = data.permissions;
-        this.localized = data.localized;
         this.state = STATES.inactive;
-        this.canComment = true;
 
-        this.annotations = data.annotations || [];
-        this.annotations = this.annotations.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        this.id = data.id;
+        this.type = data.type;
+        this.location = data.location;
+        this.threadNumber = data.threadNumber;
+        this.createdAt = data.createdAt;
+        this.createdBy = data.createdBy;
+        this.modifiedAt = data.modifiedAt;
+        this.fileVersionId = data.fileVersionId;
+        this.threadID = data.threadID || AnnotationAPI.generateID();
+        this.canDelete = data.canDelete;
+        this.canAnnotate = data.canAnnotate;
+        this.canComment = true;
+        this.comments = data.comments
+            ? data.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            : [];
 
         this.regenerateBoundary();
 
@@ -143,20 +147,6 @@ class AnnotationThread extends EventEmitter {
             event.preventDefault();
         }
 
-        const firstAnnotation = this.annotations[0];
-        const comments = this.annotations
-            .filter((annotation) => annotation.message && annotation.message !== '')
-            .map((comment) => {
-                const { id, message, permissions, createdBy, createdAt } = comment;
-                return {
-                    id,
-                    message,
-                    permissions,
-                    createdBy,
-                    createdAt
-                };
-            });
-
         const pageEl = this.getPopoverParent();
         let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (!popoverLayer) {
@@ -165,29 +155,32 @@ class AnnotationThread extends EventEmitter {
             pageEl.appendChild(popoverLayer);
         }
 
-        const isPending = !firstAnnotation;
+        const isPending = !this.threadNumber;
         if (isPending) {
             this.state = STATES.pending;
         } else {
             this.state = STATES.active;
         }
 
+        this.save = this.save.bind(this);
+        this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
+        this.delete = this.delete.bind(this);
         this.popoverComponent = render(
             <AnnotationPopover
-                id={comments.length > 0 || isPending ? this.threadID : firstAnnotation.id}
+                id={this.id}
                 type={this.type}
-                createdAt={get(firstAnnotation, 'createdAt', null)}
-                createdBy={get(firstAnnotation, 'createdBy', null)}
-                modifiedBy={get(firstAnnotation, 'modifiedBy', null)}
+                createdAt={this.createdAt}
+                createdBy={this.createdBy}
+                modifiedAt={this.modifiedAt}
+                canAnnotate={this.canAnnotate}
+                canDelete={this.canDelete}
                 isMobile={this.isMobile}
-                canAnnotate={this.permissions.can_annotate}
                 canComment={this.canComment}
-                canDelete={get(firstAnnotation, 'permissions.can_delete', false)}
-                comments={comments}
+                comments={this.comments}
                 position={this.position}
-                onDelete={this.deleteAnnotation}
+                onDelete={this.delete}
                 onCancel={this.cancelUnsavedAnnotation}
-                onCreate={this.saveAnnotation}
+                onCreate={this.save}
                 isPending={isPending}
             />,
             popoverLayer
@@ -213,24 +206,23 @@ class AnnotationThread extends EventEmitter {
      * @param {string} message - Text of annotation to save
      * @return {Promise} - Annotation create promise
      */
-    saveAnnotation = (type, message) => {
+    save(type, message) {
         const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client
-        const tempAnnotationID = AnnotationAPI.generateID();
-        const tempAnnotation = {
-            id: tempAnnotationID,
+        const id = AnnotationAPI.generateID();
+        this.updateAnnotationThread({
+            id,
+            message,
             permissions: {
                 can_edit: true,
                 can_delete: true
             },
-            message,
-            location: this.location,
-            created_at: new Date().toLocaleString(),
-            created_by: this.api.user,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString(),
             isPending: true
-        };
-        this.annotations.push(tempAnnotation);
+        });
+
         this.renderAnnotationPopover();
 
         this.state = STATES.inactive;
@@ -238,21 +230,40 @@ class AnnotationThread extends EventEmitter {
         // Save annotation on server
         return this.api
             .create(annotationData)
-            .then((savedAnnotation) => this.updateTemporaryAnnotation(tempAnnotation, savedAnnotation))
-            .catch((error) => this.handleThreadSaveError(error, tempAnnotationID));
-    };
+            .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
+            .catch((error) => this.handleThreadSaveError(error, id));
+    }
+
+    updateAnnotationThread(data) {
+        if (!this.threadNumber) {
+            this.id = data.id;
+            this.threadNumber = data.threadNumber;
+            this.threadID = data.threadID;
+        }
+
+        // If annotation is the first in the thread
+        const { message } = data;
+        if (message && message.trim() !== '') {
+            this.comments.push(data);
+        } else {
+            this.createdAt = data.createdAt;
+            this.createdBy = data.createdBy;
+            this.modifiedAt = data.modifiedAt;
+        }
+    }
 
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationToRemove - ID of annotation to delete
+     * @param {Object} annotationToRemove - annotation to delete
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation = (annotationToRemove, useServer = true) => {
+    delete(annotationToRemove, useServer = true) {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
         const { id: annotationIDToRemove } = annotationToRemove;
-        const annotation = this.annotations.find(({ id }) => id === annotationIDToRemove);
+        const annotation =
+            annotationIDToRemove !== this.id ? this.comments.find(({ id }) => id === annotationIDToRemove) : this;
         if (!annotation) {
             // Broadcast error
             this.emit(THREAD_EVENT.deleteError);
@@ -274,21 +285,19 @@ class AnnotationThread extends EventEmitter {
             return Promise.reject();
         }
 
-        // Delete annotation on client
-        this.annotations = this.annotations.filter(({ id }) => id !== annotationIDToRemove);
+        // Delete matching comment from annotation
+        this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
-        let firstAnnotation = this.annotations[0];
-        let canDeleteAnnotation =
-            firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-        if (util.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
+        if (this.type === TYPES.highlight && !this.canDelete) {
             // If the user doesn't have permission to delete the entire highlight
             // annotation, display the annotation as a plain highlight
             this.cancelFirstComment();
-        } else if (!firstAnnotation || util.isPlainHighlight(this.annotations)) {
+        } else if (this.type === TYPES.highlight || this.type === TYPES.draw) {
             // If this annotation was the last one in the thread, destroy the thread
             this.destroy();
+            this.threadID = null;
         } else {
-            // Otherwise, remove deleted annotation from dialog
+            // Otherwise, display annotation with deleted comment
             this.renderAnnotationPopover();
         }
 
@@ -308,21 +317,22 @@ class AnnotationThread extends EventEmitter {
             .then(() => {
                 // Ensures that blank highlight comment is also deleted when removing
                 // the last comment on a highlight
-                firstAnnotation = this.annotations[0];
-                canDeleteAnnotation =
-                    firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-                if (util.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
-                    this.api.delete(firstAnnotation.id);
+                if (this.type === TYPES.highlight && this.canDelete) {
+                    this.api.delete(this.id).then(() => {
+                        // Broadcast thread cleanup if needed
+                        if (!this.threadID) {
+                            this.emit(THREAD_EVENT.reset);
+                        } else {
+                            // Broadcast annotation deletion event
+                            this.emit(THREAD_EVENT.delete);
+                        }
+
+                        this.threadID = null;
+                    });
                 }
 
-                // Broadcast thread cleanup if needed
-                firstAnnotation = this.annotations[0];
-                if (!firstAnnotation) {
-                    this.emit(THREAD_EVENT.threadCleanup);
-                } else {
-                    // Broadcast annotation deletion event
-                    this.emit(THREAD_EVENT.delete);
-                }
+                // Broadcast annotation deletion event
+                this.emit(THREAD_EVENT.delete);
             })
             .catch((error) => {
                 // Broadcast error
@@ -331,7 +341,7 @@ class AnnotationThread extends EventEmitter {
                 console.error(THREAD_EVENT.deleteError, error.toString());
                 /* eslint-enable no-console */
             });
-    };
+    }
 
     //--------------------------------------------------------------------------
     // Abstract
@@ -363,11 +373,10 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     setup() {
-        const firstAnnotation = this.annotations[0];
-        if (!firstAnnotation) {
-            this.state = STATES.pending;
-        } else {
+        if (this.threadNumber) {
             this.state = STATES.inactive;
+        } else {
+            this.state = STATES.pending;
         }
 
         this.setupElement();
@@ -482,26 +491,25 @@ class AnnotationThread extends EventEmitter {
      * yet been set. Propogate the threadnumber to an attached dialog if applicable.
      *
      * @private
-     * @param {Annotation} tempAnnotation - The locally stored placeholder for the server validated annotation
+     * @param {string} tempAnnotationID - The locally stored placeholder for the server validated annotation
      * @param {Annotation} savedAnnotation - The annotation determined by the backend to be used as the source of truth
      * @return {void}
      */
-    updateTemporaryAnnotation(tempAnnotation, savedAnnotation) {
-        this.annotations = this.annotations.filter(({ id }) => id !== tempAnnotation.id);
-
-        const annotation = this.api.formatAnnotation(savedAnnotation);
-        this.annotations.push(annotation);
-
-        // Set threadNumber if the savedAnnotation is the first annotation of the thread
-        if (!this.threadNumber && annotation && annotation.threadNumber) {
-            this.threadNumber = annotation.threadNumber;
+    updateTemporaryAnnotation(tempAnnotationID, savedAnnotation) {
+        if (this.comments.length > 0) {
+            this.comments = this.comments.filter(({ id }) => id !== tempAnnotationID);
         }
+
+        this.updateAnnotationThread(savedAnnotation);
 
         if (this.isMobile) {
             // Changing state from pending
             this.state = STATES.active;
+        } else {
+            this.state = STATES.inactive;
         }
 
+        this.show();
         this.renderAnnotationPopover();
         this.emit(THREAD_EVENT.save);
     }
@@ -552,7 +560,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     createAnnotation(message) {
-        this.saveAnnotation(TYPES.point, message);
+        this.save(TYPES.point, message);
     }
 
     /**
@@ -582,7 +590,7 @@ class AnnotationThread extends EventEmitter {
      */
     handleThreadSaveError(error, tempAnnotationID) {
         // Remove temporary annotation
-        this.deleteAnnotation(tempAnnotationID, /* useServer */ false);
+        this.delete({ id: tempAnnotationID }, /* useServer */ false);
 
         // Broadcast error
         this.emit(THREAD_EVENT.createError);

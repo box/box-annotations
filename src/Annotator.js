@@ -55,6 +55,7 @@ class Annotator extends EventEmitter {
             apiHost,
             fileId: this.fileId,
             token,
+            permissions: this.permissions,
             anonymousUserName: this.localized.anonymousUserName
         });
 
@@ -309,7 +310,7 @@ class Annotator extends EventEmitter {
     }
 
     /**
-     * Generates a map of thread ID to annotations in thread by page.
+     * Generates a map of annotations by page.
      *
      * @private
      * @param {Object} annotationMap - Annotations to generate map from
@@ -322,21 +323,15 @@ class Annotator extends EventEmitter {
         }
 
         // Generate map of page to annotations
-        Object.keys(annotationMap).forEach((threadID) => {
-            const annotations = annotationMap[threadID];
+        Object.keys(annotationMap).forEach((id) => {
+            const annotation = annotationMap[id];
 
-            // NOTE: Using the last annotation to evaluate if the annotation type
-            // is enabled because highlight comment annotations may have a plain
-            // highlight as the first annotation in the thread.
-            const lastAnnotation = annotations[annotations.length - 1];
-            const { type, location } = lastAnnotation;
-            const controller = this.modeControllers[type];
-            if (!lastAnnotation || !this.isModeAnnotatable(type) || !controller) {
+            const controller = this.modeControllers[annotation.type];
+            if (!controller) {
                 return;
             }
 
-            // Register a valid annotation thread
-            controller.registerThread(annotations, location, type);
+            controller.registerThread(annotation);
         });
     }
 
@@ -427,7 +422,7 @@ class Annotator extends EventEmitter {
 
         thread.state = STATES.active;
         thread.renderAnnotationPopover();
-        thread.saveAnnotation(TYPES.point, commentText);
+        thread.save(TYPES.point, commentText);
 
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;

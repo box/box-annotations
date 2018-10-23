@@ -27,6 +27,7 @@ describe('controllers/PointModeController', () => {
         controller.emit = jest.fn();
         controller.registerThread = jest.fn();
         controller.getLocation = jest.fn();
+        controller.api = { user: {} };
 
         thread = {
             type: 'point',
@@ -221,7 +222,7 @@ describe('controllers/PointModeController', () => {
             controller.pointClickHandler(event);
             expect(controller.registerThread).toBeCalled();
             expect(controller.emit).toBeCalledWith(THREAD_EVENT.pending, 'data');
-            expect(controller.registerThread).toBeCalledWith([], thread.location, 'point');
+            expect(controller.registerThread).toBeCalled();
             expect(thread.show).toBeCalled();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
