@@ -310,7 +310,7 @@ class AnnotationThread extends EventEmitter {
             // If the user doesn't have permission to delete the entire highlight
             // annotation, display the annotation as a plain highlight
             this.cancelFirstComment();
-        } else if (this.type === TYPES.highlight || this.type === TYPES.draw) {
+        } else if (this.type === TYPES.highlight || this.type === TYPES.draw || this.comments.length <= 0) {
             // If this annotation was the last one in the thread, destroy the thread
             this.destroy();
             this.threadID = null;
