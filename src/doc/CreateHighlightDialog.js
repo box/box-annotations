@@ -69,10 +69,7 @@ class CreateHighlightDialog extends EventEmitter {
 
     unmountPopover() {
         this.isVisible = false;
-        const pageEl = shouldDisplayMobileUI(this.container)
-            ? this.container
-            : getPageEl(this.annotatedElement, this.location.page);
-        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        const popoverLayer = this.container.querySelector('.ba-dialog-layer');
         if (this.createPopoverComponent && popoverLayer) {
             unmountComponentAtNode(popoverLayer);
             this.createPopoverComponent = null;
