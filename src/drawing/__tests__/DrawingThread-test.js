@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
 import { STATES } from '../../constants';
+import * as util from '../../util';
 
 let thread;
 
@@ -27,6 +28,7 @@ describe('drawing/DrawingThread', () => {
             type: 'draw'
         });
         expect(thread.state).toEqual(STATES.inactive);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -87,7 +89,6 @@ describe('drawing/DrawingThread', () => {
 
     describe('bindDrawingListeners()', () => {
         beforeEach(() => {
-            thread.isMobile = false;
             thread.hasTouch = false;
             thread.annotatedElement = {
                 addEventListener: jest.fn()
@@ -114,7 +115,7 @@ describe('drawing/DrawingThread', () => {
         });
 
         it('should add only touch listeners for touch enabled mobile devices', () => {
-            thread.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.hasTouch = true;
             thread.bindDrawingListeners();
             expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mousemove', expect.any(Function));

@@ -197,7 +197,7 @@ describe('doc/DocHighlightThread', () => {
 
             thread.handleDraw();
             expect(thread.show).toBeCalled();
-            expect(thread.state).toEqual(STATES.pending_active);
+            expect(thread.state).toEqual(STATES.pending);
             expect(selection.removeAllRanges).toBeCalled();
         });
     });
@@ -205,7 +205,7 @@ describe('doc/DocHighlightThread', () => {
     describe('handleCommentPending()', () => {
         it('should set the thread state to pending active', () => {
             thread.handleCommentPending();
-            expect(thread.state).toEqual(STATES.pending_active);
+            expect(thread.state).toEqual(STATES.pending);
         });
     });
 

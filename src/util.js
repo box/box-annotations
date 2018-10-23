@@ -6,23 +6,13 @@ import {
     PERMISSION_CAN_VIEW_ANNOTATIONS_SELF,
     TYPES,
     SELECTOR_ANNOTATION_CARET,
-    PENDING_STATES,
-    CLASS_ACTIVE,
-    CLASS_ANNOTATION_COMMENT_TEXT,
-    CLASS_HIDDEN,
-    CLASS_INVISIBLE,
     CLASS_DISABLED,
-    CLASS_INVALID_INPUT,
+    CLASS_HIDDEN,
     CLASS_ANNOTATION_DIALOG,
     CLASS_BOX_PREVIEW_HEADER,
-    CLASS_DIALOG_CLOSE,
-    CLASS_MOBILE_DIALOG_HEADER,
-    DATA_TYPE_MOBILE_CLOSE,
     SELECTOR_ANNOTATION_MODE,
     CLASS_ANNOTATION_POINT_MARKER
 } from './constants';
-
-import { ICON_CLOSE } from './icons/icons';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
 const HEADER_CLIENT_VERSION = 'X-Box-Client-Version';
@@ -30,9 +20,6 @@ const HEADER_CLIENT_VERSION = 'X-Box-Client-Version';
 const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
-
-const THREAD_PARAMS = ['comments', 'api', 'fileVersionId', 'locale', 'location', 'type'];
-const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 
 const DESKTOP_MIN_WIDTH = 1025;
 
@@ -230,61 +217,6 @@ export function enableElement(elementOrSelector) {
 }
 
 /**
- * Shows the specified element or element with specified selector.
- *
- * @param {HTMLElement|string} elementOrSelector Element or CSS selector
- * @return {void}
- */
-export function showInvisibleElement(elementOrSelector) {
-    let element = elementOrSelector;
-    if (typeof elementOrSelector === 'string' || elementOrSelector instanceof String) {
-        element = document.querySelector(elementOrSelector);
-    }
-
-    if (element) {
-        element.classList.remove(CLASS_INVISIBLE);
-    }
-}
-
-/**
- * Hides the specified element or element with specified selector. The element
- * will still take up DOM space but not be visible in the UI.
- *
- * @param {HTMLElement|string} elementOrSelector Element or CSS selector
- * @return {void}
- */
-export function hideElementVisibility(elementOrSelector) {
-    let element = elementOrSelector;
-    if (typeof elementOrSelector === 'string' || elementOrSelector instanceof String) {
-        element = document.querySelector(elementOrSelector);
-    }
-
-    if (element) {
-        element.classList.add(CLASS_INVISIBLE);
-    }
-}
-
-/**
- * Reset textarea element - clears value, resets styles, and remove active
- * state.
- *
- * @param {HTMLElement} element Textarea to reset
- * @param {boolean} clearText Whether or not text in text area should be cleared
- * @return {void}
- */
-export function resetTextarea(element, clearText) {
-    const textareaEl = element;
-    textareaEl.style.width = '';
-    textareaEl.style.height = '';
-    textareaEl.classList.remove(CLASS_ACTIVE);
-    textareaEl.classList.remove(CLASS_INVALID_INPUT);
-
-    if (clearText) {
-        textareaEl.value = '';
-    }
-}
-
-/**
  * Checks whether mouse is inside the specified DOM element
  *
  * @private
@@ -366,46 +298,6 @@ export function insertTemplate(node, template, beforeNode = null) {
 }
 
 /**
- * Returns a button HTMLElement with specified information
- *
- * @public
- * @param {string[]} classNames Button CSS class
- * @param {string} title Accessibilty title
- * @param {string} content Button HTML content
- * @param {string} [dataType] Optional data type
- * @return {HTMLElement} Button
- */
-export function generateBtn(classNames, title, content, dataType = '') {
-    const buttonEl = document.createElement('button');
-    classNames.forEach((className) => buttonEl.classList.add(className));
-    buttonEl.title = title;
-    buttonEl.innerHTML = content;
-    buttonEl.setAttribute('data-type', dataType);
-    return buttonEl;
-}
-
-//------------------------------------------------------------------------------
-// Point Utils
-//------------------------------------------------------------------------------
-
-/**
- * Checks whether element is fully in viewport.
- *
- * @param {HTMLElement} element The element to check and see if it lies in the viewport
- * @return {boolean} Whether the element is fully in viewport
- */
-export function isElementInViewport(element) {
-    const dimensions = element.getBoundingClientRect();
-
-    return (
-        dimensions.top >= 0 &&
-        dimensions.left >= 0 &&
-        dimensions.bottom <= window.innerHeight &&
-        dimensions.right <= window.innerWidth
-    );
-}
-
-/**
  * Returns zoom scale of annotated element.
  *
  * @param {HTMLElement} annotatedElement HTML element being annotated on
@@ -414,10 +306,6 @@ export function isElementInViewport(element) {
 export function getScale(annotatedElement) {
     return parseFloat(annotatedElement.getAttribute('data-scale')) || 1;
 }
-
-//------------------------------------------------------------------------------
-// Highlight Utils
-//------------------------------------------------------------------------------
 
 /**
  * Whether or not a highlight annotation has comments or is a plain highlight
@@ -487,22 +375,6 @@ export function getDimensionScale(dimensions, fileDimensions, zoomScale, heightP
 }
 
 /**
- * Escapes HTML.
- *
- * @param {string} str Input string
- * @return {string} HTML escaped string
- */
-export function htmlEscape(str) {
-    return `${str}`
-        .replace(/&/g, '&amp;') // first!
-        .replace(/>/g, '&gt;')
-        .replace(/</g, '&lt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/`/g, '&#96;');
-}
-
-/**
  * Repositions caret if annotations dialog will run off the right or left
  * side of the page. Otherwise positions caret at the center of the
  * annotations dialog and the updated left corner x coordinate.
@@ -547,16 +419,6 @@ export function repositionCaret(dialogEl, dialogX, highlightDialogWidth, browser
 }
 
 /**
- * Checks thread is in a pending or pending-active state
- *
- * @param {string} threadState State of thread
- * @return {boolean} Whether annotation thread is in a pending state
- */
-export function isPending(threadState) {
-    return PENDING_STATES.indexOf(threadState) > -1;
-}
-
-/**
  * Checks whether an annotation thread has valid min/max boundary coordinates
  *
  * @param {AnnotationThread} thread Annotation thread location object
@@ -564,57 +426,6 @@ export function isPending(threadState) {
  */
 export function hasValidBoundaryCoordinates(thread) {
     return !!(isHighlightAnnotation(thread.type) || (thread.minX && thread.minY && thread.maxX && thread.maxY));
-}
-
-/**
- * Checks whether a point annotation thread has the correct location params
- *
- * @param {Object} location Point annotation thread location object
- * @return {boolean} Whether or not the point annotation has the correct location information
- */
-export function isPointLocationValid(location) {
-    return !!(location && location.x && location.y);
-}
-
-/**
- * Checks whether a highlight annotation thread has the correct location params
- *
- * @param {Object} location Highlight annotation thread location object
- * @return {boolean} Whether or not the highlight annotation has the correct location information
- */
-export function isHighlightLocationValid(location) {
-    return !!(location && location.quadPoints);
-}
-
-/**
- * Checks whether a draw annotation thread has the correct location params
- *
- * @param {Object} location Draw annotation thread location object
- * @return {boolean} Whether or not the draw annotation has the correct location information
- */
-export function isDrawLocationValid(location) {
-    return !!(location && location.minX && location.minY && location.maxX && location.maxY);
-}
-
-/**
- * Checks whether annotation thread is valid by checking whether each property
- * in THREAD_PARAMS on the specified file object is defined.
- *
- * @param {Object} thread Annotation thread params to check
- * @return {boolean} Whether or not annotation thread has all the required params
- */
-export function areThreadParamsValid(thread) {
-    if (thread) {
-        if (
-            (thread.type === TYPES.point && !isPointLocationValid(thread.location)) ||
-            (isHighlightAnnotation(thread.type) && !isHighlightLocationValid(thread.location)) ||
-            (thread.type === TYPES.draw && !isDrawLocationValid(thread.location))
-        ) {
-            return false;
-        }
-        return THREAD_PARAMS.every((param) => typeof thread[param] !== 'undefined');
-    }
-    return false;
 }
 
 /**
@@ -725,31 +536,6 @@ export function round(number, precision) {
 }
 
 /**
- * Replaces variable place holders specified between {} in the string with
- * specified custom value. Localizes strings that include variables.
- *
- * @param {string} string String to be interpolated
- * @param {string[]} placeholderValues Custom values to replace into string
- * @return {string} Properly translated string with replaced custom variable
- */
-export function replacePlaceholders(string, placeholderValues) {
-    const regex = /\{\d+\}/g;
-
-    if (!string || !string.length) {
-        return string;
-    }
-
-    return string.replace(regex, (match) => {
-        // extracting the index that is supposed to replace the matched placeholder
-        const placeholderIndex = parseInt(match.replace(/^\D+/g, ''), 10) - 1;
-
-        /* eslint-disable no-plusplus */
-        return placeholderValues[placeholderIndex] ? placeholderValues[placeholderIndex] : match;
-        /* eslint-enable no-plusplus */
-    });
-}
-
-/**
  * Determines whether the user has file permissions to annotate, view (either
  * their own or everyone's) annotations which would allow annotations to at
  * least be fetched for the current file
@@ -767,38 +553,6 @@ export function canLoadAnnotations(permissions) {
     const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
     return !!can_annotate || !!can_view_annotations_all || !!can_view_annotations_self;
-}
-
-/**
- * Creates a paragraph node that preserves newline characters.
- *
- * @param {string} annotationText - Text that belongs to an annotation.
- * @return {HTMLElement} An HTML Element containing newline preserved text.
- */
-export function createCommentTextNode(annotationText) {
-    const newlineList = annotationText.replace(NEWLINE_REGEX, '\n').split('\n');
-    const textEl = document.createElement('p');
-    textEl.classList.add(CLASS_ANNOTATION_COMMENT_TEXT);
-
-    // If newlines are present...
-    if (newlineList.length > 1) {
-        newlineList.forEach((text) => {
-            if (text === '') {
-                // ...Add in <br/> for each one...
-                textEl.appendChild(document.createElement('br'));
-            } else {
-                // ...Otherwise use the text that exists there.
-                const contentEl = document.createElement('p');
-                contentEl.textContent = text;
-                textEl.appendChild(contentEl);
-            }
-        });
-    } else {
-        // Otherwise just use the text
-        textEl.textContent = annotationText;
-    }
-
-    return textEl;
 }
 
 /**
@@ -821,53 +575,6 @@ export function clearCanvas(pageEl, layerClass) {
 }
 
 /**
- * Activates appropriate textarea and adjusts the cursor position on focus
- *
- * @param {HTMLElement} element The DOM element for the current page
- * @return {HTMLElement} textAreaEl
- */
-export function focusTextArea(element) {
-    const textAreaEl = element;
-    if (!textAreaEl) {
-        return textAreaEl;
-    }
-
-    // Activate textarea
-    textAreaEl.classList.add(CLASS_ACTIVE);
-
-    // Move cursor to end of text area
-    if (textAreaEl.selectionStart) {
-        textAreaEl.selectionEnd = textAreaEl.value.length;
-        textAreaEl.selectionStart = textAreaEl.selectionEnd;
-    }
-
-    // Focus the textarea if visible
-    if (isElementInViewport(textAreaEl)) {
-        textAreaEl.focus();
-    }
-
-    return textAreaEl;
-}
-
-/**
- * Generates a blank mobile annotation dialog
- *
- * @return {HTMLElement} Blank mobile annotation dialog
- */
-export function generateMobileDialogEl() {
-    const el = document.createElement('div');
-
-    const headerEl = document.createElement('div');
-    headerEl.classList.add(CLASS_MOBILE_DIALOG_HEADER);
-    el.appendChild(headerEl);
-
-    const closeButtonEl = generateBtn([CLASS_DIALOG_CLOSE], DATA_TYPE_MOBILE_CLOSE, ICON_CLOSE, DATA_TYPE_MOBILE_CLOSE);
-    headerEl.appendChild(closeButtonEl);
-
-    return el;
-}
-
-/**
  * Whether or not the user is currently in an annotation mode other than the
  * specified annotation mode
  *
@@ -877,35 +584,6 @@ export function generateMobileDialogEl() {
  */
 export function isInAnnotationOrMarkerMode(element) {
     return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
-}
-
-/**
- * Calculates the dialog width when visible
- *
- * @param {HTMLElement} dialogEl - Annotation dialog element
- * @return {number} Annotations dialog width
- */
-export function getDialogWidth(dialogEl) {
-    const element = dialogEl;
-
-    // Switches to 'visibility: hidden' to ensure that dialog takes up
-    // DOM space while still being invisible
-    hideElementVisibility(element);
-    showElement(element);
-
-    // Ensure dialog will not be displayed off the page when
-    // calculating the dialog width
-    element.style.left = 0;
-
-    const boundingRect = element.getBoundingClientRect();
-    const dialogWidth = boundingRect.width;
-
-    // Switches back to 'display: none' to so that it no longer takes up place
-    // in the DOM while remaining hidden
-    hideElement(element);
-    showInvisibleElement(element);
-
-    return dialogWidth;
 }
 
 export function findElement(parent, selector, finderMethod) {

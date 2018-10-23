@@ -61,17 +61,6 @@ export function getLocationWithoutRotation(x, y, rotation, imageDimensions, scal
 }
 
 /**
- * Returnsnumber of pixels above the image when it's not rotated
- *
- * @param {HTMLElement} imageEl - HTML element for image
- * @param {boolean} isRotated - Whether or not image is rotated
- * @return {number}number of pixels above the image
- */
-export function getRotatedPadding(imageEl, isRotated) {
-    return isRotated ? imageEl.offsetLeft - (IMAGE_PADDING * 3) / 2 : imageEl.offsetTop;
-}
-
-/**
  * Returns browser coordinates given an annotation location object and
  * the HTML element being annotated on.
  *

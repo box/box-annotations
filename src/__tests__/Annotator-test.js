@@ -95,7 +95,6 @@ describe('Annotator', () => {
         });
 
         it('should set scale and setup annotations', () => {
-            annotator.isMobile = false;
             annotator.init(5);
             expect(annotator.setScale).toBeCalledWith(5);
             expect(annotator.setupAnnotations).toBeCalled();

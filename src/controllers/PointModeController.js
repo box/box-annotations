@@ -6,7 +6,6 @@ import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     THREAD_EVENT,
-    CONTROLLER_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,

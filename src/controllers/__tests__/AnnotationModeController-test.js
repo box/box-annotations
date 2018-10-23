@@ -48,6 +48,9 @@ describe('controllers/AnnotationModeController', () => {
         thread.maxY = 2;
         controller.getLocation = jest.fn();
         controller.annotatedElement = rootElement;
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -558,7 +561,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should render the annotations on every page', () => {
-                util.isPending = jest.fn().mockReturnValue(false);
+                thread.state = STATES.inactive;
                 controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush(),
@@ -575,7 +578,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should destroy any pending annotations on re-render', () => {
-                util.isPending = jest.fn().mockReturnValue(true);
+                thread.state = STATES.pending;
                 controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush()
@@ -591,12 +594,6 @@ describe('controllers/AnnotationModeController', () => {
 
         describe('destroyPendingThreads()', () => {
             beforeEach(() => {
-                util.isPending = jest.fn((state) => {
-                    if (state === STATES.pending) {
-                        return true;
-                    }
-                    return false;
-                });
                 controller.unregisterThread = jest.fn();
                 controller.annotations = {
                     1: {
@@ -615,7 +612,7 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should not destroy and return false if the threads are not pending', () => {
-                thread.state = 'NOT_PENDING';
+                thread.state = STATES.inactive;
                 thread.isDialogVisible = jest.fn().mockReturnValue(false);
                 const destroyed = controller.destroyPendingThreads();
                 expect(destroyed).toBeFalsy();
@@ -624,13 +621,15 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should destroy only pending threads, and return true', () => {
-                thread.state = 'NOT_PENDING';
+                thread.state = STATES.inactive;
+
                 const pendingThread = new AnnotationThread();
                 pendingThread.threadID = '456def';
                 pendingThread.location = { page: 1 };
                 pendingThread.type = 'type';
                 pendingThread.state = STATES.pending;
-                controller.threads[1].all = jest.fn().mockReturnValue([thread, pendingThread]);
+
+                controller.annotations[1].all = jest.fn().mockReturnValue([thread, pendingThread]);
 
                 const destroyed = controller.destroyPendingThreads();
                 expect(destroyed).toBeTruthy();

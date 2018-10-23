@@ -72,7 +72,8 @@ class AnnotationPopover extends React.PureComponent<Props> {
             <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames('ba-popover', {
-                        'ba-inline': !hasComments && (isMobile || !isPending)
+                        'ba-inline': !hasComments && (isMobile || !isPending),
+                        'ba-animate-popover': isMobile
                     })}
                 >
                     {isMobile ? (
@@ -95,7 +96,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
                         )}
-                        <span className='ba-buffer' />
+                        {isMobile && <span className='ba-buffer' />}
                         {canAnnotate && (
                             <ActionControls
                                 id={id}

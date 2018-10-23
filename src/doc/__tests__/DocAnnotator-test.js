@@ -8,7 +8,6 @@ import {
     STATES,
     TYPES,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
     CREATE_EVENT,
     SELECTOR_ANNOTATED_ELEMENT
@@ -132,7 +131,6 @@ describe('doc/DocAnnotator', () => {
                 clientY: y,
                 target: annotator.annotatedEl
             };
-            annotator.isMobile = false;
 
             docUtil.isSelectionPresent = jest.fn().mockReturnValue(true);
             pageEl = {
@@ -150,7 +148,6 @@ describe('doc/DocAnnotator', () => {
                 highlightEls: []
             });
 
-            util.findClosestDataType = jest.fn().mockReturnValue(DATA_TYPE_ANNOTATION_DIALOG);
             util.isInDialog = jest.fn().mockReturnValue(false);
             util.getScale = jest.fn().mockReturnValue(1);
 
@@ -579,7 +576,6 @@ describe('doc/DocAnnotator', () => {
         it('should bind selectionchange event on the document, if on a touch-enabled device and can annotate', () => {
             document.addEventListener = jest.fn();
             annotator.drawEnabled = true;
-            annotator.isMobile = false;
             annotator.hasTouch = true;
             annotator.bindDOMListeners();
             expect(document.addEventListener).toBeCalledWith('selectionchange', annotator.onSelectionChange);
@@ -630,7 +626,7 @@ describe('doc/DocAnnotator', () => {
                 removeEventListener: jest.fn()
             };
             annotator.highlightMousemoveHandler = jest.fn();
-            annotator.isMobile = false;
+
             annotator.hasTouch = false;
         });
 
@@ -753,13 +749,10 @@ describe('doc/DocAnnotator', () => {
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             annotator.highlightCreateHandler = jest.fn();
-            annotator.mouseX = undefined;
-            annotator.mouseY = undefined;
+            annotator.mouseDownEvent = { clientX: 100, clientY: 100 };
         });
 
         it('should call highlightCreateHandler if on desktop and the mouse moved', () => {
-            annotator.mouseX = 100;
-            annotator.mouseY = 100;
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlightCreateHandler).toBeCalled();
         });
@@ -938,8 +931,6 @@ describe('doc/DocAnnotator', () => {
             pageInfo.pageEl.getBoundingClientRect = jest.fn().mockReturnValue(pageRect);
             selection.getRangeAt = jest.fn().mockReturnValue({});
 
-            annotator.isMobile = false;
-
             annotator.highlightCreateHandler(event);
             expect(annotator.createHighlightDialog.show).toBeCalled();
         });
@@ -994,7 +985,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should reset the mobile dialog if no active thread exists', () => {
             annotator.plainHighlightEnabled = true;
-            annotator.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
             annotator.highlightClickHandler(event);
@@ -1007,7 +998,6 @@ describe('doc/DocAnnotator', () => {
             document.getSelection = jest.fn().mockReturnValue({
                 removeAllRanges: jest.fn()
             });
-            annotator.isMobile = false;
 
             annotator.highlightClickHandler(event);
             expect(annotator.resetHighlightSelection).toBeCalled();
@@ -1017,7 +1007,7 @@ describe('doc/DocAnnotator', () => {
     describe('clickThread()', () => {
         beforeEach(() => {
             thread.type = 'something';
-            util.isPending = jest.fn().mockReturnValue(false);
+            thread.state = STATES.inactive;
             util.isHighlightAnnotation = jest.fn().mockReturnValue(false);
 
             annotator.consumed = false;
@@ -1025,13 +1015,13 @@ describe('doc/DocAnnotator', () => {
 
         it('should destroy any pending point annotations', () => {
             thread.type = 'point';
-            util.isPending = jest.fn().mockReturnValue(true);
+            thread.state = STATES.pending;
             annotator.clickThread({}, thread);
             expect(thread.destroy).toBeCalled();
         });
 
         it('should cancel any pending threads that are not point annotations', () => {
-            util.isPending = jest.fn().mockReturnValue(true);
+            thread.state = STATES.pending;
             annotator.clickThread({}, thread);
             expect(thread.cancelFirstComment).toBeCalled();
         });
@@ -1053,7 +1043,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should hide all non-pending mobile dialogs', () => {
-            annotator.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             annotator.clickThread({}, thread);
             expect(thread.unmountPopover).toBeCalled();
         });

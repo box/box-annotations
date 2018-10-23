@@ -206,7 +206,6 @@ class DocHighlightThread extends AnnotationThread {
                 this.draw(HIGHLIGHT_FILL.normal);
                 break;
             case STATES.active:
-            case STATES.pending_active:
                 this.renderAnnotationPopover();
                 this.draw(HIGHLIGHT_FILL.active);
                 break;
@@ -238,7 +237,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     handleDraw() {
-        this.state = STATES.pending_active;
+        this.state = STATES.pending;
         window.getSelection().removeAllRanges();
         this.show();
     }
@@ -250,7 +249,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     handleCommentPending() {
-        this.state = STATES.pending_active;
+        this.state = STATES.pending;
     }
 
     /**

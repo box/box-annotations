@@ -155,6 +155,10 @@ class CreateHighlightDialog extends EventEmitter {
 
     /** @inheritdoc */
     setPosition(selection) {
+        if (!this.selection || !this.selection.rangeCount) {
+            return;
+        }
+
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 

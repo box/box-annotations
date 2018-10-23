@@ -40,6 +40,9 @@ describe('controllers/PointModeController', () => {
 
         controller.annotatedElement = rootElement;
         controller.annotator = new Annotator();
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {

@@ -5,7 +5,6 @@ import noop from 'lodash/noop';
 
 import {
     insertTemplate,
-    isPending,
     replaceHeader,
     hasValidBoundaryCoordinates,
     getPopoverLayer,
@@ -20,7 +19,8 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    BORDER_OFFSET
+    BORDER_OFFSET,
+    STATES
 } from '../constants';
 import AnnotationAPI from '../api/AnnotationAPI';
 
@@ -613,7 +613,7 @@ class AnnotationModeController extends EventEmitter {
         const pageThreads = this.annotations[pageNum].all() || [];
         pageThreads.forEach((thread, index) => {
             // Destroy any pending threads that may exist on re-render
-            if (isPending(thread.state)) {
+            if (thread.state === STATES.pending) {
                 this.unregisterThread(thread);
                 thread.destroy();
                 return;
@@ -645,7 +645,7 @@ class AnnotationModeController extends EventEmitter {
         Object.keys(this.annotations).forEach((pageNum) => {
             const pageThreads = this.annotations[pageNum].all() || [];
             pageThreads.forEach((thread) => {
-                if (isPending(thread.state) || thread.id === this.pendingThreadID) {
+                if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
                     this.unregisterThread(thread);
                     hadPendingThreads = true;
                     this.pendingThreadID = null;

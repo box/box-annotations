@@ -13,7 +13,6 @@ import * as docUtil from './docUtil';
 import {
     STATES,
     TYPES,
-    DATA_TYPE_ANNOTATION_INDICATOR,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
@@ -76,7 +75,6 @@ class DocAnnotator extends Annotator {
 
         if (this.commentHighlightEnabled) {
             this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-            this.createHighlightDialog.removeListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -149,8 +147,7 @@ class DocAnnotator extends Annotator {
             }
 
             // If click is inside an annotation dialog, ignore
-            const dataType = util.findClosestDataType(eventTarget);
-            if (util.isInDialog(event) || dataType === DATA_TYPE_ANNOTATION_INDICATOR) {
+            if (util.isInAnnotationOrMarker(event)) {
                 return location;
             }
 
@@ -291,16 +288,9 @@ class DocAnnotator extends Annotator {
             container: this.container
         });
 
-        this.createHighlightDialog.addListener(CREATE_EVENT.init, () =>
-            this.emit(THREAD_EVENT.pending, TYPES.highlight)
-        );
-
         if (this.commentHighlightEnabled) {
             this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
             this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-
-            this.createHighlightThread = this.createHighlightThread.bind(this);
-            this.createHighlightDialog.addListener(CREATE_EVENT.post, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -779,7 +769,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     clickThread = (event, thread) => {
-        if (util.isPending(thread.state)) {
+        if (thread.state === STATES.pending) {
             // Destroy any pending highlights on click outside the highlight
             if (thread.type === TYPES.point) {
                 thread.destroy();

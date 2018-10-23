@@ -33,6 +33,9 @@ describe('controllers/HighlightModeController', () => {
         thread.location = { page: 1 };
         thread.annotations = {};
         thread.type = TYPES.highlight;
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {

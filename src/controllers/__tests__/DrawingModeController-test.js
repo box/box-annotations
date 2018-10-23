@@ -48,6 +48,9 @@ describe('controllers/DrawingModeController', () => {
         controller.emit = jest.fn();
         controller.annotatedElement = rootElement;
         controller.api = { user: {} };
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -90,7 +93,6 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should bind DOM listeners for desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = false;
             controller.bindDOMListeners();
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('click', expect.any(Function));
@@ -98,7 +100,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should bind DOM listeners for touch enabled mobile devices', () => {
-            controller.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             controller.hasTouch = true;
             controller.bindDOMListeners();
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
@@ -106,7 +108,6 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should bind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = true;
             controller.bindDOMListeners();
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
@@ -120,7 +121,6 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should unbind DOM listeners for desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = false;
             controller.unbindDOMListeners();
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('click', expect.any(Function));
@@ -131,7 +131,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should unbind DOM listeners for touch enabled mobile devices', () => {
-            controller.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             controller.hasTouch = true;
             controller.unbindDOMListeners();
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));
@@ -139,7 +139,6 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should unbind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = true;
             controller.unbindDOMListeners();
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));

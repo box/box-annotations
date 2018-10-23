@@ -15,8 +15,7 @@ import {
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
     POINT_ANNOTATION_ICON_HEIGHT,
     SELECTOR_ANNOTATION_CARET,
-    CLASS_HIDDEN,
-    DATA_TYPE_MOBILE_CLOSE
+    CLASS_HIDDEN
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -448,7 +447,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     cancelUnsavedAnnotation = () => {
-        if (!util.isPending(this.state)) {
+        if (this.state !== STATES.pending) {
             this.unmountPopover();
             return;
         }
@@ -675,34 +674,6 @@ class AnnotationThread extends EventEmitter {
             } else {
                 this.cancelAnnotation();
             }
-        }
-    }
-
-    /**
-     * Click handler on dialog.
-     *
-     * @private
-     * @param {Event} event DOM event
-     * @return {void}
-     */
-    clickHandler(event) {
-        const eventTarget = event.target;
-        const dataType = util.findClosestDataType(eventTarget);
-
-        switch (dataType) {
-            // Clicking 'Cancel' button to cancel the annotation OR
-            // Clicking 'X' button on mobile dialog to close
-            case DATA_TYPE_MOBILE_CLOSE:
-                // @spramod: is the mobile close button still needed?
-                this.hide();
-
-                if (!util.shouldDisplayMobileUI(this.container)) {
-                    // Cancels + destroys the annotation thread
-                    this.cancelAnnotation();
-                }
-                break;
-            default:
-                break;
         }
     }
 
