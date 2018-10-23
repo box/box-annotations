@@ -55,7 +55,7 @@
         display: inline-flex;
     }
 
-    .bcs-comment-input-container {
+    .ba-annotation-input-container {
         border-top: none;
         width: 252px; // Hard-coded width to solve layout issues
     }
@@ -101,7 +101,8 @@
             width: 100%;
         }
 
-        .ba-inline .ba-mobile-header {
+        .ba-inline .ba-mobile-header,
+        .ba-create-popover .ba-mobile-header {
             display: none;
         }
 
@@ -112,6 +113,7 @@
             height: 100%;
         }
 
+        .ba-create-popover .ba-popover-overlay,
         .ba-inline .ba-popover-overlay {
             background: transparent;
         }
@@ -126,7 +128,10 @@
         }
 
         .ba-create-popover .overlay {
+            background: transparent;
+            border-radius: 0;
             justify-content: flex-end;
+            padding: 0;
         }
 
         .ba-inline .overlay {
@@ -138,7 +143,7 @@
             text-align: center;
         }
 
-        .ba-inline .ba-create-popover .overlay {
+        .ba-inline.ba-create-popover .overlay {
             border: none;
             box-shadow: none;
             display: flex;
@@ -159,6 +164,10 @@
             width: 45%;
         }
 
+        .ba-create-popover .ba-mobile-header {
+            display: flex;
+        }
+
         .ba-popover.ba-inline {
             border: none;
             width: 100%;
@@ -166,6 +175,14 @@
 
         .ba-inline .ba-mobile-header {
             display: none;
+        }
+
+        .ba-create-popover {
+            background: white;
+        }
+
+        .ba-inline.ba-create-popover {
+            background: transparent;
         }
     }
 }

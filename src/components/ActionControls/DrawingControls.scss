@@ -30,6 +30,13 @@
 
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
+        .ba-inline .ba-action-controls-draw {
+            border-top: 1px solid #bdc3c7;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            margin: 0;
+            padding: 15px;
+        }
+
         .ba-action-controls-draw .btn-plain {
             padding: 10px;
         }

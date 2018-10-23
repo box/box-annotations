@@ -75,6 +75,7 @@ class DocAnnotator extends Annotator {
 
         if (this.commentHighlightEnabled) {
             this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
+            this.createHighlightDialog.removeListener(CREATE_EVENT.commentPost, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -285,12 +286,15 @@ class DocAnnotator extends Annotator {
             allowComment: this.commentHighlightEnabled,
             allowHighlight: this.plainHighlightEnabled,
             localized: this.localized,
-            container: this.container
+            container: this.container,
+            headerHeight: this.headerElement.clientHeight
         });
 
         if (this.commentHighlightEnabled) {
             this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
             this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
+            this.createHighlightThread = this.createHighlightThread.bind(this);
+            this.createHighlightDialog.addListener(CREATE_EVENT.commentPost, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
@@ -397,6 +401,7 @@ class DocAnnotator extends Annotator {
         if (this.createHighlightDialog.isVisible && !this.createHighlightDialog.isInHighlight(mouseEvent)) {
             mouseEvent.stopPropagation();
             mouseEvent.preventDefault();
+            this.highlighter.removeAllHighlights();
             this.resetHighlightSelection(mouseEvent);
             return;
         }
@@ -495,7 +500,6 @@ class DocAnnotator extends Annotator {
         }
 
         thread.state = STATES.active;
-        thread.show();
         thread.save(highlightType, commentText);
         this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
         return thread;

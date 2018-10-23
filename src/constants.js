@@ -220,7 +220,8 @@ export const CONTROLLER_EVENT = {
 
 export const CREATE_EVENT = {
     plain: 'plain_highlight_create',
-    comment: 'comment_highlight_edit'
+    comment: 'comment_highlight_edit',
+    commentPost: 'comment_highlight_create'
 };
 
 export const ERROR_TYPE = {

@@ -68,13 +68,15 @@ class AnnotationPopover extends React.PureComponent<Props> {
             headerHeight
         } = this.props;
         const hasComments = comments.length > 0;
+        const isInline = !hasComments && (type === TYPES.highlight || type === TYPES.draw);
 
         return (
             <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames('ba-popover', {
-                        'ba-inline': !hasComments && (type === TYPES.highlight || type === TYPES.draw),
-                        'ba-animate-popover': isMobile
+                        'ba-inline': isInline,
+                        'ba-animate-popover': isMobile,
+                        'ba-create-popover': isPending
                     })}
                 >
                     {isMobile ? (
@@ -87,17 +89,13 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         <span className='ba-popover-caret' />
                     )}
 
-                    <Overlay
-                        className={classNames('ba-popover-overlay', {
-                            'ba-create-popover': isPending
-                        })}
-                    >
+                    <Overlay className='ba-popover-overlay'>
                         {hasComments ? (
                             <CommentList comments={comments} onDelete={onDelete} />
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
                         )}
-                        {isMobile && <span className='ba-buffer' />}
+                        {isMobile && (isInline || isPending) && <span className='ba-buffer' />}
                         {canAnnotate && (
                             <ActionControls
                                 id={id}

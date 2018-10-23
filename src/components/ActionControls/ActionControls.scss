@@ -2,27 +2,42 @@
 
 .ba {
     .ba-action-controls {
+        background: white;
         color: $fours;
         white-space: normal;
     }
 
-    // MOBILE & TABLET CSS
-    @media #{$mobile}, #{$tablet} {
+    // TABLET-SPECIFIC CSS
+    @media #{$tablet} {
+        .ba-create-popover .ba-action-controls {
+            border: none;
+            box-shadow: none;
+        }
+
+        .ba-annotation-input-container {
+            padding: 15px;
+            width: 100%;
+        }
+    }
+
+    // MOBILE CSS
+    @media #{$mobile} {
         .ba-action-controls {
+            background: white;
             justify-content: flex-end;
             width: 100%;
         }
 
-        .ba-inline .ba-action-controls {
-            background: white;
-            border-top: 1px solid #bdc3c7;
-            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+        .ba-annotation-input-container,
+        .ba-create-popover .ba-annotation-input-container {
             margin: 0;
             padding: 15px;
+            width: 100%;
         }
 
-        .bcs-comment-input-container {
-            width: 100%;
+        .ba-create-popover .ba-annotation-input-container {
+            border-top: 1px solid #bdc3c7;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
         }
     }
 }

@@ -153,13 +153,7 @@ class AnnotationThread extends EventEmitter {
             event.preventDefault();
         }
 
-        const isPending = !this.threadNumber;
-        if (isPending) {
-            this.state = STATES.pending;
-        } else {
-            this.state = STATES.active;
-        }
-
+        const isPending = this.state === STATES.pending;
         this.onCommentClick = this.onCommentClick.bind(this);
         this.save = this.save.bind(this);
         this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
@@ -222,13 +216,11 @@ class AnnotationThread extends EventEmitter {
                 can_delete: true
             },
             createdBy: this.api.user,
-            createdAt: new Date().toLocaleString(),
-            isPending: true
+            createdAt: new Date().toLocaleString()
         });
 
-        this.renderAnnotationPopover();
-
         this.state = STATES.inactive;
+        this.renderAnnotationPopover();
 
         // Save annotation on server
         return this.api

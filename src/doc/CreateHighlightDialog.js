@@ -61,6 +61,7 @@ class CreateHighlightDialog extends EventEmitter {
         this.localized = config.localized;
         this.allowHighlight = config.allowHighlight || false;
         this.allowComment = config.allowComment || false;
+        this.headerHeight = config.headerHeight;
     }
 
     destroy() {
@@ -131,6 +132,7 @@ class CreateHighlightDialog extends EventEmitter {
                 onCommentClick={this.onCommentClick}
                 isPending={true}
                 isMobile={shouldDisplayMobileUI(this.container)}
+                headerHeight={this.headerHeight}
             />,
             popoverLayer
         );
@@ -227,7 +229,10 @@ class CreateHighlightDialog extends EventEmitter {
     onCreate = (type, message) => {
         if (!message) {
             this.emit(CREATE_EVENT.plain);
+            return;
         }
+
+        this.emit(CREATE_EVENT.commentPost, message);
     };
 
     /**
@@ -238,7 +243,6 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     onCommentClick = () => {
-        // this.onCreate(TYPES.highlight);
         this.emit(CREATE_EVENT.comment);
         this.renderAnnotationPopover(TYPES.highlight_comment);
     };
