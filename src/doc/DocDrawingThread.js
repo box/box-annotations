@@ -306,6 +306,8 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     drawBoundary = () => {
+        super.drawBoundary();
+
         if (!this.location.page) {
             return;
         }

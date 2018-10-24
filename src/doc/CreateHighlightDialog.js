@@ -127,7 +127,7 @@ class CreateHighlightDialog extends EventEmitter {
                 canDelete={true}
                 position={this.updatePosition}
                 onDelete={noop}
-                onCancel={this.onCancel}
+                onCancel={this.onCommentCancel}
                 onCreate={this.onCreate}
                 onCommentClick={this.onCommentClick}
                 isPending={true}
@@ -239,12 +239,20 @@ class CreateHighlightDialog extends EventEmitter {
      * Fire an event notifying that the comment button has been clicked. Also
      * show the comment box, and give focus to the text area conatined by it.
      *
-     * @param {Event} event - The DOM event coming from interacting with the element.
      * @return {void}
      */
     onCommentClick = () => {
         this.emit(CREATE_EVENT.comment);
         this.renderAnnotationPopover(TYPES.highlight_comment);
+    };
+
+    /**
+     * Cancels adding a comment to the highlgiht annotation by rendering a plain highlight popover
+     *
+     * @return {void}
+     */
+    onCommentCancel = () => {
+        this.renderAnnotationPopover(TYPES.highlight);
     };
 }
 

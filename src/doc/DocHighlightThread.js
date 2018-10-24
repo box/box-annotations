@@ -45,7 +45,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     cancelFirstComment() {
         // Reset type from highlight-comment to highlight
-        if (util.isPlainHighlight(this.comments)) {
+        if (this.comments.length <= 0) {
             this.type = TYPES.highlight;
         }
 
@@ -61,6 +61,11 @@ class DocHighlightThread extends AnnotationThread {
         }
     }
 
+    /** @inheritdoc */
+    cancelUnsavedAnnotation = () => {
+        this.cancelFirstComment();
+    };
+
     /**
      * [destructor]
      *
@@ -68,6 +73,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     destroy() {
+        this.threadID = null;
         this.emit(THREAD_EVENT.render, this.location.page);
         super.destroy();
 
