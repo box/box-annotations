@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI } from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
-import { STATES } from '../constants';
+import { STATES, SELECTOR_CLASS_ANNOTATION_POPOVER } from '../constants';
 
 const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -54,7 +54,11 @@ class DocPointThread extends AnnotationThread {
 
         const pageEl = this.getPopoverParent();
 
-        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         const pageDimensions = pageEl.getBoundingClientRect();

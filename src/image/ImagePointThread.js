@@ -6,7 +6,8 @@ import {
     ANNOTATION_POPOVER_CARET_HEIGHT,
     POINT_ANNOTATION_ICON_WIDTH,
     POINT_ANNOTATION_ICON_HEIGHT,
-    POINT_ANNOTATION_ICON_DOT_HEIGHT
+    POINT_ANNOTATION_ICON_DOT_HEIGHT,
+    SELECTOR_CLASS_ANNOTATION_POPOVER
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
@@ -59,7 +60,11 @@ class ImagePointThread extends AnnotationThread {
             return;
         }
 
-        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
 

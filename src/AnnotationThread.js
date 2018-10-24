@@ -17,7 +17,8 @@ import {
     SELECTOR_ANNOTATION_CARET,
     STATES,
     THREAD_EVENT,
-    TYPES
+    TYPES,
+    SELECTOR_CLASS_ANNOTATION_POPOVER
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -682,7 +683,11 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     flipDialog(yPos, containerHeight) {
-        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = util.findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const annotationCaretEl = popoverEl.querySelector(SELECTOR_ANNOTATION_CARET);
         let top = '';
         let bottom = '';
@@ -744,7 +749,11 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     fitDialogHeightInPage() {
-        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = util.findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const maxHeight = this.container.clientHeight / 2 - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         popoverEl.style.maxHeight = `${maxHeight}px`;
     }

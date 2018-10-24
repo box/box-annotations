@@ -48,6 +48,8 @@ export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
 export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
 
 // Dialog CSS constants
+export const CLASS_ANNOTATION_POPOVER = 'ba-popover';
+export const SELECTOR_CLASS_ANNOTATION_POPOVER = `.${CLASS_ANNOTATION_POPOVER}`;
 export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
 export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
