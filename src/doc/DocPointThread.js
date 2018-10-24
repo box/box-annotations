@@ -74,7 +74,7 @@ class DocPointThread extends AnnotationThread {
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;
 
-        popoverEl.style.top = dialogTopY;
+        popoverEl.style.top = `${dialogTopY}px`;
     };
 }
 

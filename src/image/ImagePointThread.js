@@ -1,16 +1,29 @@
 import AnnotationThread from '../AnnotationThread';
 import { showElement, shouldDisplayMobileUI, repositionCaret, findElement } from '../util';
 import { getBrowserCoordinatesFromLocation } from './imageUtil';
-import { STATES } from '../constants';
-
-const POINT_ANNOTATION_ICON_HEIGHT = 31;
-const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
-const POINT_ANNOTATION_ICON_WIDTH = 24;
+import {
+    STATES,
+    ANNOTATION_POPOVER_CARET_HEIGHT,
+    POINT_ANNOTATION_ICON_WIDTH,
+    POINT_ANNOTATION_ICON_HEIGHT,
+    POINT_ANNOTATION_ICON_DOT_HEIGHT
+} from '../constants';
 
 class ImagePointThread extends AnnotationThread {
     //--------------------------------------------------------------------------
     // Abstract Implementations
     //--------------------------------------------------------------------------
+
+    /**
+     * Gets the popover parent for image point threads. The popover parent
+     * should not the image element but rather the annotatedElement
+     *
+     * @override
+     * @return {HTMLElement} The correct parent based on mobile view or not
+     */
+    getPopoverParent() {
+        return shouldDisplayMobileUI(this.container) ? this.container : this.annotatedElement;
+    }
 
     /**
      * Shows the annotation indicator.
@@ -54,11 +67,15 @@ class ImagePointThread extends AnnotationThread {
         const imageEl = this.getPopoverParent();
 
         // Center middle of dialog with point - this coordinate is with respect to the page
-        const threadIconLeftX = this.threadEl.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
+        const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
         // Adjusts Y position for transparent top border
-        const dialogTopY = this.threadEl.offsetTop + POINT_ANNOTATION_ICON_HEIGHT;
+        const dialogTopY =
+            this.element.offsetTop +
+            POINT_ANNOTATION_ICON_HEIGHT +
+            POINT_ANNOTATION_ICON_DOT_HEIGHT +
+            ANNOTATION_POPOVER_CARET_HEIGHT;
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing

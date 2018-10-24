@@ -6,16 +6,18 @@ import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
-    STATES,
-    TYPES,
+    ANNOTATION_POPOVER_CARET_HEIGHT,
     CLASS_ANNOTATION_POINT_MARKER,
-    DATA_TYPE_ANNOTATION_INDICATOR,
-    THREAD_EVENT,
     CLASS_FLIPPED_DIALOG,
+    CLASS_HIDDEN,
+    DATA_TYPE_ANNOTATION_INDICATOR,
+    PAGE_PADDING_BOTTOM,
+    PAGE_PADDING_TOP,
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
-    POINT_ANNOTATION_ICON_HEIGHT,
     SELECTOR_ANNOTATION_CARET,
-    CLASS_HIDDEN
+    STATES,
+    THREAD_EVENT,
+    TYPES
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -680,8 +682,8 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     flipDialog(yPos, containerHeight) {
-        const iconPadding = POINT_ANNOTATION_ICON_HEIGHT - POINT_ANNOTATION_ICON_DOT_HEIGHT / 2;
-        const annotationCaretEl = this.element.querySelector(SELECTOR_ANNOTATION_CARET);
+        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const annotationCaretEl = popoverEl.querySelector(SELECTOR_ANNOTATION_CARET);
         let top = '';
         let bottom = '';
 
@@ -690,16 +692,16 @@ class AnnotationThread extends EventEmitter {
             top = `${yPos - POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
             bottom = '';
 
-            this.element.classList.remove(CLASS_FLIPPED_DIALOG);
+            popoverEl.classList.remove(CLASS_FLIPPED_DIALOG);
 
             annotationCaretEl.style.bottom = '';
         } else {
             // Flip dialog to above the icon if in the lower half of the viewport
-            const flippedY = containerHeight - yPos - iconPadding;
+            const flippedY = containerHeight - yPos + ANNOTATION_POPOVER_CARET_HEIGHT;
             top = '';
             bottom = `${flippedY}px`;
 
-            this.element.classList.add(CLASS_FLIPPED_DIALOG);
+            popoverEl.classList.add(CLASS_FLIPPED_DIALOG);
 
             // Adjust dialog caret
             annotationCaretEl.style.top = '';
@@ -733,6 +735,18 @@ class AnnotationThread extends EventEmitter {
         } else {
             this.threadEl.classList.add(CLASS_FLIPPED_DIALOG);
         }
+    }
+
+    /**
+     * Set max height for dialog to prevent the dialog from being cut off
+     *
+     * @private
+     * @return {void}
+     */
+    fitDialogHeightInPage() {
+        const popoverEl = util.findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const maxHeight = this.container.clientHeight / 2 - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+        popoverEl.style.maxHeight = `${maxHeight}px`;
     }
 }
 

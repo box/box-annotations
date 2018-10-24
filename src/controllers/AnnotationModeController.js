@@ -3,14 +3,7 @@ import rbush from 'rbush';
 import EventEmitter from 'events';
 import noop from 'lodash/noop';
 
-import {
-    insertTemplate,
-    replaceHeader,
-    hasValidBoundaryCoordinates,
-    getPopoverLayer,
-    getPageEl,
-    shouldDisplayMobileUI
-} from '../util';
+import { insertTemplate, replaceHeader, hasValidBoundaryCoordinates, shouldDisplayMobileUI } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -601,11 +594,6 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: string) {
-        const pageEl = shouldDisplayMobileUI(this.container)
-            ? this.container
-            : getPageEl(this.annotatedElement, pageNum);
-        getPopoverLayer(pageEl);
-
         if (!this.annotations || !this.annotations[pageNum]) {
             return;
         }
