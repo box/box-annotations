@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import AnnotationPopover from '../AnnotationPopover';
+import { TYPES } from '../../../constants';
 
 const fnMock = jest.fn();
 
@@ -54,14 +55,19 @@ describe('components/AnnotationPopover', () => {
     });
 
     test('should render a view-only annotation with a annotator label and no comments', () => {
-        const wrapper = render();
+        const wrapper = render({
+            comments: [],
+            type: TYPES.highlight
+        });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline').length).toEqual(1);
     });
 
     test('should correctly render an annotation with a annotator label and no comments', () => {
         const wrapper = render({
-            canAnnotate: true
+            canAnnotate: true,
+            comments: [],
+            type: TYPES.highlight
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline').length).toEqual(1);

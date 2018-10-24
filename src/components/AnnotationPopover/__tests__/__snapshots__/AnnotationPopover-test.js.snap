@@ -3,13 +3,13 @@
 exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
 <Internationalize>
   <div
-    className="ba-popover"
+    className="ba-popover ba-create-popover"
   >
     <span
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay ba-create-popover"
+      className="ba-popover-overlay"
     >
       <AnnotatorLabel
         isPending={true}
@@ -242,6 +242,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
     >
       <AnnotatorLabel
         isPending={false}
+        type="highlight"
       />
       <ActionControls
         canComment={false}
@@ -288,6 +289,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
             ],
           }
         }
+        type="highlight"
       />
     </Overlay>
   </div>
@@ -307,6 +309,7 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
     >
       <AnnotatorLabel
         isPending={false}
+        type="highlight"
       />
     </Overlay>
   </div>

@@ -37,7 +37,7 @@
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
         .ba-inline .ba-action-controls-highlight {
-            border-top: 1px solid #bdc3c7;
+            border-top: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
             margin: 0;
             padding: 15px;

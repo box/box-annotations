@@ -555,39 +555,48 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         describe('renderPage()', () => {
-            it('should do nothing if no threads exist', () => {
-                controller.renderPage(1);
-                expect(thread.show).not.toBeCalled();
-            });
+            const thread2 = new AnnotationThread();
 
-            it('should render the annotations on every page', () => {
-                thread.state = STATES.inactive;
+            beforeEach(() => {
                 controller.annotations = {
                     // eslint-disable-next-line new-cap
                     1: new rbush(),
                     // eslint-disable-next-line new-cap
                     2: new rbush()
                 };
+                thread.state = STATES.inactive;
+                thread2.state = STATES.inactive;
+                controller.pendingThreadID = '9999';
+            });
+
+            it('should do nothing if no threads exist', () => {
+                controller.renderPage(1);
+                expect(thread.show).not.toBeCalled();
+            });
+
+            it('should render the annotations on page 1', () => {
                 controller.annotations[1].insert(thread);
-                controller.annotations[2].insert(thread);
+                controller.annotations[2].insert(thread2);
 
                 controller.renderPage(1);
-                expect(thread.show).toHaveBeenCalledTimes(1);
-                expect(thread.destroy).not.toBeCalled();
+                expect(thread.reset).toBeCalled();
+                expect(thread2.reset).not.toBeCalled();
                 expect(thread.unmountPopover).toBeCalled();
+                expect(thread2.unmountPopover).not.toBeCalled();
+                expect(thread.show).toBeCalled();
+                expect(thread2.show).not.toBeCalled();
+                expect(thread2.destroy).not.toBeCalled();
             });
 
             it('should destroy any pending annotations on re-render', () => {
                 thread.state = STATES.pending;
-                controller.annotations = {
-                    // eslint-disable-next-line new-cap
-                    1: new rbush()
-                };
                 controller.annotations[1].insert(thread);
+                controller.annotations[2].insert(thread2);
 
                 controller.renderPage(1);
                 expect(thread.show).not.toBeCalled();
-                expect(thread.destroy).toHaveBeenCalledTimes(1);
+                expect(thread.destroy).toBeCalled();
+                expect(thread2.destroy).not.toBeCalled();
                 expect(thread.unmountPopover).not.toBeCalled();
             });
         });

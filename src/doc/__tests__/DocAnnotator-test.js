@@ -73,6 +73,7 @@ describe('doc/DocAnnotator', () => {
             }
         });
 
+        annotator.headerElement = document.createElement('div');
         annotator.annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
         annotator.threads = {};
         annotator.modeControllers = {};
@@ -405,7 +406,6 @@ describe('doc/DocAnnotator', () => {
             annotator.modeControllers = { highlight: controller };
             expect(annotator.createHighlightThread()).toStrictEqual(thread);
             expect(controller.registerThread).toBeCalled();
-            expect(thread.show).toBeCalled();
         });
     });
 

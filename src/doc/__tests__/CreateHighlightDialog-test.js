@@ -158,11 +158,9 @@ describe('doc/CreateHighlightDialog', () => {
 
     describe('onCommentClick()', () => {
         it('should create a plain highlight and render the popover', () => {
-            dialog.onCreate = jest.fn();
             dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
             expect(dialog.emit).toBeCalledWith(CREATE_EVENT.comment);
             expect(dialog.renderAnnotationPopover).toBeCalled();
-            expect(dialog.onCreate).toBeCalledWith(TYPES.highlight);
         });
     });
 });

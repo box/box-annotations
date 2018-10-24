@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+import rbush from 'rbush';
 import HighlightModeController from '../HighlightModeController';
 import * as util from '../../util';
 import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '../../constants';
@@ -118,6 +119,10 @@ describe('controllers/HighlightModeController', () => {
     describe('renderPage()', () => {
         beforeEach(() => {
             util.clearCanvas = jest.fn();
+            controller.annotations = {
+                // eslint-disable-next-line new-cap
+                1: new rbush()
+            };
         });
 
         it('should do nothing if no threads exist', () => {
@@ -127,11 +132,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on the specified page', () => {
-            controller.annotations = {
-                1: {
-                    all: jest.fn().mockReturnValue([thread])
-                }
-            };
+            controller.annotations.insert(thread);
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalled();
             expect(thread.show).toBeCalled();
