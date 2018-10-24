@@ -117,25 +117,14 @@ describe('controllers/HighlightModeController', () => {
     });
 
     describe('renderPage()', () => {
-        beforeEach(() => {
+        it('should clear the canvas on the specified page', () => {
             util.clearCanvas = jest.fn();
             controller.annotations = {
                 // eslint-disable-next-line new-cap
                 1: new rbush()
             };
-        });
-
-        it('should do nothing if no threads exist', () => {
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).not.toBeCalled();
-        });
-
-        it('should render the annotations on the specified page', () => {
-            controller.annotations.insert(thread);
-            controller.renderPage(1);
-            expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).toBeCalled();
         });
     });
 });

@@ -402,27 +402,14 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('renderPage()', () => {
-        beforeEach(() => {
+        it('should clear both canvases on the specified page', () => {
             util.clearCanvas = jest.fn();
             controller.annotations = {
                 // eslint-disable-next-line new-cap
                 1: new rbush()
             };
-        });
-
-        it('should do nothing if no threads exist or none are on the specified page', () => {
             controller.renderPage(1);
-            controller.renderPage(2);
             expect(util.clearCanvas).toBeCalledTwice;
-            expect(thread.show).not.toBeCalled();
-        });
-
-        it('should render the annotations on every page', () => {
-            controller.annotations.insert(thread);
-
-            controller.renderPage(1);
-            expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).toHaveBeenCalledTimes(1);
         });
     });
 
