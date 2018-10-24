@@ -1,5 +1,12 @@
 import AnnotationThread from '../AnnotationThread';
-import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI } from '../util';
+import {
+    getPageEl,
+    showElement,
+    findElement,
+    repositionCaret,
+    shouldDisplayMobileUI,
+    findClosestElWithClass
+} from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
 import { STATES, SELECTOR_CLASS_ANNOTATION_POPOVER } from '../constants';
 
@@ -7,6 +14,7 @@ const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
 const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
+const POINT_ANNOTATION_CARET_HEIGHT = 8.5;
 
 class DocPointThread extends AnnotationThread {
     //--------------------------------------------------------------------------
@@ -67,17 +75,44 @@ class DocPointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
+        let isOnTop = false;
+        // Determine if element position is in the top or bottom half of the viewport
+        // Get the height of the scrolling container (bp-is-scrollable)
+        const scrollingContainerEl = findClosestElWithClass(pageEl, 'bp-is-scrollable');
+        // get the scrolltop of the scrolling container
+        if (scrollingContainerEl) {
+            const { scrollTop } = scrollingContainerEl;
+            const containerHeight = scrollingContainerEl.getBoundingClientRect().height;
+            // calculate the visible portion of the content
+            // calculate the top and bottom halves of the visible portion of the content
+            const visibleTop = scrollTop;
+            const visibleBottom = scrollTop + containerHeight;
+            // determine whether point icon is in top or bottom half
+            const visibleMiddle = visibleTop + (visibleBottom - visibleTop) / 2;
+            // if bottom half, then subtract popover height
+            isOnTop = this.element.offsetTop > visibleMiddle;
+        }
+        const heightOffset = isOnTop
+            ? popoverEl.getBoundingClientRect().height + POINT_ANNOTATION_ICON_HEIGHT + POINT_ANNOTATION_CARET_HEIGHT
+            : 0;
+
         // Adjusts Y position for transparent top border
-        const dialogTopY = this.element.offsetTop + POINT_ANNOTATION_ICON_HEIGHT;
+        const dialogTopY = this.element.offsetTop + POINT_ANNOTATION_ICON_HEIGHT - heightOffset;
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
-        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageDimensions.width);
+        dialogLeftX = repositionCaret(
+            popoverEl,
+            dialogLeftX,
+            dialogWidth,
+            threadIconLeftX,
+            pageDimensions.width,
+            !!heightOffset
+        );
 
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;
-
         popoverEl.style.top = `${dialogTopY}px`;
     };
 }

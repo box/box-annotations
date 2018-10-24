@@ -185,7 +185,6 @@ class AnnotationThread extends EventEmitter {
             />,
             util.getPopoverLayer(pageEl)
         );
-        this.position();
     }
 
     unmountPopover() {
