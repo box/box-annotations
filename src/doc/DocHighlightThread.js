@@ -47,7 +47,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     cancelFirstComment() {
         // Reset type from highlight-comment to highlight
-        if (util.isPlainHighlight(this.comments)) {
+        if (this.comments.length <= 0) {
             this.type = TYPES.highlight;
         }
 
@@ -63,6 +63,11 @@ class DocHighlightThread extends AnnotationThread {
         }
     }
 
+    /** @inheritdoc */
+    cancelUnsavedAnnotation = () => {
+        this.cancelFirstComment();
+    };
+
     /**
      * [destructor]
      *
@@ -70,6 +75,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     destroy() {
+        this.threadID = null;
         this.emit(THREAD_EVENT.render, this.location.page);
         super.destroy();
 
@@ -543,6 +549,53 @@ class DocHighlightThread extends AnnotationThread {
         }
         super.keydownHandler(event);
     }
+
+    /** @inheritdoc */
+    cleanupAnnotationOnDelete(annotationIDToRemove) {
+        // Delete matching comment from annotation
+        this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
+
+        if (this.type === TYPES.highlight_comment && this.comments.length < 0) {
+            this.type = TYPES.highlight;
+
+            // If the user doesn't have permission to delete the entire highlight
+            // annotation, display the annotation as a plain highlight
+            if (!this.canDelete) {
+                this.cancelFirstComment();
+            }
+        }
+
+        if (this.canDelete && (this.type === TYPES.highlight || this.comments.length <= 0)) {
+            // If this annotation was the last one in the thread, destroy the thread
+            this.destroy();
+            this.threadID = null;
+        } else {
+            // Otherwise, display annotation with deleted comment
+            this.renderAnnotationPopover();
+        }
+    }
+
+    /** @inheritdoc */
+    deleteSuccessHandler = () => {
+        // Ensures that blank highlight comment is also deleted when removing
+        // the last comment on a highlight
+        if (this.threadID && this.type === TYPES.highlight && this.canDelete) {
+            this.api.delete(this.id).then(() => {
+                // Broadcast thread cleanup if needed
+                if (!this.threadID) {
+                    this.emit(THREAD_EVENT.reset);
+                } else {
+                    // Broadcast annotation deletion event
+                    this.emit(THREAD_EVENT.delete);
+                }
+
+                this.threadID = null;
+            });
+        }
+
+        // Broadcast annotation deletion event
+        this.emit(THREAD_EVENT.delete);
+    };
 }
 
 export default DocHighlightThread;

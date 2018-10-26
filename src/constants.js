@@ -204,7 +204,8 @@ export const THREAD_EVENT = {
     cancel: 'annotationcanceled',
     createError: 'annotationcreateerror',
     show: 'annotationshow',
-    hide: 'annotationhide'
+    hide: 'annotationhide',
+    reset: 'annotationreset'
 };
 
 export const CONTROLLER_EVENT = {

@@ -362,7 +362,14 @@ class DrawingThread extends AnnotationThread {
         });
     }
 
-    drawBoundary() {}
+    /**
+     * Clears any existing boundaries and re-redraws a new boundary around the drawing annotation
+     *
+     * @return {void}
+     */
+    drawBoundary() {
+        this.clearBoundary();
+    }
 
     /**
      * Draw the pending path onto the DrawingThread CanvasContext. Should be used
@@ -479,6 +486,12 @@ class DrawingThread extends AnnotationThread {
             createdBy: this.api.user,
             thread: this.threadNumber
         };
+    }
+
+    /** @inheritdoc */
+    cleanupAnnotationOnDelete() {
+        this.destroy();
+        this.threadID = null;
     }
 }
 
