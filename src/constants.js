@@ -48,12 +48,14 @@ export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
 export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
 
 // Dialog CSS constants
+export const CLASS_ANNOTATION_POPOVER = 'ba-popover';
+export const SELECTOR_CLASS_ANNOTATION_POPOVER = `.${CLASS_ANNOTATION_POPOVER}`;
 export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
 export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
 
-export const CLASS_FLIPPED_DIALOG = 'ba-annotation-dialog-flipped';
+export const CLASS_FLIPPED_POPOVER = 'ba-popover-flipped';
 
 // Highlight dialog CSS constants
 export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';

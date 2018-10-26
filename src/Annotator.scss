@@ -86,17 +86,66 @@
     }
 }
 
-.ba-point-annotation-marker.ba-annotation-dialog-flipped {
-    path,
-    rect {
-        display: none;
+//------------------------------------------------------------------------------
+// CSS for highlights
+//------------------------------------------------------------------------------
+.ba-highlight-dialog {
+    border-top: 20px solid transparent; // Transparent border for hover detection
+    color: $fours;
+    display: table;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: absolute;
+    z-index: 130;
+}
+
+.ba-annotation-drawing-dialog,
+.ba-annotation-highlight-dialog,
+.ba-annotation-highlight-dialog:hover {
+    background-color: $white;
+    border: 1px solid $seesee;
+    border-radius: 3px;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 5px 6px;
+
+    // Center buttons
+    .ba-add-highlight-btn {
+        padding-top: 1px;
+    }
+
+    .ba-highlight-comment-btn {
+        padding-top: 3px;
+    }
+
+    .ba-btn-annotate-draw-add,
+    .ba-btn-annotate-draw-delete {
+        color: lighten($better-black, 10%);
+        padding: 8px;
+
+        &:hover,
+        &:active {
+            color: $better-black;
+            padding: 8px;
+        }
+    }
+
+    .ba-btn-annotate-draw-delete,
+    .ba-btn-annotate-draw-delete:active,
+    .ba-btn-annotate-draw-delete:hover,
+    .ba-btn-annotate-draw-add,
+    .ba-btn-annotate-draw-add:active,
+    .ba-btn-annotate-draw-add:hover {
+        font-size: 13px;
+        margin-top: -3px;
+        padding: 4px;
     }
 }
 
-.ba-annotation-dialog-flipped {
-    .ba-annotation-caret {
-        transform: rotate(180deg);
-    }
+.ba-create-highlight-comment {
+    background-color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px 9px;
+    white-space: normal;
 }
 
 .bp-use-default-cursor {

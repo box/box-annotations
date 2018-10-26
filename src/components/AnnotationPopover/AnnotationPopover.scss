@@ -10,7 +10,7 @@
 
     .ba-popover-caret {
         left: 50%;
-        position: relative;
+        position: absolute;
         z-index: 3;
 
         // CSS arrow for caret above container
@@ -43,7 +43,7 @@
     .overlay {
         border: 1px solid $seesee;
         border-radius: 4px;
-        display: inline-block;
+        display: block;
         overflow-x: hidden;
         overflow-y: auto;
         padding: 15px;
@@ -67,6 +67,17 @@
 
         ~ .bcs-comment-input-controls .btn {
             margin-bottom: 0;
+        }
+    }
+
+    .ba-buffer {
+        display: none;
+    }
+
+    .ba-popover-flipped {
+        .ba-popover-caret {
+            bottom: 0;
+            transform: rotate(180deg);
         }
     }
 

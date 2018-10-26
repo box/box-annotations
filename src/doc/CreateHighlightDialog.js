@@ -14,7 +14,13 @@ import {
     shouldDisplayMobileUI
 } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
-import { CREATE_EVENT, TYPES, PAGE_PADDING_TOP, PAGE_PADDING_BOTTOM } from '../constants';
+import {
+    CREATE_EVENT,
+    TYPES,
+    PAGE_PADDING_TOP,
+    PAGE_PADDING_BOTTOM,
+    SELECTOR_CLASS_ANNOTATION_POPOVER
+} from '../constants';
 
 class CreateHighlightDialog extends EventEmitter {
     /** @property {Object} - Position, on the DOM, to align the dialog to the end of a highlight. */
@@ -168,7 +174,11 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
-        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const popoverDimensions = popoverEl.getBoundingClientRect();
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageLeft = pageDimensions.left;
@@ -199,7 +209,11 @@ class CreateHighlightDialog extends EventEmitter {
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         const BOUNDARY_PADDING = 5;
 
-        const popoverEl = findElement(this.annotatedElement, '.ba-popover', this.renderAnnotationPopover);
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         let dialogX = this.position.x - dialogWidth / 2;
