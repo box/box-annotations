@@ -1,7 +1,7 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
-import { eventToLocationHandler, shouldDisplayMobileUI } from '../util';
+import { eventToLocationHandler } from '../util';
 import {
     STATES,
     DRAW_STATES,
@@ -125,17 +125,6 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     bindDrawingListeners(locationFunction) {
-        if (!shouldDisplayMobileUI(this.container)) {
-            this.annotatedElement.addEventListener(
-                'mousemove',
-                eventToLocationHandler(locationFunction, this.handleMove)
-            );
-            this.annotatedElement.addEventListener(
-                'mouseup',
-                eventToLocationHandler(locationFunction, this.handleStop)
-            );
-        }
-
         if (this.hasTouch) {
             this.annotatedElement.addEventListener(
                 'touchmove',
@@ -147,6 +136,15 @@ class DrawingThread extends AnnotationThread {
             );
             this.annotatedElement.addEventListener(
                 'touchend',
+                eventToLocationHandler(locationFunction, this.handleStop)
+            );
+        } else {
+            this.annotatedElement.addEventListener(
+                'mousemove',
+                eventToLocationHandler(locationFunction, this.handleMove)
+            );
+            this.annotatedElement.addEventListener(
+                'mouseup',
                 eventToLocationHandler(locationFunction, this.handleStop)
             );
         }
