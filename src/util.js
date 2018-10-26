@@ -11,7 +11,8 @@ import {
     CLASS_ANNOTATION_DIALOG,
     CLASS_BOX_PREVIEW_HEADER,
     SELECTOR_ANNOTATION_MODE,
-    CLASS_ANNOTATION_POINT_MARKER
+    CLASS_ANNOTATION_POINT_MARKER,
+    CLASS_FLIPPED_POPOVER
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -591,4 +592,32 @@ export function findElement(parent, selector, finderMethod) {
         finderMethod();
     }
     return parent.querySelector(selector);
+}
+
+/**
+ * Given an element, determine whether it is in the upper half or lower half of the container.
+ * It takes into account whether the container has a parent which is scrollable (.bp-is-scrollable)
+ * in which case it determines whether the the element is in the upper or lower half of the
+ * viewable area
+ * @param {HTMLElement} element The element in question
+ * @param {HTMLElement} containerElement The container of the element
+ * @return {boolean} True if the element is in the upper half, false if in the lower half
+ */
+export function isInUpperHalf(element, containerElement) {
+    let isOnTop = false;
+    // Determine if element position is in the top or bottom half of the viewport
+    // Get the height of the scrolling container (bp-is-scrollable)
+    const containerEl = findClosestElWithClass(containerElement, 'bp-is-scrollable') || containerElement;
+    // Get the scroll top of the scrolling container
+    const { scrollTop } = containerEl;
+    const containerHeight = containerEl.clientHeight;
+    // Calculate the boundaries of the visible portion of the content
+    const visibleTop = scrollTop;
+    const visibleBottom = scrollTop + containerHeight;
+    // determine whether point icon is in top or bottom half
+    const visibleMiddle = visibleTop + (visibleBottom - visibleTop) / 2;
+    // if bottom half, then subtract popover height
+    isOnTop = element.offsetTop > visibleMiddle;
+
+    return isOnTop;
 }
