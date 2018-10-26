@@ -559,7 +559,7 @@ describe('doc/DocAnnotator', () => {
             // Mobile draw selection handlers
             annotator.hasTouch = true;
             annotator.bindDOMListeners();
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('touchstart', annotator.clickHandler);
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
         it('should bind highlight mouse move handlers regardless of if the user can annotate only on desktop', () => {

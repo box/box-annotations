@@ -331,11 +331,7 @@ class DocAnnotator extends Annotator {
             }
         }
 
-        if (this.hasTouch) {
-            this.annotatedElement.addEventListener('touchstart', this.clickHandler);
-        } else {
-            this.annotatedElement.addEventListener('click', this.clickHandler);
-        }
+        this.annotatedElement.addEventListener('click', this.clickHandler);
 
         // Prevent highlight creation if annotating (or plain AND comment highlights) is disabled
         if (!this.permissions.can_annotate || !(this.plainHighlightEnabled || this.commentHighlightEnabled)) {
@@ -364,6 +360,7 @@ class DocAnnotator extends Annotator {
 
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
+        this.annotatedElement.removeEventListener('click', this.clickHandler);
 
         if (this.highlightThrottleHandle) {
             cancelAnimationFrame(this.highlightThrottleHandle);
@@ -378,7 +375,6 @@ class DocAnnotator extends Annotator {
         if (this.hasTouch) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
-            this.annotatedElement.removeEventListener('click', this.clickHandler);
             this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
@@ -398,7 +394,11 @@ class DocAnnotator extends Annotator {
         }
 
         // Hide the create dialog if click was not in the popover
-        if (this.createHighlightDialog.isVisible && !this.createHighlightDialog.isInHighlight(mouseEvent)) {
+        if (
+            !this.isCreatingHighlight &&
+            this.createHighlightDialog.isVisible &&
+            !this.createHighlightDialog.isInHighlight(mouseEvent)
+        ) {
             mouseEvent.stopPropagation();
             mouseEvent.preventDefault();
             this.highlighter.removeAllHighlights();
@@ -622,6 +622,13 @@ class DocAnnotator extends Annotator {
             this.mouseDownEvent = event.targetTouches[0];
         }
 
+        if (util.isInAnnotationOrMarker(event, this.container)) {
+            this.mouseDownEvent = null;
+            return;
+        }
+
+        this.isCreatingHighlight = true;
+
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
         }
@@ -660,6 +667,8 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMouseupHandler = (event) => {
+        this.isCreatingHighlight = false;
+
         if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }

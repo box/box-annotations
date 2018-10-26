@@ -107,17 +107,6 @@ describe('drawing/DrawingThread', () => {
         it('should add all listeners for touch enabled laptop devices', () => {
             thread.hasTouch = true;
             thread.bindDrawingListeners();
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mousemove', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchmove', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchcancel', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchend', expect.any(Function));
-        });
-
-        it('should add only touch listeners for touch enabled mobile devices', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            thread.hasTouch = true;
-            thread.bindDrawingListeners();
             expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mousemove', expect.any(Function));
             expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mouseup', expect.any(Function));
             expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchmove', expect.any(Function));

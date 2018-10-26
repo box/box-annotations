@@ -1,15 +1,7 @@
 // @flow
 import AnnotationModeController from './AnnotationModeController';
 import DocDrawingThread from '../doc/DocDrawingThread';
-import {
-    replaceHeader,
-    enableElement,
-    disableElement,
-    clearCanvas,
-    findClosestElWithClass,
-    getPageEl,
-    shouldDisplayMobileUI
-} from '../util';
+import { replaceHeader, enableElement, disableElement, clearCanvas, findClosestElWithClass, getPageEl } from '../util';
 import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
@@ -85,24 +77,12 @@ class DrawingModeController extends AnnotationModeController {
     bindDOMListeners(): void {
         // $FlowFixMe
         this.handleSelection = this.handleSelection.bind(this);
-        if (this.hasTouch) {
-            this.annotatedElement.addEventListener('touchstart', this.handleSelection);
-        }
-
-        if (!shouldDisplayMobileUI(this.container)) {
-            this.annotatedElement.addEventListener('click', this.handleSelection);
-        }
+        this.annotatedElement.addEventListener('click', this.handleSelection);
     }
 
     /** @inheritdoc */
     unbindDOMListeners(): void {
-        if (this.hasTouch) {
-            this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
-        }
-
-        if (!shouldDisplayMobileUI(this.container)) {
-            this.annotatedElement.removeEventListener('click', this.handleSelection);
-        }
+        this.annotatedElement.removeEventListener('click', this.handleSelection);
     }
 
     /** @inheritdoc */
@@ -271,9 +251,7 @@ class DrawingModeController extends AnnotationModeController {
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
         thread.bindDrawingListeners(this.locationFunction);
 
-        let threadEventHandler = (data) => this.handleThreadEvents(thread, data);
-        threadEventHandler = threadEventHandler.bind(this);
-        thread.addListener('threadevent', threadEventHandler);
+        thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
         thread.handleStart(location);
     }
 
