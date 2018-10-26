@@ -4,6 +4,7 @@
     .ba-comment-list {
         max-height: 282px;
         overflow-y: scroll;
+        user-select: text;
         width: 100%;
     }
 
