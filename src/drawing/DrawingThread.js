@@ -487,6 +487,12 @@ class DrawingThread extends AnnotationThread {
             thread: this.threadNumber
         };
     }
+
+    /** @inheritdoc */
+    cleanupAnnotationOnDelete() {
+        this.destroy();
+        this.threadID = null;
+    }
 }
 
 export default DrawingThread;

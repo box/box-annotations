@@ -296,30 +296,7 @@ class AnnotationThread extends EventEmitter {
             return Promise.reject();
         }
 
-        // Delete matching comment from annotation
-        this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
-
-        if (this.type === TYPES.highlight_comment && this.comments.length < 0) {
-            this.type = TYPES.highlight;
-
-            // If the user doesn't have permission to delete the entire highlight
-            // annotation, display the annotation as a plain highlight
-            if (!this.canDelete) {
-                this.cancelFirstComment();
-            }
-        }
-
-        if (
-            this.canDelete &&
-            (this.type === TYPES.highlight || this.type === TYPES.draw || this.comments.length <= 0)
-        ) {
-            // If this annotation was the last one in the thread, destroy the thread
-            this.destroy();
-            this.threadID = null;
-        } else {
-            // Otherwise, display annotation with deleted comment
-            this.renderAnnotationPopover();
-        }
+        this.cleanupAnnotationOnDelete(annotationIDToRemove);
 
         if (!useServer) {
             /* eslint-disable no-console */
@@ -334,33 +311,52 @@ class AnnotationThread extends EventEmitter {
         // Delete annotation on server
         return this.api
             .delete(annotationIDToRemove)
-            .then(() => {
-                // Ensures that blank highlight comment is also deleted when removing
-                // the last comment on a highlight
-                if (this.threadID && this.type === TYPES.highlight && this.canDelete) {
-                    this.api.delete(this.id).then(() => {
-                        // Broadcast thread cleanup if needed
-                        if (!this.threadID) {
-                            this.emit(THREAD_EVENT.reset);
-                        } else {
-                            // Broadcast annotation deletion event
-                            this.emit(THREAD_EVENT.delete);
-                        }
+            .then(this.deleteSuccessHandler)
+            .catch(this.deleteErrorHandler);
+    }
 
-                        this.threadID = null;
-                    });
-                }
+    /**
+     * Appropriately cleanup the AnnotationThread instance based on the delete action
+     *
+     * @param {string} annotationIDToRemove Annotation ID to remove
+     * @return {void}
+     */
+    cleanupAnnotationOnDelete(annotationIDToRemove) {
+        // Delete matching comment from annotation
+        this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
-                // Broadcast annotation deletion event
-                this.emit(THREAD_EVENT.delete);
-            })
-            .catch((error) => {
-                // Broadcast error
-                this.emit(THREAD_EVENT.deleteError);
-                /* eslint-disable no-console */
-                console.error(THREAD_EVENT.deleteError, error.toString());
-                /* eslint-enable no-console */
-            });
+        if (this.canDelete && this.comments.length <= 0) {
+            // If this annotation was the last one in the thread, destroy the thread
+            this.destroy();
+            this.threadID = null;
+        } else {
+            // Otherwise, display annotation with deleted comment
+            this.renderAnnotationPopover();
+        }
+    }
+
+    /**
+     * Handles the successful delete of an annotation or one of it's comments
+     *
+     * @return {void}
+     */
+    deleteSuccessHandler = () => {
+        // Broadcast annotation deletion event
+        this.emit(THREAD_EVENT.delete);
+    };
+
+    /**
+     * Handles annotation delete errors
+     *
+     * @param {Error} error Delete error
+     * @return {void}
+     */
+    deleteErrorHandler(error) {
+        // Broadcast error
+        this.emit(THREAD_EVENT.deleteError);
+        /* eslint-disable no-console */
+        console.error(THREAD_EVENT.deleteError, error.toString());
+        /* eslint-enable no-console */
     }
 
     //--------------------------------------------------------------------------
