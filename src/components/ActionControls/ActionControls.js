@@ -120,7 +120,6 @@ class ActionControls extends React.Component<Props, State> {
                     );
                 }
 
-                // Displayed when
                 return (
                     <HighlightControls
                         canAnnotateAndDelete={canDelete}
