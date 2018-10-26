@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER } from '../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -148,6 +148,11 @@ class FileVersionAPI extends API {
                 canDelete: permissions.can_delete,
                 comments: this.appendComments(entry, annotations[threadID].comments)
             };
+
+            // Correct highlight comment types if needed
+            if (annotation.type === TYPES.highlight && annotation.comments.length > 0) {
+                annotation.type = TYPES.highlight_comment;
+            }
 
             annotations[threadID] = annotation;
         });
