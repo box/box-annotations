@@ -149,7 +149,9 @@ class FileVersionAPI extends API {
                 comments: this.appendComments(entry, annotations[threadID].comments)
             };
 
-            // Correct highlight comment types if needed
+            // NOTE: Highlight comment annotations can be structured as a plain highlight
+            // followed by a collection of comments. This will correctly set the annotation
+            // type for such annotations as 'highlight-comment'
             if (annotation.type === TYPES.highlight && annotation.comments.length > 0) {
                 annotation.type = TYPES.highlight_comment;
             }
