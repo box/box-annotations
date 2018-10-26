@@ -64,37 +64,6 @@
     }
 }
 
-.ba-annotation-caret {
-    left: 50%;
-    position: absolute;
-
-    // CSS arrow for caret above container
-    &::after,
-    &::before {
-        border: solid transparent;
-        content: ' ';
-        height: 0;
-        left: 50%;
-        pointer-events: none;
-        position: absolute;
-        top: 0;
-        transform: rotate(-225deg);
-        width: 0;
-    }
-
-    &::after {
-        border-color: transparent transparent $white $white;
-        border-width: 6px;
-        margin: -4px 0 0 -6px;
-    }
-
-    &::before {
-        border-color: transparent transparent $sf-fog $sf-fog;
-        border-width: 6px;
-        margin: -5px 0 0 -6px;
-    }
-}
-
 //------------------------------------------------------------------------------
 // CSS for points and dialogs
 //------------------------------------------------------------------------------
@@ -130,77 +99,6 @@
     }
 }
 
-//------------------------------------------------------------------------------
-// CSS for highlights
-//------------------------------------------------------------------------------
-.ba-annotation-layer-highlight,
-.ba-annotation-layer-highlight-comment {
-    cursor: text;
-    left: 0;
-    mix-blend-mode: multiply;
-    position: absolute;
-    top: 15px; // Match 15px padding top on page
-}
-
-.ba-highlight-dialog {
-    border-top: 20px solid transparent; // Transparent border for hover detection
-    color: $fours;
-    display: table;
-    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    position: absolute;
-    z-index: 130;
-}
-
-.ba-annotation-drawing-dialog,
-.ba-annotation-highlight-dialog,
-.ba-annotation-highlight-dialog:hover {
-    background-color: $white;
-    border: 1px solid $seesee;
-    border-radius: 3px;
-    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    padding: 5px 6px;
-
-    // Center buttons
-    .ba-add-highlight-btn {
-        padding-top: 1px;
-    }
-
-    .ba-highlight-comment-btn {
-        padding-top: 3px;
-    }
-
-    .ba-btn-annotate-draw-add,
-    .ba-btn-annotate-draw-delete {
-        color: lighten($better-black, 10%);
-        padding: 8px;
-
-        &:hover,
-        &:active {
-            color: $better-black;
-            padding: 8px;
-        }
-    }
-
-    .ba-btn-annotate-draw-delete,
-    .ba-btn-annotate-draw-delete:active,
-    .ba-btn-annotate-draw-delete:hover,
-    .ba-btn-annotate-draw-add,
-    .ba-btn-annotate-draw-add:active,
-    .ba-btn-annotate-draw-add:hover {
-        font-size: 13px;
-        margin-top: -3px;
-        padding: 4px;
-    }
-}
-
-.ba-create-highlight-comment {
-    background-color: #fff;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 10px 9px;
-    white-space: normal;
-}
-
 .bp-use-default-cursor {
     cursor: default;
 
@@ -208,6 +106,15 @@
     .textLayer > div {
         cursor: default;
     }
+}
+
+.ba-annotation-layer-highlight,
+.ba-annotation-layer-highlight-comment {
+    cursor: text;
+    left: 0;
+    mix-blend-mode: multiply;
+    position: absolute;
+    top: 15px; // Match 15px padding top on page
 }
 
 // Quad point positioning - the helper divs are positioned relative to the Rangy-created element
@@ -250,12 +157,6 @@
         left: 0;
         top: 0;
     }
-}
-
-.ba-annotation-drawing-label,
-.ba-annotation-highlight-label {
-    padding: 8px 4px;
-    width: 100%;
 }
 
 //------------------------------------------------------------------------------

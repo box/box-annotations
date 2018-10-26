@@ -78,9 +78,13 @@ class ActionControls extends React.Component<Props, State> {
         const { canComment, canDelete, onCommentClick, isPending, hasComments } = this.props;
         const { isInputOpen } = this.state;
 
+        // NOTE: ActionControls are only displayed when the user has canAnnotate permissions
+        // Any annotation created by the current user will also be deletable by that user
         switch (type) {
             case TYPES.highlight:
-                if (!canDelete) {
+                // Do not display plain highlight controls if the user does not have
+                // permissions to create/delete/comment annotations
+                if (!canDelete && !canComment) {
                     return null;
                 }
 
@@ -95,6 +99,9 @@ class ActionControls extends React.Component<Props, State> {
                     />
                 );
             case TYPES.highlight_comment:
+                // Display the ApprovalCommentForm when adding the first comment
+                // to a plain highlight or additional comments to highlight
+                // comment annotations
                 if (isPending || hasComments) {
                     return (
                         <ApprovalCommentForm
@@ -124,6 +131,12 @@ class ActionControls extends React.Component<Props, State> {
                     />
                 );
             case TYPES.draw:
+                // User cannot see any actions if they are unable to delete existing drawings.
+                // Users will have delete permissions on any drawings that they create
+                if (!canDelete) {
+                    return null;
+                }
+
                 return (
                     <DrawingControls
                         canDelete={canDelete}
@@ -133,6 +146,8 @@ class ActionControls extends React.Component<Props, State> {
                     />
                 );
             case TYPES.point:
+                // Users will always be able to add comments to existing point annotations
+                // irrespective of whether or not they can create new point annotations
                 return (
                     <ApprovalCommentForm
                         className='ba-annotation-input-container'

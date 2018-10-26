@@ -234,6 +234,9 @@ export const ERROR_TYPE = {
 
 export const POINT_ANNOTATION_ICON_HEIGHT = 31;
 export const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
+export const POINT_ANNOTATION_ICON_WIDTH = 24;
+export const ANNOTATION_POPOVER_CARET_HEIGHT = 8;
+export const INLINE_POPOVER_HEIGHT = 56;
 
 export const PAGE_PADDING_TOP = 15;
 export const PAGE_PADDING_BOTTOM = 15;
