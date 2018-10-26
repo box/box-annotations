@@ -3,14 +3,7 @@
 exports[`components/ActionControls should correctly render controls for drawing annotations 1`] = `
 <div
   className="ba-action-controls"
->
-  <DrawingControls
-    canDelete={false}
-    isPending={false}
-    onCreate={[Function]}
-    onDelete={[Function]}
-  />
-</div>
+/>
 `;
 
 exports[`components/ActionControls should correctly render controls for highlight comment annotations 1`] = `

@@ -4,7 +4,19 @@
     .ba-action-controls {
         background: white;
         color: $fours;
+        margin: 0;
         white-space: normal;
+    }
+
+    .ba-annotation-input-container {
+        border-top: none;
+        width: 252px; // Hard-coded width to solve layout issues
+    }
+
+    .ba-annotation-label ~ .ba-action-controls .ba-action-controls-draw,
+    .ba-annotation-label ~ .ba-action-controls .ba-action-controls-highlight {
+        border-left: 1px solid $see-see;
+        margin-left: 5px;
     }
 
     // TABLET-SPECIFIC CSS
@@ -15,8 +27,13 @@
         }
 
         .ba-annotation-input-container {
-            padding: 15px;
             width: 100%;
+        }
+
+        .ba-annotation-label ~ .ba-action-controls .ba-action-controls-draw,
+        .ba-annotation-label ~ .ba-action-controls .ba-action-controls-highlight {
+            border-left: 0;
+            margin-left: 5px;
         }
     }
 
@@ -28,9 +45,7 @@
             width: 100%;
         }
 
-        .ba-annotation-input-container,
-        .ba-create-popover .ba-annotation-input-container {
-            margin: 0;
+        .ba-annotation-input-container {
             padding: 15px;
             width: 100%;
         }
@@ -38,6 +53,8 @@
         .ba-create-popover .ba-annotation-input-container {
             border-top: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            padding: 15px;
+            width: 100%;
         }
     }
 }

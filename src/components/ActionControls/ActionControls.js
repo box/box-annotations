@@ -124,6 +124,10 @@ class ActionControls extends React.Component<Props, State> {
                     />
                 );
             case TYPES.draw:
+                if (!canDelete) {
+                    return null;
+                }
+
                 return (
                     <DrawingControls
                         canDelete={canDelete}

@@ -48,16 +48,10 @@
         overflow-y: auto;
         padding: 15px;
         white-space: normal;
-        width: inherit;
     }
 
     .ba-inline .overlay {
         display: inline-flex;
-    }
-
-    .ba-annotation-input-container {
-        border-top: none;
-        width: 252px; // Hard-coded width to solve layout issues
     }
 
     .bcs-comment-input-form-container {
@@ -76,12 +70,9 @@
         }
     }
 
-    .ba-buffer {
-        display: none;
-    }
-
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
+        // SAVED
         .ba-popover {
             display: flex;
             flex-direction: column;
@@ -101,21 +92,11 @@
             width: 100%;
         }
 
-        .ba-inline .ba-mobile-header,
-        .ba-create-popover .ba-mobile-header {
-            display: none;
-        }
-
         .ba-popover-overlay {
             background: white;
             display: flex;
             flex-direction: column;
             height: 100%;
-        }
-
-        .ba-create-popover .ba-popover-overlay,
-        .ba-inline .ba-popover-overlay {
-            background: transparent;
         }
 
         .ba-popover .overlay {
@@ -127,19 +108,17 @@
             overflow: unset;
         }
 
-        .ba-create-popover .overlay {
-            background: transparent;
-            border-radius: 0;
-            justify-content: flex-end;
-            padding: 0;
+        // INLINE
+        .ba-popover.ba-inline {
+            height: auto;
         }
 
         .ba-inline .overlay {
             background: transparent;
             border-bottom: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            height: auto;
             margin: 0;
-            padding: 0;
             text-align: center;
         }
 
@@ -150,9 +129,30 @@
             flex-direction: column;
         }
 
-        .ba-inline .ba-buffer {
-            display: unset;
-            flex-grow: 1;
+        .ba-inline .ba-mobile-header,
+        .ba-create-popover .ba-mobile-header {
+            display: none;
+        }
+
+        .ba-create-popover .ba-popover-overlay,
+        .ba-inline .ba-popover-overlay {
+            background: transparent;
+            height: auto;
+        }
+
+        // CREATE
+        .ba-create-popover {
+            bottom: 0;
+            height: auto;
+            top: auto;
+        }
+
+        .ba-create-popover .overlay {
+            background: transparent;
+            border-radius: 0;
+            height: auto;
+            justify-content: flex-end;
+            padding: 0;
         }
     }
 
@@ -177,12 +177,20 @@
             display: none;
         }
 
-        .ba-create-popover {
+        .ba-create-popover,
+        .ba-create-popover .overlay {
             background: white;
+            height: 100%;
         }
 
-        .ba-inline.ba-create-popover {
+        .ba-inline.ba-create-popover,
+        .ba-inline.ba-create-popover .overlay {
             background: transparent;
+            height: auto;
+        }
+
+        .ba-create-popover .overlay {
+            padding: 15px;
         }
     }
 }
