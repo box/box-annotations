@@ -96,21 +96,11 @@ describe('controllers/DrawingModeController', () => {
             controller.hasTouch = false;
             controller.bindDOMListeners();
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('click', expect.any(Function));
-            expect(controller.annotatedElement.addEventListener).not.toBeCalledWith('touchstart', expect.any(Function));
         });
 
-        it('should bind DOM listeners for touch enabled mobile devices', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+        it('should bind DOM listeners for touch enabled devices', () => {
             controller.hasTouch = true;
             controller.bindDOMListeners();
-            expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
-            expect(controller.annotatedElement.addEventListener).not.toBeCalledWith('click', expect.any(Function));
-        });
-
-        it('should bind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.hasTouch = true;
-            controller.bindDOMListeners();
-            expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('click', expect.any(Function));
         });
     });
@@ -124,24 +114,11 @@ describe('controllers/DrawingModeController', () => {
             controller.hasTouch = false;
             controller.unbindDOMListeners();
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('click', expect.any(Function));
-            expect(controller.annotatedElement.removeEventListener).not.toBeCalledWith(
-                'touchstart',
-                expect.any(Function)
-            );
         });
 
-        it('should unbind DOM listeners for touch enabled mobile devices', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+        it('should unbind DOM listeners for touch enabled devices', () => {
             controller.hasTouch = true;
             controller.unbindDOMListeners();
-            expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));
-            expect(controller.annotatedElement.removeEventListener).not.toBeCalledWith('click', expect.any(Function));
-        });
-
-        it('should unbind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.hasTouch = true;
-            controller.unbindDOMListeners();
-            expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('click', expect.any(Function));
         });
     });

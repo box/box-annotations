@@ -82,10 +82,6 @@ class Annotator extends EventEmitter {
             this.modeControllers[mode].destroy();
         });
 
-        if (this.container) {
-            this.container.removeEventListener('click', this.clickHandler);
-        }
-
         this.unbindDOMListeners();
         this.unbindCustomListeners();
     }
@@ -477,14 +473,10 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     scaleAnnotations(data) {
-        if (util.shouldDisplayMobileUI(this.container)) {
-            this.container.addEventListener('click', this.clickHandler);
-        } else {
-            this.container.removeEventListener('click', this.clickHandler);
-        }
-
+        this.unbindDOMListeners();
         this.setScale(data.scale);
         this.render();
+        this.bindDOMListeners();
     }
 
     /**
@@ -495,6 +487,7 @@ class Annotator extends EventEmitter {
      */
     toggleAnnotationMode(mode) {
         this.hideAnnotations();
+        this.unbindDOMListeners();
 
         const currentMode = this.getCurrentAnnotationMode();
         if (currentMode) {
@@ -503,6 +496,8 @@ class Annotator extends EventEmitter {
 
         if (currentMode !== mode) {
             this.modeControllers[mode].enter();
+        } else {
+            this.bindDOMListeners();
         }
     }
 
