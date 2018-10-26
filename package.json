@@ -207,8 +207,5 @@
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ]
-  },
-  "resolutions": {
-    "uglify-es": "3.3.4"
   }
 }
