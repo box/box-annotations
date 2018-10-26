@@ -67,14 +67,14 @@ class DocPointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
-        const isOnTop = isInUpperHalf(this.element, pageEl);
+        const isUpperHalf = isInUpperHalf(this.element, pageEl);
 
-        const flippedPopoverOffset = isOnTop
-            ? popoverEl.getBoundingClientRect().height +
+        const flippedPopoverOffset = isUpperHalf
+            ? 0
+            : popoverEl.getBoundingClientRect().height +
               POINT_ANNOTATION_ICON_HEIGHT +
               ANNOTATION_POPOVER_CARET_HEIGHT +
-              POINT_ANNOTATION_ICON_DOT_HEIGHT
-            : 0;
+              POINT_ANNOTATION_ICON_DOT_HEIGHT;
 
         // Adjusts Y position for transparent top border
         const dialogTopY =
@@ -92,7 +92,7 @@ class DocPointThread extends AnnotationThread {
             dialogWidth,
             threadIconLeftX,
             pageDimensions.width,
-            !!flippedPopoverOffset
+            !isUpperHalf
         );
 
         // Position the dialog

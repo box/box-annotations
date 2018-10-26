@@ -78,14 +78,14 @@ class ImagePointThread extends AnnotationThread {
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;
 
-        const isOnTop = isInUpperHalf(this.element, imageEl);
+        const isUpperHalf = isInUpperHalf(this.element, imageEl);
 
-        const flippedPopoverOffset = isOnTop
-            ? popoverEl.getBoundingClientRect().height +
+        const flippedPopoverOffset = isUpperHalf
+            ? 0
+            : popoverEl.getBoundingClientRect().height +
               POINT_ANNOTATION_ICON_HEIGHT +
               ANNOTATION_POPOVER_CARET_HEIGHT +
-              POINT_ANNOTATION_ICON_DOT_HEIGHT
-            : 0;
+              POINT_ANNOTATION_ICON_DOT_HEIGHT;
 
         const dialogTopY =
             this.element.offsetTop +
@@ -101,14 +101,7 @@ class ImagePointThread extends AnnotationThread {
             imageEl.clientWidth > this.annotatedElement.clientWidth
                 ? imageEl.clientWidth
                 : this.annotatedElement.clientWidth;
-        dialogLeftX = repositionCaret(
-            popoverEl,
-            dialogLeftX,
-            dialogWidth,
-            threadIconLeftX,
-            pageWidth,
-            !!flippedPopoverOffset
-        );
+        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth, !isUpperHalf);
     };
 }
 
