@@ -3,12 +3,6 @@
 .ba {
     .ba-annotation-label {
         line-height: 23px;
-        padding: 3px 0;
-    }
-
-    .ba-annotation-label ~ .ba-action-controls {
-        border-left: 1px solid $see-see;
-        margin-left: 10px;
     }
 
     // MOBILE & TABLET CSS
@@ -16,8 +10,10 @@
         .ba-annotation-label {
             background: white;
             border-bottom: 1px solid #ccc;
-            justify-content: flex-start;
-            padding: 15px;
+            left: 0;
+            padding: 20px;
+            position: fixed;
+            top: 0;
             width: 100%;
         }
     }

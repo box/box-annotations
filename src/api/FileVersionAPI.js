@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER } from '../constants';
+import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -148,6 +148,13 @@ class FileVersionAPI extends API {
                 canDelete: permissions.can_delete,
                 comments: this.appendComments(entry, annotations[threadID].comments)
             };
+
+            // NOTE: Highlight comment annotations can be structured as a plain highlight
+            // followed by a collection of comments. This will correctly set the annotation
+            // type for such annotations as 'highlight-comment'
+            if (annotation.type === TYPES.highlight && annotation.comments.length > 0) {
+                annotation.type = TYPES.highlight_comment;
+            }
 
             annotations[threadID] = annotation;
         });

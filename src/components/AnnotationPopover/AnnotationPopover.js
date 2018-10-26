@@ -25,7 +25,7 @@ type Props = {
     isPending: boolean,
     language?: string,
     messages?: StringMap,
-    headerHeight?: string
+    headerHeight?: number
 } & Annotation;
 
 class AnnotationPopover extends React.PureComponent<Props> {
@@ -95,7 +95,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         ) : (
                             <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
                         )}
-                        {isMobile && (isInline || isPending) && <span className='ba-buffer' />}
                         {canAnnotate && (
                             <ActionControls
                                 id={id}
