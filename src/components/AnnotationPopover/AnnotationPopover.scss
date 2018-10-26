@@ -72,7 +72,7 @@
 
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
-        // SAVED
+        // SAVED ANNOTATION POPOVER CSS
         .ba-popover {
             display: flex;
             flex-direction: column;
@@ -108,7 +108,7 @@
             overflow: unset;
         }
 
-        // INLINE
+        // INLINE ANNOTATION POPOVER CSS
         .ba-popover.ba-inline {
             height: auto;
         }
@@ -140,7 +140,7 @@
             height: auto;
         }
 
-        // CREATE
+        // UNSAVED/CREATE ANNOTATION POPOVER CSS
         .ba-create-popover {
             bottom: 0;
             height: auto;
