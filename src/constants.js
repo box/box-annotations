@@ -55,7 +55,7 @@ export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
 
-export const CLASS_FLIPPED_DIALOG = 'ba-popover-flipped';
+export const CLASS_FLIPPED_POPOVER = 'ba-popover-flipped';
 
 // Highlight dialog CSS constants
 export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';

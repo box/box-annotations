@@ -8,7 +8,7 @@ import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
     ANNOTATION_POPOVER_CARET_HEIGHT,
     CLASS_ANNOTATION_POINT_MARKER,
-    CLASS_FLIPPED_DIALOG,
+    CLASS_FLIPPED_POPOVER,
     CLASS_HIDDEN,
     DATA_TYPE_ANNOTATION_INDICATOR,
     PAGE_PADDING_BOTTOM,
@@ -697,7 +697,7 @@ class AnnotationThread extends EventEmitter {
             top = `${yPos - POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
             bottom = '';
 
-            popoverEl.classList.remove(CLASS_FLIPPED_DIALOG);
+            popoverEl.classList.remove(CLASS_FLIPPED_POPOVER);
 
             annotationCaretEl.style.bottom = '';
         } else {
@@ -706,7 +706,7 @@ class AnnotationThread extends EventEmitter {
             top = '';
             bottom = `${flippedY}px`;
 
-            popoverEl.classList.add(CLASS_FLIPPED_DIALOG);
+            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
 
             // Adjust dialog caret
             annotationCaretEl.style.top = '';
@@ -730,15 +730,15 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_DIALOG);
+        const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_POPOVER);
         if (!isDialogFlipped) {
             return;
         }
 
         if (this.element.classList.contains(CLASS_HIDDEN)) {
-            this.threadEl.classList.remove(CLASS_FLIPPED_DIALOG);
+            this.threadEl.classList.remove(CLASS_FLIPPED_POPOVER);
         } else {
-            this.threadEl.classList.add(CLASS_FLIPPED_DIALOG);
+            this.threadEl.classList.add(CLASS_FLIPPED_POPOVER);
         }
     }
 
