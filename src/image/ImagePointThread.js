@@ -75,9 +75,6 @@ class ImagePointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
-        // Position the dialog
-        popoverEl.style.left = `${dialogLeftX}px`;
-
         const isUpperHalf = isInUpperHalf(this.element, imageEl);
 
         const flippedPopoverOffset = isUpperHalf
@@ -92,7 +89,6 @@ class ImagePointThread extends AnnotationThread {
             POINT_ANNOTATION_ICON_HEIGHT +
             POINT_ANNOTATION_ICON_DOT_HEIGHT -
             flippedPopoverOffset;
-        popoverEl.style.top = `${dialogTopY}px`;
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
@@ -102,6 +98,10 @@ class ImagePointThread extends AnnotationThread {
                 ? imageEl.clientWidth
                 : this.annotatedElement.clientWidth;
         dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth, !isUpperHalf);
+
+        // Position the dialog
+        popoverEl.style.left = `${dialogLeftX}px`;
+        popoverEl.style.top = `${dialogTopY}px`;
     };
 }
 
