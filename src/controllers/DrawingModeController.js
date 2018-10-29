@@ -212,6 +212,7 @@ class DrawingModeController extends AnnotationModeController {
 
         event.stopPropagation();
         event.preventDefault();
+        this.removeSelection();
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.getLocation(event, TYPES.point);
@@ -295,6 +296,7 @@ class DrawingModeController extends AnnotationModeController {
                 thread.unbindDrawingListeners();
 
                 this.currentThread = undefined;
+                this.selectedThread = thread;
                 this.registerThread(thread);
                 this.unbindListeners();
 
