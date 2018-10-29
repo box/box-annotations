@@ -47,6 +47,11 @@ class AnnotationPopover extends React.PureComponent<Props> {
         position();
     }
 
+    componentDidUpdate() {
+        const { position } = this.props;
+        position();
+    }
+
     render() {
         const {
             id,

@@ -1,5 +1,5 @@
 import AnnotationThread from '../AnnotationThread';
-import { showElement, shouldDisplayMobileUI, repositionCaret, findElement } from '../util';
+import { showElement, shouldDisplayMobileUI, repositionCaret, findElement, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './imageUtil';
 import {
     STATES,
@@ -7,7 +7,8 @@ import {
     POINT_ANNOTATION_ICON_WIDTH,
     POINT_ANNOTATION_ICON_HEIGHT,
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    CLASS_FLIPPED_POPOVER
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
@@ -75,12 +76,24 @@ class ImagePointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
-        // Adjusts Y position for transparent top border
+        const isUpperHalf = isInUpperHalf(this.element, imageEl);
+
+        const flippedPopoverOffset = isUpperHalf
+            ? 0
+            : popoverEl.getBoundingClientRect().height +
+              POINT_ANNOTATION_ICON_HEIGHT +
+              ANNOTATION_POPOVER_CARET_HEIGHT +
+              POINT_ANNOTATION_ICON_DOT_HEIGHT;
+
         const dialogTopY =
             this.element.offsetTop +
             POINT_ANNOTATION_ICON_HEIGHT +
-            POINT_ANNOTATION_ICON_DOT_HEIGHT +
-            ANNOTATION_POPOVER_CARET_HEIGHT;
+            POINT_ANNOTATION_ICON_DOT_HEIGHT -
+            flippedPopoverOffset;
+
+        if (flippedPopoverOffset) {
+            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
+        }
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
@@ -89,14 +102,11 @@ class ImagePointThread extends AnnotationThread {
             imageEl.clientWidth > this.annotatedElement.clientWidth
                 ? imageEl.clientWidth
                 : this.annotatedElement.clientWidth;
-        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth);
+        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth, !isUpperHalf);
 
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;
-
-        const dialogPos = this.flipDialog(dialogTopY, this.container.clientHeight);
-        popoverEl.style.top = dialogPos.top;
-        popoverEl.style.bottom = dialogPos.bottom;
+        popoverEl.style.top = `${dialogTopY}px`;
     };
 }
 

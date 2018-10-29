@@ -592,3 +592,34 @@ export function findElement(parent, selector, finderMethod) {
     }
     return parent.querySelector(selector);
 }
+
+/**
+ * Given an element, determine whether it is in the upper half or lower half of the container.
+ * It takes into account whether the container has a parent which is scrollable (.bp-is-scrollable)
+ * in which case it determines whether the the element is in the upper or lower half of the
+ * viewable area
+ * @param {HTMLElement} element The element in question
+ * @param {HTMLElement} containerElement The container of the element
+ * @return {boolean} True if the element is in the upper half, false if in the lower half
+ */
+export function isInUpperHalf(element, containerElement) {
+    if (!element || !containerElement) {
+        return true;
+    }
+
+    let isUpperHalf = true;
+    // Determine if element position is in the top or bottom half of the viewport
+    // Get the height of the scrolling container (bp-is-scrollable)
+    const containerEl = findClosestElWithClass(containerElement, 'bp-is-scrollable') || containerElement;
+    // Get the scroll top of the scrolling container
+    const { scrollTop, clientHeight } = containerEl;
+    // Calculate the boundaries of the visible portion of the content
+    const visibleTop = scrollTop;
+    const visibleBottom = scrollTop + clientHeight;
+    // determine whether point icon is in top or bottom half
+    const visibleMiddle = visibleTop + (visibleBottom - visibleTop) / 2;
+    // if bottom half, then subtract popover height
+    isUpperHalf = element.offsetTop < visibleMiddle;
+
+    return isUpperHalf;
+}

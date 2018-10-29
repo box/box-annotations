@@ -561,4 +561,44 @@ describe('util', () => {
             expect(util.hasValidBoundaryCoordinates({ type: TYPES.highlight })).toBeTruthy();
         });
     });
+
+    describe('isInUpperHalf()', () => {
+        test('Should return true if element is falsy', () => {
+            expect(util.isInUpperHalf(undefined, {})).toBe(true);
+        });
+
+        it('Should return true if containerElement is falsy', () => {
+            expect(util.isInUpperHalf({})).toBe(true);
+        });
+
+        it('Should return true if element is in top half', () => {
+            const element = { offsetTop: 0 };
+            const containerElement = { clientHeight: 100, scrollTop: 0 };
+            util.findClosestElWithClass = jest.fn();
+            expect(util.isInUpperHalf(element, containerElement)).toBe(true);
+        });
+
+        it('Should return false if element is in bottom half', () => {
+            const element = { offsetTop: 60 };
+            const containerElement = { clientHeight: 100, scrollTop: 0 };
+            util.findClosestElWithClass = jest.fn();
+            expect(util.isInUpperHalf(element, containerElement)).toBe(false);
+        });
+
+        it('Should return true if element is in top half of scrollable view', () => {
+            const element = { offsetTop: 55 };
+            const containerElement = { clientHeight: 200, scrollTop: 0 };
+            const scrollableElement = { clientHeight: 100, scrollTop: 50 };
+            util.findClosestElWithClass = jest.fn().mockReturnValue(scrollableElement);
+            expect(util.isInUpperHalf(element, containerElement)).toBe(true);
+        });
+
+        it('Should return false if element is in bottom half of scrollable view', () => {
+            const element = { offsetTop: 105 };
+            const containerElement = { clientHeight: 200, scrollTop: 0 };
+            const scrollableElement = { clientHeight: 100, scrollTop: 50 };
+            util.findClosestElWithClass = jest.fn().mockReturnValue(scrollableElement);
+            expect(util.isInUpperHalf(element, containerElement)).toBe(false);
+        });
+    });
 });
