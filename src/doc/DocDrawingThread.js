@@ -360,7 +360,13 @@ class DocDrawingThread extends DrawingThread {
         const popoverWidth = popoverDimensions.width;
         const popoverY = boundaryEl.offsetTop + boundaryDimensions.height + PAGE_PADDING_TOP;
         let popoverX = boundaryEl.offsetLeft + boundaryDimensions.width / 2 - popoverWidth / 2;
-        popoverX = repositionCaret(popoverEl, popoverX, popoverWidth, popoverX, pageDimensions.width);
+        popoverX = repositionCaret(
+            popoverEl,
+            popoverX,
+            popoverWidth,
+            popoverX + popoverWidth / 2,
+            pageDimensions.width
+        );
 
         popoverEl.style.left = `${popoverX}px`;
         popoverEl.style.top = `${popoverY}px`;

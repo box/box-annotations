@@ -375,47 +375,47 @@ export function getDimensionScale(dimensions, fileDimensions, zoomScale, heightP
 }
 
 /**
- * Repositions caret if annotations dialog will run off the right or left
+ * Repositions caret if annotations popover will run off the right or left
  * side of the page. Otherwise positions caret at the center of the
- * annotations dialog and the updated left corner x coordinate.
+ * annotations popover and the updated left corner x coordinate.
  *
- * @param  {HTMLElement} dialogEl Annotations dialog element
- * @param  {number} dialogX Left corner x coordinate of the annotations dialog
- * @param  {number} highlightDialogWidth Width of the annotations dialog
+ * @param  {HTMLElement} popoverEl Annotations popover element
+ * @param  {number} popoverX Left corner x coordinate of the annotations popover
+ * @param  {number} popoverWidth Width of the annotations popover
  * @param  {number} browserX X coordinate of the mouse position
  * @param  {number} pageWidth Width of document page
- * @return {number} Adjusted left corner x coordinate of the annotations dialog
+ * @return {number} Adjusted left corner x coordinate of the annotations popover
  */
-export function repositionCaret(dialogEl, dialogX, highlightDialogWidth, browserX, pageWidth) {
+export function repositionCaret(popoverEl, popoverX, popoverWidth, browserX, pageWidth) {
     // Reposition to avoid sides - left side of page is 0px, right side is
     // ${pageWidth}px
-    const dialogPastLeft = dialogX < 0;
-    const dialogPastRight = dialogX + highlightDialogWidth > pageWidth;
-    const annotationCaretEl = dialogEl.querySelector(SELECTOR_ANNOTATION_CARET);
+    const popoverPastLeft = popoverX < 0;
+    const popoverPastRight = popoverX + popoverWidth > pageWidth;
+    const annotationCaretEl = popoverEl.querySelector(SELECTOR_ANNOTATION_CARET);
 
-    if (dialogPastLeft && !dialogPastRight) {
+    if (popoverPastLeft && !popoverPastRight) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
-        const caretLeftX = Math.max(10, browserX);
+        const caretLeftX = Math.max(10, popoverWidth / 2 + browserX);
         annotationCaretEl.style.left = `${caretLeftX}px`;
 
         return 0;
     }
 
-    if (dialogPastRight && !dialogPastLeft) {
+    if (popoverPastRight && !popoverPastLeft) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
         const caretRightX = Math.max(10, pageWidth - browserX);
 
         // We set the 'left' property even when we have caretRightX for
         // IE10/11
-        annotationCaretEl.style.left = `${highlightDialogWidth - caretRightX}px`;
+        annotationCaretEl.style.left = `${popoverWidth - caretRightX}px`;
 
-        return pageWidth - highlightDialogWidth;
+        return pageWidth - popoverWidth;
     }
 
     // Reset caret to center
     annotationCaretEl.style.left = '50%';
 
-    return dialogX;
+    return popoverX;
 }
 
 /**
