@@ -419,8 +419,10 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
+
         this.element.addEventListener('click', this.renderAnnotationPopover);
-        this.element.addEventListener('blur', () => this.toggleFlippedThreadEl());
+        this.element.addEventListener('blur', this.handleBlur);
     }
 
     /**
@@ -435,6 +437,11 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.removeEventListener('click', this.renderAnnotationPopover);
+        this.element.removeEventListener('blur', this.handleBlur);
+    }
+
+    handleBlur() {
+        this.toggleFlippedThreadEl();
     }
 
     /**
