@@ -395,7 +395,7 @@ export function repositionCaret(popoverEl, popoverX, popoverWidth, browserX, pag
 
     if (popoverPastLeft && !popoverPastRight) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
-        const caretLeftX = Math.max(10, popoverWidth / 2 + browserX);
+        const caretLeftX = Math.max(10, browserX);
         annotationCaretEl.style.left = `${caretLeftX}px`;
 
         return 0;
