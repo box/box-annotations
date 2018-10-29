@@ -6,19 +6,12 @@ import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
-    ANNOTATION_POPOVER_CARET_HEIGHT,
     CLASS_ANNOTATION_POINT_MARKER,
     CLASS_FLIPPED_POPOVER,
-    CLASS_HIDDEN,
     DATA_TYPE_ANNOTATION_INDICATOR,
-    PAGE_PADDING_BOTTOM,
-    PAGE_PADDING_TOP,
-    POINT_ANNOTATION_ICON_DOT_HEIGHT,
-    SELECTOR_ANNOTATION_CARET,
     STATES,
     THREAD_EVENT,
-    TYPES,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    TYPES
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -426,6 +419,7 @@ class AnnotationThread extends EventEmitter {
 
         this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
         this.element.addEventListener('click', this.renderAnnotationPopover);
+        this.element.addEventListener('blur', () => this.toggleFlippedThreadEl());
     }
 
     /**
