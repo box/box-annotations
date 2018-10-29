@@ -176,8 +176,9 @@
     @media #{$tablet} {
         .ba-popover {
             border-left: 1px solid $seesee;
+            // Max width matches the max-width of the Preview Sidebar
+            max-width: 341px;
             right: 0;
-            width: 45%;
         }
 
         .ba-create-popover .ba-mobile-header {
