@@ -1,7 +1,12 @@
 import AnnotationThread from '../AnnotationThread';
-import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI } from '../util';
+import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
-import { STATES, SELECTOR_CLASS_ANNOTATION_POPOVER } from '../constants';
+import {
+    STATES,
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    ANNOTATION_POPOVER_CARET_HEIGHT,
+    CLASS_FLIPPED_POPOVER
+} from '../constants';
 
 const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -67,17 +72,43 @@ class DocPointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
+        const isUpperHalf = isInUpperHalf(this.element, pageEl);
+
+        const flippedPopoverOffset = isUpperHalf
+            ? 0
+            : popoverEl.getBoundingClientRect().height +
+              POINT_ANNOTATION_ICON_DOT_HEIGHT * 2 +
+              ANNOTATION_POPOVER_CARET_HEIGHT;
+
         // Adjusts Y position for transparent top border
-        const dialogTopY = this.element.offsetTop + POINT_ANNOTATION_ICON_HEIGHT;
+        const dialogTopY =
+            this.element.offsetTop +
+            POINT_ANNOTATION_ICON_HEIGHT +
+            POINT_ANNOTATION_ICON_DOT_HEIGHT -
+            flippedPopoverOffset;
+
+        if (flippedPopoverOffset) {
+            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
+            this.element.classList.add(CLASS_FLIPPED_POPOVER);
+        } else {
+            popoverEl.classList.remove(CLASS_FLIPPED_POPOVER);
+            this.element.classList.remove(CLASS_FLIPPED_POPOVER);
+        }
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
-        dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageDimensions.width);
+        dialogLeftX = repositionCaret(
+            popoverEl,
+            dialogLeftX,
+            dialogWidth,
+            threadIconLeftX,
+            pageDimensions.width,
+            !isUpperHalf
+        );
 
         // Position the dialog
         popoverEl.style.left = `${dialogLeftX}px`;
-
         popoverEl.style.top = `${dialogTopY}px`;
     };
 }
