@@ -133,7 +133,7 @@ class AnnotationModeController extends EventEmitter {
     destroy(): void {
         Object.keys(this.annotations).forEach((pageNum) => {
             const pageThreads = this.annotations[pageNum].all() || [];
-            pageThreads.forEach(this.unregisterThread);
+            pageThreads.forEach(this.unregisterThread.bind(this));
         });
 
         if (this.buttonEl) {
