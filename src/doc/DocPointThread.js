@@ -77,9 +77,8 @@ class DocPointThread extends AnnotationThread {
         const flippedPopoverOffset = isUpperHalf
             ? 0
             : popoverEl.getBoundingClientRect().height +
-              POINT_ANNOTATION_ICON_HEIGHT +
-              ANNOTATION_POPOVER_CARET_HEIGHT +
-              POINT_ANNOTATION_ICON_DOT_HEIGHT;
+              POINT_ANNOTATION_ICON_DOT_HEIGHT * 2 +
+              ANNOTATION_POPOVER_CARET_HEIGHT;
 
         // Adjusts Y position for transparent top border
         const dialogTopY =
@@ -90,6 +89,10 @@ class DocPointThread extends AnnotationThread {
 
         if (flippedPopoverOffset) {
             popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
+            this.element.classList.add(CLASS_FLIPPED_POPOVER);
+        } else {
+            popoverEl.classList.remove(CLASS_FLIPPED_POPOVER);
+            this.element.classList.remove(CLASS_FLIPPED_POPOVER);
         }
 
         // Only reposition if one side is past page boundary - if both are,

@@ -190,6 +190,8 @@ class AnnotationThread extends EventEmitter {
     unmountPopover() {
         this.reset();
 
+        this.toggleFlippedThreadEl();
+
         const pageEl = this.getPopoverParent();
         const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
         if (this.popoverComponent && popoverLayer) {
@@ -678,52 +680,6 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Flip the annotations dialog if the dialog would appear in the lower
-     * half of the viewer
-     *
-     * @private
-     * @param {number} yPos y coordinate for the top of the dialog
-     * @param {number} containerHeight height of the current annotation
-     * container/page
-     * @return {void}
-     */
-    flipDialog(yPos, containerHeight) {
-        const popoverEl = util.findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
-        const annotationCaretEl = popoverEl.querySelector(SELECTOR_ANNOTATION_CARET);
-        let top = '';
-        let bottom = '';
-
-        if (yPos <= containerHeight / 2) {
-            // Keep dialog below the icon if in the top half of the viewport
-            top = `${yPos - POINT_ANNOTATION_ICON_DOT_HEIGHT}px`;
-            bottom = '';
-
-            popoverEl.classList.remove(CLASS_FLIPPED_POPOVER);
-
-            annotationCaretEl.style.bottom = '';
-        } else {
-            // Flip dialog to above the icon if in the lower half of the viewport
-            const flippedY = containerHeight - yPos + ANNOTATION_POPOVER_CARET_HEIGHT;
-            top = '';
-            bottom = `${flippedY}px`;
-
-            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
-
-            // Adjust dialog caret
-            annotationCaretEl.style.top = '';
-            annotationCaretEl.style.bottom = '0px';
-        }
-
-        this.fitDialogHeightInPage();
-        this.toggleFlippedThreadEl();
-        return { top, bottom };
-    }
-
-    /**
      * Show/hide the top portion of the annotations icon based on if the
      * entire dialog is flipped
      *
@@ -731,7 +687,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     toggleFlippedThreadEl() {
-        if (!this.element || !this.threadEl) {
+        if (!this.element) {
             return;
         }
 
@@ -740,27 +696,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        if (this.element.classList.contains(CLASS_HIDDEN)) {
-            this.threadEl.classList.remove(CLASS_FLIPPED_POPOVER);
-        } else {
-            this.threadEl.classList.add(CLASS_FLIPPED_POPOVER);
-        }
-    }
-
-    /**
-     * Set max height for dialog to prevent the dialog from being cut off
-     *
-     * @private
-     * @return {void}
-     */
-    fitDialogHeightInPage() {
-        const popoverEl = util.findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
-        const maxHeight = this.container.clientHeight / 2 - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
-        popoverEl.style.maxHeight = `${maxHeight}px`;
+        this.element.classList.remove(CLASS_FLIPPED_POPOVER);
     }
 }
 

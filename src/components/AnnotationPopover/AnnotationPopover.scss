@@ -75,6 +75,11 @@
     }
 
     .ba-popover-flipped {
+        path,
+        rect {
+            display: none;
+        }
+
         .ba-popover-caret {
             bottom: 0;
             transform: rotate(180deg);
