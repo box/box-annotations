@@ -19,7 +19,8 @@ import {
     TYPES,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    INLINE_POPOVER_HEIGHT
 } from '../constants';
 
 class CreateHighlightDialog extends EventEmitter {
@@ -217,7 +218,7 @@ class CreateHighlightDialog extends EventEmitter {
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         let dialogX = this.position.x - dialogWidth / 2;
-        let dialogY = this.position.y - dialogDimensions.height + BOUNDARY_PADDING;
+        let dialogY = this.position.y - INLINE_POPOVER_HEIGHT + BOUNDARY_PADDING;
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
