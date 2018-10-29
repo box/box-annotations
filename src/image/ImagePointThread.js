@@ -7,7 +7,8 @@ import {
     POINT_ANNOTATION_ICON_WIDTH,
     POINT_ANNOTATION_ICON_HEIGHT,
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    CLASS_FLIPPED_POPOVER
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
@@ -89,6 +90,10 @@ class ImagePointThread extends AnnotationThread {
             POINT_ANNOTATION_ICON_HEIGHT +
             POINT_ANNOTATION_ICON_DOT_HEIGHT -
             flippedPopoverOffset;
+
+        if (flippedPopoverOffset) {
+            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
+        }
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing

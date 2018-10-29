@@ -1,7 +1,12 @@
 import AnnotationThread from '../AnnotationThread';
 import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
-import { STATES, SELECTOR_CLASS_ANNOTATION_POPOVER, ANNOTATION_POPOVER_CARET_HEIGHT } from '../constants';
+import {
+    STATES,
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    ANNOTATION_POPOVER_CARET_HEIGHT,
+    CLASS_FLIPPED_POPOVER
+} from '../constants';
 
 const PAGE_PADDING_TOP = 15;
 const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -82,6 +87,10 @@ class DocPointThread extends AnnotationThread {
             POINT_ANNOTATION_ICON_HEIGHT +
             POINT_ANNOTATION_ICON_DOT_HEIGHT -
             flippedPopoverOffset;
+
+        if (flippedPopoverOffset) {
+            popoverEl.classList.add(CLASS_FLIPPED_POPOVER);
+        }
 
         // Only reposition if one side is past page boundary - if both are,
         // just center the dialog and cause scrolling since there is nothing
