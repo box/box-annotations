@@ -245,20 +245,11 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Fire an event notifying that the comment button has been clicked. Also
-     * show the comment box, and give focus to the text area conatined by it.
+     * Does nothing by default
      *
-     * @param {Event} event - The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onCommentClick() {
-        if (!this.threadNumber) {
-            this.saveAnnotation(TYPES.highlight);
-        }
-        this.type = TYPES.highlight_comment;
-        this.state = STATES.pending;
-        this.renderAnnotationPopover();
-    }
+    onCommentClick() {}
 
     /**
      * Deletes an annotation.
