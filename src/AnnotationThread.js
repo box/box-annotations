@@ -90,6 +90,7 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     destroy() {
+        this.threadID = null;
         this.unmountPopover();
 
         if (this.element) {
