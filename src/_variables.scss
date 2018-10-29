@@ -1,8 +1,8 @@
 @import '~box-react-ui/lib/styles/variables';
 
 $mobile: '(max-width: 767px)';
-$tablet: '(min-width: 767px)';
-$desktop: '(min-width: 1024px)';
+$tablet: '(min-width: 768px) and (max-width: 1024px)';
+$desktop: '(min-width: 1025px)';
 
 $highlight-yellow: #fed94e;
 $highlight-yellow-active-hover: #ffc900;
