@@ -123,6 +123,8 @@ class AnnotationModeController extends EventEmitter {
             this.modeButton = data.modeButton;
             this.showButton();
         }
+
+        this.unregisterThread = this.unregisterThread.bind(this);
     }
 
     /**
