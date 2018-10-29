@@ -555,47 +555,25 @@ class DocHighlightThread extends AnnotationThread {
         // Delete matching comment from annotation
         this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
-        if (this.type === TYPES.highlight_comment && this.comments.length < 0) {
+        if (this.type === TYPES.highlight_comment && this.comments.length <= 0) {
             this.type = TYPES.highlight;
 
-            // If the user doesn't have permission to delete the entire highlight
-            // annotation, display the annotation as a plain highlight
-            if (!this.canDelete) {
+            if (this.canDelete) {
+                this.delete({ id: this.id });
+                this.destroy();
+            } else {
+                // If the user doesn't have permission to delete the entire highlight
+                // annotation, display the annotation as a plain highlight
                 this.cancelFirstComment();
             }
-        }
-
-        if (this.canDelete && (this.type === TYPES.highlight || this.comments.length <= 0)) {
+        } else if (this.canDelete && this.type === TYPES.highlight) {
             // If this annotation was the last one in the thread, destroy the thread
             this.destroy();
-            this.threadID = null;
         } else {
             // Otherwise, display annotation with deleted comment
             this.renderAnnotationPopover();
         }
     }
-
-    /** @inheritdoc */
-    deleteSuccessHandler = () => {
-        // Ensures that blank highlight comment is also deleted when removing
-        // the last comment on a highlight
-        if (this.threadID && this.type === TYPES.highlight && this.canDelete) {
-            this.api.delete(this.id).then(() => {
-                // Broadcast thread cleanup if needed
-                if (!this.threadID) {
-                    this.emit(THREAD_EVENT.reset);
-                } else {
-                    // Broadcast annotation deletion event
-                    this.emit(THREAD_EVENT.delete);
-                }
-
-                this.threadID = null;
-            });
-        }
-
-        // Broadcast annotation deletion event
-        this.emit(THREAD_EVENT.delete);
-    };
 
     /**
      * Fire an event notifying that the comment button has been clicked. Also
