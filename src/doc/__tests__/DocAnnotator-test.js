@@ -788,6 +788,7 @@ describe('doc/DocAnnotator', () => {
 
             window.getSelection = jest.fn();
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
+            util.findClosestElWithClass = jest.fn().mockReturnValue(null);
         });
 
         it('should reset the selectionEndTimeout', () => {
@@ -798,10 +799,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should do nothing if focus is on a text input element', () => {
-            const textAreaEl = document.createElement('textarea');
-            annotator.annotatedElement.appendChild(textAreaEl);
-            textAreaEl.focus();
-
+            util.findClosestElWithClass = jest.fn().mockReturnValue({});
             annotator.onSelectionChange(event);
             expect(window.getSelection).not.toBeCalled();
         });

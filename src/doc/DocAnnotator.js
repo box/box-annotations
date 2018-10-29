@@ -546,7 +546,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.selectionEndTimeout = setTimeout(() => {
-            if (!this.createHighlightDialog.isVisible) {
+            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
                 this.createHighlightDialog.show(selection);
             }
         }, SELECTION_TIMEOUT);
