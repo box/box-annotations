@@ -21,7 +21,8 @@ import {
     THREAD_EVENT,
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
-    CREATE_EVENT
+    CREATE_EVENT,
+    CLASS_ANNOTATION_POPOVER
 } from '../constants';
 
 const SELECTION_TIMEOUT = 500;
@@ -524,7 +525,8 @@ class DocAnnotator extends Annotator {
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
-        if (isCreatingPoint || document.activeElement.nodeName.toLowerCase() === 'textarea') {
+        const isPopoverActive = !!util.findClosestElWithClass(document.activeElement, CLASS_ANNOTATION_POPOVER);
+        if (isCreatingPoint || isPopoverActive) {
             return;
         }
 
@@ -545,7 +547,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.selectionEndTimeout = setTimeout(() => {
-            if (this.createHighlightDialog) {
+            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
                 this.createHighlightDialog.show(selection);
             }
         }, SELECTION_TIMEOUT);
