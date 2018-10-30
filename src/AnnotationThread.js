@@ -79,6 +79,9 @@ class AnnotationThread extends EventEmitter {
             ? data.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
             : [];
 
+        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
+
         this.regenerateBoundary();
 
         this.setup();
@@ -417,9 +420,6 @@ class AnnotationThread extends EventEmitter {
         if (!this.element) {
             return;
         }
-
-        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
-        this.handleBlur = this.handleBlur.bind(this);
 
         this.element.addEventListener('click', this.renderAnnotationPopover);
         this.element.addEventListener('blur', this.handleBlur);
