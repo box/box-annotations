@@ -125,6 +125,12 @@ class FileVersionAPI extends API {
             } = entry;
             const { threadID, location, type } = details;
 
+            // Ignore annotations without a valid details
+            // NOTE: Annotations created via the API can contain invalid parameters
+            if (!location || !threadID || !type) {
+                return;
+            }
+
             // Corrects any annotation page number to 1 instead of -1
             const fixedLocation = location;
             if (!fixedLocation.page || fixedLocation.page < 0) {
