@@ -94,7 +94,9 @@ describe('api/FileVersionAPI', () => {
                 item: {},
                 permissions: {},
                 details: {
-                    location: { page: 1 }
+                    location: { page: 1 },
+                    type: 'highlight',
+                    threadID: '123'
                 }
             };
             api.data = {
