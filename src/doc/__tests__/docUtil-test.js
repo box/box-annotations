@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as docUtil from '../docUtil';
-import { DATA_TYPE_ANNOTATION_DIALOG, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
-import * as util from '../../util';
+import { SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
 
 const html = `<div class="annotated-element">
     <div class="ba-annotation-dialog" style="width: 10px; height: 10px;">
@@ -276,30 +275,6 @@ describe('doc/docUtil', () => {
             docUtil.getContext(rootElement, 'random-class-name', 0, 0);
             expect(rootElement.insertBefore).not.toBeCalled();
             expect(canvasWrapper.appendChild).toBeCalled();
-        });
-    });
-
-    describe('getPageEl()', () => {
-        it('should return the result of querySelector', () => {
-            const page = 2;
-            const docEl = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-            const truePageEl = document.querySelector(`.page[data-page-number="${page}"]`);
-            docEl.appendChild(truePageEl);
-
-            const pageEl = docUtil.getPageEl(docEl, page);
-            expect(pageEl).toEqual(truePageEl);
-        });
-    });
-
-    describe('isDialogDataType()', () => {
-        it('should return true if the mouse event occured in a highlight dialog', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue(DATA_TYPE_ANNOTATION_DIALOG);
-            expect(docUtil.isDialogDataType({})).toBeTruthy();
-        });
-
-        it('should return false if the mouse event occured outside a highlight dialog', () => {
-            util.findClosestDataType = jest.fn().mockReturnValue('something');
-            expect(docUtil.isDialogDataType({})).toBeFalsy();
         });
     });
 

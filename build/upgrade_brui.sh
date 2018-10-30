@@ -81,6 +81,9 @@ upgrade_brui() {
     # Bump the version number
     update_version || return 1
 
+    # Update flow-typed configs
+    yarn flow-typed-update
+
     # Push to GitHub
     push_to_github || return 1
 

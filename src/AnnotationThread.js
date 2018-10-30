@@ -1,69 +1,103 @@
+// @flow
 import EventEmitter from 'events';
-import Annotation from './Annotation';
-import AnnotationService from './AnnotationService';
+import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
+
+import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
-    STATES,
-    TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
+    CLASS_FLIPPED_POPOVER,
     DATA_TYPE_ANNOTATION_INDICATOR,
+    STATES,
     THREAD_EVENT,
-    CLASS_HIDDEN
+    TYPES
 } from './constants';
+import AnnotationPopover from './components/AnnotationPopover';
 
 class AnnotationThread extends EventEmitter {
-    //--------------------------------------------------------------------------
-    // Typedef
-    //--------------------------------------------------------------------------
+    /** @param {HTMLElement} */
+    annotatedElement: HTMLElement;
 
-    /**
-     * The data object for constructing a thread.
-     * @typedef {Object} AnnotationThreadData
-     * @property {HTMLElement} annotatedElement HTML element being annotated on
-     * @property {Object} [annotations] Annotations in thread - none if
-     * this is a new thread
-     * @property {AnnotationService} annotationService Annotations CRUD service
-     * @property {string} fileVersionId File version ID
-     * @property {Object} location Location object
-     * @property {string} threadID Thread ID
-     * @property {string} thread Thread number
-     * @property {string} type Type of thread
-     */
-
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
+    /** @param {Object} */
+    annotations: Object;
+    
+    /** @param {AnnotationAPI} */
+    api: AnnotationAPI;
+    
+    /** @param {string} */
+    fileVersionId: string;
+    
+    /** @param {Location} */
+    location: Location;
+    
+    /** @param {string} */
+    threadID: ?string;
+    
+    /** @param {string} */
+    threadNumber: string;
+    
+    /** @param {AnnotationType} */
+    type: AnnotationType;
+    
+    /** @param {boolean} */
+    canComment: boolean;
 
     /**
      * [constructor]
      *
-     * @param {AnnotationThreadData} data - Data for constructing thread
+     * @param {Object} data - Data for constructing thread
      * @return {AnnotationThread} Annotation thread instance
      */
-    constructor(data) {
+    constructor(data: Object) {
         super();
 
         this.annotatedElement = data.annotatedElement;
-        this.annotations = data.annotations || {};
-        this.annotationService = data.annotationService;
+        this.api = data.api;
         this.container = data.container;
         this.fileVersionId = data.fileVersionId;
         this.location = data.location;
-        this.threadID = data.threadID || AnnotationService.generateID();
+        this.threadID = data.threadID || AnnotationAPI.generateID();
         this.threadNumber = data.threadNumber || '';
         this.type = data.type;
         this.locale = data.locale;
-        this.isMobile = data.isMobile || false;
         this.hasTouch = data.hasTouch || false;
         this.permissions = data.permissions;
-        this.localized = data.localized;
         this.state = STATES.inactive;
+        this.canComment = true;
+        this.headerHeight = data.headerHeight;
+
+        this.id = data.id;
+        this.type = data.type;
+        this.location = data.location;
+        this.threadNumber = data.threadNumber;
+        this.createdAt = data.createdAt;
+        this.createdBy = data.createdBy;
+        this.modifiedAt = data.modifiedAt;
+        this.fileVersionId = data.fileVersionId;
+        this.threadID = data.threadID || AnnotationAPI.generateID();
+        this.canDelete = data.canDelete;
+        this.canAnnotate = data.canAnnotate;
+        this.canComment = true;
+        this.comments = data.comments
+            ? data.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+            : [];
+
+        // $FlowFixMe
+        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
+        // $FlowFixMe
+        this.handleBlur = this.handleBlur.bind(this);
+        // $FlowFixMe
+        this.onCommentClick = this.onCommentClick.bind(this);
+        // $FlowFixMe
+        this.save = this.save.bind(this);
+        // $FlowFixMe
+        this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
+        // $FlowFixMe
+        this.delete = this.delete.bind(this);
 
         this.regenerateBoundary();
-
-        // Explicitly bind listeners
-        this.showDialog = this.showDialog.bind(this);
 
         this.setup();
     }
@@ -74,11 +108,8 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     destroy() {
-        if (this.dialog && !this.isMobile) {
-            this.unbindCustomListenersOnDialog();
-            this.dialog.destroy();
-            this.dialog = null;
-        }
+        this.threadID = null;
+        this.unmountPopover();
 
         if (this.element) {
             this.unbindDOMListeners();
@@ -101,7 +132,8 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     hide() {
-        util.hideElement(this.element);
+        this.state = STATES.inactive;
+        this.unmountPopover();
     }
 
     /**
@@ -114,93 +146,165 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Whether or not thread dialog is visible
-     *
+     * Positions the annotation popover
+     * 
      * @return {void}
      */
-    isDialogVisible() {
-        return !!(this.dialog && this.dialog.element && !this.dialog.element.classList.contains(CLASS_HIDDEN));
+    position = () => {
+        /* eslint-enable no-unused-vars */
+        throw new Error('Implement me!');
+    };
+
+    /**
+     * Returns the parent element for the annotation popover
+     * 
+     * @return {HTMLElement} Parent element for the annotation popover
+     */
+    getPopoverParent() {
+        return util.shouldDisplayMobileUI(this.container)
+            ? this.container
+            : util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
      * Shows the appropriate annotation dialog for this thread.
      *
+     * @param {Event} event - Mouse event
      * @return {void}
      */
-    showDialog() {
-        // Prevents the annotations dialog from being set up on every call
-        if (!this.dialog.element) {
-            this.dialog.setup(this.annotations, this.element);
+    renderAnnotationPopover(event: Event = null) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
         }
 
-        this.dialog.show();
+        const isPending = this.state === STATES.pending;
+
+        const pageEl = this.getPopoverParent();
+        this.popoverComponent = render(
+            <AnnotationPopover
+                id={this.id}
+                type={this.type}
+                isMobile={util.shouldDisplayMobileUI(this.container)}
+                createdAt={this.createdAt}
+                createdBy={this.createdBy}
+                modifiedAt={this.modifiedAt}
+                canAnnotate={this.canAnnotate}
+                canDelete={this.canDelete}
+                canComment={this.canComment}
+                comments={this.comments}
+                position={this.position}
+                onDelete={this.delete}
+                onCancel={this.cancelUnsavedAnnotation}
+                onCreate={this.save}
+                onCommentClick={this.onCommentClick}
+                isPending={isPending}
+                headerHeight={this.headerHeight}
+            />,
+            util.getPopoverLayer(pageEl)
+        );
     }
 
     /**
-     * Hides the appropriate annotation dialog for this thread.
+     * Resets and unmounts the annotation popover
      *
      * @return {void}
      */
-    hideDialog() {
-        if (this.dialog) {
-            this.state = STATES.inactive;
-            this.dialog.hide();
+    unmountPopover() {
+        this.reset();
+
+        this.toggleFlippedThreadEl();
+
+        const pageEl = this.getPopoverParent();
+        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+        if (this.popoverComponent && popoverLayer) {
+            unmountComponentAtNode(popoverLayer);
+            this.popoverComponent = null;
         }
     }
 
     /**
      * Saves an annotation.
      *
-     * @param {string} type - Type of annotation
-     * @param {string} text - Text of annotation to save
+     * @param {AnnotationType} type - Type of annotation
+     * @param {string} message - Text of annotation to save
      * @return {Promise} - Annotation create promise
      */
-    saveAnnotation(type, text) {
-        const annotationData = this.createAnnotationData(type, text);
+    save(type: AnnotationType, message: string): Promise<any> {
+        const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client
-        const tempAnnotationID = AnnotationService.generateID();
-        const tempAnnotationData = annotationData;
-        tempAnnotationData.annotationID = tempAnnotationID;
-        tempAnnotationData.permissions = {
-            can_edit: true,
-            can_delete: true
-        };
-        tempAnnotationData.created = new Date().getTime();
-        tempAnnotationData.modified = tempAnnotationData.created;
-        const tempAnnotation = new Annotation(tempAnnotationData);
-        this.saveAnnotationToThread(tempAnnotation);
-        this.state = STATES.inactive;
+        const id = AnnotationAPI.generateID();
+        this.updateAnnotationThread({
+            id,
+            message,
+            permissions: {
+                can_edit: true,
+                can_delete: true
+            },
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString()
+        });
 
-        if (this.dialog) {
-            this.dialog.disable(tempAnnotation.annotationID);
-        }
+        this.state = STATES.inactive;
+        this.renderAnnotationPopover();
 
         // Save annotation on server
-        return this.annotationService
+        return this.api
+            // $FlowFixMe
             .create(annotationData)
-            .then((savedAnnotation) => this.updateTemporaryAnnotation(tempAnnotation, savedAnnotation))
-            .catch((error) => this.handleThreadSaveError(error, tempAnnotationID));
+            .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
+            .catch((error) => this.handleThreadSaveError(error, id));
     }
+
+    /**
+     * Update the annotation thread instance with annotation data/comments
+     * 
+     * @param {Object} data - Annotation data
+     * @return {void}
+     */
+    updateAnnotationThread(data: Object) {
+        if (!this.threadNumber) {
+            this.id = data.id;
+            this.threadNumber = data.threadNumber;
+            this.threadID = data.threadID;
+        }
+
+        // If annotation is the first in the thread
+        const { message } = data;
+        if (message && message.trim() !== '') {
+            this.comments.push(data);
+        } else {
+            this.createdAt = data.createdAt;
+            this.createdBy = data.createdBy;
+            this.modifiedAt = data.modifiedAt;
+        }
+    }
+
+    /**
+     * Does nothing by default
+     *
+     * @return {void}
+     */
+    onCommentClick() {}
 
     /**
      * Deletes an annotation.
      *
-     * @param {string} annotationID - ID of annotation to delete
+     * @param {Object} annotationToRemove - annotation to delete
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    deleteAnnotation(annotationID, useServer = true) {
+    delete(annotationToRemove: Object, useServer: boolean = true): Promise<any> {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
-        const annotation = this.annotations[annotationID];
+        const { id: annotationIDToRemove } = annotationToRemove;
+        const annotation =
+            annotationIDToRemove !== this.id ? this.comments.find(({ id }) => id === annotationIDToRemove) : this;
         if (!annotation) {
             // Broadcast error
             this.emit(THREAD_EVENT.deleteError);
             /* eslint-disable no-console */
-            console.error(
-                THREAD_EVENT.deleteError,
-                `Annotation with ID ${annotation.annotationID} could not be found.`
-            );
+            console.error(THREAD_EVENT.deleteError, `Annotation with ID ${annotationIDToRemove} could not be found.`);
             /* eslint-enable no-console */
             return Promise.reject();
         }
@@ -211,37 +315,13 @@ class AnnotationThread extends EventEmitter {
             /* eslint-disable no-console */
             console.error(
                 THREAD_EVENT.deleteError,
-                `User does not have the correct permissions to delete annotation with ID ${annotation.annotationID}.`
+                `User does not have the correct permissions to delete annotation with ID ${annotation.id}.`
             );
             /* eslint-enable no-console */
             return Promise.reject();
         }
 
-        // Delete annotation on client
-        delete this.annotations[annotationID];
-
-        // If the user doesn't have permission to delete the entire highlight
-        // annotation, display the annotation as a plain highlight
-        let firstAnnotation = util.getFirstAnnotation(this.annotations);
-        let canDeleteAnnotation =
-            firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-        if (util.isPlainHighlight(this.annotations) && !canDeleteAnnotation) {
-            this.cancelFirstComment();
-
-            // If this annotation was the last one in the thread, destroy the thread
-        } else if (!firstAnnotation || util.isPlainHighlight(this.annotations)) {
-            if (this.isMobile && this.dialog) {
-                this.dialog.hideMobileDialog();
-                this.dialog.removeAnnotation(annotationID);
-            }
-            this.destroy();
-
-            // Otherwise, remove deleted annotation from dialog
-        } else if (this.dialog) {
-            this.dialog.removeAnnotation(annotationID);
-            this.showDialog();
-            this.dialog.activateReply();
-        }
+        this.cleanupAnnotationOnDelete(annotationIDToRemove);
 
         if (!useServer) {
             /* eslint-disable no-console */
@@ -254,39 +334,55 @@ class AnnotationThread extends EventEmitter {
         }
 
         // Delete annotation on server
-        return this.annotationService
-            .delete(annotationID)
-            .then(() => {
-                // Ensures that blank highlight comment is also deleted when removing
-                // the last comment on a highlight
-                firstAnnotation = util.getFirstAnnotation(this.annotations);
-                canDeleteAnnotation =
-                    firstAnnotation && firstAnnotation.permissions && firstAnnotation.permissions.can_delete;
-                if (util.isPlainHighlight(this.annotations) && canDeleteAnnotation) {
-                    this.annotationService.delete(firstAnnotation.annotationID);
-                }
-
-                // Broadcast thread cleanup if needed
-                firstAnnotation = util.getFirstAnnotation(this.annotations);
-                if (!firstAnnotation) {
-                    this.emit(THREAD_EVENT.threadCleanup);
-                }
-
-                // Broadcast annotation deletion event
-                this.emit(THREAD_EVENT.delete);
-            })
-            .catch((error) => {
-                // Broadcast error
-                this.emit(THREAD_EVENT.deleteError);
-                /* eslint-disable no-console */
-                console.error(THREAD_EVENT.deleteError, error.toString());
-                /* eslint-enable no-console */
-            });
+        return this.api
+            .delete(annotationIDToRemove)
+            .then(this.deleteSuccessHandler)
+            .catch(this.deleteErrorHandler);
     }
 
-    //--------------------------------------------------------------------------
-    // Abstract
-    //--------------------------------------------------------------------------
+    /**
+     * Appropriately cleanup the AnnotationThread instance based on the delete action
+     *
+     * @param {string} annotationIDToRemove Annotation ID to remove
+     * @return {void}
+     */
+    cleanupAnnotationOnDelete(annotationIDToRemove: string) {
+        // Delete matching comment from annotation
+        this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
+
+        if (this.canDelete && this.comments.length <= 0) {
+            // If this annotation was the last one in the thread, destroy the thread
+            this.destroy();
+            this.threadID = null;
+        } else {
+            // Otherwise, display annotation with deleted comment
+            this.renderAnnotationPopover();
+        }
+    }
+
+    /**
+     * Handles the successful delete of an annotation or one of it's comments
+     *
+     * @return {void}
+     */
+    deleteSuccessHandler = () => {
+        // Broadcast annotation deletion event
+        this.emit(THREAD_EVENT.delete);
+    };
+
+    /**
+     * Handles annotation delete errors
+     *
+     * @param {Error} error Delete error
+     * @return {void}
+     */
+    deleteErrorHandler(error: Error) {
+        // Broadcast error
+        this.emit(THREAD_EVENT.deleteError);
+        /* eslint-disable no-console */
+        console.error(THREAD_EVENT.deleteError, error.toString());
+        /* eslint-enable no-console */
+    }
 
     /**
      * Cancels the first comment on the thread
@@ -303,38 +399,16 @@ class AnnotationThread extends EventEmitter {
     show() {}
 
     /**
-     * Must be implemented to create the appropriate annotation dialog and save
-     * as a property on the thread.
-     *
-     * @return {void}
-     */
-    createDialog() {}
-
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
-
-    /**
      * Sets up the thread. Creates HTML for annotation indicator, sets
      * appropriate dialog, and binds event listeners.
      *
-     * @protected
      * @return {void}
      */
     setup() {
-        const firstAnnotation = util.getFirstAnnotation(this.annotations);
-        if (!firstAnnotation) {
-            this.state = STATES.pending;
-        } else {
+        if (this.threadNumber) {
             this.state = STATES.inactive;
-        }
-
-        this.createDialog();
-        this.bindCustomListenersOnDialog();
-
-        if (this.dialog) {
-            this.dialog.isMobile = this.isMobile;
-            this.dialog.localized = this.localized;
+        } else {
+            this.state = STATES.pending;
         }
 
         this.setupElement();
@@ -343,7 +417,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Sets up indicator element.
      *
-     * @protected
      * @return {void}
      */
     setupElement() {
@@ -354,7 +427,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Binds DOM event listeners for the thread.
      *
-     * @protected
      * @return {void}
      */
     bindDOMListeners() {
@@ -362,13 +434,13 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.element.addEventListener('click', this.showDialog);
+        this.element.addEventListener('click', this.renderAnnotationPopover);
+        this.element.addEventListener('blur', this.handleBlur);
     }
 
     /**
      * Unbinds DOM event listeners for the thread.
      *
-     * @protected
      * @return {void}
      */
     unbindDOMListeners() {
@@ -376,79 +448,41 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.element.removeEventListener('click', this.showDialog);
+        this.element.removeEventListener('click', this.renderAnnotationPopover);
+        this.element.removeEventListener('blur', this.handleBlur);
     }
 
     /**
-     * Binds custom event listeners for the dialog.
+     * Called when the annotation element loses focus
      *
-     * @protected
      * @return {void}
      */
-    bindCustomListenersOnDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        // Explicitly bind listeners to the dialog
-        this.createAnnotation = this.createAnnotation.bind(this);
-        this.cancelUnsavedAnnotation = this.cancelUnsavedAnnotation.bind(this);
-        this.deleteAnnotationWithID = this.deleteAnnotationWithID.bind(this);
-
-        this.dialog.addListener('annotationcreate', this.createAnnotation);
-        this.dialog.addListener('annotationcancel', this.cancelUnsavedAnnotation);
-        this.dialog.addListener('annotationdelete', this.deleteAnnotationWithID);
-        this.dialog.addListener('annotationshow', () => this.emit(THREAD_EVENT.show));
-        this.dialog.addListener('annotationhide', () => this.emit(THREAD_EVENT.hide));
-    }
-
-    /**
-     * Unbinds custom event listeners for the dialog.
-     *
-     * @protected
-     * @return {void}
-     */
-    unbindCustomListenersOnDialog() {
-        if (!this.dialog) {
-            return;
-        }
-
-        this.dialog.removeAllListeners([
-            'annotationcreate',
-            'annotationcancel',
-            'annotationdelete',
-            'annotationshow',
-            'annotationhide'
-        ]);
+    handleBlur() {
+        this.toggleFlippedThreadEl();
     }
 
     /**
      * Destroys mobile and pending/pending-active annotation threads
      *
-     * @protected
      * @return {void}
      */
-    cancelUnsavedAnnotation() {
-        if (!util.isPending(this.state)) {
-            this.hideDialog();
+    cancelUnsavedAnnotation = () => {
+        if (this.state !== STATES.pending) {
+            this.unmountPopover();
             return;
         }
 
         this.emit(THREAD_EVENT.cancel);
         this.destroy();
-    }
-
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
+    };
 
     /**
      * Scroll annotation into the center of the viewport, if possible
      *
-     * @private
      * @return {void}
      */
     scrollIntoView() {
+        // $FlowFixMe
         const yPos = parseInt(this.location.y, 10);
         this.scrollToPage();
         this.centerAnnotation(this.annotatedElement.scrollTop + yPos);
@@ -457,7 +491,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Scroll to the annotation's page
      *
-     * @private
      * @return {void}
      */
     scrollToPage() {
@@ -466,22 +499,22 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${this.location.page}"]`);
+        const pageEl = this.getPopoverParent();
         pageEl.scrollIntoView();
     }
 
     /**
      * Adjust page scroll position so annotation is centered in viewport
      *
-     * @private
      * @param {number} scrollVal - scroll value to adjust so annotation is
      centered in the viewport
      * @return {void}
      */
-    centerAnnotation(scrollVal) {
+    centerAnnotation(scrollVal: number) {
         if (scrollVal < this.annotatedElement.scrollHeight) {
             this.annotatedElement.scrollTop = scrollVal;
         } else {
+            // $FlowFixMe
             this.annotatedElement.scrollTop = this.annotatedElement.scrollBottom;
         }
     }
@@ -490,54 +523,35 @@ class AnnotationThread extends EventEmitter {
      * Update a temporary annotation with the annotation saved on the backend. Set the threadNumber if it has not
      * yet been set. Propogate the threadnumber to an attached dialog if applicable.
      *
-     * @private
-     * @param {Annotation} tempAnnotation - The locally stored placeholder for the server validated annotation
+     * @param {string} tempAnnotationID - The locally stored placeholder for the server validated annotation
      * @param {Annotation} savedAnnotation - The annotation determined by the backend to be used as the source of truth
      * @return {void}
      */
-    updateTemporaryAnnotation(tempAnnotation, savedAnnotation) {
-        if (!(tempAnnotation.annotationID in this.annotations)) {
-            // If no temporary annotation is found, save to thread normally
-            this.saveAnnotationToThread(savedAnnotation);
-        } else {
-            // Otherwise, replace temporary annotation with annotation saved to server
-            delete this.annotations[tempAnnotation.annotationID];
-            this.annotations[savedAnnotation.annotationID] = savedAnnotation;
+    updateTemporaryAnnotation(tempAnnotationID: string, savedAnnotation: Annotation) {
+        if (this.comments.length > 0) {
+            this.comments = this.comments.filter(({ id }) => id !== tempAnnotationID);
         }
 
-        // Set threadNumber if the savedAnnotation is the first annotation of the thread
-        if (!this.threadNumber && savedAnnotation && savedAnnotation.threadNumber) {
-            this.threadNumber = savedAnnotation.threadNumber;
-        }
+        this.updateAnnotationThread(savedAnnotation);
 
-        if (this.dialog) {
-            // Add thread number to associated dialog and thread
-            if (this.dialog.element && this.dialog.element.dataset) {
-                this.dialog.element.dataset.threadNumber = this.threadNumber;
-            }
-
-            // Remove temporary annotation and replace it with the saved annotation
-            this.dialog.addAnnotation(savedAnnotation);
-            this.dialog.removeAnnotation(tempAnnotation.annotationID);
-            this.dialog.enable(savedAnnotation.annotationID);
-            this.dialog.scrollToLastComment();
-        }
-
-        if (this.isMobile) {
+        if (util.shouldDisplayMobileUI(this.container)) {
             // Changing state from pending
-            this.state = STATES.hover;
-            this.showDialog();
+            this.state = STATES.active;
+        } else {
+            this.state = STATES.inactive;
         }
+
+        this.show();
+        this.renderAnnotationPopover();
         this.emit(THREAD_EVENT.save);
     }
 
     /**
      * Creates the HTML for the annotation indicator.
      *
-     * @private
      * @return {HTMLElement} HTML element
      */
-    createElement() {
+    createElement(): HTMLElement {
         const indicatorEl = document.createElement('button');
         indicatorEl.classList.add(CLASS_ANNOTATION_POINT_MARKER);
         indicatorEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_INDICATOR);
@@ -546,71 +560,45 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Saves the provided annotation to the thread and dialog if appropriate
-     * and resets state to inactive.
-     *
-     * @private
-     * @param {Annotation} annotation - Annotation to save
-     * @return {void}
-     */
-    saveAnnotationToThread(annotation) {
-        this.annotations[annotation.annotationID] = annotation;
-
-        if (this.dialog) {
-            this.dialog.addAnnotation(annotation);
-            this.dialog.activateReply();
-        }
-    }
-
-    /**
      * Create an annotation data object to pass to annotation service.
      *
-     * @private
-     * @param {string} type - Type of annotation
-     * @param {string} text - Annotation text
+     * @param {AnnotationType} type - Type of annotation
+     * @param {string} message - Annotation text
      * @return {Object} Annotation data
      */
-    createAnnotationData(type, text) {
+    createAnnotationData(type: AnnotationType, message: string) {
         return {
-            fileVersionId: this.fileVersionId,
-            type,
-            text,
-            location: this.location,
-            user: this.annotationService.user,
-            threadID: this.threadID,
-            threadNumber: this.threadNumber
+            item: {
+                id: this.fileVersionId,
+                type: 'file_version'
+            },
+            details: {
+                type,
+                location: this.location,
+                threadID: this.threadID
+            },
+            message,
+            createdBy: this.api.user
         };
     }
 
     /**
      * Creates a new point annotation
      *
-     * @private
-     * @param {Object} data - Annotation data
+     * @param {string} message - Annotation message string
      * @return {void}
      */
-    createAnnotation(data) {
-        this.saveAnnotation(TYPES.point, data.text);
-    }
-
-    /**
-     * Deletes annotation with annotationID from thread
-     *
-     * @private
-     * @param {Object} data - Annotation data
-     * @return {void}
-     */
-    deleteAnnotationWithID(data) {
-        this.deleteAnnotation(data.annotationID);
+    createAnnotation(message: string) {
+        this.save(TYPES.point, message);
     }
 
     /**
      * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
-     * @private
      * @return {void}
      */
     regenerateBoundary() {
+        // $FlowFixMe
         if (!this.location || !this.location.x || !this.location.y) {
             return;
         }
@@ -624,14 +612,13 @@ class AnnotationThread extends EventEmitter {
     /**
      * Deletes the temporary annotation if the annotation failed to save on the server
      *
-     * @private
      * @param {error} error - error thrown while saving the annotation
      * @param {string} tempAnnotationID - ID of temporary annotation to be updated with annotation from server
      * @return {void}
      */
-    handleThreadSaveError(error, tempAnnotationID) {
+    handleThreadSaveError(error: Error, tempAnnotationID: string) {
         // Remove temporary annotation
-        this.deleteAnnotation(tempAnnotationID, /* useServer */ false);
+        this.delete({ id: tempAnnotationID }, /* useServer */ false);
 
         // Broadcast error
         this.emit(THREAD_EVENT.createError);
@@ -645,19 +632,22 @@ class AnnotationThread extends EventEmitter {
      * Generate threadData with relevant information to be emitted with an
      * annotation thread event
      *
-     * @private
      * @return {Object} threadData - Annotation event thread data
      */
-    getThreadEventData() {
+    getThreadEventData(): Object {
         const threadData = {
             type: this.type,
             threadID: this.threadID
         };
 
-        if (this.annotationService.user.id > 0) {
-            threadData.userId = this.annotationService.user.id;
+        // $FlowFixMe
+        if (this.api.user && this.api.user.id > 0) {
+            // $FlowFixMe
+            threadData.userId = this.api.user.id;
         }
+
         if (this.threadNumber) {
+            // $FlowFixMe
             threadData.threadNumber = this.threadNumber;
         }
 
@@ -667,16 +657,53 @@ class AnnotationThread extends EventEmitter {
     /**
      * Emits a generic viewer event
      *
-     * @private
      * @emits viewerevent
      * @param {string} event - Event name
      * @param {Object} eventData - Event data
      * @return {void}
      */
-    emit(event, eventData) {
+    emit(event: Event, eventData: Object) {
         const threadData = this.getThreadEventData();
         super.emit(event, { data: threadData, eventData });
         super.emit('threadevent', { event, data: threadData, eventData });
+    }
+
+    /**
+     * Keydown handler for dialog.
+     *
+     * @param {Event} event DOM event
+     * @return {void}
+     */
+    keydownHandler(event: Event) {
+        event.stopPropagation();
+
+        const key = util.decodeKeydown(event);
+        if (key === 'Escape') {
+            if (this.hasAnnotations()) {
+                this.hide();
+            } else {
+                this.cancelAnnotation();
+            }
+        }
+    }
+
+    /**
+     * Show/hide the top portion of the annotations icon based on if the
+     * entire dialog is flipped
+     *
+     * @return {void}
+     */
+    toggleFlippedThreadEl() {
+        if (!this.element) {
+            return;
+        }
+
+        const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_POPOVER);
+        if (!isDialogFlipped) {
+            return;
+        }
+
+        this.element.classList.remove(CLASS_FLIPPED_POPOVER);
     }
 }
 

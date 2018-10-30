@@ -1,9 +1,4 @@
-import {
-    getRotatedLocation,
-    getLocationWithoutRotation,
-    getRotatedPadding,
-    getBrowserCoordinatesFromLocation
-} from '../imageUtil';
+import { getRotatedLocation, getLocationWithoutRotation, getBrowserCoordinatesFromLocation } from '../imageUtil';
 
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
@@ -17,13 +12,11 @@ const html = `<div class="mock-header-bar" height="30px" width="100px"></div>
 
 describe('image/imageUtil', () => {
     let annotatedEl;
-    let imageEl;
 
     beforeEach(() => {
         annotatedEl = document.createElement('div');
         annotatedEl.innerHTML = html;
         document.body.appendChild(annotatedEl);
-        imageEl = annotatedEl.querySelector('img');
     });
 
     afterEach(() => {
@@ -93,22 +86,6 @@ describe('image/imageUtil', () => {
             const [resultX, resultY] = getLocationWithoutRotation(x, y, ROTATION_THRICE_DEG, dimensions, 1);
             expect(resultX).toEqual(y);
             expect(resultY).toEqual(180);
-        });
-    });
-
-    describe('getRotatedPadding()', () => {
-        beforeEach(() => {
-            imageEl = { offsetLeft: 50, offsetTop: 50 };
-        });
-
-        it('should return top padding if image is not rotated', () => {
-            const rotatedPadding = getRotatedPadding(imageEl, false);
-            expect(rotatedPadding).toEqual(50);
-        });
-
-        it('should return top padding if image is rotated', () => {
-            const rotatedPadding = getRotatedPadding(imageEl, true);
-            expect(rotatedPadding).toEqual(27.5);
         });
     });
 

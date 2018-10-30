@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-expressions */
 import ImageAnnotator from '../ImageAnnotator';
-import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
 import * as imageUtil from '../imageUtil';
-import { TYPES, ANNOTATOR_EVENT } from '../../constants';
+import { TYPES } from '../../constants';
 
 let annotator;
 const html = `<div class="bp-image annotated-element">
@@ -26,10 +25,10 @@ describe('image/ImageAnnotator', () => {
                 TYPE: [TYPES.point]
             }
         };
+
         annotator = new ImageAnnotator({
-            canAnnotate: true,
             container: document,
-            annotationService: {},
+            api: {},
             file: {
                 file_version: { id: 1 }
             },
@@ -44,10 +43,21 @@ describe('image/ImageAnnotator', () => {
                 loadError: 'loaderror'
             }
         });
+
         annotator.annotatedElement = annotator.getAnnotatedEl(document);
-        annotator.annotationService = {};
+        annotator.api = {};
         annotator.threads = {};
-        annotator.modeControllers = {};
+
+        annotator.modeButtons = {
+            point: { selector: 'point_btn' }
+        };
+        annotator.modeControllers = {
+            point: {
+                api: {},
+                getButton: jest.fn()
+            }
+        };
+
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
 
         annotator.emit = jest.fn();
@@ -157,68 +167,13 @@ describe('image/ImageAnnotator', () => {
         });
     });
 
-    describe('createAnnotationThread()', () => {
-        beforeEach(() => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(true);
-            annotator.handleValidationError = jest.fn();
-        });
-
-        it('should emit error and return undefined if thread fails to create', () => {
-            const thread = annotator.createAnnotationThread([], {}, 'random');
-            expect(thread).toBeUndefined();
-            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should create, add point thread to internal map, and return it', () => {
-            const thread = annotator.createAnnotationThread([], { page: 2 }, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(2);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should emit error and return undefined if thread params are invalid', () => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(false);
-            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
-            expect(thread instanceof ImagePointThread).toBeFalsy();
-            expect(annotator.handleValidationError).toBeCalled();
-        });
-
-        it('should force page number 1 if the annotation was created without one', () => {
-            const thread = annotator.createAnnotationThread([], {}, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(1);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-
-        it('should force page number 1 if the annotation was created wit page number -1', () => {
-            const thread = annotator.createAnnotationThread([], { page: -1 }, TYPES.point);
-
-            expect(thread instanceof ImagePointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-            expect(thread.location.page).toEqual(1);
-            expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-    });
-
     describe('rotateAnnotations()', () => {
         beforeEach(() => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             util.hideElement = jest.fn();
             util.showElement = jest.fn();
             annotator.render = jest.fn();
             annotator.renderPage = jest.fn();
-
-            annotator.modeButtons = {
-                point: { selector: 'point_btn' }
-            };
-
-            annotator.modeControllers.point = {
-                getButton: jest.fn()
-            };
         });
 
         afterEach(() => {
@@ -226,7 +181,7 @@ describe('image/ImageAnnotator', () => {
         });
 
         it('should only render annotations if user cannot annotate', () => {
-            annotator.permissions.canAnnotate = false;
+            annotator.permissions.can_annotate = false;
             annotator.rotateAnnotations();
             expect(util.hideElement).not.toBeCalled();
             expect(util.showElement).not.toBeCalled();

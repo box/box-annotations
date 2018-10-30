@@ -1,0 +1,20 @@
+@import '../../variables';
+
+.ba {
+    .ba-annotation-label {
+        line-height: 23px;
+    }
+
+    // MOBILE & TABLET CSS
+    @media #{$mobile}, #{$tablet} {
+        .ba-annotation-label {
+            background: white;
+            border-bottom: 1px solid #ccc;
+            left: 0;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+    }
+}

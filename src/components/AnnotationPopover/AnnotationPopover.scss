@@ -1,0 +1,214 @@
+@import '../../variables';
+
+.ba {
+    .ba-popover {
+        cursor: auto; // Overrides cursor: none from annotation mode
+        max-width: 282px;
+        position: absolute;
+        z-index: 3;
+    }
+
+    .ba-popover-caret {
+        left: 50%;
+        position: absolute;
+        z-index: 3;
+
+        // CSS arrow for caret above container
+        &::after,
+        &::before {
+            border: solid transparent;
+            content: ' ';
+            height: 0;
+            left: 50%;
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            transform: rotate(-225deg);
+            width: 0;
+        }
+
+        &::after {
+            border-color: transparent transparent $white $white;
+            border-width: 6px;
+            margin: -4px 0 0 -6px;
+        }
+
+        &::before {
+            border-color: transparent transparent $sf-fog $sf-fog;
+            border-width: 6px;
+            margin: -5px 0 0 -6px;
+        }
+    }
+
+    .overlay {
+        border: 1px solid $seesee;
+        border-radius: 4px;
+        display: block;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 15px;
+        white-space: normal;
+    }
+
+    .ba-inline .overlay {
+        display: inline-flex;
+    }
+
+    .bcs-comment-input-form-container {
+        margin-right: 0;
+
+        form {
+            margin: 0;
+        }
+    }
+
+    .bcs-comment-input {
+        margin-top: 0;
+
+        ~ .bcs-comment-input-controls .btn {
+            margin-bottom: 0;
+        }
+    }
+
+    .ba-buffer {
+        display: none;
+    }
+
+    .ba-popover-flipped {
+        path,
+        rect {
+            display: none;
+        }
+
+        .ba-popover-caret {
+            bottom: 0;
+            transform: rotate(180deg);
+        }
+    }
+
+    // MOBILE & TABLET CSS
+    @media #{$mobile}, #{$tablet} {
+        // SAVED ANNOTATION POPOVER CSS
+        .ba-popover {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: flex-start;
+            max-width: unset;
+            top: 0;
+            width: 100%;
+        }
+
+        .ba-mobile-header {
+            background: white;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 5px;
+            width: 100%;
+        }
+
+        .ba-popover-overlay {
+            background: white;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .ba-popover .overlay {
+            border: none;
+            box-shadow: unset;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: unset;
+            padding: 0;
+        }
+
+        // INLINE ANNOTATION POPOVER CSS
+        .ba-popover.ba-inline {
+            height: auto;
+        }
+
+        .ba-inline .overlay {
+            background: transparent;
+            border-bottom: 1px solid $seesee;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
+            height: auto;
+            margin: 0;
+            text-align: center;
+        }
+
+        .ba-inline.ba-create-popover .overlay {
+            border: none;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ba-inline .ba-mobile-header,
+        .ba-create-popover .ba-mobile-header {
+            display: none;
+        }
+
+        .ba-create-popover .ba-popover-overlay,
+        .ba-inline .ba-popover-overlay {
+            background: transparent;
+            height: auto;
+        }
+
+        // UNSAVED/CREATE ANNOTATION POPOVER CSS
+        .ba-create-popover {
+            bottom: 0;
+            height: auto;
+            top: auto;
+        }
+
+        .ba-create-popover .overlay {
+            background: transparent;
+            border-radius: 0;
+            height: auto;
+            justify-content: flex-end;
+            padding: 0;
+        }
+    }
+
+    // TABLET-SPECIFIC CSS
+    @media #{$tablet} {
+        .ba-popover {
+            border-left: 1px solid $seesee;
+            // Max width matches the max-width of the Preview Sidebar
+            max-width: 341px;
+            right: 0;
+        }
+
+        .ba-create-popover .ba-mobile-header {
+            display: flex;
+        }
+
+        .ba-popover.ba-inline {
+            border: none;
+            width: 100%;
+        }
+
+        .ba-inline .ba-mobile-header {
+            display: none;
+        }
+
+        .ba-create-popover,
+        .ba-create-popover .overlay {
+            background: white;
+            height: 100%;
+        }
+
+        .ba-inline.ba-create-popover,
+        .ba-inline.ba-create-popover .overlay {
+            background: transparent;
+            height: auto;
+        }
+
+        .ba-create-popover .overlay {
+            padding: 15px;
+        }
+    }
+}

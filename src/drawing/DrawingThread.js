@@ -1,14 +1,13 @@
 import AnnotationThread from '../AnnotationThread';
 import DrawingPath from './DrawingPath';
 import DrawingContainer from './DrawingContainer';
-import { eventToLocationHandler, getFirstAnnotation } from '../util';
+import { eventToLocationHandler } from '../util';
 import {
     STATES,
     DRAW_STATES,
     DRAW_RENDER_THRESHOLD,
     DRAW_BASE_LINE_WIDTH,
     BORDER_OFFSET,
-    DRAW_DASHED_SPACING,
     THREAD_EVENT
 } from '../constants';
 
@@ -68,13 +67,14 @@ class DrawingThread extends AnnotationThread {
         this.handleStop = this.handleStop.bind(this);
         this.undo = this.undo.bind(this);
         this.redo = this.redo.bind(this);
+        this.canComment = false;
 
         // Recreate stored paths
         if (this.location && this.location.paths) {
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.location.paths.forEach((drawingPathData) => {
@@ -96,18 +96,13 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        if (this.dialog) {
-            this.dialog.destroy();
-            this.dialog = null;
-        }
-
-        super.destroy();
-
         if (this.state !== STATES.pending) {
-            this.emit(THREAD_EVENT.threadCleanup);
+            this.emit(THREAD_EVENT.render, this.location.page);
         }
 
+        this.unmountPopover();
         this.reset();
+        super.destroy();
     }
 
     /**
@@ -125,22 +120,10 @@ class DrawingThread extends AnnotationThread {
      * Binds DOM event listeners for drawing new thread using
      * mode specific location getter
      *
-     * @protected
      * @param {Function} locationFunction - Location getter method
      * @return {void}
      */
     bindDrawingListeners(locationFunction) {
-        if (!this.isMobile) {
-            this.annotatedElement.addEventListener(
-                'mousemove',
-                eventToLocationHandler(locationFunction, this.handleMove)
-            );
-            this.annotatedElement.addEventListener(
-                'mouseup',
-                eventToLocationHandler(locationFunction, this.handleStop)
-            );
-        }
-
         if (this.hasTouch) {
             this.annotatedElement.addEventListener(
                 'touchmove',
@@ -154,13 +137,21 @@ class DrawingThread extends AnnotationThread {
                 'touchend',
                 eventToLocationHandler(locationFunction, this.handleStop)
             );
+        } else {
+            this.annotatedElement.addEventListener(
+                'mousemove',
+                eventToLocationHandler(locationFunction, this.handleMove)
+            );
+            this.annotatedElement.addEventListener(
+                'mouseup',
+                eventToLocationHandler(locationFunction, this.handleStop)
+            );
         }
     }
 
     /**
      * Unbinds DOM event listeners for drawing new threads.
      *
-     * @protected
      * @return {void}
      */
     unbindDrawingListeners() {
@@ -176,7 +167,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Handle a pointer movement
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -185,7 +175,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Start a drawing stroke *
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -194,7 +183,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * End a drawing stroke
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -205,11 +193,10 @@ class DrawingThread extends AnnotationThread {
      * Delete a saved drawing thread by deleting each annotation
      * and then clearing the concrete context, boundary, and destroying its path.
      *
-     * @public
      * @return {void}
      */
     deleteThread() {
-        Object.keys(this.annotations).forEach((annotationID) => this.deleteAnnotationWithID({ annotationID }));
+        this.comments.forEach((annotation) => this.delete(annotation));
 
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
@@ -234,7 +221,6 @@ class DrawingThread extends AnnotationThread {
      * Set the drawing styles for a provided context. Sets the context of the in-progress context if
      * no other context is provided.
      *
-     * @public
      * @param {Object} config - The configuration Object
      * @param {number} config.scale - The document scale
      * @param {string} config.color - The brush color
@@ -256,10 +242,9 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Overturns the last drawing stroke if it exists. Emits the number of undo and redo
+     * Overturns the last drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if an undo was executed.
      *
-     * @public
      * @return {void}
      */
     undo() {
@@ -269,8 +254,8 @@ class DrawingThread extends AnnotationThread {
             this.updateBoundary();
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.drawBoundary();
@@ -279,12 +264,10 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Replays the last undone drawing stroke if it exists. Emits the number of undo and redo
+     * Replays the last undone drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if a redraw was executed.
      *
-     * @public
      * @return {void}
-     *
      */
     redo() {
         const executedRedo = this.pathContainer.redo();
@@ -293,8 +276,8 @@ class DrawingThread extends AnnotationThread {
             this.updateBoundary();
             this.regenerateBoundary();
 
-            if (this.dialog && this.pathContainer.isEmpty()) {
-                this.dialog.hide();
+            if (this.pathContainer.isEmpty()) {
+                this.unmountPopover();
             }
 
             this.drawBoundary();
@@ -302,33 +285,25 @@ class DrawingThread extends AnnotationThread {
         }
     }
 
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
 
     /**
      * Sets up the thread state.
      *
-     * @override
-     * @protected
      * @return {void}
      */
     setup() {
-        const firstAnnotation = getFirstAnnotation(this.annotations);
-        if (!firstAnnotation) {
-            // Newly created thread
-            this.state = STATES.pending;
-        } else {
+        if (this.threadNumber) {
             // Saved thread, load boundary dialog
             this.state = STATES.inactive;
-            this.createDialog();
+        } else {
+            // Newly created thread
+            this.state = STATES.pending;
         }
     }
 
     /**
      * Draws the paths in the thread onto the given context.
      *
-     * @protected
      * @param {CanvasContext} context - The context to draw on
      * @param {boolean} [clearCanvas] - A flag to clear the canvas before drawing.
      * @return {void}
@@ -358,9 +333,8 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Emit an event containing the number of undo and redo actions that can be done.
+     * Emit an event containing thenumber of undo and redo actions that can be done.
      *
-     * @protected
      * @return {void}
      */
     emitAvailableActions() {
@@ -372,44 +346,18 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Draw the boundary on a drawing thread that has been saved
+     * Clears any existing boundaries and re-redraws a new boundary around the drawing annotation
      *
-     * @protected
      * @return {void}
      */
     drawBoundary() {
-        if (!this.location.page) {
-            return;
-        }
-
-        const [x, y, width, height] = this.getBrowserRectangularBoundary();
-
-        // Save context style
-        this.drawingContext.save();
-
-        this.drawingContext.beginPath();
-        this.drawingContext.lineWidth = this.drawingContext.lineWidth / 2;
-        this.drawingContext.setLineDash([DRAW_DASHED_SPACING, DRAW_DASHED_SPACING * 2]);
-        this.drawingContext.rect(x, y, width, height);
-        this.drawingContext.stroke();
-
-        // Restore context style
-        this.drawingContext.restore();
-
-        if (this.dialog) {
-            if (!this.dialog.isVisible() && !this.pathContainer.isEmpty()) {
-                this.showDialog();
-            }
-
-            this.dialog.position(x + width, y);
-        }
+        this.clearBoundary();
     }
 
     /**
      * Draw the pending path onto the DrawingThread CanvasContext. Should be used
      * in conjunction with requestAnimationFrame. Does nothing when there is drawingContext set.
      *
-     * @protected
      * @param {number} timestamp - The time when the function was called;
      * @return {void}
      */
@@ -419,7 +367,6 @@ class DrawingThread extends AnnotationThread {
         const elapsed = timestamp - (this.lastRenderTimestamp || 0);
         if (elapsed >= DRAW_RENDER_THRESHOLD) {
             this.draw(this.drawingContext, true);
-            this.drawBoundary();
 
             this.lastRenderTimestamp = timestamp;
             renderAgain = this.drawingFlag === DRAW_STATES.drawing;
@@ -432,17 +379,13 @@ class DrawingThread extends AnnotationThread {
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
     }
 
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
+    /** @inheritdoc */
+    renderAnnotationPopover() {
+        this.drawBoundary();
+        super.renderAnnotationPopover();
+    }
 
-    /**
-     * Update the boundary information
-     *
-     * @inheritdoc
-     * @private
-     * @return {void}
-     */
+    /** @inheritdoc */
     updateBoundary(item) {
         // Recompute the entire AABB when no item is provided, check a new item if provided
         const boundaryData = !item
@@ -451,14 +394,8 @@ class DrawingThread extends AnnotationThread {
 
         Object.assign(this.location, boundaryData);
     }
-
-    /**
-     * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
-     *
-     * @inheritdoc
-     * @private
-     * @return {void}
-     */
+    
+    /** @inheritdoc */
     regenerateBoundary() {
         if (!this.location || this.location.boundaryData) {
             return;
@@ -476,7 +413,6 @@ class DrawingThread extends AnnotationThread {
      * coordinate indicates the upper left
      * point of the rectangular boundary in browser space
      *
-     * @private
      * @return {void}
      */
     getBrowserRectangularBoundary() {}
@@ -487,16 +423,40 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     clearBoundary() {
-        if (this.drawingContext) {
-            const { canvas } = this.drawingContext;
-            this.drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+        const boundaryEl = this.annotatedElement.querySelector('.ba-drawing-boundary');
+        if (boundaryEl) {
+            boundaryEl.parentNode.removeChild(boundaryEl);
         }
+    }
 
-        if (!this.dialog || !this.dialog.isVisible()) {
-            return;
-        }
+    /**
+     * Create an annotation data object to pass to annotation service.
+     *
+     * @param {string} type - Type of annotation
+     * @param {string} message - Annotation text
+     * @return {Object} Annotation data
+     */
+    createAnnotationData(type, message) {
+        return {
+            item: {
+                id: this.fileVersionId,
+                type: 'file_version'
+            },
+            details: {
+                type,
+                location: this.location,
+                threadID: this.threadID,
+                drawingPaths: this.pathContainer
+            },
+            createdBy: this.api.user,
+            thread: this.threadNumber
+        };
+    }
 
-        this.dialog.hide();
+    /** @inheritdoc */
+    cleanupAnnotationOnDelete() {
+        this.destroy();
+        this.threadID = null;
     }
 }
 

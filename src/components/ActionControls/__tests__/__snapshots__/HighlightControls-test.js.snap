@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/ActionControls/HighlightControls should correctly render pending highlight comment controls 1`] = `
+<div
+  className="ba-action-controls-highlight"
+>
+  <PlainButton
+    className="ba-highlight-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightAnnotation
+      className=""
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+  <PlainButton
+    className="ba-highlight-comment-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightCommentAnnotation
+      className=""
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+</div>
+`;
+
+exports[`components/ActionControls/HighlightControls should correctly render pending plain highlight controls 1`] = `
+<div
+  className="ba-action-controls-highlight"
+>
+  <PlainButton
+    className="ba-highlight-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightAnnotation
+      className=""
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+</div>
+`;
+
+exports[`components/ActionControls/HighlightControls should correctly render saved highlight comment controls 1`] = `
+<div
+  className="ba-action-controls-highlight"
+>
+  <PlainButton
+    className="ba-highlight-btn"
+    type="button"
+  >
+    <IconHighlightAnnotation
+      className="ba-saved-highlight"
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+  <PlainButton
+    className="ba-highlight-comment-btn"
+    onClick={[MockFunction]}
+    type="button"
+  >
+    <IconHighlightCommentAnnotation
+      className=""
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+</div>
+`;
+
+exports[`components/ActionControls/HighlightControls should correctly render saved plain highlight controls 1`] = `
+<div
+  className="ba-action-controls-highlight"
+>
+  <PlainButton
+    className="ba-highlight-btn"
+    type="button"
+  >
+    <IconHighlightAnnotation
+      className="ba-saved-highlight"
+      height={24}
+      width={24}
+    />
+  </PlainButton>
+</div>
+`;

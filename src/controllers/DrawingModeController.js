@@ -1,13 +1,8 @@
+// @flow
 import AnnotationModeController from './AnnotationModeController';
-import shell from './drawingShell.html';
-import {
-    replaceHeader,
-    enableElement,
-    disableElement,
-    clearCanvas,
-    hasValidBoundaryCoordinates,
-    findClosestElWithClass
-} from '../util';
+import DocDrawingThread from '../doc/DocDrawingThread';
+import { replaceHeader, enableElement, disableElement, clearCanvas, findClosestElWithClass, getPageEl } from '../util';
+import AnnotationAPI from '../api/AnnotationAPI';
 import {
     TYPES,
     STATES,
@@ -19,27 +14,38 @@ import {
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_DRAW_MODE,
-    CLASS_ANNOTATION_POINT_MARKER
+    CLASS_ANNOTATION_POINT_MARKER,
+    ANNOTATOR_TYPE,
+    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
 } from '../constants';
 
+// $FlowFixMe
+import shell from './drawingShell.html';
+
 class DrawingModeController extends AnnotationModeController {
-    /** @property {DrawingThread} - The currently selected DrawingThread */
-    selectedThread;
+    /** @property {AnnotationThread} - The currently selected DrawingThread */
+    selectedThread: AnnotationThread;
 
     /** @property {HTMLElement} - The button to cancel the pending drawing thread */
-    cancelButtonEl;
+    cancelButtonEl: HTMLElement;
 
     /** @property {HTMLElement} - The button to commit the pending drawing thread */
-    postButtonEl;
+    postButtonEl: HTMLElement;
 
     /** @property {HTMLElement} - The button to undo a stroke on the pending drawing thread */
-    undoButtonEl;
+    undoButtonEl: HTMLElement;
 
     /** @property {HTMLElement} - The button to redo a stroke on the pending drawing thread */
-    redoButtonEl;
+    redoButtonEl: HTMLElement;
+
+    /** @property {AnnotationThread} */
+    currentThread: AnnotationThread;
+
+    /** @property {Function} */
+    locationFunction: Function;
 
     /** @inheritdoc */
-    init(data) {
+    init(data: Object): void {
         super.init(data);
 
         // If the header coming from the preview options is not none (e.g.
@@ -49,12 +55,10 @@ class DrawingModeController extends AnnotationModeController {
         if (data.options.header !== 'none' || this.headerElement) {
             this.setupHeader(this.headerElement, shell);
         }
-
-        this.handleSelection = this.handleSelection.bind(this);
     }
 
     /** @inheritdoc */
-    setupHeader(container, header) {
+    setupHeader(container: HTMLElement, header: HTMLElement): void {
         super.setupHeader(container, header);
 
         this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
@@ -70,35 +74,25 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    bindDOMListeners() {
-        if (this.hasTouch) {
-            this.annotatedElement.addEventListener('touchstart', this.handleSelection);
-        }
-
-        if (!this.isMobile) {
-            this.annotatedElement.addEventListener('click', this.handleSelection);
-        }
+    bindDOMListeners(): void {
+        // $FlowFixMe
+        this.handleSelection = this.handleSelection.bind(this);
+        this.annotatedElement.addEventListener('click', this.handleSelection);
     }
 
     /** @inheritdoc */
-    unbindDOMListeners() {
-        if (this.hasTouch) {
-            this.annotatedElement.removeEventListener('touchstart', this.handleSelection);
-        }
-
-        if (!this.isMobile) {
-            this.annotatedElement.removeEventListener('click', this.handleSelection);
-        }
+    unbindDOMListeners(): void {
+        this.annotatedElement.removeEventListener('click', this.handleSelection);
     }
 
     /** @inheritdoc */
-    bindListeners() {
+    bindListeners(): void {
         super.bindListeners();
         this.unbindDOMListeners();
     }
 
     /** @inheritdoc */
-    unbindListeners() {
+    unbindListeners(): void {
         super.unbindListeners();
         this.bindDOMListeners();
 
@@ -109,11 +103,10 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Prevents click events from triggering other annotation types
      *
-     * @protected
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    stopPropagation(event) {
+    stopPropagation(event: Event): void {
         const el = findClosestElWithClass(event.target, CLASS_ANNOTATION_POINT_MARKER);
         if (el) {
             event.stopPropagation();
@@ -123,40 +116,35 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Cancels drawing annotation
      *
-     * @protected
      * @return {void}
      */
-    cancelDrawing() {
+    cancelDrawing(): void {
         if (this.currentThread) {
-            this.currentThread.cancelUnsavedAnnotation();
+            this.currentThread.destroy();
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
+        this.exit();
     }
 
     /**
      * Posts drawing annotation
      *
-     * @protected
      * @return {void}
      */
-    postDrawing() {
+    postDrawing(): void {
         if (this.currentThread && this.currentThread.state === STATES.pending) {
-            this.saveThread(this.currentThread);
+            this.currentThread.save(TYPES.draw);
         }
 
-        this.currentThread = undefined;
-        this.toggleMode();
+        this.exit();
     }
 
     /**
      * Undos last drawing
      *
-     * @protected
      * @return {void}
      */
-    undoDrawing() {
+    undoDrawing(): void {
         if (this.currentThread) {
             this.currentThread.undo();
         }
@@ -165,27 +153,33 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Redos last undone drawing annotation
      *
-     * @protected
      * @return {void}
      */
-    redoDrawing() {
+    redoDrawing(): void {
         if (this.currentThread) {
             this.currentThread.redo();
         }
     }
 
     /** @inheritdoc */
-    setupHandlers() {
+    setupHandlers(): void {
         /* eslint-disable require-jsdoc */
-        this.locationFunction = (event) => this.annotator.getLocationFromEvent(event, TYPES.point);
+        this.locationFunction = (event) => this.getLocation(event, TYPES.point);
+        this.locationFunction = this.locationFunction.bind(this);
         /* eslint-enable require-jsdoc */
 
+        // $FlowFixMe
         this.stopPropagation = this.stopPropagation.bind(this);
-        this.drawingStartHandler = this.drawingStartHandler.bind(this);
+        // $FlowFixMe
         this.cancelDrawing = this.cancelDrawing.bind(this);
+        // $FlowFixMe
         this.postDrawing = this.postDrawing.bind(this);
+        // $FlowFixMe
         this.undoDrawing = this.undoDrawing.bind(this);
+        // $FlowFixMe
         this.redoDrawing = this.redoDrawing.bind(this);
+        // $FlowFixMe
+        this.drawingStartHandler = this.drawingStartHandler.bind(this);
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
         this.pushElementHandler(this.cancelButtonEl, 'click', this.cancelDrawing);
@@ -194,6 +188,8 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
         // Mobile & Desktop listeners are bound for touch-enabled laptop edge cases
+        // $FlowFixMe
+        this.drawingStartHandler = this.drawingStartHandler.bind(this);
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
     }
 
@@ -203,12 +199,18 @@ class DrawingModeController extends AnnotationModeController {
      * @param {Event} event - DOM event
      * @return {void}
      */
-    drawingStartHandler(event) {
+    drawingStartHandler(event: Event): void {
+        // $FlowFixMe
+        if (event.target && event.target.nodeName === 'BUTTON') {
+            return;
+        }
+
         event.stopPropagation();
         event.preventDefault();
+        this.removeSelection();
 
         // Get annotation location from click event, ignore click if location is invalid
-        const location = this.annotator.getLocationFromEvent(event, TYPES.point);
+        const location = this.getLocation(event, TYPES.point);
         if (!location) {
             return;
         }
@@ -225,7 +227,18 @@ class DrawingModeController extends AnnotationModeController {
         location.maxY = location.y;
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.annotator.createAnnotationThread([], location, TYPES.draw);
+        const thread = this.registerThread({
+            id: AnnotationAPI.generateID(),
+            type: this.mode,
+            location,
+            canAnnotate: true,
+            canDelete: true,
+            createdBy: this.api.user,
+            createdAt: new Date().toLocaleString(),
+            isPending: true,
+            comments: []
+        });
+
         if (!thread) {
             return;
         }
@@ -233,12 +246,27 @@ class DrawingModeController extends AnnotationModeController {
         this.currentThread = thread;
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
         thread.bindDrawingListeners(this.locationFunction);
+
         thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
         thread.handleStart(location);
     }
 
     /** @inheritdoc */
     exit() {
+        if (this.currentThread) {
+            this.currentThread.clearBoundary();
+        }
+
+        // Remove any visible boundaries
+        const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
+
+        // $FlowFixMe
+        boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
+
+        // Clear the in progress drawing canvases
+        const pageElements = this.annotatedElement.querySelectorAll('.page');
+        pageElements.forEach((pageEl) => clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS));
+
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
         super.exit();
     }
@@ -248,33 +276,46 @@ class DrawingModeController extends AnnotationModeController {
      *
      * @return {void}
      */
-    enter() {
+    enter(): void {
         super.enter();
         replaceHeader(this.headerElement, SELECTOR_DRAW_MODE_HEADER);
         this.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
     }
 
     /** @inheritdoc */
-    handleThreadEvents(thread, data = {}) {
+    handleThreadEvents(thread: AnnotationThread, data: Object = {}): void {
         const { eventData } = data;
         switch (data.event) {
-            case 'softcommit':
+            case THREAD_EVENT.save:
                 thread.removeListener('threadevent', this.handleThreadEvents);
                 thread.unbindDrawingListeners();
 
                 this.currentThread = undefined;
-                this.saveThread(thread);
+                this.selectedThread = thread;
+                this.registerThread(thread);
                 this.unbindListeners();
+
+                // Clear existing canvases
+                // eslint-disable-next-line
+                const pageEl = this.annotatedElement.querySelector(`[data-page-number="${thread.location.page}"]`);
+                clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
+
+                // Do not bind when mode is exited
+                if (!this.annotatedElement.classList.contains(CLASS_ANNOTATION_DRAW_MODE)) {
+                    return;
+                }
+
                 this.bindListeners();
 
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
+                    // $FlowFixMe
                     this.currentThread.handleStart(eventData.location);
                 }
 
                 break;
-            case 'dialogdelete':
-                if (!thread || !thread.dialog) {
+            case THREAD_EVENT.delete:
+                if (!thread) {
                     return;
                 }
 
@@ -289,12 +330,9 @@ class DrawingModeController extends AnnotationModeController {
                     this.unbindListeners();
                     this.bindListeners();
                 } else {
-                    thread.deleteThread();
                     this.unregisterThread(thread);
-
-                    // Redraw any threads that the deleted thread could have been overlapping
-                    const { page } = thread.location;
-                    this.threads[page].all().forEach((drawingThread) => drawingThread.show());
+                    thread.destroy();
+                    this.renderPage(thread.location.page);
                 }
 
                 break;
@@ -307,24 +345,40 @@ class DrawingModeController extends AnnotationModeController {
         super.handleThreadEvents(thread, data);
     }
 
+    /** @inheritdoc */
+    renderPage(pageNum: string): void {
+        // Clear existing canvases
+        const pageEl = getPageEl(this.annotatedElement, pageNum);
+        if (pageEl) {
+            clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
+            clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
+        }
+
+        super.renderPage(pageNum);
+    }
+
     /**
      * Selects a drawing thread given a pointer event. Randomly picks one if multiple drawings overlap
      *
-     * @protected
      * @param {Event} event - The event object containing the pointer information
-     * @return {void}
+     * @return {DrawingThread} Selected drawing annotation
      */
-    handleSelection(event) {
+    handleSelection(event: Event): DrawingThread {
+        let selected;
+
         // NOTE: This is a workaround when buttons are not given precedence in the event chain
         const hasPendingDrawing = this.currentThread && this.currentThread.state === STATES.pending;
+
+        // $FlowFixMe
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
-            return;
+            return selected;
         }
 
         event.stopPropagation();
 
         // Get the threads that correspond to the point that was clicked on
-        const intersectingThreads = this.getIntersectingThreads(event);
+        const location = this.getLocation(event, TYPES.point);
+        const intersectingThreads = this.getIntersectingThreads(event, location);
 
         // Clear boundary on previously selected thread
         this.removeSelection();
@@ -332,65 +386,51 @@ class DrawingModeController extends AnnotationModeController {
         // Selected a region with no drawing threads, remove the reference to the previously selected thread
         if (intersectingThreads.length === 0) {
             this.selectedThread = undefined;
-            return;
+            return selected;
         }
 
         // Randomly select a thread in case there are multiple overlapping threads (use canvas hitmap to avoid this)
         const index = Math.floor(Math.random() * intersectingThreads.length);
-        const selected = intersectingThreads[index];
+        selected = intersectingThreads[index];
         this.select(selected);
-    }
-
-    /** @inheritdoc */
-    renderPage(pageNum) {
-        // Clear context if needed
-        const pageEl = this.annotatedElement.querySelector(`[data-page-number="${pageNum}"]`);
-        clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW);
-
-        if (!this.threads || !this.threads[pageNum]) {
-            return;
-        }
-
-        const pageThreads = this.threads[pageNum].all() || [];
-        pageThreads.forEach((thread) => thread.show());
+        return selected;
     }
 
     /**
      * Deselect a saved and selected thread
      *
-     * @private
      * @return {void}
      */
-    removeSelection() {
+    removeSelection(): void {
         if (!this.selectedThread) {
             return;
         }
 
-        this.selectedThread.clearBoundary();
+        this.selectedThread.hide();
         this.selectedThread = undefined;
     }
 
     /**
      * Select the indicated drawing thread. Deletes a drawing thread upon the second consecutive selection
      *
-     * @private
      * @param {DrawingThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
-    select(selectedDrawingThread) {
+    select(selectedDrawingThread: DrawingThread): void {
+        selectedDrawingThread.show();
         selectedDrawingThread.drawBoundary();
+        selectedDrawingThread.renderAnnotationPopover();
         this.selectedThread = selectedDrawingThread;
     }
 
     /**
-     * Toggle the undo and redo buttons based on the number of actions available
+     * Toggle the undo and redo buttons based on thenumber of actions available
      *
-     * @private
-     * @param {number} undoCount - The number of objects that can be undone
-     * @param {number} redoCount - The number of objects that can be redone
+     * @param {number} undoCount - Thenumber of objects that can be undone
+     * @param {number} redoCount - Thenumber of objects that can be redone
      * @return {void}
      */
-    updateUndoRedoButtonEls(undoCount, redoCount) {
+    updateUndoRedoButtonEls(undoCount: number, redoCount: number): void {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
                 enableElement(this.undoButtonEl);
@@ -408,20 +448,9 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
-    /**
-     * Save the original thread and create a new thread
-     *
-     * @private
-     * @param {AnnotationThread} thread The thread that emitted the event
-     * @return {void}
-     */
-    saveThread(thread) {
-        if (!thread || !hasValidBoundaryCoordinates(thread)) {
-            return;
-        }
-
-        thread.saveAnnotation(TYPES.draw);
-        this.registerThread(thread);
+    /** @inheritdoc */
+    instantiateThread(params: Object): DrawingThread {
+        return this.annotatorType === ANNOTATOR_TYPE.document ? new DocDrawingThread(params) : null;
     }
 }
 

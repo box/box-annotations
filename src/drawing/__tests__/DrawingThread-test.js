@@ -1,28 +1,34 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
-import AnnotationService from '../../AnnotationService';
-import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
+import { STATES } from '../../constants';
+import * as util from '../../util';
 
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('drawing/DrawingThread', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         thread = new DrawingThread({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             annotations: [],
-            annotationService: new AnnotationService({
-                apiHost: 'https://app.box.com/api',
-                fileId: 1,
-                token: 'someToken',
-                canAnnotate: true,
-                user: 'completelyRealUser'
-            }),
+            api: {},
             fileVersionId: 1,
             location: {},
             threadID: 2,
             type: 'draw'
         });
         expect(thread.state).toEqual(STATES.inactive);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -38,15 +44,10 @@ describe('drawing/DrawingThread', () => {
             window.cancelAnimationFrame = jest.fn();
             thread.reset = jest.fn();
             thread.emit = jest.fn();
+            thread.unmountPopover = jest.fn();
 
+            thread.location.page = 1;
             thread.lastAnimationRequestId = 1;
-            thread.drawingContext = {
-                clearRect: jest.fn(),
-                canvas: {
-                    width: 100,
-                    height: 100
-                }
-            };
             thread.destroy();
 
             expect(window.cancelAnimationFrame).toBeCalledWith(1);
@@ -65,7 +66,7 @@ describe('drawing/DrawingThread', () => {
     describe('deleteThread()', () => {
         it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
             thread.clearBoundary = jest.fn();
-            thread.deleteAnnotationWithID = jest.fn();
+            thread.delete = jest.fn();
             thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
             thread.concreteContext = {
                 clearRect: jest.fn()
@@ -75,20 +76,19 @@ describe('drawing/DrawingThread', () => {
                 destroy: jest.fn()
             };
 
-            thread.annotations = { '123abc': {} };
+            thread.comments = [{ id: '123abc' }];
 
             thread.deleteThread();
             expect(thread.getBrowserRectangularBoundary).toBeCalled();
             expect(thread.concreteContext.clearRect).toBeCalled();
             expect(thread.clearBoundary).toBeCalled();
-            expect(thread.deleteAnnotationWithID).toBeCalledWith({ annotationID: '123abc' });
+            expect(thread.delete).toBeCalledWith({ id: '123abc' });
             expect(thread.pathContainer).toEqual(null);
         });
     });
 
     describe('bindDrawingListeners()', () => {
         beforeEach(() => {
-            thread.isMobile = false;
             thread.hasTouch = false;
             thread.annotatedElement = {
                 addEventListener: jest.fn()
@@ -105,17 +105,6 @@ describe('drawing/DrawingThread', () => {
         });
 
         it('should add all listeners for touch enabled laptop devices', () => {
-            thread.hasTouch = true;
-            thread.bindDrawingListeners();
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mousemove', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('mouseup', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchmove', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchcancel', expect.any(Function));
-            expect(thread.annotatedElement.addEventListener).toBeCalledWith('touchend', expect.any(Function));
-        });
-
-        it('should add only touch listeners for touch enabled mobile devices', () => {
-            thread.isMobile = true;
             thread.hasTouch = true;
             thread.bindDrawingListeners();
             expect(thread.annotatedElement.addEventListener).not.toBeCalledWith('mousemove', expect.any(Function));
@@ -171,14 +160,12 @@ describe('drawing/DrawingThread', () => {
     describe('render()', () => {
         beforeEach(() => {
             thread.draw = jest.fn();
-            thread.drawBoundary = jest.fn();
         });
 
         it('should draw the pending path when the context is not empty', () => {
             const timeStamp = 20000;
             thread.render(timeStamp);
             expect(thread.draw).toBeCalled();
-            expect(thread.drawBoundary).toBeCalled();
         });
 
         it('should do nothing when the timeElapsed is less than the refresh rate', () => {
@@ -186,27 +173,19 @@ describe('drawing/DrawingThread', () => {
             thread.lastRenderTimestamp = 100;
             thread.render(timeStamp);
             expect(thread.draw).not.toBeCalled();
-            expect(thread.drawBoundary).not.toBeCalled();
         });
     });
 
     describe('setup()', () => {
-        beforeEach(() => {
-            thread.createDialog = jest.fn();
-        });
-
         it('should set the state to be pending when there are no saved annotations', () => {
-            thread.annotations = [];
             thread.setup();
             expect(thread.state).toEqual(STATES.pending);
-            expect(thread.createDialog).not.toBeCalled();
         });
 
-        it('should set the state to be inactive and create a dialog when there are saved annotations', () => {
-            thread.annotations = ['not empty'];
+        it('should set the state to be inactive when there are saved annotations', () => {
+            thread.threadNumber = '123';
             thread.setup();
             expect(thread.state).toEqual(STATES.inactive);
-            expect(thread.createDialog).toBeCalled();
         });
     });
 
@@ -218,6 +197,7 @@ describe('drawing/DrawingThread', () => {
             thread.drawBoundary = jest.fn();
             thread.emitAvailableActions = jest.fn();
             thread.pathContainer = {
+                isEmpty: jest.fn(),
                 undo: jest.fn().mockReturnValue(false)
             };
         });
@@ -249,6 +229,7 @@ describe('drawing/DrawingThread', () => {
             thread.draw = jest.fn();
             thread.emitAvailableActions = jest.fn();
             thread.pathContainer = {
+                isEmpty: jest.fn(),
                 redo: jest.fn().mockReturnValue(false),
                 getAxisAlignedBoundingBox: jest.fn()
             };
@@ -326,7 +307,7 @@ describe('drawing/DrawingThread', () => {
             thread.removeAllListeners('threadevent');
         });
 
-        it('should trigger an annotationevent with the number of available undo and redo actions', (done) => {
+        it('should trigger an annotationevent with thenumber of available undo and redo actions', (done) => {
             const numItems = {
                 undoCount: 3,
                 redoCount: 2
@@ -343,41 +324,6 @@ describe('drawing/DrawingThread', () => {
             });
 
             thread.emitAvailableActions();
-        });
-    });
-
-    describe('drawBoundary()', () => {
-        it('should do nothing when the location has no page', () => {
-            thread.location = {
-                page: undefined
-            };
-            thread.getBrowserRectangularBoundary = jest.fn();
-
-            thread.drawBoundary();
-            expect(thread.getBrowserRectangularBoundary).not.toBeCalled();
-        });
-
-        it('should draw the boundary of the saved path', () => {
-            thread.drawingContext = {
-                save: jest.fn(),
-                beginPath: jest.fn(),
-                setLineDash: jest.fn(),
-                rect: jest.fn(),
-                stroke: jest.fn(),
-                restore: jest.fn()
-            };
-
-            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue([1, 2, 5, 6]);
-            thread.location = { page: 1 };
-
-            thread.drawBoundary();
-            expect(thread.getBrowserRectangularBoundary).toBeCalled();
-            expect(thread.drawingContext.save).toBeCalled();
-            expect(thread.drawingContext.beginPath).toBeCalled();
-            expect(thread.drawingContext.setLineDash).toBeCalled();
-            expect(thread.drawingContext.rect).toBeCalled();
-            expect(thread.drawingContext.stroke).toBeCalled();
-            expect(thread.drawingContext.restore).toBeCalled();
         });
     });
 
@@ -409,26 +355,14 @@ describe('drawing/DrawingThread', () => {
     });
 
     describe('clearBoundary()', () => {
-        it('should clear the drawing context and hide any dialog', () => {
-            thread.drawingContext = {
-                canvas: {
-                    width: 100,
-                    height: 100
-                },
-                clearRect: jest.fn()
-            };
-
-            thread.dialog = {
-                isVisible: jest.fn().mockReturnValue(true),
-                hide: jest.fn(),
-                destroy: jest.fn(),
-                removeAllListeners: jest.fn()
-            };
+        it('should clear the drawing context', () => {
+            const boundaryEl = document.createElement('div');
+            boundaryEl.classList.add('ba-drawing-boundary');
+            rootElement.appendChild(boundaryEl);
+            rootElement.removeChild = jest.fn();
 
             thread.clearBoundary();
-            expect(thread.drawingContext.clearRect).toBeCalled();
-            expect(thread.dialog.isVisible).toBeCalled();
-            expect(thread.dialog.hide).toBeCalled();
+            expect(rootElement.removeChild).toBeCalled();
         });
     });
 });

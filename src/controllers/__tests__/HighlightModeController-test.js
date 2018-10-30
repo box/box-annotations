@@ -1,24 +1,42 @@
 /* eslint-disable no-unused-expressions */
+import rbush from 'rbush';
 import HighlightModeController from '../HighlightModeController';
 import * as util from '../../util';
 import { CLASS_ANNOTATION_MODE, THREAD_EVENT, TYPES, CONTROLLER_EVENT } from '../../constants';
+import DocHighlightThread from '../../doc/DocHighlightThread';
+
+jest.mock('../../doc/DocHighlightThread');
 
 let controller;
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('controllers/HighlightModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         controller = new HighlightModeController();
         controller.emit = jest.fn();
+        controller.registerThread = jest.fn();
+        controller.getLocation = jest.fn();
+        controller.annotatedElement = rootElement;
 
-        thread = {
-            annotations: {},
-            location: { page: 1 },
-            type: TYPES.highlight,
-            show: jest.fn(),
-            addListener: jest.fn(),
-            hideDialog: jest.fn()
-        };
+        thread = new DocHighlightThread();
+        thread.annotatedElement = rootElement;
+        thread.location = { page: 1 };
+        thread.annotations = {};
+        thread.type = TYPES.highlight;
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -27,25 +45,19 @@ describe('controllers/HighlightModeController', () => {
 
     describe('handleThreadEvents()', () => {
         it('should render page on save only if plain highlight was converted to a highlight comment', () => {
-            thread.annotations = {
-                1: { type: 'highlight' }
-            };
+            thread.comments = [];
             controller.renderPage = jest.fn();
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).not.toBeCalled();
 
-            thread.annotations = {
-                1: { type: 'highlight' },
-                2: { type: 'highlight-comment' }
-            };
+            thread.comments = [{ type: 'highlight-comment' }];
             controller.handleThreadEvents(thread, { event: THREAD_EVENT.save, data: {} });
             expect(controller.renderPage).toBeCalledWith(1);
         });
 
-        it('should emit annotationsrenderpage with page number on threadCleanup', () => {
+        it('should emit annotationsrenderpage with page number on delete', () => {
             controller.unregisterThread = jest.fn();
-            controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadCleanup, data: {} });
-            expect(controller.unregisterThread).toBeCalled();
+            controller.handleThreadEvents(thread, { event: THREAD_EVENT.delete, data: {} });
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.renderPage, thread.location.page);
         });
     });
@@ -97,7 +109,7 @@ describe('controllers/HighlightModeController', () => {
         });
 
         it('should render the annotations on every page', () => {
-            controller.threads = { 1: {}, 2: {} };
+            controller.annotations = { 1: {}, 2: {} };
             controller.render();
             expect(controller.renderPage).toBeCalledTwice;
             expect(controller.destroyPendingThreads).toBeCalled();
@@ -105,23 +117,14 @@ describe('controllers/HighlightModeController', () => {
     });
 
     describe('renderPage()', () => {
-        beforeEach(() => {
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
+        it('should clear the canvas on the specified page', () => {
             util.clearCanvas = jest.fn();
-        });
-
-        it('should do nothing if no threads exist', () => {
+            controller.annotations = {
+                // eslint-disable-next-line new-cap
+                1: new rbush()
+            };
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).not.toBeCalled();
-        });
-
-        it('should render the annotations on the specified page', () => {
-            controller.registerThread(thread);
-            controller.renderPage(1);
-            expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).toBeCalled();
         });
     });
 });

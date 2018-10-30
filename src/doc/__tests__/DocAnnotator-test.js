@@ -1,30 +1,31 @@
 /* eslint-disable no-unused-expressions */
 import rangy from 'rangy';
 import Annotator from '../../Annotator';
-import Annotation from '../../Annotation';
-import AnnotationThread from '../../AnnotationThread';
 import DocAnnotator from '../DocAnnotator';
-import DocHighlightThread from '../DocHighlightThread';
-import DocDrawingThread from '../DocDrawingThread';
-import DocPointThread from '../DocPointThread';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
 import {
-    ANNOTATOR_EVENT,
     STATES,
     TYPES,
-    CLASS_HIDDEN,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    CLASS_ANNOTATION_PLAIN_HIGHLIGHT,
-    DATA_TYPE_ANNOTATION_DIALOG,
     CONTROLLER_EVENT,
     CREATE_EVENT,
     SELECTOR_ANNOTATED_ELEMENT
 } from '../../constants';
+import DocHighlightThread from '../DocHighlightThread';
+import FileVersionAPI from '../../api/FileVersionAPI';
+import AnnotationModeController from '../../controllers/AnnotationModeController';
+import CreateHighlightDialog from '../CreateHighlightDialog';
+
+jest.mock('../DocHighlightThread');
+jest.mock('../../api/FileVersionAPI');
+jest.mock('../../controllers/AnnotationModeController');
+jest.mock('../CreateHighlightDialog');
 
 let annotator;
 let thread;
 let controller;
+let api;
 const html = '<div class="bp-doc annotated-element" id="doc-annotator-el"></div>';
 
 const SELECTOR_DEFAULT_CURSOR = '.bp-use-default-cursor';
@@ -37,7 +38,13 @@ describe('doc/DocAnnotator', () => {
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
-        controller = { enter: jest.fn() };
+        thread = new DocHighlightThread();
+        thread.threadID = '123abc';
+        thread.location = { page: 1 };
+        thread.state = STATES.pending;
+        thread.type = TYPES.highlight;
+
+        controller = new AnnotationModeController();
 
         const options = {
             annotator: {
@@ -46,10 +53,11 @@ describe('doc/DocAnnotator', () => {
                 CONTROLLERS: { something: controller }
             }
         };
+
+        api = new FileVersionAPI();
         annotator = new DocAnnotator({
-            canAnnotate: true,
-            container: document,
-            annotationService: {},
+            container: rootElement,
+            api,
             file: {
                 file_version: { id: 1 }
             },
@@ -64,39 +72,23 @@ describe('doc/DocAnnotator', () => {
                 loadError: 'loaderror'
             }
         });
+
+        annotator.headerElement = document.createElement('div');
         annotator.annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
-        annotator.annotationService = {};
         annotator.threads = {};
         annotator.modeControllers = {};
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
         annotator.emit = jest.fn();
 
-        thread = {
-            threadID: '123abc',
-            location: { page: 1 },
-            state: STATES.pending,
-            type: TYPES.highlight,
-            cancelFirstComment: jest.fn(),
-            onClick: jest.fn(),
-            show: jest.fn(),
-            reset: jest.fn(),
-            destroy: jest.fn(),
-            onMousemove: jest.fn(),
-            hideDialog: jest.fn()
-        };
-
         util.getPageInfo = jest.fn();
-        annotator.createHighlightDialog = {
-            emit: jest.fn(),
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-            destroy: jest.fn(),
-            show: jest.fn(),
-            hide: jest.fn(),
-            setPosition: jest.fn()
-        };
+        annotator.createHighlightDialog = new CreateHighlightDialog();
 
         annotator.destroy = jest.fn();
+
+        util.getPageInfo = jest.fn().mockReturnValue({
+            page: 1,
+            pageEl: document.createElement('div')
+        });
     });
 
     afterEach(() => {
@@ -113,6 +105,7 @@ describe('doc/DocAnnotator', () => {
 
     describe('init()', () => {
         it('should add ID to annotatedElement add createHighlightDialog init listener', () => {
+            annotator.setupAnnotations = jest.fn();
             annotator.init(1);
             expect(annotator.annotatedElement.id).not.toBeUndefined();
         });
@@ -139,7 +132,6 @@ describe('doc/DocAnnotator', () => {
                 clientY: y,
                 target: annotator.annotatedEl
             };
-            annotator.isMobile = false;
 
             docUtil.isSelectionPresent = jest.fn().mockReturnValue(true);
             pageEl = {
@@ -157,7 +149,6 @@ describe('doc/DocAnnotator', () => {
                 highlightEls: []
             });
 
-            util.findClosestDataType = jest.fn().mockReturnValue(DATA_TYPE_ANNOTATION_DIALOG);
             util.isInDialog = jest.fn().mockReturnValue(false);
             util.getScale = jest.fn().mockReturnValue(1);
 
@@ -257,7 +248,6 @@ describe('doc/DocAnnotator', () => {
 
         describe(TYPES.highlight, () => {
             beforeEach(() => {
-                annotator.setupAnnotations();
                 annotator.highlighter = {
                     highlights: []
                 };
@@ -297,7 +287,6 @@ describe('doc/DocAnnotator', () => {
 
         describe(TYPES.highlight_comment, () => {
             beforeEach(() => {
-                annotator.setupAnnotations();
                 annotator.highlighter = {
                     highlights: []
                 };
@@ -337,78 +326,6 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('createAnnotationThread()', () => {
-        const setupFunc = AnnotationThread.prototype.setup;
-
-        beforeEach(() => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(true);
-            annotator.handleValidationError = jest.fn();
-            annotator.notification = {
-                show: jest.fn()
-            };
-        });
-
-        afterEach(() => {
-            Object.defineProperty(AnnotationThread.prototype, 'setup', { value: setupFunc });
-        });
-
-        it('should create highlight thread and return it', () => {
-            thread = annotator.createAnnotationThread([], {}, TYPES.highlight);
-            expect(thread instanceof DocHighlightThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-        });
-
-        it('should create highlight comment thread and return it', () => {
-            thread = annotator.createAnnotationThread([], {}, TYPES.highlight_comment);
-            expect(thread instanceof DocHighlightThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-        });
-
-        it('should create point thread and return it', () => {
-            thread = annotator.createAnnotationThread([], {}, TYPES.point);
-            expect(thread instanceof DocPointThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-        });
-
-        it('should create highlight thread with appropriate parameters', () => {
-            Object.defineProperty(AnnotationThread.prototype, 'setup', { value: jest.fn() });
-            const annotation = new Annotation({
-                fileVersionId: 2,
-                threadID: '1',
-                type: TYPES.point,
-                threadNumber: '1',
-                text: 'blah',
-                location: { x: 0, y: 0 }
-            });
-            thread = annotator.createAnnotationThread([annotation], {}, TYPES.highlight);
-
-            expect(thread.threadID).toEqual(annotation.threadID);
-            expect(thread.threadNumber).toEqual(annotation.threadNumber);
-            expect(thread instanceof DocHighlightThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-        });
-
-        it('should create drawing thread and return it', () => {
-            thread = annotator.createAnnotationThread([], {}, TYPES.draw);
-            expect(thread instanceof DocDrawingThread).toBeTruthy();
-            expect(annotator.handleValidationError).not.toBeCalled();
-        });
-
-        it('should emit error and return undefined if thread params are invalid', () => {
-            util.areThreadParamsValid = jest.fn().mockReturnValue(false);
-            thread = annotator.createAnnotationThread([], {}, TYPES.highlight);
-            expect(thread instanceof DocHighlightThread).toBeFalsy();
-            expect(thread).toBeUndefined();
-            expect(annotator.handleValidationError).toBeCalled();
-        });
-
-        it('should emit error and return undefined if thread fails to create', () => {
-            thread = annotator.createAnnotationThread([], {}, 'random');
-            expect(thread).toBeUndefined();
-            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
-        });
-    });
-
     describe('createPlainHighlight()', () => {
         beforeEach(() => {
             annotator.highlightCurrentSelection = jest.fn();
@@ -426,142 +343,67 @@ describe('doc/DocAnnotator', () => {
     });
 
     describe('createHighlightThread()', () => {
-        let dialog;
-
         beforeEach(() => {
-            annotator.createAnnotationThread = jest.fn();
             annotator.getLocationFromEvent = jest.fn();
+            annotator.resetHighlightSelection = jest.fn();
             annotator.renderPage = jest.fn();
+            annotator.lastHighlightEvent = {};
 
             annotator.highlighter = {
                 removeAllHighlights: jest.fn()
             };
 
-            dialog = {
-                hasComments: false,
-                drawAnnotation: jest.fn(),
-                postAnnotation: jest.fn()
-            };
-
-            thread = {
-                dialog,
-                type: 'highlight',
-                show: jest.fn(),
-                getThreadEventData: jest.fn()
-            };
-
-            controller = {
-                registerThread: jest.fn()
+            thread.type = 'highlight';
+            controller.registerThread = jest.fn().mockReturnValue(thread);
+            annotator.modeControllers = {
+                highlight: controller,
+                highlight_comment: controller
             };
         });
 
         it('should do nothing and return null if empty string passed in', () => {
-            annotator.lastHighlightEvent = {};
-            annotator.createHighlightThread('');
-            expect(annotator.createHighlightDialog.hide).not.toBeCalled();
+            expect(annotator.createHighlightThread('')).toBeNull();
+            expect(annotator.createHighlightDialog.unmountPopover).not.toBeCalled();
         });
 
         it('should hide the dialog if it exists and is visible', () => {
-            annotator.lastHighlightEvent = {};
             annotator.createHighlightDialog.isVisible = true;
-            annotator.createHighlightThread('some text');
-            expect(annotator.createHighlightDialog.hide).toBeCalled();
+            expect(annotator.createHighlightThread('some text')).toBeNull();
+            expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
 
         it('should do nothing and return null if there was no highlight event on the previous action', () => {
             annotator.lastHighlightEvent = null;
-            annotator.createHighlightThread('some text');
-            expect(annotator.createHighlightDialog.hide).not.toBeCalled();
+            expect(annotator.createHighlightThread('some text')).toBeNull();
+            expect(annotator.createHighlightDialog.unmountPopover).not.toBeCalled();
         });
 
         it('should do nothing and return null if not a valid annotation location', () => {
-            annotator.lastHighlightEvent = {};
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(null);
-
-            annotator.createHighlightThread('some text');
-            expect(annotator.createAnnotationThread).not.toBeCalled();
-        });
-
-        it('should create an annotation thread off of the highlight selection by invoking createAnnotationThread with correct type', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-
-            annotator.createHighlightThread('some text with severe passive agression');
-            expect(annotator.createAnnotationThread).toBeCalledWith({}, location, TYPES.highlight_comment);
-        });
-
-        it('should bail out of making an annotation if thread is null', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(null);
-
-            annotator.createHighlightThread('some text');
-        });
-
-        it('should render the annotation thread dialog if it is a basic annotation type', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-
-            annotator.createHighlightThread();
-            expect(dialog.drawAnnotation).toBeCalled();
-        });
-
-        it('should set the dialog to have comments if it is a comment-highlight', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-
-            annotator.createHighlightThread('I think this document should be more better');
-            expect(dialog.hasComments).toBeTruthy();
-        });
-
-        it('should show the annotation', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-
-            annotator.createHighlightThread();
-            expect(thread.show).toBeCalled();
-        });
-
-        it('should post the annotation via the dialog', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-            const text = 'This is an annotation pointing out a mistake in the document!';
-
-            annotator.createHighlightThread(text);
-            expect(dialog.postAnnotation).toBeCalledWith(text);
-        });
-
-        it('should not register the thread if there is no appropriate controller', () => {
-            annotator.lastHighlightEvent = {};
-            const location = { page: 1 };
-            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-            annotator.modeControllers = { random: controller };
-
-            expect(annotator.createHighlightThread()).toStrictEqual(thread);
+            expect(annotator.createHighlightThread('some text')).toBeNull();
             expect(controller.registerThread).not.toBeCalled();
         });
 
-        it('should return an annotation thread', () => {
-            annotator.lastHighlightEvent = {};
+        it('should bail out of making an annotation if thread is null', () => {
+            const location = { page: 1 };
+            controller.registerThread = jest.fn().mockReturnValue(null);
+            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
+            expect(annotator.createHighlightThread('some text')).toBeNull();
+        });
+
+        it('should not register the thread if there is no appropriate controller', () => {
+            const location = { page: 1 };
+            annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
+            annotator.modeControllers = { random: controller };
+            expect(annotator.createHighlightThread()).toBeNull();
+            expect(controller.registerThread).not.toBeCalled();
+        });
+
+        it('should register, show and return an annotation thread', () => {
             const page = 999999999;
             const location = { page };
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
-
             annotator.modeControllers = { highlight: controller };
-
             expect(annotator.createHighlightThread()).toStrictEqual(thread);
             expect(controller.registerThread).toBeCalled();
         });
@@ -584,13 +426,14 @@ describe('doc/DocAnnotator', () => {
             annotator.createHighlightDialog = {
                 isVisible: true,
                 hide: jest.fn(),
-                destroy: jest.fn()
+                destroy: jest.fn(),
+                unmountPopover: jest.fn()
             };
             annotator.renderPage(1);
             expect(annotator.scaleAnnotationCanvases).toBeCalledWith(1);
             expect(annotator.modeControllers.type.renderPage).toBeCalledWith(1);
             expect(annotator.modeControllers.type2.renderPage).toBeCalledWith(1);
-            expect(annotator.createHighlightDialog.hide).toBeCalled();
+            expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
     });
 
@@ -630,11 +473,6 @@ describe('doc/DocAnnotator', () => {
             rangy.createClassApplier = jest.fn();
             rangy.createHighlighter = jest.fn().mockReturnValue(highlighter);
 
-            annotator.modeControllers = {
-                highlight: {},
-                'highlight-comment': {}
-            };
-
             annotator.createHighlightDialog = {
                 addListener: jest.fn()
             };
@@ -663,6 +501,7 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should call parent to setup annotations and initialize highlighter', () => {
+            annotator.plainHighlightEnabled = true;
             annotator.setupAnnotations();
             expect(highlighter.addClassApplier).toBeCalled();
         });
@@ -678,9 +517,10 @@ describe('doc/DocAnnotator', () => {
                 removeEventListener: jest.fn()
             };
 
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.plainHighlightEnabled = true;
             annotator.drawEnabled = true;
+            annotator.hasTouch = false;
         });
 
         afterEach(() => {
@@ -706,64 +546,42 @@ describe('doc/DocAnnotator', () => {
                 'contextmenu',
                 annotator.highlightMousedownHandler
             );
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'click',
-                annotator.drawingSelectionHandler
-            );
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
-        it('should bind draw selection handlers regardless of if the user can annotate ', () => {
-            annotator.permissions.canAnnotate = false;
+        it('should bind click handlers regardless of if the user can annotate ', () => {
+            annotator.permissions.can_annotate = false;
 
             // Desktop draw selection handlers
             annotator.bindDOMListeners();
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'click',
-                annotator.drawingSelectionHandler
-            );
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
 
             // Mobile draw selection handlers
-            annotator.isMobile = true;
             annotator.hasTouch = true;
             annotator.bindDOMListeners();
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'touchstart',
-                annotator.drawingSelectionHandler
-            );
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
         it('should bind highlight mouse move handlers regardless of if the user can annotate only on desktop', () => {
-            annotator.permissions.canAnnotate = false;
+            annotator.permissions.can_annotate = false;
             annotator.plainHighlightEnabled = true;
             annotator.commentHighlightEnabled = true;
             annotator.drawEnabled = false;
 
             annotator.bindDOMListeners();
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'mouseup',
-                annotator.highlightMouseupHandler
-            );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('wheel', annotator.hideCreateDialog);
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
-        it('should bind selectionchange event on the document, if on mobile OR a touch-enabled device and can annotate', () => {
-            annotator.isMobile = true;
-            annotator.hasTouch = false;
-            annotator.drawEnabled = true;
-
+        it('should bind selectionchange event on the document, if on a touch-enabled device and can annotate', () => {
             document.addEventListener = jest.fn();
-
-            annotator.bindDOMListeners();
-            expect(document.addEventListener).toBeCalledWith('selectionchange', annotator.onSelectionChange);
-
-            annotator.isMobile = false;
+            annotator.drawEnabled = true;
             annotator.hasTouch = true;
             annotator.bindDOMListeners();
             expect(document.addEventListener).toBeCalledWith('selectionchange', annotator.onSelectionChange);
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch OR mobile enabled', () => {
-            annotator.isMobile = true;
+        it('should not bind selection change event if both annotation types are disabled, and touch enabled', () => {
             annotator.plainHighlightEnabled = false;
             annotator.commentHighlightEnabled = false;
             annotator.drawEnabled = true;
@@ -774,20 +592,18 @@ describe('doc/DocAnnotator', () => {
             expect(document.addEventListener).not.toBeCalledWith('selectionchange', expect.any(Function));
         });
 
-        it('should not bind selection change event if both annotation types are disabled, and touch OR mobile disabled', () => {
-            annotator.isMobile = false;
+        it('should not bind selection change event if both annotation types are disabled, and touch disabled', () => {
             annotator.hasTouch = false;
             annotator.plainHighlightEnabled = false;
             annotator.commentHighlightEnabled = false;
             annotator.drawEnabled = true;
 
             annotator.bindDOMListeners();
-
+            expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'mouseup',
                 annotator.highlightMouseupHandler
             );
-            expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'dblclick',
                 annotator.highlightMouseupHandler
@@ -800,10 +616,7 @@ describe('doc/DocAnnotator', () => {
                 'contextmenu',
                 annotator.highlightMousedownHandler
             );
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'click',
-                annotator.drawingSelectionHandler
-            );
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
     });
 
@@ -813,12 +626,12 @@ describe('doc/DocAnnotator', () => {
                 removeEventListener: jest.fn()
             };
             annotator.highlightMousemoveHandler = jest.fn();
-            annotator.isMobile = false;
+
             annotator.hasTouch = false;
         });
 
         it('should unbind DOM listeners if user can annotate', () => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
 
             annotator.unbindDOMListeners();
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
@@ -842,15 +655,12 @@ describe('doc/DocAnnotator', () => {
                 'mousedown',
                 annotator.highlightMousedownHandler
             );
-            expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
-                'click',
-                annotator.drawingSelectionHandler
-            );
+            expect(annotator.annotatedElement.removeEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
         it('should stop and destroy the requestAnimationFrame handle created by getHighlightMousemoveHandler()', () => {
             const rafHandle = 12; // RAF handles are integers
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.highlightThrottleHandle = rafHandle;
 
             window.cancelAnimationFrame = jest.fn();
@@ -860,23 +670,16 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.highlightThrottleHandle).toBeNull();
         });
 
-        it('should unbind selectionchange event, on the document, if on a mobile OR touch-enabled device and can annotate', () => {
-            annotator.permissions.canAnnotate = true;
-            annotator.isMobile = true;
-            annotator.hasTouch = false;
+        it('should unbind selectionchange event, on the document, if on a touch-enabled device and can annotate', () => {
+            annotator.permissions.can_annotate = true;
             document.removeEventListener = jest.fn();
-
-            annotator.unbindDOMListeners();
-            expect(document.removeEventListener).toBeCalledWith('selectionchange', expect.any(Function));
-
-            annotator.isMobile = false;
             annotator.hasTouch = true;
             annotator.unbindDOMListeners();
             expect(document.removeEventListener).toBeCalledWith('selectionchange', expect.any(Function));
         });
 
         it('should tell controllers to clean up selections', () => {
-            annotator.permissions.canAnnotate = true;
+            annotator.permissions.can_annotate = true;
             annotator.modeControllers = {
                 test: {
                     removeSelection: jest.fn()
@@ -885,32 +688,6 @@ describe('doc/DocAnnotator', () => {
 
             annotator.unbindDOMListeners();
             expect(annotator.modeControllers.test.removeSelection).toBeCalled();
-        });
-    });
-
-    describe('removeThreadFromSharedDialog()', () => {
-        beforeEach(() => {
-            util.hideElement = jest.fn();
-            util.showElement = jest.fn();
-        });
-
-        it('should do nothing if the mobile dialog does not exist', () => {
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-        });
-
-        it('should remove the plain highlight dialog class on reset', () => {
-            annotator.mobileDialogEl = {
-                classList: {
-                    contains: jest.fn().mockReturnValue(true),
-                    remove: jest.fn()
-                },
-                removeChild: jest.fn(),
-                lastChild: {}
-            };
-            annotator.removeThreadFromSharedDialog();
-            expect(util.hideElement).not.toBeCalled();
-            expect(annotator.mobileDialogEl.classList.remove).toBeCalledWith(CLASS_ANNOTATION_PLAIN_HIGHLIGHT);
         });
     });
 
@@ -933,7 +710,6 @@ describe('doc/DocAnnotator', () => {
             annotator.highlighter = {
                 highlightSelection: jest.fn()
             };
-            annotator.setupAnnotations();
         });
 
         it('should invoke highlighter.highlightSelection()', () => {
@@ -951,19 +727,11 @@ describe('doc/DocAnnotator', () => {
 
     describe('highlightMousedownHandler()', () => {
         beforeEach(() => {
-            thread = {
-                type: 'highlight',
-                location: { page: 1 },
-                onMousedown: jest.fn()
-            };
-
+            thread.type = 'highlight';
+            controller.threads = { 1: { '123abc': thread } };
             annotator.modeControllers = {
-                highlight: {
-                    threads: { 1: { '123abc': thread } },
-                    applyActionToThreads: jest.fn()
-                }
+                highlight: controller
             };
-            controller = annotator.modeControllers.highlight;
         });
 
         it('should do nothing if highlights are disabled', () => {
@@ -981,30 +749,17 @@ describe('doc/DocAnnotator', () => {
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             annotator.highlightCreateHandler = jest.fn();
-            annotator.highlightClickHandler = jest.fn();
-            annotator.mouseX = undefined;
-            annotator.mouseY = undefined;
+            annotator.mouseDownEvent = { clientX: 100, clientY: 100 };
         });
 
         it('should call highlightCreateHandler if on desktop and the mouse moved', () => {
-            annotator.mouseX = 100;
-            annotator.mouseY = 100;
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlightCreateHandler).toBeCalled();
-            expect(annotator.highlightClickHandler).not.toBeCalled();
         });
 
         it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(annotator.highlightCreateHandler).toBeCalled();
-            expect(annotator.highlightClickHandler).not.toBeCalled();
-        });
-
-        it('should call highlightClickHandler if on desktop and createHighlightDialog exists', () => {
-            annotator.createHighlightDialog = undefined;
-            annotator.highlightMouseupHandler({ x: 0, y: 0 });
-            expect(annotator.highlightCreateHandler).not.toBeCalled();
-            expect(annotator.highlightClickHandler).toBeCalled();
         });
 
         it('should call highlighter.removeAllHighlghts', () => {
@@ -1018,8 +773,6 @@ describe('doc/DocAnnotator', () => {
 
     describe('onSelectionChange()', () => {
         let event;
-        let highlightController;
-        let commentController;
 
         beforeEach(() => {
             event = {
@@ -1031,29 +784,11 @@ describe('doc/DocAnnotator', () => {
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
 
-            annotator.setupAnnotations();
-            annotator.mobileDialogEl = document.createElement('div');
-            annotator.mobileDialogEl.classList.add(CLASS_HIDDEN);
-
             annotator.highlighter = { removeAllHighlights: jest.fn() };
-            annotator.modeControllers = {
-                point: {},
-                highlight: {
-                    applyActionToThreads: jest.fn()
-                },
-                'highlight-comment': {
-                    applyActionToThreads: jest.fn()
-                }
-            };
-            highlightController = annotator.modeControllers.highlight;
-            commentController = annotator.modeControllers['highlight-comment'];
 
             window.getSelection = jest.fn();
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
-            annotator.createHighlightDialog = {
-                show: jest.fn(),
-                hide: jest.fn()
-            };
+            util.findClosestElWithClass = jest.fn().mockReturnValue(null);
         });
 
         it('should reset the selectionEndTimeout', () => {
@@ -1064,16 +799,16 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should do nothing if focus is on a text input element', () => {
-            const textAreaEl = document.createElement('textarea');
-            annotator.annotatedElement.appendChild(textAreaEl);
-            textAreaEl.focus();
-
+            util.findClosestElWithClass = jest.fn().mockReturnValue({});
             annotator.onSelectionChange(event);
             expect(window.getSelection).not.toBeCalled();
         });
 
         it('should do nothing the the user is currently creating a point annotation', () => {
-            annotator.modeControllers.point.pendingThreadID = 'something';
+            annotator.modeControllers = {
+                point: controller
+            };
+            controller.pendingThreadID = 'something';
             annotator.onSelectionChange(event);
             expect(window.getSelection).not.toBeCalled();
         });
@@ -1125,14 +860,16 @@ describe('doc/DocAnnotator', () => {
                 isCollapsed: false,
                 toString: jest.fn().mockReturnValue('asdf')
             };
+            annotator.modeControllers = {
+                highlight: controller
+            };
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
             annotator.plainHighlightEnabled = true;
             annotator.commentHighlightEnabled = false;
             window.getSelection = jest.fn().mockReturnValue(selection);
 
             annotator.onSelectionChange(event);
-            expect(highlightController.applyActionToThreads).toBeCalledWith(expect.any(Function), 1);
-            expect(commentController.applyActionToThreads).not.toBeCalledWith(expect.any(Function), 1);
+            expect(controller.applyActionToThreads).toBeCalledWith(expect.any(Function), 1);
         });
     });
 
@@ -1147,13 +884,9 @@ describe('doc/DocAnnotator', () => {
             pageInfo = { pageEl: {}, page: 1 };
             util.getPageInfo = jest.fn().mockReturnValue(pageInfo);
             annotator.getLocationFromEvent = jest.fn().mockReturnValue(undefined);
-            annotator.createAnnotationThread = jest.fn();
+            controller.registerThread = jest.fn();
             window.getSelection = jest.fn().mockReturnThis({ rangeCount: 0 });
             event.stopPropagation = jest.fn();
-
-            annotator.createHighlightDialog = {
-                show: jest.fn()
-            };
         });
 
         afterEach(() => {
@@ -1196,8 +929,6 @@ describe('doc/DocAnnotator', () => {
             pageInfo.pageEl.getBoundingClientRect = jest.fn().mockReturnValue(pageRect);
             selection.getRangeAt = jest.fn().mockReturnValue({});
 
-            annotator.isMobile = false;
-
             annotator.highlightCreateHandler(event);
             expect(annotator.createHighlightDialog.show).toBeCalled();
         });
@@ -1205,52 +936,56 @@ describe('doc/DocAnnotator', () => {
 
     describe('highlightClickHandler()', () => {
         let event;
-        let highlightController;
-        let commentController;
 
         beforeEach(() => {
             event = { target: {} };
-            thread = { show: jest.fn() };
             util.getPageInfo = jest.fn().mockReturnValue({ pageEl: {}, page: 1 });
 
-            annotator.removeThreadFromSharedDialog = jest.fn();
             annotator.clickThread = jest.fn();
             annotator.hideAnnotations = jest.fn();
             annotator.resetHighlightSelection = jest.fn();
-
             annotator.modeControllers = {
-                highlight: {
-                    getIntersectingThreads: jest.fn()
-                },
-                'highlight-comment': {
-                    getIntersectingThreads: jest.fn()
-                }
+                highlight: controller
             };
-            highlightController = annotator.modeControllers.highlight;
-            commentController = annotator.modeControllers['highlight-comment'];
+            annotator.activeThread = undefined;
+            annotator.plainHighlightEnabled = false;
+            annotator.commentHighlightEnabled = false;
+        });
+
+        it('should do nothing and return false if no highlight types are enabled', () => {
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
+            expect(annotator.hideAnnotations).not.toBeCalled();
+        });
+
+        it('should do nothing and return true if a createHighlightDialog is visible', () => {
+            annotator.plainHighlightEnabled = true;
+            annotator.createHighlightDialog = { isVisible: true };
+            expect(annotator.highlightClickHandler(event)).toBeTruthy();
+            expect(annotator.hideAnnotations).not.toBeCalled();
         });
 
         it('should find the active plain highlight', () => {
             annotator.plainHighlightEnabled = true;
             annotator.highlightClickHandler(event);
-            expect(highlightController.getIntersectingThreads).toBeCalled();
-            expect(commentController.getIntersectingThreads).not.toBeCalled();
+            expect(controller.getIntersectingThreads).toBeCalled();
             expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
 
         it('should find the active highlight comment', () => {
+            annotator.modeControllers = {
+                'highlight-comment': controller
+            };
             annotator.commentHighlightEnabled = true;
             annotator.highlightClickHandler(event);
-            expect(highlightController.getIntersectingThreads).not.toBeCalled();
-            expect(commentController.getIntersectingThreads).toBeCalled();
+            expect(controller.getIntersectingThreads).toBeCalled();
             expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
 
         it('should show an active thread on the page', () => {
             annotator.plainHighlightEnabled = true;
-            highlightController.getIntersectingThreads = jest.fn(() => {
+            controller.getIntersectingThreads = jest.fn(() => {
                 annotator.activeThread = thread;
             });
             annotator.highlightClickHandler(event);
@@ -1259,42 +994,30 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should reset the mobile dialog if no active thread exists', () => {
-            annotator.plainHighlightEnabled = false;
-            annotator.commentHighlightEnabled = false;
-            annotator.isMobile = true;
+            annotator.plainHighlightEnabled = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
             annotator.highlightClickHandler(event);
-            expect(annotator.removeThreadFromSharedDialog).toBeCalled();
             expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
 
         it('should reset highlight selection if not on mobile and no active threads exist', () => {
-            annotator.plainHighlightEnabled = false;
-            annotator.commentHighlightEnabled = false;
+            annotator.plainHighlightEnabled = true;
             document.getSelection = jest.fn().mockReturnValue({
                 removeAllRanges: jest.fn()
             });
 
-            annotator.isMobile = false;
             annotator.highlightClickHandler(event);
-            expect(annotator.removeThreadFromSharedDialog).not.toBeCalled();
             expect(annotator.resetHighlightSelection).toBeCalled();
-            expect(thread.show).not.toBeCalled();
         });
     });
 
     describe('clickThread()', () => {
         beforeEach(() => {
-            thread = {
-                type: 'something',
-                onMousemove: jest.fn(),
-                hideDialog: jest.fn(),
-                destroy: jest.fn(),
-                cancelFirstComment: jest.fn(),
-                onClick: jest.fn()
-            };
-            util.isPending = jest.fn().mockReturnValue(false);
+            thread.type = 'something';
+            thread.state = STATES.inactive;
             util.isHighlightAnnotation = jest.fn().mockReturnValue(false);
 
             annotator.consumed = false;
@@ -1302,14 +1025,14 @@ describe('doc/DocAnnotator', () => {
 
         it('should destroy any pending point annotations', () => {
             thread.type = 'point';
-            util.isPending = jest.fn().mockReturnValue(true);
-            annotator.clickThread(thread);
+            thread.state = STATES.pending;
+            annotator.clickThread({}, thread);
             expect(thread.destroy).toBeCalled();
         });
 
         it('should cancel any pending threads that are not point annotations', () => {
-            util.isPending = jest.fn().mockReturnValue(true);
-            annotator.clickThread(thread);
+            thread.state = STATES.pending;
+            annotator.clickThread({}, thread);
             expect(thread.cancelFirstComment).toBeCalled();
         });
 
@@ -1317,23 +1040,22 @@ describe('doc/DocAnnotator', () => {
             util.isHighlightAnnotation = jest.fn().mockReturnValue(true);
 
             thread.onClick = jest.fn().mockReturnValue(false);
-            annotator.clickThread(thread);
+            annotator.clickThread({}, thread);
             expect(annotator.activeThread).toBeUndefined();
             expect(annotator.consumed).toBeFalsy();
 
-            const thread2 = {
-                type: 'something',
-                onClick: jest.fn().mockReturnValue(true)
-            };
-            annotator.clickThread(thread2);
+            const thread2 = new DocHighlightThread();
+            thread2.onClick = jest.fn().mockReturnValue(true);
+            thread2.type = 'something';
+            annotator.clickThread({}, thread2);
             expect(annotator.activeThread).toEqual(thread2);
             expect(annotator.consumed).toBeTruthy();
         });
 
         it('should hide all non-pending mobile dialogs', () => {
-            annotator.isMobile = true;
-            annotator.clickThread(thread);
-            expect(thread.hideDialog).toBeCalled();
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            annotator.clickThread({}, thread);
+            expect(thread.unmountPopover).toBeCalled();
         });
     });
 
@@ -1383,53 +1105,21 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('drawingSelectionHandler()', () => {
-        let drawController;
-
-        beforeEach(() => {
-            drawController = {
-                handleSelection: jest.fn(),
-                removeSelection: jest.fn()
-            };
-            annotator.modeControllers = {
-                [TYPES.draw]: drawController
-            };
-
-            annotator.isCreatingAnnotation = jest.fn().mockReturnValue(false);
-        });
-
-        it('should use the controller to select with the event', () => {
-            const evt = 'event';
-            annotator.drawingSelectionHandler(evt);
-            expect(drawController.handleSelection).toBeCalledWith(evt);
-        });
-
-        it('should do nothing if a mode is creating an annotation', () => {
-            annotator.isCreatingAnnotation = jest.fn().mockReturnValue(true);
-            annotator.drawingSelectionHandler('irrelevant');
-            expect(drawController.handleSelection).not.toBeCalled();
-        });
-
-        it('should do nothing if a highlight is being created', () => {
-            annotator.isCreatingHighlight = true;
-            annotator.drawingSelectionHandler('irrelevant');
-            expect(drawController.handleSelection).not.toBeCalled();
-        });
-    });
-
     describe('isCreatingAnnotation()', () => {
         it('should return true if a mode is creating an annotation', () => {
+            controller.hadPendingThreads = true;
             annotator.modeControllers = {
-                [TYPES.draw]: { hadPendingThreads: false },
-                [TYPES.point]: { hadPendingThreads: true }
+                draw: controller,
+                point: controller
             };
             expect(annotator.isCreatingAnnotation()).toBeTruthy();
         });
 
         it('should return false if all modes are NOT creating annotations', () => {
+            controller.hadPendingThreads = false;
             annotator.modeControllers = {
-                [TYPES.draw]: { hadPendingThreads: false },
-                [TYPES.point]: { hadPendingThreads: false }
+                draw: controller,
+                point: controller
             };
             expect(annotator.isCreatingAnnotation()).toBeFalsy();
         });
@@ -1439,19 +1129,12 @@ describe('doc/DocAnnotator', () => {
         const mode = 'something';
 
         beforeEach(() => {
-            annotator.createHighlightDialog = {
-                isVisible: true,
-                hide: jest.fn()
-            };
+            annotator.createHighlightDialog.isVisible = true;
             annotator.toggleAnnotationMode = jest.fn();
             annotator.renderPage = jest.fn();
             annotator.resetHighlightSelection = jest.fn();
             annotator.hideCreateDialog = jest.fn();
             annotator.annotatedElement = document.createElement('div');
-        });
-
-        afterEach(() => {
-            annotator.createHighlightDialog = null;
         });
 
         it('should clear selections and hide the createHighlightDialog on togglemode if needed', () => {

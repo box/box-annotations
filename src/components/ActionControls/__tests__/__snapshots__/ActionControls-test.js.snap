@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/ActionControls should correctly render controls for drawing annotations 1`] = `
+<div
+  className="ba-action-controls"
+/>
+`;
+
+exports[`components/ActionControls should correctly render controls for highlight comment annotations 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <HighlightControls
+    canAnnotateAndDelete={true}
+    canComment={true}
+    isPending={false}
+    onCommentClick={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
+  />
+</div>
+`;
+
+exports[`components/ActionControls should correctly render controls for highlight comment annotations without delete permissions 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <HighlightControls
+    canAnnotateAndDelete={false}
+    canComment={true}
+    isPending={false}
+    onCommentClick={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
+  />
+</div>
+`;
+
+exports[`components/ActionControls should correctly render controls for pending highlight comment annotations 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <ApprovalCommentForm
+    className="ba-annotation-input-container"
+    createComment={[Function]}
+    getAvatarUrl={[Function]}
+    isEditing={true}
+    isOpen={true}
+    onCancel={[Function]}
+    onFocus={[Function]}
+    onSubmit={[Function]}
+    user={Object {}}
+  />
+</div>
+`;
+
+exports[`components/ActionControls should correctly render controls for plain highlight annotations 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <HighlightControls
+    canAnnotateAndDelete={true}
+    canComment={false}
+    isPending={false}
+    onCommentClick={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
+  />
+</div>
+`;
+
+exports[`components/ActionControls should correctly render controls for plain highlight annotations without delete permissions 1`] = `
+<div
+  className="ba-action-controls"
+/>
+`;
+
+exports[`components/ActionControls should correctly render controls for point annotations 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <ApprovalCommentForm
+    className="ba-annotation-input-container"
+    createComment={[Function]}
+    getAvatarUrl={[Function]}
+    isEditing={true}
+    isOpen={true}
+    onCancel={[Function]}
+    onFocus={[Function]}
+    onSubmit={[Function]}
+    user={Object {}}
+  />
+</div>
+`;

@@ -1,5 +1,5 @@
+// @flow
 import Annotator from '../Annotator';
-import ImagePointThread from './ImagePointThread';
 import * as util from '../util';
 import * as imageUtil from './imageUtil';
 import { ANNOTATOR_EVENT, TYPES } from '../constants';
@@ -9,12 +9,8 @@ const IMAGE_NODE_NAME = 'img';
 const ANNOTATED_ELEMENT_SELECTOR = '.bp-image, .bp-images-wrapper';
 
 class ImageAnnotator extends Annotator {
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
-
     /** @inheritdoc */
-    getAnnotatedEl(containerEl) {
+    getAnnotatedEl(containerEl: HTMLElement): ?HTMLElement {
         return containerEl.querySelector(ANNOTATED_ELEMENT_SELECTOR);
     }
 
@@ -24,11 +20,10 @@ class ImageAnnotator extends Annotator {
      * point annotations, we return the (x, y) coordinates for the point
      * with the top left corner of the image as the origin.
      *
-     * @override
      * @param {Event} event - DOM event
-     * @return {Object|null} Location object
+     * @return {Location|null} Location object
      */
-    getLocationFromEvent(event) {
+    getLocationFromEvent = (event: EventEmitter): ?Location => {
         let location = null;
 
         let clientEvent = event;
@@ -45,7 +40,7 @@ class ImageAnnotator extends Annotator {
             return location;
         }
 
-        // If no image page was selected, ignore, as all images have a page number.
+        // If no image page was selected, ignore, as all images have a page number
         const { page } = util.getPageInfo(imageEl);
 
         // Location based only on image position
@@ -79,37 +74,10 @@ class ImageAnnotator extends Annotator {
         };
 
         return location;
-    }
+    };
 
     /** @inheritdoc */
-    createAnnotationThread(annotations, location, type) {
-        let thread;
-
-        // Corrects any image annotation page number to 1 instead of -1
-        const fixedLocation = location;
-        if (!fixedLocation.page || fixedLocation.page < 0) {
-            fixedLocation.page = 1;
-        }
-
-        const threadParams = this.getThreadParams(annotations, location, type);
-        if (!util.areThreadParamsValid(threadParams)) {
-            this.handleValidationError();
-            return thread;
-        }
-
-        if (type === TYPES.point) {
-            thread = new ImagePointThread(threadParams);
-        }
-
-        if (!thread) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
-        }
-
-        return thread;
-    }
-
-    /** @inheritdoc */
-    scaleAnnotations(data) {
+    scaleAnnotations(data: Object) {
         this.setScale(data.scale);
         this.rotateAnnotations(data.rotationAngle, data.pageNum);
     }
@@ -117,12 +85,11 @@ class ImageAnnotator extends Annotator {
     /**
      * Rotates annotations. Hides point annotation mode button if rotated
      *
-     * @private
      * @param {number} [rotationAngle] - current angle image is rotated
      * @param {number} [pageNum] - Page number
      * @return {void}
      */
-    rotateAnnotations(rotationAngle = 0, pageNum = 0) {
+    rotateAnnotations(rotationAngle: number = 0, pageNum: number = 0) {
         // Only render a specific page's annotations unless no page number
         // is specified
         if (pageNum) {
@@ -134,7 +101,7 @@ class ImageAnnotator extends Annotator {
         // Only show/hide point annotation button if user has the
         // appropriate permissions
         const controller = this.modeControllers[TYPES.point];
-        if (!this.permissions.canAnnotate || !controller) {
+        if (!this.permissions.can_annotate || !controller) {
             return;
         }
 

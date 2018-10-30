@@ -1,16 +1,9 @@
 /* eslint-disable no-unused-expressions */
 import CreateHighlightDialog from '../CreateHighlightDialog';
-import {
-    SELECTOR_ADD_HIGHLIGHT_BTN,
-    SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
-    SELECTOR_ANNOTATION_CARET,
-    CREATE_EVENT
-} from '../../constants';
-import CommentBox from '../../CommentBox';
+import { CREATE_EVENT, TYPES } from '../../constants';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
 
-const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
 const html = '<div class="ba-create-highlight-dialog-container"></div>';
 
 describe('doc/CreateHighlightDialog', () => {
@@ -34,6 +27,12 @@ describe('doc/CreateHighlightDialog', () => {
             allowComment: true,
             localized
         });
+        dialog.annotatedElement = rootElement;
+        dialog.renderAnnotationPopover = jest.fn();
+        dialog.unmountPopover = jest.fn();
+        dialog.emit = jest.fn();
+
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -66,35 +65,34 @@ describe('doc/CreateHighlightDialog', () => {
     });
 
     describe('show()', () => {
+        const selection = { anchorNode: {} };
+        const pageInfo = { page: 1, pageEl: {} };
+
         beforeEach(() => {
+            dialog.pageInfo = null;
             dialog.setPosition = jest.fn();
-            dialog.parentEl = {
-                querySelector: jest.fn(),
-                appendChild: jest.fn()
-            };
+            dialog.renderAnnotationPopover = jest.fn();
+            util.getPageInfo = jest.fn().mockReturnValue(pageInfo);
         });
 
         it('should do nothing if no selection is passed in', () => {
-            util.getPageInfo = jest.fn();
-            dialog.show({});
-            expect(dialog.parentEl.appendChild).not.toBeCalled();
-            expect(util.getPageInfo).not.toBeCalled();
+            dialog.show();
+            expect(dialog.renderAnnotationPopover).not.toBeCalled();
         });
 
-        it('should do nothing if no page element is calculated from the selection', () => {
-            util.getPageInfo = jest.fn().mockReturnValue({});
-            dialog.show({}, {});
-            expect(dialog.parentEl.appendChild).not.toBeCalled();
-            expect(util.getPageInfo).toBeCalled();
+        it('should set the position and render the popover on desktop', () => {
+            dialog.show(selection);
+            expect(dialog.pageInfo).toEqual(pageInfo);
+            expect(dialog.setPosition).toBeCalled();
+            expect(dialog.renderAnnotationPopover).toBeCalled();
         });
 
-        it('should set the parentEl to a new reference, via setParentEl(), if a new one is supplied', () => {
-            const newParent = document.createElement('span');
-            util.getPageInfo = jest.fn().mockReturnValue({ pageEl: dialog.parentEl });
-
-            dialog.show(newParent, {});
-            expect(dialog.parentEl.querySelector).toBeCalled();
-            expect(dialog.parentEl.appendChild).toBeCalled();
+        it('should only render the popover on mobile', () => {
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            dialog.show(selection);
+            expect(dialog.pageInfo).toEqual(pageInfo);
+            expect(dialog.setPosition).not.toBeCalled();
+            expect(dialog.renderAnnotationPopover).toBeCalled();
         });
     });
 
@@ -130,199 +128,39 @@ describe('doc/CreateHighlightDialog', () => {
         });
     });
 
-    describe('destroy()', () => {
-        beforeEach(() => {
-            dialog.containerEl = {
-                classList: { add: jest.fn() },
-                remove: jest.fn(),
-                removeEventListener: jest.fn()
-            };
-        });
-
-        it('should remove click event listener from the highlight button', () => {
-            dialog.highlightCreateEl = {
-                removeEventListener: jest.fn()
-            };
-            dialog.destroy();
-            expect(dialog.highlightCreateEl.removeEventListener).toHaveBeenCalledTimes(3);
-        });
-
-        it('should remove click event listener from the comment button', () => {
-            dialog.commentCreateEl = {
-                removeEventListener: jest.fn()
-            };
-            dialog.destroy();
-            expect(dialog.commentCreateEl.removeEventListener).toHaveBeenCalledTimes(3);
-        });
-
-        it('should remove out all touch events, if touch enabled', () => {
-            dialog.hasTouch = true;
-            dialog.isMobile = true;
-
-            dialog.highlightCreateEl = {
-                removeEventListener: jest.fn()
-            };
-            dialog.commentCreateEl = {
-                removeEventListener: jest.fn()
-            };
-
-            const eventStubs = [
-                {
-                    stub: dialog.highlightCreateEl.removeEventListener,
-                    args: ['touchstart', dialog.stopPropagation]
-                },
-                {
-                    stub: dialog.highlightCreateEl.removeEventListener,
-                    args: ['touchend', dialog.onHighlightClick]
-                },
-                {
-                    stub: dialog.commentCreateEl.removeEventListener,
-                    args: ['touchstart', dialog.stopPropagation]
-                },
-                {
-                    stub: dialog.commentCreateEl.removeEventListener,
-                    args: ['touchend', dialog.onCommentClick]
-                },
-                {
-                    stub: dialog.containerEl.removeEventListener,
-                    args: ['touchend', dialog.stopPropagation]
-                }
-            ];
-
-            dialog.destroy();
-
-            eventStubs.forEach((stub) => {
-                expect(stub.stub).toBeCalledWith(...stub.args);
-            });
-        });
-    });
-
     describe('updatePosition()', () => {
         beforeEach(() => {
             util.showElement = jest.fn();
-            dialog.isMobile = false;
+            dialog.pageInfo = { page: 1, pageEl: document.createElement('div') };
+            util.findElement = jest.fn().mockReturnValue(rootElement);
         });
 
         it('should do nothing on mobile devices', () => {
-            dialog.isMobile = true;
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             dialog.updatePosition();
-            expect(util.showElement).not.toBeCalled();
+            expect(util.findElement).not.toBeCalled();
         });
 
-        it('should update the top of the ui element', () => {
-            const y = 50;
-            dialog.position.y = y;
-            dialog.updatePosition();
-            expect(dialog.containerEl.style.top).toEqual(`${y + 5}px`);
-            expect(util.showElement).toBeCalled();
-        });
-
-        it('should update the left of the ui element, to center it', () => {
+        it('should update the positioning of the popover element', () => {
             const x = 50;
-            dialog.position.x = x;
             util.repositionCaret = jest.fn().mockReturnValue(x);
             dialog.updatePosition();
-            expect(dialog.containerEl.style.left).toEqual(`${x}px`);
-            expect(util.showElement).toBeCalled();
+            expect(util.findElement).toBeCalled();
         });
     });
 
-    describe('onHighlightClick()', () => {
+    describe('onCreate()', () => {
         it('should invoke the "plain" highlight event', () => {
-            dialog.emit = jest.fn();
-            dialog.onHighlightClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
+            dialog.onCreate(TYPES.highlight);
             expect(dialog.emit).toBeCalledWith(CREATE_EVENT.plain);
         });
     });
 
     describe('onCommentClick()', () => {
-        beforeEach(() => {
-            dialog.show();
-
-            dialog.commentBox = {
-                show: jest.fn(),
-                hide: jest.fn(),
-                clear: jest.fn(),
-                focus: jest.fn(),
-                removeListener: jest.fn(),
-                destroy: jest.fn()
-            };
-        });
-
-        it('should invoke the "comment" highlight event', () => {
-            dialog.emit = jest.fn();
+        it('should create a plain highlight and render the popover', () => {
             dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
             expect(dialog.emit).toBeCalledWith(CREATE_EVENT.comment);
-        });
-
-        it('should show the comment box', () => {
-            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
-            expect(dialog.commentBox.show).toBeCalled();
-        });
-
-        it('should focus on the comment box', () => {
-            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
-            expect(dialog.commentBox.focus).toBeCalled();
-        });
-
-        it('should hide the highlight buttons', () => {
-            dialog.setButtonVisibility = jest.fn();
-            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
-            expect(dialog.setButtonVisibility).toBeCalled();
-        });
-
-        it('should invoke update position', () => {
-            dialog.updatePosition = jest.fn();
-            dialog.onCommentClick({ preventDefault: jest.fn(), stopPropagation: jest.fn() });
-            expect(dialog.updatePosition).toBeCalled();
-        });
-    });
-
-    describe('createElement()', () => {
-        it('should create a div with the proper create highlight class', () => {
-            dialog.createElement();
-            expect(dialog.containerEl.nodeName).toEqual('DIV');
-            expect(dialog.containerEl.classList.contains(CLASS_CREATE_DIALOG)).toBeTruthy();
-        });
-
-        it('should make a reference to the highlight button', () => {
-            dialog.createElement();
-            expect(dialog.highlightCreateEl).not.toBeNull();
-            expect(dialog.highlightCreateEl).not.toBeUndefined();
-        });
-
-        it('should make a reference to the comment button', () => {
-            dialog.createElement();
-            expect(dialog.commentCreateEl).not.toBeNull();
-            expect(dialog.commentCreateEl).not.toBeUndefined();
-        });
-
-        it('should create a comment box', () => {
-            dialog.createElement();
-            expect(dialog.commentBox).toBeInstanceOf(CommentBox);
-        });
-
-        it('should not create the caret if on a mobile device', () => {
-            dialog.isMobile = true;
-            dialog.createElement();
-
-            expect(dialog.containerEl.querySelector(SELECTOR_ANNOTATION_CARET)).toBeNull();
-        });
-
-        it('should not create a highlight button if highlights are disabled', () => {
-            dialog.allowHighlight = false;
-            dialog.createElement();
-
-            expect(dialog.containerEl.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN)).toBeNull();
-        });
-
-        it('should not create a comment box or button if comments are disabled', () => {
-            dialog.allowComment = false;
-            dialog.commentBox = undefined;
-            dialog.createElement();
-
-            expect(dialog.containerEl.querySelector(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN)).toBeNull();
-            expect(dialog.commentBox).not.toBeInstanceOf(CommentBox);
+            expect(dialog.renderAnnotationPopover).toBeCalled();
         });
     });
 });

@@ -1,16 +1,76 @@
 {
     "presets": [
-        ["es2015", { "modules": false }],
+        ["es2015", {
+            "modules": false
+        }],
         "es2016",
-        "react"
+        "react",
+        "flow"
     ],
     "plugins": [
         "transform-class-properties",
-        "transform-object-rest-spread"
+        "transform-object-rest-spread",
+        "transform-regenerator"
     ],
     "env": {
-        "npm": {
+        "dev": {
+            "presets": [
+                ["env", {
+                    "modules": false,
+                    "targets": {
+                        "browsers": ["last 1 Chrome versions", "last 1 Firefox versions"]
+                    }
+                }],
+                "stage-1",
+                "react",
+                "flow"
+            ],
             "plugins": [
+                "flow-react-proptypes", [
+                    "react-intl",
+                    {
+                        "enforceDescriptions": true,
+                        "messagesDir": "./i18n/json"
+                    }
+                ]
+            ]
+        },
+        "production": {
+            "presets": [
+                ["env", {
+                    "modules": false
+                }],
+                "stage-1",
+                "react",
+                "flow"
+            ],
+            "plugins": [
+                [
+                    "react-intl",
+                    {
+                        "enforceDescriptions": true,
+                        "messagesDir": "./i18n/json"
+                    }
+                ]
+            ]
+        },
+        "npm": {
+            "presets": [
+                ["env", {
+                    "modules": false
+                }],
+                "stage-1",
+                "react",
+                "flow"
+            ],
+            "plugins": [
+                [
+                    "react-intl",
+                    {
+                        "enforceDescriptions": true,
+                        "messagesDir": "./i18n/json"
+                    }
+                ],
                 [
                     "babel-plugin-transform-require-ignore", {
                         "extensions": [".scss", ".css"]
@@ -19,8 +79,22 @@
             ]
         },
         "test": {
+            "presets": [
+                ["env", {
+                    "modules": false
+                }],
+                "stage-1",
+                "react",
+                "flow"
+            ],
             "plugins": [
-                "transform-es2015-modules-commonjs",
+                "transform-es2015-modules-commonjs", [
+                    "react-intl",
+                    {
+                        "enforceDescriptions": false,
+                        "messagesDir": "./i18n/json"
+                    }
+                ],
                 [
                     "babel-plugin-transform-require-ignore", {
                         "extensions": [".scss", ".css"]

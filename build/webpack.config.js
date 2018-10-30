@@ -1,17 +1,21 @@
 require('babel-polyfill');
-
-const isRelease = process.env.NODE_ENV === 'production';
-const isDev = process.env.NODE_ENV === 'dev';
-
 const path = require('path');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const RsyncPlugin = require('./RsyncPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const commonConfig = require('./webpack.common.config');
-const license = require('./license');
 const fs = require('fs');
+
+const license = require('./license');
+const commonConfig = require('./webpack.common.config');
+const TranslationsPlugin = require('./TranslationsPlugin');
+const RsyncPlugin = require('./RsyncPlugin');
+
+const isRelease = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === 'dev';
+const language = process.env.LANGUAGE;
+const locale = language.substr(0, language.indexOf('-'));
 
 let rsyncLocation = '';
 if (fs.existsSync('build/rsync.json')) {
@@ -29,6 +33,16 @@ const config = Object.assign(commonConfig(), {
     output: {
         path: path.resolve('lib'),
         filename: '[Name].js'
+    },
+    resolve: {
+        modules: ['src', 'node_modules'],
+        alias: {
+            examples: path.join(__dirname, '../examples/src'),
+            'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
+            'box-annotations-locale-data': path.resolve(`i18n/${language}`),
+            'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
+            moment: path.resolve('src/MomentShim') // Hack to leverage Intl instead
+        }
     }
 });
 
@@ -40,16 +54,23 @@ if (isDev) {
 
     // Add inline source map
     config.devtool = 'inline-source-map';
+    config.plugins.push(new TranslationsPlugin());
+    config.plugins.push(
+        new CircularDependencyPlugin({
+            exclude: /node_modules/,
+            failOnError: true
+        })
+    );
 }
 
-if (isRelease) {
+if (isRelease && language === 'en-US') {
     config.plugins.push(
         new BundleAnalyzerPlugin({
             analyzerMode: 'static',
             openAnalyzer: false,
-            reportFilename: '../reports/webpack-stats.html',
+            reportFilename: path.resolve('../reports/webpack-stats.html'),
             generateStatsFile: true,
-            statsFilename: '../reports/webpack-stats.json'
+            statsFilename: path.resolve('../reports/webpack-stats.json`')
         })
     );
 

@@ -1,48 +1,30 @@
-import CreateAnnotationDialog from '../CreateAnnotationDialog';
-import { ICON_HIGHLIGHT, ICON_HIGHLIGHT_COMMENT } from '../icons/icons';
-import { generateBtn, repositionCaret, getPageInfo, getDialogWidth, showElement } from '../util';
+// @flow
+import React from 'react';
+import noop from 'lodash/noop';
+import { render, unmountComponentAtNode } from 'react-dom';
+import EventEmitter from 'events';
+
+import AnnotationPopover from '../components/AnnotationPopover';
+import {
+    repositionCaret,
+    getPageInfo,
+    findElement,
+    getPopoverLayer,
+    isInElement,
+    getPageEl,
+    shouldDisplayMobileUI
+} from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import {
     CREATE_EVENT,
-    CLASS_ANNOTATION_CARET,
-    CLASS_HIGHLIGHT_BTNS,
-    CLASS_ADD_HIGHLIGHT_BTN,
-    CLASS_ADD_HIGHLIGHT_COMMENT_BTN,
-    CLASS_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_HIGHLIGHT_BTNS,
-    SELECTOR_ADD_HIGHLIGHT_BTN,
-    SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
-    CLASS_MOBILE_ANNOTATION_DIALOG,
-    CLASS_ANNOTATION_DIALOG,
-    CLASS_BUTTON_PLAIN,
-    PAGE_PADDING_TOP
+    TYPES,
+    PAGE_PADDING_TOP,
+    PAGE_PADDING_BOTTOM,
+    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    INLINE_POPOVER_HEIGHT
 } from '../constants';
 
-const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
-const DATA_TYPE_HIGHLIGHT = 'add-highlight-btn';
-const DATA_TYPE_ADD_HIGHLIGHT_COMMENT = 'add-highlight-comment-btn';
-const HIGHLIGHT_BTNS_WIDTH = 78;
-
-class CreateHighlightDialog extends CreateAnnotationDialog {
-    /** @property {HTMLElement} - Container element for the dialog. */
-    containerEl;
-
-    /** @property {HTMLElement} - The clickable element for creating plain highlights. */
-    highlightCreateEl;
-
-    /** @property {HTMLElement} - The clickable element got creating comment highlights. */
-    commentCreateEl;
-
-    /** @property {HTMLElement} - The parent container to nest the dialog element in. */
-    parentEl;
-
-    /** @property {HTMLElement} - The element containing the buttons that can creaet highlights. */
-    buttonsEl;
-
-    /** @property {CommentBox} - The comment box instance. Contains area for text input and post/cancel buttons. */
-    commentBox;
-
+class CreateHighlightDialog extends EventEmitter {
     /** @property {Object} - Position, on the DOM, to align the dialog to the end of a highlight. */
     position = {
         x: 0,
@@ -50,132 +32,170 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
     };
 
     /** @property {boolean} - Whether or not we're on a mobile device. */
-    isMobile;
+    isMobile: boolean;
 
     /** @property {boolean} - Whether or not we support touch. */
-    hasTouch;
-
-    /** @property {boolean} - Whether or not this is visible. */
-    isVisible;
+    hasTouch: boolean;
 
     /** @property {boolean} - Whether or not to allow plain highlight interaction. */
-    allowHighlight;
+    allowHighlight: boolean;
 
     /** @property {boolean} - Whether or not to allow comment interactions. */
-    allowComment;
+    allowComment: boolean;
 
-    /** @property {Object} - Translated strings for dialog */
-    localized;
+    /** @property {HTMLElement} - Preview container DOM element */
+    container: HTMLElement;
 
     /**
      * A dialog used to create plain and comment highlights.
      *
      * [constructor]
      *
-     * @param {HTMLElement} parentEl - Parent element
+     * @param {HTMLElement} annotatedElement - Parent element
      * @param {Object} [config] - For configuring the dialog.
      * @param {boolean} [config.hasTouch] - True to add touch events.
      * @param {boolean} [config.isMobile] - True if on a mobile device.
      * @return {CreateHighlightDialog} CreateHighlightDialog instance
      */
-    constructor(parentEl, config = {}) {
-        super(parentEl, config);
+    constructor(annotatedElement: HTMLElement, config: Object = {}) {
+        super();
 
+        this.annotatedElement = annotatedElement;
+        this.container = config.container;
+        this.hasTouch = !!config.hasTouch || false;
         this.allowHighlight = config.allowHighlight || false;
         this.allowComment = config.allowComment || false;
+        this.headerHeight = config.headerHeight;
+    }
 
-        // Explicit scope binding for event listeners
-        if (this.allowHighlight) {
-            this.onHighlightClick = this.onHighlightClick.bind(this);
-        }
-
-        if (this.allowComment) {
-            this.onCommentClick = this.onCommentClick.bind(this);
-            this.onCommentPost = this.onCommentPost.bind(this);
-            this.onCommentCancel = this.onCommentCancel.bind(this);
-        }
-
-        this.createElement();
+    /** @inheritdoc */
+    destroy() {
+        this.unmountPopover();
     }
 
     /**
-     * Show the dialog. Adds to the parent container if it isn't already there.
+     * Resets and unmounts the annotation popover
      *
-     * @public
-     * @param {HTMLElement} newParentEl The new parent container to nest this in.
-     * @param {HTMLElement} selection Current text selection
      * @return {void}
      */
-    show(newParentEl, selection) {
+    unmountPopover() {
+        this.isVisible = false;
+        const popoverLayer = this.container.querySelector('.ba-dialog-layer');
+        if (this.createPopoverComponent && popoverLayer) {
+            unmountComponentAtNode(popoverLayer);
+            this.createPopoverComponent = null;
+        }
+    }
+
+    /**
+     * Render the popover
+     *
+     * @param {HTMLElement} selection Current text selection
+     * @param {AnnotationType} type - highlight type
+     * @return {void}
+     */
+    show(selection: HTMLElement, type: AnnotationType = TYPES.highlight) {
         if (!selection) {
             return;
         }
 
         // Select page of first node selected
-        const pageInfo = getPageInfo(selection.anchorNode);
-        if (!pageInfo.pageEl) {
+        this.selection = selection;
+
+        // $FlowFixMe
+        this.pageInfo = getPageInfo(this.selection.anchorNode);
+        if (!this.pageInfo.pageEl) {
             return;
         }
 
-        const dialogParentEl = this.isMobile ? newParentEl : pageInfo.pageEl;
-        super.show(dialogParentEl);
-
-        // Add to parent if it hasn't been added already
-        if (!this.parentEl.querySelector(`.${CLASS_CREATE_DIALOG}`)) {
-            this.parentEl.appendChild(this.containerEl);
+        if (shouldDisplayMobileUI(this.container)) {
+            this.position = { x: 0, y: 0 };
+        } else {
+            this.setPosition(this.selection);
         }
 
-        if (!this.isMobile) {
-            this.setPosition(selection);
-        }
+        this.renderAnnotationPopover(type);
     }
 
+    /**
+     * Shows the appropriate annotation dialog for this thread.
+     *
+     * @param {string} type - annotation type
+     * @param {HTMLElement} pageEl - Page DOM Element
+     * @return {void}
+     */
+    renderAnnotationPopover = (type: AnnotationType = TYPES.highlight) => {
+        const pageEl = shouldDisplayMobileUI(this.container)
+            ? this.container
+            : getPageEl(this.annotatedElement, this.pageInfo.page);
+        const popoverLayer = getPopoverLayer(pageEl);
+
+        this.createPopoverComponent = render(
+            <AnnotationPopover
+                type={type}
+                canAnnotate={true}
+                canComment={this.allowComment}
+                canDelete={true}
+                position={this.updatePosition}
+                onDelete={noop}
+                onCancel={this.onCommentCancel}
+                onCreate={this.onCreate}
+                onCommentClick={this.onCommentClick}
+                isPending={true}
+                isMobile={shouldDisplayMobileUI(this.container)}
+                headerHeight={this.headerHeight}
+            />,
+            popoverLayer
+        );
+        this.isVisible = true;
+    };
+
+    /**
+     * @param {Event} event - Mouse event
+     * @return {boolean} Whether or not the click event occured over a highlight in the canvas
+     */
+    isInHighlight = (event: Event) => {
+        if (!this.selection || !this.selection.rangeCount) {
+            return false;
+        }
+
+        const lastRange = this.selection.getRangeAt(this.selection.rangeCount - 1);
+        return isInElement(event, lastRange);
+    };
+
     /** @inheritdoc */
-    setPosition(selection) {
-        if (!selection || !selection.rangeCount) {
+    setPosition(selection: HTMLElement) {
+        if (!this.selection || !this.selection.rangeCount) {
             return;
         }
 
+        // $FlowFixMe
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 
         // Select page of first node selected
-        const pageInfo = getPageInfo(selection.anchorNode);
-        if (!pageInfo.pageEl) {
+        // $FlowFixMe
+        this.pageInfo = getPageInfo(selection.anchorNode);
+        const { pageEl } = this.pageInfo;
+        if (!pageEl) {
             return;
         }
 
-        const pageDimensions = pageInfo.pageEl.getBoundingClientRect();
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
+        );
+        const popoverDimensions = popoverEl.getBoundingClientRect();
+        const pageDimensions = pageEl.getBoundingClientRect();
         const pageLeft = pageDimensions.left;
-        const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
-        super.setPosition(coords.x - pageLeft, coords.y - pageTop);
+        const pageTop = pageDimensions.top - popoverDimensions.height;
+        this.position = {
+            x: coords.x - pageLeft,
+            y: coords.y - pageTop
+        };
+        this.updatePosition();
     }
-
-    /**
-     * [destructor]
-     *
-     * @return {void}
-     */
-    destroy() {
-        super.destroy();
-
-        // Event listeners
-        if (this.highlightCreateEl) {
-            this.highlightCreateEl.removeEventListener('click', this.onHighlightClick);
-            this.highlightCreateEl.removeEventListener('touchstart', this.stopPropagation);
-            this.highlightCreateEl.removeEventListener('touchend', this.onHighlightClick);
-        }
-
-        if (this.commentCreateEl) {
-            this.commentCreateEl.removeEventListener('click', this.onCommentClick);
-            this.commentCreateEl.removeEventListener('touchstart', this.stopPropagation);
-            this.commentCreateEl.removeEventListener('touchend', this.onCommentClick);
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
 
     /**
      * Update the position styling for the dialog so that the chevron points to
@@ -183,149 +203,78 @@ class CreateHighlightDialog extends CreateAnnotationDialog {
      *
      * @return {void}
      */
-    updatePosition() {
-        if (this.isMobile) {
+    updatePosition = () => {
+        if (shouldDisplayMobileUI(this.container)) {
             return;
         }
 
-        const dialogWidth = getDialogWidth(this.containerEl);
-        const dialogX = this.position.x - 1 - dialogWidth / 2;
-        const xPos = repositionCaret(
-            this.containerEl,
-            dialogX,
-            HIGHLIGHT_BTNS_WIDTH,
-            this.position.x,
-            this.parentEl.clientWidth
+        // Position it below lower right corner or center of the highlight - we need
+        // to reposition every time since the DOM could have changed from
+        // zooming
+        const { pageEl } = this.pageInfo;
+        const pageDimensions = pageEl.getBoundingClientRect();
+        const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
+        const BOUNDARY_PADDING = 5;
+
+        const popoverEl = findElement(
+            this.annotatedElement,
+            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            this.renderAnnotationPopover
         );
+        const dialogDimensions = popoverEl.getBoundingClientRect();
+        const dialogWidth = dialogDimensions.width;
+        let dialogX = this.position.x - dialogWidth / 2;
+        let dialogY = this.position.y - INLINE_POPOVER_HEIGHT + BOUNDARY_PADDING;
+        // Only reposition if one side is past page boundary - if both are,
+        // just center the dialog and cause scrolling since there is nothing
+        // else we can do
+        dialogX = repositionCaret(popoverEl, dialogX, dialogWidth, this.position.x, pageDimensions.width);
 
-        // Plus 1 pixel for caret
-        this.containerEl.style.left = `${xPos}px`;
-        // Plus 5 pixels for caret
-        this.containerEl.style.top = `${this.position.y + 5}px`;
+        if (dialogY < 0) {
+            dialogY = 0;
+        } else if (dialogY > pageHeight) {
+            dialogY = pageHeight - dialogDimensions.height;
+        }
 
-        showElement(this.containerEl);
-    }
+        popoverEl.style.left = `${dialogX}px`;
+        popoverEl.style.top = `${dialogY}px`;
+    };
 
     /**
      * Fire an event notifying that the plain highlight button has been clicked.
      *
-     * @param {Event} event - The DOM event coming from interacting with the element.
+     * @param {AnnotationType} type - Annotation type
+     * @param {string} message - Annotation message
      * @return {void}
      */
-    onHighlightClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.emit(CREATE_EVENT.plain);
-    }
+    onCreate = (type: AnnotationType, message: String) => {
+        if (!message) {
+            this.emit(CREATE_EVENT.plain);
+            return;
+        }
+
+        this.emit(CREATE_EVENT.commentPost, message);
+    };
 
     /**
      * Fire an event notifying that the comment button has been clicked. Also
      * show the comment box, and give focus to the text area conatined by it.
      *
-     * @param {Event} event - The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onCommentClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
+    onCommentClick = () => {
         this.emit(CREATE_EVENT.comment);
-
-        this.commentBox.show();
-        this.commentBox.focus();
-        this.setButtonVisibility(false);
-        this.updatePosition();
-    }
+        this.renderAnnotationPopover(TYPES.highlight_comment);
+    };
 
     /**
-     * Create the element containing highlight create and comment buttons, and comment box.
+     * Cancels adding a comment to the highlgiht annotation by rendering a plain highlight popover
      *
-     * @private
-     * @return {HTMLElement} The element containing Highlight creation UI
+     * @return {void}
      */
-    createElement() {
-        this.containerEl = document.createElement('div');
-        this.containerEl.classList.add(CLASS_CREATE_DIALOG);
-
-        if (!this.isMobile) {
-            const caretTemplate = document.createElement('div');
-            caretTemplate.classList.add(CLASS_ANNOTATION_CARET);
-            caretTemplate.left = '50%';
-            this.containerEl.appendChild(caretTemplate);
-        }
-
-        const buttonsEl = document.createElement('span');
-        buttonsEl.classList.add(CLASS_HIGHLIGHT_BTNS);
-
-        if (this.allowHighlight) {
-            const highlightEl = generateBtn(
-                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_BTN],
-                this.localized.highlightToggle,
-                ICON_HIGHLIGHT,
-                DATA_TYPE_HIGHLIGHT
-            );
-            buttonsEl.appendChild(highlightEl);
-        }
-
-        const dialogEl = document.createElement('div');
-        dialogEl.classList.add(CLASS_ANNOTATION_HIGHLIGHT_DIALOG);
-        dialogEl.appendChild(buttonsEl);
-        this.containerEl.appendChild(dialogEl);
-
-        // Get rid of the caret
-        if (this.isMobile) {
-            this.containerEl.classList.add(CLASS_MOBILE_ANNOTATION_DIALOG);
-            this.containerEl.classList.add(CLASS_ANNOTATION_DIALOG);
-        }
-
-        const highlightDialogEl = this.containerEl.querySelector(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-
-        // Reference HTML
-        this.buttonsEl = highlightDialogEl.querySelector(SELECTOR_HIGHLIGHT_BTNS);
-
-        // Stop interacting with this element from triggering outside actions
-        if (!this.isMobile) {
-            this.containerEl.addEventListener('click', this.stopPropagation);
-            this.containerEl.addEventListener('mouseup', this.stopPropagation);
-            this.containerEl.addEventListener('dblclick', this.stopPropagation);
-        }
-
-        // Events for highlight button
-        if (this.allowHighlight) {
-            this.highlightCreateEl = highlightDialogEl.querySelector(SELECTOR_ADD_HIGHLIGHT_BTN);
-            this.highlightCreateEl.addEventListener('click', this.onHighlightClick);
-
-            if (this.hasTouch) {
-                this.highlightCreateEl.addEventListener('touchstart', this.stopPropagation);
-                this.highlightCreateEl.addEventListener('touchend', this.onHighlightClick);
-            }
-        }
-
-        if (this.allowComment) {
-            const commentEl = generateBtn(
-                [CLASS_BUTTON_PLAIN, CLASS_ADD_HIGHLIGHT_COMMENT_BTN],
-                this.localized.highlightComment,
-                ICON_HIGHLIGHT_COMMENT,
-                DATA_TYPE_ADD_HIGHLIGHT_COMMENT
-            );
-            buttonsEl.appendChild(commentEl);
-
-            // Events for comment button
-            this.commentBox = this.setupCommentBox(highlightDialogEl);
-
-            this.commentCreateEl = highlightDialogEl.querySelector(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-            this.commentCreateEl.addEventListener('click', this.onCommentClick);
-
-            if (this.hasTouch) {
-                this.commentCreateEl.addEventListener('touchstart', this.stopPropagation);
-                this.commentCreateEl.addEventListener('touchend', this.onCommentClick);
-            }
-        }
-
-        // touch events
-        if (this.hasTouch) {
-            this.containerEl.addEventListener('touchend', this.stopPropagation);
-        }
-    }
+    onCommentCancel = () => {
+        this.renderAnnotationPopover(TYPES.highlight);
+    };
 }
 
 export default CreateHighlightDialog;

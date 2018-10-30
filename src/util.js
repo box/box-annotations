@@ -6,23 +6,13 @@ import {
     PERMISSION_CAN_VIEW_ANNOTATIONS_SELF,
     TYPES,
     SELECTOR_ANNOTATION_CARET,
-    PENDING_STATES,
-    CLASS_ACTIVE,
-    CLASS_ANNOTATION_COMMENT_TEXT,
-    CLASS_HIDDEN,
-    CLASS_INVISIBLE,
     CLASS_DISABLED,
-    CLASS_INVALID_INPUT,
+    CLASS_HIDDEN,
     CLASS_ANNOTATION_DIALOG,
     CLASS_BOX_PREVIEW_HEADER,
-    CLASS_DIALOG_CLOSE,
-    CLASS_MOBILE_DIALOG_HEADER,
-    DATA_TYPE_MOBILE_CLOSE,
     SELECTOR_ANNOTATION_MODE,
     CLASS_ANNOTATION_POINT_MARKER
 } from './constants';
-
-import { ICON_CLOSE } from './icons/icons';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
 const HEADER_CLIENT_VERSION = 'X-Box-Client-Version';
@@ -31,9 +21,7 @@ const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
-const AVATAR_COLOR_COUNT = 9; // 9 colors defined in Box React UI avatar code
-const THREAD_PARAMS = ['annotations', 'annotationService', 'fileVersionId', 'locale', 'location', 'type'];
-const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
+const DESKTOP_MIN_WIDTH = 1025;
 
 //------------------------------------------------------------------------------
 // DOM Utils
@@ -42,7 +30,6 @@ const NEWLINE_REGEX = /\r\n|\n\r|\n|\r/g;
 /**
  * Replaces the currently active header with a specified header
  *
- * @public
  * @param {HTMLElement} containerEl Preview container
  * @param {string} replacementHeader Class name of new header
  * @return {void}
@@ -87,7 +74,7 @@ export function findClosestElWithClass(element, className) {
  * @return {Object} Page element/page number if found or null/-1 if not
  */
 export function getPageInfo(element) {
-    const pageEl = findClosestElWithClass(element, 'page') || null;
+    const pageEl = findClosestElWithClass(element, 'page');
     let page = 1;
 
     if (pageEl) {
@@ -95,6 +82,47 @@ export function getPageInfo(element) {
     }
 
     return { pageEl, page };
+}
+
+/**
+ * Determines whether or not the user's browser is mobile-sized
+ * so they see the appropriate UI
+ *
+ * @param {HTMLElement} container Preview container
+ * @return {boolean} Whether or not to display the mobile UI
+ */
+export function shouldDisplayMobileUI(container) {
+    const containerRect = container.getBoundingClientRect();
+    return containerRect.width < DESKTOP_MIN_WIDTH;
+}
+
+/**
+ * Gets the current page element.
+ *
+ * @private
+ * @param {HTMLElement} annotatedEl - HTML Element being annotated on
+ * @param {number} pageNum - Page number
+ * @return {HTMLElement|null} Page element if it exists, otherwise null
+ */
+export function getPageEl(annotatedEl, pageNum) {
+    return annotatedEl.querySelector(`[data-page-number="${pageNum}"]`);
+}
+
+/**
+ * Finds an existing annotation popover layer or creates one if it does
+ * not already exist and appends the layer to the page.
+ *
+ * @param {HTMLElement} pageEl Page DOM Element
+ * @return {HTMLElement} Annotation Popover layer DOM Element
+ */
+export function getPopoverLayer(pageEl) {
+    let popoverLayer = pageEl.querySelector('.ba-dialog-layer');
+    if (!popoverLayer) {
+        popoverLayer = document.createElement('span');
+        popoverLayer.classList.add('ba-dialog-layer');
+        pageEl.appendChild(popoverLayer);
+    }
+    return popoverLayer;
 }
 
 /**
@@ -188,70 +216,44 @@ export function enableElement(elementOrSelector) {
 }
 
 /**
- * Shows the specified element or element with specified selector.
- *
- * @param {HTMLElement|string} elementOrSelector Element or CSS selector
- * @return {void}
- */
-export function showInvisibleElement(elementOrSelector) {
-    let element = elementOrSelector;
-    if (typeof elementOrSelector === 'string' || elementOrSelector instanceof String) {
-        element = document.querySelector(elementOrSelector);
-    }
-
-    if (element) {
-        element.classList.remove(CLASS_INVISIBLE);
-    }
-}
-
-/**
- * Hides the specified element or element with specified selector. The element
- * will still take up DOM space but not be visible in the UI.
- *
- * @param {HTMLElement|string} elementOrSelector Element or CSS selector
- * @return {void}
- */
-export function hideElementVisibility(elementOrSelector) {
-    let element = elementOrSelector;
-    if (typeof elementOrSelector === 'string' || elementOrSelector instanceof String) {
-        element = document.querySelector(elementOrSelector);
-    }
-
-    if (element) {
-        element.classList.add(CLASS_INVISIBLE);
-    }
-}
-
-/**
- * Reset textarea element - clears value, resets styles, and remove active
- * state.
- *
- * @param {HTMLElement} element Textarea to reset
- * @param {boolean} clearText Whether or not text in text area should be cleared
- * @return {void}
- */
-export function resetTextarea(element, clearText) {
-    const textareaEl = element;
-    textareaEl.style.width = '';
-    textareaEl.style.height = '';
-    textareaEl.classList.remove(CLASS_ACTIVE);
-    textareaEl.classList.remove(CLASS_INVALID_INPUT);
-
-    if (clearText) {
-        textareaEl.value = '';
-    }
-}
-
-/**
- * Checks whether mouse is inside the dialog represented by this thread.
+ * Checks whether mouse is inside the specified DOM element
  *
  * @private
  * @param {Event} event Mouse event
- * @param {HTMLElement} [dialogEl] Optional annotation dialog element
+ * @param {HTMLElement} el DOM element
+ * @return {boolean} Whether or not mouse is inside element
+ */
+export function isInElement(event, el) {
+    if (!el) {
+        return false;
+    }
+
+    const dimensions = el.getBoundingClientRect();
+    return (
+        event.clientX > dimensions.left &&
+        event.clientX < dimensions.right &&
+        event.clientY > dimensions.top &&
+        event.clientY < dimensions.bottom
+    );
+}
+
+/**
+ * Checks whether mouse is inside the dialog represented by this annotation.
+ *
+ * @private
+ * @param {Event} event Mouse event
+ * @param {HTMLElement} [container] Optional annotation dialog container element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInDialog(event, dialogEl) {
-    return !!findClosestElWithClass(dialogEl || event.target, CLASS_ANNOTATION_DIALOG);
+export function isInDialog(event, container = null) {
+    if (!container) {
+        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
+    }
+
+    const annotatorLabelEl = container.querySelector('.ba-annotator-label');
+    const commentListEl = container.querySelector('.ba-comment-list');
+    const controlsEl = container.querySelector('.ba-action-controls');
+    return isInElement(event, annotatorLabelEl) || isInElement(event, commentListEl) || isInElement(event, controlsEl);
 }
 
 /**
@@ -259,20 +261,17 @@ export function isInDialog(event, dialogEl) {
  *
  * @private
  * @param {Event} event Mouse event
+ * @param {HTMLElement} [containerEl] Optional annotation dialog container element
  * @return {boolean} Whether or not mouse is inside dialog
  */
-export function isInAnnotationOrMarker(event) {
+export function isInAnnotationOrMarker(event, containerEl) {
     const { target } = event;
-    return !!(
-        findClosestElWithClass(target, CLASS_ANNOTATION_DIALOG) ||
-        findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER)
-    );
+    return !!(isInDialog(event, containerEl) || findClosestElWithClass(target, CLASS_ANNOTATION_POINT_MARKER));
 }
 
 /**
  * Creates contextual fragment
  *
- * @public
  * @param {Element} node DOM node
  * @param {string} template HTML template
  * @return {DocumentFragment} Document fragment
@@ -286,7 +285,6 @@ export function createFragment(node, template) {
 /**
  * Inserts template string into DOM node, before beforeNode. If beforeNode is null, inserts at end of child nodes
  *
- * @public
  * @param {Element} node DOM node
  * @param {string} template  html template
  * @param {Element|void} beforeNode DOM node
@@ -294,75 +292,6 @@ export function createFragment(node, template) {
  */
 export function insertTemplate(node, template, beforeNode = null) {
     node.insertBefore(createFragment(node, template), beforeNode);
-}
-
-/**
- * Returns a button HTMLElement with specified information
- *
- * @public
- * @param {string[]} classNames Button CSS class
- * @param {string} title Accessibilty title
- * @param {string} content Button HTML content
- * @param {string} [dataType] Optional data type
- * @return {HTMLElement} Button
- */
-export function generateBtn(classNames, title, content, dataType = '') {
-    const buttonEl = document.createElement('button');
-    classNames.forEach((className) => buttonEl.classList.add(className));
-    buttonEl.title = title;
-    buttonEl.innerHTML = content;
-    buttonEl.setAttribute('data-type', dataType);
-    return buttonEl;
-}
-
-//------------------------------------------------------------------------------
-// Point Utils
-//------------------------------------------------------------------------------
-
-/**
- * Checks whether element is fully in viewport.
- *
- * @param {HTMLElement} element The element to check and see if it lies in the viewport
- * @return {boolean} Whether the element is fully in viewport
- */
-export function isElementInViewport(element) {
-    const dimensions = element.getBoundingClientRect();
-
-    return (
-        dimensions.top >= 0 &&
-        dimensions.left >= 0 &&
-        dimensions.bottom <= window.innerHeight &&
-        dimensions.right <= window.innerWidth
-    );
-}
-
-/**
- * Returns avatar image HTML for annotation dialog. This will be either an
- * image with the supplied avatar URL as a source if there is a URL passed in
- * or one generated using the initials of the annotator.
- *
- * @param {string} avatarUrl URL of avatar photo
- * @param {string} userId User ID of annotator
- * @param {string} userName Username of annotator
- * @param {string} altText Alternate text if profile picture is not available
- * @return {string} HTML for profile image
- */
-export function getAvatarHtml(avatarUrl, userId, userName, altText) {
-    if (avatarUrl !== '') {
-        return `<img src="${avatarUrl}" alt="${altText}">`.trim();
-    }
-
-    let initials = '';
-    if (userId !== '0') {
-        // http://stackoverflow.com/questions/8133630/spliting-the-first-character-of-the-words
-        initials = userName
-            .replace(/\W*(\w)\w*/g, '$1')
-            .toUpperCase()
-            .substring(0, 3);
-    }
-
-    const index = parseInt(userId, 10) || 0;
-    return `<div class="ba-annotation-profile avatar-color-${index % AVATAR_COLOR_COUNT}">${initials}</div>`.trim();
 }
 
 /**
@@ -375,42 +304,15 @@ export function getScale(annotatedElement) {
     return parseFloat(annotatedElement.getAttribute('data-scale')) || 1;
 }
 
-//------------------------------------------------------------------------------
-// Highlight Utils
-//------------------------------------------------------------------------------
-
-/**
- * Return first annotation in thread
- *
- * @param {Object} annotations - Annotations in thread
- * @return {Annotation} First annotation in thread
- */
-export function getFirstAnnotation(annotations) {
-    const firstAnnotationId = Object.keys(annotations)[0];
-    return annotations[firstAnnotationId];
-}
-
-/**
- * Return first annotation in thread
- *
- * @param {Object} annotations - Annotations in thread
- * @return {Annotation} First annotation in thread
- */
-export function getLastAnnotation(annotations) {
-    const numAnnotations = Object.keys(annotations).length;
-    const lastAnnotationID = Object.keys(annotations)[numAnnotations - 1];
-    return annotations[lastAnnotationID];
-}
-
 /**
  * Whether or not a highlight annotation has comments or is a plain highlight
  *
- * @param {Object} annotations Annotations in highlight thread
+ * @param {Annotation[]} annotations Annotations in highlight thread
  * @return {boolean} Whether annotation is a plain highlight annotation
  */
 export function isPlainHighlight(annotations) {
-    const firstAnnotation = getFirstAnnotation(annotations);
-    return Object.keys(annotations).length === 1 && firstAnnotation.text === '';
+    const firstAnnotation = annotations[annotations.length - 1];
+    return annotations.length === 1 && firstAnnotation.message === '';
 }
 
 /**
@@ -422,6 +324,16 @@ export function isPlainHighlight(annotations) {
  */
 export function isHighlightAnnotation(type) {
     return type === TYPES.highlight || type === TYPES.highlight_comment;
+}
+
+/**
+ * Returns whether or not the annotation type is 'draw'
+ *
+ * @param {string} type Annotatation type
+ * @return {boolean} Whether or not annotation is a drawing
+ */
+export function isDrawingAnnotation(type) {
+    return type === TYPES.draw;
 }
 
 //------------------------------------------------------------------------------
@@ -460,41 +372,25 @@ export function getDimensionScale(dimensions, fileDimensions, zoomScale, heightP
 }
 
 /**
- * Escapes HTML.
- *
- * @param {string} str Input string
- * @return {string} HTML escaped string
- */
-export function htmlEscape(str) {
-    return `${str}`
-        .replace(/&/g, '&amp;') // first!
-        .replace(/>/g, '&gt;')
-        .replace(/</g, '&lt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/`/g, '&#96;');
-}
-
-/**
- * Repositions caret if annotations dialog will run off the right or left
+ * Repositions caret if annotations popover will run off the right or left
  * side of the page. Otherwise positions caret at the center of the
- * annotations dialog and the updated left corner x coordinate.
+ * annotations popover and the updated left corner x coordinate.
  *
- * @param  {HTMLElement} dialogEl Annotations dialog element
- * @param  {number} dialogX Left corner x coordinate of the annotations dialog
- * @param  {number} highlightDialogWidth Width of the annotations dialog
+ * @param  {HTMLElement} popoverEl Annotations popover element
+ * @param  {number} popoverX Left corner x coordinate of the annotations popover
+ * @param  {number} popoverWidth Width of the annotations popover
  * @param  {number} browserX X coordinate of the mouse position
  * @param  {number} pageWidth Width of document page
- * @return {number} Adjusted left corner x coordinate of the annotations dialog
+ * @return {number} Adjusted left corner x coordinate of the annotations popover
  */
-export function repositionCaret(dialogEl, dialogX, highlightDialogWidth, browserX, pageWidth) {
+export function repositionCaret(popoverEl, popoverX, popoverWidth, browserX, pageWidth) {
     // Reposition to avoid sides - left side of page is 0px, right side is
     // ${pageWidth}px
-    const dialogPastLeft = dialogX < 0;
-    const dialogPastRight = dialogX + highlightDialogWidth > pageWidth;
-    const annotationCaretEl = dialogEl.querySelector(SELECTOR_ANNOTATION_CARET);
+    const popoverPastLeft = popoverX < 0;
+    const popoverPastRight = popoverX + popoverWidth > pageWidth;
+    const annotationCaretEl = popoverEl.querySelector(SELECTOR_ANNOTATION_CARET);
 
-    if (dialogPastLeft && !dialogPastRight) {
+    if (popoverPastLeft && !popoverPastRight) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
         const caretLeftX = Math.max(10, browserX);
         annotationCaretEl.style.left = `${caretLeftX}px`;
@@ -502,31 +398,21 @@ export function repositionCaret(dialogEl, dialogX, highlightDialogWidth, browser
         return 0;
     }
 
-    if (dialogPastRight && !dialogPastLeft) {
+    if (popoverPastRight && !popoverPastLeft) {
         // Leave a minimum of 10 pixels so caret doesn't go off edge
         const caretRightX = Math.max(10, pageWidth - browserX);
 
         // We set the 'left' property even when we have caretRightX for
         // IE10/11
-        annotationCaretEl.style.left = `${highlightDialogWidth - caretRightX}px`;
+        annotationCaretEl.style.left = `${popoverWidth - caretRightX}px`;
 
-        return pageWidth - highlightDialogWidth;
+        return pageWidth - popoverWidth;
     }
 
     // Reset caret to center
     annotationCaretEl.style.left = '50%';
 
-    return dialogX;
-}
-
-/**
- * Checks thread is in a pending or pending-active state
- *
- * @param {string} threadState State of thread
- * @return {boolean} Whether annotation thread is in a pending state
- */
-export function isPending(threadState) {
-    return PENDING_STATES.indexOf(threadState) > -1;
+    return popoverX;
 }
 
 /**
@@ -537,57 +423,6 @@ export function isPending(threadState) {
  */
 export function hasValidBoundaryCoordinates(thread) {
     return !!(isHighlightAnnotation(thread.type) || (thread.minX && thread.minY && thread.maxX && thread.maxY));
-}
-
-/**
- * Checks whether a point annotation thread has the correct location params
- *
- * @param {Object} location Point annotation thread location object
- * @return {boolean} Whether or not the point annotation has the correct location information
- */
-export function isPointLocationValid(location) {
-    return !!(location && location.x && location.y);
-}
-
-/**
- * Checks whether a highlight annotation thread has the correct location params
- *
- * @param {Object} location Highlight annotation thread location object
- * @return {boolean} Whether or not the highlight annotation has the correct location information
- */
-export function isHighlightLocationValid(location) {
-    return !!(location && location.quadPoints);
-}
-
-/**
- * Checks whether a draw annotation thread has the correct location params
- *
- * @param {Object} location Draw annotation thread location object
- * @return {boolean} Whether or not the draw annotation has the correct location information
- */
-export function isDrawLocationValid(location) {
-    return !!(location && location.minX && location.minY && location.maxX && location.maxY);
-}
-
-/**
- * Checks whether annotation thread is valid by checking whether each property
- * in THREAD_PARAMS on the specified file object is defined.
- *
- * @param {Object} thread Annotation thread params to check
- * @return {boolean} Whether or not annotation thread has all the required params
- */
-export function areThreadParamsValid(thread) {
-    if (thread) {
-        if (
-            (thread.type === TYPES.point && !isPointLocationValid(thread.location)) ||
-            (isHighlightAnnotation(thread.type) && !isHighlightLocationValid(thread.location)) ||
-            (thread.type === TYPES.draw && !isDrawLocationValid(thread.location))
-        ) {
-            return false;
-        }
-        return THREAD_PARAMS.every((param) => typeof thread[param] !== 'undefined');
-    }
-    return false;
 }
 
 /**
@@ -615,21 +450,6 @@ export function eventToLocationHandler(locationFunction, callback) {
 }
 
 /**
- * Call preventDefault and stopPropagation on an event
- *
- * @param {event} event Event object to stop event bubbling
- * @return {void}
- */
-export function prevDefAndStopProp(event) {
-    if (!event) {
-        return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-}
-
-/**
  * Create a JSON object containing x/y coordinates and optionally dimensional information
  *
  * @param {number} x The x position of the location object
@@ -653,7 +473,6 @@ export function createLocation(x, y, dimensions) {
 /**
  * Function to decode key down events into keys
  *
- * @public
  * @param {Event} event - Keydown event
  * @return {string} Decoded keydown key
  */
@@ -697,11 +516,11 @@ export function getHeaders(headers = {}, token = '', sharedLink = '', password =
 }
 
 /**
- * Round a number to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
+ * Round anumber to a certain decimal place by concatenating an exponential factor. Credits to lodash library.
  *
- * @param {number} number The number to be rounded
+ * @param {number} number Thenumber to be rounded
  * @param {number} precision The amount of decimal places to keep
- * @return {number} The rounded number
+ * @return {number} The roundednumber
  */
 export function round(number, precision) {
     /* eslint-disable prefer-template */
@@ -710,31 +529,6 @@ export function round(number, precision) {
     pair = (value + 'e').split('e');
     return +(pair[0] + 'e' + (+pair[1] - precision));
     /* eslint-enable prefer-template */
-}
-
-/**
- * Replaces variable place holders specified between {} in the string with
- * specified custom value. Localizes strings that include variables.
- *
- * @param {string} string String to be interpolated
- * @param {string[]} placeholderValues Custom values to replace into string
- * @return {string} Properly translated string with replaced custom variable
- */
-export function replacePlaceholders(string, placeholderValues) {
-    const regex = /\{\d+\}/g;
-
-    if (!string || !string.length) {
-        return string;
-    }
-
-    return string.replace(regex, (match) => {
-        // extracting the index that is supposed to replace the matched placeholder
-        const placeholderIndex = parseInt(match.replace(/^\D+/g, ''), 10) - 1;
-
-        /* eslint-disable no-plusplus */
-        return placeholderValues[placeholderIndex] ? placeholderValues[placeholderIndex] : match;
-        /* eslint-enable no-plusplus */
-    });
 }
 
 /**
@@ -750,43 +544,11 @@ export function canLoadAnnotations(permissions) {
         return false;
     }
 
-    const canAnnotate = permissions[PERMISSION_ANNOTATE];
-    const canViewAllAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
-    const canViewOwnAnnotations = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
+    const can_annotate = permissions[PERMISSION_ANNOTATE];
+    const can_view_annotations_all = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
+    const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
 
-    return !!canAnnotate || !!canViewAllAnnotations || !!canViewOwnAnnotations;
-}
-
-/**
- * Creates a paragraph node that preserves newline characters.
- *
- * @param {string} annotationText - Text that belongs to an annotation.
- * @return {HTMLElement} An HTML Element containing newline preserved text.
- */
-export function createCommentTextNode(annotationText) {
-    const newlineList = annotationText.replace(NEWLINE_REGEX, '\n').split('\n');
-    const textEl = document.createElement('p');
-    textEl.classList.add(CLASS_ANNOTATION_COMMENT_TEXT);
-
-    // If newlines are present...
-    if (newlineList.length > 1) {
-        newlineList.forEach((text) => {
-            if (text === '') {
-                // ...Add in <br/> for each one...
-                textEl.appendChild(document.createElement('br'));
-            } else {
-                // ...Otherwise use the text that exists there.
-                const contentEl = document.createElement('p');
-                contentEl.textContent = text;
-                textEl.appendChild(contentEl);
-            }
-        });
-    } else {
-        // Otherwise just use the text
-        textEl.textContent = annotationText;
-    }
-
-    return textEl;
+    return !!can_annotate || !!can_view_annotations_all || !!can_view_annotations_self;
 }
 
 /**
@@ -809,53 +571,6 @@ export function clearCanvas(pageEl, layerClass) {
 }
 
 /**
- * Activates appropriate textarea and adjusts the cursor position on focus
- *
- * @param {HTMLElement} element The DOM element for the current page
- * @return {HTMLElement} textAreaEl
- */
-export function focusTextArea(element) {
-    const textAreaEl = element;
-    if (!textAreaEl) {
-        return textAreaEl;
-    }
-
-    // Activate textarea
-    textAreaEl.classList.add(CLASS_ACTIVE);
-
-    // Move cursor to end of text area
-    if (textAreaEl.selectionStart) {
-        textAreaEl.selectionEnd = textAreaEl.value.length;
-        textAreaEl.selectionStart = textAreaEl.selectionEnd;
-    }
-
-    // Focus the textarea if visible
-    if (isElementInViewport(textAreaEl)) {
-        textAreaEl.focus();
-    }
-
-    return textAreaEl;
-}
-
-/**
- * Generates a blank mobile annotation dialog
- *
- * @return {HTMLElement} Blank mobile annotation dialog
- */
-export function generateMobileDialogEl() {
-    const el = document.createElement('div');
-
-    const headerEl = document.createElement('div');
-    headerEl.classList.add(CLASS_MOBILE_DIALOG_HEADER);
-    el.appendChild(headerEl);
-
-    const closeButtonEl = generateBtn([CLASS_DIALOG_CLOSE], DATA_TYPE_MOBILE_CLOSE, ICON_CLOSE, DATA_TYPE_MOBILE_CLOSE);
-    headerEl.appendChild(closeButtonEl);
-
-    return el;
-}
-
-/**
  * Whether or not the user is currently in an annotation mode other than the
  * specified annotation mode
  *
@@ -867,31 +582,40 @@ export function isInAnnotationOrMarkerMode(element) {
     return !!element.querySelector(SELECTOR_ANNOTATION_MODE);
 }
 
+export function findElement(parent, selector, finderMethod) {
+    if (!parent.querySelector(selector)) {
+        finderMethod();
+    }
+    return parent.querySelector(selector);
+}
+
 /**
- * Calculates the dialog width when visible
- *
- * @param {HTMLElement} dialogEl - Annotation dialog element
- * @return {number} Annotations dialog width
+ * Given an element, determine whether it is in the upper half or lower half of the container.
+ * It takes into account whether the container has a parent which is scrollable (.bp-is-scrollable)
+ * in which case it determines whether the the element is in the upper or lower half of the
+ * viewable area
+ * @param {HTMLElement} element The element in question
+ * @param {HTMLElement} containerElement The container of the element
+ * @return {boolean} True if the element is in the upper half, false if in the lower half
  */
-export function getDialogWidth(dialogEl) {
-    const element = dialogEl;
+export function isInUpperHalf(element, containerElement) {
+    if (!element || !containerElement) {
+        return true;
+    }
 
-    // Switches to 'visibility: hidden' to ensure that dialog takes up
-    // DOM space while still being invisible
-    hideElementVisibility(element);
-    showElement(element);
+    let isUpperHalf = true;
+    // Determine if element position is in the top or bottom half of the viewport
+    // Get the height of the scrolling container (bp-is-scrollable)
+    const containerEl = findClosestElWithClass(containerElement, 'bp-is-scrollable') || containerElement;
+    // Get the scroll top of the scrolling container
+    const { scrollTop, clientHeight } = containerEl;
+    // Calculate the boundaries of the visible portion of the content
+    const visibleTop = scrollTop;
+    const visibleBottom = scrollTop + clientHeight;
+    // determine whether point icon is in top or bottom half
+    const visibleMiddle = visibleTop + (visibleBottom - visibleTop) / 2;
+    // if bottom half, then subtract popover height
+    isUpperHalf = element.offsetTop < visibleMiddle;
 
-    // Ensure dialog will not be displayed off the page when
-    // calculating the dialog width
-    element.style.left = 0;
-
-    const boundingRect = element.getBoundingClientRect();
-    const dialogWidth = boundingRect.width;
-
-    // Switches back to 'display: none' to so that it no longer takes up place
-    // in the DOM while remaining hidden
-    hideElement(element);
-    showInvisibleElement(element);
-
-    return dialogWidth;
+    return isUpperHalf;
 }

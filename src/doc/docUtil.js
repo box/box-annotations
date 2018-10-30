@@ -6,21 +6,6 @@ const HEIGHT_PADDING = 30;
 const PDF_UNIT_TO_CSS_PIXEL = 4 / 3;
 const CSS_PIXEL_TO_PDF_UNIT = 3 / 4;
 
-const DIALOG_DATATYPES = [
-    constants.DATA_TYPE_ANNOTATION_DIALOG,
-    constants.DATA_TYPE_ANNOTATION_INDICATOR,
-    constants.DATA_TYPE_HIGHLIGHT,
-    constants.DATA_TYPE_ADD_HIGHLIGHT_COMMENT,
-    constants.DATA_TYPE_POST,
-    constants.DATA_TYPE_CANCEL,
-    constants.DATA_TYPE_REPLY_TEXTAREA,
-    constants.DATA_TYPE_CANCEL_REPLY,
-    constants.DATA_TYPE_POST_REPLY,
-    constants.DATA_TYPE_DELETE,
-    constants.DATA_TYPE_CANCEL_DELETE,
-    constants.DATA_TYPE_CONFIRM_DELETE
-];
-
 /**
  * Checks whether this annotator is on a presentation (PPT) or not.
  *
@@ -70,7 +55,7 @@ export function isPointInPolyOpt(poly, x, y) {
     /* eslint-disable */
     for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
         ((poly[i][1] <= y && y < poly[j][1]) || (poly[j][1] <= y && y < poly[i][1])) &&
-            x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
+            x < ((poly[j][0] - poly[i][0]) * (y - poly[i][1])) / (poly[j][1] - poly[i][1]) + poly[i][0] &&
             (c = !c);
     return c;
     /* eslint-enable */
@@ -176,7 +161,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
         pdfCoordinates = [x1, pageHeight - y1, x2, pageHeight - y2, x3, pageHeight - y3, x4, pageHeight - y4];
     }
 
-    return pdfCoordinates.map((val) => (val * CSS_PIXEL_TO_PDF_UNIT / scale).toFixed(4));
+    return pdfCoordinates.map((val) => ((val * CSS_PIXEL_TO_PDF_UNIT) / scale).toFixed(4));
 }
 
 /**
@@ -188,7 +173,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
  * @return {number[]} [x,y] browser coordinates
  */
 export function getBrowserCoordinatesFromLocation(location, annotatedElement) {
-    const pageEl = annotatedElement.querySelector(`[data-page-number="${location.page}"]`) || annotatedElement;
+    const pageEl = util.getPageEl(annotatedElement, location.page) || annotatedElement;
     const pageDimensions = pageEl.getBoundingClientRect();
     const pageHeight = pageDimensions.height - constants.PAGE_PADDING_TOP - constants.PAGE_PADDING_BOTTOM;
     const zoomScale = util.getScale(annotatedElement);
@@ -374,30 +359,6 @@ export function getContext(pageEl, annotationLayerClass) {
 }
 
 /**
- * Gets the current page element.
- *
- * @private
- * @param {HTMLElement} annotatedEl - HTML Element being annotated on
- * @param {number} pageNum - Page number
- * @return {HTMLElement|null} Page element if it exists, otherwise null
- */
-export function getPageEl(annotatedEl, pageNum) {
-    return annotatedEl.querySelector(`[data-page-number="${pageNum}"]`);
-}
-
-/**
- * Checks whether the mouse event occured in a highlight dialog
- *
- * @private
- * @param {HTMLElement} eventTarget mouse event target element
- * @return {boolean} Whether mouse event occured in a highlight dialog
- */
-export function isDialogDataType(eventTarget) {
-    const dataType = util.findClosestDataType(eventTarget);
-    return DIALOG_DATATYPES.indexOf(dataType) !== -1;
-}
-
-/**
  * Get coordinates for dialog placement from a selection range.
  *
  * @param {Range} range - A text selection range to get end coordinates of.
@@ -443,4 +404,36 @@ export function getDialogCoordsFromRange(range) {
         x,
         y
     };
+}
+
+/**
+ * Get scaled coordinates for the lower center point of the highlight if the
+ * highlight has comments or the lower right corner of the highlight for
+ * plain highlights
+ *
+ * @private
+ * @param  {HTMLElement} annotatedElement Annotated element
+ * @param  {Object} location Annotation location
+ * @param  {DOMRect} pageDimensions Dimensions of the highlight annotations dialog element
+ * @param  {number} pageHeight Document page height
+ * @return {number[]} [x,y] coordinates in DOM space in CSS
+ */
+export function getScaledPDFCoordinates(annotatedElement, location, pageDimensions, pageHeight) {
+    const zoomScale = util.getScale(annotatedElement);
+
+    let [x, y] = getLowerRightCornerOfLastQuadPoint(location.quadPoints);
+
+    // If needed, scale coordinates comparing current dimensions with saved dimensions
+    const dimensionScale = util.getDimensionScale(
+        location.dimensions,
+        pageDimensions,
+        zoomScale,
+        constants.PAGE_PADDING_TOP + constants.PAGE_PADDING_BOTTOM
+    );
+    if (dimensionScale) {
+        x *= dimensionScale.x;
+        y *= dimensionScale.y;
+    }
+
+    return convertPDFSpaceToDOMSpace([x, y], pageHeight, zoomScale);
 }

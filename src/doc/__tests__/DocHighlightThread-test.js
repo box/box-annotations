@@ -1,24 +1,24 @@
 /* eslint-disable no-unused-expressions */
-import DocHighlightDialog from '../DocHighlightDialog';
 import DocHighlightThread from '../DocHighlightThread';
-import AnnotationService from '../../AnnotationService';
 import * as util from '../../util';
 import * as docUtil from '../docUtil';
-import { STATES, TYPES, HIGHLIGHT_FILL, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
+
+import { STATES, TYPES, HIGHLIGHT_FILL, THREAD_EVENT } from '../../constants';
 
 let thread;
 
 const html = `<div class="annotated-element">
-  <div class="ba-annotation-dialog ba-annotation-highlight-dialog">
-    <button class="ba-highlight-comment-btn"></button>
-    <textarea class="annotation-textarea"></textarea>
-  </div>
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
 </div>`;
-
-jest.mock('../DocHighlightDialog');
 
 describe('doc/DocHighlightThread', () => {
     let rootElement;
+
+    const api = {
+        user: {},
+        create: jest.fn().mockResolvedValue({})
+    };
 
     beforeEach(() => {
         rootElement = document.createElement('div');
@@ -26,31 +26,24 @@ describe('doc/DocHighlightThread', () => {
         document.body.appendChild(rootElement);
 
         thread = new DocHighlightThread({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement: rootElement,
             annotations: [],
-            annotationService: new AnnotationService({
-                apiHost: 'https://app.box.com/api',
-                fileId: 1,
-                token: 'someToken',
-                canAnnotate: true
-            }),
+            api,
             fileVersionId: 1,
-            location: {},
+            location: { page: 1, quadPoints: [] },
             threadID: 2,
             type: 'highlight',
             permissions: {
-                canAnnotate: true,
-                canViewAllAnnotations: true
+                can_annotate: true,
+                can_view_annotations_all: true
             },
             minX: 1,
             maxX: 10,
             minY: 1,
             maxY: 10
         });
-        thread.dialog.localized = {
-            highlightToggle: 'highlight toggle'
-        };
-        thread.dialog.setup();
+        thread.renderAnnotationPopover = jest.fn();
+        thread.unmountPopover = jest.fn();
 
         window.getSelection = jest.fn().mockReturnValue({
             removeAllRanges: jest.fn()
@@ -63,43 +56,6 @@ describe('doc/DocHighlightThread', () => {
             thread.destroy();
             thread = null;
         }
-    });
-
-    describe('cancelFirstComment()', () => {
-        it('should switch dialogs when cancelling the first comment on an existing plain highlight', () => {
-            // Adding a plain highlight annotation to the thread
-            thread.annotationService.create = jest.fn().mockResolvedValue({});
-            thread.saveAnnotation('highlight', '');
-
-            // Cancel first comment on existing annotation
-            thread.reset = jest.fn();
-            thread.cancelFirstComment();
-
-            expect(thread.dialog.toggleHighlightDialogs).toBeCalled();
-            expect(thread.reset).toBeCalled();
-
-            // only plain highlight annotation should still exist
-            expect(Object.keys(thread.annotations).length).toEqual(1);
-        });
-
-        it('should destroy the annotation when cancelling a new highlight comment annotation', () => {
-            // Cancel first comment on existing annotation
-            thread.destroy = jest.fn();
-            thread.cancelFirstComment();
-
-            expect(thread.destroy).toBeCalled();
-            expect(thread.element).toBeUndefined();
-        });
-
-        it('should reset the thread if on mobile and a comment-highlight', () => {
-            thread.reset = jest.fn();
-            thread.annotations = [{}, {}, {}];
-            thread.isMobile = true;
-
-            thread.cancelFirstComment();
-
-            expect(thread.reset).toBeCalled();
-        });
     });
 
     describe('destroy()', () => {
@@ -116,7 +72,7 @@ describe('doc/DocHighlightThread', () => {
 
             thread.destroy();
             expect(thread.element).toBeUndefined();
-            expect(thread.emit).toBeCalledWith('annotationthreadcleanup');
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, 1);
         });
     });
 
@@ -130,101 +86,10 @@ describe('doc/DocHighlightThread', () => {
 
     describe('reset()', () => {
         it('should set highlight to inactive and redraw', () => {
-            thread.show = jest.fn();
+            thread.draw = jest.fn();
             thread.reset();
-            expect(thread.show).toBeCalled();
+            expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.normal);
             expect(thread.state).toEqual(STATES.inactive);
-        });
-    });
-
-    describe('saveAnnotation()', () => {
-        it('should save a plain highlight annotation', () => {
-            // This stubs out a parent method by forcing the method we care about
-            // in the prototype of the prototype of DocHighlightThread (ie
-            // AnnotationThread's prototype) to be a stub
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'saveAnnotation', {
-                value: jest.fn()
-            });
-
-            thread.saveAnnotation(TYPES.highlight, '');
-        });
-
-        it('should save a highlight comment annotation', () => {
-            // This stubs out a parent method by forcing the method we care about
-            // in the prototype of the prototype of DocHighlightThread (ie
-            // AnnotationThread's prototype) to be a stub
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'saveAnnotation', {
-                value: jest.fn()
-            });
-
-            thread.saveAnnotation(TYPES.highlight, 'bleh');
-        });
-    });
-
-    describe('deleteAnnotation()', () => {
-        it('should hide the add highlight button if the user does not have permissions', () => {
-            const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [{ permissions: { can_delete: false } }],
-                annotationService: new AnnotationService({
-                    apiHost: 'https://app.box.com/api',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true
-                }),
-                fileVersionId: 1,
-                location: {},
-                threadID: 2,
-                type: 'highlight',
-                permissions: {
-                    canAnnotate: true,
-                    canViewAllAnnotations: true
-                }
-            });
-            plainHighlightThread.dialog.localized = {
-                highlightToggle: 'highlight toggle'
-            };
-            plainHighlightThread.setup();
-            plainHighlightThread.dialog = {
-                element: document.createElement('div')
-            };
-
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: jest.fn()
-            });
-            util.hideElement = jest.fn();
-
-            plainHighlightThread.deleteAnnotation(1);
-            expect(util.hideElement).toBeCalled();
-        });
-
-        it('should display the add highlight button if the user has permissions', () => {
-            const plainHighlightThread = new DocHighlightThread({
-                annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                annotations: [{ permissions: { can_delete: true } }],
-                annotationService: new AnnotationService({
-                    apiHost: 'https://app.box.com/api',
-                    fileId: 1,
-                    token: 'someToken',
-                    canAnnotate: true
-                }),
-                fileVersionId: 1,
-                location: {},
-                threadID: 2,
-                type: 'highlight',
-                permissions: {
-                    canAnnotate: true,
-                    canViewAllAnnotations: true
-                }
-            });
-
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'deleteAnnotation', {
-                value: jest.fn()
-            });
-            util.hideElement = jest.fn();
-
-            plainHighlightThread.deleteAnnotation(1);
-            expect(util.hideElement).not.toBeCalled();
         });
     });
 
@@ -239,7 +104,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('onClick()', () => {
         it('should set annotation to inactive if event has already been consumed', () => {
-            thread.state = STATES.hover;
+            thread.state = STATES.active;
             thread.type = TYPES.highlight_comment;
 
             const isHighlightPending = thread.onClick({}, true);
@@ -248,7 +113,7 @@ describe('doc/DocHighlightThread', () => {
             expect(thread.state).toEqual(STATES.inactive);
         });
 
-        it('should set annotation to hover if mouse is hovering over highlight or dialog', () => {
+        it('should set annotation to active if mouse is activeing over highlight or dialog', () => {
             thread.state = STATES.pending;
             thread.type = TYPES.highlight_comment;
 
@@ -260,7 +125,7 @@ describe('doc/DocHighlightThread', () => {
 
             expect(isHighlightPending).toBeTruthy();
             expect(thread.reset).not.toBeCalled();
-            expect(thread.state).toEqual(STATES.hover);
+            expect(thread.state).toEqual(STATES.active);
             expect(thread.show).toBeCalled();
         });
     });
@@ -290,55 +155,35 @@ describe('doc/DocHighlightThread', () => {
     describe('show()', () => {
         beforeEach(() => {
             thread.draw = jest.fn();
-            thread.showDialog = jest.fn();
-            thread.hideDialog = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
+            thread.unmountPopover = jest.fn();
         });
 
-        it('should show the dialog if the state is pending', () => {
+        it('should render the popover if the state is pending', () => {
             thread.state = STATES.pending;
             thread.show();
-            expect(thread.showDialog).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
         });
 
-        it('should not show the dialog if the state is inactive and redraw the highlight as not active', () => {
+        it('should not render the popover if the state is inactive and redraw the highlight as not active', () => {
             thread.state = STATES.inactive;
             thread.show();
-            expect(thread.hideDialog).toBeCalled();
+            expect(thread.unmountPopover).toBeCalled();
             expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.normal);
         });
 
-        it('should show the dialog if the state is not pending and redraw the highlight as active', () => {
-            thread.state = STATES.hover;
+        it('should render the popover if the state is not pending and redraw the highlight as active', () => {
+            thread.state = STATES.active;
             thread.show();
-            expect(thread.showDialog).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.draw).toBeCalledWith(HIGHLIGHT_FILL.active);
         });
 
         it('should do nothing if state is invalid', () => {
             thread.state = 'invalid';
             thread.show();
-            expect(thread.showDialog).not.toBeCalled();
+            expect(thread.renderAnnotationPopover).not.toBeCalled();
             expect(thread.draw).not.toBeCalled();
-        });
-    });
-
-    describe('showDialog()', () => {
-        it('should set up the dialog if it does not exist', () => {
-            thread.dialog = {
-                setup: jest.fn(),
-                show: jest.fn()
-            };
-
-            thread.showDialog();
-            expect(thread.dialog.setup).toBeCalledWith(thread.annotations, thread.showComment);
-            expect(thread.dialog.show).toBeCalled;
-        });
-    });
-
-    describe('createDialog()', () => {
-        it('should initialize an appropriate dialog', () => {
-            thread.createDialog();
-            expect(thread.dialog instanceof DocHighlightDialog).toBeTruthy();
         });
     });
 
@@ -352,7 +197,7 @@ describe('doc/DocHighlightThread', () => {
 
             thread.handleDraw();
             expect(thread.show).toBeCalled();
-            expect(thread.state).toEqual(STATES.pending_active);
+            expect(thread.state).toEqual(STATES.pending);
             expect(selection.removeAllRanges).toBeCalled();
         });
     });
@@ -360,77 +205,42 @@ describe('doc/DocHighlightThread', () => {
     describe('handleCommentPending()', () => {
         it('should set the thread state to pending active', () => {
             thread.handleCommentPending();
-            expect(thread.state).toEqual(STATES.pending_active);
+            expect(thread.state).toEqual(STATES.pending);
         });
     });
 
     describe('handleCreate()', () => {
         it('should create a plain highlight and save', () => {
-            thread.saveAnnotation = jest.fn();
+            thread.save = jest.fn();
             thread.handleCreate();
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight, '');
+            expect(thread.save).toBeCalledWith(TYPES.highlight, '');
         });
 
         it('should create a highlight comment and save', () => {
-            thread.saveAnnotation = jest.fn();
-            thread.dialog = {
-                toggleHighlightCommentsReply: jest.fn()
-            };
-            thread.annotations = { 1: {}, 2: {}, 3: {} };
+            thread.save = jest.fn();
+            thread.comments = [{}, {}, {}];
 
-            thread.handleCreate({ text: 'something' });
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.highlight_comment, 'something');
+            thread.handleCreate('something');
+            expect(thread.save).toBeCalledWith(TYPES.highlight_comment, 'something');
         });
     });
 
     describe('handleDelete()', () => {
         beforeEach(() => {
-            thread.deleteAnnotation = jest.fn();
-            thread.dialog = {
-                toggleHighlightDialogs: jest.fn()
-            };
-            thread.annotations = { 1: { annotationID: 1 }, 2: { annotationID: 2 }, 3: {} };
+            thread.delete = jest.fn();
+            thread.comments = [{ id: 1 }, { id: 2 }, {}];
         });
 
-        it('should delete the specified annotationID', () => {
-            thread.handleDelete({ annotationID: 2 });
-            expect(thread.deleteAnnotation).toBeCalledWith(2);
+        it('should delete the specified id', () => {
+            thread.handleDelete({ id: 2 });
+            expect(thread.delete).toBeCalledWith({ id: 2 });
         });
 
-        it('should delete the first annotation in the thread if no annotationID is provided', () => {
+        it('should delete the first annotation in the thread if no id is provided', () => {
+            thread.comments = [];
+            thread.id = 1;
             thread.handleDelete();
-            expect(thread.deleteAnnotation).toBeCalledWith(1);
-        });
-    });
-
-    describe('bindCustomListenersOnDialog()', () => {
-        it('should bind custom listeners on dialog', () => {
-            thread.dialog = {
-                addListener: jest.fn()
-            };
-
-            thread.bindCustomListenersOnDialog();
-
-            expect(thread.dialog.addListener).toBeCalledWith('annotationdraw', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcommentpending', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcreate', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationcancel', expect.any(Function));
-            expect(thread.dialog.addListener).toBeCalledWith('annotationdelete', expect.any(Function));
-        });
-    });
-
-    describe('unbindCustomListenersOnDialog()', () => {
-        it('should unbind custom listeners on dialog', () => {
-            thread.dialog = {
-                removeAllListeners: jest.fn()
-            };
-            thread.unbindCustomListenersOnDialog();
-
-            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationdraw');
-            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcommentpending');
-            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcreate');
-            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationcancel');
-            expect(thread.dialog.removeAllListeners).toBeCalledWith('annotationdelete');
+            expect(thread.delete).toBeCalledWith({ id: 1 });
         });
     });
 
@@ -499,8 +309,8 @@ describe('doc/DocHighlightThread', () => {
             thread.location = {};
             thread.regenerateBoundary();
 
-            expect(thread.minX).toBeUndefined();
-            expect(thread.minY).toBeUndefined();
+            expect(thread.minX).toEqual(Infinity);
+            expect(thread.minY).toEqual(Infinity);
         });
 
         it('should set the min/max x/y values for thread location', () => {

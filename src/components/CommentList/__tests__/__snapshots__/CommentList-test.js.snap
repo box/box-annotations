@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/CommentList should correctly render a list of comments 1`] = `
+<ul
+  className="ba-comment-list"
+>
+  <li
+    className="ba-comment-list-item"
+    key="annotation_123"
+  >
+    <Comment
+      createdAt="2017-09-27T10:40:41-07:00"
+      createdBy={
+        Object {
+          "email": "princess@genovia.gov",
+          "id": "789ghi",
+          "name": "Mia Thermopolis",
+          "type": "user",
+        }
+      }
+      id="123"
+      isPending={false}
+      message="test"
+      onDelete={[MockFunction]}
+      permissions={Object {}}
+    />
+  </li>
+  <li
+    className="ba-comment-list-item"
+    key="annotation_456"
+  >
+    <Comment
+      createdAt="2017-09-27T10:40:41-07:00"
+      createdBy={
+        Object {
+          "email": "princess@genovia.gov",
+          "id": "789ghi",
+          "name": "Mia Thermopolis",
+          "type": "user",
+        }
+      }
+      id="456"
+      isPending={false}
+      message="test"
+      onDelete={[MockFunction]}
+      permissions={Object {}}
+    />
+  </li>
+</ul>
+`;

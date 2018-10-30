@@ -4,7 +4,6 @@ import AnnotationModeController from '../AnnotationModeController';
 import DrawingModeController from '../DrawingModeController';
 import * as util from '../../util';
 import {
-    TYPES,
     STATES,
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
@@ -13,38 +12,45 @@ import {
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CLASS_ANNOTATION_DRAW_MODE
 } from '../../constants';
+import DrawingThread from '../../drawing/DrawingThread';
+
+jest.mock('../../drawing/DrawingThread');
 
 let controller;
 let thread;
 
+const html = `<div class="annotated-element">
+  <div data-page-number="1"></div>
+  <div data-page-number="2"></div>
+</div>`;
+
 describe('controllers/DrawingModeController', () => {
+    let rootElement;
+
     beforeEach(() => {
+        rootElement = document.createElement('div');
+        rootElement.innerHTML = html;
+        document.body.appendChild(rootElement);
+
         controller = new DrawingModeController();
-        thread = {
-            minX: 10,
-            minY: 10,
-            maxX: 20,
-            maxY: 20,
-            location: {
-                page: 1
-            },
-            info: 'I am a thread',
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-            saveAnnotation: jest.fn(),
-            handleStart: jest.fn(),
-            destroy: jest.fn(),
-            deleteThread: jest.fn(),
-            clearBoundary: jest.fn(),
-            drawBoundary: jest.fn(),
-            bindDrawingListeners: jest.fn(),
-            unbindDrawingListeners: jest.fn(),
-            getThreadEventData: jest.fn(),
-            show: jest.fn()
-        };
+        thread = new DrawingThread();
+        thread.minX = 10;
+        thread.minY = 10;
+        thread.maxX = 20;
+        thread.maxY = 20;
+        thread.location = { page: 1 };
+        thread.info = 'I am a thread';
+        thread.annotatedElement = rootElement;
+
         controller.emit = jest.fn();
+        controller.annotatedElement = rootElement;
+        controller.api = { user: {} };
+
+        util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
+        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -83,67 +89,36 @@ describe('controllers/DrawingModeController', () => {
 
     describe('bindDOMListeners()', () => {
         beforeEach(() => {
-            controller.annotatedElement = {
-                addEventListener: jest.fn()
-            };
+            controller.annotatedElement.addEventListener = jest.fn();
         });
 
         it('should bind DOM listeners for desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = false;
             controller.bindDOMListeners();
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('click', expect.any(Function));
-            expect(controller.annotatedElement.addEventListener).not.toBeCalledWith('touchstart', expect.any(Function));
         });
 
-        it('should bind DOM listeners for touch enabled mobile devices', () => {
-            controller.isMobile = true;
+        it('should bind DOM listeners for touch enabled devices', () => {
             controller.hasTouch = true;
             controller.bindDOMListeners();
-            expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
-            expect(controller.annotatedElement.addEventListener).not.toBeCalledWith('click', expect.any(Function));
-        });
-
-        it('should bind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.isMobile = false;
-            controller.hasTouch = true;
-            controller.bindDOMListeners();
-            expect(controller.annotatedElement.addEventListener).toBeCalledWith('touchstart', expect.any(Function));
             expect(controller.annotatedElement.addEventListener).toBeCalledWith('click', expect.any(Function));
         });
     });
 
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
-            controller.annotatedElement = {
-                removeEventListener: jest.fn()
-            };
+            controller.annotatedElement.removeEventListener = jest.fn();
         });
 
         it('should unbind DOM listeners for desktop devices', () => {
-            controller.isMobile = false;
             controller.hasTouch = false;
             controller.unbindDOMListeners();
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('click', expect.any(Function));
-            expect(controller.annotatedElement.removeEventListener).not.toBeCalledWith(
-                'touchstart',
-                expect.any(Function)
-            );
         });
 
-        it('should unbind DOM listeners for touch enabled mobile devices', () => {
-            controller.isMobile = true;
+        it('should unbind DOM listeners for touch enabled devices', () => {
             controller.hasTouch = true;
             controller.unbindDOMListeners();
-            expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));
-            expect(controller.annotatedElement.removeEventListener).not.toBeCalledWith('click', expect.any(Function));
-        });
-
-        it('should unbind ALL DOM listeners for touch enabled desktop devices', () => {
-            controller.isMobile = false;
-            controller.hasTouch = true;
-            controller.unbindDOMListeners();
-            expect(controller.annotatedElement.removeEventListener).toBeCalledWith('touchstart', expect.any(Function));
             expect(controller.annotatedElement.removeEventListener).toBeCalledWith('click', expect.any(Function));
         });
     });
@@ -237,12 +212,10 @@ describe('controllers/DrawingModeController', () => {
         const location = {};
 
         beforeEach(() => {
-            controller.annotator = {
-                getLocationFromEvent: jest.fn(),
-                createAnnotationThread: jest.fn()
-            };
+            controller.getLocation = jest.fn();
             controller.currentThread = undefined;
             controller.locationFunction = jest.fn();
+            controller.registerThread = jest.fn().mockReturnValue(thread);
         });
 
         afterEach(() => {
@@ -252,23 +225,23 @@ describe('controllers/DrawingModeController', () => {
 
         it('should do nothing if drawing start is invalid', () => {
             controller.drawingStartHandler(event);
-            expect(controller.annotator.getLocationFromEvent).toBeCalled();
-            expect(controller.annotator.createAnnotationThread).not.toBeCalled();
+            expect(controller.getLocation).toBeCalled();
+            expect(controller.registerThread).not.toBeCalled();
         });
 
         it('should continue drawing if in the middle of creating a new drawing', () => {
             controller.currentThread = thread;
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
+            controller.getLocation = jest.fn().mockReturnValue(location);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
             controller.drawingStartHandler(event);
-            expect(controller.annotator.createAnnotationThread).not.toBeCalled();
+            expect(controller.registerThread).not.toBeCalled();
             expect(thread.handleStart).toBeCalledWith(location);
         });
 
         it('should begin a new drawing thread if none exist already', () => {
-            controller.annotator.getLocationFromEvent = jest.fn().mockReturnValue(location);
-            controller.annotator.createAnnotationThread = jest.fn().mockReturnValue(thread);
+            controller.getLocation = jest.fn().mockReturnValue(location);
+            controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
             controller.drawingStartHandler(event);
@@ -298,78 +271,33 @@ describe('controllers/DrawingModeController', () => {
 
     describe('handleThreadEvents()', () => {
         beforeEach(() => {
-            thread.dialog = {};
-
             controller.unbindListeners = jest.fn();
             controller.bindListeners = jest.fn();
-            controller.saveThread = jest.fn();
             controller.registerThread = jest.fn();
             controller.updateUndoRedoButtonEls = jest.fn();
             controller.unregisterThread = jest.fn();
-
-            controller.annotatedElement = document.createElement('div');
+            util.clearCanvas = jest.fn();
+            controller.annotations = {};
+            controller.annotatedElement.classList.add(CLASS_ANNOTATION_DRAW_MODE);
         });
 
-        it('should save thread on softcommit', () => {
+        it('should save thread on annotationsaved', () => {
             controller.handleThreadEvents(thread, {
-                event: 'softcommit'
+                event: THREAD_EVENT.save
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
-            expect(controller.saveThread).toBeCalled();
+            expect(controller.registerThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
             expect(thread.handleStart).not.toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
         });
 
-        it('should start a new thread on pagechanged', () => {
-            const thread1 = {
-                minX: 10,
-                minY: 10,
-                maxX: 20,
-                maxY: 20,
-                location: {
-                    page: 1
-                },
-                info: 'I am a thread',
-                saveAnnotation: jest.fn(),
-                removeListener: jest.fn(),
-                unbindDrawingListeners: jest.fn()
-            };
-            const thread2 = {
-                minX: 10,
-                minY: 10,
-                maxX: 20,
-                maxY: 20,
-                location: {
-                    page: 1
-                },
-                info: 'I am a thread',
-                handleStart: jest.fn()
-            };
-            const data = {
-                event: 'softcommit',
-                eventData: {
-                    location: 'not empty'
-                }
-            };
-            controller.bindListeners = jest.fn(() => {
-                controller.currentThread = thread2;
-            });
-
-            controller.handleThreadEvents(thread1, data);
-            expect(controller.saveThread).toBeCalled();
-            expect(controller.unbindListeners).toBeCalled();
-            expect(controller.bindListeners).toBeCalled();
-            expect(thread2.handleStart).toBeCalledWith(data.eventData.location);
-            expect(controller.currentThread).not.toBeUndefined();
-        });
-
         it('should soft delete a pending thread and restart mode listeners', () => {
             thread.state = 'pending';
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.delete
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -380,33 +308,30 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should delete a non-pending thread', () => {
-            thread.state = 'idle';
+            thread.state = 'inactive';
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush();
-            controller.registerThread(thread);
+            controller.annotations[1] = new rbush();
 
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.delete
             });
             expect(controller.unregisterThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
-            expect(thread.deleteThread).toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
         });
 
         it('should not delete a thread if the dialog no longer exists', () => {
-            thread.dialog = null;
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush();
-            controller.registerThread(thread);
+            controller.annotations[1] = new rbush();
+            thread.state = 'pending';
 
             controller.handleThreadEvents(thread, {
-                event: 'dialogdelete'
+                event: THREAD_EVENT.delete
             });
-            expect(controller.unregisterThread).not.toBeCalled();
-            expect(thread.removeListener).not.toBeCalled();
-            expect(thread.unbindDrawingListeners).not.toBeCalled();
+            expect(controller.unbindListeners).toBeCalled();
+            expect(controller.bindListeners).toBeCalled();
+            expect(thread.destroy).toBeCalled();
         });
     });
 
@@ -415,8 +340,7 @@ describe('controllers/DrawingModeController', () => {
 
         beforeEach(() => {
             // eslint-disable-next-line new-cap
-            controller.threads[1] = new rbush();
-            controller.registerThread(thread);
+            controller.annotations[1] = new rbush(thread);
             controller.removeSelection = jest.fn();
             controller.select = jest.fn();
             controller.getIntersectingThreads = jest.fn().mockReturnValue([thread]);
@@ -440,7 +364,8 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should do nothing with while drawing a new annotation event', () => {
-            controller.currentThread = { state: STATES.pending };
+            controller.currentThread = new DrawingThread();
+            controller.currentThread.state = STATES.pending;
             controller.handleSelection(event);
             expect(controller.getIntersectingThreads).not.toBeCalled();
         });
@@ -454,28 +379,14 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('renderPage()', () => {
-        beforeEach(() => {
-            controller.annotatedElement = document.createElement('div');
-            controller.annotatedElement.setAttribute('data-page-number', 1);
+        it('should clear both canvases on the specified page', () => {
             util.clearCanvas = jest.fn();
-        });
-
-        it('should do nothing if no threads exist or none are on the specified page', () => {
+            controller.annotations = {
+                // eslint-disable-next-line new-cap
+                1: new rbush()
+            };
             controller.renderPage(1);
-
-            controller.threads = {};
-            controller.registerThread(thread);
-            controller.renderPage(2);
             expect(util.clearCanvas).toBeCalledTwice;
-            expect(thread.show).not.toBeCalled();
-        });
-
-        it('should render the annotations on every page', () => {
-            controller.threads = {};
-            controller.registerThread(thread);
-            controller.renderPage(1);
-            expect(util.clearCanvas).toBeCalled();
-            expect(thread.show).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -523,23 +434,6 @@ describe('controllers/DrawingModeController', () => {
             controller.updateUndoRedoButtonEls(1, 2);
             expect(util.enableElement).toBeCalledWith(controller.undoButtonEl);
             expect(util.disableElement).not.toBeCalled();
-        });
-    });
-
-    describe('saveThread()', () => {
-        it('should do nothing if thread has invalid boundary', () => {
-            controller.registerThread = jest.fn();
-            controller.saveThread({ minX: NaN, minY: 1, maxX: 1, maxY: 1 });
-            controller.saveThread({ type: TYPES.draw });
-            expect(controller.registerThread).not.toBeCalled();
-            expect(thread.saveAnnotation).not.toBeCalledWith(TYPES.draw);
-        });
-
-        it('should save and register the annotation thread', () => {
-            controller.registerThread = jest.fn();
-            controller.saveThread(thread);
-            expect(controller.registerThread).toBeCalled();
-            expect(thread.saveAnnotation).toBeCalledWith(TYPES.draw);
         });
     });
 });

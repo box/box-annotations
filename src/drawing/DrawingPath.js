@@ -1,9 +1,7 @@
+// @flow
 import { createLocation, round } from '../util';
 
 class DrawingPath {
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
     /** @property {Array} - The array of coordinates that form the path */
     path = [];
 
@@ -25,11 +23,12 @@ class DrawingPath {
     /**
      * [constructor]
      *
-     * @param {Object} drawingPathData - The drawingPath object data to be instantiated into an object
+     * @param {DrawingPath} drawingPathData - The drawingPath object data to be instantiated into an object
      * @return {DrawingPath} A DrawingPath instance
      */
-    constructor(drawingPathData) {
+    constructor(drawingPathData: ?DrawingPath) {
         if (drawingPathData) {
+            // $FlowFixMe
             this.path = drawingPathData.path.map((num) => {
                 const x = +num.x;
                 const y = +num.y;
@@ -47,17 +46,16 @@ class DrawingPath {
     /**
      * Add position to coordinates and update the bounding box
      *
-     * @public
-     * @param {Location} documentLocation - Original document location coordinate to be part of the drawing path
-     * @param {Location} [browserLocation] - Optional browser position to be saved to browserPath
+     * @param {Coordinates} documentLocation - Original document location coordinate to be part of the drawing path
+     * @param {Coordinates} [browserLocation] - Optional browser position to be saved to browserPath
      * @return {void}
      */
-    addCoordinate(documentLocation, browserLocation) {
+    addCoordinate(documentLocation: Coordinates, browserLocation: Coordinates) {
         if (!documentLocation || !documentLocation.x || !documentLocation.y) {
             return;
         }
 
-        // OPTIMIZE (@minhnguyen): We convert a number to a string using toFixed and then back a number.
+        // OPTIMIZE (@minhnguyen): We convert anumber to a string using toFixed and then back anumber.
         //           As a result, it might be better to truncate only on annotation save.
         const x = round(documentLocation.x, 2);
         const y = round(documentLocation.y, 2);
@@ -87,7 +85,6 @@ class DrawingPath {
     /**
      * Determine if any coordinates are contained in the DrawingPath
      *
-     * @public
      * @return {boolean} Whether or not any coordinates have been recorded
      */
     isEmpty() {
@@ -97,11 +94,10 @@ class DrawingPath {
     /**
      * Draw the recorded browser coordinates onto a CanvasContext. Requires a browser path to have been generated.
      *
-     * @public
      * @param {CanvasContext} drawingContext - Context to draw the recorded path on
      * @return {void}
      */
-    drawPath(drawingContext) {
+    drawPath(drawingContext: Object) {
         const ctx = drawingContext;
         if (!ctx || !this.browserPath) {
             return;
@@ -130,29 +126,28 @@ class DrawingPath {
     /**
      * Generate a browser location path that can be drawn on a canvas document from the stored path information
      *
-     * @public
      * @param {Function} coordinateToBrowserCoordinate - A function that takes a document location and returns
      *                                                   the corresponding browser location
      * @return {void}
      */
-    generateBrowserPath(coordinateToBrowserCoordinate) {
+    generateBrowserPath(coordinateToBrowserCoordinate: Function) {
         if (!this.path) {
             return;
         }
 
         // create a browser coordinate path from the document location path
+        // $FlowFixMe
         this.browserPath = this.path.map(coordinateToBrowserCoordinate);
     }
 
     /**
      * Extract the path information from two paths by merging their paths and getting the bounding rectangle
      *
-     * @public
      * @param {DrawingPath} pathA - Another drawingPath to extract information from
      * @param {Object} accumulator - A drawingPath accumulator to retain boundary and path information
      * @return {Object} A bounding rectangle and the stroke paths it contains
      */
-    static extractDrawingInfo(pathA, accumulator) {
+    static extractDrawingInfo(pathA: DrawingPath, accumulator: DrawingLocationInfo) {
         let { paths } = accumulator;
         const apath = { path: pathA.path };
         if (!paths) {
