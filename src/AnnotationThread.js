@@ -79,6 +79,9 @@ class AnnotationThread extends EventEmitter {
             ? data.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
             : [];
 
+        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
+
         this.regenerateBoundary();
 
         this.setup();
@@ -246,20 +249,11 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Fire an event notifying that the comment button has been clicked. Also
-     * show the comment box, and give focus to the text area conatined by it.
+     * Does nothing by default
      *
-     * @param {Event} event - The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onCommentClick() {
-        if (!this.threadNumber) {
-            this.saveAnnotation(TYPES.highlight);
-        }
-        this.type = TYPES.highlight_comment;
-        this.state = STATES.pending;
-        this.renderAnnotationPopover();
-    }
+    onCommentClick() {}
 
     /**
      * Deletes an annotation.
@@ -418,9 +412,8 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
         this.element.addEventListener('click', this.renderAnnotationPopover);
-        this.element.addEventListener('blur', () => this.toggleFlippedThreadEl());
+        this.element.addEventListener('blur', this.handleBlur);
     }
 
     /**
@@ -435,6 +428,16 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.removeEventListener('click', this.renderAnnotationPopover);
+        this.element.removeEventListener('blur', this.handleBlur);
+    }
+
+    /**
+     * Called when the annotation element loses focus
+     *
+     * @return {void}
+     */
+    handleBlur() {
+        this.toggleFlippedThreadEl();
     }
 
     /**
