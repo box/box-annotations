@@ -124,6 +124,7 @@ class AnnotationModeController extends EventEmitter {
             this.showButton();
         }
 
+        // $FlowFixMe
         this.unregisterThread = this.unregisterThread.bind(this);
     }
 
