@@ -324,8 +324,8 @@ class DocDrawingThread extends DrawingThread {
         const BOUNDARY_PADDING = 10;
         boundaryEl.style.left = `${Math.min(x1, x2) - BOUNDARY_PADDING}px`;
         boundaryEl.style.top = `${Math.min(y1, y2) + BOUNDARY_PADDING / 2}px`;
-        boundaryEl.style.width = Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING;
-        boundaryEl.style.height = Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING;
+        boundaryEl.style.width = `${Math.abs(x2 - x1) + 2 * BOUNDARY_PADDING}px`;
+        boundaryEl.style.height = `${Math.abs(y2 - y1) + 2 * BOUNDARY_PADDING}px`;
 
         const pageEl = getPageEl(this.annotatedElement, this.location.page);
         pageEl.appendChild(boundaryEl);
