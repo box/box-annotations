@@ -90,6 +90,9 @@ class AnnotationModeController extends EventEmitter {
     constructor(annotatorType: string): void {
         super();
         this.annotatorType = annotatorType;
+
+        // $FlowFixMe
+        this.unregisterThread = this.unregisterThread.bind(this);
     }
 
     /**
@@ -123,9 +126,6 @@ class AnnotationModeController extends EventEmitter {
             this.modeButton = data.modeButton;
             this.showButton();
         }
-
-        // $FlowFixMe
-        this.unregisterThread = this.unregisterThread.bind(this);
     }
 
     /**
