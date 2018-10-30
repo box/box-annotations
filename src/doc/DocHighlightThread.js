@@ -574,6 +574,28 @@ class DocHighlightThread extends AnnotationThread {
             this.renderAnnotationPopover();
         }
     }
+
+    /**
+     * Fire an event notifying that the comment button has been clicked. Also
+     * show the comment box, and give focus to the text area conatined by it.
+     *
+     * @return {void}
+     */
+    onCommentClick() {
+        this.type = TYPES.highlight_comment;
+        this.state = STATES.pending;
+        this.renderAnnotationPopover();
+    }
+
+    /** @inheritdoc */
+    handleThreadSaveError(error, tempAnnotationID) {
+        if (this.type === TYPES.highlight_comment && this.state === STATES.pending) {
+            this.type = TYPES.highlight;
+            this.reset();
+        }
+
+        super.handleThreadSaveError(error, tempAnnotationID);
+    }
 }
 
 export default DocHighlightThread;
