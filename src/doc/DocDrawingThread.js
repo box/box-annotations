@@ -183,6 +183,7 @@ class DocDrawingThread extends DrawingThread {
         this.draw(context, false);
     }
 
+    /** @inheritdoc */
     hide() {
         this.clearBoundary();
         this.unmountPopover();

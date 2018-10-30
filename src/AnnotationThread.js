@@ -81,6 +81,10 @@ class AnnotationThread extends EventEmitter {
 
         this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
+        this.onCommentClick = this.onCommentClick.bind(this);
+        this.save = this.save.bind(this);
+        this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
+        this.delete = this.delete.bind(this);
 
         this.regenerateBoundary();
 
@@ -130,11 +134,21 @@ class AnnotationThread extends EventEmitter {
         this.state = STATES.inactive;
     }
 
+    /**
+     * Positions the annotation popover
+     * 
+     * @return {void}
+     */
     position = () => {
         /* eslint-enable no-unused-vars */
         throw new Error('Implement me!');
     };
 
+    /**
+     * Returns the parent element for the annotation popover
+     * 
+     * @return {HTMLElement} Parent element for the annotation popover
+     */
     getPopoverParent() {
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
@@ -154,10 +168,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         const isPending = this.state === STATES.pending;
-        this.onCommentClick = this.onCommentClick.bind(this);
-        this.save = this.save.bind(this);
-        this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
-        this.delete = this.delete.bind(this);
 
         const pageEl = this.getPopoverParent();
         this.popoverComponent = render(
@@ -184,6 +194,11 @@ class AnnotationThread extends EventEmitter {
         );
     }
 
+    /**
+     * Resets and unmounts the annotation popover
+     *
+     * @return {void}
+     */
     unmountPopover() {
         this.reset();
 
@@ -230,6 +245,12 @@ class AnnotationThread extends EventEmitter {
             .catch((error) => this.handleThreadSaveError(error, id));
     }
 
+    /**
+     * Update the annotation thread instance with annotation data/comments
+     * 
+     * @param {Object} data - Annotation data
+     * @return {void}
+     */
     updateAnnotationThread(data) {
         if (!this.threadNumber) {
             this.id = data.id;

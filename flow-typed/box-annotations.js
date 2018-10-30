@@ -46,13 +46,13 @@ type Path = {
 };
 type DrawingPaths = Array<Path>;
 
-type OriginalDimensions = {
+type Dimensions = {
     width: number,
     height: number
 }
 
 type LocationInfo = {
-    dimensions: OriginalDimensions,
+    dimensions: Dimensions,
     page: number
 };
 

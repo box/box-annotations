@@ -277,7 +277,6 @@ class DrawingThread extends AnnotationThread {
      *
      * @public
      * @return {void}
-     *
      */
     redo() {
         const executedRedo = this.pathContainer.redo();
@@ -397,6 +396,7 @@ class DrawingThread extends AnnotationThread {
         this.lastAnimationRequestId = window.requestAnimationFrame(this.render);
     }
 
+    /** @inheritdoc */
     renderAnnotationPopover() {
         this.drawBoundary();
         super.renderAnnotationPopover();
@@ -406,13 +406,7 @@ class DrawingThread extends AnnotationThread {
     // Private
     //--------------------------------------------------------------------------
 
-    /**
-     * Update the boundary information
-     *
-     * @inheritdoc
-     * @private
-     * @return {void}
-     */
+    /** @inheritdoc */
     updateBoundary(item) {
         // Recompute the entire AABB when no item is provided, check a new item if provided
         const boundaryData = !item
@@ -421,14 +415,8 @@ class DrawingThread extends AnnotationThread {
 
         Object.assign(this.location, boundaryData);
     }
-
-    /**
-     * Set the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
-     *
-     * @inheritdoc
-     * @private
-     * @return {void}
-     */
+    
+    /** @inheritdoc */
     regenerateBoundary() {
         if (!this.location || this.location.boundaryData) {
             return;

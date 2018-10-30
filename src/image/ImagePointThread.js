@@ -27,12 +27,7 @@ class ImagePointThread extends AnnotationThread {
         return shouldDisplayMobileUI(this.container) ? this.container : this.annotatedElement;
     }
 
-    /**
-     * Shows the annotation indicator.
-     *
-     * @override
-     * @return {void}
-     */
+    /** @inheritdoc */
     show() {
         const [browserX, browserY] = getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 
@@ -50,12 +45,7 @@ class ImagePointThread extends AnnotationThread {
         this.renderAnnotationPopover();
     }
 
-    /**
-     * Positions the dialog.
-     *
-     * @override
-     * @return {void}
-     */
+    /** @inheritdoc */
     position = () => {
         if (shouldDisplayMobileUI(this.container)) {
             return;

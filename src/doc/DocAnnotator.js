@@ -383,6 +383,12 @@ class DocAnnotator extends Annotator {
         }
     }
 
+    /**
+     * Handles click events when not in an annotation mode
+     * 
+     * @param {Event} event - Mouse event
+     * @return {void}
+     */
     clickHandler = (event) => {
         let mouseEvent = event;
         if (this.hasTouch && event.targetTouches) {
@@ -419,6 +425,12 @@ class DocAnnotator extends Annotator {
         }
     };
 
+    /**
+     * Hides the create highlight dialog 
+     * 
+     * @param {Event} event - Mouse event 
+     * @return {void}
+     */
     hideCreateDialog(event) {
         if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
             return;

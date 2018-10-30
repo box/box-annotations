@@ -71,10 +71,16 @@ class CreateHighlightDialog extends EventEmitter {
         this.headerHeight = config.headerHeight;
     }
 
+    /** @inheritdoc */
     destroy() {
         this.unmountPopover();
     }
 
+    /**
+     * Resets and unmounts the annotation popover
+     *
+     * @return {void}
+     */
     unmountPopover() {
         this.isVisible = false;
         const popoverLayer = this.container.querySelector('.ba-dialog-layer');
