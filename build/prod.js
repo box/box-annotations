@@ -1,6 +1,5 @@
 const workerFarm = require('worker-farm');
-const locales = require('box-locales');
-const numCPUs = require('os').cpus().length;
+const locales = require('@box/i18n/locales');
 const { execSync } = require('child_process');
 const path = require('path');
 
@@ -10,7 +9,7 @@ const bundleCount = locales.length * 2; // One with react, and one without
 let counter = 0;
 const workers = workerFarm(
     {
-        maxConcurrentWorkers: numCPUs - 2,
+        maxConcurrentWorkers: 3,
         maxRetries: 0
     },
     require.resolve('./build_locale.js')
