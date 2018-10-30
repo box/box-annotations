@@ -440,6 +440,11 @@ class AnnotationThread extends EventEmitter {
         this.element.removeEventListener('blur', this.handleBlur);
     }
 
+    /**
+     * Called when the annotation element loses focus
+     *
+     * @return {void}
+     */
     handleBlur() {
         this.toggleFlippedThreadEl();
     }
