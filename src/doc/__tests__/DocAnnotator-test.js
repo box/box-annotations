@@ -952,6 +952,18 @@ describe('doc/DocAnnotator', () => {
             annotator.commentHighlightEnabled = false;
         });
 
+        it('should do nothing and return false if no highlight types are enabled', () => {
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
+            expect(annotator.hideAnnotations).not.toBeCalled();
+        });
+
+        it('should do nothing and return true if a createHighlightDialog is visible', () => {
+            annotator.plainHighlightEnabled = true;
+            annotator.createHighlightDialog = { isVisible: true };
+            expect(annotator.highlightClickHandler(event)).toBeTruthy();
+            expect(annotator.hideAnnotations).not.toBeCalled();
+        });
+
         it('should find the active plain highlight', () => {
             annotator.plainHighlightEnabled = true;
             annotator.highlightClickHandler(event);

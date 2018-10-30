@@ -735,8 +735,12 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightClickHandler(event) {
-        if (this.createHighlightDialog.isVisible || (!this.plainHighlightEnabled && !this.commentHighlightEnabled)) {
+        if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
+        }
+
+        if (this.createHighlightDialog.isVisible) {
+            return true;
         }
 
         this.activeThread = null;
