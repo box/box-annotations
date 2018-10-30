@@ -1,8 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { DefinePlugin } = require('webpack');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-
+const { DefinePlugin, NormalModuleReplacementPlugin } = require('webpack');
 const packageJSON = require('../package.json');
 
 const language = process.env.LANGUAGE;
@@ -16,9 +14,6 @@ module.exports = () => {
         bail: true,
         resolve: {
             modules: ['src', 'node_modules']
-        },
-        devServer: {
-            host: '0.0.0.0'
         },
         resolveLoader: {
             modules: [path.resolve('src'), path.resolve('node_modules')]
@@ -62,12 +57,7 @@ module.exports = () => {
             new MiniCssExtractPlugin({
                 filename: '[name].css'
             }),
-            new OptimizeCssAssetsPlugin({
-                cssProcessorOptions: {
-                    discardComments: { removeAll: true },
-                    parser: safeParser,
-                }
-            })
+            new NormalModuleReplacementPlugin(/\/iconv-loader$/)
         ],
         stats: {
             assets: true,
