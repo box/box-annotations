@@ -12,7 +12,7 @@ import {
 } from '../constants';
 
 class DrawingThread extends AnnotationThread {
-    /** @property {Number} - Drawing state */
+    /** @property {number} - Drawing state */
     drawingFlag = DRAW_STATES.idle;
 
     /** @property {DrawingContainer} - The path container supporting undo and redo */
@@ -27,25 +27,25 @@ class DrawingThread extends AnnotationThread {
     /** @property {CanvasContext} - The context to draw saved drawings on on */
     concreteContext;
 
-    /** @property {Number} - Timestamp of the last render */
+    /** @property {number} - Timestamp of the last render */
     lastRenderTimestamp;
 
-    /** @property {Number} - The the last animation frame request id */
+    /** @property {number} - The the last animation frame request id */
     lastAnimationRequestId;
 
-    /** @property {Number} - The scale factor that the drawing thread was last rendered at */
+    /** @property {number} - The scale factor that the drawing thread was last rendered at */
     lastScaleFactor;
 
-    /** @property {Number} - The minimum X coordinate occupied by the contained drawing paths */
+    /** @property {number} - The minimum X coordinate occupied by the contained drawing paths */
     minX;
 
-    /** @property {Number} - The minimum Y coordinate occupied by the contained drawing paths */
+    /** @property {number} - The minimum Y coordinate occupied by the contained drawing paths */
     minY;
 
-    /** @property {Number} - The maximum X coordinate occupied by the contained drawing paths */
+    /** @property {number} - The maximum X coordinate occupied by the contained drawing paths */
     maxX;
 
-    /** @property {Number} - The maximum Y coordinate occupied by the contained drawing paths */
+    /** @property {number} - The maximum Y coordinate occupied by the contained drawing paths */
     maxY;
 
     /**
@@ -120,7 +120,6 @@ class DrawingThread extends AnnotationThread {
      * Binds DOM event listeners for drawing new thread using
      * mode specific location getter
      *
-     * @protected
      * @param {Function} locationFunction - Location getter method
      * @return {void}
      */
@@ -153,7 +152,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Unbinds DOM event listeners for drawing new threads.
      *
-     * @protected
      * @return {void}
      */
     unbindDrawingListeners() {
@@ -169,7 +167,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Handle a pointer movement
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -178,7 +175,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Start a drawing stroke *
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -187,7 +183,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * End a drawing stroke
      *
-     * @public
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
@@ -198,7 +193,6 @@ class DrawingThread extends AnnotationThread {
      * Delete a saved drawing thread by deleting each annotation
      * and then clearing the concrete context, boundary, and destroying its path.
      *
-     * @public
      * @return {void}
      */
     deleteThread() {
@@ -227,7 +221,6 @@ class DrawingThread extends AnnotationThread {
      * Set the drawing styles for a provided context. Sets the context of the in-progress context if
      * no other context is provided.
      *
-     * @public
      * @param {Object} config - The configuration Object
      * @param {number} config.scale - The document scale
      * @param {string} config.color - The brush color
@@ -252,7 +245,6 @@ class DrawingThread extends AnnotationThread {
      * Overturns the last drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if an undo was executed.
      *
-     * @public
      * @return {void}
      */
     undo() {
@@ -275,7 +267,6 @@ class DrawingThread extends AnnotationThread {
      * Replays the last undone drawing stroke if it exists. Emits thenumber of undo and redo
      * actions available if a redraw was executed.
      *
-     * @public
      * @return {void}
      */
     redo() {
@@ -294,15 +285,10 @@ class DrawingThread extends AnnotationThread {
         }
     }
 
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
 
     /**
      * Sets up the thread state.
      *
-     * @override
-     * @protected
      * @return {void}
      */
     setup() {
@@ -318,7 +304,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Draws the paths in the thread onto the given context.
      *
-     * @protected
      * @param {CanvasContext} context - The context to draw on
      * @param {boolean} [clearCanvas] - A flag to clear the canvas before drawing.
      * @return {void}
@@ -350,7 +335,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Emit an event containing thenumber of undo and redo actions that can be done.
      *
-     * @protected
      * @return {void}
      */
     emitAvailableActions() {
@@ -374,7 +358,6 @@ class DrawingThread extends AnnotationThread {
      * Draw the pending path onto the DrawingThread CanvasContext. Should be used
      * in conjunction with requestAnimationFrame. Does nothing when there is drawingContext set.
      *
-     * @protected
      * @param {number} timestamp - The time when the function was called;
      * @return {void}
      */
@@ -401,10 +384,6 @@ class DrawingThread extends AnnotationThread {
         this.drawBoundary();
         super.renderAnnotationPopover();
     }
-
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
 
     /** @inheritdoc */
     updateBoundary(item) {
@@ -434,7 +413,6 @@ class DrawingThread extends AnnotationThread {
      * coordinate indicates the upper left
      * point of the rectangular boundary in browser space
      *
-     * @private
      * @return {void}
      */
     getBrowserRectangularBoundary() {}
@@ -454,7 +432,6 @@ class DrawingThread extends AnnotationThread {
     /**
      * Create an annotation data object to pass to annotation service.
      *
-     * @private
      * @param {string} type - Type of annotation
      * @param {string} message - Annotation text
      * @return {Object} Annotation data

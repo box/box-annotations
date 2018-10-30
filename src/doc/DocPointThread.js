@@ -1,3 +1,4 @@
+// @flow
 import AnnotationThread from '../AnnotationThread';
 import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
@@ -14,14 +15,9 @@ const POINT_ANNOTATION_ICON_DOT_HEIGHT = 8;
 const POINT_ANNOTATION_ICON_WIDTH = 24;
 
 class DocPointThread extends AnnotationThread {
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
-
     /**
      * Shows the annotation indicator.
      *
-     * @override
      * @return {void}
      */
     show() {
@@ -49,7 +45,6 @@ class DocPointThread extends AnnotationThread {
     /**
      * Positions the dialog.
      *
-     * @override
      * @return {void}
      */
     position = () => {

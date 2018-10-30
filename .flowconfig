@@ -13,6 +13,7 @@
 .*/node_modules/webpack*
 .*/node_modules/draft-js*
 .*/node_modules/findup*
+.*/node_modules/rangy*
 
 [include]
 ./src
@@ -27,4 +28,8 @@ module.name_mapper='box-annotations-locale-data' -> '<PROJECT_ROOT>/flow/Webpack
 module.name_mapper='box-react-ui-locale-data' -> '<PROJECT_ROOT>/flow/WebpackI18N.js.flow'
 module.name_mapper='draft-js' -> '<PROJECT_ROOT>/flow/DraftJSFlowStub.js.flow'
 module.name_mapper='draft-js/EditorState' -> '<PROJECT_ROOT>/flow/DraftJSFlowStub.js.flow'
+module.name_mapper='rangy' -> '<PROJECT_ROOT>/flow/Rangy.js.flow'
+module.name_mapper='rangy/lib/rangy-classapplier' -> '<PROJECT_ROOT>/flow/Rangy.js.flow'
+module.name_mapper='rangy/lib/rangy-highlighter' -> '<PROJECT_ROOT>/flow/Rangy.js.flow'
+module.name_mapper='rangy/lib/rangy-selectionsaverestore' -> '<PROJECT_ROOT>/flow/Rangy.js.flow'
 suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe

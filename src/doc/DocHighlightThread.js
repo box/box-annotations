@@ -1,3 +1,4 @@
+// @flow
 import AnnotationThread from '../AnnotationThread';
 import * as util from '../util';
 import * as docUtil from './docUtil';
@@ -23,18 +24,14 @@ class DocHighlightThread extends AnnotationThread {
      */
     pageEl;
 
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
-
     /**
      * [constructor]
      *
-     * @param {AnnotationDialogData} data Data for constructing thread
+     * @param {Object} data Data for constructing thread
      * @param {boolean} canComment Whether or not show comment highlight UI
      * @return {AnnotationDialog} Annotation dialog instance
      */
-    constructor(data, canComment) {
+    constructor(data: Object, canComment: boolean) {
         super(data);
 
         this.canComment = canComment;
@@ -71,7 +68,6 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * [destructor]
      *
-     * @override
      * @return {void}
      */
     destroy() {
@@ -89,7 +85,6 @@ class DocHighlightThread extends AnnotationThread {
      * that if there are any overlapping highlights, this will cut out
      * the overlapping portion.
      *
-     * @override
      * @return {void}
      */
     hide() {
@@ -99,7 +94,6 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Reset state to inactive and redraw.
      *
-     * @override
      * @return {void}
      */
     reset() {
@@ -110,12 +104,11 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Saves an annotation.
      *
-     * @override
      * @param {string} type Type of annotation
      * @param {string} text Text of annotation to save
      * @return {void}
      */
-    save(type, text) {
+    save(type: AnnotationType, text: string) {
         super.save(type, text);
         window.getSelection().removeAllRanges();
     }
@@ -127,7 +120,7 @@ class DocHighlightThread extends AnnotationThread {
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    delete(annotation, useServer = true) {
+    delete(annotation: Object, useServer: boolean = true) {
         super.delete(annotation, useServer);
 
         if (!this.threadID) {
@@ -164,7 +157,7 @@ class DocHighlightThread extends AnnotationThread {
      * highlight
      * @return {boolean} Whether click was in a non-pending highlight
      */
-    onClick(event, consumed) {
+    onClick(event: Event, consumed: boolean) {
         // If state is in active, it means mouse is already over this highlight
         // so we can skip the is in highlight calculation
         if (!consumed && this.isOnHighlight(event)) {
@@ -187,13 +180,9 @@ class DocHighlightThread extends AnnotationThread {
      * @return {boolean} Whether or not Mouse event is in highlight or over
      * the annotations dialog
      */
-    isOnHighlight(event) {
+    isOnHighlight(event: Event) {
         return util.isInDialog(event) || this.isInHighlight(event);
     }
-
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
 
     /**
      * Shows the highlight thread, which means different things based on the
@@ -201,7 +190,6 @@ class DocHighlightThread extends AnnotationThread {
      * If it is inactive, we draw the highlight. If it is active, we draw
      * the highlight in active state and show the 'delete' button.
      *
-     * @override
      * @return {void}
      */
     show() {
@@ -224,16 +212,10 @@ class DocHighlightThread extends AnnotationThread {
         super.show();
     }
 
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
-
     /**
      * No-op setup element. Highlight threads have no HTML indicator since
      * they are drawn onto the canvas.
      *
-     * @protected
-     * @override
      * @return {void}
      */
     setupElement() {}
@@ -241,7 +223,6 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Clear text selection and show annotation dialog on 'annotationdraw'
      *
-     * @private
      * @return {void}
      */
     handleDraw() {
@@ -253,7 +234,6 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Set the thread state to pending active on 'annotationcommentpending'
      *
-     * @private
      * @return {void}
      */
     handleCommentPending() {
@@ -264,11 +244,10 @@ class DocHighlightThread extends AnnotationThread {
      * Create the appropriate type of highlight annotation thread on
      * 'annotationcreate'
      *
-     * @private
      * @param {string} message Annotation message string
      * @return {void}
      */
-    handleCreate(message) {
+    handleCreate(message: string) {
         if (message) {
             this.type = TYPES.highlight_comment;
             this.renderAnnotationPopover();
@@ -283,11 +262,10 @@ class DocHighlightThread extends AnnotationThread {
      * Delete the annotation annotation or the thread's first annotation based on
      * if an id is specified on 'annotationdelete'
      *
-     * @private
      * @param {Object} data Event data
      * @return {void}
      */
-    handleDelete(data) {
+    handleDelete(data: Object) {
         if (data) {
             this.delete(data);
             return;
@@ -298,14 +276,9 @@ class DocHighlightThread extends AnnotationThread {
         }
     }
 
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
-
     /**
      * Scroll annotation into the center of the viewport, if possible
      *
-     * @private
      * @return {void}
      */
     scrollIntoView() {
@@ -320,12 +293,11 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Draws the highlight with the specified fill style.
      *
-     * @private
      * @param {string} fillStyle RGBA fill style
      * @return {void}
      */
     /* istanbul ignore next */
-    draw(fillStyle) {
+    draw(fillStyle: string) {
         const pageEl = this.getPageEl();
         const context =
             this.type === TYPES.highlight
@@ -385,11 +357,10 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Checks whether mouse is inside the highlight represented by this thread.
      *
-     * @private
      * @param {Event} event Mouse event
      * @return {boolean} Whether or not mouse is inside highlight
      */
-    isInHighlight(event) {
+    isInHighlight(event: Event): boolean {
         const pageEl = this.getPageEl();
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
@@ -414,7 +385,9 @@ class DocHighlightThread extends AnnotationThread {
         };
 
         // DOM coordinates with respect to the page
+        // $FlowFixMe
         const x = event.clientX - pageDimensions.left;
+        // $FlowFixMe
         const y = event.clientY - pageTop;
 
         let eventOccurredInHighlight = false;
@@ -449,10 +422,9 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Gets the page element this thread is on.
      *
-     * @private
      * @return {HTMLElement} Page element
      */
-    getPageEl() {
+    getPageEl(): HTMLElement {
         if (!this.pageEl) {
             this.pageEl = util.getPageEl(this.annotatedElement, this.location.page);
         }
@@ -463,7 +435,6 @@ class DocHighlightThread extends AnnotationThread {
      * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
      * @inheritdoc
-     * @private
      * @return {void}
      */
     regenerateBoundary() {
@@ -488,7 +459,6 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Positions the dialog.
      *
-     * @override
      * @return {void}
      */
     position = () => {
@@ -538,11 +508,10 @@ class DocHighlightThread extends AnnotationThread {
      * Keydown handler on dialog. Needed since we are binding to 'mousedown'
      * instead of 'click'.
      *
-     * @override
-     * @private
+     * @param {Event} event - Mouse event
      * @return {void}
      */
-    keydownHandler(event) {
+    keydownHandler(event: Event) {
         event.stopPropagation();
         if (util.decodeKeydown(event) === 'Enter') {
             this.mousedownHandler(event);
@@ -551,7 +520,7 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /** @inheritdoc */
-    cleanupAnnotationOnDelete(annotationIDToRemove) {
+    cleanupAnnotationOnDelete(annotationIDToRemove: number) {
         // Delete matching comment from annotation
         this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
@@ -588,7 +557,7 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /** @inheritdoc */
-    handleThreadSaveError(error, tempAnnotationID) {
+    handleThreadSaveError(error: Error, tempAnnotationID: number) {
         if (this.type === TYPES.highlight_comment && this.state === STATES.pending) {
             this.type = TYPES.highlight;
             this.reset();

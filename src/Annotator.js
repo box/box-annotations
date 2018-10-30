@@ -1,3 +1,4 @@
+// @flow
 import EventEmitter from 'events';
 import * as util from './util';
 import './Annotator.scss';
@@ -13,20 +14,11 @@ import {
 import FileVersionAPI from './api/FileVersionAPI';
 
 class Annotator extends EventEmitter {
-    //--------------------------------------------------------------------------
-    // Typedef
-    //--------------------------------------------------------------------------
+    /** @param {HTMLElement} */
+    annotatedElement: HTMLElement;
 
-    /**
-     * The data object for constructing an Annotator.
-     * @typedef {Object} AnnotatorData
-     * @property {HTMLElement} annotatedElement HTML element to annotate on
-     * @property {string} fileVersionId File version ID
-     */
-
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
+    /** @param {string} */
+    fileVersionId: string;
 
     /**
      * [constructor]
@@ -34,7 +26,7 @@ class Annotator extends EventEmitter {
      * @param {Object} options - Options for constructing an Annotator
      * @return {Annotator} Annotator instance
      */
-    constructor(options) {
+    constructor(options: Object) {
         super();
 
         this.options = options;
@@ -64,10 +56,15 @@ class Annotator extends EventEmitter {
         this.fetchPromise = this.fetchAnnotations();
 
         // Explicitly binding listeners
+        // $FlowFixMe
         this.createPointThread = this.createPointThread.bind(this);
+        // $FlowFixMe
         this.scaleAnnotations = this.scaleAnnotations.bind(this);
+        // $FlowFixMe
         this.handleControllerEvents = this.handleControllerEvents.bind(this);
+        // $FlowFixMe
         this.handleServicesErrors = this.handleServicesErrors.bind(this);
+        // $FlowFixMe
         this.hideAnnotations = this.hideAnnotations.bind(this);
     }
 
@@ -92,7 +89,7 @@ class Annotator extends EventEmitter {
      * @param {number} [initialScale] - The initial scale factor to render the annotations
      * @return {void}
      */
-    init(initialScale = 1) {
+    init(initialScale: number = 1) {
         // Get the container dom element if selector was passed, in tests
         this.container = this.options.container;
         if (typeof this.options.container === 'string') {
@@ -119,6 +116,7 @@ class Annotator extends EventEmitter {
         this.container.classList.add('ba');
 
         // Get annotated element from container
+        // $FlowFixMe
         this.annotatedElement = this.getAnnotatedEl(this.container);
 
         this.setScale(initialScale);
@@ -130,10 +128,10 @@ class Annotator extends EventEmitter {
      * Returns whether or not the current annotation mode is enabled for
      * the current viewer/annotator.
      *
-     * @param {string} type - Type of annotation
+     * @param {AnnotationType} type - Type of annotation
      * @return {boolean} Whether or not the annotation mode is enabled
      */
-    isModeAnnotatable(type) {
+    isModeAnnotatable(type: AnnotationType): boolean {
         if (!this.options.annotator) {
             return false;
         }
@@ -169,24 +167,21 @@ class Annotator extends EventEmitter {
      * @param {number} scale - current zoom scale
      * @return {void}
      */
-    setScale(scale) {
+    setScale(scale: number) {
+        // $FlowFixMe
         this.annotatedElement.setAttribute('data-scale', scale);
     }
-
-    //--------------------------------------------------------------------------
-    // Abstract
-    //--------------------------------------------------------------------------
 
     /**
      * Must be implemented to return an annotation location object from the DOM
      * event.
      *
      * @param {Event} event - DOM event
-     * @param {string} annotationType - Type of annotation
+     * @param {AnnotationType} annotationType - Type of annotation
      * @return {Object} Location object
      */
     /* eslint-disable no-unused-vars */
-    getLocationFromEvent = (event, annotationType) => {};
+    getLocationFromEvent = (event: Event, annotationType: AnnotationType): ?Location => {};
     /* eslint-enable no-unused-vars */
 
     /**
@@ -196,17 +191,12 @@ class Annotator extends EventEmitter {
      * @return {HTMLElement} Annotated element in the viewer
      */
     /* eslint-disable no-unused-vars */
-    getAnnotatedEl(containerEl) {}
+    getAnnotatedEl(containerEl: HTMLElement): ?HTMLElement {}
     /* eslint-enable no-unused-vars */
-
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
 
     /**
      * Annotations setup.
      *
-     * @protected
      * @return {void}
      */
     setupAnnotations() {
@@ -219,7 +209,6 @@ class Annotator extends EventEmitter {
     /**
      * Mode controllers setup.
      *
-     * @protected
      * @return {void}
      */
     setupControllers() {
@@ -259,7 +248,7 @@ class Annotator extends EventEmitter {
      * @param {Event} [event] - Mouse event
      * @return {void}
      */
-    hideAnnotations(event) {
+    hideAnnotations(event: ?Event) {
         if (event && util.isInDialog(event, this.container)) {
             return;
         }
@@ -276,10 +265,9 @@ class Annotator extends EventEmitter {
      * Fetches persisted annotations, creates threads as needed, and generates
      * an in-memory map of page to threads.
      *
-     * @protected
      * @return {Promise} Promise for fetching saved annotations
      */
-    fetchAnnotations() {
+    fetchAnnotations(): Promise<any> {
         // Do not load any pre-existing annotations if the user does not have
         // the correct permissions
         if (!this.permissions.can_view_annotations_all && !this.permissions.can_view_annotations_self) {
@@ -300,11 +288,10 @@ class Annotator extends EventEmitter {
     /**
      * Generates a map of annotations by page.
      *
-     * @private
      * @param {Object} annotationMap - Annotations to generate map from
      * @return {void}
      */
-    generateAnnotationMap(annotationMap) {
+    generateAnnotationMap(annotationMap: Object) {
         const { annotator } = this.options;
         if (!annotator) {
             return;
@@ -328,7 +315,6 @@ class Annotator extends EventEmitter {
      * needs to bind event listeners to the DOM in the normal state (ie not
      * in any annotation mode).
      *
-     * @protected
      * @return {void}
      */
     bindDOMListeners() {}
@@ -338,7 +324,6 @@ class Annotator extends EventEmitter {
      * needs to bind event listeners to the DOM in the normal state (ie not
      * in any annotation mode).
      *
-     * @protected
      * @return {void}
      */
     unbindDOMListeners() {}
@@ -346,7 +331,6 @@ class Annotator extends EventEmitter {
     /**
      * Binds custom event listeners for the Annotation Service.
      *
-     * @protected
      * @return {void}
      */
     bindCustomListeners() {
@@ -357,7 +341,6 @@ class Annotator extends EventEmitter {
     /**
      * Unbinds custom event listeners for the Annotation Service.
      *
-     * @protected
      * @return {void}
      */
     unbindCustomListeners() {
@@ -368,10 +351,9 @@ class Annotator extends EventEmitter {
     /**
      * Returns the current annotation mode
      *
-     * @protected
-     * @return {string|null} Current annotation mode
+     * @return {AnnotationType|null} Current annotation mode
      */
-    getCurrentAnnotationMode() {
+    getCurrentAnnotationMode(): ?AnnotationType {
         const modes = Object.keys(this.modeControllers).filter((mode) => {
             const controller = this.modeControllers[mode];
             return controller.isEnabled();
@@ -382,7 +364,6 @@ class Annotator extends EventEmitter {
     /**
      * Creates a point annotation thread, adds it to in-memory map, and returns it.
      *
-     * @private
      * @param {Object} data - Thread data
      * @param {string} data.commentText - The text for the first comment in
      * the thread.
@@ -390,7 +371,7 @@ class Annotator extends EventEmitter {
      * @param {string} data.pendingThreadID - Thread ID for the current pending point thread
      * @return {AnnotationThread} Created point annotation thread
      */
-    createPointThread(data) {
+    createPointThread(data: Object): AnnotationThread {
         // Empty string will be passed in if no text submitted in comment
         const { commentText, lastPointEvent, pendingThreadID } = data;
         if (!lastPointEvent || !pendingThreadID || !commentText || commentText.trim() === '') {
@@ -416,14 +397,9 @@ class Annotator extends EventEmitter {
         return thread;
     }
 
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
-
     /**
      * Renders annotations from memory.
      *
-     * @private
      * @return {void}
      */
     render() {
@@ -436,22 +412,20 @@ class Annotator extends EventEmitter {
     /**
      * Renders annotations from memory for a specified page.
      *
-     * @private
      * @param {number} pageNum - Page number
      * @return {void}
      */
-    renderPage(pageNum) {
+    renderPage(pageNum: number) {
         Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
     }
 
     /**
      * Returns annotation permissions
      *
-     * @private
      * @param {Object} file - File
-     * @return {boolean} Whether or not the annotation mode is enabled
+     * @return {Object} annotation permissions
      */
-    getAnnotationPermissions(file) {
+    getAnnotationPermissions(file: Object): BoxItemPermissions {
         const permissions = file.permissions || {};
         const {
             can_annotate = false,
@@ -468,11 +442,10 @@ class Annotator extends EventEmitter {
     /**
      * Orient annotations to the correct scale and orientation of the annotated document.
      *
-     * @private
      * @param {Object} data - Scale and orientation values needed to orient annotations.
      * @return {void}
      */
-    scaleAnnotations(data) {
+    scaleAnnotations(data: Object) {
         this.unbindDOMListeners();
         this.setScale(data.scale);
         this.render();
@@ -482,10 +455,10 @@ class Annotator extends EventEmitter {
     /**
      * Exits all annotation modes except the specified mode
      *
-     * @param {string} mode - Current annotation mode
+     * @param {AnnotationType} mode - Current annotation mode
      * @return {void}
      */
-    toggleAnnotationMode(mode) {
+    toggleAnnotationMode(mode: AnnotationType) {
         this.hideAnnotations();
         this.unbindDOMListeners();
 
@@ -504,11 +477,10 @@ class Annotator extends EventEmitter {
     /**
      * Scrolls specified annotation into view
      *
-     * @private
-     * @param {Object} threadID - annotation threadID for thread that should scroll into view
+     * @param {string} threadID - annotation threadID for thread that should scroll into view
      * @return {void}
      */
-    scrollToAnnotation(threadID) {
+    scrollToAnnotation(threadID: string) {
         if (!threadID) {
             return;
         }
@@ -525,7 +497,6 @@ class Annotator extends EventEmitter {
      * Displays annotation validation error notification once on load. Does
      * nothing if notification was already displayed once.
      *
-     * @private
      * @return {void}
      */
     handleValidationError() {
@@ -543,13 +514,12 @@ class Annotator extends EventEmitter {
     /**
      * Handle events emitted by the annotation service
      *
-     * @private
      * @param {Object} [data] - Annotation service event data
      * @param {string} [data.event] - Annotation service event
      * @param {string} [data.data] -
      * @return {void}
      */
-    handleServicesErrors(data) {
+    handleServicesErrors(data: Object) {
         if (data.error) {
             /* eslint-disable no-console */
             console.error(ANNOTATOR_EVENT.error, data.error);
@@ -562,13 +532,12 @@ class Annotator extends EventEmitter {
     /**
      * Handle events emitted by the annotation service
      *
-     * @private
      * @param {Object} [data] - Annotation service event data
      * @param {string} [data.event] - Annotation service event
      * @param {string} [data.data] -
      * @return {void}
      */
-    handleControllerEvents(data) {
+    handleControllerEvents(data: Object) {
         switch (data.event) {
             case CONTROLLER_EVENT.load:
                 this.loadAnnotations();
@@ -598,13 +567,12 @@ class Annotator extends EventEmitter {
     /**
      * Emits a generic annotator event
      *
-     * @private
      * @emits annotatorevent
      * @param {string} event - Event name
      * @param {Object} data - Event data
      * @return {void}
      */
-    emit(event, data) {
+    emit(event: Event, data: ?Object) {
         const { annotator } = this.options;
         super.emit(event, data);
         super.emit('annotatorevent', {

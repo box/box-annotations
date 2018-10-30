@@ -1,0 +1,4 @@
+declare export var rangy: any
+declare export var rangyClassApplier: any
+declare export var rangyHighlight: any
+declare export var rangySaveRestore: any

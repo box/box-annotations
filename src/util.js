@@ -30,7 +30,6 @@ const DESKTOP_MIN_WIDTH = 1025;
 /**
  * Replaces the currently active header with a specified header
  *
- * @public
  * @param {HTMLElement} containerEl Preview container
  * @param {string} replacementHeader Class name of new header
  * @return {void}
@@ -273,7 +272,6 @@ export function isInAnnotationOrMarker(event, containerEl) {
 /**
  * Creates contextual fragment
  *
- * @public
  * @param {Element} node DOM node
  * @param {string} template HTML template
  * @return {DocumentFragment} Document fragment
@@ -287,7 +285,6 @@ export function createFragment(node, template) {
 /**
  * Inserts template string into DOM node, before beforeNode. If beforeNode is null, inserts at end of child nodes
  *
- * @public
  * @param {Element} node DOM node
  * @param {string} template  html template
  * @param {Element|void} beforeNode DOM node
@@ -476,7 +473,6 @@ export function createLocation(x, y, dimensions) {
 /**
  * Function to decode key down events into keys
  *
- * @public
  * @param {Event} event - Keydown event
  * @return {string} Decoded keydown key
  */

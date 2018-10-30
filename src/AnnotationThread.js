@@ -1,3 +1,4 @@
+// @flow
 import EventEmitter from 'events';
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
@@ -16,36 +17,40 @@ import {
 import AnnotationPopover from './components/AnnotationPopover';
 
 class AnnotationThread extends EventEmitter {
-    //--------------------------------------------------------------------------
-    // Typedef
-    //--------------------------------------------------------------------------
+    /** @param {HTMLElement} */
+    annotatedElement: HTMLElement;
 
-    /**
-     * The data object for constructing a thread.
-     * @typedef {Object} AnnotationThreadData
-     * @property {HTMLElement} annotatedElement HTML element being annotated on
-     * @property {Object} [annotations] Annotations in thread - none if
-     * this is a new thread
-     * @property {AnnotationAPI} api Annotations CRUD API
-     * @property {string} fileVersionId File version ID
-     * @property {Object} location Location object
-     * @property {string} threadID Thread ID
-     * @property {string} threadNumber Threadnumber
-     * @property {string} type Type of thread
-     * @property {boolean} canComment Whether or not the annotation allows the addition of comments
-     */
-
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
+    /** @param {Object} */
+    annotations: Object;
+    
+    /** @param {AnnotationAPI} */
+    api: AnnotationAPI;
+    
+    /** @param {string} */
+    fileVersionId: string;
+    
+    /** @param {Location} */
+    location: Location;
+    
+    /** @param {string} */
+    threadID: ?string;
+    
+    /** @param {string} */
+    threadNumber: string;
+    
+    /** @param {AnnotationType} */
+    type: AnnotationType;
+    
+    /** @param {boolean} */
+    canComment: boolean;
 
     /**
      * [constructor]
      *
-     * @param {AnnotationThreadData} data - Data for constructing thread
+     * @param {Object} data - Data for constructing thread
      * @return {AnnotationThread} Annotation thread instance
      */
-    constructor(data) {
+    constructor(data: Object) {
         super();
 
         this.annotatedElement = data.annotatedElement;
@@ -79,11 +84,17 @@ class AnnotationThread extends EventEmitter {
             ? data.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
             : [];
 
+        // $FlowFixMe
         this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
+        // $FlowFixMe
         this.handleBlur = this.handleBlur.bind(this);
+        // $FlowFixMe
         this.onCommentClick = this.onCommentClick.bind(this);
+        // $FlowFixMe
         this.save = this.save.bind(this);
+        // $FlowFixMe
         this.updateTemporaryAnnotation = this.updateTemporaryAnnotation.bind(this);
+        // $FlowFixMe
         this.delete = this.delete.bind(this);
 
         this.regenerateBoundary();
@@ -161,7 +172,7 @@ class AnnotationThread extends EventEmitter {
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    renderAnnotationPopover(event = null) {
+    renderAnnotationPopover(event: Event = null) {
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -215,11 +226,11 @@ class AnnotationThread extends EventEmitter {
     /**
      * Saves an annotation.
      *
-     * @param {string} type - Type of annotation
+     * @param {AnnotationType} type - Type of annotation
      * @param {string} message - Text of annotation to save
      * @return {Promise} - Annotation create promise
      */
-    save(type, message) {
+    save(type: AnnotationType, message: string): Promise<any> {
         const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client
@@ -240,6 +251,7 @@ class AnnotationThread extends EventEmitter {
 
         // Save annotation on server
         return this.api
+            // $FlowFixMe
             .create(annotationData)
             .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
             .catch((error) => this.handleThreadSaveError(error, id));
@@ -251,7 +263,7 @@ class AnnotationThread extends EventEmitter {
      * @param {Object} data - Annotation data
      * @return {void}
      */
-    updateAnnotationThread(data) {
+    updateAnnotationThread(data: Object) {
         if (!this.threadNumber) {
             this.id = data.id;
             this.threadNumber = data.threadNumber;
@@ -283,7 +295,7 @@ class AnnotationThread extends EventEmitter {
      * @param {boolean} [useServer] - Whether or not to delete on server, default true
      * @return {Promise} - Annotation delete promise
      */
-    delete(annotationToRemove, useServer = true) {
+    delete(annotationToRemove: Object, useServer: boolean = true): Promise<any> {
         // Ignore if no corresponding annotation exists in thread or user doesn't have permissions
         const { id: annotationIDToRemove } = annotationToRemove;
         const annotation =
@@ -334,7 +346,7 @@ class AnnotationThread extends EventEmitter {
      * @param {string} annotationIDToRemove Annotation ID to remove
      * @return {void}
      */
-    cleanupAnnotationOnDelete(annotationIDToRemove) {
+    cleanupAnnotationOnDelete(annotationIDToRemove: string) {
         // Delete matching comment from annotation
         this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
@@ -364,17 +376,13 @@ class AnnotationThread extends EventEmitter {
      * @param {Error} error Delete error
      * @return {void}
      */
-    deleteErrorHandler(error) {
+    deleteErrorHandler(error: Error) {
         // Broadcast error
         this.emit(THREAD_EVENT.deleteError);
         /* eslint-disable no-console */
         console.error(THREAD_EVENT.deleteError, error.toString());
         /* eslint-enable no-console */
     }
-
-    //--------------------------------------------------------------------------
-    // Abstract
-    //--------------------------------------------------------------------------
 
     /**
      * Cancels the first comment on the thread
@@ -390,15 +398,10 @@ class AnnotationThread extends EventEmitter {
      */
     show() {}
 
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
-
     /**
      * Sets up the thread. Creates HTML for annotation indicator, sets
      * appropriate dialog, and binds event listeners.
      *
-     * @protected
      * @return {void}
      */
     setup() {
@@ -414,7 +417,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Sets up indicator element.
      *
-     * @protected
      * @return {void}
      */
     setupElement() {
@@ -425,7 +427,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Binds DOM event listeners for the thread.
      *
-     * @protected
      * @return {void}
      */
     bindDOMListeners() {
@@ -440,7 +441,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Unbinds DOM event listeners for the thread.
      *
-     * @protected
      * @return {void}
      */
     unbindDOMListeners() {
@@ -464,7 +464,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Destroys mobile and pending/pending-active annotation threads
      *
-     * @protected
      * @return {void}
      */
     cancelUnsavedAnnotation = () => {
@@ -477,17 +476,13 @@ class AnnotationThread extends EventEmitter {
         this.destroy();
     };
 
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
-
     /**
      * Scroll annotation into the center of the viewport, if possible
      *
-     * @private
      * @return {void}
      */
     scrollIntoView() {
+        // $FlowFixMe
         const yPos = parseInt(this.location.y, 10);
         this.scrollToPage();
         this.centerAnnotation(this.annotatedElement.scrollTop + yPos);
@@ -496,7 +491,6 @@ class AnnotationThread extends EventEmitter {
     /**
      * Scroll to the annotation's page
      *
-     * @private
      * @return {void}
      */
     scrollToPage() {
@@ -512,15 +506,15 @@ class AnnotationThread extends EventEmitter {
     /**
      * Adjust page scroll position so annotation is centered in viewport
      *
-     * @private
      * @param {number} scrollVal - scroll value to adjust so annotation is
      centered in the viewport
      * @return {void}
      */
-    centerAnnotation(scrollVal) {
+    centerAnnotation(scrollVal: number) {
         if (scrollVal < this.annotatedElement.scrollHeight) {
             this.annotatedElement.scrollTop = scrollVal;
         } else {
+            // $FlowFixMe
             this.annotatedElement.scrollTop = this.annotatedElement.scrollBottom;
         }
     }
@@ -529,12 +523,11 @@ class AnnotationThread extends EventEmitter {
      * Update a temporary annotation with the annotation saved on the backend. Set the threadNumber if it has not
      * yet been set. Propogate the threadnumber to an attached dialog if applicable.
      *
-     * @private
      * @param {string} tempAnnotationID - The locally stored placeholder for the server validated annotation
      * @param {Annotation} savedAnnotation - The annotation determined by the backend to be used as the source of truth
      * @return {void}
      */
-    updateTemporaryAnnotation(tempAnnotationID, savedAnnotation) {
+    updateTemporaryAnnotation(tempAnnotationID: string, savedAnnotation: Annotation) {
         if (this.comments.length > 0) {
             this.comments = this.comments.filter(({ id }) => id !== tempAnnotationID);
         }
@@ -556,10 +549,9 @@ class AnnotationThread extends EventEmitter {
     /**
      * Creates the HTML for the annotation indicator.
      *
-     * @private
      * @return {HTMLElement} HTML element
      */
-    createElement() {
+    createElement(): HTMLElement {
         const indicatorEl = document.createElement('button');
         indicatorEl.classList.add(CLASS_ANNOTATION_POINT_MARKER);
         indicatorEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_INDICATOR);
@@ -570,12 +562,11 @@ class AnnotationThread extends EventEmitter {
     /**
      * Create an annotation data object to pass to annotation service.
      *
-     * @private
-     * @param {string} type - Type of annotation
+     * @param {AnnotationType} type - Type of annotation
      * @param {string} message - Annotation text
      * @return {Object} Annotation data
      */
-    createAnnotationData(type, message) {
+    createAnnotationData(type: AnnotationType, message: string) {
         return {
             item: {
                 id: this.fileVersionId,
@@ -594,21 +585,20 @@ class AnnotationThread extends EventEmitter {
     /**
      * Creates a new point annotation
      *
-     * @private
      * @param {string} message - Annotation message string
      * @return {void}
      */
-    createAnnotation(message) {
+    createAnnotation(message: string) {
         this.save(TYPES.point, message);
     }
 
     /**
      * Regenerate the coordinates of the rectangular boundary on the saved thread for inserting into the rtree
      *
-     * @private
      * @return {void}
      */
     regenerateBoundary() {
+        // $FlowFixMe
         if (!this.location || !this.location.x || !this.location.y) {
             return;
         }
@@ -622,12 +612,11 @@ class AnnotationThread extends EventEmitter {
     /**
      * Deletes the temporary annotation if the annotation failed to save on the server
      *
-     * @private
      * @param {error} error - error thrown while saving the annotation
      * @param {string} tempAnnotationID - ID of temporary annotation to be updated with annotation from server
      * @return {void}
      */
-    handleThreadSaveError(error, tempAnnotationID) {
+    handleThreadSaveError(error: Error, tempAnnotationID: string) {
         // Remove temporary annotation
         this.delete({ id: tempAnnotationID }, /* useServer */ false);
 
@@ -643,20 +632,22 @@ class AnnotationThread extends EventEmitter {
      * Generate threadData with relevant information to be emitted with an
      * annotation thread event
      *
-     * @private
      * @return {Object} threadData - Annotation event thread data
      */
-    getThreadEventData() {
+    getThreadEventData(): Object {
         const threadData = {
             type: this.type,
             threadID: this.threadID
         };
 
+        // $FlowFixMe
         if (this.api.user && this.api.user.id > 0) {
+            // $FlowFixMe
             threadData.userId = this.api.user.id;
         }
 
         if (this.threadNumber) {
+            // $FlowFixMe
             threadData.threadNumber = this.threadNumber;
         }
 
@@ -666,13 +657,12 @@ class AnnotationThread extends EventEmitter {
     /**
      * Emits a generic viewer event
      *
-     * @private
      * @emits viewerevent
      * @param {string} event - Event name
      * @param {Object} eventData - Event data
      * @return {void}
      */
-    emit(event, eventData) {
+    emit(event: Event, eventData: Object) {
         const threadData = this.getThreadEventData();
         super.emit(event, { data: threadData, eventData });
         super.emit('threadevent', { event, data: threadData, eventData });
@@ -681,11 +671,10 @@ class AnnotationThread extends EventEmitter {
     /**
      * Keydown handler for dialog.
      *
-     * @private
      * @param {Event} event DOM event
      * @return {void}
      */
-    keydownHandler(event) {
+    keydownHandler(event: Event) {
         event.stopPropagation();
 
         const key = util.decodeKeydown(event);
@@ -702,7 +691,6 @@ class AnnotationThread extends EventEmitter {
      * Show/hide the top portion of the annotations icon based on if the
      * entire dialog is flipped
      *
-     * @private
      * @return {void}
      */
     toggleFlippedThreadEl() {

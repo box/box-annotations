@@ -1,3 +1,4 @@
+// @flow
 import DocAnnotator from './doc/DocAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
 import DrawingModeController from './controllers/DrawingModeController';
@@ -46,13 +47,22 @@ const ANNOTATOR_TYPE_CONTROLLERS = {
 };
 
 class BoxAnnotations {
+    /** @param {Array<Object>} */
+    annotators: Array<Object>;
+
+    /** @param {Object} */
+    viewerOptions: Object;
+
+    /** @param {Object} */
+    viewerConfig: Object;
+
     /**
      * [constructor]
      *
      * @param {Object} viewerOptions - Viewer-specific annotator options
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(viewerOptions = {}) {
+    constructor(viewerOptions: Object = {}) {
         this.annotators = ANNOTATORS;
         this.viewerOptions = viewerOptions;
     }
@@ -73,7 +83,7 @@ class BoxAnnotations {
      * @param {Array} [disabledAnnotators] List of disabled annotators
      * @return {Object} Annotator for the viewer
      */
-    getAnnotatorsForViewer(viewerName, disabledAnnotators = []) {
+    getAnnotatorsForViewer(viewerName: string, disabledAnnotators: Array<Object> = []) {
         const annotators = this.getAnnotators();
         const annotatorConfig = annotators.find(
             (annotator) => !disabledAnnotators.includes(annotator.NAME) && annotator.VIEWER.includes(viewerName)
@@ -87,11 +97,10 @@ class BoxAnnotations {
      * Instantiates and attaches controller instances to an annotator configuration. Does nothing if controller
      * has already been instantiated or the config is invalid.
      *
-     * @private
      * @param {Object} annotatorConfig The config where annotation type controller instances should be attached
      * @return {void}
      */
-    instantiateControllers(annotatorConfig) {
+    instantiateControllers(annotatorConfig: Object = {}) {
         if (!annotatorConfig || !annotatorConfig.TYPE || annotatorConfig.CONTROLLERS) {
             return;
         }
@@ -113,11 +122,10 @@ class BoxAnnotations {
      * Determines the supported annotation types based on the viewer configurations
      * or passed in options if provided, otherwise using the viewer defaults
      *
-     * @private
      * @param {Object} annotatorConfig The config where annotation type controller instances should be attached
      * @return {void}
      */
-    getAnnotatorTypes(annotatorConfig) {
+    getAnnotatorTypes(annotatorConfig: Object) {
         if (this.viewerOptions && this.viewerOptions[annotatorConfig.NAME]) {
             // Sets supported annotation types based on passed in options
             const options = this.viewerOptions[annotatorConfig.NAME];
@@ -152,7 +160,7 @@ class BoxAnnotations {
      * @param {Array} [disabledAnnotators] List of disabled annotators
      * @return {Object|null} A copy of the annotator to use, if available
      */
-    determineAnnotator(options, viewerConfig = {}, disabledAnnotators = []) {
+    determineAnnotator(options: Object, viewerConfig: Object = {}, disabledAnnotators: Array<Object> = []) {
         let modifiedAnnotator = null;
 
         this.viewerConfig = viewerConfig;

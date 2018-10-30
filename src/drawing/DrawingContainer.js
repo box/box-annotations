@@ -1,17 +1,10 @@
+// @flow
 class DrawingContainer {
-    //--------------------------------------------------------------------------
-    // Typedef
-    //--------------------------------------------------------------------------
+    /** @param {number} */
+    undonumber: number;
 
-    /**
-     * @typedef {Object} AvailableItemData
-     * @property {Number} undonumber of undoable items
-     * @property {Number} redonumber of redoable items
-     */
-
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
+    /** @param {number} */
+    redonumber: number;
 
     /** @property {Array} - The item history stack for undo operations */
     undoStack = [];
@@ -32,10 +25,10 @@ class DrawingContainer {
     /**
      * Insert an item into the drawing container. Clears any redoable items.
      *
-     * @param {Object} item - An object to be contained in the data structure.
+     * @param {DrawingPath} item - An object to be contained in the data structure.
      * @return {void}
      */
-    insert(item) {
+    insert(item: DrawingPath) {
         this.undoStack.push(item);
         this.redoStack = [];
     }
@@ -94,9 +87,9 @@ class DrawingContainer {
     /**
      * Retrieve the visible items on the undo stack.
      *
-     * @return {Array} A copy of the undoStack as an array.
+     * @return {Array<DrawingPath>} A copy of the undoStack as an array.
      */
-    getItems() {
+    getItems(): Array<DrawingPath> {
         return this.undoStack.slice();
     }
 
@@ -134,7 +127,7 @@ class DrawingContainer {
      * @param {boolean} [includeHiddenItems] - Whether or not to apply the function to items hidden on the redo stack.
      * @return {void}
      */
-    applyToItems(fn, includeHiddenItems = false) {
+    applyToItems(fn: Function, includeHiddenItems: boolean = false) {
         this.undoStack.forEach(fn);
 
         if (includeHiddenItems) {

@@ -1,3 +1,4 @@
+// @flow
 import Annotator from '../Annotator';
 import * as util from '../util';
 import * as imageUtil from './imageUtil';
@@ -8,12 +9,8 @@ const IMAGE_NODE_NAME = 'img';
 const ANNOTATED_ELEMENT_SELECTOR = '.bp-image, .bp-images-wrapper';
 
 class ImageAnnotator extends Annotator {
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
-
     /** @inheritdoc */
-    getAnnotatedEl(containerEl) {
+    getAnnotatedEl(containerEl: HTMLElement): ?HTMLElement {
         return containerEl.querySelector(ANNOTATED_ELEMENT_SELECTOR);
     }
 
@@ -23,11 +20,10 @@ class ImageAnnotator extends Annotator {
      * point annotations, we return the (x, y) coordinates for the point
      * with the top left corner of the image as the origin.
      *
-     * @override
      * @param {Event} event - DOM event
-     * @return {Object|null} Location object
+     * @return {Location|null} Location object
      */
-    getLocationFromEvent = (event) => {
+    getLocationFromEvent = (event: EventEmitter): ?Location => {
         let location = null;
 
         let clientEvent = event;
@@ -81,7 +77,7 @@ class ImageAnnotator extends Annotator {
     };
 
     /** @inheritdoc */
-    scaleAnnotations(data) {
+    scaleAnnotations(data: Object) {
         this.setScale(data.scale);
         this.rotateAnnotations(data.rotationAngle, data.pageNum);
     }
@@ -89,12 +85,11 @@ class ImageAnnotator extends Annotator {
     /**
      * Rotates annotations. Hides point annotation mode button if rotated
      *
-     * @private
      * @param {number} [rotationAngle] - current angle image is rotated
      * @param {number} [pageNum] - Page number
      * @return {void}
      */
-    rotateAnnotations(rotationAngle = 0, pageNum = 0) {
+    rotateAnnotations(rotationAngle: number = 0, pageNum: number = 0) {
         // Only render a specific page's annotations unless no page number
         // is specified
         if (pageNum) {

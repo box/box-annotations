@@ -1,3 +1,4 @@
+// @flow
 import DrawingPath from '../drawing/DrawingPath';
 import DrawingThread from '../drawing/DrawingThread';
 import {
@@ -13,25 +14,18 @@ import { createLocation, getScale, repositionCaret, findElement, getPageEl, shou
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
-    pageEl;
+    pageEl: HTMLElement;
 
     /** @property {boolean} - Whether or not to wait until next frame to create another point in the drawing */
-    isBuffering = false;
+    isBuffering: boolean = false;
 
-    //--------------------------------------------------------------------------
-    // Public
-    //--------------------------------------------------------------------------
-    /**
-     * [constructor]
-     *
-     * @inheritdoc
-     * @param {AnnotationThreadData} data - Data for constructing thread
-     * @return {DocDrawingThread} Drawing annotation thread instance
-     */
-    constructor(data) {
+    /** @inheritdoc */
+    constructor(data: Object) {
         super(data);
 
+        // $FlowFixMe
         this.onPageChange = this.onPageChange.bind(this);
+        // $FlowFixMe
         this.reconstructBrowserCoordFromLocation = this.reconstructBrowserCoordFromLocation.bind(this);
     }
 
@@ -47,11 +41,10 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Handle a pointer movement
      *
-     * @public
-     * @param {Object} location - The location information of the pointer
+     * @param {Location} location - The location information of the pointer
      * @return {void}
      */
-    handleMove(location) {
+    handleMove(location: Location) {
         if (this.drawingFlag !== DRAW_STATES.drawing || !location) {
             return;
         }
@@ -76,11 +69,10 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Start a drawing stroke
      *
-     * @public
-     * @param {Object} location - The location information of the pointer
+     * @param {Location} location - The location information of the pointer
      * @return {void}
      */
-    handleStart(location) {
+    handleStart(location: Location) {
         if (!location) {
             return;
         }
@@ -117,7 +109,6 @@ class DocDrawingThread extends DrawingThread {
     /**
      * End a drawing stroke
      *
-     * @public
      * @return {void}
      */
     handleStop() {
@@ -149,18 +140,16 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Determine if the drawing in progress if a drawing goes to a different page
      *
-     * @public
-     * @param {Object} location - The current event location information
+     * @param {Location} location - The current event location information
      * @return {boolean} Whether or not the thread page has changed
      */
-    hasPageChanged(location) {
+    hasPageChanged(location: Location) {
         return !!(location && !!this.location && !!this.location.page && this.location.page !== location.page);
     }
 
     /**
      * Display the document drawing thread. Will set the drawing context if the scale has changed since the last show.
      *
-     * @public
      * @return {void}
      */
     show() {
@@ -193,7 +182,6 @@ class DocDrawingThread extends DrawingThread {
      * Prepare the pending drawing canvas if the scale factor has changed since the last render. Will do nothing if
      * the thread has not been assigned a page.
      *
-     * @private
      * @return {void}
      */
     checkAndHandleScaleUpdate() {
@@ -214,11 +202,10 @@ class DocDrawingThread extends DrawingThread {
     /**
      * End the current drawing and emit a page changed event
      *
-     * @private
      * @param {Object} location - The location information indicating the page has changed.
      * @return {void}
      */
-    onPageChange(location) {
+    onPageChange(location: Location) {
         this.handleStop();
         this.emit('softcommit', { location });
     }
@@ -227,11 +214,10 @@ class DocDrawingThread extends DrawingThread {
      * Requires a DocDrawingThread to have been started with DocDrawingThread.start(). Reconstructs a browserCoordinate
      * relative to the dimensions of the DocDrawingThread page element.
      *
-     * @private
-     * @param {Location} documentLocation - The location coordinate relative to the document
+     * @param {Coordinates} documentLocation - The location coordinate relative to the document
      * @return {Location} The location coordinate relative to the browser
      */
-    reconstructBrowserCoordFromLocation(documentLocation) {
+    reconstructBrowserCoordFromLocation(documentLocation: Coordinates): Location {
         const reconstructedLocation = createLocation(documentLocation.x, documentLocation.y, this.location.dimensions);
         const [xNew, yNew] = getBrowserCoordinatesFromLocation(reconstructedLocation, this.pageEl);
         return createLocation(xNew, yNew);
@@ -241,7 +227,6 @@ class DocDrawingThread extends DrawingThread {
      * Choose the context to draw on. If the state of the thread is pending, select the in-progress context,
      * otherwise select the concrete context.
      *
-     * @private
      * @return {void}
      */
     selectContext() {
@@ -262,11 +247,10 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Retrieve the rectangle upper left coordinate along with its width and height
      *
-     * @private
      * @return {Array|null} The an array of length 4 with the first item being the x coordinate, the second item
      *                      being the y coordinate, and the 3rd/4th items respectively being the width and height
      */
-    getBrowserRectangularBoundary() {
+    getBrowserRectangularBoundary(): ?Array<number> {
         if (!this.location || !this.location.dimensions || !this.pageEl) {
             return null;
         }
@@ -284,11 +268,10 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Retrieve the lower right corner of the drawing annotation
      *
-     * @private
-     * @return {Array|null} An array of length 2 with the first item being the x coordinate, the second item
+     * @return {Coordinates} An array of length 2 with the first item being the x coordinate, the second item
      *                      being the y coordinate
      */
-    getLowerRightCornerOfBoundary() {
+    getLowerRightCornerOfBoundary(): ?Array<number> {
         if (!this.location || !this.location.dimensions || !this.pageEl) {
             return null;
         }
@@ -304,7 +287,6 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Draw the boundary on a drawing thread that has been saved
      *
-     * @protected
      * @return {void}
      */
     drawBoundary = () => {
@@ -335,7 +317,6 @@ class DocDrawingThread extends DrawingThread {
     /**
      * Position the drawing dialog with an x,y browser coordinate
      *
-     * @protected
      * @return {void}
      */
     position = () => {

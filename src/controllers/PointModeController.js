@@ -88,7 +88,6 @@ class PointModeController extends AnnotationModeController {
      * Event handler for adding a point annotation. Creates a point annotation
      * thread at the clicked location.
      *
-     * @protected
      * @param {Event} event - DOM event
      * @return {void}
      */

@@ -5,9 +5,12 @@
  */
 /* eslint-disable no-use-before-define */
 import type { $AxiosError, Axios, CancelTokenSource } from 'axios';
+import EventEmitter from 'events';
 import AnnotationThread from '../src/AnnotationThread';
 import DrawingThread from '../src/draw/DrawingThread';
 import DocHighlightThread from '../src/doc/DocHighlightThread';
+import DrawingPath from '../src/drawing/DrawingPath';
+import CreateHighlightDialog from '../src/doc/CreateHighlightDialog';
 
 type StringMap = { [string]: string };
 type AnnotationPermissions = {
@@ -47,8 +50,8 @@ type Path = {
 type DrawingPaths = Array<Path>;
 
 type Dimensions = {
-    width: number,
-    height: number
+    x: number,
+    y: number
 }
 
 type LocationInfo = {
@@ -98,13 +101,13 @@ type BoxFileVersion = {
 };
 
 type Annotation = {
-    id: string,
+    id?: string,
     type: AnnotationType,
-    location: Location,
+    location?: Location,
     threadNumber?: string,
     comments: Comments,
-    createdBy: User, 
-    createdAt: string,
+    createdBy?: User, 
+    createdAt?: string,
     canAnnotate: boolean,
     canDelete: boolean
 }

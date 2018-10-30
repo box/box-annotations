@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import noop from 'lodash/noop';
 import { render, unmountComponentAtNode } from 'react-dom';
@@ -31,22 +32,19 @@ class CreateHighlightDialog extends EventEmitter {
     };
 
     /** @property {boolean} - Whether or not we're on a mobile device. */
-    isMobile;
+    isMobile: boolean;
 
     /** @property {boolean} - Whether or not we support touch. */
-    hasTouch;
+    hasTouch: boolean;
 
     /** @property {boolean} - Whether or not to allow plain highlight interaction. */
-    allowHighlight;
+    allowHighlight: boolean;
 
     /** @property {boolean} - Whether or not to allow comment interactions. */
-    allowComment;
-
-    /** @property {Object} - Translated strings for dialog */
-    localized;
+    allowComment: boolean;
 
     /** @property {HTMLElement} - Preview container DOM element */
-    container;
+    container: HTMLElement;
 
     /**
      * A dialog used to create plain and comment highlights.
@@ -59,13 +57,12 @@ class CreateHighlightDialog extends EventEmitter {
      * @param {boolean} [config.isMobile] - True if on a mobile device.
      * @return {CreateHighlightDialog} CreateHighlightDialog instance
      */
-    constructor(annotatedElement, config = {}) {
+    constructor(annotatedElement: HTMLElement, config: Object = {}) {
         super();
 
         this.annotatedElement = annotatedElement;
         this.container = config.container;
         this.hasTouch = !!config.hasTouch || false;
-        this.localized = config.localized;
         this.allowHighlight = config.allowHighlight || false;
         this.allowComment = config.allowComment || false;
         this.headerHeight = config.headerHeight;
@@ -93,18 +90,19 @@ class CreateHighlightDialog extends EventEmitter {
     /**
      * Render the popover
      *
-     * @public
      * @param {HTMLElement} selection Current text selection
-     * @param {string} type - highlight type
+     * @param {AnnotationType} type - highlight type
      * @return {void}
      */
-    show(selection, type = TYPES.highlight) {
+    show(selection: HTMLElement, type: AnnotationType = TYPES.highlight) {
         if (!selection) {
             return;
         }
 
         // Select page of first node selected
         this.selection = selection;
+
+        // $FlowFixMe
         this.pageInfo = getPageInfo(this.selection.anchorNode);
         if (!this.pageInfo.pageEl) {
             return;
@@ -126,7 +124,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @param {HTMLElement} pageEl - Page DOM Element
      * @return {void}
      */
-    renderAnnotationPopover = (type = TYPES.highlight) => {
+    renderAnnotationPopover = (type: AnnotationType = TYPES.highlight) => {
         const pageEl = shouldDisplayMobileUI(this.container)
             ? this.container
             : getPageEl(this.annotatedElement, this.pageInfo.page);
@@ -156,7 +154,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @param {Event} event - Mouse event
      * @return {boolean} Whether or not the click event occured over a highlight in the canvas
      */
-    isInHighlight = (event) => {
+    isInHighlight = (event: Event) => {
         if (!this.selection || !this.selection.rangeCount) {
             return false;
         }
@@ -166,15 +164,17 @@ class CreateHighlightDialog extends EventEmitter {
     };
 
     /** @inheritdoc */
-    setPosition(selection) {
+    setPosition(selection: HTMLElement) {
         if (!this.selection || !this.selection.rangeCount) {
             return;
         }
 
+        // $FlowFixMe
         const lastRange = selection.getRangeAt(selection.rangeCount - 1);
         const coords = getDialogCoordsFromRange(lastRange);
 
         // Select page of first node selected
+        // $FlowFixMe
         this.pageInfo = getPageInfo(selection.anchorNode);
         const { pageEl } = this.pageInfo;
         if (!pageEl) {
@@ -243,11 +243,11 @@ class CreateHighlightDialog extends EventEmitter {
     /**
      * Fire an event notifying that the plain highlight button has been clicked.
      *
-     * @param {string} type - Annotation type
+     * @param {AnnotationType} type - Annotation type
      * @param {string} message - Annotation message
      * @return {void}
      */
-    onCreate = (type, message) => {
+    onCreate = (type: AnnotationType, message: String) => {
         if (!message) {
             this.emit(CREATE_EVENT.plain);
             return;

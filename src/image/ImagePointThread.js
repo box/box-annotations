@@ -1,3 +1,4 @@
+// @flow
 import AnnotationThread from '../AnnotationThread';
 import { showElement, shouldDisplayMobileUI, repositionCaret, findElement, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './imageUtil';
@@ -12,15 +13,10 @@ import {
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
-
     /**
      * Gets the popover parent for image point threads. The popover parent
      * should not the image element but rather the annotatedElement
      *
-     * @override
      * @return {HTMLElement} The correct parent based on mobile view or not
      */
     getPopoverParent() {

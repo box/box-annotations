@@ -46,6 +46,8 @@ class FileVersionAPI extends API {
      */
     fetchVersionAnnotations(version: string): Promise<AnnotationMap> {
         this.fileVersionId = version;
+        
+        // $FlowFixMe
         return this.fetchFromMarker({ version, fields: FIELDS }).then(this.createAnnotationMap);
     }
 
@@ -104,7 +106,6 @@ class FileVersionAPI extends API {
     /**
      * Generates a map of thread ID to annotations in thread.
      *
-     * @private
      * @param {AnnotationData[]} annotations - Annotations to generate map from
      * @return {AnnotationMap} Map of thread ID to annotations in that thread
      */

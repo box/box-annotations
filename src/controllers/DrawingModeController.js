@@ -103,7 +103,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Prevents click events from triggering other annotation types
      *
-     * @protected
      * @param {Event} event - Mouse event
      * @return {void}
      */
@@ -117,7 +116,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Cancels drawing annotation
      *
-     * @protected
      * @return {void}
      */
     cancelDrawing(): void {
@@ -131,7 +129,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Posts drawing annotation
      *
-     * @protected
      * @return {void}
      */
     postDrawing(): void {
@@ -145,7 +142,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Undos last drawing
      *
-     * @protected
      * @return {void}
      */
     undoDrawing(): void {
@@ -157,7 +153,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Redos last undone drawing annotation
      *
-     * @protected
      * @return {void}
      */
     redoDrawing(): void {
@@ -365,7 +360,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Selects a drawing thread given a pointer event. Randomly picks one if multiple drawings overlap
      *
-     * @protected
      * @param {Event} event - The event object containing the pointer information
      * @return {DrawingThread} Selected drawing annotation
      */
@@ -405,7 +399,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Deselect a saved and selected thread
      *
-     * @private
      * @return {void}
      */
     removeSelection(): void {
@@ -420,7 +413,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Select the indicated drawing thread. Deletes a drawing thread upon the second consecutive selection
      *
-     * @private
      * @param {DrawingThread} selectedDrawingThread - The drawing thread to select
      * @return {void}
      */
@@ -434,7 +426,6 @@ class DrawingModeController extends AnnotationModeController {
     /**
      * Toggle the undo and redo buttons based on thenumber of actions available
      *
-     * @private
      * @param {number} undoCount - Thenumber of objects that can be undone
      * @param {number} redoCount - Thenumber of objects that can be redone
      * @return {void}

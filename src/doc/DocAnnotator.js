@@ -1,3 +1,4 @@
+// @flow
 import rangy from 'rangy';
 /* eslint-disable no-unused-vars */
 // Workaround for rangy npm issue: https://github.com/timdown/rangy/lib/issues/342
@@ -42,26 +43,38 @@ const ANNOTATION_LAYER_CLASSES = [
 
 class DocAnnotator extends Annotator {
     /** @property {CreateHighlightDialog} - UI used to create new highlight annotations. */
-    createHighlightDialog;
+    createHighlightDialog: ?CreateHighlightDialog;
 
     /** @property {Event} - For delaying creation of highlight quad points and dialog. Tracks the
      * current selection event, made in a previous event. */
-    lastHighlightEvent;
+    lastHighlightEvent: ?Event;
 
     /** @property {Selection} - For tracking diffs in text selection, for mobile highlights creation. */
-    lastSelection;
+    lastSelection: ?HTMLElement;
 
     /** @property {boolean} - True if regular highlights are allowed to be read/written */
-    plainHighlightEnabled;
+    plainHighlightEnabled: boolean;
 
     /** @property {boolean} - True if draw annotations are allowed to be read/written */
-    drawEnabled;
+    drawEnabled: boolean;
 
     /** @property {boolean} - True if comment highlights are allowed to be read/written */
-    commentHighlightEnabled;
+    commentHighlightEnabled: boolean;
 
     /** @property {Function} - Reference to filter function that has been bound TODO(@jholdstock): remove on refactor. */
-    showFirstDialogFilter;
+    showFirstDialogFilter: Function;
+
+    /** @inheritdoc */
+    constructor(options: Object) {
+        super(options);
+
+        // $FlowFixMe
+        this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
+        // $FlowFixMe
+        this.createHighlightThread = this.createHighlightThread.bind(this);
+        // $FlowFixMe
+        this.createPlainHighlight = this.createPlainHighlight.bind(this);
+    }
 
     /**
      * [destructor]
@@ -75,7 +88,9 @@ class DocAnnotator extends Annotator {
         }
 
         if (this.commentHighlightEnabled) {
+            // $FlowFixMe
             this.createHighlightDialog.removeListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
+            // $FlowFixMe
             this.createHighlightDialog.removeListener(CREATE_EVENT.commentPost, this.createHighlightThread);
         }
 
@@ -88,24 +103,15 @@ class DocAnnotator extends Annotator {
     }
 
     /** @inheritdoc */
-    init(initialScale) {
+    init(initialScale: number = 1) {
         super.init(initialScale);
 
         // Allow rangy to highlight this
         this.annotatedElement.id = ID_ANNOTATED_ELEMENT;
     }
 
-    //--------------------------------------------------------------------------
-    // Abstract Implementations
-    //--------------------------------------------------------------------------
-
-    /**
-     * Determines the annotated element in the viewer
-     *
-     * @param {HTMLElement} containerEl Container element for the viewer
-     * @return {HTMLElement} Annotated element in the viewer
-     */
-    getAnnotatedEl(containerEl) {
+    /** @inheritdoc */
+    getAnnotatedEl(containerEl: HTMLElement) {
         return containerEl.querySelector(SELECTOR_PREVIEW_DOC);
     }
 
@@ -117,17 +123,18 @@ class DocAnnotator extends Annotator {
      * the origin. For highlight annotations, we return the PDF quad points
      * as defined by the PDF spec and page the highlight is on.
      *
-     * @override
      * @param {Event} event DOM event
-     * @param {string} annotationType Type of annotation
+     * @param {AnnotationType} annotationType Type of annotation
      * @return {Object|null} Location object
      */
-    getLocationFromEvent = (event, annotationType) => {
+    getLocationFromEvent = (event: Event, annotationType: AnnotationType): ?Location => {
         let location = null;
         const zoomScale = util.getScale(this.annotatedElement);
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
+            
+            // $FlowFixMe
             if (this.hasTouch && event.targetTouches) {
                 if (event.targetTouches.length <= 0) {
                     return location;
@@ -158,7 +165,9 @@ class DocAnnotator extends Annotator {
             const pageWidth = pageDimensions.width;
             const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
             const browserCoordinates = [
+                // $FlowFixMe
                 clientEvent.clientX - pageDimensions.left,
+                // $FlowFixMe
                 clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP
             ];
 
@@ -225,17 +234,17 @@ class DocAnnotator extends Annotator {
             location = { page, quadPoints, dimensions };
         }
 
+        // $FlowFixMe
         return location;
     };
 
     /**
      * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
      *
-     * @override
      * @param {number} pageNum Page number
      * @return {void}
      */
-    renderPage(pageNum) {
+    renderPage(pageNum: number) {
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
         super.renderPage(pageNum);
@@ -248,11 +257,10 @@ class DocAnnotator extends Annotator {
     /**
      * Scales all annotation canvases for a specified page.
      *
-     * @override
      * @param {number} pageNum Page number
      * @return {void}
      */
-    scaleAnnotationCanvases(pageNum) {
+    scaleAnnotationCanvases(pageNum: number) {
         const pageEl = util.getPageEl(this.annotatedElement, pageNum);
 
         ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
@@ -263,15 +271,9 @@ class DocAnnotator extends Annotator {
         });
     }
 
-    //--------------------------------------------------------------------------
-    // Protected
-    //--------------------------------------------------------------------------
-
     /**
      * Annotations setup.
      *
-     * @protected
-     * @override
      * @return {void}
      */
     setupAnnotations() {
@@ -292,14 +294,14 @@ class DocAnnotator extends Annotator {
         });
 
         if (this.commentHighlightEnabled) {
-            this.highlightCurrentSelection = this.highlightCurrentSelection.bind(this);
+            // $FlowFixMe
             this.createHighlightDialog.addListener(CREATE_EVENT.comment, this.highlightCurrentSelection);
-            this.createHighlightThread = this.createHighlightThread.bind(this);
+            // $FlowFixMe
             this.createHighlightDialog.addListener(CREATE_EVENT.commentPost, this.createHighlightThread);
         }
 
         if (this.plainHighlightEnabled) {
-            this.createPlainHighlight = this.createPlainHighlight.bind(this);
+            // $FlowFixMe
             this.createHighlightDialog.addListener(CREATE_EVENT.plain, this.createPlainHighlight);
         }
 
@@ -316,8 +318,6 @@ class DocAnnotator extends Annotator {
     /**
      * Binds DOM event listeners.
      *
-     * @protected
-     * @override
      * @return {void}
      */
     bindDOMListeners() {
@@ -352,8 +352,6 @@ class DocAnnotator extends Annotator {
     /**
      * Unbinds DOM event listeners.
      *
-     * @protected
-     * @override
      * @return {void}
      */
     unbindDOMListeners() {
@@ -389,8 +387,10 @@ class DocAnnotator extends Annotator {
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    clickHandler = (event) => {
+    clickHandler = (event: Event) => {
         let mouseEvent = event;
+
+        // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
         }
@@ -403,7 +403,9 @@ class DocAnnotator extends Annotator {
         // Hide the create dialog if click was not in the popover
         if (
             !this.isCreatingHighlight &&
+            // $FlowFixMe
             this.createHighlightDialog.isVisible &&
+            // $FlowFixMe
             !this.createHighlightDialog.isInHighlight(mouseEvent)
         ) {
             mouseEvent.stopPropagation();
@@ -431,7 +433,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event - Mouse event 
      * @return {void}
      */
-    hideCreateDialog(event) {
+    hideCreateDialog(event: ?Event) {
         if (!this.createHighlightDialog || !event || util.isInDialog(event)) {
             return;
         }
@@ -445,19 +447,16 @@ class DocAnnotator extends Annotator {
      * @param {Event} event - Mouse wheel event
      * @return {void}
      */
-    resetHighlightSelection(event) {
+    resetHighlightSelection(event: ?Event) {
         this.hideCreateDialog(event);
+
+        // $FlowFixMe
         document.getSelection().removeAllRanges();
     }
-
-    //--------------------------------------------------------------------------
-    // Private
-    //--------------------------------------------------------------------------
 
     /**
      * Creates a plain highlight annotation.
      *
-     * @private
      * @return {void}
      */
     createPlainHighlight() {
@@ -468,12 +467,11 @@ class DocAnnotator extends Annotator {
     /**
      * Creates an highlight annotation thread, adds it to in-memory map, and returns it.
      *
-     * @private
      * @param {string} [commentText] If provided, this will save a highlight comment annotation, with commentText
      * being the text as the first comment in the thread.
      * @return {DocHighlightThread} Created doc highlight annotation thread
      */
-    createHighlightThread(commentText) {
+    createHighlightThread(commentText?: string) {
         // Empty string will be passed in if no text submitted in comment
         if (commentText === '' || !this.lastHighlightEvent) {
             return null;
@@ -481,6 +479,7 @@ class DocAnnotator extends Annotator {
 
         const isCreateDialogVisible = this.createHighlightDialog && this.createHighlightDialog.isVisible;
         if (isCreateDialogVisible) {
+            // $FlowFixMe
             this.createHighlightDialog.unmountPopover();
         }
 
@@ -521,11 +520,10 @@ class DocAnnotator extends Annotator {
     /**
      * Handles changes in text selection. Used for mobile highlight creation.
      *
-     * @private
      * @param {Event} event The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onSelectionChange = (event) => {
+    onSelectionChange = (event: Event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -553,6 +551,8 @@ class DocAnnotator extends Annotator {
         // Bail if mid highlight and tapping on the screen
         if (!docUtil.isValidSelection(selection)) {
             this.lastHighlightEvent = null;
+
+            // $FlowFixMe
             this.createHighlightDialog.unmountPopover();
             this.highlighter.removeAllHighlights();
             return;
@@ -576,6 +576,8 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseEvent = event;
+            
+        // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
         }
@@ -586,7 +588,6 @@ class DocAnnotator extends Annotator {
     /**
      * Mode controllers setup.
      *
-     * @protected
      * @return {void}
      */
     setupControllers() {
@@ -609,7 +610,6 @@ class DocAnnotator extends Annotator {
     /**
      * Highlight the current range of text that has been selected.
      *
-     * @private
      * @return {void}
      */
     highlightCurrentSelection() {
@@ -626,12 +626,13 @@ class DocAnnotator extends Annotator {
      * Mousedown handler on annotated element. Also delegates to mousedown
      * handler for each thread.
      *
-     * @private
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightMousedownHandler = (event) => {
+    highlightMousedownHandler = (event: Event) => {
         this.mouseDownEvent = event;
+            
+        // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             this.mouseDownEvent = event.targetTouches[0];
         }
@@ -656,7 +657,6 @@ class DocAnnotator extends Annotator {
      * Returns whether any mode controller is currently creating an
      * annotation thread
      *
-     * @private
      * @return {boolean} Whether any controller has a pending thread
      */
     isCreatingAnnotation() {
@@ -668,6 +668,8 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
+            
+        // $FlowFixMe
         return isPending || this.createHighlightDialog.isVisible;
     }
 
@@ -676,11 +678,10 @@ class DocAnnotator extends Annotator {
      * to highlight click handlers depending on whether mouse moved since
      * mousedown.
      *
-     * @private
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightMouseupHandler = (event) => {
+    highlightMouseupHandler = (event: Event) => {
         this.isCreatingHighlight = false;
 
         if (util.isInAnnotationOrMarker(event, this.container)) {
@@ -692,12 +693,15 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseUpEvent = event;
+            
+        // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseUpEvent = event.targetTouches[0];
         }
 
         const { clientX, clientY } = this.mouseDownEvent;
         const hasMouseMoved =
+            // $FlowFixMe
             (clientX && clientX !== mouseUpEvent.clientX) || (clientY && clientY !== mouseUpEvent.clientY);
 
         // Creating highlights is disabled on mobile for now since the
@@ -715,11 +719,10 @@ class DocAnnotator extends Annotator {
      * If the user adds a comment, the type changes to
      * ANNOTATION_TYPE_HIGHLIGHT_COMMENT.
      *
-     * @private
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightCreateHandler = (event) => {
+    highlightCreateHandler = (event: Event) => {
         event.stopPropagation();
         event.preventDefault();
 
@@ -734,6 +737,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        // $FlowFixMe
         this.createHighlightDialog.show(selection);
         this.lastHighlightEvent = event;
     };
@@ -742,15 +746,15 @@ class DocAnnotator extends Annotator {
      * Highlight click handler. Delegates click event to click handlers for
      * threads on the page.
      *
-     * @private
      * @param {Event} event DOM event
      * @return {void}
      */
-    highlightClickHandler(event) {
+    highlightClickHandler(event: Event) {
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
         }
-
+            
+        // $FlowFixMe
         if (this.createHighlightDialog.isVisible) {
             return true;
         }
@@ -788,12 +792,11 @@ class DocAnnotator extends Annotator {
     /**
      * Delegates click event to click handlers for threads on the page.
      *
-     * @private
      * @param {Event} event Mouse event
      * @param {AnnotationThread} thread Highlight thread to check
      * @return {void}
      */
-    clickThread = (event, thread) => {
+    clickThread = (event: Event, thread: AnnotationThread) => {
         if (thread.state === STATES.pending) {
             // Destroy any pending highlights on click outside the highlight
             if (thread.type === TYPES.point) {
@@ -820,7 +823,6 @@ class DocAnnotator extends Annotator {
     /**
      * Show normal cursor instead of text cursor.
      *
-     * @private
      * @return {void}
      */
     useDefaultCursor() {
@@ -830,7 +832,6 @@ class DocAnnotator extends Annotator {
     /**
      * Use text cursor.
      *
-     * @private
      * @return {void}
      */
     removeDefaultCursor() {
@@ -843,11 +844,10 @@ class DocAnnotator extends Annotator {
      * the highlighter's removeHighlights since the highlight could possibly
      * not be a true Rangy highlight object.
      *
-     * @private
      * @param {Object} highlight Highlight to delete.
      * @return {void}
      */
-    removeRangyHighlight(highlight) {
+    removeRangyHighlight(highlight: Object) {
         const { highlights } = this.highlighter;
         if (!Array.isArray(highlights)) {
             return;
@@ -863,13 +863,12 @@ class DocAnnotator extends Annotator {
     /**
      * Handle events emitted by the annotation service
      *
-     * @private
      * @param {Object} [data] Annotation service event data
      * @param {string} [data.event] Annotation service event
      * @param {string} [data.data] Annotation event data
      * @return {void}
      */
-    handleControllerEvents(data) {
+    handleControllerEvents(data: Object) {
         switch (data.event) {
             case CONTROLLER_EVENT.toggleMode:
                 this.resetHighlightSelection(data.event);
@@ -888,12 +887,12 @@ class DocAnnotator extends Annotator {
     /**
      * For filtering out and only showing the first thread in a list of threads.
      *
-     * @private
+
      * @param {Object} thread The annotation thread to either hide or show
      * @param {number} index The index of the annotation thread
      * @return {void}
      */
-    showFirstDialogFilter(thread, index) {
+    showFirstDialogFilter(thread: AnnotationThread, index: number) {
         if (index === 0) {
             thread.show();
         } else {

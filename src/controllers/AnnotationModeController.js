@@ -267,7 +267,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Bind the mode listeners and store each handler for future unbinding
      *
-     * @public
      * @return {void}
      */
     bindListeners(): void {
@@ -287,7 +286,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Unbind the previously bound mode listeners
      *
-     * @public
      * @return {void}
      */
     unbindListeners(): void {
@@ -370,7 +368,7 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Unregister a previously registered thread
      *
-     * @public
+     * 
      * @param {AnnotationThread} thread - The thread to unregister with the controller
      * @param {Object} annotation - The annotation with comments to register with the controller
      * @return {void}
@@ -388,7 +386,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Apply predicate method to every thread on the specified page
      *
-     * @private
      * @param {Function} func Predicate method to apply on threads
      * @param {string} pageNum Page number
      * @return {void}
@@ -405,7 +402,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Apply predicate method to every thread on the entire file
      *
-     * @private
      * @param {Function} func Predicate method to apply on threads
      * @return {void}
      */
@@ -416,7 +412,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Gets thread specified by threadID
      *
-     * @private
      * @param {string} [threadID] - Thread ID
      * @param {string} [pageNum] - Optional page number
      * @return {AnnotationThread} Annotation thread specified by threadID
@@ -466,7 +461,7 @@ class AnnotationModeController extends EventEmitter {
 
     /**
      * Clean up any selected annotations
-     * @protected
+     * 
      * @return {void}
      */
     removeSelection(): void {}
@@ -474,7 +469,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Set up and return the necessary handlers for the annotation mode
      *
-     * @protected
      * @return {Array} An array where each element is an object containing the object that will emit the event,
      *                 the type of events to listen for, and the callback
      */
@@ -483,7 +477,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Handles annotation thread events and emits them to the viewer
      *
-     * @private
      * @param {AnnotationThread} thread - The thread that emitted the event
      * @param {Object} [data] - Annotation thread event data
      * @param {string} [data.event] - Annotation thread event
@@ -537,7 +530,6 @@ class AnnotationModeController extends EventEmitter {
      * Creates a handler description object and adds its to the internal handler container.
      * Useful for setupAndGetHandlers.
      *
-     * @protected
      * @param {HTMLElement} element - The element to bind the listener to
      * @param {Array|string} type - An array of event types to listen for or the event name to listen for
      * @param {Function} handlerFn - The callback to be invoked when the element emits a specified eventname
@@ -565,7 +557,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Setups the header for the annotation mode
      *
-     * @protected
      * @param {HTMLElement} container - Container element
      * @param {HTMLElement} header - Header to add to DOM
      * @return {void}
@@ -578,7 +569,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Renders annotations from memory.
      *
-     * @private
      * @return {void}
      */
     render(): void {
@@ -592,7 +582,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Renders annotations from memory for a specified page.
      *
-     * @private
      * @param {string} pageNum - Page number
      * @return {void}
      */
@@ -626,7 +615,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Destroys pending threads.
      *
-     * @private
      * @return {boolean} Whether or not any pending threads existed on the
      * current file
      */
@@ -650,7 +638,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Find the intersecting threads given a pointer event
      *
-     * @protected
      * @param {Event} event The event object containing the pointer information
      * @param {PointLocationInfo} location Annotation location object
      * @return {Array<AnnotationThread>} Array of intersecting annotation threads
@@ -684,7 +671,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Handle events emitted by the annotation service
      *
-     * @private
      * @param {Object} [data] - Annotation service event data
      * @param {Event} [data.event] - Annotation service event
      * @param {Object} [data.data] -
@@ -721,7 +707,6 @@ class AnnotationModeController extends EventEmitter {
     /**
      * Emits a generic annotator event
      *
-     * @private
      * @emits annotatorevent
      * @param {string} event - Event name
      * @param {Object} [data] - Event data
