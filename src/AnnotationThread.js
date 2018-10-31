@@ -30,7 +30,7 @@ class AnnotationThread extends EventEmitter {
     fileVersionId: string;
     
     /** @param {Location} */
-    location: Location;
+    location: ?Location;
     
     /** @param {string} */
     threadID: ?string;
@@ -163,6 +163,7 @@ class AnnotationThread extends EventEmitter {
     getPopoverParent() {
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
+            // $FlowFixMe
             : util.getPageEl(this.annotatedElement, this.location.page);
     }
 
@@ -172,7 +173,7 @@ class AnnotationThread extends EventEmitter {
      * @param {Event} event - Mouse event
      * @return {void}
      */
-    renderAnnotationPopover(event: Event = null) {
+    renderAnnotationPopover(event: ?Event = null) {
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -662,7 +663,7 @@ class AnnotationThread extends EventEmitter {
      * @param {Object} eventData - Event data
      * @return {void}
      */
-    emit(event: Event, eventData: Object) {
+    emit(event: Event, eventData: ?Object) {
         const threadData = this.getThreadEventData();
         super.emit(event, { data: threadData, eventData });
         super.emit('threadevent', { event, data: threadData, eventData });
