@@ -132,7 +132,11 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     postDrawing(): void {
-        if (this.currentThread && this.currentThread.state === STATES.pending) {
+        if (
+            this.currentThread &&
+            this.currentThread.state === STATES.pending &&
+            this.currentThread.pathContainer.length > 0
+        ) {
             this.currentThread.save(TYPES.draw);
         }
 
