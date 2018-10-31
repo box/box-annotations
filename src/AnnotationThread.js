@@ -22,25 +22,25 @@ class AnnotationThread extends EventEmitter {
 
     /** @param {Object} */
     annotations: Object;
-    
+
     /** @param {AnnotationAPI} */
     api: AnnotationAPI;
-    
+
     /** @param {string} */
     fileVersionId: string;
-    
+
     /** @param {Location} */
     location: ?Location;
-    
+
     /** @param {string} */
     threadID: ?string;
-    
+
     /** @param {string} */
     threadNumber: string;
-    
+
     /** @param {AnnotationType} */
     type: AnnotationType;
-    
+
     /** @param {boolean} */
     canComment: boolean;
 
@@ -121,9 +121,9 @@ class AnnotationThread extends EventEmitter {
             this.element = null;
         }
 
-        if (this.state !== STATES.pending) {
-            this.emit(THREAD_EVENT.threadDelete);
-        }
+        // $FlowFixMe
+        const { page } = this.location;
+        this.emit(THREAD_EVENT.render, { page });
     }
 
     /**
@@ -147,7 +147,7 @@ class AnnotationThread extends EventEmitter {
 
     /**
      * Positions the annotation popover
-     * 
+     *
      * @return {void}
      */
     position = () => {
@@ -157,14 +157,14 @@ class AnnotationThread extends EventEmitter {
 
     /**
      * Returns the parent element for the annotation popover
-     * 
+     *
      * @return {HTMLElement} Parent element for the annotation popover
      */
     getPopoverParent() {
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
-            // $FlowFixMe
-            : util.getPageEl(this.annotatedElement, this.location.page);
+            : // $FlowFixMe
+            util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
@@ -251,16 +251,18 @@ class AnnotationThread extends EventEmitter {
         this.renderAnnotationPopover();
 
         // Save annotation on server
-        return this.api
-            // $FlowFixMe
-            .create(annotationData)
-            .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
-            .catch((error) => this.handleThreadSaveError(error, id));
+        return (
+            this.api
+                // $FlowFixMe
+                .create(annotationData)
+                .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
+                .catch((error) => this.handleThreadSaveError(error, id))
+        );
     }
 
     /**
      * Update the annotation thread instance with annotation data/comments
-     * 
+     *
      * @param {Object} data - Annotation data
      * @return {void}
      */
@@ -353,7 +355,6 @@ class AnnotationThread extends EventEmitter {
 
         if (this.canDelete && this.comments.length <= 0) {
             // If this annotation was the last one in the thread, destroy the thread
-            this.destroy();
             this.threadID = null;
         } else {
             // Otherwise, display annotation with deleted comment
@@ -378,6 +379,12 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteErrorHandler(error: Error) {
+        // $FlowFixMe
+        const { page } = this.location;
+
+        // Re-render page
+        this.emit(THREAD_EVENT.render, { page });
+
         // Broadcast error
         this.emit(THREAD_EVENT.deleteError);
         /* eslint-disable no-console */

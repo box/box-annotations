@@ -393,7 +393,7 @@ class Annotator extends EventEmitter {
         thread.renderAnnotationPopover();
         thread.save(TYPES.point, commentText);
 
-        this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
+        this.emit(THREAD_EVENT.save, thread.getThreadEventData());
         return thread;
     }
 

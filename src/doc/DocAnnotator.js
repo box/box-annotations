@@ -133,7 +133,7 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            
+
             // $FlowFixMe
             if (this.hasTouch && event.targetTouches) {
                 if (event.targetTouches.length <= 0) {
@@ -383,7 +383,7 @@ class DocAnnotator extends Annotator {
 
     /**
      * Handles click events when not in an annotation mode
-     * 
+     *
      * @param {Event} event - Mouse event
      * @return {void}
      */
@@ -428,9 +428,9 @@ class DocAnnotator extends Annotator {
     };
 
     /**
-     * Hides the create highlight dialog 
-     * 
-     * @param {Event} event - Mouse event 
+     * Hides the create highlight dialog
+     *
+     * @param {Event} event - Mouse event
      * @return {void}
      */
     hideCreateDialog(event: ?Event) {
@@ -513,7 +513,7 @@ class DocAnnotator extends Annotator {
 
         thread.state = STATES.active;
         thread.save(highlightType, commentText);
-        this.emit(THREAD_EVENT.threadSave, thread.getThreadEventData());
+        this.emit(THREAD_EVENT.save, thread.getThreadEventData());
         return thread;
     }
 
@@ -576,7 +576,7 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
@@ -631,7 +631,7 @@ class DocAnnotator extends Annotator {
      */
     highlightMousedownHandler = (event: Event) => {
         this.mouseDownEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             this.mouseDownEvent = event.targetTouches[0];
@@ -668,7 +668,7 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
-            
+
         // $FlowFixMe
         return isPending || this.createHighlightDialog.isVisible;
     }
@@ -693,7 +693,7 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseUpEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseUpEvent = event.targetTouches[0];
@@ -753,7 +753,7 @@ class DocAnnotator extends Annotator {
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
         }
-            
+
         // $FlowFixMe
         if (this.createHighlightDialog.isVisible) {
             return true;
