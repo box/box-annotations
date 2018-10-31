@@ -17,12 +17,11 @@ import {
 } from '../constants';
 
 class DocHighlightThread extends AnnotationThread {
-    /**
-     * Cached page element for the document.
-     *
-     * @property {HTMLElement}
-     */
-    pageEl;
+    /** @property {Location} */
+    location: ?Location;
+
+    /** @property {HTMLElement} */
+    pageEl: HTMLElement;
 
     /**
      * [constructor]
@@ -72,6 +71,8 @@ class DocHighlightThread extends AnnotationThread {
      */
     destroy() {
         this.threadID = null;
+
+        // $FlowFixMe
         this.emit(THREAD_EVENT.render, this.location.page);
         super.destroy();
 
@@ -108,9 +109,9 @@ class DocHighlightThread extends AnnotationThread {
      * @param {string} text Text of annotation to save
      * @return {void}
      */
-    save(type: AnnotationType, text: string) {
-        super.save(type, text);
+    save(type: AnnotationType, text: string): Promise<any> {
         window.getSelection().removeAllRanges();
+        return super.save(type, text);
     }
 
     /**
@@ -120,14 +121,15 @@ class DocHighlightThread extends AnnotationThread {
      * @param {boolean} [useServer] Whether or not to delete on server, default true
      * @return {void}
      */
-    delete(annotation: Object, useServer: boolean = true) {
-        super.delete(annotation, useServer);
+    delete(annotation: Object, useServer: boolean = true): Promise<any> {
+        const promise = super.delete(annotation, useServer);
 
         if (!this.threadID) {
-            return;
+            return promise;
         }
 
         this.renderAnnotationPopover();
+        return promise;
     }
 
     /**
@@ -284,6 +286,7 @@ class DocHighlightThread extends AnnotationThread {
     scrollIntoView() {
         this.scrollToPage();
 
+        // $FlowFixMe
         const [yPos] = docUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
 
         // Adjust scroll to highlight position
@@ -311,12 +314,14 @@ class DocHighlightThread extends AnnotationThread {
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         const zoomScale = util.getScale(this.annotatedElement);
         const dimensionScale = util.getDimensionScale(
+            // $FlowFixMe
             this.location.dimensions,
             pageDimensions,
             zoomScale,
             PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM
         );
 
+        // $FlowFixMe
         this.location.quadPoints.forEach((quadPoint) => {
             // If needed, scale quad points comparing current dimensions with saved dimensions
             let scaledQuadPoint = quadPoint;
@@ -367,6 +372,7 @@ class DocHighlightThread extends AnnotationThread {
         const pageTop = pageDimensions.top + PAGE_PADDING_TOP;
         const zoomScale = util.getScale(this.annotatedElement);
         const dimensionScale = util.getDimensionScale(
+            // $FlowFixMe
             this.location.dimensions,
             pageDimensions,
             zoomScale,
@@ -392,6 +398,7 @@ class DocHighlightThread extends AnnotationThread {
 
         let eventOccurredInHighlight = false;
 
+        // $FlowFixMe
         const points = this.location.quadPoints;
         const { length } = points;
 
@@ -426,6 +433,7 @@ class DocHighlightThread extends AnnotationThread {
      */
     getPageEl(): HTMLElement {
         if (!this.pageEl) {
+            // $FlowFixMe
             this.pageEl = util.getPageEl(this.annotatedElement, this.location.page);
         }
         return this.pageEl;
@@ -438,6 +446,7 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     regenerateBoundary() {
+        // $FlowFixMe
         if (!this.location || !this.location.quadPoints) {
             return;
         }
@@ -520,7 +529,7 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /** @inheritdoc */
-    cleanupAnnotationOnDelete(annotationIDToRemove: number) {
+    cleanupAnnotationOnDelete(annotationIDToRemove: string) {
         // Delete matching comment from annotation
         this.comments = this.comments.filter(({ id }) => id !== annotationIDToRemove);
 
@@ -557,7 +566,7 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /** @inheritdoc */
-    handleThreadSaveError(error: Error, tempAnnotationID: number) {
+    handleThreadSaveError(error: Error, tempAnnotationID: string) {
         if (this.type === TYPES.highlight_comment && this.state === STATES.pending) {
             this.type = TYPES.highlight;
             this.reset();

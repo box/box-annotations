@@ -21,6 +21,7 @@ class DocPointThread extends AnnotationThread {
      * @return {void}
      */
     show() {
+        // $FlowFixMe
         const pageEl = getPageEl(this.annotatedElement, this.location.page);
         const [browserX, browserY] = getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
 

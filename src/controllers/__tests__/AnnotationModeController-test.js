@@ -447,6 +447,7 @@ describe('controllers/AnnotationModeController', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
                 controller.renderPage = jest.fn();
+                controller.render = jest.fn();
                 controller.registerThread = jest.fn();
                 controller.unregisterThread = jest.fn();
                 controller.localized = {
@@ -466,9 +467,12 @@ describe('controllers/AnnotationModeController', () => {
                 expect(controller.hadPendingThreads).toBeFalsy();
             });
 
-            it('should re-render the page on render', () => {
-                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, data: {} });
+            it('should re-render the annotations on render', () => {
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, eventData: 1 });
                 expect(controller.renderPage).toBeCalled();
+
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render });
+                expect(controller.render).toBeCalled();
             });
 
             it('should unregister thread on threadDelete', () => {
