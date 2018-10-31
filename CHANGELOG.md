@@ -1,3 +1,12 @@
+## 3.0.0 (2018-10-31)
+
+* Chore: Adding rsync to yarn run watch (#241) ([afe6ab6](https://github.com/box/box-annotations/commit/afe6ab6)), closes [#241](https://github.com/box/box-annotations/issues/241)
+* Chore: Cleanup flow types (#274) ([33adb47](https://github.com/box/box-annotations/commit/33adb47)), closes [#274](https://github.com/box/box-annotations/issues/274)
+* Chore: Reduce redundant point creation via buffering (#237) ([2bfc2f1](https://github.com/box/box-annotations/commit/2bfc2f1)), closes [#237](https://github.com/box/box-annotations/issues/237)
+* Breaking: Migrate Annotations UI into React (#251) ([d853b80](https://github.com/box/box-annotations/commit/d853b80)), closes [#251](https://github.com/box/box-annotations/issues/251)
+
+
+
 ## 2.3.0 (2018-10-16)
 
 * Chore: Add supported excel types. Remove greenkeeper badge (#227) ([8bd1bb9](https://github.com/box/box-annotations/commit/8bd1bb9)), closes [#227](https://github.com/box/box-annotations/issues/227)
