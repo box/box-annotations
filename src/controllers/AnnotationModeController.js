@@ -500,7 +500,12 @@ class AnnotationModeController extends EventEmitter {
                 this.visibleThreadID = null;
                 break;
             case THREAD_EVENT.render:
-                this.renderPage(eventData);
+                if (eventData) {
+                    this.renderPage(eventData);
+                } else {
+                    this.render();
+                }
+                
                 break;
             case THREAD_EVENT.delete:
                 // Thread should be cleaned up, unbind listeners - we
