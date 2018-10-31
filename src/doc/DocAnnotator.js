@@ -74,6 +74,8 @@ class DocAnnotator extends Annotator {
         this.createHighlightThread = this.createHighlightThread.bind(this);
         // $FlowFixMe
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
+        // $FlowFixMe
+        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
     /**
@@ -133,7 +135,7 @@ class DocAnnotator extends Annotator {
 
         if (annotationType === TYPES.point) {
             let clientEvent = event;
-            
+
             // $FlowFixMe
             if (this.hasTouch && event.targetTouches) {
                 if (event.targetTouches.length <= 0) {
@@ -383,7 +385,7 @@ class DocAnnotator extends Annotator {
 
     /**
      * Handles click events when not in an annotation mode
-     * 
+     *
      * @param {Event} event - Mouse event
      * @return {void}
      */
@@ -428,9 +430,9 @@ class DocAnnotator extends Annotator {
     };
 
     /**
-     * Hides the create highlight dialog 
-     * 
-     * @param {Event} event - Mouse event 
+     * Hides the create highlight dialog
+     *
+     * @param {Event} event - Mouse event
      * @return {void}
      */
     hideCreateDialog(event: ?Event) {
@@ -523,7 +525,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onSelectionChange = (event: Event) => {
+    onSelectionChange(event: Event) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -576,14 +578,14 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
         }
         this.lastHighlightEvent = mouseEvent;
         this.lastSelection = selection;
-    };
+    }
 
     /**
      * Mode controllers setup.
@@ -631,7 +633,7 @@ class DocAnnotator extends Annotator {
      */
     highlightMousedownHandler = (event: Event) => {
         this.mouseDownEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             this.mouseDownEvent = event.targetTouches[0];
@@ -668,7 +670,7 @@ class DocAnnotator extends Annotator {
             }
             return isPending;
         });
-            
+
         // $FlowFixMe
         return isPending || this.createHighlightDialog.isVisible;
     }
@@ -693,7 +695,7 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseUpEvent = event;
-            
+
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseUpEvent = event.targetTouches[0];
@@ -753,7 +755,7 @@ class DocAnnotator extends Annotator {
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
         }
-            
+
         // $FlowFixMe
         if (this.createHighlightDialog.isVisible) {
             return true;
