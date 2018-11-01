@@ -50,7 +50,7 @@ class DocAnnotator extends Annotator {
     lastHighlightEvent: ?Event;
 
     /** @property {Selection} - For tracking diffs in text selection, for mobile highlights creation. */
-    lastSelection: ?HTMLElement;
+    lastSelection: ?Selection;
 
     /** @property {boolean} - True if regular highlights are allowed to be read/written */
     plainHighlightEnabled: boolean;
@@ -76,6 +76,8 @@ class DocAnnotator extends Annotator {
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
         // $FlowFixMe
         this.onSelectionChange = this.onSelectionChange.bind(this);
+        // $FlowFixMe
+        this.selectionTimeoutHandler = this.selectionTimeoutHandler.bind(this);
     }
 
     /**
@@ -440,6 +442,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        // $FlowFixMe
         this.createHighlightDialog.unmountPopover();
     }
 
@@ -560,11 +563,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.selectionEndTimeout = setTimeout(() => {
-            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
-                this.createHighlightDialog.show(selection);
-            }
-        }, SELECTION_TIMEOUT);
+        this.selectionEndTimeout = setTimeout(this.selectionTimeoutHandler, SELECTION_TIMEOUT);
 
         const { page } = util.getPageInfo(event.target);
 
@@ -586,6 +585,12 @@ class DocAnnotator extends Annotator {
         this.lastHighlightEvent = mouseEvent;
         this.lastSelection = selection;
     }
+
+    selectionTimeoutHandler = () => {
+        if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
+            this.createHighlightDialog.show(this.lastSelection);
+        }
+    };
 
     /**
      * Mode controllers setup.
@@ -619,7 +624,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.highlighter.highlightSelection('rangy-highlight', {
+        this.highlighter.highlightSelection(CLASS_RANGY_HIGHLIGHT, {
             containerElementId: this.annotatedElement.id
         });
     }

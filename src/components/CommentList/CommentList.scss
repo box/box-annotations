@@ -22,8 +22,13 @@
         padding-top: 15px;
     }
 
-    .bcs-comment {
+    .bcs-comment,
+    .bcs-comment-user-name ~ .bcs-comment-created-at {
         margin: 0;
+    }
+
+    .bcs-comment-content {
+        text-align: left;
     }
 
     // MOBILE CSS

@@ -124,11 +124,10 @@ class DocHighlightThread extends AnnotationThread {
     delete(annotation: Object, useServer: boolean = true): Promise<any> {
         const promise = super.delete(annotation, useServer);
 
-        if (!this.threadID) {
-            return promise;
+        if (this.threadID) {
+            this.renderAnnotationPopover();
         }
 
-        this.renderAnnotationPopover();
         return promise;
     }
 

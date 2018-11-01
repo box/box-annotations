@@ -1,15 +1,17 @@
 @import '../../variables';
 
 .ba {
-    .ba-annotation-label {
+    .ba-annotator-label {
         line-height: 23px;
     }
 
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
-        .ba-annotation-label {
+        .ba-annotator-label {
             background: white;
             border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
             left: 0;
             padding: 20px;
             position: fixed;
