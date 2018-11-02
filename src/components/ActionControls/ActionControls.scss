@@ -13,6 +13,14 @@
         width: 252px; // Hard-coded width to solve layout issues
     }
 
+    .bcs-comment .bcs-comment-headline {
+        flex-flow: column wrap;
+    }
+
+    .bcs-comment-user-name ~ .bcs-comment-created-at {
+        margin: 0;
+    }
+
     .ba-annotation-label ~ .ba-action-controls .ba-action-controls-draw,
     .ba-annotation-label ~ .ba-action-controls .ba-action-controls-highlight {
         border-left: 1px solid $see-see;
