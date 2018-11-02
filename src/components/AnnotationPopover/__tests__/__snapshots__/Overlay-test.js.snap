@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/Overlay should correctly render a BRUI Overlay if not on mobile 1`] = `
+exports[`components/Overlay should correctly render a Focus Trap if not on mobile 1`] = `
 <FocusTrap
   className="ba-popover-overlay"
   handleOverlayKeyDown={[Function]}
