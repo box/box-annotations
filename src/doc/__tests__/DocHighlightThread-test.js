@@ -61,18 +61,10 @@ describe('doc/DocHighlightThread', () => {
     describe('destroy()', () => {
         it('should destroy the thread', () => {
             thread.emit = jest.fn();
-            thread.state = STATES.pending;
-
-            // This stubs out a parent method by forcing the method we care about
-            // in the prototype of the prototype of DocHighlightThread (ie
-            // AnnotationThread's prototype) to be a stub
-            Object.defineProperty(Object.getPrototypeOf(DocHighlightThread.prototype), 'destroy', {
-                value: jest.fn()
-            });
 
             thread.destroy();
             expect(thread.element).toBeUndefined();
-            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, 1);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, { page: thread.location.page });
         });
     });
 

@@ -512,7 +512,7 @@ class AnnotationModeController extends EventEmitter {
                 this.visibleThreadID = null;
                 break;
             case THREAD_EVENT.render:
-                if (eventData.page) {
+                if (eventData && eventData.page) {
                     this.renderPage(eventData.page);
                 } else {
                     this.render();

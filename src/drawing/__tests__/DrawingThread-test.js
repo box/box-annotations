@@ -82,7 +82,6 @@ describe('drawing/DrawingThread', () => {
             expect(thread.getBrowserRectangularBoundary).toBeCalled();
             expect(thread.concreteContext.clearRect).toBeCalled();
             expect(thread.clearBoundary).toBeCalled();
-            expect(thread.delete).toBeCalledWith({ id: '123abc' });
             expect(thread.pathContainer).toEqual(null);
         });
     });

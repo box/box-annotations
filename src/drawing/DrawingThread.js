@@ -96,15 +96,13 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        if (this.state !== STATES.pending) {
-            // $FlowFixMe
-            const { page } = this.location;
-            this.emit(THREAD_EVENT.render, { page });
-        }
-
         this.unmountPopover();
         this.reset();
         super.destroy();
+
+        // $FlowFixMe
+        const { page } = this.location;
+        this.emit(THREAD_EVENT.render, { page });
     }
 
     /**

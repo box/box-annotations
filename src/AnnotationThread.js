@@ -120,10 +120,6 @@ class AnnotationThread extends EventEmitter {
 
             this.element = null;
         }
-
-        // $FlowFixMe
-        const { page } = this.location;
-        this.emit(THREAD_EVENT.render, { page });
     }
 
     /**
