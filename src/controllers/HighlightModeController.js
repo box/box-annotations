@@ -34,7 +34,7 @@ class HighlightModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    exit(): void {
+    resetMode(): void {
         this.destroyPendingThreads();
         window.getSelection().removeAllRanges();
         this.unbindListeners(); // Disable mode

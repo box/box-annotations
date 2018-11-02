@@ -57,7 +57,7 @@ class PointModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    exit(): void {
+    resetMode(): void {
         if (this.buttonEl) {
             this.buttonEl.classList.remove(CLASS_ACTIVE);
         }
@@ -70,7 +70,6 @@ class PointModeController extends AnnotationModeController {
         }
 
         this.pendingThreadID = null;
-        super.exit();
     }
 
     /** @inheritdoc */

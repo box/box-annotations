@@ -62,7 +62,7 @@ describe('controllers/HighlightModeController', () => {
         });
     });
 
-    describe('exit()', () => {
+    describe('resetMode()', () => {
         it('should exit annotation mode', () => {
             controller.destroyPendingThreads = jest.fn();
             controller.unbindListeners = jest.fn();
@@ -75,7 +75,7 @@ describe('controllers/HighlightModeController', () => {
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
 
-            controller.exit();
+            controller.resetMode();
             expect(controller.destroyPendingThreads).toBeCalled();
             expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.bindDOMListeners);
             expect(controller.unbindListeners).toBeCalled();

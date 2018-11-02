@@ -492,9 +492,6 @@ class DocAnnotator extends Annotator {
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
         const controller = this.modeControllers[highlightType];
 
-        this.highlighter.removeAllHighlights();
-        this.resetHighlightSelection(this.lastHighlightEvent);
-
         if (!location || !controller) {
             return null;
         }

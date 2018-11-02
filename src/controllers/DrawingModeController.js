@@ -256,7 +256,7 @@ class DrawingModeController extends AnnotationModeController {
     }
 
     /** @inheritdoc */
-    exit() {
+    resetMode() {
         if (this.currentThread) {
             this.currentThread.clearBoundary();
         }
@@ -272,7 +272,6 @@ class DrawingModeController extends AnnotationModeController {
         pageElements.forEach((pageEl) => clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS));
 
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
-        super.exit();
     }
 
     /**
