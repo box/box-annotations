@@ -195,8 +195,6 @@ export const ANNOTATOR_EVENT = {
 
 export const THREAD_EVENT = {
     pending: 'annotationpending',
-    threadSave: 'annotationthreadsaved',
-    threadDelete: 'annotationthreaddeleted',
     render: 'annotationrender',
     save: 'annotationsaved',
     delete: 'annotationdeleted',

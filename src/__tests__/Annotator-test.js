@@ -486,7 +486,7 @@ describe('Annotator', () => {
 
                 expect(thread.state).toEqual(STATES.active);
                 expect(thread.save).toBeCalledWith(TYPES.point, 'text');
-                expect(annotator.emit).toBeCalledWith(THREAD_EVENT.threadSave, expect.any(Object));
+                expect(annotator.emit).toBeCalledWith(THREAD_EVENT.save, expect.any(Object));
                 expect(result).not.toBeNull();
                 expect(thread.renderAnnotationPopover).toBeCalled();
             });

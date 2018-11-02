@@ -96,13 +96,13 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        if (this.state !== STATES.pending) {
-            this.emit(THREAD_EVENT.render, this.location.page);
-        }
-
         this.unmountPopover();
         this.reset();
         super.destroy();
+
+        // $FlowFixMe
+        const { page } = this.location;
+        this.emit(THREAD_EVENT.render, { page });
     }
 
     /**
@@ -196,8 +196,6 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     deleteThread() {
-        this.comments.forEach((annotation) => this.delete(annotation));
-
         // Calculate the bounding rectangle
         const [x, y, width, height] = this.getBrowserRectangularBoundary();
 
@@ -284,7 +282,6 @@ class DrawingThread extends AnnotationThread {
             this.emitAvailableActions();
         }
     }
-
 
     /**
      * Sets up the thread state.
@@ -394,7 +391,7 @@ class DrawingThread extends AnnotationThread {
 
         Object.assign(this.location, boundaryData);
     }
-    
+
     /** @inheritdoc */
     regenerateBoundary() {
         if (!this.location || this.location.boundaryData) {
@@ -455,7 +452,6 @@ class DrawingThread extends AnnotationThread {
 
     /** @inheritdoc */
     cleanupAnnotationOnDelete() {
-        this.destroy();
         this.threadID = null;
     }
 }

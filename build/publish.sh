@@ -114,6 +114,8 @@ clean_assets() {
 }
 
 build_assets() {
+    yarn run pre-build;
+    
     echo "----------------------------------------------------"
     echo "Starting babel build for version" $VERSION
     echo "----------------------------------------------------"
@@ -165,13 +167,6 @@ publish_to_npm() {
     if [[ $(git status --porcelain 2>/dev/null| grep "^??") != "" ]] ; then
         echo "----------------------------------------------------"
         echo "Your branch has untracked files!"
-        echo "----------------------------------------------------"
-        exit 1
-    fi
-
-    if [[ $(git status --porcelain 2>/dev/null| egrep "^(M| M)") != "" ]] ; then
-        echo "----------------------------------------------------"
-        echo "Your branch has uncommited files!"
         echo "----------------------------------------------------"
         exit 1
     fi
