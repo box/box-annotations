@@ -717,6 +717,8 @@ class DocAnnotator extends Annotator {
         // we trigger the create handler instead of the click handler
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
+        } else if (!hasMouseMoved) {
+            this.clickHandler(event);
         }
     };
 
