@@ -90,9 +90,6 @@ class AnnotationModeController extends EventEmitter {
     constructor(annotatorType: string): void {
         super();
         this.annotatorType = annotatorType;
-
-        // $FlowFixMe
-        this.unregisterThread = this.unregisterThread.bind(this);
     }
 
     /**
@@ -136,7 +133,8 @@ class AnnotationModeController extends EventEmitter {
     destroy(): void {
         Object.keys(this.annotations).forEach((pageNum) => {
             const pageThreads = this.annotations[pageNum].all() || [];
-            pageThreads.forEach(this.unregisterThread);
+            pageThreads.forEach((thread) => thread.removeListener('threadevent', this.handleThreadEvents));
+            this.annotations[pageNum].clear();
         });
 
         if (this.buttonEl) {
@@ -366,9 +364,20 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
+     * Custom comparator function to remove annotations from the rbush
+     *
+     * @param {DrawingThread} currentAnnotation current annotation in rbush
+     * @param {DrawingThread} annotationToRemove annotation which is being unregistered
+     * @return {boolean} Whether or not the
+     */
+    deleteAnnotation(currentAnnotation: DrawingThread, annotationToRemove: DrawingThread): boolean {
+        return currentAnnotation.id === annotationToRemove.id;
+    }
+
+    /**
      * Unregister a previously registered thread
      *
-     * 
+     *
      * @param {AnnotationThread} thread - The thread to unregister with the controller
      * @param {Object} annotation - The annotation with comments to register with the controller
      * @return {void}
@@ -379,6 +388,9 @@ class AnnotationModeController extends EventEmitter {
         }
 
         this.annotations[thread.location.page].remove(thread);
+        if (this.annotations[thread.location.page].data.children.length === 0) {
+            delete this.annotations[thread.location.page];
+        }
         this.emit(CONTROLLER_EVENT.unregister, thread);
         thread.removeListener('threadevent', this.handleThreadEvents);
     }
@@ -461,7 +473,7 @@ class AnnotationModeController extends EventEmitter {
 
     /**
      * Clean up any selected annotations
-     * 
+     *
      * @return {void}
      */
     removeSelection(): void {}
@@ -500,21 +512,17 @@ class AnnotationModeController extends EventEmitter {
                 this.visibleThreadID = null;
                 break;
             case THREAD_EVENT.render:
-                if (eventData) {
-                    this.renderPage(eventData);
+                if (eventData && eventData.page) {
+                    this.renderPage(eventData.page);
                 } else {
                     this.render();
                 }
-                
+
                 break;
             case THREAD_EVENT.delete:
                 // Thread should be cleaned up, unbind listeners - we
                 // don't do this in annotationdelete listener since thread
                 // may still need to respond to error messages
-                this.unregisterThread(thread);
-                break;
-            case THREAD_EVENT.threadDelete:
-                // Thread was deleted, remove from thread map
                 this.unregisterThread(thread);
                 this.emit(event, threadData);
                 break;

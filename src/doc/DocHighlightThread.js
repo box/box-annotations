@@ -37,6 +37,24 @@ class DocHighlightThread extends AnnotationThread {
     }
 
     /**
+     * [destructor]
+     *
+     * @return {void}
+     */
+    destroy() {
+        this.threadID = null;
+
+        // $FlowFixMe
+        const { page } = this.location;
+        this.emit(THREAD_EVENT.render, { page });
+        super.destroy();
+
+        if (this.state === STATES.pending) {
+            window.getSelection().removeAllRanges();
+        }
+    }
+
+    /**
      * Cancels the first comment on the thread
      *
      * @return {void}
@@ -63,23 +81,6 @@ class DocHighlightThread extends AnnotationThread {
     cancelUnsavedAnnotation = () => {
         this.cancelFirstComment();
     };
-
-    /**
-     * [destructor]
-     *
-     * @return {void}
-     */
-    destroy() {
-        this.threadID = null;
-
-        // $FlowFixMe
-        this.emit(THREAD_EVENT.render, this.location.page);
-        super.destroy();
-
-        if (this.state === STATES.pending) {
-            window.getSelection().removeAllRanges();
-        }
-    }
 
     /**
      * Hides the highlight by cutting out the annotation from context. Note

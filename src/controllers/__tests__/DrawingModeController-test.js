@@ -287,7 +287,6 @@ describe('controllers/DrawingModeController', () => {
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
-            expect(controller.registerThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
             expect(thread.handleStart).not.toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));

@@ -379,10 +379,9 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should internally keep track of the registered thread', () => {
                 // eslint-disable-next-line new-cap
-                const pageThreads = {
-                    all: jest.fn().mockReturnValue([thread]),
-                    remove: jest.fn()
-                };
+                const pageThreads = new rbush();
+                pageThreads.all = jest.fn().mockReturnValue([thread]);
+                pageThreads.remove = jest.fn();
 
                 controller.annotations = { 1: pageThreads };
 
@@ -468,17 +467,11 @@ describe('controllers/AnnotationModeController', () => {
             });
 
             it('should re-render the annotations on render', () => {
-                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, eventData: 1 });
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.render, eventData: { page: 1 } });
                 expect(controller.renderPage).toBeCalled();
 
                 controller.handleThreadEvents(thread, { event: THREAD_EVENT.render });
                 expect(controller.render).toBeCalled();
-            });
-
-            it('should unregister thread on threadDelete', () => {
-                controller.handleThreadEvents(thread, { event: THREAD_EVENT.threadDelete, data: {} });
-                expect(controller.unregisterThread).toBeCalled();
-                expect(controller.emit).toBeCalledWith(THREAD_EVENT.threadDelete, expect.any(Object));
             });
 
             it('should unregister thread on deleteError', () => {

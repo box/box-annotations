@@ -57,15 +57,6 @@ describe('AnnotationThread', () => {
         it('should unbind listeners and remove thread element and broadcast that the thread was deleted', () => {
             thread.destroy();
             expect(thread.unbindDOMListeners).toBeCalled();
-            expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadDelete);
-            expect(thread.unmountPopover).toBeCalled();
-        });
-
-        it('should emit annotationthreaddeleted only if thread is not in a pending state', () => {
-            thread.state = STATES.inactive;
-            thread.destroy();
-            expect(thread.unbindDOMListeners).toBeCalled();
-            expect(thread.emit).toBeCalledWith(THREAD_EVENT.threadDelete);
             expect(thread.unmountPopover).toBeCalled();
         });
     });
