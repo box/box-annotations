@@ -1,5 +1,242 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`components/AnnotationPopover should correctly render a BRUI Overlay if not on mobile 1`] = `
+<Internationalize>
+  <div
+    className="ba-popover"
+  >
+    <span
+      className="ba-popover-caret"
+    />
+    <Overlay
+      shouldDefaultFocus={true}
+    >
+      <CommentList
+        comments={
+          Array [
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "123",
+              "message": "test",
+              "permissions": Object {},
+            },
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "456",
+              "message": "test",
+              "permissions": Object {},
+            },
+          ]
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+      <ActionControls
+        canComment={false}
+        canDelete={false}
+        hasComments={true}
+        isPending={false}
+        onCancel={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onCommentClick={[Function]}
+        onCreate={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
+</Internationalize>
+`;
+
+exports[`components/AnnotationPopover should correctly render a div without a Focus Trap if on mobile 1`] = `
+<Internationalize>
+  <div
+    className="ba-popover ba-animate-popover"
+  >
+    <span
+      className="ba-mobile-header"
+      style={
+        Object {
+          "height": undefined,
+        }
+      }
+    >
+      <PlainButton
+        className="ba-mobile-close-btn"
+        onClick={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      >
+        <IconClose
+          height={24}
+          width={24}
+        />
+      </PlainButton>
+    </span>
+    <Overlay
+      shouldDefaultFocus={false}
+    >
+      <CommentList
+        comments={
+          Array [
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "123",
+              "message": "test",
+              "permissions": Object {},
+            },
+            Object {
+              "createdAt": "2017-09-27T10:40:41-07:00",
+              "createdBy": Object {
+                "email": "princess@genovia.gov",
+                "id": "789ghi",
+                "name": "Mia Thermopolis",
+                "type": "user",
+              },
+              "id": "456",
+              "message": "test",
+              "permissions": Object {},
+            },
+          ]
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+      <ActionControls
+        canComment={false}
+        canDelete={false}
+        hasComments={true}
+        isPending={false}
+        onCancel={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onCommentClick={[Function]}
+        onCreate={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        onDelete={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "isThrow": false,
+                "value": undefined,
+              },
+            ],
+          }
+        }
+      />
+    </Overlay>
+  </div>
+</Internationalize>
+`;
+
 exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
 <Internationalize>
   <div
@@ -9,7 +246,7 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay"
+      shouldDefaultFocus={true}
     >
       <AnnotatorLabel
         isPending={true}
@@ -74,7 +311,7 @@ exports[`components/AnnotationPopover should correctly render a popover with com
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay"
+      shouldDefaultFocus={true}
     >
       <CommentList
         comments={
@@ -179,7 +416,7 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay"
+      shouldDefaultFocus={true}
     >
       <CommentList
         comments={
@@ -238,7 +475,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay"
+      shouldDefaultFocus={true}
     >
       <AnnotatorLabel
         isPending={false}
@@ -305,7 +542,7 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
       className="ba-popover-caret"
     />
     <Overlay
-      className="ba-popover-overlay"
+      shouldDefaultFocus={true}
     >
       <AnnotatorLabel
         isPending={false}

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Overlay should correctly render a BRUI Overlay if not on mobile 1`] = `
+<FocusTrap
+  className="ba-popover-overlay"
+  handleOverlayKeyDown={[Function]}
+  shouldOutlineFocus={false}
+  tabIndex={0}
+>
+  <div
+    className="overlay"
+  />
+</FocusTrap>
+`;
+
+exports[`components/Overlay should correctly render a div without a Focus Trap if on mobile 1`] = `
+<div
+  className="ba-popover-overlay"
+/>
+`;

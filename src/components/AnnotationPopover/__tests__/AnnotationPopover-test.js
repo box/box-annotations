@@ -73,6 +73,26 @@ describe('components/AnnotationPopover', () => {
         expect(wrapper.find('.ba-inline').length).toEqual(1);
     });
 
+    test('should correctly render a BRUI Overlay if not on mobile', () => {
+        const wrapper = render({
+            canAnnotate: true,
+            comments,
+            isMobile: false
+        });
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('Overlay').prop('shouldDefaultFocus')).toBeTruthy();
+    });
+
+    test('should correctly render a div without a Focus Trap if on mobile', () => {
+        const wrapper = render({
+            canAnnotate: true,
+            comments,
+            isMobile: true
+        });
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.find('Overlay').prop('shouldDefaultFocus')).toBeFalsy();
+    });
+
     test('should correctly render a popover with comments and reply textarea', () => {
         const wrapper = render({
             canAnnotate: true,
