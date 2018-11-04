@@ -21,14 +21,14 @@
         margin: 0;
     }
 
-    .ba-annotation-label ~ .ba-action-controls .ba-action-controls-draw,
-    .ba-annotation-label ~ .ba-action-controls .ba-action-controls-highlight {
+    .ba-annotator-label ~ .ba-action-controls .ba-action-controls-draw,
+    .ba-annotator-label ~ .ba-action-controls .ba-action-controls-highlight {
         border-left: 1px solid $see-see;
         margin-left: 5px;
     }
 
     // TABLET-SPECIFIC CSS
-    @media #{$tablet} {
+    @media #{$mobile}, #{$tablet} {
         .ba-create-popover .ba-action-controls {
             border: none;
             box-shadow: none;
@@ -38,9 +38,10 @@
             width: 100%;
         }
 
-        .ba-annotation-label ~ .ba-action-controls .ba-action-controls-draw,
-        .ba-annotation-label ~ .ba-action-controls .ba-action-controls-highlight {
+        .ba-annotator-label ~ .ba-action-controls .ba-action-controls-draw,
+        .ba-annotator-label ~ .ba-action-controls .ba-action-controls-highlight {
             border-left: 0;
+            margin: 0;
         }
     }
 

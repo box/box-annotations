@@ -90,11 +90,8 @@ describe('controllers/PointModeController', () => {
         });
     });
 
-    describe('exit()', () => {
+    describe('resetMode()', () => {
         beforeEach(() => {
-            controller.destroyPendingThreads = jest.fn();
-            controller.unbindListeners = jest.fn();
-
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
@@ -104,19 +101,12 @@ describe('controllers/PointModeController', () => {
             controller.buttonEl.classList.add(CLASS_ACTIVE);
         });
 
-        it('should exit annotation mode', () => {
-            controller.exit();
-            expect(controller.destroyPendingThreads).toBeCalled();
-            expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.exit, expect.any(Object));
-            expect(controller.unbindListeners).toBeCalled();
-            expect(controller.hadPendingThreads).toBeFalsy();
-        });
-
-        it('should deactive mode button if available', () => {
+        it('should reset annotation mode', () => {
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
-            controller.exit();
+            controller.resetMode();
             expect(controller.buttonEl.classList).not.toContain(CLASS_ACTIVE);
+            expect(controller.hadPendingThreads).toBeFalsy();
         });
     });
 

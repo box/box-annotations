@@ -42,7 +42,7 @@ class AnnotatorLabel extends React.PureComponent<Props> {
         const { id, isPending } = this.props;
         return (
             !isPending && (
-                <span className='ba-annotation-label'>
+                <span className='ba-annotator-label'>
                     <CommentText id={id} tagged_message={this.getAnnotatorLabelMessage()} translationEnabled={false} />
                 </span>
             )

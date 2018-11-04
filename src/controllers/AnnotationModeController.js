@@ -212,11 +212,18 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
+     * @return {void}
+     */
+    resetMode() {}
+
+    /**
      * Disables the specified annotation mode
      *
      * @return {void}
      */
     exit(): void {
+        this.resetMode();
+
         if (this.currentThread) {
             this.currentThread.unmountPopover();
         }

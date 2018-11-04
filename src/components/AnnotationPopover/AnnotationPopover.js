@@ -2,11 +2,11 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import Overlay from 'box-react-ui/lib/components/flyout/Overlay';
 import PlainButton from 'box-react-ui/lib/components/plain-button';
 import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 
 import Internationalize from '../Internationalize';
+import Overlay from './Overlay';
 import CommentList from '../CommentList';
 import { TYPES, CLASS_ANNOTATION_POPOVER } from '../../constants';
 
@@ -93,8 +93,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                     ) : (
                         <span className='ba-popover-caret' />
                     )}
-
-                    <Overlay className='ba-popover-overlay'>
+                    <Overlay shouldDefaultFocus={!isMobile}>
                         {hasComments ? (
                             <CommentList comments={comments} onDelete={onDelete} />
                         ) : (

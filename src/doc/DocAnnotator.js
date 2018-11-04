@@ -50,7 +50,7 @@ class DocAnnotator extends Annotator {
     lastHighlightEvent: ?Event;
 
     /** @property {Selection} - For tracking diffs in text selection, for mobile highlights creation. */
-    lastSelection: ?HTMLElement;
+    lastSelection: ?Selection;
 
     /** @property {boolean} - True if regular highlights are allowed to be read/written */
     plainHighlightEnabled: boolean;
@@ -74,6 +74,8 @@ class DocAnnotator extends Annotator {
         this.createHighlightThread = this.createHighlightThread.bind(this);
         // $FlowFixMe
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
+        // $FlowFixMe
+        this.onSelectionChange = this.onSelectionChange.bind(this);
     }
 
     /**
@@ -438,6 +440,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
+        // $FlowFixMe
         this.createHighlightDialog.unmountPopover();
     }
 
@@ -487,9 +490,6 @@ class DocAnnotator extends Annotator {
         const location = this.getLocationFromEvent(this.lastHighlightEvent, highlightType);
         const controller = this.modeControllers[highlightType];
 
-        this.highlighter.removeAllHighlights();
-        this.resetHighlightSelection(this.lastHighlightEvent);
-
         if (!location || !controller) {
             return null;
         }
@@ -523,7 +523,7 @@ class DocAnnotator extends Annotator {
      * @param {Event} event The DOM event coming from interacting with the element.
      * @return {void}
      */
-    onSelectionChange = (event: Event) => {
+    onSelectionChange(event: Event) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -560,7 +560,7 @@ class DocAnnotator extends Annotator {
 
         this.selectionEndTimeout = setTimeout(() => {
             if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
-                this.createHighlightDialog.show(selection);
+                this.createHighlightDialog.show(this.lastSelection);
             }
         }, SELECTION_TIMEOUT);
 
@@ -583,7 +583,7 @@ class DocAnnotator extends Annotator {
         }
         this.lastHighlightEvent = mouseEvent;
         this.lastSelection = selection;
-    };
+    }
 
     /**
      * Mode controllers setup.
@@ -617,7 +617,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.highlighter.highlightSelection('rangy-highlight', {
+        this.highlighter.highlightSelection(CLASS_RANGY_HIGHLIGHT, {
             containerElementId: this.annotatedElement.id
         });
     }
