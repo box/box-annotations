@@ -76,8 +76,6 @@ class DocAnnotator extends Annotator {
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
         // $FlowFixMe
         this.onSelectionChange = this.onSelectionChange.bind(this);
-        // $FlowFixMe
-        this.selectionTimeoutHandler = this.selectionTimeoutHandler.bind(this);
     }
 
     /**
@@ -560,7 +558,11 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.selectionEndTimeout = setTimeout(this.selectionTimeoutHandler, SELECTION_TIMEOUT);
+        this.selectionEndTimeout = setTimeout(() => {
+            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
+                this.createHighlightDialog.show(this.lastSelection);
+            }
+        }, SELECTION_TIMEOUT);
 
         const { page } = util.getPageInfo(event.target);
 
@@ -582,12 +584,6 @@ class DocAnnotator extends Annotator {
         this.lastHighlightEvent = mouseEvent;
         this.lastSelection = selection;
     }
-
-    selectionTimeoutHandler = () => {
-        if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
-            this.createHighlightDialog.show(this.lastSelection);
-        }
-    };
 
     /**
      * Mode controllers setup.
@@ -714,8 +710,6 @@ class DocAnnotator extends Annotator {
         // we trigger the create handler instead of the click handler
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
-        } else if (!hasMouseMoved) {
-            this.clickHandler(event);
         }
     };
 
