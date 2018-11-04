@@ -73,33 +73,6 @@ class DrawingModeController extends AnnotationModeController {
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
     }
 
-    /** @inheritdoc */
-    bindDOMListeners(): void {
-        // $FlowFixMe
-        this.handleSelection = this.handleSelection.bind(this);
-        this.annotatedElement.addEventListener('click', this.handleSelection);
-    }
-
-    /** @inheritdoc */
-    unbindDOMListeners(): void {
-        this.annotatedElement.removeEventListener('click', this.handleSelection);
-    }
-
-    /** @inheritdoc */
-    bindListeners(): void {
-        super.bindListeners();
-        this.unbindDOMListeners();
-    }
-
-    /** @inheritdoc */
-    unbindListeners(): void {
-        super.unbindListeners();
-        this.bindDOMListeners();
-
-        disableElement(this.undoButtonEl);
-        disableElement(this.redoButtonEl);
-    }
-
     /**
      * Prevents click events from triggering other annotation types
      *
