@@ -168,8 +168,7 @@
 
 // Quad point positioning - the helper divs are positioned relative to the Rangy-created element
 .bp-doc .rangy-highlight {
-    background-color: lighten($highlight-yellow, 10%);
-    opacity: .25;
+    background-color: $highlight-yellow;
     position: relative;
 }
 
