@@ -411,6 +411,12 @@ describe('doc/DocAnnotator', () => {
 
     describe('renderPage()', () => {
         beforeEach(() => {
+            document.getSelection = jest.fn().mockReturnValue({
+                removeAllRanges: jest.fn()
+            });
+            annotator.highlighter = {
+                removeAllHighlights: jest.fn()
+            };
             annotator.scaleAnnotationCanvases = jest.fn();
             annotator.modeControllers = {
                 type: {
@@ -813,6 +819,12 @@ describe('doc/DocAnnotator', () => {
             expect(window.getSelection).not.toBeCalled();
         });
 
+        it('should do nothing the the user is currently creating a highlight annotation', () => {
+            annotator.isCreatingHighlight = true;
+            annotator.onSelectionChange(event);
+            expect(window.getSelection).not.toBeCalled();
+        });
+
         it('should clear selection if the highlight has not changed', () => {
             const selection = {
                 anchorNode: 'derp',
@@ -852,6 +864,7 @@ describe('doc/DocAnnotator', () => {
 
             annotator.onSelectionChange(event);
             expect(annotator.selectionEndTimeout).not.toBeNull();
+            expect(annotator.isCreatingHighlight).toBeTruthy();
         });
 
         it('should set all of the highlight annotations on the page to "inactive" state', () => {
@@ -946,6 +959,9 @@ describe('doc/DocAnnotator', () => {
             annotator.resetHighlightSelection = jest.fn();
             annotator.modeControllers = {
                 highlight: controller
+            };
+            annotator.highlighter = {
+                removeAllHighlights: jest.fn()
             };
             annotator.activeThread = undefined;
             annotator.plainHighlightEnabled = false;

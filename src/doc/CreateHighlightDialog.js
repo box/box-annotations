@@ -265,13 +265,10 @@ class CreateHighlightDialog extends EventEmitter {
     onCommentClick = () => {
         this.emit(CREATE_EVENT.comment);
         this.renderAnnotationPopover(TYPES.highlight_comment);
-
-        // $FlowFixMe
-        document.getSelection().removeAllRanges();
     };
 
     /**
-     * Cancels adding a comment to the highlgiht annotation by rendering a plain highlight popover
+     * Cancels adding a comment to the highlight annotation by rendering a plain highlight popover
      *
      * @return {void}
      */

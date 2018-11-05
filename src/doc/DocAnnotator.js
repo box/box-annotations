@@ -247,6 +247,10 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     renderPage(pageNum: number) {
+        // $FlowFixMe
+        document.getSelection().removeAllRanges();
+        this.highlighter.removeAllHighlights();
+
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
         super.renderPage(pageNum);
@@ -442,6 +446,7 @@ class DocAnnotator extends Annotator {
 
         // $FlowFixMe
         this.createHighlightDialog.unmountPopover();
+        this.isCreatingHighlight = false;
     }
 
     /**
@@ -532,11 +537,18 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
+        const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
+        if (isClickOutsideCreateDialog) {
+            this.hideCreateDialog(event);
+            this.highlighter.removeAllHighlights();
+            return;
+        }
+
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
         const isPopoverActive = !!util.findClosestElWithClass(document.activeElement, CLASS_ANNOTATION_POPOVER);
-        if (isCreatingPoint || isPopoverActive) {
+        if (this.isCreatingHighlight || isCreatingPoint || isPopoverActive) {
             return;
         }
 
@@ -563,6 +575,7 @@ class DocAnnotator extends Annotator {
                 this.createHighlightDialog.show(this.lastSelection);
             }
         }, SELECTION_TIMEOUT);
+        this.isCreatingHighlight = true;
 
         const { page } = util.getPageInfo(event.target);
 
@@ -785,6 +798,7 @@ class DocAnnotator extends Annotator {
             return true;
         }
 
+        this.highlighter.removeAllHighlights();
         this.resetHighlightSelection(event);
         return false;
     }

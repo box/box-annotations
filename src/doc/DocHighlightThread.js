@@ -115,22 +115,19 @@ class DocHighlightThread extends AnnotationThread {
         return super.save(type, text);
     }
 
-    /**
-     * Deletes an annotation.
-     *
-     * @param {Object} annotation annotation to delete
-     * @param {boolean} [useServer] Whether or not to delete on server, default true
-     * @return {void}
-     */
-    delete(annotation: Object, useServer: boolean = true): Promise<any> {
-        const promise = super.delete(annotation, useServer);
+    /** @inheritdoc */
+    deleteSuccessHandler = () => {
+        // Broadcast annotation deletion event
+        this.emit(THREAD_EVENT.delete);
 
         if (this.threadID) {
             this.renderAnnotationPopover();
+        } else {
+            // $FlowFixMe
+            const { page } = this.location;
+            this.emit(THREAD_EVENT.render, { page });
         }
-
-        return promise;
-    }
+    };
 
     /**
      * Mousedown handler for thread. Deletes this thread if it is still pending.
