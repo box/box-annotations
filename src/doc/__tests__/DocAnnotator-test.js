@@ -791,10 +791,12 @@ describe('doc/DocAnnotator', () => {
             annotator.lastSelection = {};
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
+            annotator.resetHighlightSelection = jest.fn();
 
             window.getSelection = jest.fn();
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
             util.findClosestElWithClass = jest.fn().mockReturnValue(null);
+            annotator.isCreatingHighlight = false;
         });
 
         it('should reset the selectionEndTimeout', () => {
@@ -804,10 +806,20 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.selectionEndTimeout).toBeNull();
         });
 
-        it('should do nothing if focus is on a text input element', () => {
-            util.findClosestElWithClass = jest.fn().mockReturnValue({});
+        it('should clear selection if the user is currently creating a highlight annotation', () => {
+            annotator.isCreatingHighlight = true;
+            util.isInDialog = jest.fn().mockReturnValue(true);
             annotator.onSelectionChange(event);
-            expect(window.getSelection).not.toBeCalled();
+            expect(annotator.resetHighlightSelection).toBeCalled();
+        });
+
+        it('should clear out highlights and exit "annotation creation" mode if an invalid selection', () => {
+            annotator.lastHighlightEvent = event;
+            docUtil.isValidSelection = jest.fn().mockReturnValue(false);
+
+            annotator.onSelectionChange(event);
+            expect(annotator.lastHighlightEvent).toBeNull();
+            expect(annotator.resetHighlightSelection).toBeCalled();
         });
 
         it('should do nothing the the user is currently creating a point annotation', () => {
@@ -816,13 +828,7 @@ describe('doc/DocAnnotator', () => {
             };
             controller.pendingThreadID = 'something';
             annotator.onSelectionChange(event);
-            expect(window.getSelection).not.toBeCalled();
-        });
-
-        it('should do nothing the the user is currently creating a highlight annotation', () => {
-            annotator.isCreatingHighlight = true;
-            annotator.onSelectionChange(event);
-            expect(window.getSelection).not.toBeCalled();
+            expect(annotator.isCreatingHighlight).toBeFalsy();
         });
 
         it('should clear selection if the highlight has not changed', () => {
@@ -834,20 +840,6 @@ describe('doc/DocAnnotator', () => {
             window.getSelection = jest.fn().mockReturnValue(selection);
 
             annotator.onSelectionChange(event);
-            expect(annotator.highlighter.removeAllHighlights).toBeCalled();
-        });
-
-        it('should clear out highlights and exit "annotation creation" mode if an invalid selection', () => {
-            const selection = {
-                toString: () => '' // Causes invalid selection
-            };
-            window.getSelection = jest.fn().mockReturnValue(selection);
-            annotator.lastHighlightEvent = event;
-            docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
-            docUtil.isValidSelection = jest.fn().mockReturnValue(false);
-
-            annotator.onSelectionChange(event);
-            expect(annotator.lastHighlightEvent).toBeNull();
             expect(annotator.highlighter.removeAllHighlights).toBeCalled();
         });
 
