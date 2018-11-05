@@ -249,7 +249,9 @@ class DocAnnotator extends Annotator {
     renderPage(pageNum: number) {
         // $FlowFixMe
         document.getSelection().removeAllRanges();
-        this.highlighter.removeAllHighlights();
+        if (this.highlighter) {
+            this.highlighter.removeAllHighlights();
+        }
 
         // Scale existing canvases on re-render
         this.scaleAnnotationCanvases(pageNum);
@@ -416,7 +418,6 @@ class DocAnnotator extends Annotator {
         ) {
             mouseEvent.stopPropagation();
             mouseEvent.preventDefault();
-            this.highlighter.removeAllHighlights();
             this.resetHighlightSelection(mouseEvent);
             return;
         }
@@ -460,6 +461,9 @@ class DocAnnotator extends Annotator {
 
         // $FlowFixMe
         document.getSelection().removeAllRanges();
+        if (this.highlighter) {
+            this.highlighter.removeAllHighlights();
+        }
     }
 
     /**
@@ -537,10 +541,12 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
+        // Bail if mid highlight and tapping on the screen
+        const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
-        if (isClickOutsideCreateDialog) {
-            this.hideCreateDialog(event);
-            this.highlighter.removeAllHighlights();
+        if (!docUtil.isValidSelection(selection) || isClickOutsideCreateDialog) {
+            this.lastHighlightEvent = null;
+            this.resetHighlightSelection(event);
             return;
         }
 
@@ -552,22 +558,13 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        const selection = window.getSelection();
-
         // If we're creating a new selection, make sure to clear out to avoid
         // incorrect text being selected
-        if (!this.lastSelection || !selection || !docUtil.hasSelectionChanged(selection, this.lastSelection)) {
+        if (
+            this.highlighter &&
+            (!this.lastSelection || !selection || !docUtil.hasSelectionChanged(selection, this.lastSelection))
+        ) {
             this.highlighter.removeAllHighlights();
-        }
-
-        // Bail if mid highlight and tapping on the screen
-        if (!docUtil.isValidSelection(selection)) {
-            this.lastHighlightEvent = null;
-
-            // $FlowFixMe
-            this.createHighlightDialog.unmountPopover();
-            this.highlighter.removeAllHighlights();
-            return;
         }
 
         this.selectionEndTimeout = setTimeout(() => {
@@ -798,7 +795,6 @@ class DocAnnotator extends Annotator {
             return true;
         }
 
-        this.highlighter.removeAllHighlights();
         this.resetHighlightSelection(event);
         return false;
     }
