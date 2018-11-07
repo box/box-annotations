@@ -1,3 +1,15 @@
+## 3.1.0 (2018-11-07)
+
+* Fix: Alignment of createdAt timestamp and user's name (#277) ([b4980fb](https://github.com/box/box-annotations/commit/b4980fb)), closes [#277](https://github.com/box/box-annotations/issues/277)
+* Fix: Ensure drawings are only registered once with the controller (#278) ([feedc87](https://github.com/box/box-annotations/commit/feedc87)), closes [#278](https://github.com/box/box-annotations/issues/278)
+* Fix: Ensure onSelectionChange isn't triggered while creating highlights (#281) ([3130210](https://github.com/box/box-annotations/commit/3130210)), closes [#281](https://github.com/box/box-annotations/issues/281)
+* Fix: Remove clickHandler from DrawingModeController (#280) ([0c7fe0f](https://github.com/box/box-annotations/commit/0c7fe0f)), closes [#280](https://github.com/box/box-annotations/issues/280)
+* Fix: Remove focus trap on AnnotationPopover on mobile (#279) ([a14fe6b](https://github.com/box/box-annotations/commit/a14fe6b)), closes [#279](https://github.com/box/box-annotations/issues/279)
+* Chore: Fix publish script (#275) ([25c40f7](https://github.com/box/box-annotations/commit/25c40f7)), closes [#275](https://github.com/box/box-annotations/issues/275)
+* Chore: Upgrade husky (#276) ([14bda8a](https://github.com/box/box-annotations/commit/14bda8a)), closes [#276](https://github.com/box/box-annotations/issues/276)
+
+
+
 ## 3.0.0 (2018-10-31)
 
 * Chore: Adding rsync to yarn run watch (#241) ([afe6ab6](https://github.com/box/box-annotations/commit/afe6ab6)), closes [#241](https://github.com/box/box-annotations/issues/241)
