@@ -1,3 +1,9 @@
+## 3.2.0 (2018-11-13)
+
+* Mojito: Update translations (#282) ([48d2f8f](https://github.com/box/box-annotations/commit/48d2f8f)), closes [#282](https://github.com/box/box-annotations/issues/282)
+
+
+
 ## 3.1.0 (2018-11-07)
 
 * Fix: Alignment of createdAt timestamp and user's name (#277) ([b4980fb](https://github.com/box/box-annotations/commit/b4980fb)), closes [#277](https://github.com/box/box-annotations/issues/277)
