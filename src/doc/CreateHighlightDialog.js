@@ -79,12 +79,18 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     unmountPopover() {
-        this.isVisible = false;
-        const popoverLayer = this.container.querySelector('.ba-dialog-layer');
-        if (this.createPopoverComponent && popoverLayer) {
-            unmountComponentAtNode(popoverLayer);
-            this.createPopoverComponent = null;
+        if (!this.isVisible) {
+            return;
         }
+
+        const popoverLayers = this.container.querySelectorAll('.ba-dialog-layer');
+        if (!this.createPopoverComponent || popoverLayers.length === 0) {
+            return;
+        }
+
+        popoverLayers.forEach(unmountComponentAtNode);
+        this.createPopoverComponent = null;
+        this.isVisible = false;
     }
 
     /**

@@ -398,11 +398,22 @@ class Annotator extends EventEmitter {
     }
 
     /**
+     * Resets any popoverUI on render/scale events
+     *
+     * @param {number} [pageNum] - optional page number
+     * @return {void}
+     */
+    /* eslint-disable no-unused-vars */
+    resetPopoverUI(pageNum?: number) {}
+    /* eslint-enable no-unused-vars */
+
+    /**
      * Renders annotations from memory.
      *
      * @return {void}
      */
     render() {
+        this.resetPopoverUI();
         Object.keys(this.modeControllers).forEach((mode) => {
             const controller = this.modeControllers[mode];
             controller.render();
@@ -417,6 +428,7 @@ class Annotator extends EventEmitter {
      */
     renderPage(pageNum: number) {
         Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
+        this.resetPopoverUI(pageNum);
     }
 
     /**
