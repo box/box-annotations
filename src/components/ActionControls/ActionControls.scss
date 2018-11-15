@@ -21,7 +21,7 @@
         flex-flow: column wrap;
     }
 
-    .bcs-comment-user-name ~ .bcs-comment-created-at {
+    .bcs-comment .bcs-comment-content .bcs-comment-user-name ~ .bcs-comment-created-at {
         margin: 0;
     }
 
@@ -36,12 +36,16 @@
         .ba-create-popover .ba-action-controls {
             border: none;
             box-shadow: none;
+            justify-content: flex-end;
         }
 
-        .ba-annotation-input-container {
+        .ba-annotation-input-container,
+        .ba-create-popover .ba-annotation-input-container {
+            background: white;
+            border-top: 1px solid $see-see;
             bottom: 0;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
             padding: 15px;
-            position: absolute;
             width: 100%;
         }
 
@@ -57,19 +61,6 @@
         .ba-action-controls {
             background: white;
             justify-content: flex-end;
-            width: 100%;
-        }
-
-        .ba-annotation-input-container {
-            padding: 15px;
-            width: 100%;
-        }
-
-        .ba-create-popover .ba-annotation-input-container {
-            background: white;
-            border-top: 1px solid $seesee;
-            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
-            padding: 15px;
             width: 100%;
         }
     }
