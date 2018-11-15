@@ -88,31 +88,20 @@ describe('controllers/DrawingModeController', () => {
     });
 
     describe('cancelDrawing()', () => {
-        beforeEach(() => {
-            controller.exit = jest.fn();
-            controller.unregisterThread = jest.fn();
-            thread = new DrawingThread();
-        });
-
         it('should exit drawing mode', () => {
-            controller.cancelDrawing();
-            expect(controller.exit).toBeCalled();
-            expect(controller.unregisterThread).not.toBeCalled();
-        });
-
-        it('should destroy the current thread', () => {
+            controller.exit = jest.fn();
+            controller.destroyThread = jest.fn();
             controller.currentThread = thread;
+
             controller.cancelDrawing();
             expect(controller.exit).toBeCalled();
-            expect(controller.unregisterThread).toBeCalled();
-            expect(controller.currentThread.destroy).toBeCalled();
+            expect(controller.destroyThread).toBeCalled();
         });
     });
 
     describe('postDrawing()', () => {
         beforeEach(() => {
             controller.exit = jest.fn();
-            thread = new DrawingThread();
             thread.state = STATES.pending;
         });
 

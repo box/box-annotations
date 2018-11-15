@@ -64,7 +64,10 @@ class PointModeController extends AnnotationModeController {
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_POINT_MODE);
 
         const thread = this.getThreadByID(this.pendingThreadID);
-        this.destroyThread(thread);
+        if (thread) {
+            this.destroyThread(thread);
+        }
+
         this.pendingThreadID = null;
     }
 
