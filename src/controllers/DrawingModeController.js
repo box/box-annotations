@@ -93,6 +93,7 @@ class DrawingModeController extends AnnotationModeController {
      */
     cancelDrawing(): void {
         if (this.currentThread) {
+            this.unregisterThread(this.currentThread);
             this.currentThread.destroy();
         }
 

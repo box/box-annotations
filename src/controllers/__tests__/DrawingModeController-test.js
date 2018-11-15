@@ -87,6 +87,66 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
+    describe('cancelDrawing()', () => {
+        beforeEach(() => {
+            controller.exit = jest.fn();
+            controller.unregisterThread = jest.fn();
+            thread = new DrawingThread();
+        });
+
+        it('should exit drawing mode', () => {
+            controller.cancelDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(controller.unregisterThread).not.toBeCalled();
+        });
+
+        it('should destroy the current thread', () => {
+            controller.currentThread = thread;
+            controller.cancelDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(controller.unregisterThread).toBeCalled();
+            expect(controller.currentThread.destroy).toBeCalled();
+        });
+    });
+
+    describe('postDrawing()', () => {
+        beforeEach(() => {
+            controller.exit = jest.fn();
+            thread = new DrawingThread();
+            thread.state = STATES.pending;
+        });
+
+        it('should exit drawing mode', () => {
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should not save non-pending threads', () => {
+            thread.state = STATES.inactive;
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should not save pending threads without paths', () => {
+            thread.pathContainer = [];
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should save the current pending thread', () => {
+            thread.pathContainer = [{}];
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).toBeCalled();
+        });
+    });
+
     describe('setupHandlers()', () => {
         it('should successfully contain draw mode handlers if undo and redo buttons exist', () => {
             controller.annotatedElement = {};
