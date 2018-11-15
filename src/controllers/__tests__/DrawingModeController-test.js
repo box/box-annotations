@@ -87,6 +87,55 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
+    describe('cancelDrawing()', () => {
+        it('should exit drawing mode', () => {
+            controller.exit = jest.fn();
+            controller.destroyThread = jest.fn();
+            controller.currentThread = thread;
+
+            controller.cancelDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(controller.destroyThread).toBeCalled();
+        });
+    });
+
+    describe('postDrawing()', () => {
+        beforeEach(() => {
+            controller.exit = jest.fn();
+            thread.state = STATES.pending;
+        });
+
+        it('should exit drawing mode', () => {
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should not save non-pending threads', () => {
+            thread.state = STATES.inactive;
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should not save pending threads without paths', () => {
+            thread.pathContainer = { undoStack: [] };
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).not.toBeCalled();
+        });
+
+        it('should save the current pending thread', () => {
+            thread.pathContainer = { undoStack: [{}] };
+            controller.currentThread = thread;
+            controller.postDrawing();
+            expect(controller.exit).toBeCalled();
+            expect(thread.save).toBeCalled();
+        });
+    });
+
     describe('setupHandlers()', () => {
         it('should successfully contain draw mode handlers if undo and redo buttons exist', () => {
             controller.annotatedElement = {};

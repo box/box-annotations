@@ -93,7 +93,7 @@ class DrawingModeController extends AnnotationModeController {
      */
     cancelDrawing(): void {
         if (this.currentThread) {
-            this.currentThread.destroy();
+            this.destroyThread(this.currentThread);
         }
 
         this.exit();
@@ -108,7 +108,8 @@ class DrawingModeController extends AnnotationModeController {
         if (
             this.currentThread &&
             this.currentThread.state === STATES.pending &&
-            this.currentThread.pathContainer.length > 0
+            this.currentThread.pathContainer &&
+            this.currentThread.pathContainer.undoStack.length > 0
         ) {
             this.currentThread.save(TYPES.draw);
         }
@@ -305,8 +306,7 @@ class DrawingModeController extends AnnotationModeController {
                     this.unbindListeners();
                     this.bindListeners();
                 } else {
-                    this.unregisterThread(thread);
-                    thread.destroy();
+                    this.destroyThread(thread);
                     this.renderPage(thread.location.page);
                 }
 
