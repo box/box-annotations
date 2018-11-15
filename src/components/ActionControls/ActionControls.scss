@@ -1,6 +1,10 @@
 @import '../../variables';
 
 .ba {
+    .bcs-at-mention-tip {
+        display: none;
+    }
+
     .ba-action-controls {
         background: white;
         color: $fours;
@@ -62,6 +66,7 @@
         }
 
         .ba-create-popover .ba-annotation-input-container {
+            background: white;
             border-top: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
             padding: 15px;
