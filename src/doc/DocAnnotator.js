@@ -77,7 +77,7 @@ class DocAnnotator extends Annotator {
         // $FlowFixMe
         this.onSelectionChange = this.onSelectionChange.bind(this);
         // $FlowFixMe
-        this.resetPopoverUI = this.resetPopoverUI.bind(this);
+        this.resetAnnotationUI = this.resetAnnotationUI.bind(this);
     }
 
     /**
@@ -243,7 +243,7 @@ class DocAnnotator extends Annotator {
     };
 
     /** @inheritdoc */
-    resetPopoverUI(pageNum?: number) {
+    resetAnnotationUI(pageNum?: number) {
         // $FlowFixMe
         document.getSelection().removeAllRanges();
         if (this.highlighter) {
@@ -328,7 +328,7 @@ class DocAnnotator extends Annotator {
     bindDOMListeners() {
         super.bindDOMListeners();
 
-        this.container.addEventListener('resize', this.resetPopoverUI);
+        this.container.addEventListener('resize', this.resetAnnotationUI);
 
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
@@ -364,7 +364,7 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
-        this.container.removeEventListener('resize', this.resetPopoverUI);
+        this.container.removeEventListener('resize', this.resetAnnotationUI);
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('click', this.clickHandler);
@@ -694,7 +694,7 @@ class DocAnnotator extends Annotator {
     highlightMouseupHandler = (event: Event) => {
         this.isCreatingHighlight = false;
 
-        if (!event || util.isInAnnotationOrMarker(event, this.container)) {
+        if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }
 

@@ -409,7 +409,7 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('resetPopoverUI()', () => {
+    describe('resetAnnotationUI()', () => {
         beforeEach(() => {
             document.getSelection = jest.fn().mockReturnValue({
                 removeAllRanges: jest.fn()
@@ -421,13 +421,13 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should clear and hide createHighlightDialog', () => {
-            annotator.resetPopoverUI();
+            annotator.resetAnnotationUI();
             expect(annotator.scaleAnnotationCanvases).not.toBeCalled();
             expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
 
         it('should scale annotation canvases if page number is provided', () => {
-            annotator.resetPopoverUI(1);
+            annotator.resetAnnotationUI(1);
             expect(annotator.scaleAnnotationCanvases).toBeCalledWith(1);
             expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
@@ -525,7 +525,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should bind DOM listeners if user can annotate and highlight', () => {
             annotator.bindDOMListeners();
-            expect(annotator.container.addEventListener).toBeCalledWith('resize', annotator.resetPopoverUI);
+            expect(annotator.container.addEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'mouseup',
                 annotator.highlightMouseupHandler
@@ -634,7 +634,7 @@ describe('doc/DocAnnotator', () => {
             annotator.permissions.can_annotate = true;
 
             annotator.unbindDOMListeners();
-            expect(annotator.container.removeEventListener).toBeCalledWith('resize', annotator.resetPopoverUI);
+            expect(annotator.container.removeEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'mouseup',
                 annotator.highlightMouseupHandler

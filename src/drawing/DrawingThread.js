@@ -431,10 +431,9 @@ class DrawingThread extends AnnotationThread {
      * Create an annotation data object to pass to annotation service.
      *
      * @param {string} type - Type of annotation
-     * @param {string} message - Annotation text
      * @return {Object} Annotation data
      */
-    createAnnotationData(type, message) {
+    createAnnotationData(type) {
         return {
             item: {
                 id: this.fileVersionId,

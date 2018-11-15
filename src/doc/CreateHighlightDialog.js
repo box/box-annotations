@@ -83,6 +83,7 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
+        this.isVisible = false;
         const popoverLayers = this.container.querySelectorAll('.ba-dialog-layer');
         if (!this.createPopoverComponent || popoverLayers.length === 0) {
             return;
@@ -90,7 +91,6 @@ class CreateHighlightDialog extends EventEmitter {
 
         popoverLayers.forEach(unmountComponentAtNode);
         this.createPopoverComponent = null;
-        this.isVisible = false;
     }
 
     /**
