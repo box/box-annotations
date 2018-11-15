@@ -600,6 +600,17 @@ class AnnotationModeController extends EventEmitter {
     }
 
     /**
+     * Unregisters and destroys the specified thread
+     *
+     * @param {AnnotationThread} thread thread to destroy
+     * @return {void}
+     */
+    destroyThread(thread: AnnotationThread) {
+        this.unregisterThread(thread);
+        thread.destroy();
+    }
+
+    /**
      * Renders annotations from memory for a specified page.
      *
      * @param {string} pageNum - Page number
@@ -614,8 +625,7 @@ class AnnotationModeController extends EventEmitter {
         pageThreads.forEach((thread, index) => {
             // Destroy any pending threads that may exist on re-render
             if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
-                this.unregisterThread(thread);
-                thread.destroy();
+                this.destroyThread(thread);
                 return;
             }
 
@@ -645,10 +655,9 @@ class AnnotationModeController extends EventEmitter {
             const pageThreads = this.annotations[pageNum].all() || [];
             pageThreads.forEach((thread) => {
                 if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
-                    this.unregisterThread(thread);
+                    this.destroyThread(thread);
                     hadPendingThreads = true;
                     this.pendingThreadID = null;
-                    thread.destroy();
                 }
             });
         });
