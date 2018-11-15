@@ -131,7 +131,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should not save pending threads without paths', () => {
-            thread.pathContainer = [];
+            thread.pathContainer = { undoStack: [] };
             controller.currentThread = thread;
             controller.postDrawing();
             expect(controller.exit).toBeCalled();
@@ -139,7 +139,7 @@ describe('controllers/DrawingModeController', () => {
         });
 
         it('should save the current pending thread', () => {
-            thread.pathContainer = [{}];
+            thread.pathContainer = { undoStack: [{}] };
             controller.currentThread = thread;
             controller.postDrawing();
             expect(controller.exit).toBeCalled();
