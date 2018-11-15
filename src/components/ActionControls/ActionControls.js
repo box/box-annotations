@@ -64,11 +64,13 @@ class ActionControls extends React.Component<Props, State> {
     onCreate = ({ text }: { text: string }) => {
         const { onCreate, type } = this.props;
         onCreate(type, text);
+        this.setState({ isInputOpen: false });
     };
 
     onDelete = (event: Event) => {
         event.stopPropagation();
         event.preventDefault();
+        this.setState({ isInputOpen: false });
 
         const { onDelete, id } = this.props;
         onDelete({ id });
