@@ -180,9 +180,8 @@ class Annotator extends EventEmitter {
      * @param {AnnotationType} annotationType - Type of annotation
      * @return {Object} Location object
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     getLocationFromEvent = (event: Event, annotationType: AnnotationType): ?Location => {};
-    /* eslint-enable no-unused-vars */
 
     /**
      * Must be implemented to determine the annotated element in the viewer.
@@ -190,9 +189,8 @@ class Annotator extends EventEmitter {
      * @param {HTMLElement} containerEl - Container element for the viewer
      * @return {HTMLElement} Annotated element in the viewer
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     getAnnotatedEl(containerEl: HTMLElement): ?HTMLElement {}
-    /* eslint-enable no-unused-vars */
 
     /**
      * Annotations setup.
@@ -403,9 +401,8 @@ class Annotator extends EventEmitter {
      * @param {number} [pageNum] - optional page number
      * @return {void}
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     resetPopoverUI(pageNum?: number) {}
-    /* eslint-enable no-unused-vars */
 
     /**
      * Renders annotations from memory.
