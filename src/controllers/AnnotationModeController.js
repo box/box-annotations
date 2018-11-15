@@ -606,10 +606,6 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     destroyThread(thread: AnnotationThread) {
-        if (!thread) {
-            return;
-        }
-
         this.unregisterThread(thread);
         thread.destroy();
     }
