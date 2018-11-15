@@ -92,11 +92,7 @@ class DrawingModeController extends AnnotationModeController {
      * @return {void}
      */
     cancelDrawing(): void {
-        if (this.currentThread) {
-            this.unregisterThread(this.currentThread);
-            this.currentThread.destroy();
-        }
-
+        this.destroyThread(this.currentThread);
         this.exit();
     }
 
@@ -307,8 +303,7 @@ class DrawingModeController extends AnnotationModeController {
                     this.unbindListeners();
                     this.bindListeners();
                 } else {
-                    this.unregisterThread(thread);
-                    thread.destroy();
+                    this.destroyThread(thread);
                     this.renderPage(thread.location.page);
                 }
 
