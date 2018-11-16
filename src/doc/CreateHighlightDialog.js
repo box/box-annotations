@@ -11,8 +11,8 @@ import {
     findElement,
     getPopoverLayer,
     isInElement,
-    getPageEl,
-    shouldDisplayMobileUI
+    shouldDisplayMobileUI,
+    getPopoverParent
 } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import {
@@ -131,9 +131,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     renderAnnotationPopover = (type: AnnotationType = TYPES.highlight) => {
-        const pageEl = shouldDisplayMobileUI(this.container)
-            ? this.container
-            : getPageEl(this.annotatedElement, this.pageInfo.page);
+        const pageEl = getPopoverParent(this.container, this.annotatedElement, this.pageInfo);
         const popoverLayer = getPopoverLayer(pageEl);
 
         this.createPopoverComponent = render(

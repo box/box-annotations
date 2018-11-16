@@ -1,6 +1,13 @@
 // @flow
 import AnnotationThread from '../AnnotationThread';
-import { showElement, shouldDisplayMobileUI, repositionCaret, findElement, isInUpperHalf } from '../util';
+import {
+    showElement,
+    shouldDisplayMobileUI,
+    repositionCaret,
+    findElement,
+    isInUpperHalf,
+    getPopoverParent
+} from '../util';
 import { getBrowserCoordinatesFromLocation } from './imageUtil';
 import {
     STATES,
@@ -13,16 +20,6 @@ import {
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
-    /**
-     * Gets the popover parent for image point threads. The popover parent
-     * should not the image element but rather the annotatedElement
-     *
-     * @return {HTMLElement} The correct parent based on mobile view or not
-     */
-    getPopoverParent() {
-        return shouldDisplayMobileUI(this.container) ? this.container : this.annotatedElement;
-    }
-
     /** @inheritdoc */
     show() {
         const [browserX, browserY] = getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
@@ -56,7 +53,7 @@ class ImagePointThread extends AnnotationThread {
         const dialogWidth = dialogDimensions.width;
 
         // Get image tag inside viewer, based on page number. All images are page 1 by default.
-        const imageEl = this.getPopoverParent();
+        const imageEl = getPopoverParent(this.container, this.annotatedElement);
 
         // Center middle of dialog with point - this coordinate is with respect to the page
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;

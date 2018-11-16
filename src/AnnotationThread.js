@@ -152,18 +152,6 @@ class AnnotationThread extends EventEmitter {
     };
 
     /**
-     * Returns the parent element for the annotation popover
-     *
-     * @return {HTMLElement} Parent element for the annotation popover
-     */
-    getPopoverParent() {
-        return util.shouldDisplayMobileUI(this.container)
-            ? this.container
-            : // $FlowFixMe
-            util.getPageEl(this.annotatedElement, this.location.page);
-    }
-
-    /**
      * Shows the appropriate annotation dialog for this thread.
      *
      * @param {Event} event - Mouse event
@@ -177,7 +165,7 @@ class AnnotationThread extends EventEmitter {
 
         const isPending = this.state === STATES.pending;
 
-        const pageEl = this.getPopoverParent();
+        const pageEl = util.getPopoverParent(this.container, this.annotatedElement, this.location);
         this.popoverComponent = render(
             <AnnotationPopover
                 id={this.id}
@@ -507,7 +495,7 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.getPopoverParent();
+        const pageEl = util.getPopoverParent(this.container, this.annotatedElement, this.location);
         pageEl.scrollIntoView();
     }
 

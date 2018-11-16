@@ -109,6 +109,22 @@ export function getPageEl(annotatedEl, pageNum) {
 }
 
 /**
+ * Returns the parent element for the annotation popover
+ *
+ * @param {HTMLElement} container - Preview container
+ * @param {HTMLElement} annotatedElement - Annotated element
+ * @param {Object} location - event/annotation location container page number
+ * @return {HTMLElement} Parent element for the annotation popover
+ */
+export function getPopoverParent(container, annotatedElement, location) {
+    if (!location || !location.page) {
+        return this.annotatedElement;
+    }
+
+    return shouldDisplayMobileUI(container) ? container : getPageEl(annotatedElement, location.page);
+}
+
+/**
  * Finds an existing annotation popover layer or creates one if it does
  * not already exist and appends the layer to the page.
  *

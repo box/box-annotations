@@ -10,7 +10,15 @@ import {
     SELECTOR_CLASS_ANNOTATION_POPOVER
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
-import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
+import {
+    createLocation,
+    getScale,
+    repositionCaret,
+    findElement,
+    getPageEl,
+    shouldDisplayMobileUI,
+    getPopoverParent
+} from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
@@ -325,7 +333,7 @@ class DocDrawingThread extends DrawingThread {
         }
 
         if (!this.pageEl) {
-            this.pageEl = this.getPopoverParent();
+            this.pageEl = getPopoverParent(this.container, this.annotatedElement, this.location);
         }
 
         // Render popover so we can get width
