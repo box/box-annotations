@@ -85,15 +85,6 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
-    describe('onMousedown()', () => {
-        it('should destroy the thread when annotation is in pending state', () => {
-            thread.state = STATES.pending;
-            thread.destroy = jest.fn();
-            thread.onMousedown();
-            expect(thread.destroy).toBeCalled();
-        });
-    });
-
     describe('onClick()', () => {
         it('should set annotation to inactive if event has already been consumed', () => {
             thread.state = STATES.active;
