@@ -409,7 +409,7 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
-    describe('renderPage()', () => {
+    describe('resetAnnotationUI()', () => {
         beforeEach(() => {
             document.getSelection = jest.fn().mockReturnValue({
                 removeAllRanges: jest.fn()
@@ -418,27 +418,17 @@ describe('doc/DocAnnotator', () => {
                 removeAllHighlights: jest.fn()
             };
             annotator.scaleAnnotationCanvases = jest.fn();
-            annotator.modeControllers = {
-                type: {
-                    renderPage: jest.fn()
-                },
-                type2: {
-                    renderPage: jest.fn()
-                }
-            };
         });
 
-        it('should clear and hide createHighlightDialog on page render', () => {
-            annotator.createHighlightDialog = {
-                isVisible: true,
-                hide: jest.fn(),
-                destroy: jest.fn(),
-                unmountPopover: jest.fn()
-            };
-            annotator.renderPage(1);
+        it('should clear and hide createHighlightDialog', () => {
+            annotator.resetAnnotationUI();
+            expect(annotator.scaleAnnotationCanvases).not.toBeCalled();
+            expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
+        });
+
+        it('should scale annotation canvases if page number is provided', () => {
+            annotator.resetAnnotationUI(1);
             expect(annotator.scaleAnnotationCanvases).toBeCalledWith(1);
-            expect(annotator.modeControllers.type.renderPage).toBeCalledWith(1);
-            expect(annotator.modeControllers.type2.renderPage).toBeCalledWith(1);
             expect(annotator.createHighlightDialog.unmountPopover).toBeCalled();
         });
     });
@@ -478,10 +468,6 @@ describe('doc/DocAnnotator', () => {
             Object.defineProperty(Annotator.prototype, 'setupAnnotations', { value: jest.fn() });
             rangy.createClassApplier = jest.fn();
             rangy.createHighlighter = jest.fn().mockReturnValue(highlighter);
-
-            annotator.createHighlightDialog = {
-                addListener: jest.fn()
-            };
         });
 
         afterEach(() => {
@@ -518,6 +504,10 @@ describe('doc/DocAnnotator', () => {
 
         beforeEach(() => {
             Object.defineProperty(Annotator.prototype, 'bindDOMListeners', { value: jest.fn() });
+            annotator.container = {
+                addEventListener: jest.fn(),
+                removeEventListener: jest.fn()
+            };
             annotator.annotatedElement = {
                 addEventListener: jest.fn(),
                 removeEventListener: jest.fn()
@@ -535,6 +525,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should bind DOM listeners if user can annotate and highlight', () => {
             annotator.bindDOMListeners();
+            expect(annotator.container.addEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'mouseup',
                 annotator.highlightMouseupHandler
@@ -628,6 +619,9 @@ describe('doc/DocAnnotator', () => {
 
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
+            annotator.container = {
+                removeEventListener: jest.fn()
+            };
             annotator.annotatedElement = {
                 removeEventListener: jest.fn()
             };
@@ -640,6 +634,7 @@ describe('doc/DocAnnotator', () => {
             annotator.permissions.can_annotate = true;
 
             annotator.unbindDOMListeners();
+            expect(annotator.container.removeEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'mouseup',
                 annotator.highlightMouseupHandler
@@ -976,7 +971,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should do nothing and return true if a createHighlightDialog is visible', () => {
             annotator.plainHighlightEnabled = true;
-            annotator.createHighlightDialog = { isVisible: true };
+            annotator.createHighlightDialog.isVisible = true;
             expect(annotator.highlightClickHandler(event)).toBeTruthy();
             expect(annotator.hideAnnotations).not.toBeCalled();
         });

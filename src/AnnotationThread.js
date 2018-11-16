@@ -209,15 +209,15 @@ class AnnotationThread extends EventEmitter {
      */
     unmountPopover() {
         this.reset();
-
         this.toggleFlippedThreadEl();
 
-        const pageEl = this.getPopoverParent();
-        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (this.popoverComponent && popoverLayer) {
-            unmountComponentAtNode(popoverLayer);
-            this.popoverComponent = null;
+        const popoverLayers = this.container.querySelectorAll('.ba-dialog-layer');
+        if (!this.popoverComponent || popoverLayers.length === 0) {
+            return;
         }
+
+        popoverLayers.forEach(unmountComponentAtNode);
+        this.popoverComponent = null;
     }
 
     /**

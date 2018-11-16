@@ -329,9 +329,8 @@ class AnnotationModeController extends EventEmitter {
      * @param {Object} params - Annotation thread params
      * @return {AnnotationThread|null} Annotation thread instance or null
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     instantiateThread(params: Object): AnnotationThread {
-        /* eslint-enable no-unused-vars */
         throw new Error('Implement me!');
     }
 
