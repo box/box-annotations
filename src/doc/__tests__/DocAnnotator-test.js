@@ -746,15 +746,15 @@ describe('doc/DocAnnotator', () => {
 
         it('should do nothing if highlights are disabled', () => {
             annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
-            expect(thread.onMousedown).not.toBeCalled();
             expect(annotator.resetHighlightSelection).toBeCalled();
+            expect(controller.destroyPendingThreads).not.toBeCalled();
         });
 
         it('should get highlights on page and call their onMouse down method', () => {
             annotator.plainHighlightEnabled = true;
             annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
-            expect(controller.applyActionToThreads).toBeCalled();
             expect(annotator.resetHighlightSelection).toBeCalled();
+            expect(controller.destroyPendingThreads).toBeCalled();
         });
     });
 

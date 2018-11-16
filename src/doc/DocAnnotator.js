@@ -656,11 +656,11 @@ class DocAnnotator extends Annotator {
         this.resetHighlightSelection(this.mouseDownEvent);
 
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
+            this.modeControllers[TYPES.highlight].destroyPendingThreads();
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.onMousedown());
+            this.modeControllers[TYPES.highlight_comment].destroyPendingThreads();
         }
     };
 
