@@ -653,6 +653,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.isCreatingHighlight = true;
+        this.resetHighlightSelection(this.mouseDownEvent);
 
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
@@ -797,6 +798,16 @@ class DocAnnotator extends Annotator {
 
         this.resetHighlightSelection(event);
         return false;
+    }
+
+    /** @inheritdoc */
+    hideAnnotations(event: ?Event) {
+        if (event && util.isInDialog(event, this.container)) {
+            return;
+        }
+
+        this.resetHighlightSelection(event);
+        super.hideAnnotations();
     }
 
     /**
