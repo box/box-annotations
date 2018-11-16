@@ -148,9 +148,6 @@
     "functional-tests": "node functional-tests/app.js & node ./node_modules/codeceptjs/bin/codecept.js run --steps",
     "functional-tests-ci": "yarn run pre-build && yarn run selenium-build && node ./node_modules/codeceptjs/bin/codecept.js run --steps",
     "lint": "NODE_ENV=dev ./node_modules/.bin/eslint src && ./node_modules/.bin/stylelint 'src/**/*.scss'",
-    "precommit": "lint-staged",
-    "commitmsg": "commitlint -e",
-    "prepush": "./build/prepush.sh",
     "pre-build": "yarn install && yarn run clean && yarn run build-locales",
     "flow": "flow check",
     "flow-typed": "flow-typed",
@@ -210,5 +207,12 @@
   },
   "resolutions": {
     "uglify-es": "3.3.4"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e",
+      "pre-commit": "lint-staged",
+      "pre-push": "./build/prepush.sh"
+    }
   }
 }
