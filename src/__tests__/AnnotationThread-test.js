@@ -61,6 +61,34 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('unmountPopover', () => {
+        beforeEach(() => {
+            thread.popoverComponent = {};
+            thread.reset = jest.fn();
+            thread.toggleFlippedThreadEl = jest.fn();
+            thread.container = {
+                querySelectorAll: jest.fn().mockReturnValue([rootElement])
+            };
+        });
+
+        it('should there are no popover layers', () => {
+            thread.container = {
+                querySelectorAll: jest.fn().mockReturnValue([])
+            };
+            thread.unmountPopover();
+            expect(thread.popoverComponent).not.toBeNull();
+            expect(thread.reset).toBeCalled();
+            expect(thread.toggleFlippedThreadEl).toBeCalled();
+        });
+
+        it('should unmount any visible popovers', () => {
+            thread.unmountPopover();
+            expect(thread.popoverComponent).toBeNull();
+            expect(thread.reset).toBeCalled();
+            expect(thread.toggleFlippedThreadEl).toBeCalled();
+        });
+    });
+
     describe('hide()', () => {
         it('should hide the thread element', () => {
             thread.unmountPopover = jest.fn();
@@ -274,6 +302,65 @@ describe('AnnotationThread', () => {
                 expect(thread.cancelFirstComment).not.toBeCalled();
                 expect(thread.destroy).toBeCalled();
             });
+        });
+    });
+
+    describe('cleanupAnnotationOnDelete()', () => {
+        let comment;
+        beforeEach(() => {
+            comment = {
+                id: '123'
+            };
+            thread.comments = [comment];
+            thread.threadID = '123abc';
+            thread.renderAnnotationPopover = jest.fn();
+            thread.canDelete = false;
+        });
+
+        it('should delete the appropriate comment', () => {
+            thread.cleanupAnnotationOnDelete(comment.id);
+            expect(thread.comments.length).toEqual(0);
+        });
+
+        it('should not destroy the thread if the user does not have canDelete permissions', () => {
+            thread.cleanupAnnotationOnDelete(comment.id);
+            expect(thread.threadID).not.toBeNull();
+        });
+
+        it('should destroy the the thread if the comment was the last one in the annotation', () => {
+            thread.canDelete = true;
+            thread.cleanupAnnotationOnDelete(comment.id);
+            expect(thread.threadID).toBeNull();
+        });
+
+        it('should re-render the popover if the comment was NOTthe last one in the annotation', () => {
+            thread.cleanupAnnotationOnDelete(comment.id);
+            expect(thread.threadID).not.toBeNull();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+        });
+    });
+
+    describe('deleteSuccessHAndler()', () => {
+        beforeEach(() => {
+            thread.renderAnnotationPopover = jest.fn();
+            thread.destroy = jest.fn();
+            thread.emit = jest.fn();
+        });
+
+        it('should re-render the popover if the thread is still valid', () => {
+            thread.threadID = '123';
+            thread.deleteSuccessHandler();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+            expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.delete);
+            expect(thread.destroy).not.toBeCalled();
+        });
+
+        it('should properly destroy the thread if the thread should be completely deleted', () => {
+            thread.threadID = null;
+            thread.deleteSuccessHandler();
+            expect(thread.renderAnnotationPopover).not.toBeCalled();
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
+            expect(thread.destroy).toBeCalled();
         });
     });
 

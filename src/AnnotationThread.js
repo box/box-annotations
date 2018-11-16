@@ -209,15 +209,15 @@ class AnnotationThread extends EventEmitter {
      */
     unmountPopover() {
         this.reset();
-
         this.toggleFlippedThreadEl();
 
-        const pageEl = this.getPopoverParent();
-        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (this.popoverComponent && popoverLayer) {
-            unmountComponentAtNode(popoverLayer);
-            this.popoverComponent = null;
+        const popoverLayers = this.container.querySelectorAll('.ba-dialog-layer');
+        if (!this.popoverComponent || popoverLayers.length === 0) {
+            return;
         }
+
+        popoverLayers.forEach(unmountComponentAtNode);
+        this.popoverComponent = null;
     }
 
     /**
@@ -364,8 +364,12 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteSuccessHandler = () => {
-        // Broadcast annotation deletion event
-        this.emit(THREAD_EVENT.delete);
+        if (this.threadID) {
+            this.renderAnnotationPopover();
+        } else {
+            this.emit(THREAD_EVENT.delete);
+            this.destroy();
+        }
     };
 
     /**

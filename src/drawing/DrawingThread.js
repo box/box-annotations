@@ -163,13 +163,13 @@ class DrawingThread extends AnnotationThread {
         this.annotatedElement.removeEventListener('touchend', eventToLocationHandler);
     }
 
-    /* eslint-disable no-unused-vars */
     /**
      * Handle a pointer movement
      *
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
+    /* eslint-disable-next-line no-unused-vars */
     handleMove(location) {}
 
     /**
@@ -178,6 +178,7 @@ class DrawingThread extends AnnotationThread {
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
+    /* eslint-disable-next-line no-unused-vars */
     handleStart(location) {}
 
     /**
@@ -186,8 +187,8 @@ class DrawingThread extends AnnotationThread {
      * @param {Object} location - The location information of the pointer
      * @return {void}
      */
+    /* eslint-disable-next-line no-unused-vars */
     handleStop(location) {}
-    /* eslint-disable no-unused-vars */
 
     /**
      * Delete a saved drawing thread by deleting each annotation
@@ -430,10 +431,9 @@ class DrawingThread extends AnnotationThread {
      * Create an annotation data object to pass to annotation service.
      *
      * @param {string} type - Type of annotation
-     * @param {string} message - Annotation text
      * @return {Object} Annotation data
      */
-    createAnnotationData(type, message) {
+    createAnnotationData(type) {
         return {
             item: {
                 id: this.fileVersionId,

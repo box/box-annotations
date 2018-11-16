@@ -65,8 +65,7 @@ class PointModeController extends AnnotationModeController {
 
         const thread = this.getThreadByID(this.pendingThreadID);
         if (thread) {
-            this.unregisterThread(thread);
-            thread.destroy();
+            this.destroyThread(thread);
         }
 
         this.pendingThreadID = null;

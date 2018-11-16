@@ -76,6 +76,8 @@ class DocAnnotator extends Annotator {
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
         // $FlowFixMe
         this.onSelectionChange = this.onSelectionChange.bind(this);
+        // $FlowFixMe
+        this.resetAnnotationUI = this.resetAnnotationUI.bind(this);
     }
 
     /**
@@ -240,25 +242,20 @@ class DocAnnotator extends Annotator {
         return location;
     };
 
-    /**
-     * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
-     *
-     * @param {number} pageNum Page number
-     * @return {void}
-     */
-    renderPage(pageNum: number) {
+    /** @inheritdoc */
+    resetAnnotationUI(pageNum?: number) {
         // $FlowFixMe
         document.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
 
-        // Scale existing canvases on re-render
-        this.scaleAnnotationCanvases(pageNum);
-        super.renderPage(pageNum);
-
         if (this.createHighlightDialog) {
             this.createHighlightDialog.unmountPopover();
+        }
+
+        if (pageNum) {
+            this.scaleAnnotationCanvases(pageNum);
         }
     }
 
@@ -331,6 +328,8 @@ class DocAnnotator extends Annotator {
     bindDOMListeners() {
         super.bindDOMListeners();
 
+        this.container.addEventListener('resize', this.resetAnnotationUI);
+
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('wheel', this.hideCreateDialog);
@@ -365,6 +364,7 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
+        this.container.removeEventListener('resize', this.resetAnnotationUI);
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('click', this.clickHandler);
