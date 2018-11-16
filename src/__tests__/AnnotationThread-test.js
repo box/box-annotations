@@ -61,6 +61,34 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('unmountPopover', () => {
+        beforeEach(() => {
+            thread.popoverComponent = {};
+            thread.reset = jest.fn();
+            thread.toggleFlippedThreadEl = jest.fn();
+            thread.container = {
+                querySelectorAll: jest.fn().mockReturnValue([rootElement])
+            };
+        });
+
+        it('should there are no popover layers', () => {
+            thread.container = {
+                querySelectorAll: jest.fn().mockReturnValue([])
+            };
+            thread.unmountPopover();
+            expect(thread.popoverComponent).not.toBeNull();
+            expect(thread.reset).toBeCalled();
+            expect(thread.toggleFlippedThreadEl).toBeCalled();
+        });
+
+        it('should unmount any visible popovers', () => {
+            thread.unmountPopover();
+            expect(thread.popoverComponent).toBeNull();
+            expect(thread.reset).toBeCalled();
+            expect(thread.toggleFlippedThreadEl).toBeCalled();
+        });
+    });
+
     describe('hide()', () => {
         it('should hide the thread element', () => {
             thread.unmountPopover = jest.fn();
