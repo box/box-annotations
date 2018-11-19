@@ -750,17 +750,26 @@ describe('doc/DocAnnotator', () => {
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             annotator.highlightCreateHandler = jest.fn();
+            annotator.resetHighlightSelection = jest.fn();
             annotator.mouseDownEvent = { clientX: 100, clientY: 100 };
         });
 
         it('should call highlightCreateHandler if on desktop and the mouse moved', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlightCreateHandler).toBeCalled();
+            expect(annotator.resetHighlightSelection).not.toBeCalled();
         });
 
         it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(annotator.highlightCreateHandler).toBeCalled();
+            expect(annotator.resetHighlightSelection).not.toBeCalled();
+        });
+
+        it('should reset highlight selection when mouse has not moved', () => {
+            annotator.highlightMouseupHandler(annotator.mouseDownEvent);
+            expect(annotator.highlightCreateHandler).not.toBeCalled();
+            expect(annotator.resetHighlightSelection).toBeCalled();
         });
 
         it('should call highlighter.removeAllHighlghts', () => {
