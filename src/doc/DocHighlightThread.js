@@ -130,18 +130,6 @@ class DocHighlightThread extends AnnotationThread {
     };
 
     /**
-     * Mousedown handler for thread. Deletes this thread if it is still pending.
-     *
-     * @return {void}
-     */
-    onMousedown() {
-        // Destroy pending highlights on mousedown
-        if (this.state === STATES.pending) {
-            this.destroy();
-        }
-    }
-
-    /**
      * Click handler for thread. If click is inside this highlight, set the
      * state to be active, and return true. If not, hide the delete highlight
      * button, set state to inactive, and reset. The 'consumed' param tracks
