@@ -61,6 +61,34 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('getPopoverParent()', () => {
+        beforeEach(() => {
+            thread.annotatedElement = 'annotatedElement';
+            thread.container = 'container';
+            util.getPageEl = jest.fn().mockReturnValue('pageEl');
+        });
+
+        it('should return the annotated element if no location or location page is set', () => {
+            thread.location = undefined;
+            expect(thread.getPopoverParent()).toEqual('annotatedElement');
+
+            thread.location = {};
+            expect(thread.getPopoverParent()).toEqual('annotatedElement');
+        });
+
+        it('should return container if user should see the mobile UI', () => {
+            thread.location = { page: 1 };
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            expect(thread.getPopoverParent()).toEqual('container');
+        });
+
+        it('should return the page element if user should NOT see the mobile UI', () => {
+            thread.location = { page: 1 };
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
+            expect(thread.getPopoverParent()).toEqual('pageEl');
+        });
+    });
+
     describe('unmountPopover', () => {
         beforeEach(() => {
             thread.popoverComponent = {};
