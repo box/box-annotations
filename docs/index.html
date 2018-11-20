@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href='./styles.css' />
+        <link rel="stylesheet" href='https://cdn01.boxcdn.net/platform/preview/1.58.2/en-US/preview.css' />
+        <link rel="stylesheet" href='https://unpkg.com/box-annotations@3.3.0/lib/annotations.css' />
+        <script src='https://cdn01.boxcdn.net/platform/preview/1.58.2/en-US/preview.js'></script>
+        <script src='https://unpkg.com/box-annotations@3.3.0/lib/annotations.js'></script>
+
+
+    </head>
+
+    <body>
+        <div class='setters-container'>
+                <div class='container' id='token'>
+                        <div> Token: <span id='token-display'></span> </div>
+                        <input id='token-set' placeholder='Enter token' />
+                        <button onClick="setProperty('token')">Set new token</button>
+                </div>
+            
+                <div class='container' id='file'>
+                        <div> File ID: <span id='fileid-display'></span></div>
+                        <input id='fileid-set' placeholder='Enter file ID' />
+                        <button onClick="setProperty('fileid')">Set new file ID</button>
+                </div>  
+        </div>
+
+        <div class='preview-container'> </div>
+        <script>
+            function setProperty(selector) {
+                // Get new value, fallback to local storage
+                const inputValue = document.querySelector('#' + selector + '-set')
+                value = inputValue && inputValue.value || localStorage.getItem(selector);
+
+
+                if (!value) {
+                    return;
+                }
+                
+                // Set it for display purposes
+                displayElement = document.querySelector('#' + selector + '-display');
+                displayElement.textContent = value;
+
+                // Cache it in local storage
+                localStorage.setItem(selector, value)
+
+                // Attempt to load Preview + Annotations
+                loadPreview();
+            }
+
+            function loadPreview() {
+                const token = localStorage.getItem('token');
+                const fileid = localStorage.getItem('fileid');
+
+                if ( !token || !fileid) {
+                    return;
+                }
+    
+                // Load Preview + Annotations with the passed in file ID
+                const options = {
+                    Image: {
+                        enabledTypes: ["point"]
+                    },
+                    Document: {
+                        enabledTypes: ["draw", "point", "highlight-comment", "highlight"]
+                    },
+                    Presentation: {
+                        enabledTypes: ["draw", "point", "highlight-comment", "highlight"]
+                    }
+                };
+
+                /* global BoxAnnotations */
+                const boxAnnotations = new BoxAnnotations(options);
+
+                /* global Box */
+                var preview = new Box.Preview();
+                preview.show(fileid, token, {
+                    container: ".preview-container",
+                    boxAnnotations
+                });
+
+            }
+
+            // Try to load all properties from storage on page load
+            setProperty('token');
+            setProperty('fileid');
+        </script>
+    </body>
+</html>

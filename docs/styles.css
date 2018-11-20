@@ -1,0 +1,30 @@
+* {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.setters-container {
+    height: 25vh;
+    display: flex;
+    font-size: 75%;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.setters-container button,input {
+    padding: 5px;
+}
+
+.container {
+    text-align: center;
+}
+
+.container > input {
+    text-align: center;
+}
+
+#preview-container {
+    width: 100vw;
+    height: 75vh;
+}
