@@ -157,6 +157,10 @@ class AnnotationThread extends EventEmitter {
      * @return {HTMLElement} Parent element for the annotation popover
      */
     getPopoverParent() {
+        if (!this.location || !this.location.page) {
+            return this.annotatedElement;
+        }
+
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
             : // $FlowFixMe
@@ -507,8 +511,10 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.getPopoverParent();
-        pageEl.scrollIntoView();
+        const pageEl = util.getPageEl(this.annotatedElement, this.location.page);
+        if (pageEl) {
+            pageEl.scrollIntoView();
+        }
     }
 
     /**
