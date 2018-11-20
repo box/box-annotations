@@ -380,7 +380,7 @@ describe('AnnotationThread', () => {
             pageEl = {
                 scrollIntoView: jest.fn()
             };
-            thread.getPopoverParent = jest.fn().mockReturnValue(pageEl);
+            util.getPageEl = jest.fn().mockReturnValue(pageEl);
         });
 
         it('should do nothing if annotation does not have a location or page', () => {

@@ -1,14 +1,6 @@
 // @flow
 import AnnotationThread from '../AnnotationThread';
-import {
-    getPageEl,
-    showElement,
-    findElement,
-    repositionCaret,
-    shouldDisplayMobileUI,
-    isInUpperHalf,
-    getPopoverParent
-} from '../util';
+import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobileUI, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './docUtil';
 import {
     STATES,
@@ -61,7 +53,7 @@ class DocPointThread extends AnnotationThread {
             return;
         }
 
-        const pageEl = getPopoverParent(this.container, this.annotatedElement, this.location);
+        const pageEl = this.popoverParent;
         const popoverEl = findElement(
             this.annotatedElement,
             SELECTOR_CLASS_ANNOTATION_POPOVER,

@@ -1,13 +1,6 @@
 // @flow
 import AnnotationThread from '../AnnotationThread';
-import {
-    showElement,
-    shouldDisplayMobileUI,
-    repositionCaret,
-    findElement,
-    isInUpperHalf,
-    getPopoverParent
-} from '../util';
+import { showElement, shouldDisplayMobileUI, repositionCaret, findElement, isInUpperHalf } from '../util';
 import { getBrowserCoordinatesFromLocation } from './imageUtil';
 import {
     STATES,
@@ -52,15 +45,11 @@ class ImagePointThread extends AnnotationThread {
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
 
-        // Get image tag inside viewer, based on page number. All images are page 1 by default.
-        const imageEl = getPopoverParent(this.container, this.annotatedElement);
-
         // Center middle of dialog with point - this coordinate is with respect to the page
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
-        const isUpperHalf = isInUpperHalf(this.element, imageEl);
-
+        const isUpperHalf = isInUpperHalf(this.element, this.popoverParent);
         const flippedPopoverOffset = isUpperHalf
             ? 0
             : popoverEl.getBoundingClientRect().height +
@@ -82,8 +71,8 @@ class ImagePointThread extends AnnotationThread {
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
         const pageWidth =
-            imageEl.clientWidth > this.annotatedElement.clientWidth
-                ? imageEl.clientWidth
+            this.popoverParent.clientWidth > this.annotatedElement.clientWidth
+                ? this.popoverParent.clientWidth
                 : this.annotatedElement.clientWidth;
         dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth, !isUpperHalf);
 
