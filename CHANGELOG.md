@@ -1,3 +1,19 @@
+## 3.3.0 (2018-11-20)
+
+* Fix: Clear highlight selection on mousedown and hideAnnotations() (#293) ([b60bc56](https://github.com/box/box-annotations/commit/b60bc56)), closes [#293](https://github.com/box/box-annotations/issues/293)
+* Fix: Ensure deleteSuccessHandler destroys thread when necessary (#289) ([e972a72](https://github.com/box/box-annotations/commit/e972a72)), closes [#289](https://github.com/box/box-annotations/issues/289)
+* Fix: Ensure popover parent element is determined correctly (#292) ([eab98ec](https://github.com/box/box-annotations/commit/eab98ec)), closes [#292](https://github.com/box/box-annotations/issues/292)
+* Fix: Popover CSS issues  (#287) ([e64b3f8](https://github.com/box/box-annotations/commit/e64b3f8)), closes [#287](https://github.com/box/box-annotations/issues/287)
+* Fix: Reset create highlight UI when mouse hasn't moved on mouseup (#290) ([4abd611](https://github.com/box/box-annotations/commit/4abd611)), closes [#290](https://github.com/box/box-annotations/issues/290)
+* Fix: Reset popover UI on re-render/scale events (#284) ([43e5cb0](https://github.com/box/box-annotations/commit/43e5cb0)), closes [#284](https://github.com/box/box-annotations/issues/284)
+* Fix: Unfocus textarea on comment post/cancel (#286) ([448347c](https://github.com/box/box-annotations/commit/448347c)), closes [#286](https://github.com/box/box-annotations/issues/286)
+* Fix: Unregister drawing on mode cancel (#288) ([12d5f6d](https://github.com/box/box-annotations/commit/12d5f6d)), closes [#288](https://github.com/box/box-annotations/issues/288)
+* Chore: Remove unecesary highlightThread.onMouseDown() (#291) ([a01db9f](https://github.com/box/box-annotations/commit/a01db9f)), closes [#291](https://github.com/box/box-annotations/issues/291)
+* Update: Husky scripts (#285) ([eaff0f0](https://github.com/box/box-annotations/commit/eaff0f0)), closes [#285](https://github.com/box/box-annotations/issues/285)
+* Mojito: Update translations (#283) ([529bbc0](https://github.com/box/box-annotations/commit/529bbc0)), closes [#283](https://github.com/box/box-annotations/issues/283)
+
+
+
 ## 3.2.0 (2018-11-13)
 
 * Mojito: Update translations (#282) ([48d2f8f](https://github.com/box/box-annotations/commit/48d2f8f)), closes [#282](https://github.com/box/box-annotations/issues/282)
