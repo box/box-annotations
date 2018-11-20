@@ -733,16 +733,27 @@ describe('doc/DocAnnotator', () => {
             annotator.modeControllers = {
                 highlight: controller
             };
+            annotator.resetHighlightSelection = jest.fn();
+            util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
+        });
+
+        it('should do nothing if event occured inside an annotation or marker', () => {
+            util.isInAnnotationOrMarker = jest.fn().mockReturnValue(true);
+            annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
+            expect(annotator.mouseDownEvent).toBeNull();
+            expect(annotator.resetHighlightSelection).not.toBeCalled();
         });
 
         it('should do nothing if highlights are disabled', () => {
             annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
+            expect(annotator.resetHighlightSelection).toBeCalled();
             expect(controller.destroyPendingThreads).not.toBeCalled();
         });
 
         it('should get highlights on page and call their onMouse down method', () => {
             annotator.plainHighlightEnabled = true;
             annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
+            expect(annotator.resetHighlightSelection).toBeCalled();
             expect(controller.destroyPendingThreads).toBeCalled();
         });
     });
@@ -1022,6 +1033,23 @@ describe('doc/DocAnnotator', () => {
             });
 
             annotator.highlightClickHandler(event);
+            expect(annotator.resetHighlightSelection).toBeCalled();
+        });
+    });
+
+    describe('hideAnnotations()', () => {
+        beforeEach(() => {
+            annotator.resetHighlightSelection = jest.fn();
+            util.isInDialog = jest.fn().mockReturnValue(false);
+        });
+
+        it('should reset the highlight selection', () => {
+            util.isInDialog = jest.fn().mockReturnValue(true);
+            annotator.hideAnnotations({});
+            expect(annotator.resetHighlightSelection).not.toBeCalled();
+        });
+        it('should reset the highlight selection', () => {
+            annotator.hideAnnotations({});
             expect(annotator.resetHighlightSelection).toBeCalled();
         });
     });
