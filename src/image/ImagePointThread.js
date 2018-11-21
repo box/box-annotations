@@ -49,7 +49,8 @@ class ImagePointThread extends AnnotationThread {
         const threadIconLeftX = this.element.offsetLeft + POINT_ANNOTATION_ICON_WIDTH / 2;
         let dialogLeftX = threadIconLeftX - dialogWidth / 2;
 
-        const isUpperHalf = isInUpperHalf(this.element, this.popoverParent);
+        const popoverParentEl = this.getPopoverParent();
+        const isUpperHalf = isInUpperHalf(this.element, popoverParentEl);
         const flippedPopoverOffset = isUpperHalf
             ? 0
             : popoverEl.getBoundingClientRect().height +
@@ -71,8 +72,8 @@ class ImagePointThread extends AnnotationThread {
         // just center the dialog and cause scrolling since there is nothing
         // else we can do
         const pageWidth =
-            this.popoverParent.clientWidth > this.annotatedElement.clientWidth
-                ? this.popoverParent.clientWidth
+            popoverParentEl.clientWidth > this.annotatedElement.clientWidth
+                ? popoverParentEl.clientWidth
                 : this.annotatedElement.clientWidth;
         dialogLeftX = repositionCaret(popoverEl, dialogLeftX, dialogWidth, threadIconLeftX, pageWidth, !isUpperHalf);
 
