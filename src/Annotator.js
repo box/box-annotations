@@ -180,9 +180,8 @@ class Annotator extends EventEmitter {
      * @param {AnnotationType} annotationType - Type of annotation
      * @return {Object} Location object
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     getLocationFromEvent = (event: Event, annotationType: AnnotationType): ?Location => {};
-    /* eslint-enable no-unused-vars */
 
     /**
      * Must be implemented to determine the annotated element in the viewer.
@@ -190,9 +189,8 @@ class Annotator extends EventEmitter {
      * @param {HTMLElement} containerEl - Container element for the viewer
      * @return {HTMLElement} Annotated element in the viewer
      */
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     getAnnotatedEl(containerEl: HTMLElement): ?HTMLElement {}
-    /* eslint-enable no-unused-vars */
 
     /**
      * Annotations setup.
@@ -398,15 +396,22 @@ class Annotator extends EventEmitter {
     }
 
     /**
+     * Resets any annotation UI on render/scale events
+     *
+     * @param {number} [pageNum] - optional page number
+     * @return {void}
+     */
+    /* eslint-disable-next-line no-unused-vars */
+    resetAnnotationUI(pageNum?: number) {}
+
+    /**
      * Renders annotations from memory.
      *
      * @return {void}
      */
     render() {
-        Object.keys(this.modeControllers).forEach((mode) => {
-            const controller = this.modeControllers[mode];
-            controller.render();
-        });
+        this.resetAnnotationUI();
+        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].render());
     }
 
     /**
@@ -416,6 +421,7 @@ class Annotator extends EventEmitter {
      * @return {void}
      */
     renderPage(pageNum: number) {
+        this.resetAnnotationUI(pageNum);
         Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
     }
 

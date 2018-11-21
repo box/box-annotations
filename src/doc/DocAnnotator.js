@@ -76,6 +76,8 @@ class DocAnnotator extends Annotator {
         this.createPlainHighlight = this.createPlainHighlight.bind(this);
         // $FlowFixMe
         this.onSelectionChange = this.onSelectionChange.bind(this);
+        // $FlowFixMe
+        this.resetAnnotationUI = this.resetAnnotationUI.bind(this);
     }
 
     /**
@@ -240,25 +242,20 @@ class DocAnnotator extends Annotator {
         return location;
     };
 
-    /**
-     * Override to factor in highlight types being filtered out, if disabled. Also scales annotation canvases.
-     *
-     * @param {number} pageNum Page number
-     * @return {void}
-     */
-    renderPage(pageNum: number) {
+    /** @inheritdoc */
+    resetAnnotationUI(pageNum?: number) {
         // $FlowFixMe
         document.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
 
-        // Scale existing canvases on re-render
-        this.scaleAnnotationCanvases(pageNum);
-        super.renderPage(pageNum);
-
         if (this.createHighlightDialog) {
             this.createHighlightDialog.unmountPopover();
+        }
+
+        if (pageNum) {
+            this.scaleAnnotationCanvases(pageNum);
         }
     }
 
@@ -331,6 +328,8 @@ class DocAnnotator extends Annotator {
     bindDOMListeners() {
         super.bindDOMListeners();
 
+        this.container.addEventListener('resize', this.resetAnnotationUI);
+
         // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('wheel', this.hideCreateDialog);
@@ -365,6 +364,7 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
+        this.container.removeEventListener('resize', this.resetAnnotationUI);
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('click', this.clickHandler);
@@ -653,13 +653,14 @@ class DocAnnotator extends Annotator {
         }
 
         this.isCreatingHighlight = true;
+        this.resetHighlightSelection(this.mouseDownEvent);
 
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.onMousedown());
+            this.modeControllers[TYPES.highlight].destroyPendingThreads();
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.onMousedown());
+            this.modeControllers[TYPES.highlight_comment].destroyPendingThreads();
         }
     };
 
@@ -720,6 +721,8 @@ class DocAnnotator extends Annotator {
         // we trigger the create handler instead of the click handler
         if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
             this.highlightCreateHandler(event);
+        } else {
+            this.resetHighlightSelection(event);
         }
     };
 
@@ -797,6 +800,16 @@ class DocAnnotator extends Annotator {
 
         this.resetHighlightSelection(event);
         return false;
+    }
+
+    /** @inheritdoc */
+    hideAnnotations(event: ?Event) {
+        if (event && util.isInDialog(event, this.container)) {
+            return;
+        }
+
+        this.resetHighlightSelection(event);
+        super.hideAnnotations();
     }
 
     /**

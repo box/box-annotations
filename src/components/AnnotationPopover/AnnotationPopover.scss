@@ -115,7 +115,7 @@
             height: 100%;
         }
 
-        .ba-popover .overlay {
+        .ba-popover .ba-popover-overlay {
             border: none;
             box-shadow: unset;
             display: flex;
@@ -130,7 +130,7 @@
             height: auto;
         }
 
-        .ba-inline .overlay {
+        .ba-inline .ba-popover-overlay {
             background: transparent;
             border-bottom: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
@@ -139,7 +139,7 @@
             text-align: center;
         }
 
-        .ba-inline.ba-create-popover .overlay {
+        .ba-inline.ba-create-popover .ba-popover-overlay {
             border: none;
             box-shadow: none;
             display: flex;
@@ -164,7 +164,7 @@
             top: auto;
         }
 
-        .ba-create-popover .overlay {
+        .ba-create-popover .ba-popover-overlay {
             background: transparent;
             border-radius: 0;
             height: auto;
@@ -196,19 +196,15 @@
         }
 
         .ba-create-popover,
-        .ba-create-popover .overlay {
+        .ba-create-popover .ba-popover-overlay {
             background: white;
             height: 100%;
         }
 
         .ba-inline.ba-create-popover,
-        .ba-inline.ba-create-popover .overlay {
+        .ba-inline.ba-create-popover .ba-popover-overlay {
             background: transparent;
             height: auto;
-        }
-
-        .ba-create-popover .overlay {
-            padding: 15px;
         }
     }
 }

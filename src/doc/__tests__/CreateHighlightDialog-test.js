@@ -29,7 +29,6 @@ describe('doc/CreateHighlightDialog', () => {
         });
         dialog.annotatedElement = rootElement;
         dialog.renderAnnotationPopover = jest.fn();
-        dialog.unmountPopover = jest.fn();
         dialog.emit = jest.fn();
 
         util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
@@ -61,6 +60,36 @@ describe('doc/CreateHighlightDialog', () => {
             const instance = new CreateHighlightDialog(document.createElement('div'), config);
             expect(instance.allowHighlight).toBeTruthy();
             expect(instance.allowComment).toBeFalsy();
+        });
+    });
+
+    describe('unmountPopover', () => {
+        beforeEach(() => {
+            dialog.isVisible = true;
+            dialog.createPopoverComponent = {};
+
+            dialog.container = {
+                querySelectorAll: jest.fn().mockReturnValue([rootElement])
+            };
+        });
+
+        it('should do nothing if the popover is not visible', () => {
+            dialog.isVisible = false;
+            dialog.unmountPopover();
+            expect(dialog.createPopoverComponent).not.toBeNull();
+        });
+
+        it('should there are no popover layers', () => {
+            dialog.container = {
+                querySelectorAll: jest.fn().mockReturnValue([])
+            };
+            dialog.unmountPopover();
+            expect(dialog.createPopoverComponent).not.toBeNull();
+        });
+
+        it('should unmount any visible create highlight popovers', () => {
+            dialog.unmountPopover();
+            expect(dialog.createPopoverComponent).toBeNull();
         });
     });
 

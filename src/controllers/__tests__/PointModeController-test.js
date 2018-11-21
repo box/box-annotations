@@ -91,7 +91,7 @@ describe('controllers/PointModeController', () => {
     });
 
     describe('resetMode()', () => {
-        beforeEach(() => {
+        it('should reset annotation mode', () => {
             // Set up annotation mode
             controller.annotatedElement = document.createElement('div');
             controller.annotatedElement.classList.add(CLASS_ANNOTATION_MODE);
@@ -99,14 +99,15 @@ describe('controllers/PointModeController', () => {
 
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
-        });
+            controller.getThreadByID = jest.fn().mockReturnValue(thread);
+            controller.destroyThread = jest.fn();
 
-        it('should reset annotation mode', () => {
             controller.buttonEl = document.createElement('button');
             controller.buttonEl.classList.add(CLASS_ACTIVE);
             controller.resetMode();
             expect(controller.buttonEl.classList).not.toContain(CLASS_ACTIVE);
             expect(controller.hadPendingThreads).toBeFalsy();
+            expect(controller.destroyThread).toBeCalledWith(thread);
         });
     });
 

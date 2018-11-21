@@ -157,6 +157,10 @@ class AnnotationThread extends EventEmitter {
      * @return {HTMLElement} Parent element for the annotation popover
      */
     getPopoverParent() {
+        if (!this.location || !this.location.page) {
+            return this.annotatedElement;
+        }
+
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
             : // $FlowFixMe
@@ -209,15 +213,15 @@ class AnnotationThread extends EventEmitter {
      */
     unmountPopover() {
         this.reset();
-
         this.toggleFlippedThreadEl();
 
-        const pageEl = this.getPopoverParent();
-        const popoverLayer = pageEl.querySelector('.ba-dialog-layer');
-        if (this.popoverComponent && popoverLayer) {
-            unmountComponentAtNode(popoverLayer);
-            this.popoverComponent = null;
+        const popoverLayers = this.container.querySelectorAll('.ba-dialog-layer');
+        if (!this.popoverComponent || popoverLayers.length === 0) {
+            return;
         }
+
+        popoverLayers.forEach(unmountComponentAtNode);
+        this.popoverComponent = null;
     }
 
     /**
@@ -364,8 +368,12 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteSuccessHandler = () => {
-        // Broadcast annotation deletion event
-        this.emit(THREAD_EVENT.delete);
+        if (this.threadID) {
+            this.renderAnnotationPopover();
+        } else {
+            this.emit(THREAD_EVENT.delete);
+            this.destroy();
+        }
     };
 
     /**
@@ -503,8 +511,10 @@ class AnnotationThread extends EventEmitter {
             return;
         }
 
-        const pageEl = this.getPopoverParent();
-        pageEl.scrollIntoView();
+        const pageEl = util.getPageEl(this.annotatedElement, this.location.page);
+        if (pageEl) {
+            pageEl.scrollIntoView();
+        }
     }
 
     /**
