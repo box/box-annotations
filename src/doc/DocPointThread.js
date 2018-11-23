@@ -53,7 +53,7 @@ class DocPointThread extends AnnotationThread {
             return;
         }
 
-        const pageEl = this.popoverParent;
+        const pageEl = this.getPopoverParent();
         const popoverEl = findElement(
             this.annotatedElement,
             SELECTOR_CLASS_ANNOTATION_POPOVER,
