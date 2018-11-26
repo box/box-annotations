@@ -7,7 +7,7 @@ import {
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
     PAGE_PADDING_TOP,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
 import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
@@ -329,11 +329,7 @@ class DocDrawingThread extends DrawingThread {
         }
 
         // Render popover so we can get width
-        const popoverEl = findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
+        const popoverEl = findElement(this.annotatedElement, SELECTOR_ANNOTATION_POPOVER, this.renderAnnotationPopover);
         const boundaryEl = findElement(this.annotatedElement, '.ba-drawing-boundary', this.drawBoundary);
         const pageDimensions = this.pageEl.getBoundingClientRect();
         const boundaryDimensions = boundaryEl.getBoundingClientRect();

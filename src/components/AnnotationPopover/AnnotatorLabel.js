@@ -10,6 +10,8 @@ import messages from './messages';
 
 import './AnnotatorLabel.scss';
 
+const CLASS_ANNOTATOR_LABEL = 'ba-annotator-label';
+
 type Props = {
     id?: string,
     type: AnnotationType,
@@ -42,7 +44,7 @@ class AnnotatorLabel extends React.PureComponent<Props> {
         const { id, isPending } = this.props;
         return (
             !isPending && (
-                <span className='ba-annotator-label'>
+                <span className={CLASS_ANNOTATOR_LABEL}>
                     <CommentText id={id} tagged_message={this.getAnnotatorLabelMessage()} translationEnabled={false} />
                 </span>
             )

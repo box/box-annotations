@@ -9,6 +9,8 @@ export const CLASS_INVISIBLE = 'bp-is-invisible';
 export const SELECTOR_INVISIBLE = `.${CLASS_INVISIBLE}`;
 export const CLASS_DISABLED = 'is-disabled';
 export const SELECTOR_DISABLED = `.${CLASS_DISABLED}`;
+export const CLASS_FOCUSED = 'ba-is-focused';
+export const SELECTOR_FOCUSED = `.${CLASS_FOCUSED}`;
 
 export const CLASS_BUTTON = 'bp-btn';
 export const SELECTOR_BUTTON = `.${CLASS_BUTTON}`;
@@ -38,6 +40,8 @@ export const CLASS_TEXT_LAYER = 'textLayer';
 export const SELECTOR_TEXT_LAYER = `.${CLASS_TEXT_LAYER}`;
 
 // Annotation CSS constants
+export const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
+export const SELECTOR_ANNOTATED_ELEMENT = `.${CLASS_ANNOTATED_ELEMENT}`;
 export const CLASS_ANNOTATIONS_LOADED = 'ba-annotations-loaded';
 export const SELECTOR_ANNOTATIONS_LOADED = `.${CLASS_ANNOTATIONS_LOADED}`;
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
@@ -45,23 +49,12 @@ export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKE
 
 // Dialog CSS constants
 export const CLASS_ANNOTATION_POPOVER = 'ba-popover';
-export const SELECTOR_CLASS_ANNOTATION_POPOVER = `.${CLASS_ANNOTATION_POPOVER}`;
+export const SELECTOR_ANNOTATION_POPOVER = `.${CLASS_ANNOTATION_POPOVER}`;
+export const CLASS_FLIPPED_POPOVER = 'ba-popover-flipped';
+export const SELECTOR_FLIPPED_POPOVER = `.${CLASS_FLIPPED_POPOVER}`;
+
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
-
-export const CLASS_FLIPPED_POPOVER = 'ba-popover-flipped';
-
-// Highlight dialog CSS constants
-export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
-export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
-export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
-export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
-
-// Drawing dialog CSS constants
-
-// Mobile dialog CSS constants
-export const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
-export const SELECTOR_ANIMATE_DIALOG = `.${CLASS_ANIMATE_DIALOG}`;
 
 // Annotation mode CSS constants
 export const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
@@ -90,6 +83,12 @@ export const CLASS_ANNOTATION_LAYER_DRAW = 'ba-annotation-layer-draw';
 export const SELECTOR_ANNOTATION_LAYER_DRAW = `.${CLASS_ANNOTATION_LAYER_DRAW}`;
 export const CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS = 'ba-annotation-layer-draw-in-progress';
 export const SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS = `.${CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS}`;
+
+// Highlight CSS constants
+export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
+export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
+export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Drawing CSS constants
 export const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';

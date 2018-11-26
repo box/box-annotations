@@ -10,6 +10,9 @@ import DrawingControls from './DrawingControls';
 
 import './ActionControls.scss';
 
+const CLASS_ACTION_CONTROLS = 'ba-action-controls';
+const CLASS_INPUT_CONTAINER = 'ba-annotation-input-container';
+
 type Props = {
     id?: string,
     type: AnnotationType,
@@ -107,7 +110,7 @@ class ActionControls extends React.Component<Props, State> {
                 if (isPending || hasComments) {
                     return (
                         <ApprovalCommentForm
-                            className='ba-annotation-input-container'
+                            className={CLASS_INPUT_CONTAINER}
                             // $FlowFixMe
                             user={NULL_USER}
                             isOpen={isInputOpen}
@@ -152,7 +155,7 @@ class ActionControls extends React.Component<Props, State> {
                 // irrespective of whether or not they can create new point annotations
                 return (
                     <ApprovalCommentForm
-                        className='ba-annotation-input-container'
+                        className={CLASS_INPUT_CONTAINER}
                         // $FlowFixMe
                         user={NULL_USER}
                         isOpen={isInputOpen}
@@ -172,7 +175,7 @@ class ActionControls extends React.Component<Props, State> {
 
     render() {
         const { type } = this.props;
-        return <div className='ba-action-controls'>{this.determineControls(type)}</div>;
+        return <div className={CLASS_ACTION_CONTROLS}>{this.determineControls(type)}</div>;
     }
 }
 
