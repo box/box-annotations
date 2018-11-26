@@ -8,10 +8,10 @@ import {
     SELECTOR_ANNOTATION_CARET,
     CLASS_DISABLED,
     CLASS_HIDDEN,
-    CLASS_ANNOTATION_DIALOG,
     CLASS_BOX_PREVIEW_HEADER,
     SELECTOR_ANNOTATION_MODE,
-    CLASS_ANNOTATION_POINT_MARKER
+    CLASS_ANNOTATION_POINT_MARKER,
+    CLASS_ANNOTATION_POPOVER
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -247,7 +247,7 @@ export function isInElement(event, el) {
  */
 export function isInDialog(event, container = null) {
     if (!container) {
-        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_DIALOG);
+        return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_POPOVER);
     }
 
     const annotatorLabelEl = container.querySelector('.ba-annotator-label');

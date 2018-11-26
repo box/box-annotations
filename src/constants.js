@@ -38,77 +38,30 @@ export const CLASS_TEXT_LAYER = 'textLayer';
 export const SELECTOR_TEXT_LAYER = `.${CLASS_TEXT_LAYER}`;
 
 // Annotation CSS constants
-export const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
-export const SELECTOR_ANNOTATED_ELEMENT = `.${CLASS_ANNOTATED_ELEMENT}`;
 export const CLASS_ANNOTATIONS_LOADED = 'ba-annotations-loaded';
 export const SELECTOR_ANNOTATIONS_LOADED = `.${CLASS_ANNOTATIONS_LOADED}`;
 export const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
 export const SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
-export const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
-export const SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
 
 // Dialog CSS constants
 export const CLASS_ANNOTATION_POPOVER = 'ba-popover';
 export const SELECTOR_CLASS_ANNOTATION_POPOVER = `.${CLASS_ANNOTATION_POPOVER}`;
-export const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
-export const SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
 export const CLASS_ANNOTATION_CARET = 'ba-popover-caret';
 export const SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
 
 export const CLASS_FLIPPED_POPOVER = 'ba-popover-flipped';
 
 // Highlight dialog CSS constants
-export const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
-export const SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG = `.${CLASS_ANNOTATION_HIGHLIGHT_DIALOG}`;
-export const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
-export const SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT = `.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`;
-
-export const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
-export const SELECTOR_HIGHLIGHT_DIALOG = `.${CLASS_HIGHLIGHT_DIALOG}`;
-export const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
-export const SELECTOR_TEXT_HIGHLIGHTED = `.${CLASS_TEXT_HIGHLIGHTED}`;
-export const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
-export const SELECTOR_HIGHLIGHT_LABEL = `.${CLASS_HIGHLIGHT_LABEL}`;
-export const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
-export const SELECTOR_HIGHLIGHT_BTNS = `.${CLASS_HIGHLIGHT_BTNS}`;
-export const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
-export const SELECTOR_ADD_HIGHLIGHT_BTN = `.${CLASS_ADD_HIGHLIGHT_BTN}`;
-export const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
-export const SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN = `.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`;
 export const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
 export const SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
 export const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
 export const SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
 
 // Drawing dialog CSS constants
-export const CLASS_ANNOTATION_DRAWING_LABEL = 'ba-annotation-drawing-label';
-export const SELECTOR_ANNOTATION_DRAWING_LABEL = `.${CLASS_ANNOTATION_DRAWING_LABEL}`;
-export const CLASS_ANNOTATION_DRAWING_DIALOG = 'ba-annotation-drawing-dialog';
-export const SELECTOR_ANNOTATION_DRAWING_DIALOG = `.${CLASS_ANNOTATION_DRAWING_DIALOG}`;
-
-export const CLASS_ANNOTATION_DRAWING_BTNS = 'ba-annotation-drawing-btns';
-export const SELECTOR_ANNOTATION_DRAWING_BTNS = `.${CLASS_ANNOTATION_DRAWING_BTNS}`;
-export const CLASS_ADD_DRAWING_BTN = 'ba-btn-annotate-draw-add';
-export const SELECTOR_ADD_DRAWING_BTN = `.${CLASS_ADD_DRAWING_BTN}`;
-export const CLASS_DELETE_DRAWING_BTN = 'ba-btn-annotate-draw-delete';
-export const SELECTOR_DELETE_DRAWING_BTN = `.${CLASS_DELETE_DRAWING_BTN}`;
 
 // Mobile dialog CSS constants
 export const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
 export const SELECTOR_ANIMATE_DIALOG = `.${CLASS_ANIMATE_DIALOG}`;
-export const CLASS_MOBILE_ANNOTATION_DIALOG = 'ba-mobile-annotation-dialog';
-export const SELECTOR_MOBILE_ANNOTATION_DIALOG = `.${CLASS_MOBILE_ANNOTATION_DIALOG}`;
-export const CLASS_MOBILE_CREATE_ANNOTATION_DIALOG = 'ba-mobile-create-annotation-dialog';
-export const SELECTOR_MOBILE_CREATE_ANNOTATION_DIALOG = `.${CLASS_MOBILE_CREATE_ANNOTATION_DIALOG}`;
-export const CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG = 'ba-mobile-create-highlight-dialog';
-export const SELECTOR_MOBILE_CREATE_HIGHLIGHT_DIALOG = `.${CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG}`;
-export const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
-export const SELECTOR_CREATE_DIALOG = `.${CLASS_CREATE_DIALOG}`;
-
-export const CLASS_MOBILE_DIALOG_HEADER = 'ba-annotation-mobile-header';
-export const SELECTOR_MOBILE_DIALOG_HEADER = `.${CLASS_MOBILE_DIALOG_HEADER}`;
-export const CLASS_DIALOG_CLOSE = 'ba-annotation-dialog-close';
-export const SELECTOR_DIALOG_CLOSE = `.${CLASS_DIALOG_CLOSE}`;
 
 // Annotation mode CSS constants
 export const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
