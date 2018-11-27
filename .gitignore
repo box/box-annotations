@@ -11,7 +11,8 @@ yarn-error.log
 package-lock.json
 reports
 dist
-src/i18n/json
+i18n/*.js
+i18n/json
 test/dev.html
 lib
 *~~bak
