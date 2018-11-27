@@ -533,6 +533,12 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     onSelectionChange(event: Event) {
+        const selection = window.getSelection();
+        const selectionNode = selection.anchorNode;
+        if (!this.annotatedElement.contains(selectionNode)) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -542,7 +548,6 @@ class DocAnnotator extends Annotator {
         }
 
         // Bail if mid highlight and tapping on the screen
-        const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
         if (!docUtil.isValidSelection(selection) || isClickOutsideCreateDialog) {
             this.lastHighlightEvent = null;
