@@ -533,6 +533,19 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     onSelectionChange(event: Event) {
+        const selection = window.getSelection();
+        const selectionNode = selection.anchorNode;
+        // If the selection is not contained within the annotated element, don't do anything to avoid conflicting
+        // with default selection behavior outside of annotations.
+        // In IE 11, we need to check the parent of the selection, as the anchor node is a TextElement that cannot
+        // be found by it's parent divs.
+        if (
+            !this.annotatedElement.contains(selectionNode) ||
+            !this.annotatedElement.contains(selectionNode.parentNode)
+        ) {
+            return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -542,7 +555,6 @@ class DocAnnotator extends Annotator {
         }
 
         // Bail if mid highlight and tapping on the screen
-        const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
         if (!docUtil.isValidSelection(selection) || isClickOutsideCreateDialog) {
             this.lastHighlightEvent = null;
