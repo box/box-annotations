@@ -535,7 +535,10 @@ class DocAnnotator extends Annotator {
     onSelectionChange(event: Event) {
         const selection = window.getSelection();
         const selectionNode = selection.anchorNode;
-        // Check parent node in IE, which will return a text node instead of a div when accessing the anchorNode
+        // If the selection is not contained within the annotated element, don't do anything to avoid conflicting
+        // with default selection behavior outside of annotations.
+        // In IE 11, we need to check the parent of the selection, as the anchor node is a TextElement that cannot
+        // be found by it's parent divs.
         if (
             !this.annotatedElement.contains(selectionNode) ||
             !this.annotatedElement.contains(selectionNode.parentNode)

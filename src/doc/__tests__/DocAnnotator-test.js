@@ -802,16 +802,32 @@ describe('doc/DocAnnotator', () => {
                 stopPropagation: jest.fn()
             };
 
+            annotator.annotatedElement = {
+                contains: jest.fn().mockReturnValue(true)
+            };
+
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
             annotator.resetHighlightSelection = jest.fn();
 
-            window.getSelection = jest.fn();
+            window.getSelection = jest.fn().mockReturnValue({
+                anchorNode: {
+                    parentNode: 'Node'
+                }
+            });
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
             util.findClosestElWithClass = jest.fn().mockReturnValue(null);
             annotator.isCreatingHighlight = false;
+        });
+
+        it('should do nothing if the selection is not contained in the annotatedElement', () => {
+            annotator.annotatedElement.contains.mockReturnValue(false);
+            annotator.onSelectionChange(event);
+
+            expect(event.preventDefault).not.toBeCalled();
+            expect(event.stopPropagation).not.toBeCalled();
         });
 
         it('should reset the selectionEndTimeout', () => {
@@ -862,6 +878,9 @@ describe('doc/DocAnnotator', () => {
             const selection = {
                 rangeCount: 10,
                 isCollapsed: false,
+                anchorNode: {
+                    parentNode: 'Node'
+                },
                 toString: () => 'asdf'
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
@@ -878,6 +897,9 @@ describe('doc/DocAnnotator', () => {
             const selection = {
                 rangeCount: 10,
                 isCollapsed: false,
+                anchorNode: {
+                    parentNode: 'Node'
+                },
                 toString: jest.fn().mockReturnValue('asdf')
             };
             annotator.modeControllers = {
