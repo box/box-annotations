@@ -79,12 +79,12 @@
             bottom: 0;
             transform: rotate(180deg);
         }
-    }
 
-    .ba-point-annotation-marker.ba-popover-flipped {
-        path,
-        rect {
-            display: none;
+        &.ba-point-annotation-marker {
+            path,
+            rect {
+                display: none;
+            }
         }
     }
 
