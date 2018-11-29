@@ -127,9 +127,15 @@ describe('AnnotationThread', () => {
     });
 
     describe('reset()', () => {
-        it('should set the thread state to inactive', () => {
+        it('should set the thread state to inactive if saved', () => {
             thread.reset();
             expect(thread.state).toEqual(STATES.inactive);
+        });
+
+        it('should set the thread state to pending if not saved', () => {
+            thread.threadNumber = undefined;
+            thread.reset();
+            expect(thread.state).toEqual(STATES.pending);
         });
     });
 
