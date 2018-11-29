@@ -87,8 +87,6 @@ class AnnotationThread extends EventEmitter {
         // $FlowFixMe
         this.renderAnnotationPopover = this.renderAnnotationPopover.bind(this);
         // $FlowFixMe
-        this.handleBlur = this.handleBlur.bind(this);
-        // $FlowFixMe
         this.onCommentClick = this.onCommentClick.bind(this);
         // $FlowFixMe
         this.save = this.save.bind(this);
@@ -447,7 +445,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.addEventListener('click', this.renderAnnotationPopover);
-        this.element.addEventListener('blur', this.handleBlur);
     }
 
     /**
@@ -461,16 +458,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.element.removeEventListener('click', this.renderAnnotationPopover);
-        this.element.removeEventListener('blur', this.handleBlur);
-    }
-
-    /**
-     * Called when the annotation element loses focus
-     *
-     * @return {void}
-     */
-    handleBlur() {
-        this.toggleFlippedThreadEl();
     }
 
     /**
