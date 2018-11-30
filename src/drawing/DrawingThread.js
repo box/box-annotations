@@ -255,6 +255,8 @@ class DrawingThread extends AnnotationThread {
 
             if (this.pathContainer.isEmpty()) {
                 this.unmountPopover();
+            } else {
+                this.renderAnnotationPopover();
             }
 
             this.drawBoundary();
@@ -277,6 +279,8 @@ class DrawingThread extends AnnotationThread {
 
             if (this.pathContainer.isEmpty()) {
                 this.unmountPopover();
+            } else {
+                this.renderAnnotationPopover();
             }
 
             this.drawBoundary();
@@ -290,13 +294,7 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     setup() {
-        if (this.threadNumber) {
-            // Saved thread, load boundary dialog
-            this.state = STATES.inactive;
-        } else {
-            // Newly created thread
-            this.state = STATES.pending;
-        }
+        this.reset();
     }
 
     /**
