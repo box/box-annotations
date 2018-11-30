@@ -3,6 +3,8 @@ import * as React from 'react';
 
 import OverlayComponent from 'box-react-ui/lib/components/flyout/Overlay';
 
+const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
+
 type Props = {
     shouldDefaultFocus: boolean,
     children: React.Node
@@ -11,13 +13,13 @@ type Props = {
 const Overlay = ({ shouldDefaultFocus, children }: Props) => {
     if (shouldDefaultFocus) {
         return (
-            <OverlayComponent className='ba-popover-overlay' shouldOutlineFocus={false}>
+            <OverlayComponent className={CLASS_POPOVER_OVERLAY} shouldOutlineFocus={false}>
                 {children}
             </OverlayComponent>
         );
     }
 
-    return <div className='ba-popover-overlay'>{children}</div>;
+    return <div className={CLASS_POPOVER_OVERLAY}>{children}</div>;
 };
 
 export default Overlay;
