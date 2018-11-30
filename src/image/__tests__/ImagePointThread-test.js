@@ -13,16 +13,24 @@ const html = `<div class="annotated-element" data-page-number="1">
 
 describe('image/ImagePointThread', () => {
     let rootElement;
+    let container;
+    let annotatedElement;
 
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
+        container = document.createElement('div');
+        container.classList.add('container');
+
+        annotatedElement = document.querySelector(SELECTOR_ANNOTATED_ELEMENT);
+
         thread = new ImagePointThread({
-            annotatedElement: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
+            annotatedElement,
             annotations: [],
             api: {},
+            container,
             fileVersionId: 1,
             location: {},
             threadID: 2,
@@ -71,6 +79,24 @@ describe('image/ImagePointThread', () => {
             thread.state = STATES.inactive;
             thread.show();
             expect(thread.renderAnnotationPopover).not.toBeCalled();
+        });
+    });
+
+    describe('getPopoverParent()', () => {
+        beforeEach(() => {
+            util.shouldDisplayMobileUI = jest.fn();
+        });
+
+        it('should return the container if mobile', () => {
+            util.shouldDisplayMobileUI.mockReturnValueOnce(true);
+
+            expect(thread.getPopoverParent()).toBe(container);
+        });
+
+        it('should return the annotatedEleemnt if not mobile', () => {
+            util.shouldDisplayMobileUI.mockReturnValueOnce(false);
+
+            expect(thread.getPopoverParent()).toBe(annotatedElement);
         });
     });
 });
