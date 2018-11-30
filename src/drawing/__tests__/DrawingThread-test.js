@@ -195,6 +195,8 @@ describe('drawing/DrawingThread', () => {
             thread.regenerateBoundary = jest.fn();
             thread.drawBoundary = jest.fn();
             thread.emitAvailableActions = jest.fn();
+            thread.unmountPopover = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
             thread.pathContainer = {
                 isEmpty: jest.fn(),
                 undo: jest.fn().mockReturnValue(false)
@@ -220,6 +222,11 @@ describe('drawing/DrawingThread', () => {
             expect(thread.updateBoundary).toBeCalled();
             expect(thread.regenerateBoundary).toBeCalled();
             expect(thread.drawBoundary).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+
+            thread.pathContainer.isEmpty = jest.fn().mockReturnValue(true);
+            thread.undo();
+            expect(thread.unmountPopover).toBeCalled();
         });
     });
 
@@ -227,6 +234,8 @@ describe('drawing/DrawingThread', () => {
         beforeEach(() => {
             thread.draw = jest.fn();
             thread.emitAvailableActions = jest.fn();
+            thread.unmountPopover = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
             thread.pathContainer = {
                 isEmpty: jest.fn(),
                 redo: jest.fn().mockReturnValue(false),
@@ -247,6 +256,11 @@ describe('drawing/DrawingThread', () => {
             expect(thread.pathContainer.redo).toBeCalled();
             expect(thread.draw).toBeCalled();
             expect(thread.emitAvailableActions).toBeCalled();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+
+            thread.pathContainer.isEmpty = jest.fn().mockReturnValue(true);
+            thread.redo();
+            expect(thread.unmountPopover).toBeCalled();
         });
     });
 
