@@ -136,7 +136,13 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     reset() {
-        this.state = STATES.inactive;
+        if (this.threadNumber) {
+            // Saved thread
+            this.state = STATES.inactive;
+        } else {
+            // Newly created thread
+            this.state = STATES.pending;
+        }
     }
 
     /**
