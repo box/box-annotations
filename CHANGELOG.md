@@ -1,3 +1,14 @@
+## 3.4.0 (2018-11-28)
+
+* Fix: Dialog not showing when creating points (#295) ([c0ee86f](https://github.com/box/box-annotations/commit/c0ee86f)), closes [#295](https://github.com/box/box-annotations/issues/295)
+* Fix: Don't clear selection  if selecting outside of annotated element (#298) ([5e277a0](https://github.com/box/box-annotations/commit/5e277a0)), closes [#298](https://github.com/box/box-annotations/issues/298)
+* Fix: Fix test site for IE 11 (#300) ([359bda3](https://github.com/box/box-annotations/commit/359bda3)), closes [#300](https://github.com/box/box-annotations/issues/300)
+* Fix: Positioning of undo/redo drawing buttons in header on mobile (#296) ([873394f](https://github.com/box/box-annotations/commit/873394f)), closes [#296](https://github.com/box/box-annotations/issues/296)
+* Chore: Add Annotations test page to be hosted by github pages (#294) ([b91ade9](https://github.com/box/box-annotations/commit/b91ade9)), closes [#294](https://github.com/box/box-annotations/issues/294)
+* Chore: Ignore js and json in i18n (#297) ([e691bdc](https://github.com/box/box-annotations/commit/e691bdc)), closes [#297](https://github.com/box/box-annotations/issues/297)
+
+
+
 ## 3.3.0 (2018-11-20)
 
 * Fix: Clear highlight selection on mousedown and hideAnnotations() (#293) ([b60bc56](https://github.com/box/box-annotations/commit/b60bc56)), closes [#293](https://github.com/box/box-annotations/issues/293)
