@@ -14,7 +14,7 @@ import './AnnotationPopover.scss';
 import ActionControls from '../ActionControls';
 import AnnotatorLabel from './AnnotatorLabel';
 
-const CLASS_INLINE_POPOVER = 'ba-inline';
+const CLASS_INLINE_POPOVER = 'ba-inline-popover';
 const CLASS_ANIMATE_POPOVER = 'ba-animate-popover';
 const CLASS_CREATE_POPOVER = 'ba-create-popover';
 const CLASS_MOBILE_HEADER = 'ba-mobile-header';
