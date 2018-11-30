@@ -50,7 +50,7 @@
         white-space: normal;
     }
 
-    .ba-inline .overlay {
+    .ba-inline-popover .overlay {
         display: inline-flex;
     }
 
@@ -128,11 +128,11 @@
         }
 
         // INLINE ANNOTATION POPOVER CSS
-        .ba-popover.ba-inline {
+        .ba-popover.ba-inline-popover {
             height: auto;
         }
 
-        .ba-inline .ba-popover-overlay {
+        .ba-inline-popover .ba-popover-overlay {
             background: transparent;
             border-bottom: 1px solid $seesee;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
@@ -141,20 +141,20 @@
             text-align: center;
         }
 
-        .ba-inline.ba-create-popover .ba-popover-overlay {
+        .ba-inline-popover.ba-create-popover .ba-popover-overlay {
             border: none;
             box-shadow: none;
             display: flex;
             flex-direction: column;
         }
 
-        .ba-inline .ba-mobile-header,
+        .ba-inline-popover .ba-mobile-header,
         .ba-create-popover .ba-mobile-header {
             display: none;
         }
 
         .ba-create-popover .ba-popover-overlay,
-        .ba-inline .ba-popover-overlay {
+        .ba-inline-popover .ba-popover-overlay {
             background: transparent;
             height: auto;
         }
@@ -188,12 +188,12 @@
             display: flex;
         }
 
-        .ba-popover.ba-inline {
+        .ba-popover.ba-inline-popover {
             border: none;
             width: 100%;
         }
 
-        .ba-inline .ba-mobile-header {
+        .ba-inline-popover .ba-mobile-header {
             display: none;
         }
 
@@ -203,8 +203,8 @@
             height: 100%;
         }
 
-        .ba-inline.ba-create-popover,
-        .ba-inline.ba-create-popover .ba-popover-overlay {
+        .ba-inline-popover.ba-create-popover,
+        .ba-inline-popover.ba-create-popover .ba-popover-overlay {
             background: transparent;
             height: auto;
         }

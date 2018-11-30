@@ -6,6 +6,8 @@
 
 import * as React from 'react';
 
+import { CLASS_FOCUSED } from '../constants';
+
 type Props = {};
 type State = {
     isFocused: boolean
@@ -34,7 +36,7 @@ const withFocus = (WrappedComponent: React.ComponentType<any>) => {
             const { isFocused } = this.state;
             return (
                 <WrappedComponent
-                    className={isFocused ? 'ba-is-focused' : ''}
+                    className={isFocused ? CLASS_FOCUSED : ''}
                     onBlur={this.handleBlur}
                     onFocus={this.handleFocus}
                     {...this.props}

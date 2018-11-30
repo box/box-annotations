@@ -2,15 +2,14 @@
 const {
     SELECTOR_TEXT_LAYER,
     SELECTOR_ANNOTATIONS_LOADED,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_ADD_HIGHLIGHT_BTN,
-    SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN,
-    SELECTOR_CREATE_DIALOG,
-    SELECTOR_CREATE_COMMENT,
-    SELECTOR_ANNOTATION_TEXTAREA,
-    SELECTOR_ANNOTATION_BUTTON_POST,
-    SELECTOR_ANNOTATION_BUTTON_CANCEL,
-    SELECTOR_ANNOTATION_COMMENT
+    SELECTOR_ACTION_CONTROLS,
+    SELECTOR_HIGHLIGHT_CONTROLS,
+    SELECTOR_HIGHLIGHT_BTN,
+    SELECTOR_HIGHLIGHT_COMMENT_BTN,
+    SELECTOR_DRAFTEDITOR_CONTENT,
+    SELECTOR_INPUT_CANCEL_BTN,
+    SELECTOR_INPUT_SUBMIT_BTN,
+    SELECTOR_COMMENT_LIST_ITEM
 } = require('../helpers/constants');
 
 const { selectText } = require('../helpers/mouseEvents');
@@ -33,39 +32,39 @@ Scenario('Create/Delete a new highlight comment annotation @desktop @doc', funct
 
     I.say('Highlight dialog should appear after selecting text');
     selectText(I, SELECTOR_TEXT_LAYER);
-    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_CONTROLS);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_BTN);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_COMMENT_BTN);
 
     I.say('Create highlight comment annotation');
-    I.click(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_CREATE_DIALOG);
-    validateTextarea(I, SELECTOR_CREATE_COMMENT, SELECTOR_ANNOTATION_TEXTAREA);
+    I.click(SELECTOR_HIGHLIGHT_COMMENT_BTN);
+    I.waitForVisible(SELECTOR_DRAFTEDITOR_CONTENT);
+    validateTextarea(I, SELECTOR_ACTION_CONTROLS, SELECTOR_DRAFTEDITOR_CONTENT);
 
     I.say('Cancel highlight comment annotation');
-    I.click(SELECTOR_ANNOTATION_BUTTON_CANCEL);
-    I.waitForInvisible(SELECTOR_CREATE_COMMENT, 1);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
+    I.click(SELECTOR_INPUT_CANCEL_BTN);
+    I.waitForInvisible(SELECTOR_DRAFTEDITOR_CONTENT, 1);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_BTN);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_COMMENT_BTN);
 
     /*
      * Create/reply to a new highlight comment annotation
      */
     I.say('Highlight dialog should appear after selecting text');
     selectText(I, SELECTOR_TEXT_LAYER);
-    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_BTN);
-    I.waitForVisible(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_CONTROLS);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_BTN);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_COMMENT_BTN);
 
     I.say('Create highlight comment annotation');
-    I.click(SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_CREATE_DIALOG);
-    validateTextarea(I, SELECTOR_CREATE_COMMENT, SELECTOR_ANNOTATION_TEXTAREA);
+    I.click(SELECTOR_HIGHLIGHT_COMMENT_BTN);
+    I.waitForVisible(SELECTOR_DRAFTEDITOR_CONTENT);
+    validateTextarea(I, SELECTOR_ACTION_CONTROLS, SELECTOR_DRAFTEDITOR_CONTENT);
 
     I.say('Post highlight comment annotation');
-    I.fillField(SELECTOR_ANNOTATION_TEXTAREA, 'Sample comment');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POST);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
+    I.fillField(SELECTOR_DRAFTEDITOR_CONTENT, 'Sample comment');
+    I.click(SELECTOR_INPUT_SUBMIT_BTN);
+    I.waitNumberOfVisibleElements(SELECTOR_COMMENT_LIST_ITEM, 1);
     validateAnnotation(I);
 
     /*

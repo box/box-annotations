@@ -20,7 +20,7 @@ import {
     TYPES,
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
-    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    SELECTOR_ANNOTATION_POPOVER,
     INLINE_POPOVER_HEIGHT
 } from '../constants';
 
@@ -187,11 +187,7 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
-        const popoverEl = findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
+        const popoverEl = findElement(this.annotatedElement, SELECTOR_ANNOTATION_POPOVER, this.renderAnnotationPopover);
         const popoverDimensions = popoverEl.getBoundingClientRect();
         const pageDimensions = pageEl.getBoundingClientRect();
         const pageLeft = pageDimensions.left;
@@ -222,11 +218,7 @@ class CreateHighlightDialog extends EventEmitter {
         const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
         const BOUNDARY_PADDING = 5;
 
-        const popoverEl = findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
+        const popoverEl = findElement(this.annotatedElement, SELECTOR_ANNOTATION_POPOVER, this.renderAnnotationPopover);
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         let dialogX = this.position.x - dialogWidth / 2;

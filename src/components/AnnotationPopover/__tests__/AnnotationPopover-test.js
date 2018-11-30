@@ -51,7 +51,7 @@ describe('components/AnnotationPopover', () => {
             comments
         });
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-inline').length).toEqual(0);
+        expect(wrapper.find('.ba-inline-popover').length).toEqual(0);
     });
 
     test('should render a view-only annotation with a annotator label and no comments', () => {
@@ -60,7 +60,7 @@ describe('components/AnnotationPopover', () => {
             type: TYPES.highlight
         });
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-inline').length).toEqual(1);
+        expect(wrapper.find('.ba-inline-popover').length).toEqual(1);
     });
 
     test('should correctly render an annotation with a annotator label and no comments', () => {
@@ -70,7 +70,7 @@ describe('components/AnnotationPopover', () => {
             type: TYPES.highlight
         });
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-inline').length).toEqual(1);
+        expect(wrapper.find('.ba-inline-popover').length).toEqual(1);
     });
 
     test('should correctly render a BRUI Overlay if not on mobile', () => {
@@ -99,7 +99,7 @@ describe('components/AnnotationPopover', () => {
             comments
         });
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-inline').length).toEqual(0);
+        expect(wrapper.find('.ba-inline-popover').length).toEqual(0);
     });
 
     test('should correctly render a pending annotation', () => {
@@ -108,6 +108,6 @@ describe('components/AnnotationPopover', () => {
             canAnnotate: true
         });
         expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('.ba-inline').length).toEqual(0);
+        expect(wrapper.find('.ba-inline-popover').length).toEqual(0);
     });
 });

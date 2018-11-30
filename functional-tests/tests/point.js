@@ -1,9 +1,10 @@
 /* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
+    SELECTOR_PREVIEW_IMAGE,
     SELECTOR_TEXT_LAYER,
     SELECTOR_ANNOTATIONS_LOADED,
     SELECTOR_ANNOTATION_BUTTON_POINT,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG
+    SELECTOR_HIGHLIGHT_CONTROLS
 } = require('../helpers/constants');
 
 const {
@@ -31,7 +32,7 @@ Scenario('Create/Delete point annotation @desktop @doc', function(I) {
 
     I.say('Selected text will be cleared on entering point mode');
     selectText(I, SELECTOR_TEXT_LAYER);
-    I.waitForVisible(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_CONTROLS);
 
     enterPointMode(I);
 
@@ -51,10 +52,10 @@ Scenario('Create/Delete point annotation @desktop @image', function(I) {
     enterPointMode(I);
 
     I.say('Create point annotation');
-    I.click('.bp-image');
+    I.click(SELECTOR_PREVIEW_IMAGE);
     cancelPointAnnotation(I);
 
     I.say('Create point annotation');
-    I.click('.bp-image');
+    I.click(SELECTOR_PREVIEW_IMAGE);
     createReplyDeletePoint(I);
 });

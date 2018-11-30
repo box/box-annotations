@@ -30,7 +30,7 @@
 
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
-        .ba-inline .ba-action-controls-draw {
+        .ba-inline-popover .ba-action-controls-draw {
             background: white;
             border-top: 1px solid $seesee;
             bottom: 0;

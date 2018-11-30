@@ -8,11 +8,17 @@ import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 import Internationalize from '../Internationalize';
 import Overlay from './Overlay';
 import CommentList from '../CommentList';
-import { TYPES, CLASS_ANNOTATION_POPOVER } from '../../constants';
+import { TYPES, CLASS_ANNOTATION_POPOVER, CLASS_ANNOTATION_CARET } from '../../constants';
 
 import './AnnotationPopover.scss';
 import ActionControls from '../ActionControls';
 import AnnotatorLabel from './AnnotatorLabel';
+
+const CLASS_INLINE_POPOVER = 'ba-inline-popover';
+const CLASS_ANIMATE_POPOVER = 'ba-animate-popover';
+const CLASS_CREATE_POPOVER = 'ba-create-popover';
+const CLASS_MOBILE_HEADER = 'ba-mobile-header';
+const CLASS_MOBILE_CLOSE_BTN = 'ba-mobile-close-btn';
 
 type Props = {
     isMobile: boolean,
@@ -79,19 +85,19 @@ class AnnotationPopover extends React.PureComponent<Props> {
             <Internationalize language={language} messages={intlMessages}>
                 <div
                     className={classNames(CLASS_ANNOTATION_POPOVER, {
-                        'ba-inline': isInline,
-                        'ba-animate-popover': isMobile,
-                        'ba-create-popover': isPending
+                        [CLASS_INLINE_POPOVER]: isInline,
+                        [CLASS_ANIMATE_POPOVER]: isMobile,
+                        [CLASS_CREATE_POPOVER]: isPending
                     })}
                 >
                     {isMobile ? (
-                        <span className='ba-mobile-header' style={{ height: headerHeight }}>
-                            <PlainButton className='ba-mobile-close-btn' onClick={onCancel}>
+                        <span className={CLASS_MOBILE_HEADER} style={{ height: headerHeight }}>
+                            <PlainButton className={CLASS_MOBILE_CLOSE_BTN} onClick={onCancel}>
                                 <IconClose height={24} width={24} />
                             </PlainButton>
                         </span>
                     ) : (
-                        <span className='ba-popover-caret' />
+                        <span className={CLASS_ANNOTATION_CARET} />
                     )}
                     <Overlay shouldDefaultFocus={!isMobile}>
                         {hasComments ? (

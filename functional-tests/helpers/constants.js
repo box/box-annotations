@@ -1,185 +1,67 @@
 // Preview CSS constants
-const CLASS_ACTIVE = 'bp-is-active';
-exports.SELECTOR_ACTIVE = `.${CLASS_ACTIVE}`;
-const CLASS_HIDDEN = 'bp-is-hidden';
-exports.SELECTOR_HIDDEN = `.${CLASS_HIDDEN}`;
-const CLASS_INVISIBLE = 'bp-is-invisible';
-exports.SELECTOR_INVISIBLE = `.${CLASS_INVISIBLE}`;
-const CLASS_DISABLED = 'is-disabled';
-exports.SELECTOR_DISABLED = `.${CLASS_DISABLED}`;
+exports.SELECTOR_ACTIVE = '.bp-is-active';
+exports.SELECTOR_DISABLED = '.is-disabled';
 
-const CLASS_BUTTON = 'bp-btn';
-exports.SELECTOR_BUTTON = `.${CLASS_BUTTON}`;
-const CLASS_BUTTON_PLAIN = 'bp-btn-plain';
-exports.SELECTOR_BUTTON_PLAIN = `.${CLASS_BUTTON_PLAIN}`;
-const CLASS_BUTTON_PRIMARY = 'bp-btn-primary';
-exports.SELECTOR_BUTTON_PRIMARY = `.${CLASS_BUTTON_PRIMARY}`;
+exports.SELECTOR_BOX_PREVIEW_HEADER = '.bp-header';
+exports.SELECTOR_BOX_PREVIEW_BASE_HEADER = '.bp-base-header';
+exports.SELECTOR_ANNOTATION_BUTTON_POINT = '.bp-btn-annotate-point';
+exports.SELECTOR_ANNOTATION_BUTTON_DRAW = '.bp-btn-annotate-draw';
+exports.SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = '.bp-btn-annotate-draw-enter';
 
-const CLASS_BOX_PREVIEW_HEADER = 'bp-header';
-exports.SELECTOR_BOX_PREVIEW_HEADER = `.${CLASS_BOX_PREVIEW_HEADER}`;
-const CLASS_BOX_PREVIEW_BASE_HEADER = 'bp-base-header';
-exports.SELECTOR_BOX_PREVIEW_BASE_HEADER = `.${CLASS_BOX_PREVIEW_BASE_HEADER}`;
-const CLASS_ANNOTATION_BUTTON_POINT = 'bp-btn-annotate-point';
-exports.SELECTOR_ANNOTATION_BUTTON_POINT = `.${CLASS_ANNOTATION_BUTTON_POINT}`;
-const CLASS_ANNOTATION_BUTTON_DRAW = 'bp-btn-annotate-draw';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW = `.${CLASS_ANNOTATION_BUTTON_DRAW}`;
-const CLASS_ANNOTATION_BUTTON_DRAW_ENTER = 'bp-btn-annotate-draw-enter';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW_ENTER = `.${CLASS_ANNOTATION_BUTTON_DRAW_ENTER}`;
-
-const CLASS_BOX_PREVIEW = 'bp';
-exports.SELECTOR_BOX_PREVIEW = `.${CLASS_BOX_PREVIEW}`;
-const CLASS_PREVIEW_PRESENTATION = 'bp-doc-presentation';
-exports.SELECTOR_PREVIEW_PRESENTATION = `.${CLASS_PREVIEW_PRESENTATION}`;
-const CLASS_TEXT_LAYER = 'textLayer';
-exports.SELECTOR_TEXT_LAYER = `.${CLASS_TEXT_LAYER}`;
+exports.SELECTOR_BOX_PREVIEW = '.bp';
+exports.SELECTOR_PREVIEW_IMAGE = '.bp-image';
+exports.SELECTOR_PREVIEW_PRESENTATION = '.bp-doc-presentation';
+exports.SELECTOR_TEXT_LAYER = '.textLayer';
 
 // Annotation CSS constants
-const CLASS_ANNOTATED_ELEMENT = 'annotated-element';
-exports.SELECTOR_ANNOTATED_ELEMENT = `.${CLASS_ANNOTATED_ELEMENT}`;
-const CLASS_ANNOTATIONS_LOADED = 'ba-annotations-loaded';
-exports.SELECTOR_ANNOTATIONS_LOADED = `.${CLASS_ANNOTATIONS_LOADED}`;
-const CLASS_ANNOTATION_POINT_MARKER = 'ba-point-annotation-marker';
-exports.SELECTOR_ANNOTATION_POINT_MARKER = `.${CLASS_ANNOTATION_POINT_MARKER}`;
-const CLASS_ANNOTATION_POINT_BUTTON = 'ba-point-annotation-btn';
-exports.SELECTOR_ANNOTATION_POINT_BUTTON = `.${CLASS_ANNOTATION_POINT_BUTTON}`;
-const CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER = 'ba-quad-corner-container';
-exports.SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = `.${CLASS_HIGHLIGHT_QUAD_CORNER_CONTAINER}`;
-const CLASS_HIGHLIGHT_QUAD_CORNER = 'ba-quad-corner';
-exports.SELECTOR_HIGHLIGHT_QUAD_CORNER = `.${CLASS_HIGHLIGHT_QUAD_CORNER}`;
+exports.SELECTOR_ANNOTATED_ELEMENT = '.annotated-element';
+exports.SELECTOR_ANNOTATIONS_LOADED = '.ba-annotations-loaded';
+exports.SELECTOR_ANNOTATION_POINT_MARKER = '.ba-point-annotation-marker';
+exports.SELECTOR_ANNOTATION_POINT_BUTTON = '.ba-point-annotation-btn';
+exports.SELECTOR_HIGHLIGHT_QUAD_CORNER_CONTAINER = '.ba-quad-corner-container';
+exports.SELECTOR_HIGHLIGHT_QUAD_CORNER = '.ba-quad-corner';
 
 // Dialog CSS constants
-const CLASS_ANNOTATION_DIALOG = 'ba-annotation-dialog';
-exports.SELECTOR_ANNOTATION_DIALOG = `.${CLASS_ANNOTATION_DIALOG}`;
-const CLASS_ANNOTATION_CARET = 'ba-annotation-caret';
-exports.SELECTOR_ANNOTATION_CARET = `.${CLASS_ANNOTATION_CARET}`;
+exports.SELECTOR_ANNOTATION_POPOVER = '.ba-popover';
+exports.SELECTOR_HIGHLIGHT_CONTROLS = '.ba-action-controls-highlight';
+exports.SELECTOR_HIGHLIGHT_BTN = '.ba-highlight-btn';
+exports.SELECTOR_HIGHLIGHT_COMMENT_BTN = '.ba-highlight-comment-btn';
+exports.SELECTOR_SAVED_HIGHLIGHT = '.ba-saved-highlight';
+exports.SELECTOR_ANNOTATION_CARET = '.ba-annotation-caret';
 
-const CLASS_TEXTAREA = 'ba-textarea';
-exports.SELECTOR_TEXTAREA = `.${CLASS_TEXTAREA}`;
-const CLASS_ANNOTATION_TEXTAREA = 'annotation-textarea';
-exports.SELECTOR_ANNOTATION_TEXTAREA = `.${CLASS_ANNOTATION_TEXTAREA}`;
-const CLASS_INVALID_INPUT = 'ba-invalid-input';
-exports.SELECTOR_INVALID_INPUT = `.${CLASS_INVALID_INPUT}`;
+exports.SELECTOR_ANNOTATOR_LABEL = '.ba-annotator-label';
+exports.SELECTOR_ACTION_CONTROLS = '.ba-action-controls';
+exports.SELECTOR_DRAFTEDITOR_CONTENT = '.public-DraftEditor-content';
 
-const CLASS_BUTTON_CONTAINER = 'button-container';
-exports.SELECTOR_BUTTON_CONTAINER = `.${CLASS_BUTTON_CONTAINER}`;
-const CLASS_ANNOTATION_BUTTON_CANCEL = 'cancel-annotation-btn';
-exports.SELECTOR_ANNOTATION_BUTTON_CANCEL = `.${CLASS_ANNOTATION_BUTTON_CANCEL}`;
-const CLASS_ANNOTATION_BUTTON_POST = 'post-annotation-btn';
-exports.SELECTOR_ANNOTATION_BUTTON_POST = `.${CLASS_ANNOTATION_BUTTON_POST}`;
-const CLASS_DELETE_COMMENT_BTN = 'delete-comment-btn';
-exports.SELECTOR_DELETE_COMMENT_BTN = `.${CLASS_DELETE_COMMENT_BTN}`;
+exports.SELECTOR_COMMENT_LIST = '.ba-comment-list';
+exports.SELECTOR_COMMENT_LIST_ITEM = '.ba-comment-list-item';
+exports.SELECTOR_USER_NAME = '.bcs-comment-headline';
+exports.SELECTOR_DELETE_COMMENT_BTN = '.bcs-comment-delete';
+exports.SELECTOR_COMMENT_DELETE_YES = '.bcs-comment-delete-yes';
+exports.SELECTOR_INPUT_CANCEL_BTN = '.bcs-comment-input-cancel-btn';
+exports.SELECTOR_INPUT_SUBMIT_BTN = '.bcs-comment-input-submit-btn';
 
-const CLASS_DELETE_CONFIRM_MESSAGE = 'delete-confirmation-message';
-exports.SELECTOR_DELETE_CONFIRM_MESSAGE = `.${CLASS_DELETE_CONFIRM_MESSAGE}`;
-const CLASS_CANCEL_DELETE_BTN = 'cancel-delete-btn';
-exports.SELECTOR_CANCEL_DELETE_BTN = `.${CLASS_CANCEL_DELETE_BTN}`;
-const CLASS_CONFIRM_DELETE_BTN = 'confirm-delete-btn';
-exports.SELECTOR_CONFIRM_DELETE_BTN = `.${CLASS_CONFIRM_DELETE_BTN}`;
-
-const CLASS_ANNOTATION_CONTAINER = 'annotation-container';
-exports.SELECTOR_ANNOTATION_CONTAINER = `.${CLASS_ANNOTATION_CONTAINER}`;
-const CLASS_ANNOTATION_COMMENT = 'annotation-comment';
-exports.SELECTOR_ANNOTATION_COMMENT = `.${CLASS_ANNOTATION_COMMENT}`;
-const CLASS_ANNOTATION_COMMENT_TEXT = 'ba-annotation-comment-text';
-exports.SELECTOR_ANNOTATION_COMMENT_TEXT = `.${CLASS_ANNOTATION_COMMENT_TEXT}`;
-const CLASS_PROFILE_CONTAINER = 'profile-container';
-exports.SELECTOR_PROFILE_CONTAINER = `.${CLASS_PROFILE_CONTAINER}`;
-const CLASS_PROFILE_IMG_CONTAINER = 'profile-image-container';
-exports.SELECTOR_PROFILE_IMG_CONTAINER = `.${CLASS_PROFILE_IMG_CONTAINER}`;
-const CLASS_USER_NAME = 'user-name';
-exports.SELECTOR_USER_NAME = `.${CLASS_USER_NAME}`;
-const CLASS_COMMENT_DATE = 'comment-date';
-exports.SELECTOR_COMMENT_DATE = `.${CLASS_COMMENT_DATE}`;
-
-const CLASS_REPLY_CONTAINER = 'reply-container';
-exports.SELECTOR_REPLY_CONTAINER = `.${CLASS_REPLY_CONTAINER}`;
-const CLASS_REPLY_TEXTAREA = 'reply-textarea';
-exports.SELECTOR_REPLY_TEXTAREA = `.${CLASS_REPLY_TEXTAREA}`;
-
-const CLASS_CREATE_COMMENT = 'ba-create-comment';
-exports.SELECTOR_CREATE_COMMENT = `.${CLASS_CREATE_COMMENT}`;
-
-// Highlight dialog CSS constants
-const CLASS_ANNOTATION_HIGHLIGHT_DIALOG = 'ba-annotation-highlight-dialog';
-exports.SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG = `.${CLASS_ANNOTATION_HIGHLIGHT_DIALOG}`;
-const CLASS_ANNOTATION_PLAIN_HIGHLIGHT = 'ba-plain-highlight';
-exports.SELECTOR_ANNOTATION_PLAIN_HIGHLIGHT = `.${CLASS_ANNOTATION_PLAIN_HIGHLIGHT}`;
-
-const CLASS_HIGHLIGHT_DIALOG = 'ba-highlight-dialog';
-exports.SELECTOR_HIGHLIGHT_DIALOG = `.${CLASS_HIGHLIGHT_DIALOG}`;
-const CLASS_TEXT_HIGHLIGHTED = 'ba-is-text-highlighted';
-exports.SELECTOR_TEXT_HIGHLIGHTED = `.${CLASS_TEXT_HIGHLIGHTED}`;
-const CLASS_HIGHLIGHT_LABEL = 'ba-annotation-highlight-label';
-exports.SELECTOR_HIGHLIGHT_LABEL = `.${CLASS_HIGHLIGHT_LABEL}`;
-const CLASS_HIGHLIGHT_BTNS = 'ba-annotation-highlight-btns';
-exports.SELECTOR_HIGHLIGHT_BTNS = `.${CLASS_HIGHLIGHT_BTNS}`;
-const CLASS_ADD_HIGHLIGHT_BTN = 'ba-add-highlight-btn';
-exports.SELECTOR_ADD_HIGHLIGHT_BTN = `.${CLASS_ADD_HIGHLIGHT_BTN}`;
-const CLASS_ADD_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
-exports.SELECTOR_ADD_HIGHLIGHT_COMMENT_BTN = `.${CLASS_ADD_HIGHLIGHT_COMMENT_BTN}`;
-
-// Drawing dialog CSS constants
-const CLASS_ANNOTATION_DRAWING_LABEL = 'ba-annotation-drawing-label';
-exports.SELECTOR_ANNOTATION_DRAWING_LABEL = `.${CLASS_ANNOTATION_DRAWING_LABEL}`;
-const CLASS_ANNOTATION_DRAWING_DIALOG = 'ba-annotation-drawing-dialog';
-exports.SELECTOR_ANNOTATION_DRAWING_DIALOG = `.${CLASS_ANNOTATION_DRAWING_DIALOG}`;
-
-const CLASS_ANNOTATION_DRAWING_BTNS = 'ba-annotation-drawing-btns';
-exports.SELECTOR_ANNOTATION_DRAWING_BTNS = `.${CLASS_ANNOTATION_DRAWING_BTNS}`;
-const CLASS_ADD_DRAWING_BTN = 'ba-btn-annotate-draw-add';
-exports.SELECTOR_ADD_DRAWING_BTN = `.${CLASS_ADD_DRAWING_BTN}`;
-const CLASS_DELETE_DRAWING_BTN = 'ba-btn-annotate-draw-delete';
-exports.SELECTOR_DELETE_DRAWING_BTN = `.${CLASS_DELETE_DRAWING_BTN}`;
-
-// Mobile dialog CSS constants
-const CLASS_ANIMATE_DIALOG = 'ba-animate-show-dialog';
-exports.SELECTOR_ANIMATE_DIALOG = `.${CLASS_ANIMATE_DIALOG}`;
-const CLASS_MOBILE_ANNOTATION_DIALOG = 'ba-mobile-annotation-dialog';
-exports.SELECTOR_MOBILE_ANNOTATION_DIALOG = `.${CLASS_MOBILE_ANNOTATION_DIALOG}`;
-const CLASS_MOBILE_CREATE_ANNOTATION_DIALOG = 'ba-mobile-create-annotation-dialog';
-exports.SELECTOR_MOBILE_CREATE_ANNOTATION_DIALOG = `.${CLASS_MOBILE_CREATE_ANNOTATION_DIALOG}`;
-const CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG = 'ba-mobile-create-highlight-dialog';
-exports.SELECTOR_MOBILE_CREATE_HIGHLIGHT_DIALOG = `.${CLASS_MOBILE_CREATE_HIGHLIGHT_DIALOG}`;
-const CLASS_CREATE_DIALOG = 'ba-create-annotation-dialog';
-exports.SELECTOR_CREATE_DIALOG = `.${CLASS_CREATE_DIALOG}`;
-
-const CLASS_MOBILE_DIALOG_HEADER = 'ba-annotation-mobile-header';
-exports.SELECTOR_MOBILE_DIALOG_HEADER = `.${CLASS_MOBILE_DIALOG_HEADER}`;
-const CLASS_DIALOG_CLOSE = 'ba-annotation-dialog-close';
-exports.SELECTOR_DIALOG_CLOSE = `.${CLASS_DIALOG_CLOSE}`;
+exports.SELECTOR_DRAW_CONTROLS = '.ba-action-controls-draw';
+exports.SELECTOR_DRAWING_SAVE_BTN = '.ba-drawing-save-btn';
+exports.SELECTOR_DRAWING_DELETE_BTN = '.ba-drawing-delete-btn';
 
 // Annotation mode CSS constants
-const CLASS_ANNOTATION_MODE = 'ba-annotation-mode';
-exports.SELECTOR_ANNOTATION_MODE = `.${CLASS_ANNOTATION_MODE}`;
-const CLASS_ANNNOTATION_MODE_BACKGROUND = 'ba-annotate-mode-background';
-exports.SELECTOR_ANNNOTATION_MODE_BACKGROUND = `.${CLASS_ANNNOTATION_MODE_BACKGROUND}`;
-const CLASS_ANNOTATION_BUTTON_POINT_EXIT = 'ba-btn-annotate-point-exit';
-exports.SELECTOR_ANNOTATION_BUTTON_POINT_EXIT = `.${CLASS_ANNOTATION_BUTTON_POINT_EXIT}`;
+exports.SELECTOR_ANNOTATION_MODE = '.ba-annotation-mode';
+exports.SELECTOR_ANNNOTATION_MODE_BACKGROUND = '.ba-annotate-mode-background';
+exports.SELECTOR_ANNOTATION_BUTTON_POINT_EXIT = '.ba-btn-annotate-point-exit';
 
-const CLASS_ANNOTATION_MODE_HEADER = 'ba-mode-header';
-exports.SELECTOR_ANNOTATION_MODE_HEADER = `.${CLASS_ANNOTATION_MODE_HEADER}`;
-const CLASS_POINT_MODE_HEADER = 'ba-point-mode-header';
-exports.SELECTOR_POINT_MODE_HEADER = `.${CLASS_POINT_MODE_HEADER}`;
-const CLASS_DRAW_MODE_HEADER = 'ba-draw-mode-header';
-exports.SELECTOR_DRAW_MODE_HEADER = `.${CLASS_DRAW_MODE_HEADER}`;
+exports.SELECTOR_ANNOTATION_MODE_HEADER = '.ba-mode-header';
+exports.SELECTOR_POINT_MODE_HEADER = '.ba-point-mode-header';
+exports.SELECTOR_DRAW_MODE_HEADER = '.ba-draw-mode-header';
 
-const CLASS_ANNOTATION_LAYER_HIGHLIGHT = 'ba-annotation-layer-highlight';
-exports.SELECTOR_ANNOTATION_LAYER_HIGHLIGHT = `.${CLASS_ANNOTATION_LAYER_HIGHLIGHT}`;
-const CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT = 'ba-annotation-layer-highlight-comment';
-exports.SELECTOR_ANNOTATION_LAYER_HIGHLIGHT_COMMENT = `.${CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT}`;
-const CLASS_ANNOTATION_LAYER_DRAW = 'ba-annotation-layer-draw';
-exports.SELECTOR_ANNOTATION_LAYER_DRAW = `.${CLASS_ANNOTATION_LAYER_DRAW}`;
-const CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS = 'ba-annotation-layer-draw-in-progress';
-exports.SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS = `.${CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS}`;
+exports.SELECTOR_ANNOTATION_LAYER_HIGHLIGHT = '.ba-annotation-layer-highlight';
+exports.SELECTOR_ANNOTATION_LAYER_HIGHLIGHT_COMMENT = '.ba-annotation-layer-highlight-comment';
+exports.SELECTOR_ANNOTATION_LAYER_DRAW = '.ba-annotation-layer-draw';
+exports.SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS = '.ba-annotation-layer-draw-in-progress';
 
 // Drawing CSS constants
-const CLASS_ANNOTATION_DRAW = 'ba-annotation-draw';
-exports.SELECTOR_ANNOTATION_DRAW = `.${CLASS_ANNOTATION_DRAW}`;
-const CLASS_ANNOTATION_BUTTON_DRAW_UNDO = 'ba-btn-annotate-draw-undo';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO = `.${CLASS_ANNOTATION_BUTTON_DRAW_UNDO}`;
-const CLASS_ANNOTATION_BUTTON_DRAW_REDO = 'ba-btn-annotate-draw-redo';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW_REDO = `.${CLASS_ANNOTATION_BUTTON_DRAW_REDO}`;
-const CLASS_ANNOTATION_BUTTON_DRAW_POST = 'ba-btn-annotate-draw-post';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW_POST = `.${CLASS_ANNOTATION_BUTTON_DRAW_POST}`;
-const CLASS_ANNOTATION_BUTTON_DRAW_CANCEL = 'ba-btn-annotate-draw-cancel';
-exports.SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL = `.${CLASS_ANNOTATION_BUTTON_DRAW_CANCEL}`;
+exports.SELECTOR_ANNOTATION_DRAW = '.ba-annotation-draw';
+exports.SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO = '.ba-btn-annotate-draw-undo';
+exports.SELECTOR_ANNOTATION_BUTTON_DRAW_REDO = '.ba-btn-annotate-draw-redo';
+exports.SELECTOR_DRAWING_SAVE_BTN = '.ba-btn-annotate-draw-post';
+exports.SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL = '.ba-btn-annotate-draw-cancel';
