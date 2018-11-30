@@ -7,6 +7,10 @@ import IconTrash from 'box-react-ui/lib/icons/general/IconTrash';
 
 import './DrawingControls.scss';
 
+const CLASS_DRAW_CONTROLS = 'ba-action-controls-draw';
+const CLASS_DRAWING_SAVE_BTN = 'ba-drawing-save-btn';
+const CLASS_DRAWING_DELETE_BTN = 'ba-drawing-delete-btn';
+
 type Props = {
     canDelete: boolean,
     isPending: boolean,
@@ -15,14 +19,14 @@ type Props = {
 };
 
 const DrawingControls = ({ isPending, canDelete, onCreate, onDelete }: Props) => (
-    <div className='ba-action-controls-draw'>
+    <div className={CLASS_DRAW_CONTROLS}>
         {isPending && (
-            <PlainButton type='button' className='ba-drawing-save-btn' onClick={onCreate}>
+            <PlainButton type='button' className={CLASS_DRAWING_SAVE_BTN} onClick={onCreate}>
                 <IconCheck />
             </PlainButton>
         )}
         {canDelete && (
-            <PlainButton type='button' className='ba-drawing-delete-btn' onClick={onDelete}>
+            <PlainButton type='button' className={CLASS_DRAWING_DELETE_BTN} onClick={onDelete}>
                 <IconTrash height={20} width={20} />
             </PlainButton>
         )}

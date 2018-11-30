@@ -13,7 +13,7 @@ import {
     PAGE_PADDING_BOTTOM,
     BORDER_OFFSET,
     INLINE_POPOVER_HEIGHT,
-    SELECTOR_CLASS_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER
 } from '../constants';
 
 class DocHighlightThread extends AnnotationThread {
@@ -475,7 +475,7 @@ class DocHighlightThread extends AnnotationThread {
 
         const popoverEl = util.findElement(
             this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
+            SELECTOR_ANNOTATION_POPOVER,
             this.renderAnnotationPopover
         );
         const dialogDimensions = popoverEl.getBoundingClientRect();

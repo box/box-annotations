@@ -469,7 +469,7 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
 exports[`components/AnnotationPopover should correctly render an annotation with a annotator label and no comments 1`] = `
 <Internationalize>
   <div
-    className="ba-popover ba-inline"
+    className="ba-popover ba-inline-popover"
   >
     <span
       className="ba-popover-caret"
@@ -536,7 +536,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
 exports[`components/AnnotationPopover should render a view-only annotation with a annotator label and no comments 1`] = `
 <Internationalize>
   <div
-    className="ba-popover ba-inline"
+    className="ba-popover ba-inline-popover"
   >
     <span
       className="ba-popover-caret"

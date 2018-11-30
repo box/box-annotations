@@ -4,7 +4,7 @@ import { getPageEl, showElement, findElement, repositionCaret, shouldDisplayMobi
 import { getBrowserCoordinatesFromLocation } from './docUtil';
 import {
     STATES,
-    SELECTOR_CLASS_ANNOTATION_POPOVER,
+    SELECTOR_ANNOTATION_POPOVER,
     ANNOTATION_POPOVER_CARET_HEIGHT,
     CLASS_FLIPPED_POPOVER
 } from '../constants';
@@ -54,11 +54,7 @@ class DocPointThread extends AnnotationThread {
         }
 
         const pageEl = this.getPopoverParent();
-        const popoverEl = findElement(
-            this.annotatedElement,
-            SELECTOR_CLASS_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
-        );
+        const popoverEl = findElement(this.annotatedElement, SELECTOR_ANNOTATION_POPOVER, this.renderAnnotationPopover);
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;
         const pageDimensions = pageEl.getBoundingClientRect();

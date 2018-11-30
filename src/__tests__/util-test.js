@@ -2,10 +2,10 @@
 import * as util from '../util';
 import {
     TYPES,
-    SELECTOR_ANNOTATION_DIALOG,
+    SELECTOR_ANNOTATION_POPOVER,
     CLASS_ANNOTATION_CARET,
     SELECTOR_ANNOTATION_POINT_MARKER,
-    CLASS_ANNOTATION_DIALOG,
+    CLASS_ANNOTATION_POPOVER,
     CLASS_ANNOTATION_POINT_MARKER
 } from '../constants';
 
@@ -22,7 +22,7 @@ const html = `<div class="wrapper" data-name="someName">
 <div class="foo"></div>
 </div>
 
-<div class="${CLASS_ANNOTATION_DIALOG}">
+<div class="${CLASS_ANNOTATION_POPOVER}">
 <div class="${CLASS_ANNOTATION_CARET}"></div>
 </div>
 
@@ -167,7 +167,7 @@ describe('util', () => {
 
     describe('isInAnnotationOrMarker()', () => {
         it('should return false if no dialog element exists', () => {
-            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_DIALOG);
+            const dialogEl = rootElement.querySelector(SELECTOR_ANNOTATION_POPOVER);
             const markerEl = rootElement.querySelector(SELECTOR_ANNOTATION_POINT_MARKER);
             expect(util.isInAnnotationOrMarker({ target: dialogEl })).toBeTruthy();
             expect(util.isInAnnotationOrMarker({ target: markerEl })).toBeTruthy();

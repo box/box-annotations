@@ -8,6 +8,11 @@ import IconHighlightCommentAnnotation from 'box-react-ui/lib/icons/annotations/I
 
 import './HighlightControls.scss';
 
+const CLASS_HIGHLIGHT_CONTROLS = 'ba-action-controls-highlight';
+const CLASS_HIGHLIGHT_BTN = 'ba-highlight-btn';
+const CLASS_HIGHLIGHT_COMMENT_BTN = 'ba-highlight-comment-btn';
+const CLASS_SAVED_HIGHLIGHT = 'ba-saved-highlight';
+
 type Props = {
     canAnnotateAndDelete: boolean,
     canComment: boolean,
@@ -25,18 +30,18 @@ const HighlightControls = ({
     onCommentClick,
     isPending
 }: Props) => (
-    <div className='ba-action-controls-highlight'>
+    <div className={CLASS_HIGHLIGHT_CONTROLS}>
         {canAnnotateAndDelete && (
-            <PlainButton type='button' className='ba-highlight-btn' onClick={isPending ? onCreate : onDelete}>
+            <PlainButton type='button' className={CLASS_HIGHLIGHT_BTN} onClick={isPending ? onCreate : onDelete}>
                 <IconHighlightAnnotation
                     className={classNames({
-                        'ba-saved-highlight': !isPending
+                        [CLASS_SAVED_HIGHLIGHT]: !isPending
                     })}
                 />
             </PlainButton>
         )}
         {canComment && (
-            <PlainButton type='button' className='ba-highlight-comment-btn' onClick={onCommentClick}>
+            <PlainButton type='button' className={CLASS_HIGHLIGHT_COMMENT_BTN} onClick={onCommentClick}>
                 <IconHighlightCommentAnnotation height={24} width={24} />
             </PlainButton>
         )}
