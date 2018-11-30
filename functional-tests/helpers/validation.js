@@ -1,22 +1,17 @@
 /* eslint-disable prefer-arrow-callback, no-var, func-names */
-const {
-    SELECTOR_ANNOTATION_DIALOG,
-    SELECTOR_ACTIVE,
-    SELECTOR_ANNOTATION_BUTTON_POST,
-    SELECTOR_INVALID_INPUT,
-    SELECTOR_ANNOTATION_BUTTON_CANCEL,
-    SELECTOR_USER_NAME,
-    SELECTOR_ANNOTATION_CONTAINER,
-    SELECTOR_ANNOTATION_COMMENT,
-    SELECTOR_DELETE_COMMENT_BTN,
-    SELECTOR_PROFILE_IMG_CONTAINER,
-    SELECTOR_REPLY_TEXTAREA,
-    SELECTOR_DELETE_CONFIRM_MESSAGE,
-    SELECTOR_CONFIRM_DELETE_BTN,
-    SELECTOR_CANCEL_DELETE_BTN,
-    SELECTOR_REPLY_CONTAINER
-} = require('../helpers/constants');
 const { expect } = require('chai');
+const {
+    SELECTOR_ANNOTATION_POPOVER,
+    SELECTOR_ACTIVE,
+    SELECTOR_INPUT_SUBMIT_BTN,
+    SELECTOR_INVALID_INPUT,
+    SELECTOR_INPUT_CANCEL_BTN,
+    SELECTOR_USER_NAME,
+    SELECTOR_DRAFTEDITOR_CONTENT,
+    SELECTOR_ACTION_CONTROLS,
+    SELECTOR_COMMENT_LIST,
+    SELECTOR_COMMENT_LIST_ITEM
+} = require('../helpers/constants');
 
 
 /**
@@ -47,16 +42,16 @@ async function validateIconColor(I, selector, color) {
 function* validateTextarea(I, containerSel, textareaSel) {
     I.say(`Validate ${containerSel} ${textareaSel}`);
     I.waitForVisible(`${containerSel} ${textareaSel}${SELECTOR_ACTIVE}`);
-    I.waitForVisible(`${containerSel} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
-    I.waitForVisible(`${containerSel} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
+    I.waitForVisible(`${containerSel} ${SELECTOR_INPUT_CANCEL_BTN}`);
+    I.waitForVisible(`${containerSel} ${SELECTOR_INPUT_SUBMIT_BTN}`);
     expect(yield I.grabValueFrom(`${containerSel} ${textareaSel}`)).to.equal('');
 
-    const message = textareaSel === SELECTOR_REPLY_CONTAINER ? 'Post a reply...' : 'Add a comment here...';
+    const message = 'Write a comment';
     expect(yield I.grabAttributeFrom(`${containerSel} ${textareaSel}`, 'placeholder')).to.equal(message);
 
-    I.click(`${containerSel} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
+    I.click(`${containerSel} ${SELECTOR_INPUT_SUBMIT_BTN}`);
     I.waitForVisible(`${containerSel} ${textareaSel}${SELECTOR_INVALID_INPUT}`);
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
+    I.waitForVisible(SELECTOR_ANNOTATION_POPOVER);
 }
 
 /**
@@ -68,63 +63,13 @@ function* validateTextarea(I, containerSel, textareaSel) {
  */
 function validateAnnotation(I) {
     I.say('Dialog should contain new annotation');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    validateTextarea(I, SELECTOR_REPLY_CONTAINER, SELECTOR_REPLY_TEXTAREA);
-    I.waitForText('Kanye West', 15, `${SELECTOR_ANNOTATION_COMMENT} ${SELECTOR_USER_NAME}`);
-}
-
-/**
- * Validates that the annotation reply appears as expected
- *
- * @param {Object} I - the codeceptjs I
- *
- * @return {void}
- */
-function validateReply(I) {
-    I.say('Reply should be added to dialog');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    I.waitForVisible(SELECTOR_ANNOTATION_CONTAINER);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
-    I.waitForEnabled(SELECTOR_DELETE_COMMENT_BTN);
-    I.waitForVisible(SELECTOR_PROFILE_IMG_CONTAINER);
-    I.waitForText('Kanye West', 10, SELECTOR_USER_NAME);
-
-    validateTextarea(I, SELECTOR_REPLY_CONTAINER, SELECTOR_REPLY_TEXTAREA);
-}
-
-/**
- * Validates that the delete confirmation message appears
- * and acts as expected
- *
- * @param {Object} I - the codeceptjs I
- * @param {string} selector - the selector to use
- *
- * @return {void}
- */
-function validateDeleteConfirmation(I, selector = '') {
-    I.say('Validate delete confirmation');
-    I.waitForText('Delete this annotation?', 10, `${selector} ${SELECTOR_DELETE_CONFIRM_MESSAGE}`);
-    I.waitForVisible(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
-    I.waitForVisible(`${selector} ${SELECTOR_CANCEL_DELETE_BTN}`);
-
-    // Cancel annotation delete
-    I.click(`${selector} ${SELECTOR_CANCEL_DELETE_BTN}`);
-    I.waitForInvisible(`${selector} ${SELECTOR_DELETE_CONFIRM_MESSAGE}`);
-
-    // Delete the annotation
-    I.click(`${selector} ${SELECTOR_DELETE_COMMENT_BTN}`);
-
-    // Delete confirmation should appear
-    I.waitForVisible(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
-    I.click(`${selector} ${SELECTOR_CONFIRM_DELETE_BTN}`);
+    I.waitForVisible(SELECTOR_ANNOTATION_POPOVER);
+    I.waitForVisible(SELECTOR_COMMENT_LIST);
+    I.waitNumberOfVisibleElements(SELECTOR_COMMENT_LIST_ITEM, 1);
+    validateTextarea(I, SELECTOR_ACTION_CONTROLS, SELECTOR_DRAFTEDITOR_CONTENT);
+    I.waitForText('Kanye West', 15, `${SELECTOR_COMMENT_LIST_ITEM} ${SELECTOR_USER_NAME}`);
 }
 
 exports.validateIconColor = validateIconColor;
 exports.validateAnnotation = validateAnnotation;
-exports.validateDeleteConfirmation = validateDeleteConfirmation;
-exports.validateReply = validateReply;
 exports.validateTextarea = validateTextarea;

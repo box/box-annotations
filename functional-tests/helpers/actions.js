@@ -1,21 +1,25 @@
 /* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
-    SELECTOR_ANNOTATION_DIALOG,
+    SELECTOR_ANNOTATION_POPOVER,
     SELECTOR_ANNOTATION_BUTTON_POST,
     SELECTOR_ANNOTATION_BUTTON_CANCEL,
     SELECTOR_ANNOTATION_COMMENT,
     SELECTOR_DELETE_COMMENT_BTN,
-    SELECTOR_REPLY_TEXTAREA,
-    SELECTOR_REPLY_CONTAINER,
+    SELECTOR_DRAFTEDITOR_CONTENT,
+    SELECTOR_ACTION_CONTROLS,
+    SELECTOR_INPUT_SUBMIT_BTN,
+    SELECTOR_INPUT_CANCEL_BTN,
     SELECTOR_ANNOTATION_POINT_MARKER,
     SELECTOR_ANNOTATION_TEXTAREA,
     SELECTOR_ANNNOTATION_MODE_BACKGROUND,
     SELECTOR_ANNOTATION_BUTTON_POINT,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
-    SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG,
-    SELECTOR_POINT_MODE_HEADER
+    SELECTOR_HIGHLIGHT_CONTROLS,
+    SELECTOR_POINT_MODE_HEADER,
+    SELECTOR_COMMENT_LIST_ITEM,
+    SELECTOR_COMMENT_DELETE_YES
 } = require('../helpers/constants');
-const { validateReply, validateDeleteConfirmation, validateTextarea, validateAnnotation } = require('./validation');
+const { validateTextarea, validateAnnotation } = require('./validation');
 
 /**
  * Replies to an annotation thread
@@ -26,14 +30,14 @@ const { validateReply, validateDeleteConfirmation, validateTextarea, validateAnn
  */
 function replyToThread(I) {
     I.say('Reply to highlight comment annotation');
-    I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample reply');
-    I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_POST}`);
-    validateReply(I, SELECTOR_ANNOTATION_DIALOG);
+    I.fillField(SELECTOR_DRAFTEDITOR_CONTENT, 'Sample reply');
+    I.click(SELECTOR_INPUT_SUBMIT_BTN);
+    validateTextarea(I, SELECTOR_ANNOTATION_POPOVER);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 2);
 
     I.say('Cancel a reply to a highlight comment annotation');
-    I.fillField(SELECTOR_REPLY_TEXTAREA, 'Sample canceled reply');
-    I.click(`${SELECTOR_REPLY_CONTAINER} ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
+    I.fillField(SELECTOR_DRAFTEDITOR_CONTENT, 'Sample canceled reply');
+    I.click(SELECTOR_INPUT_CANCEL_BTN);
     I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
 }
 
@@ -46,20 +50,21 @@ function replyToThread(I) {
  *
  * @return {void}
  */
-function deleteAnnotation(I, annotationCount, selector = SELECTOR_ANNOTATION_COMMENT) {
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, annotationCount);
+function deleteAnnotation(I, annotationCount, selector = SELECTOR_COMMENT_LIST_ITEM) {
+    I.waitNumberOfVisibleElements(SELECTOR_COMMENT_LIST_ITEM, annotationCount);
+    I.click(SELECTOR_COMMENT_LIST_ITEM);
 
     I.say('Delete the annotation');
     I.waitForEnabled(`${selector} ${SELECTOR_DELETE_COMMENT_BTN}`, 9);
     I.click(`${selector} ${SELECTOR_DELETE_COMMENT_BTN}`);
-    validateDeleteConfirmation(I, selector);
+    I.click(`${SELECTOR_COMMENT_DELETE_YES}`);
 
     I.say('Annotation should be deleted');
     if (annotationCount > 1) {
-        I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, annotationCount - 1);
-        I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
+        I.waitNumberOfVisibleElements(SELECTOR_COMMENT_LIST_ITEM, annotationCount - 1);
+        I.waitForVisible(SELECTOR_ANNOTATION_POPOVER);
     } else {
-        I.waitForDetached(SELECTOR_ANNOTATION_DIALOG, 1);
+        I.waitForDetached(SELECTOR_ANNOTATION_POPOVER, 1);
     }
 }
 
@@ -73,7 +78,7 @@ function deleteAnnotation(I, annotationCount, selector = SELECTOR_ANNOTATION_COM
 function enterPointMode(I) {
     I.say('Enter point annotation mode');
     I.click(SELECTOR_ANNOTATION_BUTTON_POINT);
-    I.dontSeeElement(SELECTOR_ANNOTATION_HIGHLIGHT_DIALOG);
+    I.dontSeeElement(SELECTOR_HIGHLIGHT_CONTROLS);
     I.waitForVisible('.bp-notification');
     I.waitForVisible(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
     I.waitForVisible(SELECTOR_POINT_MODE_HEADER);
@@ -91,12 +96,12 @@ function cancelPointAnnotation(I) {
     I.waitForVisible(SELECTOR_ANNOTATION_POINT_MARKER);
 
     I.say('Annotation dialog should appear with focus on the textarea');
-    I.waitForVisible(SELECTOR_ANNOTATION_DIALOG);
-    validateTextarea(I, '[data-section="create"]', SELECTOR_ANNOTATION_TEXTAREA);
+    I.waitForVisible(SELECTOR_ANNOTATION_POPOVER);
+    validateTextarea(I, SELECTOR_ACTION_CONTROLS, SELECTOR_DRAFTEDITOR_CONTENT);
 
     I.say('Cancel point annotation');
-    I.click(`[data-section="create"] ${SELECTOR_ANNOTATION_BUTTON_CANCEL}`);
-    I.waitForInvisible(SELECTOR_ANNOTATION_DIALOG, 1);
+    I.click(SELECTOR_INPUT_CANCEL_BTN);
+    I.waitForInvisible(SELECTOR_ANNOTATION_POPOVER, 1);
     I.waitForInvisible(SELECTOR_ANNOTATION_POINT_MARKER, 1);
 }
 
@@ -115,10 +120,10 @@ function createReplyDeletePoint(I) {
     I.waitForVisible(SELECTOR_ANNOTATION_POINT_MARKER);
 
     I.say('Post point annotation');
-    I.fillField(`[data-section="create"] ${SELECTOR_ANNOTATION_TEXTAREA}`, 'Sample comment');
-    I.click(`[data-section="create"] ${SELECTOR_ANNOTATION_BUTTON_POST}`);
+    I.fillField(SELECTOR_DRAFTEDITOR_CONTENT, 'Sample comment');
+    I.click(SELECTOR_INPUT_SUBMIT_BTN);
     validateAnnotation(I);
-    I.waitNumberOfVisibleElements(SELECTOR_ANNOTATION_COMMENT, 1);
+    I.waitNumberOfVisibleElements(SELECTOR_COMMENT_LIST_ITEM, 1);
 
     /*
      * Delete the point annotation
