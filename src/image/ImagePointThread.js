@@ -61,9 +61,8 @@ class ImagePointThread extends AnnotationThread {
         const flippedPopoverOffset = isUpperHalf
             ? 0
             : popoverEl.getBoundingClientRect().height +
-              POINT_ANNOTATION_ICON_HEIGHT +
-              ANNOTATION_POPOVER_CARET_HEIGHT +
-              POINT_ANNOTATION_ICON_DOT_HEIGHT;
+              POINT_ANNOTATION_ICON_DOT_HEIGHT * 2 +
+              ANNOTATION_POPOVER_CARET_HEIGHT;
 
         const dialogTopY =
             this.element.offsetTop +
