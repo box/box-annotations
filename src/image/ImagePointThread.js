@@ -13,6 +13,17 @@ import {
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
+    /**
+     * Gets the popover parent for image point threads. The popover parent
+     * should be not the image element but rather the annotatedElement
+     *
+     * @override
+     * @return {HTMLElement} The correct parent based on mobile view or not
+     */
+    getPopoverParent() {
+        return shouldDisplayMobileUI(this.container) ? this.container : this.annotatedElement;
+    }
+
     /** @inheritdoc */
     show() {
         const [browserX, browserY] = getBrowserCoordinatesFromLocation(this.location, this.annotatedElement);
