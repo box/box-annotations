@@ -265,6 +265,7 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
+            expect(controller.updateUndoRedoButtonEls).toBeCalled();
             expect(thread.handleStart).not.toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
@@ -278,6 +279,7 @@ describe('controllers/DrawingModeController', () => {
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
+            expect(controller.updateUndoRedoButtonEls).toBeCalled();
             expect(thread.destroy).toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
@@ -293,6 +295,7 @@ describe('controllers/DrawingModeController', () => {
             });
             expect(controller.unregisterThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
+            expect(controller.updateUndoRedoButtonEls).toBeCalled();
             expect(thread.removeListener).toBeCalledWith('threadevent', expect.any(Function));
             expect(thread.unbindDrawingListeners).toBeCalled();
         });
@@ -307,6 +310,7 @@ describe('controllers/DrawingModeController', () => {
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
+            expect(controller.updateUndoRedoButtonEls).toBeCalled();
             expect(thread.destroy).toBeCalled();
         });
     });
