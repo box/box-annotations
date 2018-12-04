@@ -151,7 +151,7 @@ class AnnotationModeController extends EventEmitter {
      */
     getButton(annotatorSelector: string): HTMLElement {
         // $FlowFixMe
-        return this.container.querySelector(annotatorSelector);
+        return this.headerElement.querySelector(annotatorSelector);
     }
 
     /**
