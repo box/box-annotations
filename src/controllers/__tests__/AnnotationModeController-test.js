@@ -123,14 +123,10 @@ describe('controllers/AnnotationModeController', () => {
             it('should return the annotation mode button', () => {
                 const buttonEl = document.createElement('button');
                 buttonEl.classList.add('class');
-                controller.container = document.createElement('div');
-                controller.container.appendChild(buttonEl);
+                controller.headerElement = document.createElement('div');
+                controller.headerElement.appendChild(buttonEl);
 
                 expect(controller.getButton('.class')).not.toBeNull();
-            });
-
-            it('should return null if no headerElement', () => {
-                expect(controller.getButton('.class')).toBeNull();
             });
         });
 
