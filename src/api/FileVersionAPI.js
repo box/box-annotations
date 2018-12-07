@@ -78,6 +78,15 @@ class FileVersionAPI extends API {
      * @return {void}
      */
     successHandler = (data: Data, queryParams: Params): Promise<any> => {
+        if (data.type === 'error' || !Array.isArray(data.entries)) {
+            const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
+            this.emit(ANNOTATOR_EVENT.error, {
+                reason: ERROR_TYPE.read,
+                error: error.toString()
+            });
+            return Promise.reject(error);
+        }
+
         const entries = this.data ? this.data.entries : [];
         this.data = {
             ...data,
@@ -94,15 +103,7 @@ class FileVersionAPI extends API {
             return this.fetchFromMarker(params);
         }
 
-        if (data.type === 'error' || !Array.isArray(data.entries)) {
-            const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
-            this.emit(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.read,
-                error: error.toString()
-            });
-        }
-
-        return Promise.resolve();
+        return Promise.resolve(this.data);
     };
 
     /**
