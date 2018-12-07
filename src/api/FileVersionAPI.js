@@ -46,7 +46,7 @@ class FileVersionAPI extends API {
      */
     fetchVersionAnnotations(version: string): Promise<AnnotationMap> {
         this.fileVersionId = version;
-        
+
         // $FlowFixMe
         return this.fetchFromMarker({ version, fields: FIELDS }).then(this.createAnnotationMap);
     }
@@ -77,11 +77,11 @@ class FileVersionAPI extends API {
      * @param {Params} queryParams - Key-value map of querystring params
      * @return {void}
      */
-    successHandler = (data: Data, queryParams: Params): void => {
+    successHandler = (data: Data, queryParams: Params): Promise<any> => {
         const entries = this.data ? this.data.entries : [];
         this.data = {
             ...data,
-            entries: entries.concat(data.entries)
+            entries: [...entries, ...data.entries]
         };
 
         const { next_marker } = data;
@@ -91,7 +91,7 @@ class FileVersionAPI extends API {
                 marker: next_marker
             };
 
-            this.fetchFromMarker(params);
+            return this.fetchFromMarker(params);
         }
 
         if (data.type === 'error' || !Array.isArray(data.entries)) {
@@ -101,6 +101,8 @@ class FileVersionAPI extends API {
                 error: error.toString()
             });
         }
+
+        return Promise.resolve();
     };
 
     /**
