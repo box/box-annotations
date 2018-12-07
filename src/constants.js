@@ -146,6 +146,7 @@ export const ANNOTATOR_EVENT = {
 };
 
 export const THREAD_EVENT = {
+    create: 'annotationcreate',
     pending: 'annotationpending',
     render: 'annotationrender',
     save: 'annotationsaved',

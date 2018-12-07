@@ -156,6 +156,7 @@ describe('AnnotationThread', () => {
                 done();
             });
             expect(thread.api.create).toBeCalled();
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.create);
         });
 
         it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {

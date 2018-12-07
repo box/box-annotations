@@ -438,6 +438,15 @@ describe('controllers/AnnotationModeController', () => {
             });
         });
 
+        describe('resetCurrentThread()', () => {
+            it('should reset the current thread when an annotaiton is no longer pending', () => {
+                controller.currentThread = thread;
+                controller.resetCurrentThread(thread);
+                expect(controller.currentThread).toBeUndefined();
+                expect(controller.selectedThread).toEqual(thread);
+            });
+        });
+
         describe('handleThreadEvents()', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
@@ -445,10 +454,16 @@ describe('controllers/AnnotationModeController', () => {
                 controller.render = jest.fn();
                 controller.registerThread = jest.fn();
                 controller.unregisterThread = jest.fn();
+                controller.resetCurrentThread = jest.fn();
                 controller.localized = {
                     deleteError: 'delete error',
                     createError: 'create error'
                 };
+            });
+
+            it('should reset the current thread when a new annotation is created', () => {
+                controller.handleThreadEvents(thread, { event: THREAD_EVENT.create });
+                expect(controller.resetCurrentThread).toBeCalledWith(thread);
             });
 
             it('should mark hadPendingThreads as false and emit event on thread save or cancel', () => {

@@ -246,6 +246,15 @@ describe('controllers/DrawingModeController', () => {
         });
     });
 
+    describe('resetCurrentThread()', () => {
+        it('should reset the current annotation thread', () => {
+            controller.selectedThread = null;
+            controller.resetCurrentThread(thread);
+            expect(controller.selectedThread).not.toBeNull();
+            expect(controller.currentThread).toBeUndefined();
+        });
+    });
+
     describe('handleThreadEvents()', () => {
         beforeEach(() => {
             controller.unbindListeners = jest.fn();
