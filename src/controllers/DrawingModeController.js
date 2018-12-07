@@ -112,6 +112,9 @@ class DrawingModeController extends AnnotationModeController {
             this.currentThread.pathContainer.undoStack.length > 0
         ) {
             this.currentThread.save(TYPES.draw);
+            this.handleThreadEvents(this.currentThread, {
+                event: THREAD_EVENT.save
+            });
         }
 
         this.exit();
