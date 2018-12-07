@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import FileVersionAPI from '../FileVersionAPI';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
+import { ERROR_TYPE } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
 
@@ -79,13 +79,10 @@ describe('api/FileVersionAPI', () => {
             api.fileVersionId = 123;
             api.successHandler({ type: 'error' }).catch(() => {
                 const error = new Error(`Could not read annotations from file version with ID ${api.fileVersionId}`);
+                error.name = ERROR_TYPE.read;
 
                 expect(api.data.entries.length).toEqual(1);
                 expect(api.fetchFromMarker).not.toBeCalled();
-                expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
-                    reason: ERROR_TYPE.read,
-                    error: error.toString()
-                });
             });
         });
     });

@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import axios from 'axios';
 
 import { getHeaders } from '../util';
-import { PLACEHOLDER_USER, ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
+import { PLACEHOLDER_USER, ANNOTATOR_EVENT } from '../constants';
 
 class API extends EventEmitter {
     /** @property {string} */
@@ -95,7 +95,7 @@ class API extends EventEmitter {
      */
     errorHandler = (error: $AxiosError): void => {
         this.emit(ANNOTATOR_EVENT.error, {
-            reason: ERROR_TYPE.auth,
+            reason: error.name,
             error: error.toString()
         });
     };

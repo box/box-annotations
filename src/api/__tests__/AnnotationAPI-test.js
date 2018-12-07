@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import AnnotationAPI from '../AnnotationAPI';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
+import { ERROR_TYPE } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
 const HTTP_POST = 'POST';
@@ -24,6 +24,7 @@ describe('api/AnnotationAPI', () => {
             token: 'someToken'
         });
         api.axios = jest.fn().mockReturnValue(promise);
+        api.errorHandler = jest.fn();
         api.axiosSource = { token: '123abc' };
         api.headers = {};
     });
@@ -67,14 +68,11 @@ describe('api/AnnotationAPI', () => {
 
     describe('createSuccessHandler()', () => {
         it('should emit an error event', () => {
-            api.emit = jest.fn();
             const error = new Error('Could not create annotation');
+            error.name = ERROR_TYPE.create;
 
             api.createSuccessHandler({ type: 'error' });
-            expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.create,
-                error: error.toString()
-            });
+            expect(api.errorHandler).toBeCalledWith(error);
         });
 
         it('should return the created annotation', () => {
@@ -87,14 +85,11 @@ describe('api/AnnotationAPI', () => {
 
     describe('deleteSuccessHandler()', () => {
         it('should emit an error event', () => {
-            api.emit = jest.fn();
             const error = new Error('Could not delete annotation with ID 123');
+            error.name === ERROR_TYPE.delete;
 
             api.deleteSuccessHandler({ type: 'error' }, '123');
-            expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.delete,
-                error: error.toString()
-            });
+            expect(api.errorHandler).toBeCalledWith(error);
         });
 
         it('should return the deleted annotation', () => {

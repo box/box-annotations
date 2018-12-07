@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../constants';
+import { ERROR_TYPE } from '../constants';
 
 const HTTP_POST = 'POST';
 const HTTP_DELETE = 'DELETE';
@@ -57,10 +57,8 @@ class AnnotationAPI extends API {
     createSuccessHandler = (data: Object): CommentProps => {
         if (data.type === 'error') {
             const error = new Error('Could not create annotation');
-            this.emit(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.create,
-                error: error.toString()
-            });
+            error.name = ERROR_TYPE.create;
+            this.errorHandler(error);
             return data;
         }
 
@@ -94,10 +92,8 @@ class AnnotationAPI extends API {
     deleteSuccessHandler = (data: Object, id: string) => {
         if (data.type === 'error' || !data.id) {
             const error = new Error(`Could not delete annotation with ID ${id}`);
-            this.emit(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.delete,
-                error: error.toString()
-            });
+            error.name = ERROR_TYPE.delete;
+            this.errorHandler(error);
         }
 
         return data;

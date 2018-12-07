@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
+import { ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -80,10 +80,7 @@ class FileVersionAPI extends API {
     successHandler = (data: Data, queryParams: Params): Promise<any> => {
         if (data.type === 'error' || !Array.isArray(data.entries)) {
             const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
-            this.emit(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.read,
-                error: error.toString()
-            });
+            error.name = ERROR_TYPE.read;
             return Promise.reject(error);
         }
 
