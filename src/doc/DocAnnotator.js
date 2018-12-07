@@ -513,7 +513,7 @@ class DocAnnotator extends Annotator {
             canAnnotate: true,
             canDelete: true,
             createdBy: this.api.user,
-            createdAt: new Date().toLocaleString()
+            createdAt: new Date().toISOString()
         });
         if (!thread) {
             this.handleValidationError();
