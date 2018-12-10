@@ -248,7 +248,7 @@ class AnnotationThread extends EventEmitter {
                 can_delete: true
             },
             createdBy: this.api.user,
-            createdAt: new Date().toLocaleString()
+            createdAt: new Date().toISOString()
         });
 
         this.state = STATES.inactive;
