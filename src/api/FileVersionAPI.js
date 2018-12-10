@@ -1,6 +1,6 @@
 // @flow
 import API from './API';
-import { ANNOTATOR_EVENT, ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
+import { ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
 
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
@@ -46,7 +46,7 @@ class FileVersionAPI extends API {
      */
     fetchVersionAnnotations(version: string): Promise<AnnotationMap> {
         this.fileVersionId = version;
-        
+
         // $FlowFixMe
         return this.fetchFromMarker({ version, fields: FIELDS }).then(this.createAnnotationMap);
     }
@@ -77,11 +77,17 @@ class FileVersionAPI extends API {
      * @param {Params} queryParams - Key-value map of querystring params
      * @return {void}
      */
-    successHandler = (data: Data, queryParams: Params): void => {
+    successHandler = (data: Data, queryParams: Params): Promise<any> => {
+        if (data.type === 'error' || !Array.isArray(data.entries)) {
+            const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
+            error.name = ERROR_TYPE.read;
+            return Promise.reject(error);
+        }
+
         const entries = this.data ? this.data.entries : [];
         this.data = {
             ...data,
-            entries: entries.concat(data.entries)
+            entries: [...entries, ...data.entries]
         };
 
         const { next_marker } = data;
@@ -91,16 +97,10 @@ class FileVersionAPI extends API {
                 marker: next_marker
             };
 
-            this.fetchFromMarker(params);
+            return this.fetchFromMarker(params);
         }
 
-        if (data.type === 'error' || !Array.isArray(data.entries)) {
-            const error = new Error(`Could not read annotations from file version with ID ${this.fileVersionId}`);
-            this.emit(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.read,
-                error: error.toString()
-            });
-        }
+        return Promise.resolve(this.data);
     };
 
     /**

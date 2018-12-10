@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import API from '../API';
-import { ANNOTATOR_EVENT, ERROR_TYPE } from '../../constants';
+import { ANNOTATOR_EVENT } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
 let api;
@@ -49,7 +49,7 @@ describe('api/API', () => {
 
             api.errorHandler(error);
             expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
-                reason: ERROR_TYPE.auth,
+                reason: error.name,
                 error: error.toString()
             });
         });
