@@ -493,6 +493,19 @@ class AnnotationModeController extends EventEmitter {
     setupHandlers(): void {}
 
     /**
+     * Resets current thread when annotation is no longer pending
+     *
+     * @param {AnnotationThread} thread  - Annotation thread being saved
+     * @return {void}
+     */
+    resetCurrentThread(thread: AnnotationThread): void {
+        this.selectedThread = thread;
+        this.currentThread = undefined;
+        this.hadPendingThreads = false;
+        this.pendingThreadID = null;
+    }
+
+    /**
      * Handles annotation thread events and emits them to the viewer
      *
      * @param {AnnotationThread} thread - The thread that emitted the event
@@ -505,6 +518,9 @@ class AnnotationModeController extends EventEmitter {
         const { event, data: threadData, eventData } = data;
 
         switch (event) {
+            case THREAD_EVENT.create:
+                this.resetCurrentThread(thread);
+                break;
             case THREAD_EVENT.save:
             case THREAD_EVENT.cancel:
                 this.hadPendingThreads = false;

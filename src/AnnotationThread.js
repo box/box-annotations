@@ -56,16 +56,8 @@ class AnnotationThread extends EventEmitter {
         this.annotatedElement = data.annotatedElement;
         this.api = data.api;
         this.container = data.container;
-        this.fileVersionId = data.fileVersionId;
-        this.location = data.location;
-        this.threadID = data.threadID || AnnotationAPI.generateID();
-        this.threadNumber = data.threadNumber || '';
-        this.type = data.type;
         this.locale = data.locale;
         this.hasTouch = data.hasTouch || false;
-        this.permissions = data.permissions;
-        this.state = STATES.inactive;
-        this.canComment = true;
         this.headerHeight = data.headerHeight;
 
         this.id = data.id;
@@ -77,6 +69,8 @@ class AnnotationThread extends EventEmitter {
         this.modifiedAt = data.modifiedAt;
         this.fileVersionId = data.fileVersionId;
         this.threadID = data.threadID || AnnotationAPI.generateID();
+        this.state = STATES.inactive;
+        this.permissions = data.permissions;
         this.canDelete = data.canDelete;
         this.canAnnotate = data.canAnnotate;
         this.canComment = true;
@@ -236,6 +230,8 @@ class AnnotationThread extends EventEmitter {
      * @return {Promise} - Annotation create promise
      */
     save(type: AnnotationType, message: string): Promise<any> {
+        this.emit(THREAD_EVENT.create);
+
         const annotationData = this.createAnnotationData(type, message);
 
         // Save annotation on client

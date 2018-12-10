@@ -267,8 +267,7 @@ class DrawingModeController extends AnnotationModeController {
                 thread.removeListener('threadevent', this.handleThreadEvents);
                 thread.unbindDrawingListeners();
 
-                this.currentThread = undefined;
-                this.selectedThread = thread;
+                this.resetCurrentThread(thread);
                 this.unbindListeners();
 
                 // Clear existing canvases
