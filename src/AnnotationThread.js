@@ -585,7 +585,8 @@ class AnnotationThread extends EventEmitter {
                 threadID: this.threadID
             },
             message,
-            createdBy: this.api.user
+            createdBy: this.api.user,
+            thread: this.threadNumber
         };
     }
 

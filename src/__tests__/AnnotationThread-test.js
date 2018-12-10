@@ -171,6 +171,28 @@ describe('AnnotationThread', () => {
         });
     });
 
+    describe('createAnnotationData()', () => {
+        it('should create an annotation data object to post to the API', () => {
+            const message = 'something';
+            const type = 'point';
+            const data = thread.createAnnotationData(type, message);
+            expect(data).toStrictEqual({
+                item: {
+                    type: 'file_version',
+                    id: '1'
+                },
+                details: {
+                    type,
+                    location: {},
+                    threadID: '2'
+                },
+                message,
+                createdBy: { id: '1' },
+                thread: '1'
+            });
+        });
+    });
+
     describe('updateTemporaryAnnotation()', () => {
         const tempAnnotation = { id: 1 };
         const serverAnnotation = {

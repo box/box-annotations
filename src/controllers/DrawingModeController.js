@@ -283,6 +283,9 @@ class DrawingModeController extends AnnotationModeController {
 
                 this.bindListeners();
 
+                // Reset undo/redo buttons
+                this.updateUndoRedoButtonEls();
+
                 // Given a location (page change) start drawing at the provided location
                 if (eventData && eventData.location) {
                     // $FlowFixMe
@@ -298,6 +301,9 @@ class DrawingModeController extends AnnotationModeController {
                 this.currentThread = undefined;
                 thread.removeListener('threadevent', this.handleThreadEvents);
                 thread.unbindDrawingListeners();
+
+                // Reset undo/redo buttons
+                this.updateUndoRedoButtonEls();
 
                 if (thread.state === STATES.pending) {
                     // Soft delete, in-progress thread doesn't require a redraw or a delete on the server
@@ -405,7 +411,7 @@ class DrawingModeController extends AnnotationModeController {
      * @param {number} redoCount - Thenumber of objects that can be redone
      * @return {void}
      */
-    updateUndoRedoButtonEls(undoCount: number, redoCount: number): void {
+    updateUndoRedoButtonEls(undoCount: number = 0, redoCount: number = 0): void {
         if (this.undoButtonEl) {
             if (undoCount === 1) {
                 enableElement(this.undoButtonEl);
