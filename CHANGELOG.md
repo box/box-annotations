@@ -1,3 +1,22 @@
+## 3.5.0 (2018-12-13)
+
+* Fix: AnnotationPopover CSS to not hide popover svgs (#304) ([83ca5b7](https://github.com/box/box-annotations/commit/83ca5b7)), closes [#304](https://github.com/box/box-annotations/issues/304)
+* Fix: date appears incorrectly for point annotations in IE11 (#312) ([bcd6ae5](https://github.com/box/box-annotations/commit/bcd6ae5)), closes [#312](https://github.com/box/box-annotations/issues/312)
+* Fix: Don't render until AFTER all are fetched (#311) ([0e3fbff](https://github.com/box/box-annotations/commit/0e3fbff)), closes [#311](https://github.com/box/box-annotations/issues/311)
+* Fix: Ensure dialog is still visible on undo/redo (#302) ([1c8a7e2](https://github.com/box/box-annotations/commit/1c8a7e2)), closes [#302](https://github.com/box/box-annotations/issues/302)
+* Fix: Ensure thread number is persisted for annotation replies (#307) ([734fc6c](https://github.com/box/box-annotations/commit/734fc6c)), closes [#307](https://github.com/box/box-annotations/issues/307)
+* Fix: Functional tests to work with React components (#303) ([4f0418e](https://github.com/box/box-annotations/commit/4f0418e)), closes [#303](https://github.com/box/box-annotations/issues/303)
+* Fix: Get mode button from header element rather than container (#308) ([b50d72b](https://github.com/box/box-annotations/commit/b50d72b)), closes [#308](https://github.com/box/box-annotations/issues/308)
+* Fix: Point image annotations popover should be on annotated element (#305) ([6d71dee](https://github.com/box/box-annotations/commit/6d71dee)), closes [#305](https://github.com/box/box-annotations/issues/305)
+* Fix: Reset current annotation thread immediately on save (#313) ([19c89cc](https://github.com/box/box-annotations/commit/19c89cc)), closes [#313](https://github.com/box/box-annotations/issues/313)
+* Fix: Reset undo/redo buttons on drawing save/delete (#306) ([441f0f2](https://github.com/box/box-annotations/commit/441f0f2)), closes [#306](https://github.com/box/box-annotations/issues/306)
+* Fix: Show comment list scrollbars only on overflow (#314) ([83c143e](https://github.com/box/box-annotations/commit/83c143e)), closes [#314](https://github.com/box/box-annotations/issues/314)
+* Chore: Remove NSP from build (defunct) (#315) ([720802f](https://github.com/box/box-annotations/commit/720802f)), closes [#315](https://github.com/box/box-annotations/issues/315)
+* Chore: Update test page for annotations 3.4 (#301) ([71afd21](https://github.com/box/box-annotations/commit/71afd21)), closes [#301](https://github.com/box/box-annotations/issues/301)
+* Update: CSS className constants for react classNames (#299) ([b472a2e](https://github.com/box/box-annotations/commit/b472a2e)), closes [#299](https://github.com/box/box-annotations/issues/299)
+
+
+
 ## 3.4.0 (2018-11-28)
 
 * Fix: Dialog not showing when creating points (#295) ([c0ee86f](https://github.com/box/box-annotations/commit/c0ee86f)), closes [#295](https://github.com/box/box-annotations/issues/295)
