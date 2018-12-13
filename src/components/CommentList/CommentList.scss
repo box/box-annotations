@@ -3,7 +3,7 @@
 
     .ba-comment-list {
         max-height: 282px;
-        overflow-y: scroll;
+        overflow-y: auto;
         user-select: text;
         width: 100%;
     }
