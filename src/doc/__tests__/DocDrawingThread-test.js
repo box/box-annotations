@@ -324,6 +324,7 @@ describe('doc/DocDrawingThread', () => {
                 clearRect: jest.fn(),
                 canvas: {
                     height: 100,
+                    remove: jest.fn(),
                     width: 100
                 }
             };
@@ -379,6 +380,25 @@ describe('doc/DocDrawingThread', () => {
             expect(util.createLocation).toBeCalledTimes(2);
             expect(docUtil.getBrowserCoordinatesFromLocation).toHaveBeenCalledTimes(2);
             expect(value).toStrictEqual([5, 5, 45, 40]);
+        });
+    });
+
+    describe('destroy()', () => {
+        it('should remove the drawing canvas from the DOM if present', () => {
+            const removeFn = jest.fn();
+
+            thread.drawingContext = {
+                clearRect: jest.fn(),
+                canvas: {
+                    height: 100,
+                    remove: removeFn,
+                    width: 100
+                }
+            };
+
+            thread.destroy();
+
+            expect(removeFn).toHaveBeenCalled();
         });
     });
 });

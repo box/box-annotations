@@ -166,8 +166,6 @@ class DrawingModeController extends AnnotationModeController {
         this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
         // Mobile & Desktop listeners are bound for touch-enabled laptop edge cases
-        // $FlowFixMe
-        this.drawingStartHandler = this.drawingStartHandler.bind(this);
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);
     }
 

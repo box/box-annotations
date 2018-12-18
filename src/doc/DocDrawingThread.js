@@ -147,6 +147,15 @@ class DocDrawingThread extends DrawingThread {
         return !!(location && !!this.location && !!this.location.page && this.location.page !== location.page);
     }
 
+    /** @inheritdoc */
+    destroy() {
+        if (this.drawingContext) {
+            this.drawingContext.canvas.remove();
+        }
+
+        super.destroy();
+    }
+
     /**
      * Display the document drawing thread. Will set the drawing context if the scale has changed since the last show.
      *
