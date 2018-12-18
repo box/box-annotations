@@ -149,8 +149,8 @@ class DocDrawingThread extends DrawingThread {
 
     /** @inheritdoc */
     destroy() {
-        if (this.drawingContext) {
-            this.drawingContext.canvas.remove();
+        if (this.drawingContext && this.drawingContext.canvas && this.drawingContext.canvas.parentNode) {
+            this.drawingContext.canvas.parentNode.removeChild(this.drawingContext.canvas);
         }
 
         super.destroy();

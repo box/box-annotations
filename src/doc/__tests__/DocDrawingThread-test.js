@@ -320,11 +320,11 @@ describe('doc/DocDrawingThread', () => {
 
         it('should return the pending drawing context when the state is pending', () => {
             thread.state = STATES.pending;
+            thread.destroy = jest.fn();
             thread.drawingContext = {
                 clearRect: jest.fn(),
                 canvas: {
                     height: 100,
-                    remove: jest.fn(),
                     width: 100
                 }
             };
@@ -391,7 +391,9 @@ describe('doc/DocDrawingThread', () => {
                 clearRect: jest.fn(),
                 canvas: {
                     height: 100,
-                    remove: removeFn,
+                    parentNode: {
+                        removeChild: removeFn
+                    },
                     width: 100
                 }
             };
