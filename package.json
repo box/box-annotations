@@ -132,6 +132,7 @@
     "webpack": "^4.12.0",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.0.7",
+    "webpack-dev-server": "^3.1.10",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
@@ -139,7 +140,6 @@
     "build-locales": "node ./build/props-to-es2015.js",
     "build-prod": "BABEL_ENV=production NODE_ENV=production webpack --config build/webpack.config.js --mode production",
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
-    "watch": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
     "test": "yarn install && NODE_ENV=test yarn run jest",
     "debug": "yarn install && NODE_ENV=test yarn run jest --watch",
     "setup-travis": "cd functional-tests && yarn install && node app.js",
@@ -160,6 +160,8 @@
     "major": "./build/release.sh -m && ./build/publish.sh",
     "patch": "./build/release.sh -p && ./build/publish.sh",
     "upgrade-brui": "./build/upgrade_brui.sh",
+    "start": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
+    "start:dev": "yarn run pre-build && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack-dev-server --config build/webpack.config.js --mode development",
     "styleguide": "yarn run pre-build && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development",
     "styleguide-static": "LANGUAGE=en-US REACT=true BABEL_ENV=production NODE_ENV=production node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js build --config build/styleguide.config.js --mode production"
   },
