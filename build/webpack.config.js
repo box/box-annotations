@@ -43,6 +43,10 @@ const config = Object.assign(commonConfig(), {
             'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
             moment: path.resolve('src/MomentShim') // Hack to leverage Intl instead
         }
+    },
+    devServer: {
+        contentBase: './test',
+        inline: true
     }
 });
 
@@ -53,7 +57,7 @@ if (isDev) {
     }
 
     // Add inline source map
-    config.devtool = 'inline-source-map';
+    config.devtool = 'source-map';
     config.plugins.push(new TranslationsPlugin());
     config.plugins.push(
         new CircularDependencyPlugin({
