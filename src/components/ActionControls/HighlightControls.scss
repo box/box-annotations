@@ -2,35 +2,36 @@
 
 .ba {
     .ba-action-controls-highlight {
+        $button-spacing: 5px;
+
         display: flex;
-    }
+        margin-left: -#{$button-spacing};
+        margin-right: -#{$button-spacing};
 
-    .ba-action-controls-highlight .btn-plain {
-        flex-grow: 1;
-        padding-left: 5px;
-        padding-right: 5px;
-    }
+        .btn-plain {
+            flex-grow: 1;
+            padding-left: $button-spacing;
+            padding-right: $button-spacing;
 
-    .icon-annotation-highlight,
-    .icon-annotation-highlight-comment .icon {
-        fill: $sevens;
-    }
+            .icon-annotation-highlight,
+            .icon-annotation-highlight-comment .icon {
+                fill: $sevens;
+            }
 
-    .ba-saved-highlight {
-        fill: $highlight-yellow;
-    }
-
-    .ba-action-controls-highlight .btn-plain:hover {
-        padding-left: 5px;
-        padding-right: 5px;
-
-        .icon-annotation-highlight,
-        .icon-annotation-highlight-comment .icon {
-            fill: $better-black;
+            .icon-annotation-highlight.ba-saved-highlight {
+                fill: $highlight-yellow;
+            }
         }
 
-        .icon-annotation-highlight.ba-saved-highlight {
-            fill: $highlight-yellow-hover;
+        .btn-plain:hover {
+            .icon-annotation-highlight,
+            .icon-annotation-highlight-comment .icon {
+                fill: $better-black;
+            }
+
+            .icon-annotation-highlight.ba-saved-highlight {
+                fill: $highlight-yellow-hover;
+            }
         }
     }
 

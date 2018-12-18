@@ -1,10 +1,6 @@
 @import '../../variables';
 
 .ba {
-    .ba-annotator-label {
-        line-height: 23px;
-    }
-
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
         .ba-annotator-label {

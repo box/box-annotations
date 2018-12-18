@@ -46,11 +46,12 @@
         display: block;
         overflow-x: hidden;
         overflow-y: auto;
-        padding: 15px;
+        padding: 10px;
         white-space: normal;
     }
 
     .ba-inline-popover .overlay {
+        align-items: center;
         display: inline-flex;
     }
 
