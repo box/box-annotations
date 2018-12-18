@@ -15,6 +15,12 @@ class DrawingThread extends AnnotationThread {
     /** @property {number} - Drawing state */
     drawingFlag = DRAW_STATES.idle;
 
+    /** @property {Function} Handler for drawing start events */
+    userMoveHandler;
+
+    /** @property {Function} Handler for drawing stop events */
+    userStopHandler;
+
     /** @property {DrawingContainer} - The path container supporting undo and redo */
     pathContainer = new DrawingContainer();
 
@@ -96,7 +102,6 @@ class DrawingThread extends AnnotationThread {
             window.cancelAnimationFrame(this.lastAnimationRequestId);
         }
 
-        this.unmountPopover();
         this.reset();
         super.destroy();
 
@@ -124,29 +129,23 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     bindDrawingListeners(locationFunction) {
+        this.userMoveHandler = eventToLocationHandler(locationFunction, this.handleMove);
+        this.userStopHandler = eventToLocationHandler(locationFunction, this.handleStop);
+
         if (this.hasTouch) {
-            this.annotatedElement.addEventListener(
-                'touchmove',
-                eventToLocationHandler(locationFunction, this.handleMove)
-            );
-            this.annotatedElement.addEventListener(
-                'touchcancel',
-                eventToLocationHandler(locationFunction, this.handleStop)
-            );
-            this.annotatedElement.addEventListener(
-                'touchend',
-                eventToLocationHandler(locationFunction, this.handleStop)
-            );
+            this.annotatedElement.addEventListener('touchmove', this.userMoveHandler);
+            this.annotatedElement.addEventListener('touchcancel', this.userStopHandler);
+            this.annotatedElement.addEventListener('touchend', this.userStopHandler);
         } else {
-            this.annotatedElement.addEventListener(
-                'mousemove',
-                eventToLocationHandler(locationFunction, this.handleMove)
-            );
-            this.annotatedElement.addEventListener(
-                'mouseup',
-                eventToLocationHandler(locationFunction, this.handleStop)
-            );
+            this.annotatedElement.addEventListener('mousemove', this.userMoveHandler);
+            this.annotatedElement.addEventListener('mouseup', this.userStopHandler);
         }
+    }
+
+    /** @inheritdoc */
+    unbindDOMListeners() {
+        this.unbindDrawingListeners();
+        super.unbindDOMListeners();
     }
 
     /**
@@ -155,12 +154,11 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     unbindDrawingListeners() {
-        this.annotatedElement.removeEventListener('mousemove', eventToLocationHandler);
-        this.annotatedElement.removeEventListener('mouseup', eventToLocationHandler);
-
-        this.annotatedElement.removeEventListener('touchmove', eventToLocationHandler);
-        this.annotatedElement.removeEventListener('touchcancel', eventToLocationHandler);
-        this.annotatedElement.removeEventListener('touchend', eventToLocationHandler);
+        this.annotatedElement.removeEventListener('mousemove', this.userMoveHandler);
+        this.annotatedElement.removeEventListener('mouseup', this.userStopHandler);
+        this.annotatedElement.removeEventListener('touchmove', this.userMoveHandler);
+        this.annotatedElement.removeEventListener('touchcancel', this.userStopHandler);
+        this.annotatedElement.removeEventListener('touchend', this.userStopHandler);
     }
 
     /**

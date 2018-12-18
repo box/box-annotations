@@ -119,15 +119,17 @@ describe('drawing/DrawingThread', () => {
             thread.annotatedElement = {
                 removeEventListener: jest.fn()
             };
+            thread.userMoveHandler = jest.fn();
+            thread.userStopHandler = jest.fn();
         });
 
         it('should add only mouse listeners for desktop devices', () => {
             thread.unbindDrawingListeners();
-            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mousemove', expect.any(Function));
-            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mouseup', expect.any(Function));
-            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchmove', expect.any(Function));
-            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchcancel', expect.any(Function));
-            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchend', expect.any(Function));
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mousemove', thread.userMoveHandler);
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('mouseup', thread.userStopHandler);
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchmove', thread.userMoveHandler);
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchcancel', thread.userStopHandler);
+            expect(thread.annotatedElement.removeEventListener).toBeCalledWith('touchend', thread.userStopHandler);
         });
     });
 

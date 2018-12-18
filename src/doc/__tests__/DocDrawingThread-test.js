@@ -320,6 +320,7 @@ describe('doc/DocDrawingThread', () => {
 
         it('should return the pending drawing context when the state is pending', () => {
             thread.state = STATES.pending;
+            thread.destroy = jest.fn();
             thread.drawingContext = {
                 clearRect: jest.fn(),
                 canvas: {
@@ -379,6 +380,27 @@ describe('doc/DocDrawingThread', () => {
             expect(util.createLocation).toBeCalledTimes(2);
             expect(docUtil.getBrowserCoordinatesFromLocation).toHaveBeenCalledTimes(2);
             expect(value).toStrictEqual([5, 5, 45, 40]);
+        });
+    });
+
+    describe('destroy()', () => {
+        it('should remove the drawing canvas from the DOM if present', () => {
+            const removeFn = jest.fn();
+
+            thread.drawingContext = {
+                clearRect: jest.fn(),
+                canvas: {
+                    height: 100,
+                    parentNode: {
+                        removeChild: removeFn
+                    },
+                    width: 100
+                }
+            };
+
+            thread.destroy();
+
+            expect(removeFn).toHaveBeenCalled();
         });
     });
 });

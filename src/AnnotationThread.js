@@ -102,10 +102,9 @@ class AnnotationThread extends EventEmitter {
     destroy() {
         this.threadID = null;
         this.unmountPopover();
+        this.unbindDOMListeners();
 
         if (this.element) {
-            this.unbindDOMListeners();
-
             if (this.element.parentNode) {
                 this.element.parentNode.removeChild(this.element);
             }
