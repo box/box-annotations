@@ -12,6 +12,10 @@
             flex-grow: 1;
             padding-left: $button-spacing;
             padding-right: $button-spacing;
+
+            .fill-color {
+                fill: $sevens;
+            }
         }
 
         .btn-plain:hover .fill-color {
