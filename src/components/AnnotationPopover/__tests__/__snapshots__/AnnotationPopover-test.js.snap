@@ -135,8 +135,8 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
         }
       >
         <IconClose
-          height={24}
-          width={24}
+          height={20}
+          width={20}
         />
       </PlainButton>
     </span>

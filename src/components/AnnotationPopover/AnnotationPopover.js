@@ -93,7 +93,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                     {isMobile ? (
                         <span className={CLASS_MOBILE_HEADER} style={{ height: headerHeight }}>
                             <PlainButton className={CLASS_MOBILE_CLOSE_BTN} onClick={onCancel}>
-                                <IconClose height={24} width={24} />
+                                <IconClose height={20} width={20} />
                             </PlainButton>
                         </span>
                     ) : (

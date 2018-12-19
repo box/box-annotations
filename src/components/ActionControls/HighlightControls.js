@@ -34,6 +34,8 @@ const HighlightControls = ({
         {canAnnotateAndDelete && (
             <PlainButton type='button' className={CLASS_HIGHLIGHT_BTN} onClick={isPending ? onCreate : onDelete}>
                 <IconHighlightAnnotation
+                    height={20}
+                    width={20}
                     className={classNames({
                         [CLASS_SAVED_HIGHLIGHT]: !isPending
                     })}
@@ -42,7 +44,7 @@ const HighlightControls = ({
         )}
         {canComment && (
             <PlainButton type='button' className={CLASS_HIGHLIGHT_COMMENT_BTN} onClick={onCommentClick}>
-                <IconHighlightCommentAnnotation height={24} width={24} />
+                <IconHighlightCommentAnnotation height={20} width={20} />
             </PlainButton>
         )}
     </div>
