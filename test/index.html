@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <link rel="stylesheet" href='./styles.css' />
         <link rel="stylesheet" href='https://cdn01.boxcdn.net/platform/preview/1.60.0/en-US/preview.css' />
         <link rel="stylesheet" href='./annotations.css' />
@@ -28,7 +29,7 @@
         <script>
             function setProperty(selector) {
                 // Get new value, fallback to local storage
-                const inputValue = document.querySelector('#' + selector + '-set')
+                var inputValue = document.querySelector('#' + selector + '-set')
                 value = inputValue && inputValue.value || localStorage.getItem(selector);
 
 
@@ -37,7 +38,7 @@
                 }
 
                 // Set it for display purposes
-                displayElement = document.querySelector('#' + selector + '-display');
+                var displayElement = document.querySelector('#' + selector + '-display');
                 displayElement.textContent = value;
 
                 // Cache it in local storage
@@ -48,15 +49,15 @@
             }
 
             function loadPreview() {
-                const token = localStorage.getItem('token');
-                const fileid = localStorage.getItem('fileid');
+                var token = localStorage.getItem('token');
+                var fileid = localStorage.getItem('fileid');
 
                 if ( !token || !fileid) {
                     return;
                 }
 
                 // Load Preview + Annotations with the passed in file ID
-                const options = {
+                var options = {
                     Image: {
                         enabledTypes: ["point"]
                     },
@@ -69,7 +70,7 @@
                 };
 
                 /* global BoxAnnotations */
-                const annotations = new BoxAnnotations(options);
+                var annotations = new BoxAnnotations(options);
 
                 /* global Box */
                 var preview = new Box.Preview();

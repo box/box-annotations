@@ -46,6 +46,8 @@ const config = Object.assign(commonConfig(), {
     },
     devServer: {
         contentBase: './test',
+        disableHostCheck: true,
+        host: '0.0.0.0',
         inline: true
     }
 });
