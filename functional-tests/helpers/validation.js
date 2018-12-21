@@ -25,7 +25,7 @@ const {
  */
 async function validateIconColor(I, selector, color) {
     I.waitForElement(selector);
-    const clr = await I.grabCssPropertyFrom(`${selector} svg`, 'fill');
+    const clr = await I.grabCssPropertyFrom(selector, 'fill');
     expect(clr).to.equal(color);
 }
 

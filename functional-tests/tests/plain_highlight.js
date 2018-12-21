@@ -5,10 +5,14 @@ const {
     SELECTOR_HIGHLIGHT_CONTROLS,
     SELECTOR_ANNOTATION_POPOVER,
     SELECTOR_HIGHLIGHT_BTN,
-    SELECTOR_ANNOTATOR_LABEL
+    SELECTOR_SAVED_HIGHLIGHT,
+    SELECTOR_ANNOTATOR_LABEL,
+    SELECTOR_ANNOTATION_BUTTON_DRAW,
+    SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL
 } = require('../helpers/constants');
 
-const { selectText } = require('../helpers/mouseEvents');
+const { selectText, clickAtLocation } = require('../helpers/mouseEvents');
+const { enterPointMode, exitPointMode } = require('../helpers/actions');
 const { validateIconColor } = require('../helpers/validation');
 const { cleanupAnnotations } = require('../helpers/cleanup');
 
@@ -25,6 +29,28 @@ After(function() {
 Scenario('Create/Delete a new plain highlight annotation @desktop @doc', function(I) {
     I.waitForVisible(SELECTOR_ANNOTATIONS_LOADED);
 
+    /** Highlighting should still work after drawing on the file */
+    I.say('Enter draw annotation mode');
+    I.click(SELECTOR_ANNOTATION_BUTTON_DRAW);
+    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+
+    I.say('Exit draw annotations mode');
+    I.click(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
+    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_DRAW);
+
+    selectText(I, SELECTOR_TEXT_LAYER);
+    I.waitForVisible(SELECTOR_HIGHLIGHT_CONTROLS);
+
+    /** Highlighting should still work after entering/exiting point mode */
+    I.say('Enter point mode');
+    enterPointMode(I);
+
+    I.say('Starting creating point annotation');
+    clickAtLocation(I, SELECTOR_TEXT_LAYER);
+
+    I.say('Exit point mode');
+    exitPointMode(I);
+    
     /*
      * Create plain highlight annotation
      */
@@ -40,7 +66,7 @@ Scenario('Create/Delete a new plain highlight annotation @desktop @doc', functio
     I.waitForText('Kanye West highlighted', 9, SELECTOR_ANNOTATOR_LABEL);
     I.waitForEnabled(SELECTOR_HIGHLIGHT_BTN);
 
-    validateIconColor(I, `${SELECTOR_HIGHLIGHT_BTN}`, 'rgb(255, 201, 0)');
+    validateIconColor(I, SELECTOR_SAVED_HIGHLIGHT, 'rgb(254, 217, 78)');
 
     /*
      * Delete plain highlight annotation
