@@ -11,7 +11,6 @@ const {
     SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
     SELECTOR_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
     SELECTOR_DRAW_CONTROLS,
-    SELECTOR_ADD_DRAWING_BTN,
     SELECTOR_ANNOTATION_DRAWING_LABEL,
     SELECTOR_DRAWING_DELETE_BTN,
     SELECTOR_HIGHLIGHT_CONTROLS
@@ -94,7 +93,6 @@ Scenario('Create/Delete drawing @desktop @doc', function(I) {
 
     I.say('Save drawing');
     I.click(SELECTOR_DRAWING_SAVE_BTN);
-    I.waitForInvisible(SELECTOR_DRAW_CONTROLS);
 
     // Unselect newly created drawing
     I.click(SELECTOR_TEXT_LAYER);
@@ -121,7 +119,6 @@ Scenario('Create/Delete drawing @desktop @doc', function(I) {
 
     I.say('Save drawing');
     I.click(SELECTOR_DRAWING_SAVE_BTN);
-    I.waitForInvisible(SELECTOR_DRAW_CONTROLS);
 
     // Unselect newly created drawing
     I.click(SELECTOR_TEXT_LAYER);

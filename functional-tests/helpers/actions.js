@@ -1,8 +1,6 @@
 /* eslint-disable prefer-arrow-callback, no-var, func-names */
 const {
     SELECTOR_ANNOTATION_POPOVER,
-    SELECTOR_ANNOTATION_BUTTON_POST,
-    SELECTOR_ANNOTATION_BUTTON_CANCEL,
     SELECTOR_ANNOTATION_COMMENT,
     SELECTOR_DELETE_COMMENT_BTN,
     SELECTOR_DRAFTEDITOR_CONTENT,
@@ -10,7 +8,6 @@ const {
     SELECTOR_INPUT_SUBMIT_BTN,
     SELECTOR_INPUT_CANCEL_BTN,
     SELECTOR_ANNOTATION_POINT_MARKER,
-    SELECTOR_ANNOTATION_TEXTAREA,
     SELECTOR_ANNNOTATION_MODE_BACKGROUND,
     SELECTOR_ANNOTATION_BUTTON_POINT,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
@@ -86,6 +83,21 @@ function enterPointMode(I) {
 }
 
 /**
+ * Exit point annotation mode
+ *
+ * @param {Object} I - the codeceptjs I
+ *
+ * @return {void}
+ */
+function exitPointMode(I) {
+    I.say('Exit point annotation mode');
+    I.click(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
+    I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
+    I.dontSeeElement(SELECTOR_POINT_MODE_HEADER);
+    I.dontSeeElement(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
+}
+/**
  * Cancel a point annotation
  *
  * @param {Object} I - the codeceptjs I
@@ -131,14 +143,12 @@ function createReplyDeletePoint(I) {
     deleteAnnotation(I, 1);
     I.waitForDetached(SELECTOR_ANNOTATION_POINT_MARKER, 1);
 
-    I.say('Exit point annotation mode');
-    I.click(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
-    I.dontSeeElement(SELECTOR_ANNNOTATION_MODE_BACKGROUND);
-    I.waitForVisible(SELECTOR_ANNOTATION_BUTTON_POINT);
+    exitPointMode(I);
 }
 
 exports.replyToThread = replyToThread;
 exports.deleteAnnotation = deleteAnnotation;
 exports.enterPointMode = enterPointMode;
+exports.exitPointMode = exitPointMode;
 exports.cancelPointAnnotation = cancelPointAnnotation;
 exports.createReplyDeletePoint = createReplyDeletePoint;
