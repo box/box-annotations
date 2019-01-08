@@ -364,6 +364,10 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
+        if (!this.container || !this.annotatedElement) {
+            return;
+        }
+
         this.container.removeEventListener('resize', this.resetAnnotationUI);
         this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
         this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);

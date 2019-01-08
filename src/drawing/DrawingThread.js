@@ -154,6 +154,10 @@ class DrawingThread extends AnnotationThread {
      * @return {void}
      */
     unbindDrawingListeners() {
+        if (!this.annotatedElement) {
+            return;
+        }
+
         this.annotatedElement.removeEventListener('mousemove', this.userMoveHandler);
         this.annotatedElement.removeEventListener('mouseup', this.userStopHandler);
         this.annotatedElement.removeEventListener('touchmove', this.userMoveHandler);
