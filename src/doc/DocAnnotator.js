@@ -410,10 +410,8 @@ class DocAnnotator extends Annotator {
 
         // Hide the create dialog if click was not in the popover
         if (
-            !this.isCreatingHighlight &&
-            // $FlowFixMe
+            this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
-            // $FlowFixMe
             !this.createHighlightDialog.isInHighlight(mouseEvent)
         ) {
             mouseEvent.stopPropagation();
@@ -464,6 +462,8 @@ class DocAnnotator extends Annotator {
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
+
+        this.mouseDownEvent = null;
     }
 
     /**
@@ -598,7 +598,6 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseEvent = event;
-
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
@@ -652,6 +651,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMousedownHandler = (event: Event) => {
+        const prevMouseDownEvent = this.mouseDownEvent;
         this.mouseDownEvent = event;
 
         // $FlowFixMe
@@ -665,7 +665,9 @@ class DocAnnotator extends Annotator {
         }
 
         this.isCreatingHighlight = true;
-        this.resetHighlightSelection(this.mouseDownEvent);
+        if (this.hasMouseMoved(prevMouseDownEvent, event)) {
+            this.resetHighlightSelection(this.mouseEvent);
+        }
 
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].destroyPendingThreads();
@@ -697,6 +699,21 @@ class DocAnnotator extends Annotator {
     }
 
     /**
+     * Determines whether the mouse position has changed between the two provided mouse events
+     * @param {Event} prevEvent - Previous mouse event
+     * @param {Event} event - Current mouse event
+     * @return {boolean} Whether or not mouse has moved
+     */
+    hasMouseMoved(prevEvent: Event, event: Event) {
+        if (!prevEvent || !event) {
+            return false;
+        }
+
+        // $FlowFixMe
+        return prevEvent.clientX !== event.clientX || prevEvent.clientY !== event.clientY;
+    }
+
+    /**
      * Mouseup handler. Switches between creating a highlight and delegating
      * to highlight click handlers depending on whether mouse moved since
      * mousedown.
@@ -705,8 +722,7 @@ class DocAnnotator extends Annotator {
      * @return {void}
      */
     highlightMouseupHandler = (event: Event) => {
-        this.isCreatingHighlight = false;
-
+        // this.isCreatingHighlight = false;
         if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }
@@ -716,25 +732,20 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseUpEvent = event;
-
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseUpEvent = event.targetTouches[0];
         }
 
-        const { clientX, clientY } = this.mouseDownEvent;
-        const hasMouseMoved =
-            // $FlowFixMe
-            (clientX && clientX !== mouseUpEvent.clientX) || (clientY && clientY !== mouseUpEvent.clientY);
-
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
+        if (
+            (this.createHighlightDialog && this.hasMouseMoved(this.mouseDownEvent, mouseUpEvent)) ||
+            event.type === 'dblclick'
+        ) {
             this.highlightCreateHandler(event);
-        } else {
-            this.resetHighlightSelection(event);
         }
     };
 
@@ -779,8 +790,12 @@ class DocAnnotator extends Annotator {
             return false;
         }
 
-        // $FlowFixMe
-        if (this.createHighlightDialog.isVisible) {
+        // Does nothing if the use is creating a highlight or has double clicked text
+        if (
+            (this.createHighlightDialog && this.createHighlightDialog.isVisible) ||
+            // $FlowFixMe
+            event.detail === 2
+        ) {
             return true;
         }
 
@@ -798,8 +813,6 @@ class DocAnnotator extends Annotator {
         if (this.commentHighlightEnabled) {
             commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(event, location);
         }
-
-        this.hideAnnotations(event);
 
         const intersectingThreads = [].concat(plainThreads, commentThreads);
         intersectingThreads.forEach((thread) => this.clickThread(event, thread));
