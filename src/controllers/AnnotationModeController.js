@@ -140,7 +140,10 @@ class AnnotationModeController extends EventEmitter {
         if (this.buttonEl) {
             this.buttonEl.removeEventListener('click', this.toggleMode);
         }
-        this.api.removeListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
+
+        if (this.api) {
+            this.api.removeListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
+        }
     }
 
     /**

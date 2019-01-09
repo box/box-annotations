@@ -343,7 +343,10 @@ class Annotator extends EventEmitter {
      */
     unbindCustomListeners() {
         this.removeListener(ANNOTATOR_EVENT.scale, this.scaleAnnotations);
-        this.api.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+
+        if (this.api) {
+            this.api.removeListener(ANNOTATOR_EVENT.error, this.handleServicesErrors);
+        }
     }
 
     /**
