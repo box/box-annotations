@@ -392,10 +392,10 @@ class DocAnnotator extends Annotator {
     /**
      * Handles click events when not in an annotation mode
      *
-     * @param {Event} event - Mouse event
+     * @param {MouseEvent} event - Mouse event
      * @return {void}
      */
-    clickHandler = (event: Event) => {
+    clickHandler = (event: MouseEvent) => {
         let mouseEvent = event;
 
         // $FlowFixMe
@@ -647,10 +647,10 @@ class DocAnnotator extends Annotator {
      * Mousedown handler on annotated element. Also delegates to mousedown
      * handler for each thread.
      *
-     * @param {Event} event DOM event
+     * @param {MouseEvent} event DOM event
      * @return {void}
      */
-    highlightMousedownHandler = (event: Event) => {
+    highlightMousedownHandler = (event: MouseEvent) => {
         const prevMouseDownEvent = this.mouseDownEvent;
         this.mouseDownEvent = event;
 
@@ -700,16 +700,15 @@ class DocAnnotator extends Annotator {
 
     /**
      * Determines whether the mouse position has changed between the two provided mouse events
-     * @param {Event} prevEvent - Previous mouse event
-     * @param {Event} event - Current mouse event
+     * @param {MouseEvent} prevEvent - Previous mouse event
+     * @param {MouseEvent} event - Current mouse event
      * @return {boolean} Whether or not mouse has moved
      */
-    hasMouseMoved(prevEvent: Event, event: Event) {
+    hasMouseMoved(prevEvent: MouseEvent, event: MouseEvent) {
         if (!prevEvent || !event) {
             return false;
         }
 
-        // $FlowFixMe
         return prevEvent.clientX !== event.clientX || prevEvent.clientY !== event.clientY;
     }
 
@@ -718,11 +717,10 @@ class DocAnnotator extends Annotator {
      * to highlight click handlers depending on whether mouse moved since
      * mousedown.
      *
-     * @param {Event} event DOM event
+     * @param {MouseEvent} event DOM event
      * @return {void}
      */
-    highlightMouseupHandler = (event: Event) => {
-        // this.isCreatingHighlight = false;
+    highlightMouseupHandler = (event: MouseEvent) => {
         if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }
@@ -782,20 +780,16 @@ class DocAnnotator extends Annotator {
      * Highlight click handler. Delegates click event to click handlers for
      * threads on the page.
      *
-     * @param {Event} event DOM event
-     * @return {void}
+     * @param {MouseEvent} event DOM event
+     * @return {boolean} Whether or not mouse event was consumed
      */
-    highlightClickHandler(event: Event) {
+    highlightClickHandler(event: MouseEvent) {
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
         }
 
         // Does nothing if the use is creating a highlight or has double clicked text
-        if (
-            (this.createHighlightDialog && this.createHighlightDialog.isVisible) ||
-            // $FlowFixMe
-            event.detail === 2
-        ) {
+        if ((this.createHighlightDialog && this.createHighlightDialog.isVisible) || event.detail === 2) {
             return true;
         }
 
