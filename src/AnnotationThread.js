@@ -7,6 +7,7 @@ import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
+    SELECTOR_ANNOTATION_POPOVER,
     CLASS_ANNOTATION_POINT_MARKER,
     CLASS_FLIPPED_POPOVER,
     DATA_TYPE_ANNOTATION_INDICATOR,
@@ -179,6 +180,7 @@ class AnnotationThread extends EventEmitter {
         const isPending = this.state === STATES.pending;
 
         const pageEl = this.getPopoverParent();
+        const popoverLayer = util.getPopoverLayer(pageEl);
         this.popoverComponent = render(
             <AnnotationPopover
                 id={this.id}
@@ -199,8 +201,11 @@ class AnnotationThread extends EventEmitter {
                 isPending={isPending}
                 headerHeight={this.headerHeight}
             />,
-            util.getPopoverLayer(pageEl)
+            popoverLayer
         );
+
+        const popoverEl = popoverLayer.querySelector(SELECTOR_ANNOTATION_POPOVER);
+        popoverEl.scrollIntoView();
     }
 
     /**

@@ -26,6 +26,7 @@ import {
     CLASS_ANNOTATION_POPOVER
 } from '../constants';
 
+const DOUBLE_CLICK_COUNT = 2;
 const SELECTION_TIMEOUT = 500;
 const CLASS_RANGY_HIGHLIGHT = 'rangy-highlight';
 
@@ -245,7 +246,7 @@ class DocAnnotator extends Annotator {
     /** @inheritdoc */
     resetAnnotationUI(pageNum?: number) {
         // $FlowFixMe
-        document.getSelection().removeAllRanges();
+        window.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -350,7 +351,6 @@ class DocAnnotator extends Annotator {
             document.addEventListener('selectionchange', this.onSelectionChange);
         } else {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.addEventListener('contextmenu', this.highlightMousedownHandler);
         }
@@ -383,7 +383,6 @@ class DocAnnotator extends Annotator {
             document.removeEventListener('selectionchange', this.onSelectionChange);
         } else {
             this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
         }
@@ -410,6 +409,7 @@ class DocAnnotator extends Annotator {
 
         // Hide the create dialog if click was not in the popover
         if (
+            this.hasMouseMoved(this.lastHighlightEvent, event) &&
             this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
             !this.createHighlightDialog.isInHighlight(mouseEvent)
@@ -458,7 +458,7 @@ class DocAnnotator extends Annotator {
         this.hideCreateDialog(event);
 
         // $FlowFixMe
-        document.getSelection().removeAllRanges();
+        window.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -739,10 +739,7 @@ class DocAnnotator extends Annotator {
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if (
-            (this.createHighlightDialog && this.hasMouseMoved(this.mouseDownEvent, mouseUpEvent)) ||
-            event.type === 'dblclick'
-        ) {
+        if (this.createHighlightDialog && this.hasMouseMoved(this.mouseDownEvent, mouseUpEvent)) {
             this.highlightCreateHandler(event);
         }
     };
@@ -788,8 +785,14 @@ class DocAnnotator extends Annotator {
             return false;
         }
 
-        // Does nothing if the use is creating a highlight or has double clicked text
-        if ((this.createHighlightDialog && this.createHighlightDialog.isVisible) || event.detail === 2) {
+        // Does nothing if the use is creating a highlight
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            return true;
+        }
+
+        // Create a highlight if the user has double clicked
+        if (event.detail === DOUBLE_CLICK_COUNT) {
+            this.highlightCreateHandler(event);
             return true;
         }
 
@@ -817,7 +820,6 @@ class DocAnnotator extends Annotator {
             return true;
         }
 
-        this.resetHighlightSelection(event);
         return false;
     }
 
