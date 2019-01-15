@@ -454,11 +454,9 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     unbindDOMListeners() {
-        if (!this.element) {
-            return;
+        if (this.element) {
+            this.element.removeEventListener('click', this.renderAnnotationPopover);
         }
-
-        this.element.removeEventListener('click', this.renderAnnotationPopover);
     }
 
     /**

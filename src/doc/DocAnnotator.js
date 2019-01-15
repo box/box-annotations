@@ -364,10 +364,19 @@ class DocAnnotator extends Annotator {
     unbindDOMListeners() {
         super.unbindDOMListeners();
 
-        this.container.removeEventListener('resize', this.resetAnnotationUI);
-        this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
-        this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
-        this.annotatedElement.removeEventListener('click', this.clickHandler);
+        if (this.container) {
+            this.container.removeEventListener('resize', this.resetAnnotationUI);
+        }
+
+        if (this.annotatedElement) {
+            this.annotatedElement.removeEventListener('wheel', this.hideCreateDialog);
+            this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
+            this.annotatedElement.removeEventListener('click', this.clickHandler);
+            this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
+            this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
+            this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
+            this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
+        }
 
         if (this.highlightThrottleHandle) {
             cancelAnimationFrame(this.highlightThrottleHandle);
@@ -381,11 +390,6 @@ class DocAnnotator extends Annotator {
 
         if (this.hasTouch) {
             document.removeEventListener('selectionchange', this.onSelectionChange);
-        } else {
-            this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
-            this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
-            this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
         }
     }
 
