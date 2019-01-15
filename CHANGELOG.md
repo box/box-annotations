@@ -1,3 +1,15 @@
+## 3.6.0 (2019-01-15)
+
+* Fix: Don't display @mention selector in ACF (#323) ([a474251](https://github.com/box/box-annotations/commit/a474251)), closes [#323](https://github.com/box/box-annotations/issues/323)
+* Fix: Drawing threads now destroy their event handlers properly (#317) ([ba3795d](https://github.com/box/box-annotations/commit/ba3795d)), closes [#317](https://github.com/box/box-annotations/issues/317)
+* Fix: Functional tests (#320) ([bba4a9c](https://github.com/box/box-annotations/commit/bba4a9c)), closes [#320](https://github.com/box/box-annotations/issues/320)
+* Fix: Only unbind listeners from existing DOM elements (#321) ([6a71a9e](https://github.com/box/box-annotations/commit/6a71a9e)), closes [#321](https://github.com/box/box-annotations/issues/321)
+* Update: Improve and simplify annotation button and icon styles (#318) ([538fbd2](https://github.com/box/box-annotations/commit/538fbd2)), closes [#318](https://github.com/box/box-annotations/issues/318)
+* Chore: Add webpack-dev-server and basic fixture for local dev (#316) ([7e3c01b](https://github.com/box/box-annotations/commit/7e3c01b)), closes [#316](https://github.com/box/box-annotations/issues/316)
+* Chore: Update doc and test fixtures to support IE11 (#319) ([6f9d783](https://github.com/box/box-annotations/commit/6f9d783)), closes [#319](https://github.com/box/box-annotations/issues/319)
+
+
+
 ## 3.5.0 (2018-12-13)
 
 * Fix: AnnotationPopover CSS to not hide popover svgs (#304) ([83ca5b7](https://github.com/box/box-annotations/commit/83ca5b7)), closes [#304](https://github.com/box/box-annotations/issues/304)
