@@ -462,8 +462,6 @@ class DocAnnotator extends Annotator {
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
-
-        this.mouseDownEvent = null;
     }
 
     /**
@@ -554,13 +552,7 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
-        // Bail if mid highlight and tapping on the screen
-        const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
-        if (!docUtil.isValidSelection(selection) || isClickOutsideCreateDialog) {
-            this.lastHighlightEvent = null;
-            this.resetHighlightSelection(event);
-            return;
-        }
+        this.resetHighlightOnTap(event);
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
@@ -774,6 +766,22 @@ class DocAnnotator extends Annotator {
     };
 
     /**
+     * Bail if mid highlight and click is outside highlight/selection
+     *
+     * @param {MouseEvent} event - Mouse event
+     * @return {void}
+     */
+
+    resetHighlightOnTap(event: MouseEvent) {
+        const selection = window.getSelection();
+        const isClickOutsideCreateDialog = this.isCreatingHighlight && !util.isInDialog(event);
+        if (!docUtil.isValidSelection(selection) && isClickOutsideCreateDialog) {
+            this.lastHighlightEvent = null;
+            this.resetHighlightSelection(event);
+        }
+    }
+
+    /**
      * Highlight click handler. Delegates click event to click handlers for
      * threads on the page.
      *
@@ -785,8 +793,9 @@ class DocAnnotator extends Annotator {
             return false;
         }
 
-        // Does nothing if the use is creating a highlight
+        // Does nothing if the user is creating a highlight
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            this.resetHighlightOnTap();
             return true;
         }
 
