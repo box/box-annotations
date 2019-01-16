@@ -117,13 +117,17 @@ class ImageAnnotator extends Annotator {
 
     /** @inheritdoc */
     bindDOMListeners() {
-        this.annotatedElement.addEventListener('mouseup', this.hideAnnotations);
+        if (this.annotatedElement) {
+            this.annotatedElement.addEventListener('mouseup', this.hideAnnotations);
+        }
         super.bindDOMListeners();
     }
 
     /** @inheritdoc */
     unbindDOMListeners() {
-        this.annotatedElement.removeEventListener('mouseup', this.hideAnnotations);
+        if (this.annotatedElement) {
+            this.annotatedElement.removeEventListener('mouseup', this.hideAnnotations);
+        }
         super.bindDOMListeners();
     }
 }
