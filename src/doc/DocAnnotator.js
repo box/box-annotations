@@ -409,6 +409,7 @@ class DocAnnotator extends Annotator {
 
         // Hide the create dialog if click was not in the popover
         if (
+            // $FlowFixMe
             this.hasMouseMoved(this.lastHighlightEvent, event) &&
             this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
@@ -552,7 +553,7 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
-        this.resetHighlightOnTap(event);
+        this.resetHighlightOnOutsideClick(event);
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
@@ -696,7 +697,7 @@ class DocAnnotator extends Annotator {
      * @param {MouseEvent} event - Current mouse event
      * @return {boolean} Whether or not mouse has moved
      */
-    hasMouseMoved(prevEvent: MouseEvent, event: MouseEvent) {
+    hasMouseMoved(prevEvent: ?MouseEvent, event: ?MouseEvent) {
         if (!prevEvent || !event) {
             return false;
         }
@@ -768,11 +769,10 @@ class DocAnnotator extends Annotator {
     /**
      * Bail if mid highlight and click is outside highlight/selection
      *
-     * @param {MouseEvent} event - Mouse event
+     * @param {Event} event - Mouse event
      * @return {void}
      */
-
-    resetHighlightOnTap(event: MouseEvent) {
+    resetHighlightOnOutsideClick(event: Event) {
         const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && !util.isInDialog(event);
         if (!docUtil.isValidSelection(selection) && isClickOutsideCreateDialog) {
@@ -795,7 +795,7 @@ class DocAnnotator extends Annotator {
 
         // Does nothing if the user is creating a highlight
         if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
-            this.resetHighlightOnTap();
+            this.resetHighlightOnOutsideClick(event);
             return true;
         }
 
