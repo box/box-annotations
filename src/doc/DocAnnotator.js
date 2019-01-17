@@ -842,15 +842,6 @@ class DocAnnotator extends Annotator {
         super.toggleAnnotationMode(mode);
     }
 
-    /** @inheritdoc */
-    hideAnnotations(event: ?Event) {
-        if (event && util.isInDialog(event, this.container)) {
-            return;
-        }
-
-        super.hideAnnotations();
-    }
-
     /**
      * Delegates click event to click handlers for threads on the page.
      *

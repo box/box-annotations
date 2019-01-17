@@ -411,7 +411,7 @@ describe('doc/DocAnnotator', () => {
 
     describe('resetAnnotationUI()', () => {
         beforeEach(() => {
-            document.getSelection = jest.fn().mockReturnValue({
+            window.getSelection = jest.fn().mockReturnValue({
                 removeAllRanges: jest.fn()
             });
             annotator.highlighter = {
@@ -532,10 +532,6 @@ describe('doc/DocAnnotator', () => {
             );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
-                'dblclick',
-                annotator.highlightMouseupHandler
-            );
-            expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'mousedown',
                 annotator.highlightMousedownHandler
             );
@@ -602,10 +598,6 @@ describe('doc/DocAnnotator', () => {
                 annotator.highlightMouseupHandler
             );
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
-                'dblclick',
-                annotator.highlightMouseupHandler
-            );
-            expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'mousedown',
                 annotator.highlightMousedownHandler
             );
@@ -647,10 +639,6 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'touchend',
                 annotator.hideCreateDialog
-            );
-            expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
-                'dblclick',
-                annotator.highlightMouseupHandler
             );
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'mousedown',
@@ -697,7 +685,7 @@ describe('doc/DocAnnotator', () => {
             const selection = {
                 removeAllRanges: jest.fn()
             };
-            document.getSelection = jest.fn().mockReturnValue(selection);
+            window.getSelection = jest.fn().mockReturnValue(selection);
             annotator.hideCreateDialog = jest.fn();
 
             annotator.resetHighlightSelection({});
@@ -735,6 +723,7 @@ describe('doc/DocAnnotator', () => {
             };
             annotator.resetHighlightSelection = jest.fn();
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
+            annotator.hasMouseMoved = jest.fn().mockReturnValue(true);
         });
 
         it('should do nothing if event occured inside an annotation or marker', () => {
@@ -750,6 +739,12 @@ describe('doc/DocAnnotator', () => {
             expect(controller.destroyPendingThreads).not.toBeCalled();
         });
 
+        it('should not reset highlights if the user is double clicking', () => {
+            annotator.hasMouseMoved = jest.fn().mockReturnValue(false);
+            annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
+            expect(annotator.resetHighlightSelection).not.toBeCalled();
+        });
+
         it('should get highlights on page and call their onMouse down method', () => {
             annotator.plainHighlightEnabled = true;
             annotator.highlightMousedownHandler({ clientX: 1, clientY: 1 });
@@ -758,29 +753,42 @@ describe('doc/DocAnnotator', () => {
         });
     });
 
+    describe('hasMouseMoved()', () => {
+        let prevEvent;
+        let currEvent;
+
+        beforeEach(() => {
+            prevEvent = { clientX: 1, clientY: 1 };
+            currEvent = { clientX: 1, clientY: 1 };
+        });
+
+        it('should return false if either a previous OR current event is non-existent', () => {
+            expect(annotator.hasMouseMoved(prevEvent, null)).toBeFalsy();
+            expect(annotator.hasMouseMoved(null, currEvent)).toBeFalsy();
+        });
+
+        it('should return true if the mouse has moved', () => {
+            expect(annotator.hasMouseMoved(prevEvent, currEvent)).toBeFalsy();
+
+            currEvent.clientY = 2;
+            expect(annotator.hasMouseMoved(prevEvent, currEvent)).toBeTruthy();
+        });
+    });
+
     describe('highlightMouseupHandler()', () => {
         beforeEach(() => {
             annotator.highlightCreateHandler = jest.fn();
-            annotator.resetHighlightSelection = jest.fn();
             annotator.mouseDownEvent = { clientX: 100, clientY: 100 };
         });
 
         it('should call highlightCreateHandler if on desktop and the mouse moved', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlightCreateHandler).toBeCalled();
-            expect(annotator.resetHighlightSelection).not.toBeCalled();
         });
 
         it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(annotator.highlightCreateHandler).toBeCalled();
-            expect(annotator.resetHighlightSelection).not.toBeCalled();
-        });
-
-        it('should reset highlight selection when mouse has not moved', () => {
-            annotator.highlightMouseupHandler(annotator.mouseDownEvent);
-            expect(annotator.highlightCreateHandler).not.toBeCalled();
-            expect(annotator.resetHighlightSelection).toBeCalled();
         });
 
         it('should call highlighter.removeAllHighlghts', () => {
@@ -807,15 +815,17 @@ describe('doc/DocAnnotator', () => {
             };
 
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
+            docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
             annotator.lastSelection = {};
 
             annotator.highlighter = { removeAllHighlights: jest.fn() };
-            annotator.resetHighlightSelection = jest.fn();
+            annotator.resetHighlightOnOutsideClick = jest.fn();
 
             window.getSelection = jest.fn().mockReturnValue({
                 anchorNode: {
                     parentNode: 'Node'
-                }
+                },
+                getRangeAt: jest.fn()
             });
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
             util.findClosestElWithClass = jest.fn().mockReturnValue(null);
@@ -831,26 +841,22 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should reset the selectionEndTimeout', () => {
-            annotator.selectionEndTimeout = 1;
-            docUtil.isValidSelection = jest.fn().mockReturnValue(false);
+            annotator.selectionEndTimeout = 123;
             annotator.onSelectionChange(event);
-            expect(annotator.selectionEndTimeout).toBeNull();
+            expect(annotator.selectionEndTimeout).not.toEqual(123);
         });
 
         it('should clear selection if the user is currently creating a highlight annotation', () => {
             annotator.isCreatingHighlight = true;
             util.isInDialog = jest.fn().mockReturnValue(true);
             annotator.onSelectionChange(event);
-            expect(annotator.resetHighlightSelection).toBeCalled();
+            expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
         });
 
         it('should clear out highlights and exit "annotation creation" mode if an invalid selection', () => {
-            annotator.lastHighlightEvent = event;
             docUtil.isValidSelection = jest.fn().mockReturnValue(false);
-
             annotator.onSelectionChange(event);
-            expect(annotator.lastHighlightEvent).toBeNull();
-            expect(annotator.resetHighlightSelection).toBeCalled();
+            expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
         });
 
         it('should do nothing the the user is currently creating a point annotation', () => {
@@ -986,6 +992,8 @@ describe('doc/DocAnnotator', () => {
             annotator.clickThread = jest.fn();
             annotator.hideAnnotations = jest.fn();
             annotator.resetHighlightSelection = jest.fn();
+            annotator.resetHighlightOnOutsideClick = jest.fn();
+            annotator.highlightCreateHandler = jest.fn();
             annotator.modeControllers = {
                 highlight: controller
             };
@@ -994,26 +1002,33 @@ describe('doc/DocAnnotator', () => {
             };
             annotator.activeThread = undefined;
             annotator.plainHighlightEnabled = false;
-            annotator.commentHighlightEnabled = false;
+            annotator.createHighlightDialog.isVisible = false;
+            annotator.createHighlightDialog = { isVisible: false };
         });
 
         it('should do nothing and return false if no highlight types are enabled', () => {
             expect(annotator.highlightClickHandler(event)).toBeFalsy();
-            expect(annotator.hideAnnotations).not.toBeCalled();
         });
 
-        it('should do nothing and return true if a createHighlightDialog is visible', () => {
+        it('should do nothing if the user is creating a highlight and resets on outside click when necessary', () => {
             annotator.plainHighlightEnabled = true;
             annotator.createHighlightDialog.isVisible = true;
             expect(annotator.highlightClickHandler(event)).toBeTruthy();
-            expect(annotator.hideAnnotations).not.toBeCalled();
+            expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
+        });
+
+        it('should create a highlight if the user has double clicked', () => {
+            annotator.plainHighlightEnabled = true;
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
+            event.detail = 2;
+            expect(annotator.highlightClickHandler(event)).toBeTruthy();
+            expect(annotator.highlightCreateHandler).toBeCalledTimes(1);
         });
 
         it('should find the active plain highlight', () => {
             annotator.plainHighlightEnabled = true;
-            annotator.highlightClickHandler(event);
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
             expect(controller.getIntersectingThreads).toBeCalled();
-            expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
 
@@ -1022,9 +1037,9 @@ describe('doc/DocAnnotator', () => {
                 'highlight-comment': controller
             };
             annotator.commentHighlightEnabled = true;
-            annotator.highlightClickHandler(event);
+            annotator.activeThread = thread;
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
             expect(controller.getIntersectingThreads).toBeCalled();
-            expect(annotator.hideAnnotations).toBeCalled();
             expect(thread.show).not.toBeCalled();
         });
 
@@ -1033,8 +1048,7 @@ describe('doc/DocAnnotator', () => {
             controller.getIntersectingThreads = jest.fn(() => {
                 annotator.activeThread = thread;
             });
-            annotator.highlightClickHandler(event);
-            expect(annotator.hideAnnotations).toBeCalled();
+            expect(annotator.highlightClickHandler(event)).toBeTruthy();
             expect(thread.show).toBeCalled();
         });
 
@@ -1043,36 +1057,19 @@ describe('doc/DocAnnotator', () => {
             util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
-            annotator.highlightClickHandler(event);
-            expect(annotator.hideAnnotations).toBeCalled();
+            expect(annotator.highlightClickHandler(event)).toBeFalsy();
             expect(thread.show).not.toBeCalled();
-        });
-
-        it('should reset highlight selection if not on mobile and no active threads exist', () => {
-            annotator.plainHighlightEnabled = true;
-            document.getSelection = jest.fn().mockReturnValue({
-                removeAllRanges: jest.fn()
-            });
-
-            annotator.highlightClickHandler(event);
-            expect(annotator.resetHighlightSelection).toBeCalled();
         });
     });
 
-    describe('hideAnnotations()', () => {
-        beforeEach(() => {
-            annotator.resetHighlightSelection = jest.fn();
-            util.isInDialog = jest.fn().mockReturnValue(false);
-        });
+    describe('toggleAnnotationMode()', () => {
+        it('should reset the annotation UI and toggle the annotation mode', () => {
+            annotator.modeControllers.something = controller;
+            annotator.hideAnnotations = jest.fn();
+            annotator.resetAnnotationUI = jest.fn();
 
-        it('should reset the highlight selection', () => {
-            util.isInDialog = jest.fn().mockReturnValue(true);
-            annotator.hideAnnotations({});
-            expect(annotator.resetHighlightSelection).not.toBeCalled();
-        });
-        it('should reset the highlight selection', () => {
-            annotator.hideAnnotations({});
-            expect(annotator.resetHighlightSelection).toBeCalled();
+            annotator.toggleAnnotationMode('something');
+            expect(annotator.resetAnnotationUI).toBeCalled();
         });
     });
 

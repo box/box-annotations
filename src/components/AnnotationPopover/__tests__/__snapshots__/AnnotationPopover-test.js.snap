@@ -1,111 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`components/AnnotationPopover should correctly render a BRUI Overlay if not on mobile 1`] = `
-<Internationalize>
-  <div
-    className="ba-popover"
-  >
-    <span
-      className="ba-popover-caret"
-    />
-    <Overlay
-      shouldDefaultFocus={true}
-    >
-      <CommentList
-        comments={
-          Array [
-            Object {
-              "createdAt": "2017-09-27T10:40:41-07:00",
-              "createdBy": Object {
-                "email": "princess@genovia.gov",
-                "id": "789ghi",
-                "name": "Mia Thermopolis",
-                "type": "user",
-              },
-              "id": "123",
-              "message": "test",
-              "permissions": Object {},
-            },
-            Object {
-              "createdAt": "2017-09-27T10:40:41-07:00",
-              "createdBy": Object {
-                "email": "princess@genovia.gov",
-                "id": "789ghi",
-                "name": "Mia Thermopolis",
-                "type": "user",
-              },
-              "id": "456",
-              "message": "test",
-              "permissions": Object {},
-            },
-          ]
-        }
-        onDelete={
-          [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          }
-        }
-      />
-      <ActionControls
-        canComment={false}
-        canDelete={false}
-        hasComments={true}
-        isPending={false}
-        onCancel={
-          [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          }
-        }
-        onCommentClick={[Function]}
-        onCreate={
-          [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          }
-        }
-        onDelete={
-          [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          }
-        }
-      />
-    </Overlay>
-  </div>
-</Internationalize>
-`;
-
-exports[`components/AnnotationPopover should correctly render a div without a Focus Trap if on mobile 1`] = `
+exports[`components/AnnotationPopover should correctly render a div without a Focus Trap 1`] = `
 <Internationalize>
   <div
     className="ba-popover ba-animate-popover"
@@ -140,8 +35,8 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
         />
       </PlainButton>
     </span>
-    <Overlay
-      shouldDefaultFocus={false}
+    <div
+      className="ba-popover-overlay"
     >
       <CommentList
         comments={
@@ -232,7 +127,7 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
           }
         }
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
@@ -245,8 +140,8 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
     <span
       className="ba-popover-caret"
     />
-    <Overlay
-      shouldDefaultFocus={true}
+    <div
+      className="ba-popover-overlay"
     >
       <AnnotatorLabel
         isPending={true}
@@ -297,7 +192,7 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
           }
         }
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
@@ -310,8 +205,8 @@ exports[`components/AnnotationPopover should correctly render a popover with com
     <span
       className="ba-popover-caret"
     />
-    <Overlay
-      shouldDefaultFocus={true}
+    <div
+      className="ba-popover-overlay"
     >
       <CommentList
         comments={
@@ -402,7 +297,7 @@ exports[`components/AnnotationPopover should correctly render a popover with com
           }
         }
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
@@ -415,8 +310,8 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
     <span
       className="ba-popover-caret"
     />
-    <Overlay
-      shouldDefaultFocus={true}
+    <div
+      className="ba-popover-overlay"
     >
       <CommentList
         comments={
@@ -461,7 +356,7 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
           }
         }
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
@@ -474,8 +369,8 @@ exports[`components/AnnotationPopover should correctly render an annotation with
     <span
       className="ba-popover-caret"
     />
-    <Overlay
-      shouldDefaultFocus={true}
+    <div
+      className="ba-popover-overlay"
     >
       <AnnotatorLabel
         isPending={false}
@@ -528,7 +423,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
         }
         type="highlight"
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
@@ -541,14 +436,14 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
     <span
       className="ba-popover-caret"
     />
-    <Overlay
-      shouldDefaultFocus={true}
+    <div
+      className="ba-popover-overlay"
     >
       <AnnotatorLabel
         isPending={false}
         type="highlight"
       />
-    </Overlay>
+    </div>
   </div>
 </Internationalize>
 `;
