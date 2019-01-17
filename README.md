@@ -1,8 +1,8 @@
-[![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg?style=flat-square)](http://opensource.box.com/badges/)
-[![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![build status](https://img.shields.io/travis/box/box-content-preview/master.svg?style=flat-square)](https://travis-ci.org/box/box-annotations)
-[![version](https://img.shields.io/badge/version-v3.6.0-blue.svg?style=flat-square)](https://github.com/box/box-annotations)
-[![npm version](https://img.shields.io/npm/v/box-ui-elements.svg?style=flat-square)](https://www.npmjs.com/package/box-ui-elements)
+[![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](http://opensource.box.com/badges)
+[![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![build status](https://travis-ci.com/box/box-ui-elements.svg?branch=master)](https://travis-ci.com/box/box-annotations)
+[![version](https://img.shields.io/badge/version-v3.6.0-blue.svg)](https://github.com/box/box-annotations)
+[![npm version](https://img.shields.io/npm/v/box-ui-elements.svg)](https://www.npmjs.com/package/box-annotations)
 
 # [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
 
