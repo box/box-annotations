@@ -837,12 +837,17 @@ class DocAnnotator extends Annotator {
     }
 
     /** @inheritdoc */
+    toggleAnnotationMode(mode: AnnotationType) {
+        this.resetAnnotationUI();
+        super.toggleAnnotationMode(mode);
+    }
+
+    /** @inheritdoc */
     hideAnnotations(event: ?Event) {
         if (event && util.isInDialog(event, this.container)) {
             return;
         }
 
-        this.resetHighlightSelection(event);
         super.hideAnnotations();
     }
 

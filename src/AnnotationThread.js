@@ -7,7 +7,6 @@ import AnnotationAPI from './api/AnnotationAPI';
 import * as util from './util';
 import { ICON_PLACED_ANNOTATION } from './icons/icons';
 import {
-    SELECTOR_ANNOTATION_POPOVER,
     CLASS_ANNOTATION_POINT_MARKER,
     CLASS_FLIPPED_POPOVER,
     DATA_TYPE_ANNOTATION_INDICATOR,
@@ -204,8 +203,7 @@ class AnnotationThread extends EventEmitter {
             popoverLayer
         );
 
-        const popoverEl = popoverLayer.querySelector(SELECTOR_ANNOTATION_POPOVER);
-        popoverEl.scrollIntoView();
+        this.scrollIntoView();
     }
 
     /**
