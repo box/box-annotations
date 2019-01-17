@@ -179,7 +179,6 @@ class AnnotationThread extends EventEmitter {
         const isPending = this.state === STATES.pending;
 
         const pageEl = this.getPopoverParent();
-        const popoverLayer = util.getPopoverLayer(pageEl);
         this.popoverComponent = render(
             <AnnotationPopover
                 id={this.id}
@@ -200,10 +199,8 @@ class AnnotationThread extends EventEmitter {
                 isPending={isPending}
                 headerHeight={this.headerHeight}
             />,
-            popoverLayer
+            util.getPopoverLayer(pageEl)
         );
-
-        this.scrollIntoView();
     }
 
     /**

@@ -119,19 +119,15 @@ describe('AnnotationThread', () => {
     });
 
     describe('renderAnnotationPopover()', () => {
-        beforeEach(() => {
+        it('should render and display the popover for this annotation', () => {
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
             util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
-            thread.scrollIntoView = jest.fn();
             ReactDOM.render = jest.fn();
             thread.position = jest.fn();
-        });
 
-        it('should render and display the popover for this annotation', () => {
             thread.renderAnnotationPopover();
             expect(thread.popoverComponent).not.toBeUndefined();
-            expect(thread.scrollIntoView).toBeCalled();
         });
     });
 
