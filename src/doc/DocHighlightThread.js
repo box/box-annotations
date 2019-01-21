@@ -275,7 +275,7 @@ class DocHighlightThread extends AnnotationThread {
         const [yPos] = docUtil.getLowerRightCornerOfLastQuadPoint(this.location.quadPoints);
 
         // Adjust scroll to highlight position
-        this.adjustScroll(this.annotatedElement.scrollTop + yPos);
+        this.centerAnnotation(this.annotatedElement.scrollTop + yPos);
     }
 
     /**

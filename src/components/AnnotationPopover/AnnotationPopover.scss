@@ -40,7 +40,8 @@
         }
     }
 
-    .overlay {
+    .ba-popover-overlay {
+        background: white;
         border: 1px solid $seesee;
         border-radius: 4px;
         display: block;
@@ -50,7 +51,7 @@
         white-space: normal;
     }
 
-    .ba-inline-popover .overlay {
+    .ba-inline-popover .ba-popover-overlay {
         align-items: center;
         display: inline-flex;
     }

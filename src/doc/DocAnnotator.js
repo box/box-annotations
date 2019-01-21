@@ -26,6 +26,7 @@ import {
     CLASS_ANNOTATION_POPOVER
 } from '../constants';
 
+const DOUBLE_CLICK_COUNT = 2;
 const SELECTION_TIMEOUT = 500;
 const CLASS_RANGY_HIGHLIGHT = 'rangy-highlight';
 
@@ -245,7 +246,7 @@ class DocAnnotator extends Annotator {
     /** @inheritdoc */
     resetAnnotationUI(pageNum?: number) {
         // $FlowFixMe
-        document.getSelection().removeAllRanges();
+        window.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -350,7 +351,6 @@ class DocAnnotator extends Annotator {
             document.addEventListener('selectionchange', this.onSelectionChange);
         } else {
             this.annotatedElement.addEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.addEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.addEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.addEventListener('contextmenu', this.highlightMousedownHandler);
         }
@@ -373,7 +373,6 @@ class DocAnnotator extends Annotator {
             this.annotatedElement.removeEventListener('touchend', this.hideCreateDialog);
             this.annotatedElement.removeEventListener('click', this.clickHandler);
             this.annotatedElement.removeEventListener('mouseup', this.highlightMouseupHandler);
-            this.annotatedElement.removeEventListener('dblclick', this.highlightMouseupHandler);
             this.annotatedElement.removeEventListener('mousedown', this.highlightMousedownHandler);
             this.annotatedElement.removeEventListener('contextmenu', this.highlightMousedownHandler);
         }
@@ -396,10 +395,10 @@ class DocAnnotator extends Annotator {
     /**
      * Handles click events when not in an annotation mode
      *
-     * @param {Event} event - Mouse event
+     * @param {MouseEvent} event - Mouse event
      * @return {void}
      */
-    clickHandler = (event: Event) => {
+    clickHandler = (event: MouseEvent) => {
         let mouseEvent = event;
 
         // $FlowFixMe
@@ -414,10 +413,10 @@ class DocAnnotator extends Annotator {
 
         // Hide the create dialog if click was not in the popover
         if (
-            !this.isCreatingHighlight &&
             // $FlowFixMe
+            this.hasMouseMoved(this.lastHighlightEvent, event) &&
+            this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
-            // $FlowFixMe
             !this.createHighlightDialog.isInHighlight(mouseEvent)
         ) {
             mouseEvent.stopPropagation();
@@ -464,7 +463,7 @@ class DocAnnotator extends Annotator {
         this.hideCreateDialog(event);
 
         // $FlowFixMe
-        document.getSelection().removeAllRanges();
+        window.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -558,13 +557,7 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
-        // Bail if mid highlight and tapping on the screen
-        const isClickOutsideCreateDialog = this.isCreatingHighlight && util.isInDialog(event);
-        if (!docUtil.isValidSelection(selection) || isClickOutsideCreateDialog) {
-            this.lastHighlightEvent = null;
-            this.resetHighlightSelection(event);
-            return;
-        }
+        this.resetHighlightOnOutsideClick(event);
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
@@ -602,7 +595,6 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseEvent = event;
-
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseEvent = event.targetTouches[0];
@@ -652,10 +644,11 @@ class DocAnnotator extends Annotator {
      * Mousedown handler on annotated element. Also delegates to mousedown
      * handler for each thread.
      *
-     * @param {Event} event DOM event
+     * @param {MouseEvent} event DOM event
      * @return {void}
      */
-    highlightMousedownHandler = (event: Event) => {
+    highlightMousedownHandler = (event: MouseEvent) => {
+        const prevMouseDownEvent = this.mouseDownEvent;
         this.mouseDownEvent = event;
 
         // $FlowFixMe
@@ -669,7 +662,9 @@ class DocAnnotator extends Annotator {
         }
 
         this.isCreatingHighlight = true;
-        this.resetHighlightSelection(this.mouseDownEvent);
+        if (this.hasMouseMoved(prevMouseDownEvent, event)) {
+            this.resetHighlightSelection(this.mouseEvent);
+        }
 
         if (this.plainHighlightEnabled) {
             this.modeControllers[TYPES.highlight].destroyPendingThreads();
@@ -701,16 +696,28 @@ class DocAnnotator extends Annotator {
     }
 
     /**
+     * Determines whether the mouse position has changed between the two provided mouse events
+     * @param {MouseEvent} prevEvent - Previous mouse event
+     * @param {MouseEvent} event - Current mouse event
+     * @return {boolean} Whether or not mouse has moved
+     */
+    hasMouseMoved(prevEvent: ?MouseEvent, event: ?MouseEvent) {
+        if (!prevEvent || !event) {
+            return false;
+        }
+
+        return prevEvent.clientX !== event.clientX || prevEvent.clientY !== event.clientY;
+    }
+
+    /**
      * Mouseup handler. Switches between creating a highlight and delegating
      * to highlight click handlers depending on whether mouse moved since
      * mousedown.
      *
-     * @param {Event} event DOM event
+     * @param {MouseEvent} event DOM event
      * @return {void}
      */
-    highlightMouseupHandler = (event: Event) => {
-        this.isCreatingHighlight = false;
-
+    highlightMouseupHandler = (event: MouseEvent) => {
         if (util.isInAnnotationOrMarker(event, this.container)) {
             return;
         }
@@ -720,25 +727,17 @@ class DocAnnotator extends Annotator {
         }
 
         let mouseUpEvent = event;
-
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
             mouseUpEvent = event.targetTouches[0];
         }
 
-        const { clientX, clientY } = this.mouseDownEvent;
-        const hasMouseMoved =
-            // $FlowFixMe
-            (clientX && clientX !== mouseUpEvent.clientX) || (clientY && clientY !== mouseUpEvent.clientY);
-
         // Creating highlights is disabled on mobile for now since the
         // event we would listen to, selectionchange, fires continuously and
         // is unreliable. If the mouse moved or we double clicked text,
         // we trigger the create handler instead of the click handler
-        if ((this.createHighlightDialog && hasMouseMoved) || event.type === 'dblclick') {
+        if (this.createHighlightDialog && this.hasMouseMoved(this.mouseDownEvent, mouseUpEvent)) {
             this.highlightCreateHandler(event);
-        } else {
-            this.resetHighlightSelection(event);
         }
     };
 
@@ -772,19 +771,41 @@ class DocAnnotator extends Annotator {
     };
 
     /**
+     * Bail if mid highlight and click is outside highlight/selection
+     *
+     * @param {Event} event - Mouse event
+     * @return {void}
+     */
+    resetHighlightOnOutsideClick(event: Event) {
+        const selection = window.getSelection();
+        const isClickOutsideCreateDialog = this.isCreatingHighlight && !util.isInDialog(event);
+        if (!docUtil.isValidSelection(selection) && isClickOutsideCreateDialog) {
+            this.lastHighlightEvent = null;
+            this.resetHighlightSelection(event);
+        }
+    }
+
+    /**
      * Highlight click handler. Delegates click event to click handlers for
      * threads on the page.
      *
-     * @param {Event} event DOM event
-     * @return {void}
+     * @param {MouseEvent} event DOM event
+     * @return {boolean} Whether or not mouse event was consumed
      */
-    highlightClickHandler(event: Event) {
+    highlightClickHandler(event: MouseEvent) {
         if (!this.plainHighlightEnabled && !this.commentHighlightEnabled) {
             return false;
         }
 
-        // $FlowFixMe
-        if (this.createHighlightDialog.isVisible) {
+        // Does nothing if the user is creating a highlight
+        if (this.createHighlightDialog && this.createHighlightDialog.isVisible) {
+            this.resetHighlightOnOutsideClick(event);
+            return true;
+        }
+
+        // Create a highlight if the user has double clicked
+        if (event.detail === DOUBLE_CLICK_COUNT) {
+            this.highlightCreateHandler(event);
             return true;
         }
 
@@ -803,8 +824,6 @@ class DocAnnotator extends Annotator {
             commentThreads = this.modeControllers[TYPES.highlight_comment].getIntersectingThreads(event, location);
         }
 
-        this.hideAnnotations(event);
-
         const intersectingThreads = [].concat(plainThreads, commentThreads);
         intersectingThreads.forEach((thread) => this.clickThread(event, thread));
 
@@ -814,18 +833,13 @@ class DocAnnotator extends Annotator {
             return true;
         }
 
-        this.resetHighlightSelection(event);
         return false;
     }
 
     /** @inheritdoc */
-    hideAnnotations(event: ?Event) {
-        if (event && util.isInDialog(event, this.container)) {
-            return;
-        }
-
-        this.resetHighlightSelection(event);
-        super.hideAnnotations();
+    toggleAnnotationMode(mode: AnnotationType) {
+        this.resetAnnotationUI();
+        super.toggleAnnotationMode(mode);
     }
 
     /**

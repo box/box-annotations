@@ -181,6 +181,13 @@ class DocDrawingThread extends DrawingThread {
         this.draw(context, false);
     }
 
+    /**
+     * Do nothing for drawing annotations
+     *
+     * @return {void}
+     */
+    scrollIntoView() {}
+
     /** @inheritdoc */
     hide() {
         this.clearBoundary();

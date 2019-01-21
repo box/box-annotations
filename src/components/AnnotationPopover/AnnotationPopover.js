@@ -6,7 +6,6 @@ import PlainButton from 'box-react-ui/lib/components/plain-button';
 import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 
 import Internationalize from '../Internationalize';
-import Overlay from './Overlay';
 import CommentList from '../CommentList';
 import { TYPES, CLASS_ANNOTATION_POPOVER, CLASS_ANNOTATION_CARET } from '../../constants';
 
@@ -19,6 +18,7 @@ const CLASS_ANIMATE_POPOVER = 'ba-animate-popover';
 const CLASS_CREATE_POPOVER = 'ba-create-popover';
 const CLASS_MOBILE_HEADER = 'ba-mobile-header';
 const CLASS_MOBILE_CLOSE_BTN = 'ba-mobile-close-btn';
+const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
 
 type Props = {
     isMobile: boolean,
@@ -99,7 +99,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                     ) : (
                         <span className={CLASS_ANNOTATION_CARET} />
                     )}
-                    <Overlay shouldDefaultFocus={!isMobile}>
+                    <div className={CLASS_POPOVER_OVERLAY}>
                         {hasComments ? (
                             <CommentList comments={comments} onDelete={onDelete} />
                         ) : (
@@ -121,7 +121,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                                 onCommentClick={onCommentClick}
                             />
                         )}
-                    </Overlay>
+                    </div>
                 </div>
             </Internationalize>
         );
