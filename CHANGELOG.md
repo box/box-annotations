@@ -1,3 +1,10 @@
+## 3.7.0 (2019-01-22)
+
+* Fix: Creation of highlights on Edge/IE11/Firefox browsers (#322) ([3d9ee7f](https://github.com/box/box-annotations/commit/3d9ee7f)), closes [#322](https://github.com/box/box-annotations/issues/322)
+* Docs: Update badges (#324) ([daf18a7](https://github.com/box/box-annotations/commit/daf18a7)), closes [#324](https://github.com/box/box-annotations/issues/324)
+
+
+
 ## 3.6.0 (2019-01-15)
 
 * Fix: Don't display @mention selector in ACF (#323) ([a474251](https://github.com/box/box-annotations/commit/a474251)), closes [#323](https://github.com/box/box-annotations/issues/323)
