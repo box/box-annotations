@@ -462,8 +462,12 @@ class DocAnnotator extends Annotator {
     resetHighlightSelection(event: ?Event) {
         this.hideCreateDialog(event);
 
-        // $FlowFixMe
-        window.getSelection().removeAllRanges();
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            // $FlowFixMe
+            selection.removeAllRanges();
+        }
+
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
@@ -557,13 +561,15 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
-        this.resetHighlightOnOutsideClick(event);
+        if (!this.isCreatingHighlight) {
+            this.resetHighlightOnOutsideClick(event);
+        }
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
         const isPopoverActive = !!util.findClosestElWithClass(document.activeElement, CLASS_ANNOTATION_POPOVER);
-        if (this.isCreatingHighlight || isCreatingPoint || isPopoverActive) {
+        if (isCreatingPoint || isPopoverActive) {
             return;
         }
 
@@ -577,7 +583,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.selectionEndTimeout = setTimeout(() => {
-            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
+            if (this.createHighlightDialog) {
                 this.createHighlightDialog.show(this.lastSelection);
             }
         }, SELECTION_TIMEOUT);
@@ -594,12 +600,8 @@ class DocAnnotator extends Annotator {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
-        let mouseEvent = event;
         // $FlowFixMe
-        if (this.hasTouch && event.targetTouches) {
-            mouseEvent = event.targetTouches[0];
-        }
-        this.lastHighlightEvent = mouseEvent;
+        this.lastHighlightEvent = this.hasTouch && event.targetTouches ? event.targetTouches[0] : event;
         this.lastSelection = selection;
     }
 
@@ -774,15 +776,17 @@ class DocAnnotator extends Annotator {
      * Bail if mid highlight and click is outside highlight/selection
      *
      * @param {Event} event - Mouse event
-     * @return {void}
+     * @return {boolean} - Whether or not event was consumed
      */
-    resetHighlightOnOutsideClick(event: Event) {
+    resetHighlightOnOutsideClick(event: Event): boolean {
         const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && !util.isInDialog(event);
         if (!docUtil.isValidSelection(selection) && isClickOutsideCreateDialog) {
             this.lastHighlightEvent = null;
             this.resetHighlightSelection(event);
+            return true;
         }
+        return false;
     }
 
     /**
