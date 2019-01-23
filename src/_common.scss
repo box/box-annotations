@@ -14,12 +14,21 @@
     src: local('Lato Bold'), local('Lato-Bold'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff') format('woff');
 }
 
+.flyout-overlay {
+    @import '~box-react-ui/lib/styles/common/overlay';
+    @import '~box-react-ui/lib/styles/common/links';
+    @import '~box-react-ui/lib/styles/common/buttons';
+}
+
 .ba {
     @include reset;
 
+    /* stylelint-disable no-duplicate-at-import-rules */
     @import '~box-react-ui/lib/styles/common/links';
-    @import '~box-react-ui/lib/styles/common/forms';
     @import '~box-react-ui/lib/styles/common/buttons';
+    /* stylelint-enable no-duplicate-at-import-rules */
+
+    @import '~box-react-ui/lib/styles/common/forms';
 
     background: $white;
     border: 0 none;
