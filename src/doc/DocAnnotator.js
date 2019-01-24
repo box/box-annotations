@@ -1,5 +1,6 @@
 // @flow
 import rangy from 'rangy';
+import get from 'lodash/get';
 /* eslint-disable no-unused-vars */
 // Workaround for rangy npm issue: https://github.com/timdown/rangy/lib/issues/342
 import rangyClassApplier from 'rangy/lib/rangy-classapplier';
@@ -596,8 +597,7 @@ class DocAnnotator extends Annotator {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
-        // $FlowFixMe
-        this.lastHighlightEvent = this.hasTouch && event.targetTouches ? event.targetTouches[0] : event;
+        this.lastHighlightEvent = this.hasTouch ? get(event, 'targetTouches[0]', event) : event;
         this.lastSelection = selection;
     }
 
@@ -772,17 +772,15 @@ class DocAnnotator extends Annotator {
      * Bail if mid highlight and click is outside highlight/selection
      *
      * @param {Event} event - Mouse event
-     * @return {boolean} - Whether or not event was consumed
+     * @return {void}
      */
-    resetHighlightOnOutsideClick(event: Event): boolean {
+    resetHighlightOnOutsideClick(event: Event) {
         const selection = window.getSelection();
         const isClickOutsideCreateDialog = this.isCreatingHighlight && !util.isInDialog(event);
         if (!docUtil.isValidSelection(selection) && isClickOutsideCreateDialog) {
             this.lastHighlightEvent = null;
             this.resetHighlightSelection(event);
-            return true;
         }
-        return false;
     }
 
     /**
