@@ -498,21 +498,6 @@ class DocHighlightThread extends AnnotationThread {
         popoverEl.style.top = `${dialogY + INLINE_POPOVER_HEIGHT / 2 - BORDER_OFFSET}px`;
     };
 
-    /**
-     * Keydown handler on dialog. Needed since we are binding to 'mousedown'
-     * instead of 'click'.
-     *
-     * @param {Event} event - Mouse event
-     * @return {void}
-     */
-    keydownHandler(event: Event) {
-        event.stopPropagation();
-        if (util.decodeKeydown(event) === 'Enter') {
-            this.mousedownHandler(event);
-        }
-        super.keydownHandler(event);
-    }
-
     /** @inheritdoc */
     cleanupAnnotationOnDelete(annotationIDToRemove: string) {
         // Delete matching comment from annotation

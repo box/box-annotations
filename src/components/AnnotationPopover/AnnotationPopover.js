@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import PlainButton from 'box-react-ui/lib/components/plain-button';
 import IconClose from 'box-react-ui/lib/icons/general/IconClose';
+import { HotkeyRecord, HotkeyLayer } from 'box-react-ui/lib/components/hotkeys';
 
 import Internationalize from '../Internationalize';
 import CommentList from '../CommentList';
@@ -43,7 +44,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
         canDelete: false,
         onCommentClick: noop,
         onDelete: noop,
-        onCancel: noop,
         onCreate: noop,
         comments: []
     };
@@ -56,6 +56,18 @@ class AnnotationPopover extends React.PureComponent<Props> {
     componentDidUpdate() {
         const { position } = this.props;
         position();
+    }
+
+    getHotkeyConfigs() {
+        const { onCancel } = this.props;
+        return [
+            new HotkeyRecord({
+                description: 'Close popover',
+                key: 'esc',
+                handler: () => onCancel(),
+                type: 'Close'
+            })
+        ];
     }
 
     render() {
@@ -83,46 +95,48 @@ class AnnotationPopover extends React.PureComponent<Props> {
 
         return (
             <Internationalize language={language} messages={intlMessages}>
-                <div
-                    className={classNames(CLASS_ANNOTATION_POPOVER, {
-                        [CLASS_INLINE_POPOVER]: isInline,
-                        [CLASS_ANIMATE_POPOVER]: isMobile,
-                        [CLASS_CREATE_POPOVER]: isPending
-                    })}
-                >
-                    {isMobile ? (
-                        <span className={CLASS_MOBILE_HEADER} style={{ height: headerHeight }}>
-                            <PlainButton className={CLASS_MOBILE_CLOSE_BTN} onClick={onCancel}>
-                                <IconClose height={20} width={20} />
-                            </PlainButton>
-                        </span>
-                    ) : (
-                        <span className={CLASS_ANNOTATION_CARET} />
-                    )}
-                    <div className={CLASS_POPOVER_OVERLAY}>
-                        {hasComments ? (
-                            <CommentList comments={comments} onDelete={onDelete} />
+                <HotkeyLayer configs={this.getHotkeyConfigs()}>
+                    <div
+                        className={classNames(CLASS_ANNOTATION_POPOVER, {
+                            [CLASS_INLINE_POPOVER]: isInline,
+                            [CLASS_ANIMATE_POPOVER]: isMobile,
+                            [CLASS_CREATE_POPOVER]: isPending
+                        })}
+                    >
+                        {isMobile ? (
+                            <span className={CLASS_MOBILE_HEADER} style={{ height: headerHeight }}>
+                                <PlainButton className={CLASS_MOBILE_CLOSE_BTN} onClick={onCancel}>
+                                    <IconClose height={20} width={20} />
+                                </PlainButton>
+                            </span>
                         ) : (
-                            <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
+                            <span className={CLASS_ANNOTATION_CARET} />
                         )}
-                        {canAnnotate && (
-                            <ActionControls
-                                id={id}
-                                type={type}
-                                hasComments={hasComments}
-                                isPending={isPending}
-                                canComment={canComment}
-                                canDelete={canDelete}
-                                createdBy={createdBy}
-                                createdAt={createdAt}
-                                onCreate={onCreate}
-                                onCancel={onCancel}
-                                onDelete={onDelete}
-                                onCommentClick={onCommentClick}
-                            />
-                        )}
+                        <div className={CLASS_POPOVER_OVERLAY}>
+                            {hasComments ? (
+                                <CommentList comments={comments} onDelete={onDelete} />
+                            ) : (
+                                <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
+                            )}
+                            {canAnnotate && (
+                                <ActionControls
+                                    id={id}
+                                    type={type}
+                                    hasComments={hasComments}
+                                    isPending={isPending}
+                                    canComment={canComment}
+                                    canDelete={canDelete}
+                                    createdBy={createdBy}
+                                    createdAt={createdAt}
+                                    onCreate={onCreate}
+                                    onCancel={onCancel}
+                                    onDelete={onDelete}
+                                    onCommentClick={onCommentClick}
+                                />
+                            )}
+                        </div>
                     </div>
-                </div>
+                </HotkeyLayer>
             </Internationalize>
         );
     }
