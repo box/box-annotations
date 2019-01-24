@@ -58,18 +58,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
         position();
     }
 
-    getHotkeyConfigs() {
-        const { onCancel } = this.props;
-        return [
-            new HotkeyRecord({
-                description: 'Close popover',
-                key: 'esc',
-                handler: onCancel,
-                type: 'Close'
-            })
-        ];
-    }
-
     render() {
         const {
             id,
@@ -92,10 +80,18 @@ class AnnotationPopover extends React.PureComponent<Props> {
         } = this.props;
         const hasComments = comments.length > 0;
         const isInline = !hasComments && (type === TYPES.highlight || type === TYPES.draw);
+        const configs = [
+            new HotkeyRecord({
+                description: 'Close popover',
+                key: 'esc',
+                handler: onCancel,
+                type: 'Close'
+            })
+        ];
 
         return (
             <Internationalize language={language} messages={intlMessages}>
-                <HotkeyLayer configs={this.getHotkeyConfigs()}>
+                <HotkeyLayer configs={configs}>
                     <div
                         className={classNames(CLASS_ANNOTATION_POPOVER, {
                             [CLASS_INLINE_POPOVER]: isInline,
