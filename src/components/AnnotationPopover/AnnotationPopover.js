@@ -64,7 +64,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
             new HotkeyRecord({
                 description: 'Close popover',
                 key: 'esc',
-                handler: () => onCancel(),
+                handler: onCancel,
                 type: 'Close'
             })
         ];
