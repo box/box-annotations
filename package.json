@@ -183,7 +183,8 @@
       "jest-canvas-mock"
     ],
     "moduleNameMapper": {
-      "rangy": "<rootDir>/test-utils/rangyMock.js",
+      "mousetrap": "<rootDir>/test-utils/moduleMock.js",
+      "rangy": "<rootDir>/test-utils/moduleMock.js",
       "react-intl": "<rootDir>/test-utils/react-intl-mocks.js",
       "intl": "<rootDir>/test-utils/lib-intl-mock.js",
       "react-intl-locale-data": "<rootDir>/node_modules/react-intl/locale-data/en.js",

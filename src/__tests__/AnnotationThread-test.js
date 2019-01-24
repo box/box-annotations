@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as ReactDOM from 'react-dom';
+
 import AnnotationThread from '../AnnotationThread';
 import * as util from '../util';
 import {
@@ -256,15 +257,13 @@ describe('AnnotationThread', () => {
 
     describe('delete()', () => {
         let annotation;
-        let annotation2;
-        const threadPromise = Promise.resolve();
 
         beforeEach(() => {
             api = {
                 user: {
                     id: 1
                 },
-                delete: jest.fn().mockResolvedValue(threadPromise)
+                delete: jest.fn().mockResolvedValue()
             };
 
             annotation = {
@@ -275,68 +274,33 @@ describe('AnnotationThread', () => {
                 threadID: 1
             };
 
-            annotation2 = {
-                id: 'someID2',
-                permissions: {
-                    can_delete: false
-                },
-                threadID: 1
-            };
-
+            console.error = jest.fn(); // eslint-disable-line
             thread.api = api;
             thread.comments = [annotation];
             util.isPlainHighlight = jest.fn();
             thread.cancelFirstComment = jest.fn();
             thread.destroy = jest.fn();
+            thread.deleteSuccessHandler = jest.fn().mockResolvedValue();
             thread.renderAnnotationPopover = jest.fn();
+            thread.cleanupAnnotationOnDelete = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({
                 threadNumber: 1
             });
             thread.emit = jest.fn();
         });
 
-        it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
-                threadPromise.then(() => {
-                    expect(thread.destroy).toBeCalled();
-                    expect(thread.renderAnnotationPopover).not.toBeCalled();
-                });
-            });
-        });
-
-        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', () => {
-            thread.comments.push(annotation2);
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
-                expect(thread.renderAnnotationPopover).toBeCalled();
-            });
-        });
-
-        it('should make a server call to delete an annotation with the specified ID if useServer is true', () => {
-            thread.comments.push(annotation2);
-            const promise = thread.delete('someID', true);
-            promise.then(() => {
-                expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
-                expect(api.delete).toBeCalledWith('someID');
-            });
-        });
-
-        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', () => {
-            annotation2.permissions.can_delete = false;
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID', true);
-            promise.then(() => {
-                expect(api.delete).toBeCalledWith('someID');
+        it('should cleanup the annotation on delete successfully and delete from the specified annotation from the server', () => {
+            thread.delete({ id: 'someID' }).then(() => {
+                expect(thread.api.delete).toBeCalledWith('someID');
+                expect(thread.cleanupAnnotationOnDelete).toBeCalled();
+                expect(thread.deleteSuccessHandler).toBeCalled();
             });
         });
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', () => {
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
+            thread.delete({ id: 'someID' }, false).then(() => {
                 expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
             });
         });
 
@@ -344,34 +308,8 @@ describe('AnnotationThread', () => {
             api.delete = jest.fn().mockRejectedValue();
             thread.api = api;
 
-            const promise = thread.delete('someID', true);
-            promise.catch(() => {
+            thread.delete({ id: 'someID' }).catch(() => {
                 expect(api.delete).toBeCalled();
-            });
-        });
-
-        it('should toggle highlight dialogs with the delete of the last comment if user does not have permission to delete the entire annotation', () => {
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID');
-            promise.then(() => {
-                expect(thread.cancelFirstComment).toBeCalled();
-                expect(thread.destroy).not.toBeCalled();
-            });
-        });
-
-        it('should destroy the annotation with the delete of the last comment if the user has permissions', () => {
-            annotation2.permissions.can_delete = true;
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID');
-            promise.then(() => {
-                expect(thread.emit).toBeCalledWith(THREAD_EVENT.threadCleanup);
-                expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
-                expect(thread.cancelFirstComment).not.toBeCalled();
-                expect(thread.destroy).toBeCalled();
             });
         });
     });
