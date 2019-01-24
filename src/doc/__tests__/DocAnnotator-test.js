@@ -846,11 +846,12 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.selectionEndTimeout).not.toEqual(123);
         });
 
-        it('should clear selection if the user is currently creating a highlight annotation', () => {
-            annotator.isCreatingHighlight = true;
+        it('should clear selection if the user is NOT currently creating a highlight annotation', () => {
+            annotator.isCreatingHighlight = false;
             util.isInDialog = jest.fn().mockReturnValue(true);
             annotator.onSelectionChange(event);
             expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
+            expect(util.findClosestElWithClass).toBeCalled();
         });
 
         it('should clear out highlights and exit "annotation creation" mode if an invalid selection', () => {
@@ -893,6 +894,25 @@ describe('doc/DocAnnotator', () => {
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
             annotator.lastHighlightEvent = event;
             annotator.createHighlightDialog.isVisible = false;
+
+            annotator.onSelectionChange(event);
+            expect(annotator.selectionEndTimeout).not.toBeNull();
+            expect(annotator.isCreatingHighlight).toBeTruthy();
+        });
+
+        it('should reposition the existing createHighlightDialog', () => {
+            const selection = {
+                rangeCount: 10,
+                isCollapsed: false,
+                anchorNode: {
+                    parentNode: 'Node'
+                },
+                toString: () => 'asdf'
+            };
+            window.getSelection = jest.fn().mockReturnValue(selection);
+            docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
+            annotator.lastHighlightEvent = event;
+            annotator.createHighlightDialog.isVisible = true;
 
             annotator.onSelectionChange(event);
             expect(annotator.selectionEndTimeout).not.toBeNull();
