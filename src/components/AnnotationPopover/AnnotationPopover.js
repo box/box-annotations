@@ -2,10 +2,12 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { FormattedMessage } from 'react-intl';
 import PlainButton from 'box-react-ui/lib/components/plain-button';
 import IconClose from 'box-react-ui/lib/icons/general/IconClose';
 import { HotkeyRecord, HotkeyLayer } from 'box-react-ui/lib/components/hotkeys';
 
+import messages from './messages';
 import Internationalize from '../Internationalize';
 import CommentList from '../CommentList';
 import { TYPES, CLASS_ANNOTATION_POPOVER, CLASS_ANNOTATION_CARET } from '../../constants';
@@ -82,7 +84,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
         const isInline = !hasComments && (type === TYPES.highlight || type === TYPES.draw);
         const configs = [
             new HotkeyRecord({
-                description: 'Close popover',
+                description: <FormattedMessage {...messages.close} />,
                 key: 'esc',
                 handler: onCancel,
                 type: 'Close'

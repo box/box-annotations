@@ -28,6 +28,11 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         id: 'ba.whoAnnotated',
         description: 'Label for who left the annotation',
         defaultMessage: '{name} annotated'
+    },
+    close: {
+        id: 'ba.closePopover',
+        description: 'Description for popover close hotkey record',
+        defaultMessage: 'Close Popover'
     }
 });
 

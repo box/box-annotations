@@ -6,7 +6,10 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
@@ -163,7 +166,10 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
@@ -253,7 +259,10 @@ exports[`components/AnnotationPopover should correctly render a popover with com
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
@@ -383,7 +392,10 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
@@ -467,7 +479,10 @@ exports[`components/AnnotationPopover should correctly render an annotation with
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
@@ -559,7 +574,10 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
     configs={
       Array [
         Immutable.Record {
-          "description": "Close popover",
+          "description": <FormattedMessage
+            defaultMessage="Close Popover"
+            id="ba.closePopover"
+          />,
           "handler": [MockFunction] {
             "calls": Array [
               Array [],
