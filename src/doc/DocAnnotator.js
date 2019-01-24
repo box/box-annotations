@@ -462,12 +462,8 @@ class DocAnnotator extends Annotator {
     resetHighlightSelection(event: ?Event) {
         this.hideCreateDialog(event);
 
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            // $FlowFixMe
-            selection.removeAllRanges();
-        }
-
+        // $FlowFixMe
+        window.getSelection().removeAllRanges();
         if (this.highlighter) {
             this.highlighter.removeAllHighlights();
         }
