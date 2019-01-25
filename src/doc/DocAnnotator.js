@@ -597,7 +597,7 @@ class DocAnnotator extends Annotator {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
-        this.lastHighlightEvent = this.hasTouch ? get(event, 'targetTouches[0]', event) : event;
+        this.lastHighlightEvent = get(event, 'targetTouches[0]', event);
         this.lastSelection = selection;
     }
 
