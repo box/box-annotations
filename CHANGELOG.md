@@ -1,3 +1,12 @@
+## <small>3.7.1 (2019-01-25)</small>
+
+* Update Translations (#328) ([39805b8](https://github.com/box/box-annotations/commit/39805b8)), closes [#328](https://github.com/box/box-annotations/issues/328)
+* Chore: Add escape hotkey on AnnotationPopover (#327) ([e92ec85](https://github.com/box/box-annotations/commit/e92ec85)), closes [#327](https://github.com/box/box-annotations/issues/327)
+* Fix: Highlight selection on Surface (#326) ([6a3b83a](https://github.com/box/box-annotations/commit/6a3b83a)), closes [#326](https://github.com/box/box-annotations/issues/326)
+* Fix: Import correct styling for flyout component (#325) ([14d65f6](https://github.com/box/box-annotations/commit/14d65f6)), closes [#325](https://github.com/box/box-annotations/issues/325)
+
+
+
 ## 3.7.0 (2019-01-22)
 
 * Fix: Creation of highlights on Edge/IE11/Firefox browsers (#322) ([3d9ee7f](https://github.com/box/box-annotations/commit/3d9ee7f)), closes [#322](https://github.com/box/box-annotations/issues/322)
