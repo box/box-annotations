@@ -416,6 +416,7 @@ class DocAnnotator extends Annotator {
         if (
             // $FlowFixMe
             this.hasMouseMoved(this.lastHighlightEvent, event) &&
+            !this.isCreatingHighlight &&
             this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
             !this.createHighlightDialog.isInHighlight(mouseEvent)
