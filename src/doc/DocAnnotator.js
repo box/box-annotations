@@ -1,5 +1,6 @@
 // @flow
 import rangy from 'rangy';
+import get from 'lodash/get';
 /* eslint-disable no-unused-vars */
 // Workaround for rangy npm issue: https://github.com/timdown/rangy/lib/issues/342
 import rangyClassApplier from 'rangy/lib/rangy-classapplier';
@@ -415,6 +416,7 @@ class DocAnnotator extends Annotator {
         if (
             // $FlowFixMe
             this.hasMouseMoved(this.lastHighlightEvent, event) &&
+            !this.isCreatingHighlight &&
             this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
             !this.createHighlightDialog.isInHighlight(mouseEvent)
@@ -557,13 +559,15 @@ class DocAnnotator extends Annotator {
             this.selectionEndTimeout = null;
         }
 
-        this.resetHighlightOnOutsideClick(event);
+        if (!this.isCreatingHighlight) {
+            this.resetHighlightOnOutsideClick(event);
+        }
 
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
         const isPopoverActive = !!util.findClosestElWithClass(document.activeElement, CLASS_ANNOTATION_POPOVER);
-        if (this.isCreatingHighlight || isCreatingPoint || isPopoverActive) {
+        if (isCreatingPoint || isPopoverActive) {
             return;
         }
 
@@ -577,7 +581,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.selectionEndTimeout = setTimeout(() => {
-            if (this.createHighlightDialog && !this.createHighlightDialog.isVisible) {
+            if (this.createHighlightDialog) {
                 this.createHighlightDialog.show(this.lastSelection);
             }
         }, SELECTION_TIMEOUT);
@@ -594,12 +598,7 @@ class DocAnnotator extends Annotator {
             this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
         }
 
-        let mouseEvent = event;
-        // $FlowFixMe
-        if (this.hasTouch && event.targetTouches) {
-            mouseEvent = event.targetTouches[0];
-        }
-        this.lastHighlightEvent = mouseEvent;
+        this.lastHighlightEvent = get(event, 'targetTouches[0]', event);
         this.lastSelection = selection;
     }
 
