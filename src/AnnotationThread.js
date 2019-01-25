@@ -670,25 +670,6 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Keydown handler for dialog.
-     *
-     * @param {Event} event DOM event
-     * @return {void}
-     */
-    keydownHandler(event: Event) {
-        event.stopPropagation();
-
-        const key = util.decodeKeydown(event);
-        if (key === 'Escape') {
-            if (this.hasAnnotations()) {
-                this.hide();
-            } else {
-                this.cancelAnnotation();
-            }
-        }
-    }
-
-    /**
      * Show/hide the top portion of the annotations icon based on if the
      * entire dialog is flipped
      *
