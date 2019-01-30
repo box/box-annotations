@@ -118,7 +118,6 @@ class DocHighlightThread extends AnnotationThread {
     /** @inheritdoc */
     deleteSuccessHandler = () => {
         // Broadcast annotation deletion event
-        this.emit(THREAD_EVENT.delete);
 
         if (this.threadID) {
             this.renderAnnotationPopover();

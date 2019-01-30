@@ -151,6 +151,7 @@ export const THREAD_EVENT = {
     render: 'annotationrender',
     save: 'annotationsaved',
     delete: 'annotationdeleted',
+    deleteComment: 'annotationcommentdeleted',
     deleteError: 'annotationdeleteerror',
     cancel: 'annotationcanceled',
     createError: 'annotationcreateerror',
