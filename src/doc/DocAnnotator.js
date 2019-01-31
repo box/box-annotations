@@ -437,7 +437,7 @@ class DocAnnotator extends Annotator {
 
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            isClickConsumed = controller.handleSelection(event);
+            isClickConsumed = !!controller.handleSelection(event);
             if (isClickConsumed) {
                 return;
             }
