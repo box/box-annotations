@@ -401,6 +401,7 @@ class DocAnnotator extends Annotator {
      */
     clickHandler = (event: MouseEvent) => {
         let mouseEvent = event;
+        let isClickConsumed = false;
 
         // $FlowFixMe
         if (this.hasTouch && event.targetTouches) {
@@ -408,14 +409,16 @@ class DocAnnotator extends Annotator {
         }
 
         // Don't do anything if the click is in a popover
-        if (util.isInDialog(mouseEvent, this.container)) {
+        isClickConsumed = util.isInDialog(mouseEvent, this.container);
+        if (isClickConsumed) {
             return;
         }
 
         // Hide the create dialog if click was not in the popover
+        // $FlowFixMe
+        isClickConsumed = this.hasMouseMoved(this.lastHighlightEvent, event);
         if (
-            // $FlowFixMe
-            this.hasMouseMoved(this.lastHighlightEvent, event) &&
+            isClickConsumed &&
             !this.isCreatingHighlight &&
             this.createHighlightDialog &&
             this.createHighlightDialog.isVisible &&
@@ -427,13 +430,15 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        if (this.highlightClickHandler(event)) {
+        isClickConsumed = this.highlightClickHandler(event);
+        if (isClickConsumed) {
             return;
         }
 
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
-            if (controller.handleSelection(event)) {
+            isClickConsumed = controller.handleSelection(event);
+            if (isClickConsumed) {
                 return;
             }
         }
