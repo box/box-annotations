@@ -1,3 +1,18 @@
+## 3.8.0 (2019-01-31)
+
+* Fix: Don't destroy a thread that still has comments it hides (#330) ([ff0bc9b](https://github.com/box/box-annotations/commit/ff0bc9b)), closes [#330](https://github.com/box/box-annotations/issues/330)
+* Fix: Emit different event to avoid thread de-reference on comment delete (#331) ([2ead4a0](https://github.com/box/box-annotations/commit/2ead4a0)), closes [#331](https://github.com/box/box-annotations/issues/331)
+* Fix: Highlight selection on Surface (#326) ([6a3b83a](https://github.com/box/box-annotations/commit/6a3b83a)), closes [#326](https://github.com/box/box-annotations/issues/326)
+* Fix: Import correct styling for flyout component (#325) ([14d65f6](https://github.com/box/box-annotations/commit/14d65f6)), closes [#325](https://github.com/box/box-annotations/issues/325)
+* Fix: Prevent API delete of an unsaved drawing annotation (#334) ([5c3f188](https://github.com/box/box-annotations/commit/5c3f188)), closes [#334](https://github.com/box/box-annotations/issues/334)
+* Fix: Prevent pending drawings from disappearing (#333) ([1415c23](https://github.com/box/box-annotations/commit/1415c23)), closes [#333](https://github.com/box/box-annotations/issues/333)
+* Update Translations (#328) ([39805b8](https://github.com/box/box-annotations/commit/39805b8)), closes [#328](https://github.com/box/box-annotations/issues/328)
+* Update Translations (#332) ([cb73f8a](https://github.com/box/box-annotations/commit/cb73f8a)), closes [#332](https://github.com/box/box-annotations/issues/332)
+* Chore: Add escape hotkey on AnnotationPopover (#327) ([e92ec85](https://github.com/box/box-annotations/commit/e92ec85)), closes [#327](https://github.com/box/box-annotations/issues/327)
+* Chore: Update testing site to preview v1.63.0 (#329) ([309c427](https://github.com/box/box-annotations/commit/309c427)), closes [#329](https://github.com/box/box-annotations/issues/329)
+
+
+
 ## 3.7.0 (2019-01-22)
 
 * Fix: Creation of highlights on Edge/IE11/Firefox browsers (#322) ([3d9ee7f](https://github.com/box/box-annotations/commit/3d9ee7f)), closes [#322](https://github.com/box/box-annotations/issues/322)
