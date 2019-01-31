@@ -431,12 +431,13 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        this.hideAnnotations(event);
-
         if (this.drawEnabled) {
             const controller = this.modeControllers[TYPES.draw];
             controller.handleSelection(event);
+            return;
         }
+
+        this.hideAnnotations(event);
     };
 
     /**
