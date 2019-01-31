@@ -2,8 +2,9 @@
 import * as docUtil from '../docUtil';
 import * as util from '../../util';
 import DocDrawingThread from '../DocDrawingThread';
+import AnnotationThread from '../../AnnotationThread';
 import DrawingPath from '../../drawing/DrawingPath';
-import { DRAW_STATES, STATES } from '../../constants';
+import { DRAW_STATES, STATES, THREAD_EVENT } from '../../constants';
 
 let thread;
 
@@ -401,6 +402,27 @@ describe('doc/DocDrawingThread', () => {
             thread.destroy();
 
             expect(removeFn).toHaveBeenCalled();
+        });
+    });
+
+    describe('delete()', () => {
+        it('the thread is pending, emit delete without making an API call', () => {
+            thread.emit = jest.fn();
+            thread.state = STATES.pending;
+
+            thread.delete();
+
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
+        });
+
+        it('the thread is not pending, do a full annotation delete', () => {
+            const deleteStub = jest.fn();
+            Object.defineProperty(AnnotationThread.prototype, 'delete', { value: deleteStub });
+            thread.state = STATES.active;
+
+            thread.delete();
+
+            expect(deleteStub).toBeCalled();
         });
     });
 });

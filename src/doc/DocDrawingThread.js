@@ -2,12 +2,13 @@
 import DrawingPath from '../drawing/DrawingPath';
 import DrawingThread from '../drawing/DrawingThread';
 import {
-    STATES,
-    DRAW_STATES,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
+    DRAW_STATES,
     PAGE_PADDING_TOP,
-    SELECTOR_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER,
+    STATES,
+    THREAD_EVENT
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
 import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
@@ -154,6 +155,16 @@ class DocDrawingThread extends DrawingThread {
         }
 
         super.destroy();
+    }
+
+    /** @inheritdoc */
+    delete(annotationToRemove: Object, useServer: boolean = true): ?Promise<any> {
+        if (this.state === STATES.pending) {
+            this.emit(THREAD_EVENT.delete);
+            return;
+        }
+
+        super.delete(annotationToRemove, useServer);
     }
 
     /**
