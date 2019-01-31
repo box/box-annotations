@@ -77,11 +77,6 @@ class DocHighlightThread extends AnnotationThread {
         }
     }
 
-    /** @inheritdoc */
-    cancelUnsavedAnnotation = () => {
-        this.cancelFirstComment();
-    };
-
     /**
      * Hides the highlight by cutting out the annotation from context. Note
      * that if there are any overlapping highlights, this will cut out
