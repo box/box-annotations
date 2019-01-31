@@ -267,6 +267,7 @@ class DrawingModeController extends AnnotationModeController {
 
                 this.resetCurrentThread(thread);
                 this.unbindListeners();
+                this.currentThread = undefined;
 
                 // Clear existing canvases
                 // eslint-disable-next-line
@@ -349,7 +350,7 @@ class DrawingModeController extends AnnotationModeController {
 
         // $FlowFixMe
         if (!event || (event.target && event.target.nodeName === 'BUTTON') || hasPendingDrawing) {
-            return selected;
+            return this.currentThread;
         }
 
         event.stopPropagation();
