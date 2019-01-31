@@ -16,10 +16,12 @@ import DocHighlightThread from '../DocHighlightThread';
 import FileVersionAPI from '../../api/FileVersionAPI';
 import AnnotationModeController from '../../controllers/AnnotationModeController';
 import CreateHighlightDialog from '../CreateHighlightDialog';
+import DrawingModeController from '../../controllers/DrawingModeController';
 
 jest.mock('../DocHighlightThread');
 jest.mock('../../api/FileVersionAPI');
 jest.mock('../../controllers/AnnotationModeController');
+jest.mock('../../controllers/DrawingModeController');
 jest.mock('../CreateHighlightDialog');
 
 let annotator;
@@ -677,6 +679,73 @@ describe('doc/DocAnnotator', () => {
 
             annotator.unbindDOMListeners();
             expect(annotator.modeControllers.test.removeSelection).toBeCalled();
+        });
+    });
+
+    describe('clickHandler()', () => {
+        let drawingController;
+        const event = {
+            stopPropagation: jest.fn(),
+            preventDefault: jest.fn()
+        };
+
+        beforeEach(() => {
+            util.isInDialog = jest.fn().mockReturnValue(false);
+            annotator.hasMouseMoved = jest.fn().mockReturnValue(false);
+            annotator.highlightClickHandler = jest.fn().mockReturnValue(false);
+            annotator.resetHighlightSelection = jest.fn();
+            annotator.hideAnnotations = jest.fn();
+
+            annotator.modeControllers = {
+                [TYPES.draw]: new DrawingModeController()
+            };
+            drawingController = annotator.modeControllers[TYPES.draw];
+            drawingController.handleSelection = jest.fn();
+
+            annotator.createHighlightDialog.isVisible = false;
+            annotator.createHighlightDialog.isInHighlight = jest.fn().mockReturnValue(false);
+
+            annotator.isCreatingHighlight = false;
+            annotator.hasTouch = false;
+            annotator.drawEnabled = true;
+        });
+
+        it('should do nothing if the click is in a popover', () => {
+            util.isInDialog = jest.fn().mockReturnValue(true);
+            annotator.clickHandler(event);
+            expect(annotator.hasMouseMoved).not.toBeCalled();
+            expect(annotator.hideAnnotations).not.toBeCalled();
+        });
+
+        it('should hide only the create dialog if click was not in the popover', () => {
+            annotator.hasMouseMoved = jest.fn().mockReturnValue(true);
+            annotator.clickHandler(event);
+
+            annotator.createHighlightDialog.isVisible = true;
+            annotator.clickHandler(event);
+
+            annotator.createHighlightDialog.isInHighlight = jest.fn().mockReturnValue(true);
+            annotator.clickHandler(event);
+            expect(annotator.resetHighlightSelection).toBeCalledTimes(1);
+            expect(annotator.hideAnnotations).toBeCalledTimes(2);
+        });
+
+        it('should do nothing if highlight click handler consumes click event', () => {
+            annotator.highlightClickHandler = jest.fn().mockReturnValue(true);
+            annotator.clickHandler(event);
+            expect(annotator.hideAnnotations).not.toBeCalled();
+        });
+
+        it('should hide all annotations if drawing is disabled', () => {
+            annotator.drawEnabled = false;
+            annotator.clickHandler(event);
+            expect(annotator.hideAnnotations).toBeCalled();
+        });
+
+        it('should do nothing if drawing selection handler consumes click event', () => {
+            drawingController.handleSelection = jest.fn().mockReturnValue(thread);
+            annotator.clickHandler(event);
+            expect(annotator.hideAnnotations).not.toBeCalled();
         });
     });
 
