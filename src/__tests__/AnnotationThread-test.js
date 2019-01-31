@@ -411,7 +411,7 @@ describe('AnnotationThread', () => {
         });
     });
 
-    describe('deleteSuccessHAndler()', () => {
+    describe('deleteSuccessHandler()', () => {
         beforeEach(() => {
             thread.renderAnnotationPopover = jest.fn();
             thread.destroy = jest.fn();
@@ -424,6 +424,12 @@ describe('AnnotationThread', () => {
             expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.delete);
             expect(thread.destroy).not.toBeCalled();
+        });
+
+        it('should emit that an annotation comment has been deleted', () => {
+            thread.threadID = '123';
+            thread.deleteSuccessHandler();
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.deleteComment);
         });
 
         it('should properly destroy the thread if the thread should be completely deleted', () => {
