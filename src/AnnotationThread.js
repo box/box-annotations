@@ -368,6 +368,7 @@ class AnnotationThread extends EventEmitter {
      */
     deleteSuccessHandler = () => {
         if (this.threadID) {
+            this.emit(THREAD_EVENT.deleteComment);
             this.renderAnnotationPopover();
         } else {
             this.emit(THREAD_EVENT.delete);
