@@ -13,7 +13,7 @@ describe('api/AnnotationAPI', () => {
     const annotationData = {
         id: '',
         details: {
-            location: { page: 1 }
+            location: { page: -1 }
         }
     };
 
@@ -29,15 +29,15 @@ describe('api/AnnotationAPI', () => {
         api.headers = {};
     });
 
-    describe('getBaseUrl()', () => {
-        it('should return the create annotations URL', () => {
-            expect(api.getBaseUrl()).toEqual('https://app.box.com/api/2.0/annotations');
-        });
+    // describe('getBaseUrl()', () => {
+    //     it('should return the create annotations URL', () => {
+    //         expect(api.getBaseUrl()).toEqual('https://app.box.com/api/2.0/annotations');
+    //     });
 
-        it('should return the delete annotations URL', () => {
-            expect(api.getBaseUrl(1)).toEqual('https://app.box.com/api/2.0/annotations/1');
-        });
-    });
+    //     it('should return the delete annotations URL', () => {
+    //         expect(api.getBaseUrl(1)).toEqual('https://app.box.com/api/2.0/annotations/1');
+    //     });
+    // });
 
     describe('create()', () => {
         it('post and create a new annotation', () => {
@@ -76,7 +76,9 @@ describe('api/AnnotationAPI', () => {
         });
 
         it('should return the created annotation', () => {
-            expect(api.createSuccessHandler(annotationData).permissions).toEqual({
+            const annotation = api.createSuccessHandler(annotationData);
+            expect(annotation.location.page).toEqual(1);
+            expect(annotation.permissions).toEqual({
                 can_delete: true,
                 can_edit: true
             });
@@ -84,11 +86,19 @@ describe('api/AnnotationAPI', () => {
     });
 
     describe('deleteSuccessHandler()', () => {
-        it('should emit an error event', () => {
+        it('should emit an error event on error', () => {
             const error = new Error('Could not delete annotation with ID 123');
             error.name === ERROR_TYPE.delete;
 
             api.deleteSuccessHandler({ type: 'error' }, '123');
+            expect(api.errorHandler).toBeCalledWith(error);
+        });
+
+        it('should emit an error event when response has no annotation id', () => {
+            const error = new Error('Could not delete annotation with ID undefined');
+            error.name === ERROR_TYPE.delete;
+
+            api.deleteSuccessHandler({ type: 'error' });
             expect(api.errorHandler).toBeCalledWith(error);
         });
 
