@@ -113,10 +113,12 @@ class DocHighlightThread extends AnnotationThread {
     /** @inheritdoc */
     deleteSuccessHandler = () => {
         if (this.threadID) {
+            this.emit(THREAD_EVENT.deleteComment);
             this.renderAnnotationPopover();
         } else {
             // $FlowFixMe
             const { page } = this.location;
+            this.emit(THREAD_EVENT.delete);
             this.emit(THREAD_EVENT.render, { page });
         }
     };

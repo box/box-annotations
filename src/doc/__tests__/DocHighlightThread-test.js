@@ -85,6 +85,32 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
+    describe('deleteSuccessHandler()', () => {
+        it('should emit comment deleted and render the popover if the thread still exists (one highlight comment in a thread was deleted)', () => {
+            thread.emit = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
+            thread.threadID = 'foo';
+
+            thread.deleteSuccessHandler();
+
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.deleteComment);
+            expect(thread.renderAnnotationPopover).toBeCalled();
+        });
+
+        it('should emit deleted and a render event if the thread has been destroyed (the entire annotation was just deleted', () => {
+            thread.emit = jest.fn();
+            thread.location = {
+                page: 1
+            };
+            thread.threadID = null;
+
+            thread.deleteSuccessHandler();
+
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, { page: 1 });
+        });
+    });
+
     describe('onClick()', () => {
         it('should set annotation to inactive if event has already been consumed', () => {
             thread.state = STATES.active;
