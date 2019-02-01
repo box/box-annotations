@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import FileVersionAPI from '../FileVersionAPI';
-import { ERROR_TYPE } from '../../constants';
+import { ERROR_TYPE, TYPES } from '../../constants';
 
 const API_HOST = 'https://app.box.com/api';
 
@@ -57,6 +57,9 @@ describe('api/FileVersionAPI', () => {
         beforeEach(() => {
             api.fetchFromMarker = jest.fn().mockReturnValue(Promise.resolve());
             api.emit = jest.fn();
+            api.data = {
+                entries: []
+            };
         });
 
         it('should call fetch the remaining annotations if the version has more to fetch', () => {
@@ -75,13 +78,18 @@ describe('api/FileVersionAPI', () => {
             });
         });
 
+        it('should emit an error if the entries in the success response is not an array', () => {
+            api.fileVersionId = 123;
+            api.successHandler({ entries: 'wrong type' }).catch((err) => {
+                expect(err.name).toEqual(ERROR_TYPE.read);
+                expect(api.fetchFromMarker).not.toBeCalled();
+            });
+        });
+
         it('should emit an error if the success response is of type error', () => {
             api.fileVersionId = 123;
-            api.successHandler({ type: 'error' }).catch(() => {
-                const error = new Error(`Could not read annotations from file version with ID ${api.fileVersionId}`);
-                error.name = ERROR_TYPE.read;
-
-                expect(api.data.entries.length).toEqual(1);
+            api.successHandler({ type: 'error' }).catch((err) => {
+                expect(err.name).toEqual(ERROR_TYPE.read);
                 expect(api.fetchFromMarker).not.toBeCalled();
             });
         });
@@ -90,20 +98,61 @@ describe('api/FileVersionAPI', () => {
     describe('createAnnotationMap()', () => {
         it('should create a map of thread IDs to annotations', () => {
             const annotationData = {
-                threadID: 1,
                 item: {},
                 permissions: {},
                 details: {
-                    location: { page: 1 },
-                    type: 'highlight',
+                    location: { page: -1 },
+                    type: TYPES.highlight,
                     threadID: '123'
                 }
             };
+
             api.data = {
-                entries: [{ id: 1, ...annotationData }, { id: 2, ...annotationData }]
+                entries: [
+                    {
+                        // invalid location
+                        ...annotationData,
+                        details: {
+                            type: TYPES.highlight,
+                            threadID: '123'
+                        }
+                    },
+                    {
+                        // invalid type
+                        ...annotationData,
+                        details: {
+                            location: { page: -1 },
+                            threadID: '123'
+                        }
+                    },
+                    {
+                        // invalid threadID
+                        ...annotationData,
+                        details: {
+                            location: { page: -1 },
+                            type: TYPES.highlight
+                        }
+                    },
+                    // plain highlight
+                    { ...annotationData, id: 1 },
+                    {
+                        // comment added onto an existing plain highlight
+                        ...annotationData,
+                        id: 2,
+                        message: 'string',
+                        details: {
+                            location: { page: 1 },
+                            type: TYPES.highlight_comment,
+                            threadID: '123'
+                        }
+                    }
+                ]
             };
-            const threadMap = api.createAnnotationMap();
-            expect(Object.keys(threadMap).length).toEqual(1);
+
+            const annotationMap = api.createAnnotationMap();
+            expect(Object.keys(annotationMap).length).toEqual(1);
+            expect(annotationMap['123'].comments.length).toEqual(1);
+            expect(annotationMap['123'].type).toEqual(TYPES.highlight_comment);
         });
     });
 });
