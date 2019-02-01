@@ -11,7 +11,8 @@ import { ContentState, EditorState } from 'draft-js';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import Form from 'box-react-ui/lib/components/form-elements/form/Form';
-import DraftJSMentionSelector, {
+import TextArea from 'box-react-ui/lib/components/form-elements/text-area/TextArea';
+import {
     DraftMentionDecorator
 } from 'box-react-ui/lib/components/form-elements/draft-js-mention-selector';
 import commonMessages from 'box-react-ui/lib/common/messages';
@@ -204,21 +205,31 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         approvers.splice(index, 1);
         this.setState({ approvers });
     };
+    
+    validateTextArea = (value: ?string) => {
+        const { intl } = this.props;
+        if (value && value.trim() === '') {
+            return {
+                message: intl.formatMessage(
+                    commonMessages.requiredFieldError
+                )
+            };
+        }
+        return null;
+    }
 
     render(): React.Node {
         const {
             approverSelectorContacts,
             className,
             createTask,
-            getMentionWithQuery,
             intl: { formatMessage },
-            isDisabled,
             isOpen,
-            mentionSelectorContacts = [],
             onCancel,
             onFocus,
             user,
             isEditing,
+            isDisabled,
             tagged_message,
             getAvatarUrl
         } = this.props;
@@ -226,7 +237,6 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             approvalDate,
             approvers,
             approverSelectorError,
-            commentEditorState,
             isAddApprovalVisible
         } = this.state;
         const inputContainerClassNames = classNames(
@@ -249,28 +259,24 @@ class ApprovalCommentForm extends React.Component<Props, State> {
                         onChange={this.onFormChangeHandler}
                         onValidSubmit={this.onFormValidSubmitHandler}
                     >
-                        <DraftJSMentionSelector
+                        {/* TODO: Replace Draft.js in box-react-ui implementation of ApprovalCommentForm */}
+                        <TextArea
                             className='bcs-comment-input'
-                            contacts={isOpen ? mentionSelectorContacts : []}
-                            editorState={commentEditorState}
-                            hideLabel
-                            isDisabled={isDisabled}
                             isRequired={isOpen}
+                            isDisabled={isDisabled}
                             name='commentText'
-                            label='Comment'
                             onChange={this.onMentionSelectorChangeHandler}
                             onFocus={onFocus}
-                            onMention={getMentionWithQuery}
                             placeholder={
                                 tagged_message
                                     ? null
                                     : formatMessage(messages.commentWrite)
                             }
-                            validateOnBlur={false}
+                            validation={this.validateTextArea}
                         />
                         <aside
                             className={classNames('bcs-at-mention-tip', {
-                                'accessibility-hidden': isOpen,
+                                'accessibility-hidden': isOpen
                             })}
                         >
                             <FormattedMessage {...messages.atMentionTip} />
