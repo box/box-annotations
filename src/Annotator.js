@@ -101,7 +101,6 @@ class Annotator extends EventEmitter {
         if (typeof this.headerElement === 'string') {
             this.headerElement = document.querySelector(this.headerElement);
         }
-
         // If using box content preview header and no external header element was specified,
         // fallback to the container element
         if (this.options.header !== 'none' && !this.headerElement) {
@@ -570,6 +569,7 @@ class Annotator extends EventEmitter {
                 break;
             default:
                 this.emit(data.event, data.data);
+                break;
         }
     }
 

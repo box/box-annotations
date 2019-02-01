@@ -144,7 +144,6 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     position = () => {
-        /* eslint-enable no-unused-vars */
         throw new Error('Implement me!');
     };
 
@@ -383,17 +382,12 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     deleteErrorHandler(error: Error) {
-        // $FlowFixMe
-        const { page } = this.location;
-
         // Re-render page
-        this.emit(THREAD_EVENT.render, { page });
+        this.emit(THREAD_EVENT.render, this.location);
 
         // Broadcast error
         this.emit(THREAD_EVENT.deleteError);
-        /* eslint-disable no-console */
-        console.error(THREAD_EVENT.deleteError, error.toString());
-        /* eslint-enable no-console */
+        console.error(THREAD_EVENT.deleteError, error.toString()); // eslint-disable-line no-console
     }
 
     /**
@@ -442,11 +436,9 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     bindDOMListeners() {
-        if (!this.element) {
-            return;
+        if (this.element) {
+            this.element.addEventListener('click', this.renderAnnotationPopover);
         }
-
-        this.element.addEventListener('click', this.renderAnnotationPopover);
     }
 
     /**
@@ -677,16 +669,12 @@ class AnnotationThread extends EventEmitter {
      * @return {void}
      */
     toggleFlippedThreadEl() {
-        if (!this.element) {
-            return;
+        if (this.element) {
+            const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_POPOVER);
+            if (isDialogFlipped) {
+                this.element.classList.remove(CLASS_FLIPPED_POPOVER);
+            }
         }
-
-        const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_POPOVER);
-        if (!isDialogFlipped) {
-            return;
-        }
-
-        this.element.classList.remove(CLASS_FLIPPED_POPOVER);
     }
 }
 

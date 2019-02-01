@@ -76,6 +76,7 @@ class AnnotationAPI extends API {
             type,
             threadID,
             threadNumber,
+            location,
             canAnnotate: true,
             permissions: {
                 can_delete: true,

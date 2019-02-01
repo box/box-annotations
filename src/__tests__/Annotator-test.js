@@ -9,6 +9,7 @@ import {
     SELECTOR_ANNOTATED_ELEMENT,
     SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
 } from '../constants';
+import * as util from '../util';
 import AnnotationThread from '../AnnotationThread';
 import FileVersionAPI from '../api/FileVersionAPI';
 import AnnotationModeController from '../controllers/AnnotationModeController';
@@ -30,6 +31,8 @@ describe('Annotator', () => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
+
+        console.error = jest.fn(); // eslint-disable-line
 
         thread = new AnnotationThread();
         thread.threadID = '123abc';
@@ -243,16 +246,35 @@ describe('Annotator', () => {
             });
         });
 
+        describe('hideAnnotations()', () => {
+            beforeEach(() => {
+                util.isInDialog = jest.fn().mockReturnValue(false);
+                annotator.modeControllers = {
+                    something: controller
+                };
+            });
+
+            it('should do nothing if event occurred in a dialog', () => {
+                util.isInDialog = jest.fn().mockReturnValue(true);
+                annotator.hideAnnotations({});
+                expect(controller.destroyPendingThreads).not.toBeCalled();
+            });
+
+            it('should hide all threads', () => {
+                annotator.hideAnnotations();
+                expect(controller.destroyPendingThreads).toBeCalled();
+                expect(controller.applyActionToThreads).toBeCalled();
+            });
+        });
+
         describe('fetchAnnotations()', () => {
             const threadMap = {
                 someID: [{}, {}],
                 someID2: [{}]
             };
-            const threadPromise = Promise.resolve(threadMap);
 
             beforeEach(() => {
-                annotator.api.getThreadMap = jest.fn();
-
+                annotator.api.fetchVersionAnnotations = jest.fn().mockResolvedValue(threadMap);
                 annotator.permissions = {
                     can_view_annotations_all: true,
                     can_view_annotations_self: true
@@ -268,44 +290,41 @@ describe('Annotator', () => {
 
                 const result = annotator.fetchAnnotations();
                 result.then(() => {
-                    expect(result).toBeTruthy();
-                    expect(annotator.api.getThreadMap).not.toBeCalled();
+                    expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.fetch);
                 });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                // api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
-                api.fetchVersionAnnotations = jest.fn().mockResolvedValue({});
-                annotator.api = api;
                 annotator.permissions = {
                     can_view_annotations_all: false,
                     can_view_annotations_self: true
                 };
 
-                const result = annotator.fetchAnnotations();
-                result.then(() => {
-                    expect(result).toBeTruthy();
-                    expect(annotator.threadMap).not.toBeUndefined();
+                annotator.fetchAnnotations().then(() => {
+                    expect(annotator.annotationMap).not.toBeUndefined();
                     expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
                 });
             });
 
             it('should fetch existing annotations if the user can view all annotations', () => {
-                // api.getThreadMap = jest.fn().mockReturnValue(threadPromise);
-                api.fetchVersionAnnotations = jest.fn().mockResolvedValue({});
-                annotator.api = api;
                 annotator.permissions = {
                     can_view_annotations_all: true,
                     can_view_annotations_self: false
                 };
 
-                const result = annotator.fetchAnnotations();
-                result.then(() => {
-                    expect(result).toBeTruthy();
-                    threadPromise.then(() => {
-                        expect(annotator.threadMap).not.toBeUndefined();
-                        expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
-                    });
+                annotator.fetchAnnotations().then(() => {
+                    expect(annotator.annotationMap).not.toBeUndefined();
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.fetch);
+                });
+            });
+
+            it('should emit an error on fetch failure', () => {
+                const error = new Error();
+                annotator.api.fetchVersionAnnotations = jest.fn().mockRejectedValue(error);
+                annotator.fetchAnnotations().catch(() => {
+                    expect(annotator.annotationMap).toBeUndefined();
+                    expect(annotator.emit).not.toBeCalledWith(ANNOTATOR_EVENT.fetch);
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, error);
                 });
             });
         });
@@ -315,7 +334,7 @@ describe('Annotator', () => {
 
             beforeEach(() => {
                 annotator.options = { annotator: {} };
-                threadMap = { '123abc': { type: 'highlight-comment', location: {} } };
+                threadMap = { '123abc': thread, '456def': { type: 'not-supported', location: {} } };
             });
 
             it('should do nothing if annotator conf does not exist in options', () => {
@@ -325,9 +344,10 @@ describe('Annotator', () => {
             });
 
             it('should register thread if controller exists', () => {
-                annotator.modeControllers = { 'highlight-comment': controller };
+                annotator.modeControllers = { [TYPES.highlight_comment]: controller };
+                thread.type = TYPES.highlight_comment;
                 annotator.generateAnnotationMap(threadMap);
-                expect(controller.registerThread).toBeCalled();
+                expect(controller.registerThread).toBeCalledTimes(1);
             });
         });
 
@@ -358,6 +378,13 @@ describe('Annotator', () => {
                 annotator.emit = jest.fn();
             });
 
+            it('should load annotations on load event', () => {
+                annotator.loadAnnotations = jest.fn();
+                data.event = CONTROLLER_EVENT.load;
+                annotator.handleControllerEvents(data);
+                expect(annotator.loadAnnotations).toBeCalled();
+            });
+
             it('should toggle annotation mode on togglemode', () => {
                 annotator.toggleAnnotationMode = jest.fn();
                 data.event = CONTROLLER_EVENT.toggleMode;
@@ -386,6 +413,18 @@ describe('Annotator', () => {
                 data.event = CONTROLLER_EVENT.createThread;
                 annotator.handleControllerEvents(data);
                 expect(annotator.createPointThread).toBeCalledWith(data.data);
+            });
+
+            it('should emit annotation error on controller error event', () => {
+                data.event = CONTROLLER_EVENT.error;
+                annotator.handleControllerEvents(data);
+                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, data.data);
+            });
+
+            it('should re-emit event for default case', () => {
+                data.event = 'misc';
+                annotator.handleControllerEvents(data);
+                expect(annotator.emit).toBeCalledWith(data.event, data.data);
             });
         });
 

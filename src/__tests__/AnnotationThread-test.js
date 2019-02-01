@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import * as ReactDOM from 'react-dom';
+
 import AnnotationThread from '../AnnotationThread';
 import * as util from '../util';
 import {
@@ -7,7 +8,8 @@ import {
     TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CLASS_FLIPPED_POPOVER
 } from '../constants';
 
 let thread;
@@ -26,6 +28,8 @@ describe('AnnotationThread', () => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
+
+        console.error = jest.fn(); // eslint-disable-line
 
         thread = new AnnotationThread({
             annotatedElement: rootElement,
@@ -59,6 +63,14 @@ describe('AnnotationThread', () => {
             thread.destroy();
             expect(thread.unbindDOMListeners).toBeCalled();
             expect(thread.unmountPopover).toBeCalled();
+        });
+
+        it('should remove thread element from DOM', () => {
+            thread.element = document.createElement('div');
+            rootElement.removeChild = jest.fn();
+            rootElement.appendChild(thread.element);
+            thread.destroy();
+            expect(rootElement.removeChild).toBeCalled();
         });
     });
 
@@ -119,6 +131,11 @@ describe('AnnotationThread', () => {
     });
 
     describe('renderAnnotationPopover()', () => {
+        const event = {
+            stopPropagation: jest.fn(),
+            preventDefault: jest.fn()
+        };
+
         it('should render and display the popover for this annotation', () => {
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
@@ -126,8 +143,10 @@ describe('AnnotationThread', () => {
             ReactDOM.render = jest.fn();
             thread.position = jest.fn();
 
-            thread.renderAnnotationPopover();
+            thread.renderAnnotationPopover(event);
             expect(thread.popoverComponent).not.toBeUndefined();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
         });
     });
 
@@ -183,6 +202,36 @@ describe('AnnotationThread', () => {
             });
             expect(thread.api.create).toBeCalled();
             expect(thread.updateTemporaryAnnotation).not.toBeCalled();
+        });
+    });
+
+    describe('updateAnnotationThread()', () => {
+        beforeEach(() => {
+            thread.threadNumber = '2';
+            thread.comments = [];
+            thread.createdAt = 'yesterday';
+        });
+
+        it('should update thread information if none was set', () => {
+            thread.threadNumber = undefined;
+            thread.updateAnnotationThread({
+                id: '123',
+                threadNumber: '1',
+                threadID: 'abc',
+                createdAt: 'today'
+            });
+            expect(thread.id).toEqual('123');
+            expect(thread.threadNumber).toEqual('1');
+            expect(thread.threadID).toEqual('abc');
+            expect(thread.comments.length).toEqual(0);
+            expect(thread.createdAt).toEqual('today');
+        });
+
+        it('should add a comment to the annotation', () => {
+            thread.updateAnnotationThread({
+                message: 'something'
+            });
+            expect(thread.comments.length).toEqual(1);
         });
     });
 
@@ -256,15 +305,11 @@ describe('AnnotationThread', () => {
 
     describe('delete()', () => {
         let annotation;
-        let annotation2;
-        const threadPromise = Promise.resolve();
 
         beforeEach(() => {
             api = {
-                user: {
-                    id: 1
-                },
-                delete: jest.fn().mockResolvedValue(threadPromise)
+                user: { id: 1 },
+                delete: jest.fn().mockResolvedValue()
             };
 
             annotation = {
@@ -275,68 +320,48 @@ describe('AnnotationThread', () => {
                 threadID: 1
             };
 
-            annotation2 = {
-                id: 'someID2',
-                permissions: {
-                    can_delete: false
-                },
-                threadID: 1
-            };
-
             thread.api = api;
             thread.comments = [annotation];
             util.isPlainHighlight = jest.fn();
             thread.cancelFirstComment = jest.fn();
             thread.destroy = jest.fn();
+            thread.deleteSuccessHandler = jest.fn().mockResolvedValue();
             thread.renderAnnotationPopover = jest.fn();
+            thread.cleanupAnnotationOnDelete = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({
                 threadNumber: 1
             });
             thread.emit = jest.fn();
         });
 
-        it('should destroy the thread if the deleted annotation was the last annotation in the thread', () => {
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
-                threadPromise.then(() => {
-                    expect(thread.destroy).toBeCalled();
-                    expect(thread.renderAnnotationPopover).not.toBeCalled();
-                });
+        it('should cleanup the annotation on delete successfully and delete from the specified annotation from the server', () => {
+            thread.delete({ id: 'someID' }).then(() => {
+                expect(thread.api.delete).toBeCalledWith('someID');
+                expect(thread.cleanupAnnotationOnDelete).toBeCalled();
+                expect(thread.deleteSuccessHandler).toBeCalled();
             });
         });
 
-        it('should remove the relevant annotation from its dialog if the deleted annotation was not the last one', () => {
-            thread.comments.push(annotation2);
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
-                expect(thread.renderAnnotationPopover).toBeCalled();
+        it('should error if no annotation was found in thread', () => {
+            thread.comments = [];
+            thread.delete({ id: 'someID' }).catch(() => {
+                expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
             });
         });
 
-        it('should make a server call to delete an annotation with the specified ID if useServer is true', () => {
-            thread.comments.push(annotation2);
-            const promise = thread.delete('someID', true);
-            promise.then(() => {
-                expect(thread.emit).not.toBeCalledWith(THREAD_EVENT.threadCleanup);
-                expect(api.delete).toBeCalledWith('someID');
-            });
-        });
-
-        it('should also delete blank highlight comment from the server when removing the last comment on a highlight thread', () => {
-            annotation2.permissions.can_delete = false;
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID', true);
-            promise.then(() => {
-                expect(api.delete).toBeCalledWith('someID');
+        it('should not delete annotation if user does not have permissions to delete', () => {
+            annotation.permissions.can_delete = false;
+            thread.delete({ id: 'someID' }).catch(() => {
+                expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
             });
         });
 
         it('should not make a server call to delete an annotation with the specified ID if useServer is false', () => {
-            const promise = thread.delete('someID', false);
-            promise.then(() => {
+            thread.delete({ id: 'someID' }, false).then(() => {
                 expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
             });
         });
 
@@ -344,34 +369,8 @@ describe('AnnotationThread', () => {
             api.delete = jest.fn().mockRejectedValue();
             thread.api = api;
 
-            const promise = thread.delete('someID', true);
-            promise.catch(() => {
+            thread.delete({ id: 'someID' }).catch(() => {
                 expect(api.delete).toBeCalled();
-            });
-        });
-
-        it('should toggle highlight dialogs with the delete of the last comment if user does not have permission to delete the entire annotation', () => {
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID');
-            promise.then(() => {
-                expect(thread.cancelFirstComment).toBeCalled();
-                expect(thread.destroy).not.toBeCalled();
-            });
-        });
-
-        it('should destroy the annotation with the delete of the last comment if the user has permissions', () => {
-            annotation2.permissions.can_delete = true;
-            thread.comments.push(annotation2);
-            util.isPlainHighlight = jest.fn().mockReturnValue(true);
-
-            const promise = thread.delete('someID');
-            promise.then(() => {
-                expect(thread.emit).toBeCalledWith(THREAD_EVENT.threadCleanup);
-                expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
-                expect(thread.cancelFirstComment).not.toBeCalled();
-                expect(thread.destroy).toBeCalled();
             });
         });
     });
@@ -438,6 +437,18 @@ describe('AnnotationThread', () => {
             expect(thread.renderAnnotationPopover).not.toBeCalled();
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
             expect(thread.destroy).toBeCalled();
+        });
+    });
+
+    describe('deleteErrorHandler()', () => {
+        it('should re-render and broadcast delete error message', () => {
+            const error = {
+                toString: jest.fn().mockReturnValue('error')
+            };
+            thread.deleteErrorHandler(error);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, thread.location);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.deleteError);
+            expect(console.error).toBeCalledWith(THREAD_EVENT.deleteError, 'error'); // eslint-disable-line
         });
     });
 
@@ -712,6 +723,15 @@ describe('AnnotationThread', () => {
             thread.handleThreadSaveError(new Error(), 1);
             expect(thread.delete).toBeCalledWith({ id: 1 }, false);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.createError);
+        });
+    });
+
+    describe('toggleFlippedThreadEl()', () => {
+        it('should do nothing if annotation has no associated element', () => {
+            thread.element = document.createElement('div');
+            thread.element.classList.add(CLASS_FLIPPED_POPOVER);
+            thread.toggleFlippedThreadEl();
+            expect(thread.element.classList).not.toContain(CLASS_FLIPPED_POPOVER);
         });
     });
 });
