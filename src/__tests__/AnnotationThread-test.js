@@ -8,7 +8,8 @@ import {
     TYPES,
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
-    THREAD_EVENT
+    THREAD_EVENT,
+    CLASS_FLIPPED_POPOVER
 } from '../constants';
 
 let thread;
@@ -27,6 +28,8 @@ describe('AnnotationThread', () => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
+
+        console.error = jest.fn(); // eslint-disable-line
 
         thread = new AnnotationThread({
             annotatedElement: rootElement,
@@ -60,6 +63,14 @@ describe('AnnotationThread', () => {
             thread.destroy();
             expect(thread.unbindDOMListeners).toBeCalled();
             expect(thread.unmountPopover).toBeCalled();
+        });
+
+        it('should remove thread element from DOM', () => {
+            thread.element = document.createElement('div');
+            rootElement.removeChild = jest.fn();
+            rootElement.appendChild(thread.element);
+            thread.destroy();
+            expect(rootElement.removeChild).toBeCalled();
         });
     });
 
@@ -120,6 +131,11 @@ describe('AnnotationThread', () => {
     });
 
     describe('renderAnnotationPopover()', () => {
+        const event = {
+            stopPropagation: jest.fn(),
+            preventDefault: jest.fn()
+        };
+
         it('should render and display the popover for this annotation', () => {
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
@@ -127,8 +143,10 @@ describe('AnnotationThread', () => {
             ReactDOM.render = jest.fn();
             thread.position = jest.fn();
 
-            thread.renderAnnotationPopover();
+            thread.renderAnnotationPopover(event);
             expect(thread.popoverComponent).not.toBeUndefined();
+            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toBeCalled();
         });
     });
 
@@ -184,6 +202,36 @@ describe('AnnotationThread', () => {
             });
             expect(thread.api.create).toBeCalled();
             expect(thread.updateTemporaryAnnotation).not.toBeCalled();
+        });
+    });
+
+    describe('updateAnnotationThread()', () => {
+        beforeEach(() => {
+            thread.threadNumber = '2';
+            thread.comments = [];
+            thread.createdAt = 'yesterday';
+        });
+
+        it('should update thread information if none was set', () => {
+            thread.threadNumber = undefined;
+            thread.updateAnnotationThread({
+                id: '123',
+                threadNumber: '1',
+                threadID: 'abc',
+                createdAt: 'today'
+            });
+            expect(thread.id).toEqual('123');
+            expect(thread.threadNumber).toEqual('1');
+            expect(thread.threadID).toEqual('abc');
+            expect(thread.comments.length).toEqual(0);
+            expect(thread.createdAt).toEqual('today');
+        });
+
+        it('should add a comment to the annotation', () => {
+            thread.updateAnnotationThread({
+                message: 'something'
+            });
+            expect(thread.comments.length).toEqual(1);
         });
     });
 
@@ -260,9 +308,7 @@ describe('AnnotationThread', () => {
 
         beforeEach(() => {
             api = {
-                user: {
-                    id: 1
-                },
+                user: { id: 1 },
                 delete: jest.fn().mockResolvedValue()
             };
 
@@ -274,7 +320,6 @@ describe('AnnotationThread', () => {
                 threadID: 1
             };
 
-            console.error = jest.fn(); // eslint-disable-line
             thread.api = api;
             thread.comments = [annotation];
             util.isPlainHighlight = jest.fn();
@@ -294,6 +339,22 @@ describe('AnnotationThread', () => {
                 expect(thread.api.delete).toBeCalledWith('someID');
                 expect(thread.cleanupAnnotationOnDelete).toBeCalled();
                 expect(thread.deleteSuccessHandler).toBeCalled();
+            });
+        });
+
+        it('should error if no annotation was found in thread', () => {
+            thread.comments = [];
+            thread.delete({ id: 'someID' }).catch(() => {
+                expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
+            });
+        });
+
+        it('should not delete annotation if user does not have permissions to delete', () => {
+            annotation.permissions.can_delete = false;
+            thread.delete({ id: 'someID' }).catch(() => {
+                expect(api.delete).not.toBeCalled();
+                expect(console.error).toBeCalled(); // eslint-disable-line
             });
         });
 
@@ -376,6 +437,18 @@ describe('AnnotationThread', () => {
             expect(thread.renderAnnotationPopover).not.toBeCalled();
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.delete);
             expect(thread.destroy).toBeCalled();
+        });
+    });
+
+    describe('deleteErrorHandler()', () => {
+        it('should re-render and broadcast delete error message', () => {
+            const error = {
+                toString: jest.fn().mockReturnValue('error')
+            };
+            thread.deleteErrorHandler(error);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, thread.location);
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.deleteError);
+            expect(console.error).toBeCalledWith(THREAD_EVENT.deleteError, 'error'); // eslint-disable-line
         });
     });
 
@@ -650,6 +723,14 @@ describe('AnnotationThread', () => {
             thread.handleThreadSaveError(new Error(), 1);
             expect(thread.delete).toBeCalledWith({ id: 1 }, false);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.createError);
+        });
+    });
+
+    describe('toggleFlippedThreadEl()', () => {
+        it('should do nothing if annotation has no associated element', () => {
+            thread.element = document.createElement('div');
+            thread.toggleFlippedThreadEl();
+            expect(thread.element.classList).toContain(CLASS_FLIPPED_POPOVER);
         });
     });
 });
