@@ -96,11 +96,6 @@ class Annotator extends EventEmitter {
             this.container = document.querySelector(this.container);
         }
 
-        if (!this.container) {
-            this.emit(ANNOTATOR_EVENT.loadError, this.localized.loadError);
-            return;
-        }
-
         // Get the header dom element if selector was passed, in tests
         this.headerElement = this.options.headerElement;
         if (typeof this.headerElement === 'string') {
@@ -110,6 +105,11 @@ class Annotator extends EventEmitter {
         // fallback to the container element
         if (this.options.header !== 'none' && !this.headerElement) {
             this.headerElement = this.container.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER);
+        }
+
+        if (!this.container) {
+            this.emit(ANNOTATOR_EVENT.loadError, this.localized.loadError);
+            return;
         }
 
         this.container.classList.add('ba');
