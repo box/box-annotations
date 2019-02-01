@@ -54,4 +54,30 @@ describe('api/API', () => {
             });
         });
     });
+
+    describe('formatUserInfo()', () => {
+        it('should return a properly formatted user', () => {
+            const user = api.formatUserInfo({ login: 'me@email.com', profile_image: 'url' });
+            expect(user.avatarUrl).toEqual('url');
+            expect(user.email).toEqual('me@email.com');
+        });
+    });
+
+    describe('formatComment()', () => {
+        it('should reformat a comment to only contain relevant information', () => {
+            api.formatUserInfo = jest.fn();
+            const comment = api.formatComment({ threadNumber: '1', message: 'something' });
+            expect(comment.threadNumber).toBeUndefined();
+            expect(comment.message).toEqual('something');
+        });
+    });
+
+    describe('appendComments()', () => {
+        it('should format and append a valid comment to the annotation comments', () => {
+            api.formatComment = jest.fn();
+            expect(api.appendComments({}, []).length).toEqual(0);
+            expect(api.appendComments({ message: '' }, []).length).toEqual(0);
+            expect(api.appendComments({ message: 'something' }, []).length).toEqual(1);
+        });
+    });
 });

@@ -569,6 +569,7 @@ class Annotator extends EventEmitter {
                 break;
             default:
                 this.emit(data.event, data.data);
+                break;
         }
     }
 
