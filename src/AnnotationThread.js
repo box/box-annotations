@@ -670,7 +670,10 @@ class AnnotationThread extends EventEmitter {
      */
     toggleFlippedThreadEl() {
         if (this.element) {
-            this.element.classList.toggle(CLASS_FLIPPED_POPOVER);
+            const isDialogFlipped = this.element.classList.contains(CLASS_FLIPPED_POPOVER);
+            if (isDialogFlipped) {
+                this.element.classList.remove(CLASS_FLIPPED_POPOVER);
+            }
         }
     }
 }

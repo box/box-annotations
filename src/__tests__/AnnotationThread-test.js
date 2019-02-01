@@ -729,8 +729,9 @@ describe('AnnotationThread', () => {
     describe('toggleFlippedThreadEl()', () => {
         it('should do nothing if annotation has no associated element', () => {
             thread.element = document.createElement('div');
+            thread.element.classList.add(CLASS_FLIPPED_POPOVER);
             thread.toggleFlippedThreadEl();
-            expect(thread.element.classList).toContain(CLASS_FLIPPED_POPOVER);
+            expect(thread.element.classList).not.toContain(CLASS_FLIPPED_POPOVER);
         });
     });
 });
