@@ -17,18 +17,18 @@ class CommentList extends React.Component<Props> {
     commentsContainer: null | HTMLElement;
 
     componentDidMount() {
-        this.resetCommentsScroll();
+        this.scrollToBottom();
     }
 
     componentDidUpdate() {
-        this.resetCommentsScroll();
+        this.scrollToBottom();
     }
 
     /**
      * Scrolls the container to the bottom
      * @return {void}
      */
-    resetCommentsScroll = () => {
+    scrollToBottom = () => {
         if (this.commentsContainer) {
             this.commentsContainer.scrollTop = this.commentsContainer.scrollHeight;
         }
