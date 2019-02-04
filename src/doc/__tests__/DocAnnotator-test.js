@@ -10,7 +10,8 @@ import {
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CONTROLLER_EVENT,
     CREATE_EVENT,
-    SELECTOR_ANNOTATED_ELEMENT
+    SELECTOR_ANNOTATED_ELEMENT,
+    CLASS_ANNOTATION_POPOVER
 } from '../../constants';
 import DocHighlightThread from '../DocHighlightThread';
 import FileVersionAPI from '../../api/FileVersionAPI';
@@ -897,7 +898,6 @@ describe('doc/DocAnnotator', () => {
                 getRangeAt: jest.fn()
             });
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
-            util.findClosestElWithClass = jest.fn().mockReturnValue(null);
             annotator.isCreatingHighlight = false;
         });
 
@@ -916,11 +916,9 @@ describe('doc/DocAnnotator', () => {
         });
 
         it('should clear selection if the user is NOT currently creating a highlight annotation', () => {
-            annotator.isCreatingHighlight = false;
             util.isInDialog = jest.fn().mockReturnValue(true);
             annotator.onSelectionChange(event);
             expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
-            expect(util.findClosestElWithClass).toBeCalled();
         });
 
         it('should clear out highlights and exit "annotation creation" mode if an invalid selection', () => {
@@ -929,11 +927,20 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.resetHighlightOnOutsideClick).toBeCalled();
         });
 
-        it('should do nothing the the user is currently creating a point annotation', () => {
+        it('should do nothing if the user is currently creating a point annotation', () => {
             annotator.modeControllers = {
                 point: controller
             };
             controller.pendingThreadID = 'something';
+            annotator.onSelectionChange(event);
+            expect(annotator.isCreatingHighlight).toBeFalsy();
+        });
+
+        it('should do nothing if a popover is already visible in the DOM', () => {
+            const popover = document.createElement('div');
+            popover.classList.add(CLASS_ANNOTATION_POPOVER);
+            rootElement.appendChild(popover);
+
             annotator.onSelectionChange(event);
             expect(annotator.isCreatingHighlight).toBeFalsy();
         });

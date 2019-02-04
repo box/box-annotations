@@ -24,7 +24,7 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
     CREATE_EVENT,
-    CLASS_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER
 } from '../constants';
 
 const DOUBLE_CLICK_COUNT = 2;
@@ -573,7 +573,7 @@ class DocAnnotator extends Annotator {
         // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
-        const isPopoverActive = !!util.findClosestElWithClass(document.activeElement, CLASS_ANNOTATION_POPOVER);
+        const isPopoverActive = !!document.querySelector(SELECTOR_ANNOTATION_POPOVER);
         if (isCreatingPoint || isPopoverActive) {
             return;
         }
