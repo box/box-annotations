@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import Form from 'box-react-ui/lib/components/form-elements/form/Form';
-import TextArea from 'box-react-ui/lib/components/form-elements/text-area/TextArea';
+import TextArea from 'box-react-ui/lib/components/text-area/TextArea';
 import commonMessages from 'box-react-ui/lib/common/messages';
 
 import AddApproval from './AddApproval';
@@ -209,6 +209,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
                             isDisabled={isDisabled}
                             name='commentText'
                             label='Annotation Comment'
+                            hideLabel={true}
                             onFocus={onFocus}
                             value={commentText}
                             placeholder={

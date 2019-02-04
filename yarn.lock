@@ -2203,10 +2203,10 @@ box-node-sdk@^1.22.0:
     url-template "^2.0.8"
     uuid "^3.0.0"
 
-box-react-ui@^26.1.1:
-  version "26.11.0"
-  resolved "https://registry.yarnpkg.com/box-react-ui/-/box-react-ui-26.11.0.tgz#1e66a3bc19413a6d58628ddc0bcdeb4ba4e79513"
-  integrity sha512-MlbdZxnpMemwuuSXFJZlRGvHcGW/z+LcuEsztWBl0O/mEHqV1mIUwFLEIsU0Dk/aYuKgS36+z61K+tDx+b3DEA==
+box-react-ui@^29.0.0:
+  version "29.0.0"
+  resolved "https://registry.yarnpkg.com/box-react-ui/-/box-react-ui-29.0.0.tgz#f4a080de5ca8f049b741a4f53e1f357b7518a8b2"
+  integrity sha512-1fC8dK7ujoKr9kq+qgA/5IAOktMV6UXVqL2NtQ1fMtA24O2D38EQd/YllyKfHyZvoj5xPGGc8KStikbG22hhfg==
 
 brace-expansion@^1.0.0, brace-expansion@^1.1.7:
   version "1.1.11"
