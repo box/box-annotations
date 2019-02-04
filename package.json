@@ -20,8 +20,7 @@
     "yarn": ">=1.0.0"
   },
   "peerDependencies": {
-    "box-react-ui": "^26.1.1",
-    "draft-js": "^0.10.5",
+    "box-react-ui": "^29.0.0",
     "form-serialize": "^0.7.2",
     "immutable": "^3.7.4",
     "lodash": "^4.17.10",
@@ -57,7 +56,7 @@
     "bluebird": "^3.5.2",
     "box-locales": "^0.0.1",
     "box-node-sdk": "^1.22.0",
-    "box-react-ui": "^26.1.1",
+    "box-react-ui": "^29.0.0",
     "chai": "^4.1.2",
     "chai-dom": "^1.8.0",
     "circular-dependency-plugin": "^5.0.2",
@@ -69,7 +68,6 @@
     "core-js": "^2.5.7",
     "css-loader": "^1.0.0",
     "cssnano-cli": "^1.0.5",
-    "draft-js": "^0.10.5",
     "enzyme": "^3.4.4",
     "enzyme-adapter-react-16": "^1.2.0",
     "enzyme-to-json": "^3.3.4",

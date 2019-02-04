@@ -5,13 +5,13 @@
     display: flex;
 
     .bcs-comment-input {
-        div[contentEditable="true"].public-DraftEditor-content {
-            width: auto;
+        textarea {
+            width: 100%;
         }
 
         box-shadow: none;
         margin-bottom: 15px;
-        margin-top: 20px;
+        margin-top: 5px;
         max-height: 140px;
         width: auto;
 
