@@ -7,13 +7,10 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
-import { ContentState, EditorState } from 'draft-js';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 import Form from 'box-react-ui/lib/components/form-elements/form/Form';
-import DraftJSMentionSelector, {
-    DraftMentionDecorator
-} from 'box-react-ui/lib/components/form-elements/draft-js-mention-selector';
+import TextArea from 'box-react-ui/lib/components/text-area/TextArea';
 import commonMessages from 'box-react-ui/lib/common/messages';
 
 import AddApproval from './AddApproval';
@@ -49,7 +46,7 @@ type State = {
     approvalDate: ?Date,
     approvers: SelectorItems,
     approverSelectorError: string,
-    commentEditorState: any,
+    commentText: ?string,
     isAddApprovalVisible: boolean,
 };
 
@@ -62,10 +59,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         approvalDate: null,
         approvers: [],
         approverSelectorError: '',
-        commentEditorState: EditorState.createWithContent(
-            ContentState.createFromText(this.props.tagged_message || ''),
-            DraftMentionDecorator,
-        ),
+        commentText: '',
         isAddApprovalVisible: false
     };
 
@@ -74,16 +68,17 @@ class ApprovalCommentForm extends React.Component<Props, State> {
 
         if (isOpen !== this.props.isOpen && !isOpen) {
             this.setState({
-                commentEditorState: EditorState.createEmpty(
-                    DraftMentionDecorator,
-                ),
+                commentText: this.props.tagged_message || '',
                 isAddApprovalVisible: false
             });
         }
     }
 
-    onFormChangeHandler = (formData: any): void =>
-        this.setState({ isAddApprovalVisible: formData.addApproval === 'on' });
+    onFormChangeHandler = ({ addApproval, commentText }: any): void =>
+        this.setState({ 
+            isAddApprovalVisible: addApproval === 'on',
+            commentText
+        });
 
     onFormValidSubmitHandler = (formData: any): void => {
         const {
@@ -95,7 +90,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             entityId
         } = this.props;
 
-        const { text, hasMention } = this.getFormattedCommentText();
+        const { commentText: text } = this.state;
         if (!text) {
             return;
         }
@@ -119,7 +114,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         } else if (entityId) {
             updateTask({ text, id: entityId });
         } else {
-            createComment({ text, hasMention });
+            createComment({ text, hasMention: false });
         }
 
         if (onSubmit) {
@@ -127,66 +122,15 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         }
 
         this.setState({
-            commentEditorState: EditorState.createEmpty(DraftMentionDecorator),
+            commentText: '',
             isAddApprovalVisible: false,
             approvalDate: null,
             approvers: []
         });
     };
 
-    onMentionSelectorChangeHandler = (nextEditorState: any): void =>
-        this.setState({ commentEditorState: nextEditorState });
-
     onApprovalDateChangeHandler = (date: Date): void => {
         this.setState({ approvalDate: date });
-    };
-
-    /**
-     * Formats the comment editor's text such that it will be accepted by the server.
-     *
-     * @returns {Object}
-     */
-    getFormattedCommentText = (): { text: string, hasMention: boolean } => {
-        const { commentEditorState } = this.state;
-
-        const contentState = commentEditorState.getCurrentContent();
-        const blockMap = contentState.getBlockMap();
-
-        const resultStringArr = [];
-
-        // The API needs to explicitly know if a message contains a mention.
-        let hasMention = false;
-
-        // For all ContentBlocks in the ContentState:
-        blockMap.forEach((block) => {
-            const text = block.getText();
-            const blockMapStringArr = [];
-
-            // Break down the ContentBlock into ranges
-            block.findEntityRanges(
-                () => true,
-                (start, end) => {
-                    const entityKey = block.getEntityAt(start);
-                    // If the range is an Entity, format its text eg '@[1:Username]'
-                    // Otherwise append its text to the block result as-is
-                    if (entityKey) {
-                        const entity = contentState.getEntity(entityKey);
-                        const stringToAdd = `@[${
-                            entity.getData().id
-                        }:${text.substring(start + 1, end)}]`;
-                        blockMapStringArr.push(stringToAdd);
-                        hasMention = true;
-                    } else {
-                        blockMapStringArr.push(text.substring(start, end));
-                    }
-                },
-            );
-            resultStringArr.push(blockMapStringArr.join(''));
-        });
-
-        // Concatentate the array of block strings with newlines
-        // (Each block represents a paragraph)
-        return { text: resultStringArr.join('\n'), hasMention };
     };
 
     handleApproverSelectorInput = (value: any): void => {
@@ -204,21 +148,31 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         approvers.splice(index, 1);
         this.setState({ approvers });
     };
+    
+    validateTextArea = (value: ?string) => {
+        const { intl } = this.props;
+        if (value && value.trim() === '') {
+            return {
+                message: intl.formatMessage(
+                    commonMessages.requiredFieldError
+                )
+            };
+        }
+        return null;
+    }
 
     render(): React.Node {
         const {
             approverSelectorContacts,
             className,
             createTask,
-            getMentionWithQuery,
             intl: { formatMessage },
-            isDisabled,
             isOpen,
-            mentionSelectorContacts = [],
             onCancel,
             onFocus,
             user,
             isEditing,
+            isDisabled,
             tagged_message,
             getAvatarUrl
         } = this.props;
@@ -226,7 +180,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             approvalDate,
             approvers,
             approverSelectorError,
-            commentEditorState,
+            commentText,
             isAddApprovalVisible
         } = this.state;
         const inputContainerClassNames = classNames(
@@ -249,28 +203,26 @@ class ApprovalCommentForm extends React.Component<Props, State> {
                         onChange={this.onFormChangeHandler}
                         onValidSubmit={this.onFormValidSubmitHandler}
                     >
-                        <DraftJSMentionSelector
+                        {/* TODO: Replace Draft.js in box-react-ui implementation of ApprovalCommentForm */}
+                        <TextArea
                             className='bcs-comment-input'
-                            contacts={isOpen ? mentionSelectorContacts : []}
-                            editorState={commentEditorState}
-                            hideLabel
                             isDisabled={isDisabled}
-                            isRequired={isOpen}
                             name='commentText'
-                            label='Comment'
-                            onChange={this.onMentionSelectorChangeHandler}
+                            label='Annotation Comment'
+                            hideLabel={true}
                             onFocus={onFocus}
-                            onMention={getMentionWithQuery}
+                            value={commentText}
                             placeholder={
                                 tagged_message
                                     ? null
                                     : formatMessage(messages.commentWrite)
                             }
-                            validateOnBlur={false}
+                            validation={this.validateTextArea}
+                            isRequired
                         />
                         <aside
                             className={classNames('bcs-at-mention-tip', {
-                                'accessibility-hidden': isOpen,
+                                'accessibility-hidden': isOpen
                             })}
                         >
                             <FormattedMessage {...messages.atMentionTip} />
