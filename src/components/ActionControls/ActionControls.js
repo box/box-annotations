@@ -67,7 +67,7 @@ class ActionControls extends React.Component<Props, State> {
     onCreate = ({ text }: { text: string }) => {
         const { onCreate, type } = this.props;
         onCreate(type, text);
-        this.setState({ isInputOpen: false });
+        this.setState({ isInputOpen: true });
     };
 
     onDelete = (event: Event) => {
