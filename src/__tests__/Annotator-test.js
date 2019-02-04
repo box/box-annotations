@@ -93,6 +93,7 @@ describe('Annotator', () => {
             annotator.setupAnnotations = jest.fn();
             annotator.loadAnnotations = jest.fn();
             annotator.getAnnotationPermissions = jest.fn();
+            annotator.emit = jest.fn();
 
             annotator.permissions = { can_annotate: true };
         });
@@ -104,10 +105,29 @@ describe('Annotator', () => {
             expect(annotator.loadAnnotations).toBeCalled();
         });
 
+        it('should set the container based on class selector', () => {
+            annotator.options.container = 'bp-container';
+            annotator.init(5);
+            expect(annotator.container).not.toBeUndefined();
+        });
+
+        it('should set the headerElement based on class selector', () => {
+            annotator.options.headerElement = 'bp-header';
+            annotator.init(5);
+            expect(annotator.headerElement).not.toBeUndefined();
+        });
+
         it('should set the headerElement to the container as a fallback', () => {
             annotator.options.header = 'light';
             annotator.init(5);
             expect(annotator.headerElement).toEqual(document.querySelector(SELECTOR_BOX_PREVIEW_HEADER_CONTAINER));
+        });
+
+        it('should emit error if no container exists', () => {
+            annotator.options.container = undefined;
+            annotator.init(5);
+            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, annotator.localized.loadError);
+            expect(annotator.container).toBeUndefined();
         });
     });
 
