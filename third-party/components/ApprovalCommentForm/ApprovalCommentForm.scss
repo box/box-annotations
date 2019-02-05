@@ -1,12 +1,16 @@
 .bcs-comment-input-container {
     @import '../../../src/variables';
-    
+
     border-top: solid 1px $off-white;
     display: flex;
 
     .bcs-comment-input {
         textarea {
             width: 100%;
+        }
+
+        .label {
+            display: none;
         }
 
         box-shadow: none;
