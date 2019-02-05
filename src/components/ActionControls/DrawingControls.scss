@@ -5,21 +5,28 @@
         $button-spacing: 5px;
 
         display: flex;
-        margin-left: -#{$button-spacing};
-        margin-right: -#{$button-spacing};
 
         .btn-plain {
             flex-grow: 1;
-            padding-left: $button-spacing;
-            padding-right: $button-spacing;
+            padding: 10px;
 
             .fill-color {
                 fill: $sevens;
             }
+
+            &:hover .fill-color {
+                fill: $better-black;
+            }
         }
 
-        .btn-plain:hover .fill-color {
-            fill: $better-black;
+        .ba-drawing-save-btn,
+        .ba-drawing-save-btn:hover {
+            padding-right: $button-spacing;
+        }
+
+        .ba-drawing-delete-btn,
+        .ba-drawing-delete-btn:hover {
+            padding-left: $button-spacing;
         }
     }
 

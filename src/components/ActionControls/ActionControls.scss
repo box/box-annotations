@@ -25,9 +25,7 @@
         margin: 0;
     }
 
-    .ba-annotator-label ~ .ba-action-controls .ba-action-controls-draw,
-    .ba-annotator-label ~ .ba-action-controls .ba-action-controls-highlight {
-        border-left: 1px solid $see-see;
+    .ba-annotator-label ~ .ba-action-controls .ba-action-controls-draw {
         margin-left: 5px;
     }
 

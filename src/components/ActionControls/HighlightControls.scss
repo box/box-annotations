@@ -5,13 +5,10 @@
         $button-spacing: 5px;
 
         display: flex;
-        margin-left: -#{$button-spacing};
-        margin-right: -#{$button-spacing};
 
         .btn-plain {
             flex-grow: 1;
-            padding-left: $button-spacing;
-            padding-right: $button-spacing;
+            padding: 10px;
 
             .icon-annotation-highlight,
             .icon-annotation-highlight-comment .icon {
@@ -21,17 +18,27 @@
             .icon-annotation-highlight.ba-saved-highlight {
                 fill: $highlight-yellow;
             }
+
+            &:hover {
+                .icon-annotation-highlight,
+                .icon-annotation-highlight-comment .icon {
+                    fill: $better-black;
+                }
+
+                .icon-annotation-highlight.ba-saved-highlight {
+                    fill: $highlight-yellow-hover;
+                }
+            }
         }
 
-        .btn-plain:hover {
-            .icon-annotation-highlight,
-            .icon-annotation-highlight-comment .icon {
-                fill: $better-black;
-            }
+        .ba-highlight-btn,
+        .ba-highlight-btn:hover {
+            padding-right: $button-spacing;
+        }
 
-            .icon-annotation-highlight.ba-saved-highlight {
-                fill: $highlight-yellow-hover;
-            }
+        .ba-highlight-comment-btn,
+        .ba-highlight-comment-btn:hover {
+            padding-left: $button-spacing;
         }
     }
 
