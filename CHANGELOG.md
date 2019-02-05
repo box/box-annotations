@@ -1,3 +1,16 @@
+## 3.9.0 (2019-02-05)
+
+* Fix: Emit correct events when deleting a comment vs. a full annotation (#336) ([1fe30cf](https://github.com/box/box-annotations/commit/1fe30cf)), closes [#336](https://github.com/box/box-annotations/issues/336)
+* Fix: Ensure onSelectionChange doesn't close active popover (#340) ([b3ae944](https://github.com/box/box-annotations/commit/b3ae944)), closes [#340](https://github.com/box/box-annotations/issues/340)
+* Fix: Increase action control button padding (#342) ([4c0a3e6](https://github.com/box/box-annotations/commit/4c0a3e6)), closes [#342](https://github.com/box/box-annotations/issues/342)
+* Fix: Replacing DraftJSMentionSelector with TextArea (#338) ([865c5f2](https://github.com/box/box-annotations/commit/865c5f2)), closes [#338](https://github.com/box/box-annotations/issues/338)
+* Fix: Using form-element/text-area for validation (#341) ([1bb0af8](https://github.com/box/box-annotations/commit/1bb0af8)), closes [#341](https://github.com/box/box-annotations/issues/341)
+* Chore: Cleanup unit test errors and update code coverage (#335) ([9a1fb2d](https://github.com/box/box-annotations/commit/9a1fb2d)), closes [#335](https://github.com/box/box-annotations/issues/335)
+* Chore: Ensure comment list auto scrolls to bottom on post (#339) ([e6aef71](https://github.com/box/box-annotations/commit/e6aef71)), closes [#339](https://github.com/box/box-annotations/issues/339)
+* Chore: Ensure container exists before setting up annotations UI (#337) ([5e2b048](https://github.com/box/box-annotations/commit/5e2b048)), closes [#337](https://github.com/box/box-annotations/issues/337)
+
+
+
 ## 3.8.0 (2019-01-31)
 
 * Fix: Don't destroy a thread that still has comments it hides (#330) ([ff0bc9b](https://github.com/box/box-annotations/commit/ff0bc9b)), closes [#330](https://github.com/box/box-annotations/issues/330)
