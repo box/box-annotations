@@ -192,77 +192,72 @@ describe('drawing/DrawingThread', () => {
 
     describe('undo()', () => {
         beforeEach(() => {
-            thread.draw = jest.fn();
-            thread.updateBoundary = jest.fn();
-            thread.regenerateBoundary = jest.fn();
-            thread.drawBoundary = jest.fn();
-            thread.emitAvailableActions = jest.fn();
-            thread.unmountPopover = jest.fn();
-            thread.renderAnnotationPopover = jest.fn();
-            thread.pathContainer = {
-                isEmpty: jest.fn(),
-                undo: jest.fn().mockReturnValue(false)
-            };
+            thread.updateBoundaryAndPopover = jest.fn();
+            thread.pathContainer.undo = jest.fn();
         });
 
         it('should do nothing when the path container fails to undo', () => {
+            thread.pathContainer.undo.mockReturnValue(false);
+
             thread.undo();
-            expect(thread.pathContainer.undo).toBeCalled();
-            expect(thread.draw).not.toBeCalled();
-            expect(thread.emitAvailableActions).not.toBeCalled();
-            expect(thread.updateBoundary).not.toBeCalled();
-            expect(thread.regenerateBoundary).not.toBeCalled();
-            expect(thread.drawBoundary).not.toBeCalled();
+
+            expect(thread.updateBoundaryAndPopover).not.toBeCalled();
         });
 
-        it('should draw when the path container indicates a successful undo', () => {
-            thread.pathContainer.undo = jest.fn().mockReturnValue(true);
-            thread.undo();
-            expect(thread.pathContainer.undo).toBeCalled();
-            expect(thread.draw).toBeCalled();
-            expect(thread.emitAvailableActions).toBeCalled();
-            expect(thread.updateBoundary).toBeCalled();
-            expect(thread.regenerateBoundary).toBeCalled();
-            expect(thread.drawBoundary).toBeCalled();
-            expect(thread.renderAnnotationPopover).toBeCalled();
+        it('should update the boundary and popover on a successful undo', () => {
+            thread.pathContainer.undo.mockReturnValue(true);
 
-            thread.pathContainer.isEmpty = jest.fn().mockReturnValue(true);
             thread.undo();
-            expect(thread.unmountPopover).toBeCalled();
+
+            expect(thread.updateBoundaryAndPopover).toBeCalled();
         });
     });
 
     describe('redo()', () => {
         beforeEach(() => {
+            thread.updateBoundaryAndPopover = jest.fn();
+            thread.pathContainer.redo = jest.fn();
+        });
+
+        it('should do nothing when the path container fails to redo', () => {
+            thread.pathContainer.redo.mockReturnValue(false);
+
+            thread.redo();
+
+            expect(thread.updateBoundaryAndPopover).not.toBeCalled();
+        });
+
+        it('should update the boundary and popover on a successful redo', () => {
+            thread.pathContainer.redo.mockReturnValue(true);
+
+            thread.redo();
+
+            expect(thread.updateBoundaryAndPopover).toBeCalled();
+        });
+    });
+
+    describe('updateBoundaryAndPopover()', () => {
+        it('should draw, update the boundary, and update the popover', () => {
             thread.draw = jest.fn();
             thread.emitAvailableActions = jest.fn();
             thread.unmountPopover = jest.fn();
             thread.renderAnnotationPopover = jest.fn();
             thread.pathContainer = {
-                isEmpty: jest.fn(),
-                redo: jest.fn().mockReturnValue(false),
+                isEmpty: jest.fn().mockReturnValue(true),
                 getAxisAlignedBoundingBox: jest.fn()
             };
-        });
 
-        it('should do nothing when the path container fails to redo', () => {
-            thread.redo();
-            expect(thread.pathContainer.redo).toBeCalled();
-            expect(thread.draw).not.toBeCalled();
-            expect(thread.emitAvailableActions).not.toBeCalled();
-        });
+            thread.updateBoundaryAndPopover();
 
-        it('should draw when the path container indicates a successful redo', () => {
-            thread.pathContainer.redo = jest.fn().mockReturnValue(true);
-            thread.redo();
-            expect(thread.pathContainer.redo).toBeCalled();
+            expect(thread.unmountPopover).toBeCalled();
             expect(thread.draw).toBeCalled();
             expect(thread.emitAvailableActions).toBeCalled();
-            expect(thread.renderAnnotationPopover).toBeCalled();
+            expect(thread.renderAnnotationPopover).not.toBeCalled();
 
-            thread.pathContainer.isEmpty = jest.fn().mockReturnValue(true);
-            thread.redo();
-            expect(thread.unmountPopover).toBeCalled();
+            thread.pathContainer.isEmpty.mockReturnValue(false);
+
+            thread.updateBoundaryAndPopover();
+            expect(thread.renderAnnotationPopover).toBeCalled();
         });
     });
 

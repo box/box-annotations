@@ -241,7 +241,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Overturns the last drawing stroke if it exists. Emits thenumber of undo and redo
+     * Overturns the last drawing stroke if it exists. Emits the number of undo and redo
      * actions available if an undo was executed.
      *
      * @return {void}
@@ -249,23 +249,12 @@ class DrawingThread extends AnnotationThread {
     undo() {
         const executedUndo = this.pathContainer.undo();
         if (executedUndo) {
-            this.draw(this.drawingContext, true);
-            this.updateBoundary();
-            this.regenerateBoundary();
-
-            if (this.pathContainer.isEmpty()) {
-                this.unmountPopover();
-            } else {
-                this.renderAnnotationPopover();
-            }
-
-            this.drawBoundary();
-            this.emitAvailableActions();
+            this.updateBoundaryAndPopover();
         }
     }
 
     /**
-     * Replays the last undone drawing stroke if it exists. Emits thenumber of undo and redo
+     * Replays the last undone drawing stroke if it exists. Emits the number of undo and redo
      * actions available if a redraw was executed.
      *
      * @return {void}
@@ -273,19 +262,28 @@ class DrawingThread extends AnnotationThread {
     redo() {
         const executedRedo = this.pathContainer.redo();
         if (executedRedo) {
-            this.draw(this.drawingContext, true);
-            this.updateBoundary();
-            this.regenerateBoundary();
-
-            if (this.pathContainer.isEmpty()) {
-                this.unmountPopover();
-            } else {
-                this.renderAnnotationPopover();
-            }
-
-            this.drawBoundary();
-            this.emitAvailableActions();
+            this.updateBoundaryAndPopover();
         }
+    }
+
+    /**
+     * Updates the position of the drawing boundary and popover after an undo/redo event.
+s    *
+     * @return {void}
+     */
+    updateBoundaryAndPopover() {
+        this.draw(this.drawingContext, true);
+        this.updateBoundary();
+        this.regenerateBoundary();
+
+        this.unmountPopover();
+
+        if (!this.pathContainer.isEmpty()) {
+            this.renderAnnotationPopover();
+        }
+
+        this.drawBoundary();
+        this.emitAvailableActions();
     }
 
     /**
@@ -309,7 +307,7 @@ class DrawingThread extends AnnotationThread {
             return;
         }
 
-        /* OPTIMIZE (@minhnguyen): Render only what has been obstructed by the new drawing
+        /* OPTIMIZE: Render only what has been obstructed by the new drawing
          *           rather than every single line in the thread. If we do end
          *           up splitting saves into multiple requests, we can buffer
          *           the amount of re-renders onto a temporary memory canvas.
@@ -329,7 +327,7 @@ class DrawingThread extends AnnotationThread {
     }
 
     /**
-     * Emit an event containing thenumber of undo and redo actions that can be done.
+     * Emit an event containing the number of undo and redo actions that can be done.
      *
      * @return {void}
      */
