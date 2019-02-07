@@ -54,11 +54,12 @@ class DocHighlightThread extends AnnotationThread {
         }
     }
 
-    /**
-     * Cancels the first comment on the thread
-     *
-     * @return {void}
-     */
+    /** @override */
+    cancelUnsavedAnnotation = () => {
+        this.cancelFirstComment();
+    };
+
+    /** @override */
     cancelFirstComment() {
         // Reset type from highlight-comment to highlight
         if (this.comments.length <= 0) {
@@ -66,6 +67,7 @@ class DocHighlightThread extends AnnotationThread {
         }
 
         this.reset();
+        this.emit(THREAD_EVENT.cancel);
 
         // Clear and reset mobile annotations dialog
         if (util.shouldDisplayMobileUI(this.container)) {

@@ -68,6 +68,41 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
+    describe('cancelFirstComment()', () => {
+        beforeEach(() => {
+            thread.type = TYPES.highlight_comment;
+            thread.reset = jest.fn();
+            thread.emit = jest.fn();
+            thread.unmountPopover = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
+            thread.destroy = jest.fn();
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
+            util.isPlainHighlight = jest.fn().mockReturnValue(false);
+        });
+
+        it('should reset the highlight type if annotation has no comments', () => {
+            thread.cancelFirstComment();
+            expect(thread.type).toEqual(TYPES.highlight);
+        });
+
+        it('should unmount popover when user is on mobile', () => {
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            thread.cancelFirstComment();
+            expect(thread.unmountPopover).toBeCalled();
+        });
+
+        it('should re-render popover when annotation toggles from highlight comment to plain highlight', () => {
+            util.isPlainHighlight = jest.fn().mockReturnValue(true);
+            thread.cancelFirstComment();
+            expect(thread.renderAnnotationPopover).toBeCalled();
+        });
+
+        it('should destroy any other annotations', () => {
+            thread.cancelFirstComment();
+            expect(thread.destroy).toBeCalled();
+        });
+    });
+
     describe('hide()', () => {
         it('should erase highlight thread from the UI', () => {
             thread.draw = jest.fn();
