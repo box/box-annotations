@@ -148,20 +148,14 @@ describe('util', () => {
 
     describe('isInDialog()', () => {
         it('should return false if no dialog element exists', () => {
-            expect(util.isInDialog({ clientX: 8, clientY: 8 })).toBeFalsy();
+            expect(util.findClosestElWithClass()).toBeFalsy();
         });
 
         it('should return true if the event is in the given dialog', () => {
             const actionControls = document.createElement('div');
             actionControls.classList.add('ba-action-controls');
             rootElement.appendChild(actionControls);
-            actionControls.getBoundingClientRect = jest.fn().mockReturnValue({
-                left: 0,
-                right: 10,
-                top: 0,
-                bottom: 10
-            });
-            expect(util.isInDialog({ clientX: 8, clientY: 8 }, rootElement)).toBeTruthy();
+            expect(util.isInDialog({ target: actionControls }, rootElement)).toBeTruthy();
         });
     });
 

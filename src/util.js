@@ -250,10 +250,11 @@ export function isInDialog(event, container = null) {
         return !!findClosestElWithClass(event.target, CLASS_ANNOTATION_POPOVER);
     }
 
-    const annotatorLabelEl = container.querySelector('.ba-annotator-label');
-    const commentListEl = container.querySelector('.ba-comment-list');
-    const controlsEl = container.querySelector('.ba-action-controls');
-    return isInElement(event, annotatorLabelEl) || isInElement(event, commentListEl) || isInElement(event, controlsEl);
+    return (
+        !!findClosestElWithClass(event.target, 'ba-annotator-label') ||
+        !!findClosestElWithClass(event.target, 'ba-comment-list') ||
+        !!findClosestElWithClass(event.target, 'ba-action-controls')
+    );
 }
 
 /**
