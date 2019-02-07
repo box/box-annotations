@@ -1,3 +1,11 @@
+## 3.10.0 (2019-02-07)
+
+* Fix: Fix position of popover on drawing undo/redo (#343) ([3ad4107](https://github.com/box/box-annotations/commit/3ad4107)), closes [#343](https://github.com/box/box-annotations/issues/343)
+* Fix: Keep pointClickHandler open when user touches comment form (#344) ([652c2cd](https://github.com/box/box-annotations/commit/652c2cd)), closes [#344](https://github.com/box/box-annotations/issues/344)
+* Fix: Toggle highlight comment to plain highlight on cancel (#345) ([dfdf999](https://github.com/box/box-annotations/commit/dfdf999)), closes [#345](https://github.com/box/box-annotations/issues/345)
+
+
+
 ## 3.9.0 (2019-02-05)
 
 * Fix: Emit correct events when deleting a comment vs. a full annotation (#336) ([1fe30cf](https://github.com/box/box-annotations/commit/1fe30cf)), closes [#336](https://github.com/box/box-annotations/issues/336)
