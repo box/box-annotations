@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import DrawingPath from '../DrawingPath';
 
 let drawingPath;
@@ -10,6 +9,25 @@ describe('drawing/DrawingPath', () => {
 
     afterEach(() => {
         drawingPath = null;
+    });
+
+    describe('initPath()', () => {
+        it('should do nothing if no path data was provided', () => {
+            drawingPath.initPath();
+            expect(drawingPath.path.length).toEqual(0);
+        });
+
+        it('should generate path of Location objects from provided data', () => {
+            const data = {
+                path: [{ x: 1, y: 1 }, { x: 2, y: 2 }]
+            };
+            drawingPath.initPath(data);
+            expect(drawingPath.path.length).toEqual(2);
+            expect(drawingPath.minX).toEqual(1);
+            expect(drawingPath.minY).toEqual(1);
+            expect(drawingPath.maxX).toEqual(2);
+            expect(drawingPath.maxY).toEqual(2);
+        });
     });
 
     describe('addCoordinate()', () => {
@@ -108,6 +126,16 @@ describe('drawing/DrawingPath', () => {
     });
 
     describe('drawPath()', () => {
+        it('should do nothing when no context or browser path exist', () => {
+            drawingPath.drawPath({});
+
+            drawingPath.browserPath = {
+                forEach: jest.fn()
+            };
+            drawingPath.drawPath();
+            expect(drawingPath.browserPath.forEach).not.toBeCalled();
+        });
+
         it('should draw when there are browser coordinates', () => {
             const context = {
                 quadraticCurveTo: jest.fn(),
@@ -123,10 +151,11 @@ describe('drawing/DrawingPath', () => {
             };
 
             drawingPath.addCoordinate(docCoord, browserCoord);
+            drawingPath.addCoordinate(docCoord, browserCoord);
             drawingPath.drawPath(context);
 
-            expect(context.quadraticCurveTo).toBeCalled();
-            expect(context.moveTo).toBeCalled();
+            expect(context.quadraticCurveTo).toBeCalledTimes(2);
+            expect(context.moveTo).toBeCalledTimes(1);
         });
 
         it('should not draw when there are no browser coordinates', () => {
@@ -149,6 +178,13 @@ describe('drawing/DrawingPath', () => {
     });
 
     describe('generateBrowserPath()', () => {
+        it('should do nothing when no path exists', () => {
+            const transform = jest.fn();
+            drawingPath.path = undefined;
+            drawingPath.generateBrowserPath(transform);
+            expect(transform).not.toBeCalled();
+        });
+
         it('should generate the browser path', () => {
             const lengthBefore = drawingPath.browserPath.length;
 

@@ -75,19 +75,28 @@ class DrawingThread extends AnnotationThread {
         this.redo = this.redo.bind(this);
         this.canComment = false;
 
-        // Recreate stored paths
-        if (this.location && this.location.paths) {
-            this.regenerateBoundary();
+        this.initStoredPaths();
+    }
 
-            if (this.pathContainer.isEmpty()) {
-                this.unmountPopover();
-            }
-
-            this.location.paths.forEach((drawingPathData) => {
-                const pathInstance = new DrawingPath(drawingPathData);
-                this.pathContainer.insert(pathInstance);
-            });
+    /**
+     * Recreate stored paths
+     * @return {void}
+     */
+    initStoredPaths() {
+        if (!this.location || !this.location.paths) {
+            return;
         }
+
+        this.regenerateBoundary();
+
+        if (this.pathContainer.isEmpty()) {
+            this.unmountPopover();
+        }
+
+        this.location.paths.forEach((drawingPathData) => {
+            const pathInstance = new DrawingPath(drawingPathData);
+            this.pathContainer.insert(pathInstance);
+        });
     }
 
     /**

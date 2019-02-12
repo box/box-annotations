@@ -27,20 +27,31 @@ class DrawingPath {
      * @return {DrawingPath} A DrawingPath instance
      */
     constructor(drawingPathData: ?DrawingPath) {
-        if (drawingPathData) {
-            // $FlowFixMe
-            this.path = drawingPathData.path.map((num) => {
-                const x = +num.x;
-                const y = +num.y;
+        this.initPath(drawingPathData);
+    }
 
-                this.minX = Math.min(this.minX, x);
-                this.maxX = Math.max(this.maxX, x);
-                this.minY = Math.min(this.minY, y);
-                this.maxY = Math.max(this.maxY, y);
-
-                return createLocation(x, y);
-            });
+    /**
+     * Initialize a path from passed in data
+     * @param {DrawingPath} drawingPathData - The drawingPath object data to be instantiated into an object
+     * @return {void}
+     */
+    initPath(drawingPathData: ?DrawingPath) {
+        if (!drawingPathData) {
+            return;
         }
+
+        // $FlowFixMe
+        this.path = drawingPathData.path.map((num: Coordinates) => {
+            const x = +num.x;
+            const y = +num.y;
+
+            this.minX = Math.min(this.minX, x);
+            this.maxX = Math.max(this.maxX, x);
+            this.minY = Math.min(this.minY, y);
+            this.maxY = Math.max(this.maxY, y);
+
+            return createLocation(x, y);
+        });
     }
 
     /**
@@ -103,24 +114,23 @@ class DrawingPath {
             return;
         }
 
-        const pathLen = this.browserPath.length;
-        for (let i = 0; i < pathLen; i++) {
+        this.browserPath.forEach((coordinate, index) => {
             let xLast;
             let yLast;
 
-            if (i > 0) {
-                xLast = this.browserPath[i - 1].x;
-                yLast = this.browserPath[i - 1].y;
+            if (index > 0) {
+                xLast = this.browserPath[index - 1].x;
+                yLast = this.browserPath[index - 1].y;
             } else {
-                xLast = this.browserPath[i].x;
-                yLast = this.browserPath[i].y;
+                xLast = coordinate.x;
+                yLast = coordinate.y;
                 ctx.moveTo(xLast, yLast);
             }
 
-            const xMid = (this.browserPath[i].x + xLast) / 2;
-            const yMid = (this.browserPath[i].y + yLast) / 2;
+            const xMid = (coordinate.x + xLast) / 2;
+            const yMid = (coordinate.y + yLast) / 2;
             ctx.quadraticCurveTo(xLast, yLast, xMid, yMid);
-        }
+        });
     }
 
     /**

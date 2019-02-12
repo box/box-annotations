@@ -1,69 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/AnnotationPopover/AnnotatorLabel should render a drawing annotation label 1`] = `
-<AnnotatorLabel
-  createdBy={
-    Object {
-      "email": "princess@genovia.gov",
-      "id": "789ghi",
-      "name": "Mia Thermopolis",
-      "type": "user",
-    }
-  }
-  id="123"
-  intl={
-    Object {
-      "formatDate": [Function],
-      "formatMessage": [Function],
-    }
-  }
-  type="draw"
-/>
+<span
+  className="ba-annotator-label"
+>
+  <CommentText
+    id="123"
+    tagged_message="{name} drew"
+    translationEnabled={false}
+  />
+</span>
 `;
 
 exports[`components/AnnotationPopover/AnnotatorLabel should render a highlight annotation label 1`] = `
-<AnnotatorLabel
-  createdBy={
-    Object {
-      "email": "princess@genovia.gov",
-      "id": "789ghi",
-      "name": "Mia Thermopolis",
-      "type": "user",
-    }
-  }
-  id="123"
-  intl={
-    Object {
-      "formatDate": [Function],
-      "formatMessage": [Function],
-    }
-  }
-  type="highlight"
-/>
+<span
+  className="ba-annotator-label"
+>
+  <CommentText
+    id="123"
+    tagged_message="{name} highlighted"
+    translationEnabled={false}
+  />
+</span>
 `;
 
 exports[`components/AnnotationPopover/AnnotatorLabel should render an anonymous drawing annotation label 1`] = `
-<AnnotatorLabel
-  id="123"
-  intl={
-    Object {
-      "formatDate": [Function],
-      "formatMessage": [Function],
-    }
-  }
-  type="draw"
-/>
+<span
+  className="ba-annotator-label"
+>
+  <CommentText
+    id="123"
+    tagged_message="{name} drew"
+    translationEnabled={false}
+  />
+</span>
 `;
 
 exports[`components/AnnotationPopover/AnnotatorLabel should render an anonymous highlight annotation label 1`] = `
-<AnnotatorLabel
-  id="123"
-  intl={
-    Object {
-      "formatDate": [Function],
-      "formatMessage": [Function],
-    }
-  }
-  type="highlight"
-/>
+<span
+  className="ba-annotator-label"
+>
+  <CommentText
+    id="123"
+    tagged_message="{name} highlighted"
+    translationEnabled={false}
+  />
+</span>
 `;
+
+exports[`components/AnnotationPopover/AnnotatorLabel should render nothign if label is pending 1`] = `""`;

@@ -13,11 +13,16 @@ const createdBy = {
 describe('components/AnnotationPopover/AnnotatorLabel', () => {
     const render = (props = {}) => shallow(<AnnotatorLabel id='123' {...props} />);
 
+    test('should render nothign if label is pending', () => {
+        const wrapper = render({ isPending: true }).dive();
+        expect(wrapper).toMatchSnapshot();
+    });
+
     test('should render a highlight annotation label', () => {
         const wrapper = render({
             type: 'highlight',
             createdBy
-        });
+        }).dive();
         expect(wrapper).toMatchSnapshot();
     });
 
@@ -25,21 +30,21 @@ describe('components/AnnotationPopover/AnnotatorLabel', () => {
         const wrapper = render({
             type: 'draw',
             createdBy
-        });
+        }).dive();
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render an anonymous highlight annotation label', () => {
         const wrapper = render({
             type: 'highlight'
-        });
+        }).dive();
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render an anonymous drawing annotation label', () => {
         const wrapper = render({
             type: 'draw'
-        });
+        }).dive();
         expect(wrapper).toMatchSnapshot();
     });
 });

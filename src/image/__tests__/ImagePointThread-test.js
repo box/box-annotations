@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import ImagePointThread from '../ImagePointThread';
 import * as util from '../../util';
-import { STATES, SELECTOR_ANNOTATED_ELEMENT } from '../../constants';
+import { STATES, SELECTOR_ANNOTATED_ELEMENT, CLASS_FLIPPED_POPOVER } from '../../constants';
 import * as imageUtil from '../imageUtil';
 
 let thread;
@@ -79,6 +79,35 @@ describe('image/ImagePointThread', () => {
             thread.state = STATES.inactive;
             thread.show();
             expect(thread.renderAnnotationPopover).not.toBeCalled();
+        });
+    });
+
+    describe('position()', () => {
+        beforeEach(() => {
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
+            util.findElement = jest.fn().mockReturnValue(rootElement);
+            thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
+            util.repositionCaret = jest.fn().mockReturnValue(0);
+        });
+
+        it('should not re-position the popover on mobile devices', () => {
+            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
+            thread.position();
+            expect(util.findElement).not.toBeCalled();
+        });
+
+        it('should position desktop popovers', () => {
+            util.isInUpperHalf = jest.fn().mockReturnValue(true);
+            thread.position();
+            expect(util.findElement).toBeCalled();
+            expect(rootElement.classList).not.toContain(CLASS_FLIPPED_POPOVER);
+        });
+
+        it('should flip popovers in the lower half of the viewport', () => {
+            util.isInUpperHalf = jest.fn().mockReturnValue(false);
+            thread.position();
+            expect(util.findElement).toBeCalled();
+            expect(rootElement.classList).toContain(CLASS_FLIPPED_POPOVER);
         });
     });
 
