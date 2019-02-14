@@ -10,17 +10,7 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },
@@ -42,19 +32,7 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
       >
         <PlainButton
           className="ba-mobile-close-btn"
-          onClick={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onClick={[MockFunction]}
         >
           <IconClose
             height={20}
@@ -94,65 +72,17 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
               },
             ]
           }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onDelete={[MockFunction]}
         />
         <ActionControls
           canComment={false}
           canDelete={false}
           hasComments={true}
           isPending={false}
-          onCancel={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCancel={[MockFunction]}
           onCommentClick={[Function]}
-          onCreate={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCreate={[MockFunction]}
+          onDelete={[MockFunction]}
         />
       </div>
     </div>
@@ -170,17 +100,7 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },
@@ -206,46 +126,10 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
           canDelete={false}
           hasComments={false}
           isPending={true}
-          onCancel={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCancel={[MockFunction]}
           onCommentClick={[Function]}
-          onCreate={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCreate={[MockFunction]}
+          onDelete={[MockFunction]}
         />
       </div>
     </div>
@@ -263,17 +147,7 @@ exports[`components/AnnotationPopover should correctly render a popover with com
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },
@@ -320,65 +194,17 @@ exports[`components/AnnotationPopover should correctly render a popover with com
               },
             ]
           }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onDelete={[MockFunction]}
         />
         <ActionControls
           canComment={false}
           canDelete={false}
           hasComments={true}
           isPending={false}
-          onCancel={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCancel={[MockFunction]}
           onCommentClick={[Function]}
-          onCreate={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCreate={[MockFunction]}
+          onDelete={[MockFunction]}
         />
       </div>
     </div>
@@ -396,17 +222,7 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },
@@ -453,19 +269,7 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
               },
             ]
           }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onDelete={[MockFunction]}
         />
       </div>
     </div>
@@ -483,17 +287,7 @@ exports[`components/AnnotationPopover should correctly render an annotation with
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },
@@ -520,46 +314,10 @@ exports[`components/AnnotationPopover should correctly render an annotation with
           canDelete={false}
           hasComments={false}
           isPending={false}
-          onCancel={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCancel={[MockFunction]}
           onCommentClick={[Function]}
-          onCreate={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
-          onDelete={
-            [MockFunction] {
-              "calls": Array [
-                Array [],
-              ],
-              "results": Array [
-                Object {
-                  "isThrow": false,
-                  "value": undefined,
-                },
-              ],
-            }
-          }
+          onCreate={[MockFunction]}
+          onDelete={[MockFunction]}
           type="highlight"
         />
       </div>
@@ -578,17 +336,7 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
             defaultMessage="Close Popover"
             id="ba.closePopover"
           />,
-          "handler": [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "isThrow": false,
-                "value": undefined,
-              },
-            ],
-          },
+          "handler": [MockFunction],
           "key": "esc",
           "type": "Close",
         },

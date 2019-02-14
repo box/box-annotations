@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import CommentList from '../CommentList';
+
+const SELECTOR_COMMENT_LIST = '.ba-comment-list';
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
@@ -36,5 +38,14 @@ describe('components/CommentList', () => {
         const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />);
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-comment-list-item').length).toEqual(2);
+    });
+
+    test('should scroll to the bottom on componentDidUpdate()', () => {
+        const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />);
+        const instance = wrapper.instance();
+        instance.scrollToBottom = jest.fn();
+
+        instance.componentDidUpdate();
+        expect(instance.scrollToBottom).toBeCalled();
     });
 });
