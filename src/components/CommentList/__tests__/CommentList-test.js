@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 import CommentList from '../CommentList';
-
-const SELECTOR_COMMENT_LIST = '.ba-comment-list';
 
 const TIME_STRING_SEPT_27_2017 = '2017-09-27T10:40:41-07:00';
 
