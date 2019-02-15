@@ -31,6 +31,19 @@ class DrawingPath {
     }
 
     /**
+     * Updates the path min/max coordinates if necessary
+     * @param {number} x - X path coordinate
+     * @param {number} y - Y path coordinate
+     * @return {void}
+     */
+    updatePathBounds(x: number, y: number) {
+        this.minX = Math.min(this.minX, x);
+        this.maxX = Math.max(this.maxX, x);
+        this.minY = Math.min(this.minY, y);
+        this.maxY = Math.max(this.maxY, y);
+    }
+
+    /**
      * Initialize a path from passed in data
      * @param {DrawingPath} drawingPathData - The drawingPath object data to be instantiated into an object
      * @return {void}
@@ -45,11 +58,7 @@ class DrawingPath {
             const x = +num.x;
             const y = +num.y;
 
-            this.minX = Math.min(this.minX, x);
-            this.maxX = Math.max(this.maxX, x);
-            this.minY = Math.min(this.minY, y);
-            this.maxY = Math.max(this.maxY, y);
-
+            this.updatePathBounds(x, y);
             return createLocation(x, y);
         });
     }

@@ -48,4 +48,4 @@ exports[`components/AnnotationPopover/AnnotatorLabel should render an anonymous 
 </span>
 `;
 
-exports[`components/AnnotationPopover/AnnotatorLabel should render nothign if label is pending 1`] = `""`;
+exports[`components/AnnotationPopover/AnnotatorLabel should render nothing if label is pending 1`] = `""`;

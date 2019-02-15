@@ -159,11 +159,6 @@ describe('components/ActionControls', () => {
 
     test('should focus the input on componentDidMount()', () => {
         const wrapper = render({ canDelete: true, type: 'highlight' });
-        const instance = wrapper.instance();
-
-        instance.componentDidMount(event);
-        wrapper.update();
-
         expect(wrapper.state().isInputOpen).toEqual(true);
     });
 });

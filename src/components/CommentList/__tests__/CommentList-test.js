@@ -43,7 +43,7 @@ describe('components/CommentList', () => {
         const instance = wrapper.instance();
         instance.scrollToBottom = jest.fn();
 
-        instance.componentDidUpdate();
+        wrapper.setProps({ comments: [...comments, ...comments] });
         expect(instance.scrollToBottom).toBeCalled();
     });
 });

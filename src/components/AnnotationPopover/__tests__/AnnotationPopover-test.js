@@ -49,8 +49,7 @@ describe('components/AnnotationPopover', () => {
 
     test('should position the component on componentDidUpdate()', () => {
         const wrapper = render({ comments });
-        const instance = wrapper.instance();
-        instance.componentDidUpdate();
+        wrapper.setProps({ canAnnotate: true });
         expect(position).toBeCalled();
     });
 

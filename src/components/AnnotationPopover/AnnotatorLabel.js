@@ -21,6 +21,10 @@ type Props = {
 };
 
 const AnnotatorLabel = ({ id, isPending, type, createdBy, intl }: Props) => {
+    if (isPending) {
+        return null;
+    }
+
     const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
     const name = get(createdBy, 'name', anonymousUserName);
 
@@ -32,15 +36,13 @@ const AnnotatorLabel = ({ id, isPending, type, createdBy, intl }: Props) => {
     }
 
     return (
-        !isPending && (
-            <span className={CLASS_ANNOTATOR_LABEL}>
-                <CommentText
-                    id={id}
-                    tagged_message={intl.formatMessage(labelMessage, { name })}
-                    translationEnabled={false}
-                />
-            </span>
-        )
+        <span className={CLASS_ANNOTATOR_LABEL}>
+            <CommentText
+                id={id}
+                tagged_message={intl.formatMessage(labelMessage, { name })}
+                translationEnabled={false}
+            />
+        </span>
     );
 };
 
