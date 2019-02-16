@@ -20,36 +20,30 @@ type Props = {
     intl: any
 };
 
-class AnnotatorLabel extends React.PureComponent<Props> {
-    /**
-     * Return a string describes the action completed by the annotator
-     * @return {string} Localized annotator label message
-     */
-    getAnnotatorLabelMessage(): string {
-        const { type, createdBy, intl } = this.props;
-        const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
-        const name = get(createdBy, 'name', anonymousUserName);
-
-        let labelMessage = messages.whoAnnotated;
-        if (isHighlightAnnotation(type)) {
-            labelMessage = messages.whoHighlighted;
-        } else if (isDrawingAnnotation(type)) {
-            labelMessage = messages.whoDrew;
-        }
-
-        return intl.formatMessage(labelMessage, { name });
+const AnnotatorLabel = ({ id, isPending, type, createdBy, intl }: Props) => {
+    if (isPending) {
+        return null;
     }
 
-    render() {
-        const { id, isPending } = this.props;
-        return (
-            !isPending && (
-                <span className={CLASS_ANNOTATOR_LABEL}>
-                    <CommentText id={id} tagged_message={this.getAnnotatorLabelMessage()} translationEnabled={false} />
-                </span>
-            )
-        );
+    const anonymousUserName = intl.formatMessage(messages.anonymousUserName);
+    const name = get(createdBy, 'name', anonymousUserName);
+
+    let labelMessage = messages.whoAnnotated;
+    if (isHighlightAnnotation(type)) {
+        labelMessage = messages.whoHighlighted;
+    } else if (isDrawingAnnotation(type)) {
+        labelMessage = messages.whoDrew;
     }
-}
+
+    return (
+        <span className={CLASS_ANNOTATOR_LABEL}>
+            <CommentText
+                id={id}
+                tagged_message={intl.formatMessage(labelMessage, { name })}
+                translationEnabled={false}
+            />
+        </span>
+    );
+};
 
 export default injectIntl(AnnotatorLabel);

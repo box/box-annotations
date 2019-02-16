@@ -37,4 +37,13 @@ describe('components/CommentList', () => {
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-comment-list-item').length).toEqual(2);
     });
+
+    test('should scroll to the bottom on componentDidUpdate()', () => {
+        const wrapper = shallow(<CommentList comments={comments} onDelete={onDelete} />);
+        const instance = wrapper.instance();
+        instance.scrollToBottom = jest.fn();
+
+        wrapper.setProps({ comments: [...comments, ...comments] });
+        expect(instance.scrollToBottom).toBeCalled();
+    });
 });

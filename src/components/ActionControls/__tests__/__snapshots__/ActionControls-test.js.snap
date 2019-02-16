@@ -3,25 +3,17 @@
 exports[`components/ActionControls should correctly render controls for drawing annotations 1`] = `
 <div
   className="ba-action-controls"
-/>
-`;
-
-exports[`components/ActionControls should correctly render controls for highlight comment annotations 1`] = `
-<div
-  className="ba-action-controls"
 >
-  <HighlightControls
-    canAnnotateAndDelete={true}
-    canComment={true}
+  <DrawingControls
+    canDelete={true}
     isPending={false}
-    onCommentClick={[MockFunction]}
     onCreate={[Function]}
     onDelete={[Function]}
   />
 </div>
 `;
 
-exports[`components/ActionControls should correctly render controls for highlight comment annotations without delete permissions 1`] = `
+exports[`components/ActionControls should correctly render controls for highlight comment annotations 1`] = `
 <div
   className="ba-action-controls"
 >
@@ -32,6 +24,24 @@ exports[`components/ActionControls should correctly render controls for highligh
     onCommentClick={[MockFunction]}
     onCreate={[Function]}
     onDelete={[Function]}
+  />
+</div>
+`;
+
+exports[`components/ActionControls should correctly render controls for highlight comment annotations without any existing comments 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <ApprovalCommentForm
+    className="ba-annotation-input-container"
+    createComment={[Function]}
+    getAvatarUrl={[Function]}
+    isEditing={true}
+    isOpen={true}
+    onCancel={[Function]}
+    onFocus={[Function]}
+    onSubmit={[Function]}
+    user={Object {}}
   />
 </div>
 `;
@@ -69,10 +79,34 @@ exports[`components/ActionControls should correctly render controls for plain hi
 </div>
 `;
 
+exports[`components/ActionControls should correctly render controls for plain highlight annotations without comment permissions 1`] = `
+<div
+  className="ba-action-controls"
+>
+  <HighlightControls
+    canAnnotateAndDelete={true}
+    canComment={false}
+    isPending={false}
+    onCommentClick={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
+  />
+</div>
+`;
+
 exports[`components/ActionControls should correctly render controls for plain highlight annotations without delete permissions 1`] = `
 <div
   className="ba-action-controls"
-/>
+>
+  <HighlightControls
+    canAnnotateAndDelete={false}
+    canComment={true}
+    isPending={false}
+    onCommentClick={[MockFunction]}
+    onCreate={[Function]}
+    onDelete={[Function]}
+  />
+</div>
 `;
 
 exports[`components/ActionControls should correctly render controls for point annotations 1`] = `
@@ -91,4 +125,22 @@ exports[`components/ActionControls should correctly render controls for point an
     user={Object {}}
   />
 </div>
+`;
+
+exports[`components/ActionControls should render no controls if the type does not match a valid type 1`] = `
+<div
+  className="ba-action-controls"
+/>
+`;
+
+exports[`components/ActionControls should render no controls if user cannot delete or comment on a plain highlight annotation 1`] = `
+<div
+  className="ba-action-controls"
+/>
+`;
+
+exports[`components/ActionControls should render no controls if user cannot delete or comment on a plain highlight annotation 2`] = `
+<div
+  className="ba-action-controls"
+/>
 `;

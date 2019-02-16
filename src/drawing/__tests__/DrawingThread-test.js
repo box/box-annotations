@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
-import { STATES } from '../../constants';
+import { STATES, TYPES } from '../../constants';
 import * as util from '../../util';
+import DrawingPath from '../DrawingPath';
+import DrawingContainer from '../DrawingContainer';
+
+jest.mock('../DrawingPath');
 
 let thread;
 
@@ -35,6 +39,35 @@ describe('drawing/DrawingThread', () => {
         thread = null;
     });
 
+    describe('initStoredPaths', () => {
+        beforeEach(() => {
+            thread.regenerateBoundary = jest.fn();
+            thread.unmountPopover = jest.fn();
+            thread.pathContainer = new DrawingContainer();
+            thread.pathContainer.insert = jest.fn();
+            thread.location = {
+                paths: [{}, {}]
+            };
+        });
+
+        it('should do nothing if no location or paths exist', () => {
+            thread.location = undefined;
+            thread.initStoredPaths();
+
+            thread.location = {};
+            thread.initStoredPaths();
+            expect(thread.regenerateBoundary).not.toBeCalled();
+        });
+
+        it('should unmount popover if the path container is empty', () => {
+            thread.pathContainer.isEmpty = jest.fn().mockReturnValue(true);
+            thread.initStoredPaths();
+            expect(thread.regenerateBoundary).toBeCalled();
+            expect(thread.unmountPopover).toBeCalled();
+            expect(thread.pathContainer.insert).toBeCalledTimes(2);
+        });
+    });
+
     describe('destroy()', () => {
         beforeEach(() => {
             thread.state = STATES.pending;
@@ -60,29 +93,6 @@ describe('drawing/DrawingThread', () => {
             thread.clearBoundary = jest.fn();
             thread.reset();
             expect(thread.clearBoundary).toBeCalled();
-        });
-    });
-
-    describe('deleteThread()', () => {
-        it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
-            thread.clearBoundary = jest.fn();
-            thread.delete = jest.fn();
-            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
-            thread.concreteContext = {
-                clearRect: jest.fn()
-            };
-
-            thread.pathContainer = {
-                destroy: jest.fn()
-            };
-
-            thread.comments = [{ id: '123abc' }];
-
-            thread.deleteThread();
-            expect(thread.getBrowserRectangularBoundary).toBeCalled();
-            expect(thread.concreteContext.clearRect).toBeCalled();
-            expect(thread.clearBoundary).toBeCalled();
-            expect(thread.pathContainer).toEqual(null);
         });
     });
 
@@ -114,6 +124,14 @@ describe('drawing/DrawingThread', () => {
         });
     });
 
+    describe('unbindDOMListeners()', () => {
+        it('should also unbind drawing listeners', () => {
+            thread.unbindDrawingListeners = jest.fn();
+            thread.unbindDOMListeners();
+            expect(thread.unbindDrawingListeners).toBeCalled();
+        });
+    });
+
     describe('unbindDrawingListeners()', () => {
         beforeEach(() => {
             thread.annotatedElement = {
@@ -133,60 +151,53 @@ describe('drawing/DrawingThread', () => {
         });
     });
 
-    describe('setContextStyles()', () => {
-        it('should set configurable context properties', () => {
-            thread.drawingContext = {
-                lineCap: 'not set',
-                lineJoin: 'not set',
-                strokeStyle: 'no color',
-                lineWidth: 'no width'
+    describe('deleteThread()', () => {
+        it('should delete all attached annotations, clear the drawn rectangle, and call destroy', () => {
+            thread.clearBoundary = jest.fn();
+            thread.delete = jest.fn();
+            thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
+            thread.concreteContext = {
+                clearRect: jest.fn()
             };
 
-            const config = {
-                scale: 2,
-                color: 'blue'
+            thread.pathContainer = {
+                destroy: jest.fn()
             };
+
+            thread.comments = [{ id: '123abc' }];
+
+            thread.deleteThread();
+            expect(thread.getBrowserRectangularBoundary).toBeCalled();
+            expect(thread.concreteContext.clearRect).toBeCalled();
+            expect(thread.clearBoundary).toBeCalled();
+            expect(thread.pathContainer).toEqual(null);
+        });
+    });
+
+    describe('setContextStyles()', () => {
+        const config = {
+            scale: 2,
+            color: 'blue'
+        };
+
+        const context = {
+            lineCap: 'not set',
+            lineJoin: 'not set',
+            strokeStyle: 'no color',
+            lineWidth: 'no width'
+        };
+
+        it('should do nothing when no context exists', () => {
+            thread.setContextStyles(config);
+            expect(thread.drawingContext).not.toStrictEqual(context);
+        });
+
+        it('should set configurable context properties', () => {
+            thread.drawingContext = context;
 
             thread.setContextStyles(config);
-            expect(thread.drawingContext).toStrictEqual({
-                lineCap: 'round',
-                lineJoin: 'round',
-                strokeStyle: 'blue',
-                lineWidth: thread.drawingContext.lineWidth
-            });
+            expect(thread.drawingContext).toStrictEqual(context);
             expect(thread.drawingContext.lineWidth % config.scale).toEqual(0);
-        });
-    });
-
-    describe('render()', () => {
-        beforeEach(() => {
-            thread.draw = jest.fn();
-        });
-
-        it('should draw the pending path when the context is not empty', () => {
-            const timeStamp = 20000;
-            thread.render(timeStamp);
-            expect(thread.draw).toBeCalled();
-        });
-
-        it('should do nothing when the timeElapsed is less than the refresh rate', () => {
-            const timeStamp = 100;
-            thread.lastRenderTimestamp = 100;
-            thread.render(timeStamp);
-            expect(thread.draw).not.toBeCalled();
-        });
-    });
-
-    describe('setup()', () => {
-        it('should set the state to be pending when there are no saved annotations', () => {
-            thread.setup();
-            expect(thread.state).toEqual(STATES.pending);
-        });
-
-        it('should set the state to be inactive when there are saved annotations', () => {
-            thread.threadNumber = '123';
-            thread.setup();
-            expect(thread.state).toEqual(STATES.inactive);
         });
     });
 
@@ -258,6 +269,19 @@ describe('drawing/DrawingThread', () => {
 
             thread.updateBoundaryAndPopover();
             expect(thread.renderAnnotationPopover).toBeCalled();
+        });
+    });
+
+    describe('setup()', () => {
+        it('should set the state to be pending when there are no saved annotations', () => {
+            thread.setup();
+            expect(thread.state).toEqual(STATES.pending);
+        });
+
+        it('should set the state to be inactive when there are saved annotations', () => {
+            thread.threadNumber = '123';
+            thread.setup();
+            expect(thread.state).toEqual(STATES.inactive);
         });
     });
 
@@ -337,7 +361,72 @@ describe('drawing/DrawingThread', () => {
         });
     });
 
+    describe('drawBoundary()', () => {
+        it('should clear the boundary', () => {
+            thread.clearBoundary = jest.fn();
+            thread.drawBoundary();
+            expect(thread.clearBoundary).toBeCalled();
+        });
+    });
+
+    describe('render()', () => {
+        beforeEach(() => {
+            thread.draw = jest.fn();
+        });
+
+        it('should draw the pending path when the context is not empty', () => {
+            const timeStamp = 20000;
+            thread.render(timeStamp);
+            expect(thread.draw).toBeCalled();
+        });
+
+        it('should do nothing when the timeElapsed is less than the refresh rate', () => {
+            const timeStamp = 100;
+            thread.lastRenderTimestamp = 100;
+            thread.render(timeStamp);
+            expect(thread.draw).not.toBeCalled();
+        });
+    });
+
+    describe('renderAnnotationPopover()', () => {
+        it('should re-draw the boundary and render the popover', () => {
+            thread.drawBoundary = jest.fn();
+            thread.position = jest.fn();
+            thread.renderAnnotationPopover();
+            expect(thread.drawBoundary).toBeCalled();
+        });
+    });
+
+    describe('updateBoundary()', () => {
+        beforeEach(() => {
+            thread.pathContainer = {
+                getAxisAlignedBoundingBox: jest.fn()
+            };
+            DrawingPath.extractDrawingInfo = jest.fn();
+        });
+
+        it('should recompute boundary when no item is provided', () => {
+            thread.updateBoundary();
+            expect(thread.pathContainer.getAxisAlignedBoundingBox).toBeCalled();
+        });
+
+        it('should extract drawing info from drawing path when item is provided', () => {
+            thread.updateBoundary({});
+            expect(thread.pathContainer.getAxisAlignedBoundingBox).not.toBeCalled();
+        });
+    });
+
     describe('regenerateBoundary()', () => {
+        it('should do nothing when drawing has no location', () => {
+            thread.location = undefined;
+
+            thread.regenerateBoundary();
+            expect(thread.minX).toBeUndefined();
+            expect(thread.maxX).toBeUndefined();
+            expect(thread.minY).toBeUndefined();
+            expect(thread.maxY).toBeUndefined();
+        });
+
         it('should do nothing when no drawingPaths have been saved', () => {
             thread.location = {};
 
@@ -373,6 +462,23 @@ describe('drawing/DrawingThread', () => {
 
             thread.clearBoundary();
             expect(rootElement.removeChild).toBeCalled();
+        });
+    });
+
+    describe('createAnnotationData()', () => {
+        it('should set the drawingPaths in the details blob of the annotation', () => {
+            const pathContainer = 'container';
+            thread.pathContainer = pathContainer;
+            const data = thread.createAnnotationData(TYPES.draw);
+            expect(data.details.drawingPaths).toEqual(pathContainer);
+        });
+    });
+
+    describe('cleanupAnnotationOnDelete()', () => {
+        it('should set the threadID to null', () => {
+            thread.threadID = '123';
+            thread.cleanupAnnotationOnDelete();
+            expect(thread.threadID).toBeNull();
         });
     });
 });

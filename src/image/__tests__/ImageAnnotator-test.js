@@ -167,6 +167,16 @@ describe('image/ImageAnnotator', () => {
         });
     });
 
+    describe('scaleAnnotations()', () => {
+        it('should set the scale and rotate the annotations appropriately', () => {
+            annotator.setScale = jest.fn();
+            annotator.rotateAnnotations = jest.fn();
+            annotator.scaleAnnotations({ scale: 2, rotationAngle: 90, pageNum: 1 });
+            expect(annotator.setScale).toBeCalledWith(2);
+            expect(annotator.rotateAnnotations).toBeCalledWith(90, 1);
+        });
+    });
+
     describe('rotateAnnotations()', () => {
         beforeEach(() => {
             annotator.permissions.can_annotate = true;
@@ -180,12 +190,19 @@ describe('image/ImageAnnotator', () => {
             annotator.modeButtons = {};
         });
 
+        it('should only re-render the specified page annotations', () => {
+            annotator.rotateAnnotations(90, 1);
+            expect(annotator.renderPage).toBeCalled();
+            expect(annotator.render).not.toBeCalled();
+        });
+
         it('should only render annotations if user cannot annotate', () => {
             annotator.permissions.can_annotate = false;
             annotator.rotateAnnotations();
             expect(util.hideElement).not.toBeCalled();
             expect(util.showElement).not.toBeCalled();
             expect(annotator.render).toBeCalled();
+            expect(annotator.renderPage).not.toBeCalled();
         });
 
         it('should hide point annotation button if image is rotated', () => {
@@ -193,6 +210,7 @@ describe('image/ImageAnnotator', () => {
             expect(util.hideElement).toBeCalled();
             expect(util.showElement).not.toBeCalled();
             expect(annotator.render).toBeCalled();
+            expect(annotator.renderPage).not.toBeCalled();
         });
 
         it('should show point annotation button if image is rotated', () => {
@@ -200,6 +218,23 @@ describe('image/ImageAnnotator', () => {
             expect(util.hideElement).not.toBeCalled();
             expect(util.showElement).toBeCalled();
             expect(annotator.render).toBeCalled();
+            expect(annotator.renderPage).not.toBeCalled();
+        });
+    });
+
+    describe('bindDOMListeners()', () => {
+        it('should bind the mouseup handler', () => {
+            annotator.annotatedElement.addEventListener = jest.fn();
+            annotator.bindDOMListeners();
+            expect(annotator.annotatedElement.addEventListener).toBeCalledWith('mouseup', annotator.hideAnnotations);
+        });
+    });
+
+    describe('unbindDOMListeners()', () => {
+        it('should unbind the mouseup handler', () => {
+            annotator.annotatedElement.removeEventListener = jest.fn();
+            annotator.unbindDOMListeners();
+            expect(annotator.annotatedElement.removeEventListener).toBeCalledWith('mouseup', annotator.hideAnnotations);
         });
     });
 });

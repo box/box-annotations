@@ -198,6 +198,9 @@
     "coverageDirectory": "<rootDir>/reports",
     "collectCoverageFrom": [
       "src/**/*.js",
+      "!src/utils/*.js",
+      "!third-party/*.js",
+      "!src/**/messages.js",
       "!**/node_modules/**",
       "!**/__tests__/**"
     ],

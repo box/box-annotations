@@ -7,7 +7,7 @@
 import React, { Children } from 'react';
 import { IntlProvider, addLocaleData } from 'react-intl';
 
-import i18n from '../i18n';
+import i18n from '../utils/i18n';
 
 type Props = {
     children?: any

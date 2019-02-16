@@ -11,7 +11,12 @@ const createdBy = {
 };
 
 describe('components/AnnotationPopover/AnnotatorLabel', () => {
-    const render = (props = {}) => shallow(<AnnotatorLabel id='123' {...props} />);
+    const render = (props = {}) => shallow(<AnnotatorLabel id='123' {...props} />).dive();
+
+    test('should render nothing if label is pending', () => {
+        const wrapper = render({ isPending: true });
+        expect(wrapper).toMatchSnapshot();
+    });
 
     test('should render a highlight annotation label', () => {
         const wrapper = render({
