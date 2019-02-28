@@ -160,7 +160,7 @@
     "patch": "./build/release.sh -p && ./build/publish.sh",
     "upgrade-brui": "./build/upgrade_brui.sh",
     "start": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
-    "start:dev": "yarn run pre-build && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack-dev-server --config build/webpack.config.js --mode development",
+    "start:dev": "yarn run pre-build && yarn run build && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack-dev-server --config build/webpack.config.js --mode development",
     "styleguide": "yarn run pre-build && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development",
     "styleguide-static": "LANGUAGE=en-US REACT=true BABEL_ENV=production NODE_ENV=production node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js build --config build/styleguide.config.js --mode production"
   },
