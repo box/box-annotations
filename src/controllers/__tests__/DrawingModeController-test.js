@@ -192,7 +192,8 @@ describe('controllers/DrawingModeController', () => {
             controller.getLocation = jest.fn();
             controller.currentThread = undefined;
             controller.locationFunction = jest.fn();
-            controller.registerThread = jest.fn().mockReturnValue(thread);
+            controller.getThreadParams = jest.fn().mockReturnValue({});
+            controller.instantiateThread = jest.fn().mockReturnValue(thread);
         });
 
         afterEach(() => {
@@ -203,7 +204,7 @@ describe('controllers/DrawingModeController', () => {
         it('should do nothing if drawing start is invalid', () => {
             controller.drawingStartHandler(event);
             expect(controller.getLocation).toBeCalled();
-            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.instantiateThread).not.toBeCalled();
         });
 
         it('should continue drawing if in the middle of creating a new drawing', () => {
@@ -212,13 +213,12 @@ describe('controllers/DrawingModeController', () => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
             controller.drawingStartHandler(event);
-            expect(controller.registerThread).not.toBeCalled();
+            expect(controller.instantiateThread).not.toBeCalled();
             expect(thread.handleStart).toBeCalledWith(location);
         });
 
         it('should begin a new drawing thread if none exist already', () => {
             controller.getLocation = jest.fn().mockReturnValue(location);
-            controller.registerThread = jest.fn().mockReturnValue(thread);
             thread.getThreadEventData = jest.fn().mockReturnValue({});
 
             controller.drawingStartHandler(event);

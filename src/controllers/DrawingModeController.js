@@ -203,7 +203,7 @@ class DrawingModeController extends AnnotationModeController {
         location.maxY = location.y;
 
         // Create new thread with no annotations, show indicator, and show dialog
-        const thread = this.registerThread({
+        const threadParams = this.getThreadParams({
             id: AnnotationAPI.generateID(),
             type: this.mode,
             location,
@@ -214,6 +214,12 @@ class DrawingModeController extends AnnotationModeController {
             isPending: true,
             comments: []
         });
+
+        if (!threadParams) {
+            return;
+        }
+
+        const thread = this.instantiateThread(threadParams);
 
         if (!thread) {
             return;
@@ -267,6 +273,8 @@ class DrawingModeController extends AnnotationModeController {
 
                 this.resetCurrentThread(thread);
                 this.unbindListeners();
+
+                this.registerThread(thread);
 
                 // Clear existing canvases
                 // eslint-disable-next-line

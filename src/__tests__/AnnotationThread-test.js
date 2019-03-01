@@ -268,7 +268,6 @@ describe('AnnotationThread', () => {
         beforeEach(() => {
             thread.api.create = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({});
-            thread.renderAnnotationPopover = jest.fn();
             thread.comments = [tempAnnotation];
         });
 
@@ -291,7 +290,6 @@ describe('AnnotationThread', () => {
 
         it('should only render popover on desktop', () => {
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
-            expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.state).toEqual(STATES.inactive);
         });
 
@@ -299,7 +297,6 @@ describe('AnnotationThread', () => {
             util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.state).toEqual(STATES.active);
-            expect(thread.renderAnnotationPopover).toBeCalled();
         });
     });
 
