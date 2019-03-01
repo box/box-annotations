@@ -177,7 +177,7 @@ describe('AnnotationThread', () => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
             thread.handleThreadSaveError = jest.fn();
             thread.updateTemporaryAnnotation = jest.fn();
-            thread.renderAnnotationPopover = jest.fn();
+            thread.unmountPopover = jest.fn();
         });
 
         it('should save an annotation with the specified type and text', (done) => {
@@ -268,7 +268,6 @@ describe('AnnotationThread', () => {
         beforeEach(() => {
             thread.api.create = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({});
-            thread.renderAnnotationPopover = jest.fn();
             thread.comments = [tempAnnotation];
         });
 
@@ -291,7 +290,6 @@ describe('AnnotationThread', () => {
 
         it('should only render popover on desktop', () => {
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
-            expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.state).toEqual(STATES.inactive);
         });
 
@@ -299,7 +297,6 @@ describe('AnnotationThread', () => {
             util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.state).toEqual(STATES.active);
-            expect(thread.renderAnnotationPopover).toBeCalled();
         });
     });
 

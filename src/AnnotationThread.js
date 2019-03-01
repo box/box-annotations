@@ -246,7 +246,7 @@ class AnnotationThread extends EventEmitter {
         });
 
         this.state = STATES.inactive;
-        this.renderAnnotationPopover();
+        this.unmountPopover();
 
         // Save annotation on server
         return (
@@ -535,7 +535,6 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.show();
-        this.renderAnnotationPopover();
         this.emit(THREAD_EVENT.save);
     }
 
