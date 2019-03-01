@@ -177,7 +177,7 @@ describe('AnnotationThread', () => {
             thread.getThreadEventData = jest.fn().mockReturnValue({});
             thread.handleThreadSaveError = jest.fn();
             thread.updateTemporaryAnnotation = jest.fn();
-            thread.unmountPopover = jest.fn();
+            thread.renderAnnotationPopover = jest.fn();
         });
 
         it('should save an annotation with the specified type and text', (done) => {

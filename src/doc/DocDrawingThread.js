@@ -376,6 +376,17 @@ class DocDrawingThread extends DrawingThread {
         popoverEl.style.left = `${popoverX}px`;
         popoverEl.style.top = `${popoverY}px`;
     };
+
+    /**
+     * Update annotation after successfully saved.
+     * @override
+     */
+    updateTemporaryAnnotation(tempAnnotationID: string, savedAnnotation: Annotation) {
+        super.updateTemporaryAnnotation(tempAnnotationID, savedAnnotation);
+
+        // Unmount the drawing annotation popover after successful save
+        this.unmountPopover();
+    }
 }
 
 export default DocDrawingThread;
