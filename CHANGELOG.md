@@ -1,3 +1,12 @@
+## 3.11.0 (2019-03-05)
+
+* Fix: Make annotation popover delete icon always visible (#349) ([6c24c11](https://github.com/box/box-annotations/commit/6c24c11)), closes [#349](https://github.com/box/box-annotations/issues/349)
+* Fix: Unable to select drawing annotation after saving (#350) ([8632777](https://github.com/box/box-annotations/commit/8632777)), closes [#350](https://github.com/box/box-annotations/issues/350)
+*  Chore: Increase Code Coverage (#346) ([3c7d816](https://github.com/box/box-annotations/commit/3c7d816)), closes [#346](https://github.com/box/box-annotations/issues/346)
+* Chore: Remove unused withFocus component (#347) ([2bb1ec8](https://github.com/box/box-annotations/commit/2bb1ec8)), closes [#347](https://github.com/box/box-annotations/issues/347)
+
+
+
 ## 3.10.0 (2019-02-07)
 
 * Fix: Fix position of popover on drawing undo/redo (#343) ([3ad4107](https://github.com/box/box-annotations/commit/3ad4107)), closes [#343](https://github.com/box/box-annotations/issues/343)
