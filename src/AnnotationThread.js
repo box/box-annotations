@@ -535,6 +535,7 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.show();
+        this.renderAnnotationPopover();
         this.emit(THREAD_EVENT.save);
     }
 
