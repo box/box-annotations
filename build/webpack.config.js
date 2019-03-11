@@ -41,7 +41,7 @@ const config = Object.assign(commonConfig(), {
             'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
             'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
-            moment: path.resolve('src/MomentShim') // Hack to leverage Intl instead
+            moment: path.resolve('src/utils/MomentShim') // Hack to leverage Intl instead
         }
     },
     devServer: {
