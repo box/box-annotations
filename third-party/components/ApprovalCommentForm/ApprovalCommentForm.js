@@ -219,6 +219,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
                             }
                             validation={this.validateTextArea}
                             isRequired
+                            autoFocus
                         />
                         <aside
                             className={classNames('bcs-at-mention-tip', {
