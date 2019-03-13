@@ -347,6 +347,7 @@ describe('AnnotationThread', () => {
             thread.delete({ id: 'someID' }).catch(() => {
                 expect(api.delete).not.toBeCalled();
                 expect(console.error).toBeCalled(); // eslint-disable-line
+                expect(thread.deleteSuccessHandler).toBeCalled();
             });
         });
 
@@ -355,6 +356,7 @@ describe('AnnotationThread', () => {
             thread.delete({ id: 'someID' }).catch(() => {
                 expect(api.delete).not.toBeCalled();
                 expect(console.error).toBeCalled(); // eslint-disable-line
+                expect(thread.deleteSuccessHandler).toBeCalled();
             });
         });
 
@@ -362,6 +364,7 @@ describe('AnnotationThread', () => {
             thread.delete({ id: 'someID' }, false).then(() => {
                 expect(api.delete).not.toBeCalled();
                 expect(console.error).toBeCalled(); // eslint-disable-line
+                expect(thread.deleteSuccessHandler).toBeCalled();
             });
         });
 
