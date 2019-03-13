@@ -88,6 +88,7 @@ describe('image/ImagePointThread', () => {
             util.findElement = jest.fn().mockReturnValue(rootElement);
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.repositionCaret = jest.fn().mockReturnValue(0);
+            thread.scrollIntoView = jest.fn();
         });
 
         it('should not re-position the popover on mobile devices', () => {
@@ -101,6 +102,7 @@ describe('image/ImagePointThread', () => {
             thread.position();
             expect(util.findElement).toBeCalled();
             expect(rootElement.classList).not.toContain(CLASS_FLIPPED_POPOVER);
+            expect(thread.scrollIntoView).toBeCalled();
         });
 
         it('should flip popovers in the lower half of the viewport', () => {
@@ -108,6 +110,7 @@ describe('image/ImagePointThread', () => {
             thread.position();
             expect(util.findElement).toBeCalled();
             expect(rootElement.classList).toContain(CLASS_FLIPPED_POPOVER);
+            expect(thread.scrollIntoView).toBeCalled();
         });
     });
 

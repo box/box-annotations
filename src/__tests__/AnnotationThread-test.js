@@ -453,12 +453,27 @@ describe('AnnotationThread', () => {
     });
 
     describe('scrollIntoView()', () => {
+        beforeEach(() => {
+            thread.annotatedElement = {
+                scrollTop: 0
+            };
+        });
+
+        it('should scroll to annotation page and center annotation in viewport according to dialog y position', () => {
+            thread.scrollToPage = jest.fn();
+            thread.centerAnnotation = jest.fn();
+            thread.scrollIntoView(50);
+            expect(thread.scrollToPage);
+            expect(thread.centerAnnotation).not.toBeCalledWith(thread.location.y);
+        });
+
         it('should scroll to annotation page and center annotation in viewport', () => {
+            thread.location.y = 10;
             thread.scrollToPage = jest.fn();
             thread.centerAnnotation = jest.fn();
             thread.scrollIntoView();
             expect(thread.scrollToPage);
-            expect(thread.centerAnnotation).toBeCalledWith(expect.any(Number));
+            expect(thread.centerAnnotation).toBeCalledWith(thread.location.y);
         });
     });
 
@@ -494,13 +509,14 @@ describe('AnnotationThread', () => {
             thread.annotatedElement = {
                 scrollHeight: 100,
                 scrollTop: 0,
-                scrollBottom: 200
+                scrollBottom: 200,
+                clientHeight: 50
             };
         });
 
         it('should scroll so annotation is vertically centered in viewport', () => {
             thread.centerAnnotation(50);
-            expect(thread.annotatedElement.scrollTop).toEqual(50);
+            expect(thread.annotatedElement.scrollTop).toEqual(25);
         });
 
         it('should scroll so annotation is vertically centered in viewport', () => {
