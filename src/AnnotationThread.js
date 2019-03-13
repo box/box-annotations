@@ -470,11 +470,12 @@ class AnnotationThread extends EventEmitter {
     /**
      * Scroll annotation into the center of the viewport, if possible
      *
+     * @param {number|null} dialogYPos - Y coordinate of the annotation popover
      * @return {void}
      */
-    scrollIntoView() {
+    scrollIntoView(dialogYPos: ?number) {
         // $FlowFixMe
-        const yPos = parseInt(this.location.y, 10);
+        const yPos = dialogYPos || parseInt(this.location.y, 10);
         this.scrollToPage();
         this.centerAnnotation(this.annotatedElement.scrollTop + yPos);
     }
@@ -505,7 +506,7 @@ class AnnotationThread extends EventEmitter {
      */
     centerAnnotation(scrollVal: number) {
         if (scrollVal < this.annotatedElement.scrollHeight) {
-            this.annotatedElement.scrollTop = scrollVal;
+            this.annotatedElement.scrollTop = scrollVal - this.annotatedElement.clientHeight / 2;
         } else {
             // $FlowFixMe
             this.annotatedElement.scrollTop = this.annotatedElement.scrollBottom;
