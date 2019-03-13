@@ -307,6 +307,7 @@ class AnnotationThread extends EventEmitter {
             /* eslint-disable no-console */
             console.error(THREAD_EVENT.deleteError, `Annotation with ID ${annotationIDToRemove} could not be found.`);
             /* eslint-enable no-console */
+            this.deleteSuccessHandler();
             return Promise.reject();
         }
 
@@ -331,6 +332,7 @@ class AnnotationThread extends EventEmitter {
                 `Annotation with ID ${annotation.threadNumber} not deleted from server`
             );
             /* eslint-enable no-console */
+            this.deleteSuccessHandler();
             return Promise.resolve();
         }
 
