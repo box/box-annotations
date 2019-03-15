@@ -147,6 +147,7 @@ describe('controllers/PointModeController', () => {
 
         beforeEach(() => {
             controller.destroyPendingThreads = jest.fn().mockReturnValue(false);
+            controller.applyActionToThreads = jest.fn();
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
             controller.modeButton = {
                 title: 'Point Annotation Mode',
@@ -165,6 +166,7 @@ describe('controllers/PointModeController', () => {
             expect(event.stopPropagation).not.toBeCalled();
             expect(event.preventDefault).not.toBeCalled();
             expect(controller.destroyPendingThreads).not.toBeCalled();
+            expect(controller.applyActionToThreads).not.toBeCalled();
         });
 
         it('should not destroy the pending thread if click was in an annotation or marker', () => {
@@ -180,6 +182,8 @@ describe('controllers/PointModeController', () => {
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
             expect(controller.getLocation).toBeCalled();
+            expect(controller.destroyPendingThreads).toBeCalled();
+            expect(controller.applyActionToThreads).toBeCalled();
         });
 
         it('should not create a thread if a location object cannot be inferred from the event', () => {
@@ -193,6 +197,8 @@ describe('controllers/PointModeController', () => {
             expect(event.preventDefault).toBeCalled();
             expect(controller.registerThread).not.toBeCalled();
             expect(controller.getLocation).toBeCalled();
+            expect(controller.destroyPendingThreads).toBeCalled();
+            expect(controller.applyActionToThreads).toBeCalled();
         });
 
         it('should create, show, and bind listeners to a thread', () => {
@@ -208,6 +214,8 @@ describe('controllers/PointModeController', () => {
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
             expect(controller.getLocation).toBeCalled();
+            expect(controller.destroyPendingThreads).toBeCalled();
+            expect(controller.applyActionToThreads).toBeCalled();
         });
     });
 });
