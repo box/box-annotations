@@ -105,6 +105,9 @@ class PointModeController extends AnnotationModeController {
         }
 
         this.hadPendingThreads = this.destroyPendingThreads();
+        this.applyActionToThreads((thread) => {
+            thread.hide();
+        });
 
         // Get annotation location from click event, ignore click if location is invalid
         const location = this.getLocation(event, TYPES.point);
