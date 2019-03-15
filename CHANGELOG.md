@@ -1,3 +1,13 @@
+## 3.12.0 (2019-03-15)
+
+* Fix: Autofocus approvalcommentform textarea on popover render (#353) ([3b17e50](https://github.com/box/box-annotations/commit/3b17e50)), closes [#353](https://github.com/box/box-annotations/issues/353)
+* Fix: Cleanup thread when API requests fail (#355) ([5b7b685](https://github.com/box/box-annotations/commit/5b7b685)), closes [#355](https://github.com/box/box-annotations/issues/355)
+* Fix: Ensure point annotations aren't scrolled out of view on focus (#354) ([b90ed71](https://github.com/box/box-annotations/commit/b90ed71)), closes [#354](https://github.com/box/box-annotations/issues/354)
+* Fix: Path for MomentShim.js (#352) ([3a84c76](https://github.com/box/box-annotations/commit/3a84c76)), closes [#352](https://github.com/box/box-annotations/issues/352)
+* Fix: render annotation popover after save (#351) ([bdd00c8](https://github.com/box/box-annotations/commit/bdd00c8)), closes [#351](https://github.com/box/box-annotations/issues/351)
+
+
+
 ## 3.11.0 (2019-03-05)
 
 * Fix: Make annotation popover delete icon always visible (#349) ([6c24c11](https://github.com/box/box-annotations/commit/6c24c11)), closes [#349](https://github.com/box/box-annotations/issues/349)
