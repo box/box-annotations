@@ -7,7 +7,7 @@ The following methods are available for the annotation threads.
 
 | Method Name | Explanation | Method Parameters |
 | --- | --- | --- |
-| createDialog | Creates the dialog for the thread |  ||
+| position | Positions the AnnotationPopover |  ||
 | show | Shows the annotation indicator |  ||
 | hide | Hides the annotation indicator |  ||
 | reset | Resets thread state to 'inactive' |  ||
@@ -37,6 +37,8 @@ All annotation threads fire the following events. The event data will contain:
 | annotationsaved | An annotation thread was added and saved to an existing annotation thread on the server  ||
 | annotationdeleted | An annotation thread was deleted from an existing thread on the server. The entire annotation thread is not deleted. ||
 | annotationcanceled | An annotation thread was cancelled from posting on either a new or existing thread. ||
+| annotationshow | Shows an annotation thread ||
+| annotationhide | Hides an annotation thread ||
 | annotationdeleteerror | An error occurs while deleting an annotation on either a new or existing thread. ||
 | annotationcreateerror | An error occurs while posting an annotation on either a new or existing thread. ||
 

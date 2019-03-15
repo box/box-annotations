@@ -9,6 +9,10 @@
             width: 100%;
         }
 
+        textarea::placeholder {
+            color: $threes;
+        }
+
         .label {
             display: none;
         }

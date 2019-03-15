@@ -15,9 +15,20 @@ Additional Methods
 
 `annotator.getLocationFromEvent(/* Event */ event, /* String */ annotationType)` determines the annotation location object from a DOM event.
 
-`annotator.createAnnotationThread(/* Annotation[] */ annotations, /* Object */ location, /* String */ [annotation type])` creates the proper type of annotation thread, adds it to the in-memory map, and returns it.
+`annotator.getAnnotatedEl(/* HTMLElement */ containerEl)` determines the DOM element to be annotated on.
 
 `annotator.getAnnotatedEl(/* HTMLElement */ containerEl)` determines the annotated element in the viewer.
+
+`annotator.hideAnnotations(/* Event */ event)` conditionally hides all saved annotations on the file based on an optional mouse event.
+
+`annotator.getCurrentAnnotationMode()` determines which annotation mode is currently active.
+
+`annotator.render()` renders all annotations on the file.
+
+`annotator.renderPage(/* Number */ pageNum)` renders all annotations for the specified page.
+
+`annotator.scrollToAnnotation(/* String */ threadID)` scrolls the annotation with the specified threadID into view.
+
 
 Events
 ------
