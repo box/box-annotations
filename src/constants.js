@@ -161,6 +161,7 @@ export const THREAD_EVENT = {
 };
 
 export const CONTROLLER_EVENT = {
+    error: 'annotationmodecontrollererror',
     load: 'annotationload',
     toggleMode: 'togglemode',
     enter: 'annotationmodeenter',
