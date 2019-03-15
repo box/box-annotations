@@ -253,7 +253,7 @@ class Annotator extends EventEmitter {
         Object.keys(this.modeControllers).forEach((mode) => {
             this.modeControllers[mode].destroyPendingThreads();
             this.modeControllers[mode].applyActionToThreads((thread) => {
-                thread.unmountPopover();
+                thread.hide();
             });
         });
     }
