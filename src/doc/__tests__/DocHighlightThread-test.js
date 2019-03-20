@@ -291,6 +291,7 @@ describe('doc/DocHighlightThread', () => {
     describe('scrollIntoView()', () => {
         beforeEach(() => {
             thread.scrollToPage = jest.fn();
+            thread.centerAnnotation = jest.fn();
             thread.annotatedElement.scrollTop = 0;
             docUtil.getLowerRightCornerOfLastQuadPoint = jest.fn().mockReturnValue(20);
         });
