@@ -571,6 +571,7 @@ describe('Annotator', () => {
                 };
                 annotator.scrollToAnnotation(thread.threadID);
                 expect(thread.scrollIntoView).toBeCalled();
+                expect(thread.renderAnnotationPopover).toBeCalled();
             });
         });
 
