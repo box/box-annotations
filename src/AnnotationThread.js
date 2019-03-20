@@ -200,6 +200,7 @@ class AnnotationThread extends EventEmitter {
             />,
             util.getPopoverLayer(pageEl)
         );
+        this.emit(THREAD_EVENT.renderPopover);
     }
 
     /**
