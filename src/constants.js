@@ -148,6 +148,7 @@ export const ANNOTATOR_EVENT = {
 export const THREAD_EVENT = {
     create: 'annotationcreate',
     pending: 'annotationpending',
+    renderPopover: 'annotationrenderpopover',
     render: 'annotationrender',
     save: 'annotationsaved',
     delete: 'annotationdeleted',
