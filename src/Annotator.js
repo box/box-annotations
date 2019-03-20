@@ -66,6 +66,8 @@ class Annotator extends EventEmitter {
         this.handleServicesErrors = this.handleServicesErrors.bind(this);
         // $FlowFixMe
         this.hideAnnotations = this.hideAnnotations.bind(this);
+        // $FlowFixMe
+        this.scrollToAnnotation = this.scrollToAnnotation.bind(this);
     }
 
     /**
@@ -494,9 +496,10 @@ class Annotator extends EventEmitter {
         }
 
         Object.keys(this.modeControllers).forEach((mode) => {
-            const thread = this.modeControllers[mode].getThreadByID(threadID);
-            if (thread) {
-                thread.scrollIntoView();
+            const annotation = this.modeControllers[mode].getThreadByID(threadID);
+            if (annotation) {
+                annotation.scrollIntoView();
+                annotation.renderAnnotationPopover();
             }
         });
     }
