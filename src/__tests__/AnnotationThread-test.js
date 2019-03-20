@@ -147,6 +147,7 @@ describe('AnnotationThread', () => {
             expect(thread.popoverComponent).not.toBeUndefined();
             expect(event.stopPropagation).toBeCalled();
             expect(event.preventDefault).toBeCalled();
+            expect(thread.emit).toBeCalledWith(THREAD_EVENT.renderPopover);
         });
     });
 
