@@ -1,3 +1,14 @@
+## 3.13.0 (2019-03-21)
+
+* Fix: Hide all threads before creating a new point annotation (#357) ([c980d7d](https://github.com/box/box-annotations/commit/c980d7d)), closes [#357](https://github.com/box/box-annotations/issues/357)
+* Fix: Only unmount popover when hiding all annotations (#361) ([c42a8ff](https://github.com/box/box-annotations/commit/c42a8ff)), closes [#361](https://github.com/box/box-annotations/issues/361)
+* Chore: Bind scrollToAnnotation method to Annotator object (#358) ([fbd7728](https://github.com/box/box-annotations/commit/fbd7728)), closes [#358](https://github.com/box/box-annotations/issues/358)
+* Chore: Emit event when annotation popover is opened (#359) ([00f3ece](https://github.com/box/box-annotations/commit/00f3ece)), closes [#359](https://github.com/box/box-annotations/issues/359)
+* Chore: Scroll drawing/highlight annotations into view on popover render (#360) ([9a71320](https://github.com/box/box-annotations/commit/9a71320)), closes [#360](https://github.com/box/box-annotations/issues/360)
+* Update: Annotation Documentation after React Refactor (#356) ([5fecf02](https://github.com/box/box-annotations/commit/5fecf02)), closes [#356](https://github.com/box/box-annotations/issues/356)
+
+
+
 ## 3.12.0 (2019-03-15)
 
 * Fix: Autofocus approvalcommentform textarea on popover render (#353) ([3b17e50](https://github.com/box/box-annotations/commit/3b17e50)), closes [#353](https://github.com/box/box-annotations/issues/353)
