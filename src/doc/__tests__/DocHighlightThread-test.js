@@ -288,6 +288,21 @@ describe('doc/DocHighlightThread', () => {
         });
     });
 
+    describe('scrollIntoView()', () => {
+        beforeEach(() => {
+            thread.scrollToPage = jest.fn();
+            thread.centerAnnotation = jest.fn();
+            thread.annotatedElement.scrollTop = 0;
+            docUtil.getLowerRightCornerOfLastQuadPoint = jest.fn().mockReturnValue(20);
+        });
+
+        it('should call super.scrollIntoView() if dialog Y position was passed in as an argument', () => {
+            thread.scrollIntoView(10);
+            expect(docUtil.getLowerRightCornerOfLastQuadPoint).not.toBeCalled();
+            expect(thread.centerAnnotation).toBeCalledWith(10);
+        });
+    });
+
     describe('draw()', () => {
         it('should not draw if no context exists', () => {
             thread.getPageEl = jest.fn();
