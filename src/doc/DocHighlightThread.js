@@ -262,9 +262,15 @@ class DocHighlightThread extends AnnotationThread {
     /**
      * Scroll annotation into the center of the viewport, if possible
      *
+     * @param {number|null} dialogYPos - Y coordinate of the annotation popover
      * @return {void}
      */
-    scrollIntoView() {
+    scrollIntoView(dialogYPos: ?number) {
+        if (dialogYPos) {
+            super.scrollIntoView(dialogYPos);
+            return;
+        }
+
         this.scrollToPage();
 
         // $FlowFixMe
@@ -490,8 +496,10 @@ class DocHighlightThread extends AnnotationThread {
             dialogY = pageHeight - INLINE_POPOVER_HEIGHT;
         }
 
+        const dialogTopY = dialogY + INLINE_POPOVER_HEIGHT / 2 - BORDER_OFFSET;
         popoverEl.style.left = `${dialogX}px`;
-        popoverEl.style.top = `${dialogY + INLINE_POPOVER_HEIGHT / 2 - BORDER_OFFSET}px`;
+        popoverEl.style.top = `${dialogTopY}px`;
+        this.scrollIntoView(dialogTopY);
     };
 
     /** @inheritdoc */
