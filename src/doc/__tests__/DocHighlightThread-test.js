@@ -301,12 +301,6 @@ describe('doc/DocHighlightThread', () => {
             expect(docUtil.getLowerRightCornerOfLastQuadPoint).not.toBeCalled();
             expect(thread.centerAnnotation).toBeCalledWith(10);
         });
-
-        it('should call super.scrollIntoView() if dialog Y position was passed in as an argument', () => {
-            thread.scrollIntoView();
-            expect(docUtil.getLowerRightCornerOfLastQuadPoint).toBeCalled();
-            expect(thread.centerAnnotation).toBeCalledWith(20);
-        });
     });
 
     describe('draw()', () => {
