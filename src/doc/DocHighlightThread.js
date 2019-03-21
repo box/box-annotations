@@ -492,7 +492,6 @@ class DocHighlightThread extends AnnotationThread {
 
         popoverEl.style.left = `${dialogX}px`;
         popoverEl.style.top = `${dialogY + INLINE_POPOVER_HEIGHT / 2 - BORDER_OFFSET}px`;
-        this.scrollIntoView(dialogY);
     };
 
     /** @inheritdoc */
