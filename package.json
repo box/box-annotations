@@ -146,7 +146,7 @@
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
     "cy:open": "yarn cy:wait; yarn cypress open",
     "cy:run": "yarn cy:wait; yarn cypress run --spec test/integration/**/*.test.js",
-    "cy:wait": "wait-on http-get://localhost:8000",
+    "cy:wait": "wait-on http-get://localhost:6000",
     "test": "yarn install && NODE_ENV=test yarn run jest",
     "debug": "yarn install && NODE_ENV=test yarn run jest --watch",
     "setup-travis": "cd functional-tests && yarn install && node app.js",

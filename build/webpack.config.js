@@ -49,7 +49,7 @@ const config = Object.assign(commonConfig(), {
         disableHostCheck: true,
         host: '0.0.0.0',
         inline: true,
-        port: 8000
+        port: 6000
     }
 });
 
