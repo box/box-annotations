@@ -58,7 +58,8 @@
                         "enforceDescriptions": true,
                         "messagesDir": "./i18n/json"
                     }
-                ]
+                ], 
+                ["react-remove-properties", {"properties": ["data-testid"]}]
             ]
         },
         "npm": {

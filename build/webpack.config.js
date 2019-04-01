@@ -48,7 +48,8 @@ const config = Object.assign(commonConfig(), {
         contentBase: './test',
         disableHostCheck: true,
         host: '0.0.0.0',
-        inline: true
+        inline: true,
+        port: 8000
     }
 });
 

@@ -42,6 +42,7 @@
     "babel-loader": "^7.1.5",
     "babel-plugin-flow-react-proptypes": "^24.1.1",
     "babel-plugin-react-intl": "^2.4.0",
+    "babel-plugin-react-remove-properties": "^0.3.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -68,6 +69,7 @@
     "core-js": "^2.5.7",
     "css-loader": "^1.0.0",
     "cssnano-cli": "^1.0.5",
+    "cypress": "^3.2.0",
     "enzyme": "^3.4.4",
     "enzyme-adapter-react-16": "^1.2.0",
     "enzyme-to-json": "^3.3.4",
@@ -76,6 +78,7 @@
     "eslint-config-prettier": "^3.0.1",
     "eslint-import-resolver-webpack": "^0.10.1",
     "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-cypress": "^2.2.1",
     "eslint-plugin-flowtype": "^2.46.1",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
@@ -96,6 +99,7 @@
     "mocha": "^5.2.0",
     "mousetrap": "^1.6.2",
     "node-sass": "^4.9.3",
+    "npm-run-all": "^4.1.5",
     "optimize-css-assets-webpack-plugin": "^4.0.2",
     "pikaday": "^1.8.0",
     "postcss-loader": "^3.0.0",
@@ -128,6 +132,7 @@
     "stylelint-scss": "^3.3.0",
     "tabbable": "^3.1.1",
     "uglifyjs-webpack-plugin": "^1.3.0",
+    "wait-on": "^3.2.0",
     "webpack": "^4.12.0",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.0.7",
@@ -139,6 +144,9 @@
     "build-locales": "node ./build/props-to-es2015.js",
     "build-prod": "BABEL_ENV=production NODE_ENV=production webpack --config build/webpack.config.js --mode production",
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
+    "cy:open": "yarn cy:wait; yarn cypress open",
+    "cy:run": "yarn cy:wait; yarn cypress run --spec test/integration/**/*.test.js",
+    "cy:wait": "wait-on http-get://localhost:8000",
     "test": "yarn install && NODE_ENV=test yarn run jest",
     "debug": "yarn install && NODE_ENV=test yarn run jest --watch",
     "setup-travis": "cd functional-tests && yarn install && node app.js",
@@ -162,7 +170,10 @@
     "start": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack --watch --progress --colors --config build/webpack.config.js --mode development",
     "start:dev": "yarn run pre-build && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev ./node_modules/.bin/webpack-dev-server --config build/webpack.config.js --mode development",
     "styleguide": "yarn run pre-build && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development",
-    "styleguide-static": "LANGUAGE=en-US REACT=true BABEL_ENV=production NODE_ENV=production node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js build --config build/styleguide.config.js --mode production"
+    "styleguide-static": "LANGUAGE=en-US REACT=true BABEL_ENV=production NODE_ENV=production node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js build --config build/styleguide.config.js --mode production",
+    "test:e2e": "npm-run-all -p -r start:dev cy:run",
+    "test:e2e:open": "npm-run-all -p -r start:dev cy:open"
+
   },
   "lint-staged": {
     "src/**/*.js": [
@@ -204,6 +215,7 @@
       "!**/node_modules/**",
       "!**/__tests__/**"
     ],
+    "roots": ["src"],
     "setupTestFrameworkScriptFile": "<rootDir>/build/enzyme-adapter.js",
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
