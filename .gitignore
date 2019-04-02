@@ -18,3 +18,5 @@ lib
 *~~bak
 functional-tests/output
 build/rsync.json
+test/screenshots
+test/videos

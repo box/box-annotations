@@ -552,6 +552,7 @@ class AnnotationThread extends EventEmitter {
         const indicatorEl = document.createElement('button');
         indicatorEl.classList.add(CLASS_ANNOTATION_POINT_MARKER);
         indicatorEl.setAttribute('data-type', DATA_TYPE_ANNOTATION_INDICATOR);
+        indicatorEl.setAttribute('data-testid', 'annotation-marker');
         indicatorEl.innerHTML = ICON_PLACED_ANNOTATION;
         return indicatorEl;
     }
