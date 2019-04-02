@@ -1,15 +1,15 @@
 # @desktop @mobile @enabled
 language: node_js
 node_js:
-- '8'
+    - '8'
 cache: yarn
 notifications:
     email:
         recipients:
             - preview-alerts@box.com
 jobs:
-  include:
-  - name: "CI"
-  script: yarn run ci
-  - name: "E2E Tests"
-  script: yarn test:e2e
+    include:
+        - name: "CI"
+          script: yarn run ci
+        - name: "E2E Tests"
+          script: yarn test:e2e
