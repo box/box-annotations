@@ -146,7 +146,7 @@
     "build-variables": "node ./build/build-style-vars.js ./src/styles/_variables.scss ./src/styles/variables.js ./src/styles/variables.json",
     "cy:open": "yarn cy:wait; yarn cypress open",
     "cy:run": "yarn cy:wait; yarn cypress run --spec test/integration/**/*.test.js",
-    "cy:wait": "wait-on http-get://localhost:6000",
+    "cy:wait": "wait-on http-get://localhost:8001",
     "test": "yarn install && NODE_ENV=test yarn run jest",
     "debug": "yarn install && NODE_ENV=test yarn run jest --watch",
     "setup-travis": "cd functional-tests && yarn install && node app.js",
@@ -173,7 +173,6 @@
     "styleguide-static": "LANGUAGE=en-US REACT=true BABEL_ENV=production NODE_ENV=production node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js build --config build/styleguide.config.js --mode production",
     "test:e2e": "npm-run-all -p -r start:dev cy:run",
     "test:e2e:open": "npm-run-all -p -r start:dev cy:open"
-
   },
   "lint-staged": {
     "src/**/*.js": [
