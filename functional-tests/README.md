@@ -11,8 +11,8 @@
 1) Install selenium-standalone `npm install selenium-standalone@latest -g`
 2) Install Selenium drivers `selenium-standalone install`
 3) Start Selenium `selenium-standalone start`
-4) In a separate terminal, build BoxAnnotations `yarn run selenium-build`
-5) Run functional tests `FILE_ID="285568802145" FILE_VERSION_ID="300497533713" yarn run functional-tests`
+4) In a separate terminal, build BoxAnnotations `yarn build:selenium`
+5) Run functional tests `FILE_ID="285568802145" FILE_VERSION_ID="300497533713" yarn functional-tests`
 
 ### Running Specific Tests
 1) Start Selenium `selenium-standalone start`

@@ -8,7 +8,7 @@
 6.  Add the upstream repo to your remotes `git remote add upstream git@github.com:box/box-annotations.git`.
 7.  Verify your remotes are properly set up `git remote -v`. You should pull updates from the Box repo `upstream` and push changes to your fork `origin`.
 8.  Install dependencies `yarn install`
-9.  Test your first build! `yarn run build`
+9.  Test your first build! `yarn build`
 10. To test only local annotation changes, see [instantiating a custom instance of Box Annotations](https://github.com/box/box-annotations/#passing-an-instance-of-box-annotations-into-box-content-preview).
 11. To link and test your local code changes along with your local Preview changes, run `yarn link` in this repository and `yarn link box-annotations` wherever [Box Content Preview](github.com/box/box-content-preview/) is cloned locally.
 12. To automatically rsync files after a Webpack build, add a build/rsync.json file with a `location` field. This file should look like:
@@ -29,11 +29,9 @@ Install the following plugins in your preferred editor
 
 ### Yarn commands
 
-*   `yarn run build` to generate resource bundles and JS webpack bundles.
-*   `yarn run start` to only generate JS webpack bundles on file changes.
-*   `yarn run test` launches jest.
-*   `yarn run test -- --src=PATH/TO/SRC/FILENAME` launches test only for `src/PATH/TO/SRC/__tests__/FILENAME-test.js` instead of all tests. For example, `yarn run test -- --src=doc/DocAnnotator` launches tests for `src/doc/__tests__/DocAnnotator-test.js`. This also works for directories, e.g. `yarn run test -- --src=doc/`.
-*   `yarn run debug` launches jest for debugging. Open the URL mentioned in the console.
-*   `yarn run debug -- --src=path/to/src/FILENAME` launches debugging for `src/path/to/src/__tests__/FILENAME-test.js` instead of all tests. Open the URL mentioned in the console.
+*   `yarn build` to generate resource bundles and JS webpack bundles.
+*   `yarn start` to only generate JS webpack bundles on file changes.
+*   `yarn test` launches Jest.
+*   `yarn test:watch` launches Jest for debugging.
 
 For more script commands see `package.json`. Test coverage reports are available under reports/coverage.

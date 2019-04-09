@@ -86,7 +86,7 @@ install_dependencies() {
 
 build_lint_and_test() {
     # The build command includes linting
-    yarn run build && yarn run test || return 1
+    yarn build && yarn test || return 1
 }
 
 

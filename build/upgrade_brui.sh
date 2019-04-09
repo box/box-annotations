@@ -82,7 +82,7 @@ upgrade_brui() {
     update_version || return 1
 
     # Update flow-typed configs
-    yarn flow-typed-update
+    yarn upgrade:flow-typed
 
     # Push to GitHub
     push_to_github || return 1
