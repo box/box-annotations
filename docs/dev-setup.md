@@ -31,9 +31,7 @@ Install the following plugins in your preferred editor
 
 *   `yarn build` to generate resource bundles and JS webpack bundles.
 *   `yarn start` to only generate JS webpack bundles on file changes.
-*   `yarn test` launches jest.
-*   `yarn test -- --src=PATH/TO/SRC/FILENAME` launches test only for `src/PATH/TO/SRC/__tests__/FILENAME-test.js` instead of all tests. For example, `yarn test -- --src=doc/DocAnnotator` launches tests for `src/doc/__tests__/DocAnnotator-test.js`. This also works for directories, e.g. `yarn test -- --src=doc/`.
-*   `yarn test:watch` launches jest for debugging. Open the URL mentioned in the console.
-*   `yarn test:watch -- --src=path/to/src/FILENAME` launches debugging for `src/path/to/src/__tests__/FILENAME-test.js` instead of all tests. Open the URL mentioned in the console.
+*   `yarn test` launches Jest.
+*   `yarn test:watch` launches Jest for debugging.
 
 For more script commands see `package.json`. Test coverage reports are available under reports/coverage.
