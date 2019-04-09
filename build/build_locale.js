@@ -11,7 +11,7 @@ module.exports = (locale, callback) => {
     try {
         console.log(`Building ${locale}`);
         // build assets for a single locale
-        execSync(`time LANGUAGE=${locale} yarn run build:prod`);
+        execSync(`time LANGUAGE=${locale} yarn build:prod`);
         callback();
     } catch (error) {
         console.error(`Error: Failed to build ${locale}`);

@@ -41,7 +41,7 @@ lint_and_test() {
     echo "----------------------------------------------------"
     echo "Running linter for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run lint; then
+    if yarn lint; then
         echo "----------------------------------------------------"
         echo "Done linting for version" $VERSION
         echo "----------------------------------------------------"
@@ -56,7 +56,7 @@ lint_and_test() {
     echo "----------------------------------------------------"
     echo "Running flow for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run flow check; then
+    if yarn flow check; then
         echo "----------------------------------------------------"
         echo "Done flowing for version" $VERSION
         echo "----------------------------------------------------"
@@ -71,7 +71,7 @@ lint_and_test() {
     echo "----------------------------------------------------"
     echo "Running tests for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run test; then
+    if yarn test; then
         echo "----------------------------------------------------"
         echo "Done testing for version" $VERSION
         echo "----------------------------------------------------"
@@ -87,7 +87,7 @@ clean_assets() {
     echo "----------------------------------------------------"
     echo "Running clean for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run clean; then
+    if yarn clean; then
         echo "----------------------------------------------------"
         echo "Done cleaning for version" $VERSION
         echo "----------------------------------------------------"
@@ -100,12 +100,12 @@ clean_assets() {
 }
 
 build_assets() {
-    yarn run setup;
+    yarn setup;
 
     echo "----------------------------------------------------"
     echo "Starting babel build for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run build; then
+    if yarn build; then
         echo "----------------------------------------------------"
         echo "Built babel assets for version" $VERSION
         echo "----------------------------------------------------"

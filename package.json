@@ -151,7 +151,7 @@
         "cy:wait": "wait-on http-get://localhost:8001",
         "docs:changelog": "yarn conventional-changelog -i CHANGELOG.md --same-file",
         "functional-tests": "node functional-tests/app.js & node ./node_modules/codeceptjs/bin/codecept.js run --steps",
-        "functional-tests-ci": "yarn run setup && yarn run build:selenium && node ./node_modules/codeceptjs/bin/codecept.js run --steps",
+        "functional-tests-ci": "yarn setup && yarn build:selenium && node ./node_modules/codeceptjs/bin/codecept.js run --steps",
         "lint": "npm-run-all lint:*",
         "lint:js": "NODE_ENV=dev yarn eslint src",
         "lint:scss": "yarn stylelint 'src/**/*.scss'",
@@ -159,16 +159,16 @@
         "release:major": "./build/release.sh -m && ./build/publish.sh",
         "release:minor": "./build/release.sh -n && ./build/publish.sh",
         "release:patch": "./build/release.sh -p && ./build/publish.sh",
-        "setup": "yarn install && yarn run clean && yarn run build:i18n",
+        "setup": "yarn install && yarn clean && yarn build:i18n",
         "start": "yarn install && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev yarn webpack --watch --progress --colors --config build/webpack.config.js --mode development",
-        "start:dev": "yarn run setup && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev yarn webpack-dev-server --config build/webpack.config.js --mode development",
-        "start:examples": "yarn run setup && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development",
-        "test": "yarn install && NODE_ENV=test yarn run jest",
+        "start:dev": "yarn setup && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev yarn webpack-dev-server --config build/webpack.config.js --mode development",
+        "start:examples": "yarn setup && LANGUAGE=en-US REACT=true BABEL_ENV=dev NODE_ENV=dev node --max_old_space_size=8192 node_modules/react-styleguidist/bin/styleguidist.js server --config build/styleguide.config.js --mode development",
+        "test": "yarn install && NODE_ENV=test yarn jest",
         "test:e2e": "npm-run-all -p -r start:dev cy:run",
         "test:e2e:open": "npm-run-all -p -r start:dev cy:open",
         "test:watch": "yarn test --watch",
         "upgrade:brui": "./build/upgrade_brui.sh",
-        "upgrade:flow-typed": "yarn add flow-typed && yarn run flow-typed update -i dev"
+        "upgrade:flow-typed": "yarn add flow-typed && yarn flow-typed update -i dev"
     },
     "lint-staged": {
         "src/**/*.js": [

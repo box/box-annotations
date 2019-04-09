@@ -10,8 +10,8 @@ notifications:
 jobs:
     include:
         - name: "Code Lint"
-          script: yarn run lint
+          script: yarn lint
         - name: "Unit Tests"
-          script: yarn run test
+          script: yarn test
         - name: "E2E Tests"
-          script: yarn run test:e2e
+          script: yarn test:e2e
