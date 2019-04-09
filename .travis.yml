@@ -9,7 +9,9 @@ notifications:
             - preview-alerts@box.com
 jobs:
     include:
-        - name: "CI"
-          script: yarn run ci
+        - name: "Code Lint"
+          script: yarn run lint
+        - name: "Unit Tests"
+          script: yarn run test
         - name: "E2E Tests"
-          script: yarn test:e2e
+          script: yarn run test:e2e

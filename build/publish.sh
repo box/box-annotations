@@ -56,7 +56,7 @@ lint_and_test() {
     echo "----------------------------------------------------"
     echo "Running flow for version" $VERSION
     echo "----------------------------------------------------"
-    if yarn run flow; then
+    if yarn run flow check; then
         echo "----------------------------------------------------"
         echo "Done flowing for version" $VERSION
         echo "----------------------------------------------------"
@@ -100,7 +100,7 @@ clean_assets() {
 }
 
 build_assets() {
-    yarn run pre-build;
+    yarn run setup;
 
     echo "----------------------------------------------------"
     echo "Starting babel build for version" $VERSION

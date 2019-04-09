@@ -33,7 +33,7 @@ Install the following plugins in your preferred editor
 *   `yarn run start` to only generate JS webpack bundles on file changes.
 *   `yarn run test` launches jest.
 *   `yarn run test -- --src=PATH/TO/SRC/FILENAME` launches test only for `src/PATH/TO/SRC/__tests__/FILENAME-test.js` instead of all tests. For example, `yarn run test -- --src=doc/DocAnnotator` launches tests for `src/doc/__tests__/DocAnnotator-test.js`. This also works for directories, e.g. `yarn run test -- --src=doc/`.
-*   `yarn run debug` launches jest for debugging. Open the URL mentioned in the console.
-*   `yarn run debug -- --src=path/to/src/FILENAME` launches debugging for `src/path/to/src/__tests__/FILENAME-test.js` instead of all tests. Open the URL mentioned in the console.
+*   `yarn run test:watch` launches jest for debugging. Open the URL mentioned in the console.
+*   `yarn run test:watch -- --src=path/to/src/FILENAME` launches debugging for `src/path/to/src/__tests__/FILENAME-test.js` instead of all tests. Open the URL mentioned in the console.
 
 For more script commands see `package.json`. Test coverage reports are available under reports/coverage.
