@@ -11,7 +11,7 @@ import {
     CONTROLLER_EVENT,
     CREATE_EVENT,
     SELECTOR_ANNOTATED_ELEMENT,
-    CLASS_ANNOTATION_POPOVER
+    CLASS_ANNOTATION_POPOVER,
 } from '../../constants';
 import DocHighlightThread from '../DocHighlightThread';
 import FileVersionAPI from '../../api/FileVersionAPI';
@@ -53,8 +53,8 @@ describe('doc/DocAnnotator', () => {
             annotator: {
                 NAME: 'name',
                 TYPE: ['highlight', 'highlight-comment'],
-                CONTROLLERS: { something: controller }
-            }
+                CONTROLLERS: { something: controller },
+            },
         };
 
         api = new FileVersionAPI();
@@ -62,18 +62,18 @@ describe('doc/DocAnnotator', () => {
             container: rootElement,
             api,
             file: {
-                file_version: { id: 1 }
+                file_version: { id: 1 },
             },
             isMobile: false,
             options,
             modeButtons: {},
             location: {
-                locale: 'en-US'
+                locale: 'en-US',
             },
             localizedStrings: {
                 anonymousUserName: 'anonymous',
-                loadError: 'loaderror'
-            }
+                loadError: 'loaderror',
+            },
         });
 
         annotator.headerElement = document.createElement('div');
@@ -90,7 +90,7 @@ describe('doc/DocAnnotator', () => {
 
         util.getPageInfo = jest.fn().mockReturnValue({
             page: 1,
-            pageEl: document.createElement('div')
+            pageEl: document.createElement('div'),
         });
     });
 
@@ -124,7 +124,10 @@ describe('doc/DocAnnotator', () => {
         const x = 100;
         const y = 200;
         const dimensions = { x, y };
-        const quadPoints = [[1, 2, 3, 4, 5, 6, 7, 8], [2, 3, 4, 5, 6, 7, 8, 9]];
+        const quadPoints = [
+            [1, 2, 3, 4, 5, 6, 7, 8],
+            [2, 3, 4, 5, 6, 7, 8, 9],
+        ];
         const page = 3;
         let event;
         let pageEl;
@@ -133,7 +136,7 @@ describe('doc/DocAnnotator', () => {
             event = {
                 clientX: x,
                 clientY: y,
-                target: annotator.annotatedEl
+                target: annotator.annotatedEl,
             };
 
             docUtil.isSelectionPresent = jest.fn().mockReturnValue(true);
@@ -142,14 +145,14 @@ describe('doc/DocAnnotator', () => {
                     width: dimensions.x,
                     height: dimensions.y + 30, // 15px padding top and bottom,
                     top: 0,
-                    left: 0
-                })
+                    left: 0,
+                }),
             };
             util.getPageInfo = jest.fn().mockReturnValue({ pageEl, page });
 
             docUtil.getHighlightAndHighlightEls = jest.fn().mockReturnValue({
                 highlight: {},
-                highlightEls: []
+                highlightEls: [],
             });
 
             util.isInDialog = jest.fn().mockReturnValue(false);
@@ -170,9 +173,9 @@ describe('doc/DocAnnotator', () => {
                     {
                         clientX: x,
                         clientY: y,
-                        target: annotator.annotatedEl
-                    }
-                ]
+                        target: annotator.annotatedEl,
+                    },
+                ],
             };
             annotator.getLocationFromEvent(event, TYPES.point);
         });
@@ -184,15 +187,15 @@ describe('doc/DocAnnotator', () => {
             event = {
                 targetTouches: [
                     {
-                        target: annotator.annotatedEl
-                    }
-                ]
+                        target: annotator.annotatedEl,
+                    },
+                ],
             };
             annotator;
             expect(annotator.getLocationFromEvent(event, TYPES.point)).toBeNull();
         });
 
-        it('should not return a location if click isn\'t on page', () => {
+        it("should not return a location if click isn't on page", () => {
             window.getSelection = jest.fn().mockReturnValue(false);
             util.getPageInfo = jest.fn().mockReturnValue({ pageEl: null, page: -1 });
             expect(annotator.getLocationFromEvent(event, TYPES.point)).toBeNull();
@@ -207,7 +210,7 @@ describe('doc/DocAnnotator', () => {
                 docUtil.getSelection = jest.fn().mockReturnValue(false);
                 util.getPageInfo = jest.fn().mockReturnValue({
                     pageEl: document.querySelector(SELECTOR_ANNOTATED_ELEMENT),
-                    page: 1
+                    page: 1,
                 });
                 util.isInDialog = jest.fn().mockReturnValue(true);
                 expect(annotator.getLocationFromEvent(event, TYPES.point)).toBeNull();
@@ -231,9 +234,9 @@ describe('doc/DocAnnotator', () => {
                         {
                             clientX: x + 1,
                             clientY: y,
-                            target: annotator.annotatedEl
-                        }
-                    ]
+                            target: annotator.annotatedEl,
+                        },
+                    ],
                 };
 
                 expect(annotator.getLocationFromEvent(event, TYPES.point)).toBeNull();
@@ -252,7 +255,7 @@ describe('doc/DocAnnotator', () => {
         describe(TYPES.highlight, () => {
             beforeEach(() => {
                 annotator.highlighter = {
-                    highlights: []
+                    highlights: [],
                 };
             });
 
@@ -291,7 +294,7 @@ describe('doc/DocAnnotator', () => {
         describe(TYPES.highlight_comment, () => {
             beforeEach(() => {
                 annotator.highlighter = {
-                    highlights: []
+                    highlights: [],
                 };
             });
 
@@ -353,14 +356,14 @@ describe('doc/DocAnnotator', () => {
             annotator.lastHighlightEvent = {};
 
             annotator.highlighter = {
-                removeAllHighlights: jest.fn()
+                removeAllHighlights: jest.fn(),
             };
 
             thread.type = 'highlight';
             controller.registerThread = jest.fn().mockReturnValue(thread);
             annotator.modeControllers = {
                 highlight: controller,
-                highlight_comment: controller
+                highlight_comment: controller,
             };
         });
 
@@ -415,10 +418,10 @@ describe('doc/DocAnnotator', () => {
     describe('resetAnnotationUI()', () => {
         beforeEach(() => {
             window.getSelection = jest.fn().mockReturnValue({
-                removeAllRanges: jest.fn()
+                removeAllRanges: jest.fn(),
             });
             annotator.highlighter = {
-                removeAllHighlights: jest.fn()
+                removeAllHighlights: jest.fn(),
             };
             annotator.scaleAnnotationCanvases = jest.fn();
         });
@@ -480,18 +483,18 @@ describe('doc/DocAnnotator', () => {
         it('should not bind any plain highlight functions if they are disabled', () => {
             expect(annotator.createHighlightDialog.addListener).not.toBeCalledWith(
                 CREATE_EVENT.plain,
-                expect.any(Function)
+                expect.any(Function),
             );
         });
 
         it('should not bind any comment highlight functions if they are disabled', () => {
             expect(annotator.createHighlightDialog.addListener).not.toBeCalledWith(
                 CREATE_EVENT.comment,
-                expect.any(Function)
+                expect.any(Function),
             );
             expect(annotator.createHighlightDialog.addListener).not.toBeCalledWith(
                 CREATE_EVENT.post,
-                expect.any(Function)
+                expect.any(Function),
             );
         });
 
@@ -509,11 +512,11 @@ describe('doc/DocAnnotator', () => {
             Object.defineProperty(Annotator.prototype, 'bindDOMListeners', { value: jest.fn() });
             annotator.container = {
                 addEventListener: jest.fn(),
-                removeEventListener: jest.fn()
+                removeEventListener: jest.fn(),
             };
             annotator.annotatedElement = {
                 addEventListener: jest.fn(),
-                removeEventListener: jest.fn()
+                removeEventListener: jest.fn(),
             };
 
             annotator.permissions.can_annotate = true;
@@ -531,16 +534,16 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.container.addEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'mouseup',
-                annotator.highlightMouseupHandler
+                annotator.highlightMouseupHandler,
             );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'mousedown',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith(
                 'contextmenu',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
@@ -598,15 +601,15 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'mouseup',
-                annotator.highlightMouseupHandler
+                annotator.highlightMouseupHandler,
             );
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'mousedown',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.addEventListener).not.toBeCalledWith(
                 'contextmenu',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
@@ -615,10 +618,10 @@ describe('doc/DocAnnotator', () => {
     describe('unbindDOMListeners()', () => {
         beforeEach(() => {
             annotator.container = {
-                removeEventListener: jest.fn()
+                removeEventListener: jest.fn(),
             };
             annotator.annotatedElement = {
-                removeEventListener: jest.fn()
+                removeEventListener: jest.fn(),
             };
             annotator.highlightMousemoveHandler = jest.fn();
 
@@ -632,20 +635,20 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.container.removeEventListener).toBeCalledWith('resize', annotator.resetAnnotationUI);
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'mouseup',
-                annotator.highlightMouseupHandler
+                annotator.highlightMouseupHandler,
             );
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith('wheel', annotator.hideCreateDialog);
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'contextmenu',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'touchend',
-                annotator.hideCreateDialog
+                annotator.hideCreateDialog,
             );
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith(
                 'mousedown',
-                annotator.highlightMousedownHandler
+                annotator.highlightMousedownHandler,
             );
             expect(annotator.annotatedElement.removeEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
@@ -674,8 +677,8 @@ describe('doc/DocAnnotator', () => {
             annotator.permissions.can_annotate = true;
             annotator.modeControllers = {
                 test: {
-                    removeSelection: jest.fn()
-                }
+                    removeSelection: jest.fn(),
+                },
             };
 
             annotator.unbindDOMListeners();
@@ -687,7 +690,7 @@ describe('doc/DocAnnotator', () => {
         let drawingController;
         const event = {
             stopPropagation: jest.fn(),
-            preventDefault: jest.fn()
+            preventDefault: jest.fn(),
         };
 
         beforeEach(() => {
@@ -698,7 +701,7 @@ describe('doc/DocAnnotator', () => {
             annotator.hideAnnotations = jest.fn();
 
             annotator.modeControllers = {
-                [TYPES.draw]: new DrawingModeController()
+                [TYPES.draw]: new DrawingModeController(),
             };
             drawingController = annotator.modeControllers[TYPES.draw];
             drawingController.handleSelection = jest.fn();
@@ -753,7 +756,7 @@ describe('doc/DocAnnotator', () => {
     describe('resetHighlightSelection()', () => {
         it('should hide the visible createHighlightDialog and clear the text selection', () => {
             const selection = {
-                removeAllRanges: jest.fn()
+                removeAllRanges: jest.fn(),
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
             annotator.hideCreateDialog = jest.fn();
@@ -767,7 +770,7 @@ describe('doc/DocAnnotator', () => {
     describe('highlightCurrentSelection()', () => {
         beforeEach(() => {
             annotator.highlighter = {
-                highlightSelection: jest.fn()
+                highlightSelection: jest.fn(),
             };
         });
 
@@ -776,10 +779,10 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.highlighter.highlightSelection).toBeCalled();
         });
 
-        it('should invoke highlighter.highlightSelection() with the annotated element\'s id', () => {
+        it("should invoke highlighter.highlightSelection() with the annotated element's id", () => {
             annotator.highlightCurrentSelection();
             expect(annotator.highlighter.highlightSelection).toBeCalledWith('rangy-highlight', {
-                containerElementId: 'doc-annotator-el'
+                containerElementId: 'doc-annotator-el',
             });
         });
     });
@@ -789,7 +792,7 @@ describe('doc/DocAnnotator', () => {
             thread.type = 'highlight';
             controller.threads = { 1: { '123abc': thread } };
             annotator.modeControllers = {
-                highlight: controller
+                highlight: controller,
             };
             annotator.resetHighlightSelection = jest.fn();
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
@@ -863,7 +866,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should call highlighter.removeAllHighlghts', () => {
             annotator.highlighter = {
-                removeAllHighlights: jest.fn()
+                removeAllHighlights: jest.fn(),
             };
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlighter.removeAllHighlights).toBeCalled();
@@ -877,11 +880,11 @@ describe('doc/DocAnnotator', () => {
             event = {
                 nodeName: 'textarea',
                 preventDefault: jest.fn(),
-                stopPropagation: jest.fn()
+                stopPropagation: jest.fn(),
             };
 
             annotator.annotatedElement = {
-                contains: jest.fn().mockReturnValue(true)
+                contains: jest.fn().mockReturnValue(true),
             };
 
             docUtil.isValidSelection = jest.fn().mockReturnValue(true);
@@ -893,9 +896,9 @@ describe('doc/DocAnnotator', () => {
 
             window.getSelection = jest.fn().mockReturnValue({
                 anchorNode: {
-                    parentNode: 'Node'
+                    parentNode: 'Node',
                 },
-                getRangeAt: jest.fn()
+                getRangeAt: jest.fn(),
             });
             util.getPageInfo = jest.fn().mockReturnValue({ page: 1 });
             annotator.isCreatingHighlight = false;
@@ -929,7 +932,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should do nothing if the user is currently creating a point annotation', () => {
             annotator.modeControllers = {
-                point: controller
+                point: controller,
             };
             controller.pendingThreadID = 'something';
             annotator.onSelectionChange(event);
@@ -948,7 +951,7 @@ describe('doc/DocAnnotator', () => {
         it('should clear selection if the highlight has not changed', () => {
             const selection = {
                 anchorNode: 'derp',
-                toString: () => '' // Causes invalid selection
+                toString: () => '', // Causes invalid selection
             };
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(false);
             window.getSelection = jest.fn().mockReturnValue(selection);
@@ -962,9 +965,9 @@ describe('doc/DocAnnotator', () => {
                 rangeCount: 10,
                 isCollapsed: false,
                 anchorNode: {
-                    parentNode: 'Node'
+                    parentNode: 'Node',
                 },
-                toString: () => 'asdf'
+                toString: () => 'asdf',
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
@@ -981,9 +984,9 @@ describe('doc/DocAnnotator', () => {
                 rangeCount: 10,
                 isCollapsed: false,
                 anchorNode: {
-                    parentNode: 'Node'
+                    parentNode: 'Node',
                 },
-                toString: () => 'asdf'
+                toString: () => 'asdf',
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
@@ -1000,12 +1003,12 @@ describe('doc/DocAnnotator', () => {
                 rangeCount: 10,
                 isCollapsed: false,
                 anchorNode: {
-                    parentNode: 'Node'
+                    parentNode: 'Node',
                 },
-                toString: jest.fn().mockReturnValue('asdf')
+                toString: jest.fn().mockReturnValue('asdf'),
             };
             annotator.modeControllers = {
-                highlight: controller
+                highlight: controller,
             };
             docUtil.hasSelectionChanged = jest.fn().mockReturnValue(true);
             annotator.plainHighlightEnabled = true;
@@ -1019,7 +1022,7 @@ describe('doc/DocAnnotator', () => {
 
     describe('highlightCreateHandler()', () => {
         const selection = {
-            rangeCount: 1
+            rangeCount: 1,
         };
         let pageInfo;
         const event = new Event({ x: 1, y: 1 });
@@ -1068,7 +1071,7 @@ describe('doc/DocAnnotator', () => {
             docUtil.getDialogCoordsFromRange = jest.fn().mockReturnValue({ x: 50, y: 35 });
             const pageRect = {
                 top: 0,
-                left: 0
+                left: 0,
             };
             pageInfo.pageEl.getBoundingClientRect = jest.fn().mockReturnValue(pageRect);
             selection.getRangeAt = jest.fn().mockReturnValue({});
@@ -1091,10 +1094,10 @@ describe('doc/DocAnnotator', () => {
             annotator.resetHighlightOnOutsideClick = jest.fn();
             annotator.highlightCreateHandler = jest.fn();
             annotator.modeControllers = {
-                highlight: controller
+                highlight: controller,
             };
             annotator.highlighter = {
-                removeAllHighlights: jest.fn()
+                removeAllHighlights: jest.fn(),
             };
             annotator.activeThread = undefined;
             annotator.plainHighlightEnabled = false;
@@ -1130,7 +1133,7 @@ describe('doc/DocAnnotator', () => {
 
         it('should find the active highlight comment', () => {
             annotator.modeControllers = {
-                'highlight-comment': controller
+                'highlight-comment': controller,
             };
             annotator.commentHighlightEnabled = true;
             annotator.activeThread = thread;
@@ -1235,7 +1238,7 @@ describe('doc/DocAnnotator', () => {
             annotator.highlighter = {
                 highlights: [{ id: 1 }, { id: 2 }, { id: 3 }],
                 filter: jest.fn(),
-                removeHighlights: jest.fn()
+                removeHighlights: jest.fn(),
             };
             Array.isArray = jest.fn().mockReturnValue(false);
 
@@ -1248,10 +1251,10 @@ describe('doc/DocAnnotator', () => {
             annotator.highlighter = {
                 highlights: {
                     filter: jest.fn().mockReturnValue(1),
-                    ids: [1, 2, 3, 4]
+                    ids: [1, 2, 3, 4],
                 },
                 filter: jest.fn(),
-                removeHighlights: jest.fn()
+                removeHighlights: jest.fn(),
             };
             Array.isArray = jest.fn().mockReturnValue(true);
 
@@ -1265,7 +1268,7 @@ describe('doc/DocAnnotator', () => {
             controller.hadPendingThreads = true;
             annotator.modeControllers = {
                 draw: controller,
-                point: controller
+                point: controller,
             };
             expect(annotator.isCreatingAnnotation()).toBeTruthy();
         });
@@ -1274,7 +1277,7 @@ describe('doc/DocAnnotator', () => {
             controller.hadPendingThreads = false;
             annotator.modeControllers = {
                 draw: controller,
-                point: controller
+                point: controller,
             };
             expect(annotator.isCreatingAnnotation()).toBeFalsy();
         });

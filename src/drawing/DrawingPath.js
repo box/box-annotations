@@ -180,7 +180,7 @@ class DrawingPath {
             maxX: accumulator.maxX ? Math.max(accumulator.maxX, pathA.maxX) : pathA.maxX,
             minY: accumulator.minY ? Math.min(accumulator.minY, pathA.minY) : pathA.minY,
             maxY: accumulator.maxY ? Math.max(accumulator.maxY, pathA.maxY) : pathA.maxY,
-            paths
+            paths,
         };
     }
 }

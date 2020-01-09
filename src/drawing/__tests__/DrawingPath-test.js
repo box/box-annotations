@@ -19,7 +19,10 @@ describe('drawing/DrawingPath', () => {
 
         it('should generate path of Location objects from provided data', () => {
             const data = {
-                path: [{ x: 1, y: 1 }, { x: 2, y: 2 }]
+                path: [
+                    { x: 1, y: 1 },
+                    { x: 2, y: 2 },
+                ],
             };
             drawingPath.initPath(data);
             expect(drawingPath.path.length).toEqual(2);
@@ -35,11 +38,11 @@ describe('drawing/DrawingPath', () => {
             let lengthBefore = drawingPath.path.length;
             drawingPath.addCoordinate({
                 x: null,
-                y: 2
+                y: 2,
             });
             drawingPath.addCoordinate({
                 x: 2,
-                y: null
+                y: null,
             });
 
             let lengthAfter = drawingPath.path.length;
@@ -50,22 +53,22 @@ describe('drawing/DrawingPath', () => {
             drawingPath.addCoordinate(
                 {
                     x: 1,
-                    y: 1
+                    y: 1,
                 },
                 {
                     x: null,
-                    y: 1
-                }
+                    y: 1,
+                },
             );
             drawingPath.addCoordinate(
                 {
                     x: 1,
-                    y: 1
+                    y: 1,
                 },
                 {
                     x: 1,
-                    y: null
-                }
+                    y: null,
+                },
             );
             lengthAfter = drawingPath.browserPath.length;
             expect(lengthAfter).toEqual(lengthBefore);
@@ -75,14 +78,14 @@ describe('drawing/DrawingPath', () => {
             const lengthBefore = drawingPath.path.length;
             drawingPath.addCoordinate({
                 x: 1,
-                y: 2
+                y: 2,
             });
             const lengthAfter = drawingPath.path.length;
 
             expect(lengthAfter).toEqual(lengthBefore + 1);
             expect(drawingPath.path[lengthAfter - 1]).toStrictEqual({
                 x: 1,
-                y: 2
+                y: 2,
             });
         });
 
@@ -91,16 +94,16 @@ describe('drawing/DrawingPath', () => {
                 x1: 1,
                 x2: 5,
                 y1: 2,
-                y2: 6
+                y2: 6,
             };
 
             drawingPath.addCoordinate({
                 x: rectBounds.x1,
-                y: rectBounds.y1
+                y: rectBounds.y1,
             });
             drawingPath.addCoordinate({
                 x: rectBounds.x2,
-                y: rectBounds.y2
+                y: rectBounds.y2,
             });
 
             expect(drawingPath.minY).toEqual(rectBounds.y1);
@@ -118,7 +121,7 @@ describe('drawing/DrawingPath', () => {
         it('should return false when a coordinate has been inserted', () => {
             const coord = {
                 x: 1,
-                y: 1
+                y: 1,
             };
             drawingPath.addCoordinate(coord);
             expect(drawingPath.isEmpty()).toBeFalsy();
@@ -130,7 +133,7 @@ describe('drawing/DrawingPath', () => {
             drawingPath.drawPath({});
 
             drawingPath.browserPath = {
-                forEach: jest.fn()
+                forEach: jest.fn(),
             };
             drawingPath.drawPath();
             expect(drawingPath.browserPath.forEach).not.toBeCalled();
@@ -139,15 +142,15 @@ describe('drawing/DrawingPath', () => {
         it('should draw when there are browser coordinates', () => {
             const context = {
                 quadraticCurveTo: jest.fn(),
-                moveTo: jest.fn()
+                moveTo: jest.fn(),
             };
             const docCoord = {
                 x: 1,
-                y: 1
+                y: 1,
             };
             const browserCoord = {
                 x: 1,
-                y: 1
+                y: 1,
             };
 
             drawingPath.addCoordinate(docCoord, browserCoord);
@@ -161,12 +164,12 @@ describe('drawing/DrawingPath', () => {
         it('should not draw when there are no browser coordinates', () => {
             const context = {
                 quadraticCurveTo: jest.fn(),
-                moveTo: jest.fn()
+                moveTo: jest.fn(),
             };
 
             drawingPath.path.push({
                 x: 1,
-                y: 1
+                y: 1,
             });
 
             expect(drawingPath.browserPath.length).toEqual(0);
@@ -189,15 +192,15 @@ describe('drawing/DrawingPath', () => {
             const lengthBefore = drawingPath.browserPath.length;
 
             // eslint-disable-next-line require-jsdoc
-            const transform = (coord) => {
+            const transform = coord => {
                 return {
                     x: coord.x + 1,
-                    y: coord.y + 1
+                    y: coord.y + 1,
                 };
             };
             const documentCoord = {
                 x: 1,
-                y: 2
+                y: 2,
             };
 
             drawingPath.path = [documentCoord];
@@ -206,7 +209,7 @@ describe('drawing/DrawingPath', () => {
             const lengthAfter = drawingPath.browserPath.length;
 
             // eslint-disable-next-line require-jsdoc
-            const isBrowserCoord = (item) => item.x === documentCoord.x + 1 && item.y === documentCoord.y + 1;
+            const isBrowserCoord = item => item.x === documentCoord.x + 1 && item.y === documentCoord.y + 1;
             expect(lengthBefore).toBeLessThan(lengthAfter);
             expect(drawingPath.browserPath.find(isBrowserCoord)).not.toBeUndefined();
         });
@@ -219,7 +222,7 @@ describe('drawing/DrawingPath', () => {
                 minX: 5,
                 maxX: 6,
                 minY: 7,
-                maxY: 8
+                maxY: 8,
             };
 
             const result = DrawingPath.extractDrawingInfo(drawingObjA, {});
@@ -236,14 +239,14 @@ describe('drawing/DrawingPath', () => {
                 minX: 5,
                 maxX: 11,
                 minY: 6,
-                maxY: 12
+                maxY: 12,
             };
             const drawingObjC = {
                 path: 'pathC',
                 minX: 3,
                 maxX: 10,
                 minY: 5,
-                maxY: 11
+                maxY: 11,
             };
 
             const result = DrawingPath.extractDrawingInfo(drawingObjC, acc);

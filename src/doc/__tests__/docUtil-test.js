@@ -54,10 +54,10 @@ describe('doc/docUtil', () => {
 
         it('should return true if the previous and current selection have changed', () => {
             const selection = {
-                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(false) })
+                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(false) }),
             };
             const diffSelection = {
-                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(true) })
+                getRangeAt: jest.fn().mockReturnValue({ compareBoundaryPoints: jest.fn().mockReturnValue(true) }),
             };
             expect(docUtil.hasSelectionChanged(diffSelection, selection)).toBeTruthy();
             expect(docUtil.hasSelectionChanged(selection, selection)).toBeFalsy();
@@ -66,12 +66,22 @@ describe('doc/docUtil', () => {
 
     describe('isPointInPolyOpt()', () => {
         it('should return true if point is inside polygon', () => {
-            const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
+            const polygon = [
+                [0, 0],
+                [100, 0],
+                [100, 100],
+                [0, 100],
+            ];
             expect(docUtil.isPointInPolyOpt(polygon, 50, 50)).toBeTruthy();
         });
 
         it('should return false if point is outside polygon', () => {
-            const polygon = [[0, 0], [100, 0], [100, 100], [0, 100]];
+            const polygon = [
+                [0, 0],
+                [100, 0],
+                [100, 100],
+                [0, 100],
+            ];
             expect(docUtil.isPointInPolyOpt(polygon, 120, 50)).toBeFalsy();
         });
     });
@@ -80,7 +90,7 @@ describe('doc/docUtil', () => {
         it('should return true if there is a non-empty selection on the page', () => {
             window.getSelection = jest.fn().mockReturnValue({
                 isCollapsed: false,
-                rangeCount: 1
+                rangeCount: 1,
             });
             expect(docUtil.isSelectionPresent()).toBeTruthy();
         });
@@ -118,15 +128,15 @@ describe('doc/docUtil', () => {
                 y: 300,
                 dimensions: {
                     x: 600,
-                    y: 1000
-                }
+                    y: 1000,
+                },
             };
 
             const annotatedEl = document.createElement('div');
             annotatedEl.querySelector = jest.fn().mockReturnValue(rootElement);
             rootElement.getBoundingClientRect = jest.fn().mockReturnValue({
                 height: 1030,
-                width: 600
+                width: 600,
             });
 
             expect(docUtil.getBrowserCoordinatesFromLocation(location, annotatedEl)).toStrictEqual([400, 600]);
@@ -134,12 +144,18 @@ describe('doc/docUtil', () => {
     });
 
     describe('getLowerRightCornerOfLastQuadPoint()', () => {
-        const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
+        const quadPoints = [
+            [0, 10, 10, 10, 10, 20, 0, 20],
+            [0, 0, 10, 0, 10, 10, 0, 10],
+        ];
         expect(docUtil.getLowerRightCornerOfLastQuadPoint(quadPoints)).toStrictEqual([10, 0]);
     });
 
     describe('getTopRightCornerOfLastQuadPoint()', () => {
-        const quadPoints = [[0, 10, 10, 10, 10, 20, 0, 20], [0, 0, 10, 0, 10, 10, 0, 10]];
+        const quadPoints = [
+            [0, 10, 10, 10, 10, 20, 0, 20],
+            [0, 0, 10, 0, 10, 10, 0, 10],
+        ];
         expect(docUtil.getTopRightCornerOfLastQuadPoint(quadPoints)).toStrictEqual([0, 0]);
     });
 
@@ -148,16 +164,16 @@ describe('doc/docUtil', () => {
             const selection = {
                 rangeCount: 0,
                 isCollapsed: false,
-                toString: () => 'I am valid!'
+                toString: () => 'I am valid!',
             };
             expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
 
-        it('should return false if the selection isn\'t collapsed', () => {
+        it("should return false if the selection isn't collapsed", () => {
             const selection = {
                 rangeCount: 1,
                 isCollapsed: true,
-                toString: () => 'I am valid!'
+                toString: () => 'I am valid!',
             };
             expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
@@ -166,7 +182,7 @@ describe('doc/docUtil', () => {
             const selection = {
                 rangeCount: 1,
                 isCollapsed: false,
-                toString: () => ''
+                toString: () => '',
             };
             expect(docUtil.isValidSelection(selection)).toBeFalsy();
         });
@@ -175,7 +191,7 @@ describe('doc/docUtil', () => {
             const selection = {
                 rangeCount: 1,
                 isCollapsed: false,
-                toString: () => 'I am valid!'
+                toString: () => 'I am valid!',
             };
             expect(docUtil.isValidSelection(selection)).toBeTruthy();
         });
@@ -191,14 +207,14 @@ describe('doc/docUtil', () => {
         const pageEl = {
             getBoundingClientRect: jest.fn().mockReturnValue({
                 width,
-                height
-            })
+                height,
+            }),
         };
         const canvasHeight = height - pagePadding;
 
         beforeEach(() => {
             const context = {
-                scale: jest.fn()
+                scale: jest.fn(),
             };
             annotationLayer.getContext = jest.fn().mockReturnValue(context);
         });
@@ -234,7 +250,7 @@ describe('doc/docUtil', () => {
             docUtil.scaleCanvas = jest.fn().mockReturnValue(annotationLayer);
 
             annotationLayer.getContext = jest.fn().mockReturnValue({
-                scale: jest.fn()
+                scale: jest.fn(),
             });
 
             rootElement.insertBefore = jest.fn();
@@ -291,9 +307,9 @@ describe('doc/docUtil', () => {
                 insertBefore: jest.fn(),
                 appendChild: jest.fn(),
                 removeChild: jest.fn(),
-                querySelector: jest.fn((sel) => {
+                querySelector: jest.fn(sel => {
                     return rootElement.querySelector(sel);
-                })
+                }),
             };
 
             previousSibling = document.createElement('div');
@@ -305,19 +321,19 @@ describe('doc/docUtil', () => {
                 insertBefore: jest.fn(),
                 appendChild: jest.fn(),
                 previousSibling,
-                parentNode: parentContainer
+                parentNode: parentContainer,
             };
 
             range = {
                 endContainer,
                 endOffset: 6,
                 setStart: jest.fn(),
-                setEnd: jest.fn()
+                setEnd: jest.fn(),
             };
 
             document.createElement('span').getBoundingClientRect = jest.fn().mockReturnValue({
                 right: 10,
-                bottom: 11
+                bottom: 11,
             });
         });
 
@@ -362,10 +378,10 @@ describe('doc/docUtil', () => {
             expect(dummy).toBeNull();
         });
 
-        it('should use the position element\'s bounds for the x and y coordinate', () => {
+        it("should use the position element's bounds for the x and y coordinate", () => {
             docUtil.getDialogCoordsFromRange = jest.fn().mockReturnValue({
                 x: 10,
-                y: 11
+                y: 11,
             });
             const coords = docUtil.getDialogCoordsFromRange(range);
             expect(coords.x).toEqual(10);

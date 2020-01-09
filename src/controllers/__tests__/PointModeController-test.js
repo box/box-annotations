@@ -8,7 +8,7 @@ import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
-    SELECTOR_POINT_MODE_HEADER
+    SELECTOR_POINT_MODE_HEADER,
 } from '../../constants';
 import AnnotationThread from '../../AnnotationThread';
 import Annotator from '../../Annotator';
@@ -80,12 +80,12 @@ describe('controllers/PointModeController', () => {
                 controller.annotatedElement,
                 ['click', 'touchstart'],
                 controller.pointClickHandler,
-                true
+                true,
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.exitButtonEl,
                 'click',
-                controller.toggleMode
+                controller.toggleMode,
             );
         });
     });
@@ -142,7 +142,7 @@ describe('controllers/PointModeController', () => {
     describe('pointClickHandler()', () => {
         const event = {
             stopPropagation: jest.fn(),
-            preventDefault: jest.fn()
+            preventDefault: jest.fn(),
         };
 
         beforeEach(() => {
@@ -151,7 +151,7 @@ describe('controllers/PointModeController', () => {
             util.isInAnnotationOrMarker = jest.fn().mockReturnValue(false);
             controller.modeButton = {
                 title: 'Point Annotation Mode',
-                selector: '.bp-btn-annotate'
+                selector: '.bp-btn-annotate',
             };
         });
 

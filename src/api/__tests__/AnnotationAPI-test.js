@@ -13,15 +13,15 @@ describe('api/AnnotationAPI', () => {
     const annotationData = {
         id: '',
         details: {
-            location: { page: -1 }
-        }
+            location: { page: -1 },
+        },
     };
 
     beforeEach(() => {
         api = new AnnotationAPI({
             apiHost: API_HOST,
             fileId: 1,
-            token: 'someToken'
+            token: 'someToken',
         });
         api.axios = jest.fn().mockReturnValue(promise);
         api.errorHandler = jest.fn();
@@ -47,7 +47,7 @@ describe('api/AnnotationAPI', () => {
                     data: {},
                     method: HTTP_POST,
                     cancelToken: '123abc',
-                    headers: {}
+                    headers: {},
                 });
             });
         });
@@ -60,7 +60,7 @@ describe('api/AnnotationAPI', () => {
                     url: api.getBaseUrl('123'),
                     method: HTTP_DELETE,
                     cancelToken: '123abc',
-                    headers: {}
+                    headers: {},
                 });
             });
         });
@@ -80,7 +80,7 @@ describe('api/AnnotationAPI', () => {
             expect(annotation.location.page).toEqual(1);
             expect(annotation.permissions).toEqual({
                 can_delete: true,
-                can_edit: true
+                can_edit: true,
             });
         });
     });

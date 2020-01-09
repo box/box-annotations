@@ -11,29 +11,29 @@ import type { MessageDescriptor } from 'react-intl';
 const messages: { [string]: MessageDescriptor } = defineMessages({
     anonymousUserName: {
         id: 'ba.anonymousUserName',
-        description: 'Placeholder when the current annotation\'s user information is unknown',
-        defaultMessage: 'Some User'
+        description: "Placeholder when the current annotation's user information is unknown",
+        defaultMessage: 'Some User',
     },
     whoHighlighted: {
         id: 'ba.whoHighlighted',
         description: 'Label for who highlighted the annotated text',
-        defaultMessage: '{name} highlighted'
+        defaultMessage: '{name} highlighted',
     },
     whoDrew: {
         id: 'ba.whoDrew',
         description: 'Label for who drew the drawing annotation',
-        defaultMessage: '{name} drew'
+        defaultMessage: '{name} drew',
     },
     whoAnnotated: {
         id: 'ba.whoAnnotated',
         description: 'Label for who left the annotation',
-        defaultMessage: '{name} annotated'
+        defaultMessage: '{name} annotated',
     },
     close: {
         id: 'ba.closePopover',
         description: 'Description for popover close hotkey record',
-        defaultMessage: 'Close Popover'
-    }
+        defaultMessage: 'Close Popover',
+    },
 });
 
 export default messages;

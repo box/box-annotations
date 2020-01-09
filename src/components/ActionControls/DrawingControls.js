@@ -15,18 +15,18 @@ type Props = {
     canDelete: boolean,
     isPending: boolean,
     onCreate: Function,
-    onDelete: Function
+    onDelete: Function,
 };
 
 const DrawingControls = ({ isPending, canDelete, onCreate, onDelete }: Props) => (
     <div className={CLASS_DRAW_CONTROLS}>
         {isPending && (
-            <PlainButton type='button' className={CLASS_DRAWING_SAVE_BTN} onClick={onCreate}>
+            <PlainButton className={CLASS_DRAWING_SAVE_BTN} onClick={onCreate} type="button">
                 <IconCheck />
             </PlainButton>
         )}
         {canDelete && (
-            <PlainButton type='button' className={CLASS_DRAWING_DELETE_BTN} onClick={onDelete}>
+            <PlainButton className={CLASS_DRAWING_DELETE_BTN} onClick={onDelete} type="button">
                 <IconTrash height={20} width={20} />
             </PlainButton>
         )}
@@ -34,7 +34,7 @@ const DrawingControls = ({ isPending, canDelete, onCreate, onDelete }: Props) =>
 );
 
 DrawingControls.defaultProps = {
-    canDelete: false
+    canDelete: false,
 };
 
 export default DrawingControls;

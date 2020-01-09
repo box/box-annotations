@@ -13,7 +13,7 @@ import {
     CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
     THREAD_EVENT,
-    CLASS_ANNOTATION_DRAW_MODE
+    CLASS_ANNOTATION_DRAW_MODE,
 } from '../../constants';
 import DrawingThread from '../../drawing/DrawingThread';
 
@@ -76,7 +76,7 @@ describe('controllers/DrawingModeController', () => {
             controller.getButton = jest.fn().mockReturnValue(blankDiv);
             controller.localized = {
                 cancelButton: 'cancel',
-                doneButton: 'done'
+                doneButton: 'done',
             };
 
             controller.setupHeader(blankDiv, blankDiv);
@@ -150,33 +150,33 @@ describe('controllers/DrawingModeController', () => {
                 controller.annotatedElement,
                 'click',
                 expect.any(Function),
-                true
+                true,
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.postButtonEl,
                 'click',
-                expect.any(Function)
+                expect.any(Function),
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.undoButtonEl,
                 'click',
-                expect.any(Function)
+                expect.any(Function),
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.redoButtonEl,
                 'click',
-                expect.any(Function)
+                expect.any(Function),
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.cancelButtonEl,
                 'click',
-                expect.any(Function)
+                expect.any(Function),
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.annotatedElement,
                 ['mousedown', 'touchstart'],
                 expect.any(Function),
-                true
+                true,
             );
         });
     });
@@ -184,7 +184,7 @@ describe('controllers/DrawingModeController', () => {
     describe('drawingStartHandler()', () => {
         const event = {
             stopPropagation: jest.fn(),
-            preventDefault: jest.fn()
+            preventDefault: jest.fn(),
         };
         const location = {};
 
@@ -260,7 +260,7 @@ describe('controllers/DrawingModeController', () => {
 
         it('should save thread on annotationsaved', () => {
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.save
+                event: THREAD_EVENT.save,
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -274,7 +274,7 @@ describe('controllers/DrawingModeController', () => {
         it('should soft delete a pending thread and restart mode listeners', () => {
             thread.state = 'pending';
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.delete
+                event: THREAD_EVENT.delete,
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -291,7 +291,7 @@ describe('controllers/DrawingModeController', () => {
             controller.annotations[1] = new rbush();
 
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.delete
+                event: THREAD_EVENT.delete,
             });
             expect(controller.unregisterThread).toBeCalled();
             expect(controller.currentThread).toBeUndefined();
@@ -306,7 +306,7 @@ describe('controllers/DrawingModeController', () => {
             thread.state = 'pending';
 
             controller.handleThreadEvents(thread, {
-                event: THREAD_EVENT.delete
+                event: THREAD_EVENT.delete,
             });
             expect(controller.unbindListeners).toBeCalled();
             expect(controller.bindListeners).toBeCalled();
@@ -326,7 +326,7 @@ describe('controllers/DrawingModeController', () => {
             controller.getIntersectingThreads = jest.fn().mockReturnValue([thread]);
 
             event = {
-                stopPropagation: jest.fn()
+                stopPropagation: jest.fn(),
             };
         });
 
@@ -363,7 +363,7 @@ describe('controllers/DrawingModeController', () => {
             util.clearCanvas = jest.fn();
             controller.annotations = {
                 // eslint-disable-next-line new-cap
-                1: new rbush()
+                1: new rbush(),
             };
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalledTwice;

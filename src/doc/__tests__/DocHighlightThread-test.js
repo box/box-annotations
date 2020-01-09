@@ -17,7 +17,7 @@ describe('doc/DocHighlightThread', () => {
 
     const api = {
         user: {},
-        create: jest.fn().mockResolvedValue({})
+        create: jest.fn().mockResolvedValue({}),
     };
 
     beforeEach(() => {
@@ -35,18 +35,18 @@ describe('doc/DocHighlightThread', () => {
             type: 'highlight',
             permissions: {
                 can_annotate: true,
-                can_view_annotations_all: true
+                can_view_annotations_all: true,
             },
             minX: 1,
             maxX: 10,
             minY: 1,
-            maxY: 10
+            maxY: 10,
         });
         thread.renderAnnotationPopover = jest.fn();
         thread.unmountPopover = jest.fn();
 
         window.getSelection = jest.fn().mockReturnValue({
-            removeAllRanges: jest.fn()
+            removeAllRanges: jest.fn(),
         });
     });
 
@@ -135,7 +135,7 @@ describe('doc/DocHighlightThread', () => {
         it('should emit deleted and a render event if the thread has been destroyed (the entire annotation was just deleted', () => {
             thread.emit = jest.fn();
             thread.location = {
-                page: 1
+                page: 1,
             };
             thread.threadID = null;
 
@@ -234,7 +234,7 @@ describe('doc/DocHighlightThread', () => {
     describe('handleDraw()', () => {
         it('should clear the text selection and show the thread', () => {
             const selection = {
-                removeAllRanges: jest.fn()
+                removeAllRanges: jest.fn(),
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
             thread.show = jest.fn();
@@ -317,7 +317,7 @@ describe('doc/DocHighlightThread', () => {
 
     describe('isInHighlight()', () => {
         const pageEl = {
-            getBoundingClientRect: jest.fn().mockReturnValue({ height: 0, top: 10 })
+            getBoundingClientRect: jest.fn().mockReturnValue({ height: 0, top: 10 }),
         };
         let quadPoint = {};
 
@@ -374,7 +374,10 @@ describe('doc/DocHighlightThread', () => {
 
         it('should set the min/max x/y values for thread location', () => {
             thread.location = {
-                quadPoints: [[1, 1, 1, 1, 1, 1, 1, 1], [10, 10, 10, 10, 10, 10, 10, 10]]
+                quadPoints: [
+                    [1, 1, 1, 1, 1, 1, 1, 1],
+                    [10, 10, 10, 10, 10, 10, 10, 10],
+                ],
             };
             thread.regenerateBoundary();
             expect(thread.minX).toEqual(1);

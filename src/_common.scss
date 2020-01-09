@@ -1,49 +1,60 @@
-@import './variables';
+@import "./variables";
 
 @font-face {
-    font-family: 'Lato';
-    font-style: normal;
     font-weight: normal;
-    src: local('Lato Regular'), local('Lato-Regular'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff') format('woff');
+    font-family: "Lato";
+    font-style: normal;
+    src:
+        local("Lato Regular"),
+        local("Lato-Regular"),
+        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff2")
+        format("woff2"),
+        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff")
+        format("woff");
 }
 
 @font-face {
-    font-family: 'Lato';
-    font-style: normal;
     font-weight: bold;
-    src: local('Lato Bold'), local('Lato-Bold'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff') format('woff');
+    font-family: "Lato";
+    font-style: normal;
+    src:
+        local("Lato Bold"),
+        local("Lato-Bold"),
+        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2")
+        format("woff2"),
+        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff")
+        format("woff");
 }
 
 .flyout-overlay {
-    @import '~box-react-ui/lib/styles/common/overlay';
-    @import '~box-react-ui/lib/styles/common/links';
-    @import '~box-react-ui/lib/styles/common/buttons';
+    @import "~box-react-ui/lib/styles/common/overlay";
+    @import "~box-react-ui/lib/styles/common/links";
+    @import "~box-react-ui/lib/styles/common/buttons";
 }
 
 .ba {
     @include reset;
 
     /* stylelint-disable no-duplicate-at-import-rules */
-    @import '~box-react-ui/lib/styles/common/links';
-    @import '~box-react-ui/lib/styles/common/buttons';
+    @import "~box-react-ui/lib/styles/common/links";
+    @import "~box-react-ui/lib/styles/common/buttons";
     /* stylelint-enable no-duplicate-at-import-rules */
 
-    @import '~box-react-ui/lib/styles/common/forms';
-
-    background: $white;
-    border: 0 none;
+    @import "~box-react-ui/lib/styles/common/forms";
     /* stylelint-disable declaration-no-important */
     box-sizing: border-box !important;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     /* stylelint-enable declaration-no-important */
     color: $twos;
     font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    height: 100%;
-    letter-spacing: .3px;
     line-height: 20px;
-    margin: 0;
+    letter-spacing: .3px;
+    background: $white;
+    border: 0 none;
     outline: none;
-    overflow: hidden;
-    padding: 0;
     user-select: none;
 
     @media #{$mobile}, #{$tablet} {
@@ -99,8 +110,8 @@
 .ba-annotation-dialog,
 .ba-create-annotation-dialog {
     // stylelint-disable no-duplicate-at-import-rules
-    @import '~box-react-ui/lib/styles/common/forms';
-    @import '~box-react-ui/lib/styles/common/buttons';
+    @import "~box-react-ui/lib/styles/common/forms";
+    @import "~box-react-ui/lib/styles/common/buttons";
 }
 
 /**************************************
@@ -108,7 +119,7 @@
  **************************************/
 
 .accessibility-hidden {
-    left: -9999px;
     position: absolute;
     top: auto; /* Some browsers ignore left without a top */
+    left: -9999px;
 }

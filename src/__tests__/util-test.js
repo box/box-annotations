@@ -6,7 +6,7 @@ import {
     CLASS_ANNOTATION_CARET,
     SELECTOR_ANNOTATION_POINT_MARKER,
     CLASS_ANNOTATION_POPOVER,
-    CLASS_ANNOTATION_POINT_MARKER
+    CLASS_ANNOTATION_POINT_MARKER,
 } from '../constants';
 
 const DIALOG_WIDTH = 81;
@@ -176,7 +176,7 @@ describe('util', () => {
             rootElement.querySelector('.container').appendChild(node);
             document.createRange = jest.fn().mockReturnValue({
                 selectNode: jest.fn(),
-                createContextualFragment: jest.fn()
+                createContextualFragment: jest.fn(),
             });
 
             util.insertTemplate(node, '<div class="foo"></div>');
@@ -233,11 +233,11 @@ describe('util', () => {
         it('should return null if no dimension scaling is needed', () => {
             const dimensions = {
                 x: 100,
-                y: 100
+                y: 100,
             };
             const pageDimensions = {
                 width: 100,
-                height: 130
+                height: 130,
             };
 
             const HEIGHT_PADDING = 30;
@@ -248,11 +248,11 @@ describe('util', () => {
         it('should return dimension scaling factor if dimension scaling is needed', () => {
             const dimensions = {
                 x: 100,
-                y: 100
+                y: 100,
             };
             const pageDimensions = {
                 width: 200,
-                height: 230
+                height: 230,
             };
 
             const HEIGHT_PADDING = 30;
@@ -314,7 +314,7 @@ describe('util', () => {
             locationHandler = util.eventToLocationHandler(getLocation, callback);
             event = {
                 preventDefault: jest.fn(),
-                stopPropagation: jest.fn()
+                stopPropagation: jest.fn(),
             };
         });
 
@@ -330,7 +330,7 @@ describe('util', () => {
 
         it('should do nothing when the target exists and it is not the textLayer', () => {
             event.target = {
-                nodeName: 'BUTTON'
+                nodeName: 'BUTTON',
             };
             locationHandler(event);
             expect(callback).not.toBeCalled();
@@ -342,7 +342,7 @@ describe('util', () => {
             const location = util.createLocation(1, 2, undefined);
             expect(location).toStrictEqual({
                 x: 1,
-                y: 2
+                y: 2,
             });
         });
 
@@ -352,7 +352,7 @@ describe('util', () => {
             expect(location).toStrictEqual({
                 x: 1,
                 y: 2,
-                dimensions: dimensionalObj
+                dimensions: dimensionalObj,
             });
         });
     });
@@ -449,7 +449,7 @@ describe('util', () => {
             permissions = {
                 can_annotate: false,
                 can_view_annotations_all: false,
-                can_view_annotations_self: false
+                can_view_annotations_self: false,
             };
         });
 
@@ -481,11 +481,11 @@ describe('util', () => {
             layerEl = {
                 width: 500,
                 height: 500,
-                getContext: jest.fn()
+                getContext: jest.fn(),
             };
 
             context = {
-                clearRect: jest.fn()
+                clearRect: jest.fn(),
             };
         });
 
@@ -496,7 +496,7 @@ describe('util', () => {
 
         it('should clear the specified annotation layer', () => {
             const pageEl = {
-                querySelector: jest.fn().mockReturnValue(layerEl)
+                querySelector: jest.fn().mockReturnValue(layerEl),
             };
             layerEl.getContext = jest.fn().mockReturnValue(context);
             util.clearCanvas(pageEl, 'anything');
@@ -538,16 +538,16 @@ describe('util', () => {
                     minX: NaN,
                     minY: 1,
                     maxX: 1,
-                    maxY: 1
-                })
+                    maxY: 1,
+                }),
             ).toBeFalsy();
             expect(
                 util.hasValidBoundaryCoordinates({
                     minX: 1,
                     minY: 1,
                     maxX: 1,
-                    maxY: 1
-                })
+                    maxY: 1,
+                }),
             ).toBeTruthy();
         });
 

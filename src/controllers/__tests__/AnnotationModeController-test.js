@@ -10,7 +10,7 @@ import {
     SELECTOR_BOX_PREVIEW_BASE_HEADER,
     THREAD_EVENT,
     STATES,
-    CONTROLLER_EVENT
+    CONTROLLER_EVENT,
 } from '../../constants';
 import AnnotationThread from '../../AnnotationThread';
 import AnnotationAPI from '../../api/AnnotationAPI';
@@ -63,7 +63,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.init({
                 modeButton: {},
                 permissions: { can_annotate: true },
-                localized: { anonymousUserName: '' }
+                localized: { anonymousUserName: '' },
             });
             expect(controller.showButton).toBeCalled();
         });
@@ -71,7 +71,7 @@ describe('controllers/AnnotationModeController', () => {
         it('should not show modeButton if none provided', () => {
             controller.showButton = jest.fn();
             controller.init({
-                localized: { anonymousUserName: '' }
+                localized: { anonymousUserName: '' },
             });
             expect(controller.showButton).not.toBeCalled();
         });
@@ -81,7 +81,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.init({
                 modeButton: {},
                 permissions: { can_annotate: false },
-                localized: { anonymousUserName: '' }
+                localized: { anonymousUserName: '' },
             });
             expect(controller.showButton).not.toBeCalled();
         });
@@ -91,7 +91,7 @@ describe('controllers/AnnotationModeController', () => {
         beforeEach(() => {
             controller.api = new AnnotationAPI();
             controller.localized = {
-                anonymouseUserName: ''
+                anonymouseUserName: '',
             };
         });
 
@@ -112,7 +112,7 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should remove listener from button', () => {
                 controller.buttonEl = {
-                    removeEventListener: jest.fn()
+                    removeEventListener: jest.fn(),
                 };
                 controller.destroy();
                 expect(controller.buttonEl.removeEventListener).toBeCalled();
@@ -137,8 +137,8 @@ describe('controllers/AnnotationModeController', () => {
                 controller.modeButton = {
                     type: {
                         title: 'Annotation Mode',
-                        selector: '.selector'
-                    }
+                        selector: '.selector',
+                    },
                 };
                 buttonEl = document.createElement('button');
                 buttonEl.title = controller.modeButton.title;
@@ -181,8 +181,8 @@ describe('controllers/AnnotationModeController', () => {
                 controller.modeButton = {
                     type: {
                         title: 'Annotation Mode',
-                        selector: '.selector'
-                    }
+                        selector: '.selector',
+                    },
                 };
                 buttonEl = document.createElement('button');
                 buttonEl.title = controller.modeButton.title;
@@ -292,8 +292,8 @@ describe('controllers/AnnotationModeController', () => {
                     func: jest.fn(),
                     useCapture: false,
                     eventObj: {
-                        addEventListener: jest.fn()
-                    }
+                        addEventListener: jest.fn(),
+                    },
                 };
                 controller.setupHandlers = jest.fn(() => {
                     controller.handlers = [handlerObj];
@@ -313,8 +313,8 @@ describe('controllers/AnnotationModeController', () => {
                     func: jest.fn(),
                     useCapture: false,
                     eventObj: {
-                        removeEventListener: jest.fn()
-                    }
+                        removeEventListener: jest.fn(),
+                    },
                 };
 
                 controller.handlers = [handlerObj];
@@ -345,7 +345,7 @@ describe('controllers/AnnotationModeController', () => {
                 expect(controller.emit).not.toBeCalled();
             });
 
-            it('should create a new rbush for the thread\'s page location', () => {
+            it("should create a new rbush for the thread's page location", () => {
                 controller.instantiateThread = jest.fn().mockReturnValue(thread);
                 controller.registerThread([], thread.location, thread.type);
                 expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.register, thread);
@@ -388,9 +388,9 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         describe('applyActionToPageThreads()', () => {
-            it('should apply the predicate function to all of the controller\'s threads on the specified page', () => {
+            it("should apply the predicate function to all of the controller's threads on the specified page", () => {
                 controller.annotations = {
-                    1: { all: jest.fn().mockReturnValue([thread]) }
+                    1: { all: jest.fn().mockReturnValue([thread]) },
                 };
                 controller.applyActionToPageThreads(thread.addListener, 2); // func not called
                 controller.applyActionToPageThreads(thread.addListener, 1);
@@ -399,10 +399,10 @@ describe('controllers/AnnotationModeController', () => {
         });
 
         describe('applyActionToThreads()', () => {
-            it('should apply the predicate function to all of the controller\'s threads', () => {
+            it("should apply the predicate function to all of the controller's threads", () => {
                 controller.annotations = {
                     1: { all: jest.fn().mockReturnValue([thread]) },
-                    2: { all: jest.fn().mockReturnValue([thread]) }
+                    2: { all: jest.fn().mockReturnValue([thread]) },
                 };
                 controller.applyActionToThreads(thread.addListener);
                 expect(thread.addListener).toHaveBeenCalledTimes(2);
@@ -413,8 +413,8 @@ describe('controllers/AnnotationModeController', () => {
             it('should return null if no page threads exist', () => {
                 controller.annotations = {
                     1: {
-                        all: jest.fn().mockReturnValue([])
-                    }
+                        all: jest.fn().mockReturnValue([]),
+                    },
                 };
                 expect(controller.getThreadByID(thread.threadID)).toBeNull();
             });
@@ -422,8 +422,8 @@ describe('controllers/AnnotationModeController', () => {
             it('should find and return annotation thread specified by threadID', () => {
                 controller.annotations = {
                     1: {
-                        all: jest.fn().mockReturnValue([thread])
-                    }
+                        all: jest.fn().mockReturnValue([thread]),
+                    },
                 };
                 expect(controller.getThreadByID(thread.threadID)).toStrictEqual(thread);
             });
@@ -431,8 +431,8 @@ describe('controllers/AnnotationModeController', () => {
             it('should return null if specified annotation thread is not found', () => {
                 controller.annotations = {
                     1: {
-                        all: jest.fn().mockReturnValue([thread])
-                    }
+                        all: jest.fn().mockReturnValue([thread]),
+                    },
                 };
                 expect(controller.getThreadByID('random')).toBeNull();
             });
@@ -457,7 +457,7 @@ describe('controllers/AnnotationModeController', () => {
                 controller.resetCurrentThread = jest.fn();
                 controller.localized = {
                     deleteError: 'delete error',
-                    createError: 'create error'
+                    createError: 'create error',
                 };
             });
 
@@ -527,7 +527,7 @@ describe('controllers/AnnotationModeController', () => {
                     eventObj: element,
                     func: fn,
                     type,
-                    useCapture
+                    useCapture,
                 });
             });
         });
@@ -536,7 +536,7 @@ describe('controllers/AnnotationModeController', () => {
             it('should insert the new header into the container before the baseheader', () => {
                 util.insertTemplate = jest.fn();
                 const container = {
-                    firstElementChild: 'child'
+                    firstElementChild: 'child',
                 };
                 const header = document.createElement('div');
 
@@ -570,7 +570,7 @@ describe('controllers/AnnotationModeController', () => {
                     // eslint-disable-next-line new-cap
                     1: new rbush(),
                     // eslint-disable-next-line new-cap
-                    2: new rbush()
+                    2: new rbush(),
                 };
                 thread.state = STATES.inactive;
                 thread2.state = STATES.inactive;
@@ -614,8 +614,8 @@ describe('controllers/AnnotationModeController', () => {
                 controller.unregisterThread = jest.fn();
                 controller.annotations = {
                     1: {
-                        all: jest.fn()
-                    }
+                        all: jest.fn(),
+                    },
                 };
                 controller.pendingThreadID = null;
             });
@@ -660,8 +660,8 @@ describe('controllers/AnnotationModeController', () => {
             beforeEach(() => {
                 controller.annotations = {
                     1: {
-                        search: jest.fn().mockReturnValue([])
-                    }
+                        search: jest.fn().mockReturnValue([]),
+                    },
                 };
             });
 

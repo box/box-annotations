@@ -80,7 +80,7 @@ class DrawingContainer {
     getNumberOfItems() {
         return {
             undoCount: this.undoStack.length,
-            redoCount: this.redoStack.length
+            redoCount: this.redoStack.length,
         };
     }
 
@@ -105,16 +105,16 @@ class DrawingContainer {
             maxX: -Infinity,
             minY: Infinity,
             maxY: -Infinity,
-            paths: []
+            paths: [],
         };
 
-        items.forEach((drawingPath) => {
+        items.forEach(drawingPath => {
             boundary.minX = Math.min(boundary.minX, drawingPath.minX);
             boundary.maxX = Math.max(boundary.maxX, drawingPath.maxX);
             boundary.minY = Math.min(boundary.minY, drawingPath.minY);
             boundary.maxY = Math.max(boundary.maxY, drawingPath.maxY);
             boundary.paths.push({
-                path: drawingPath.path
+                path: drawingPath.path,
             });
         });
         return boundary;

@@ -9,7 +9,7 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
     CLASS_ANNOTATIONS_LOADED,
-    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER,
 } from './constants';
 import FileVersionAPI from './api/FileVersionAPI';
 
@@ -46,7 +46,7 @@ class Annotator extends EventEmitter {
             fileId: this.fileId,
             token,
             permissions: this.permissions,
-            anonymousUserName: this.localized.anonymousUserName
+            anonymousUserName: this.localized.anonymousUserName,
         });
 
         // Get applicable annotation mode controllers
@@ -77,7 +77,7 @@ class Annotator extends EventEmitter {
      */
     destroy() {
         // Destroy all annotate buttons
-        Object.keys(this.modeControllers).forEach((mode) => {
+        Object.keys(this.modeControllers).forEach(mode => {
             this.modeControllers[mode].destroy();
         });
 
@@ -139,7 +139,7 @@ class Annotator extends EventEmitter {
 
         const { TYPE: annotationTypes } = this.options.annotator;
         if (type && annotationTypes) {
-            if (!annotationTypes.some((annotationType) => type === annotationType)) {
+            if (!annotationTypes.some(annotationType => type === annotationType)) {
                 return false;
             }
         }
@@ -159,7 +159,7 @@ class Annotator extends EventEmitter {
                 this.render();
                 this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
-            .catch((error) => this.emit(ANNOTATOR_EVENT.loadError, error));
+            .catch(error => this.emit(ANNOTATOR_EVENT.loadError, error));
     }
 
     /**
@@ -216,9 +216,9 @@ class Annotator extends EventEmitter {
         const options = {
             header: this.options.header,
             hasTouch: this.hasTouch,
-            locale: this.locale
+            locale: this.locale,
         };
-        Object.keys(this.modeControllers).forEach((type) => {
+        Object.keys(this.modeControllers).forEach(type => {
             const controller = this.modeControllers[type];
             controller.init({
                 container: this.container,
@@ -233,7 +233,7 @@ class Annotator extends EventEmitter {
                 apiHost: this.options.apiHost,
                 token: this.options.token,
                 getLocation: this.getLocationFromEvent,
-                options
+                options,
             });
 
             controller.addListener('annotationcontrollerevent', this.handleControllerEvents);
@@ -252,9 +252,9 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        Object.keys(this.modeControllers).forEach((mode) => {
+        Object.keys(this.modeControllers).forEach(mode => {
             this.modeControllers[mode].destroyPendingThreads();
-            this.modeControllers[mode].applyActionToThreads((thread) => {
+            this.modeControllers[mode].applyActionToThreads(thread => {
                 thread.unmountPopover();
             });
         });
@@ -275,11 +275,11 @@ class Annotator extends EventEmitter {
 
         return this.api
             .fetchVersionAnnotations(this.fileVersionId)
-            .then((threads) => {
+            .then(threads => {
                 this.annotationMap = threads;
                 this.emit(ANNOTATOR_EVENT.fetch);
             })
-            .catch((err) => {
+            .catch(err => {
                 this.emit(ANNOTATOR_EVENT.loadError, err);
             });
     }
@@ -297,7 +297,7 @@ class Annotator extends EventEmitter {
         }
 
         // Generate map of page to annotations
-        Object.keys(annotationMap).forEach((id) => {
+        Object.keys(annotationMap).forEach(id => {
             const annotation = annotationMap[id];
 
             const controller = this.modeControllers[annotation.type];
@@ -356,7 +356,7 @@ class Annotator extends EventEmitter {
      * @return {AnnotationType|null} Current annotation mode
      */
     getCurrentAnnotationMode(): ?AnnotationType {
-        const modes = Object.keys(this.modeControllers).filter((mode) => {
+        const modes = Object.keys(this.modeControllers).filter(mode => {
             const controller = this.modeControllers[mode];
             return controller.isEnabled();
         });
@@ -415,7 +415,7 @@ class Annotator extends EventEmitter {
      */
     render() {
         this.resetAnnotationUI();
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].render());
+        Object.keys(this.modeControllers).forEach(mode => this.modeControllers[mode].render());
     }
 
     /**
@@ -426,7 +426,7 @@ class Annotator extends EventEmitter {
      */
     renderPage(pageNum: number) {
         this.resetAnnotationUI(pageNum);
-        Object.keys(this.modeControllers).forEach((mode) => this.modeControllers[mode].renderPage(pageNum));
+        Object.keys(this.modeControllers).forEach(mode => this.modeControllers[mode].renderPage(pageNum));
     }
 
     /**
@@ -440,12 +440,12 @@ class Annotator extends EventEmitter {
         const {
             can_annotate = false,
             can_view_annotations_all = false,
-            can_view_annotations_self = false
+            can_view_annotations_self = false,
         } = permissions;
         return {
             can_annotate,
             can_view_annotations_all,
-            can_view_annotations_self
+            can_view_annotations_self,
         };
     }
 
@@ -495,7 +495,7 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        Object.keys(this.modeControllers).forEach((mode) => {
+        Object.keys(this.modeControllers).forEach(mode => {
             const annotation = this.modeControllers[mode].getThreadByID(threadID);
             if (annotation) {
                 annotation.scrollIntoView();
@@ -592,7 +592,7 @@ class Annotator extends EventEmitter {
             data,
             annotatorName: annotator ? annotator.NAME : '',
             fileVersionId: this.fileVersionId,
-            fileId: this.fileId
+            fileId: this.fileId,
         });
     }
 }

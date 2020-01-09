@@ -8,7 +8,7 @@ import {
     PAGE_PADDING_TOP,
     SELECTOR_ANNOTATION_POPOVER,
     STATES,
-    THREAD_EVENT
+    THREAD_EVENT,
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
 import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
@@ -90,7 +90,7 @@ class DocDrawingThread extends DrawingThread {
         if ((!this.location || !this.location.page) && location.page) {
             this.location = {
                 page: location.page,
-                dimensions: location.dimensions
+                dimensions: location.dimensions,
             };
         }
         this.checkAndHandleScaleUpdate();
@@ -181,8 +181,8 @@ class DocDrawingThread extends DrawingThread {
         const context = this.selectContext();
 
         // Generate the paths and draw to the annotation layer canvas
-        this.pathContainer.applyToItems((drawing) =>
-            drawing.generateBrowserPath(this.reconstructBrowserCoordFromLocation)
+        this.pathContainer.applyToItems(drawing =>
+            drawing.generateBrowserPath(this.reconstructBrowserCoordFromLocation),
         );
 
         if (this.pendingPath && !this.pendingPath.isEmpty()) {
@@ -206,7 +206,7 @@ class DocDrawingThread extends DrawingThread {
      */
     checkAndHandleScaleUpdate() {
         const scale = getScale(this.annotatedElement);
-        if (this.lastScaleFactor === scale || (!this.location || !this.location.page)) {
+        if (this.lastScaleFactor === scale || !this.location || !this.location.page) {
             return;
         }
 
@@ -363,7 +363,7 @@ class DocDrawingThread extends DrawingThread {
             popoverX,
             popoverWidth,
             popoverX + popoverWidth / 2,
-            pageDimensions.width
+            pageDimensions.width,
         );
 
         popoverEl.style.left = `${popoverX}px`;
