@@ -72,13 +72,13 @@ export function isPointInPolyOpt(poly, x, y) {
  */
 export function getHighlightAndHighlightEls(highlighter, pageEl) {
     const highlight = highlighter.highlights[0];
-    const highlightEls = [].slice.call(pageEl.querySelectorAll('.rangy-highlight'), 0).filter((element) => {
+    const highlightEls = [].slice.call(pageEl.querySelectorAll('.rangy-highlight'), 0).filter(element => {
         return element.tagName && element.tagName === 'SPAN' && element.textContent.trim() !== '';
     });
 
     return {
         highlight,
-        highlightEls
+        highlightEls,
     };
 }
 /* eslint-enable space-before-function-paren */
@@ -130,7 +130,7 @@ export function isCoordOutside(coordinates, pageWidth, pageHeight) {
  * pixels
  */
 export function convertPDFSpaceToDOMSpace(coordinates, pageHeight, scale) {
-    const scaledCoordinates = coordinates.map((val) => val * PDF_UNIT_TO_CSS_PIXEL * scale);
+    const scaledCoordinates = coordinates.map(val => val * PDF_UNIT_TO_CSS_PIXEL * scale);
     if (scaledCoordinates.length === 2) {
         const [x, y] = scaledCoordinates;
         return [x, pageHeight - y];
@@ -161,7 +161,7 @@ export function convertDOMSpaceToPDFSpace(coordinates, pageHeight, scale) {
         pdfCoordinates = [x1, pageHeight - y1, x2, pageHeight - y2, x3, pageHeight - y3, x4, pageHeight - y4];
     }
 
-    return pdfCoordinates.map((val) => ((val * CSS_PIXEL_TO_PDF_UNIT) / scale).toFixed(4));
+    return pdfCoordinates.map(val => ((val * CSS_PIXEL_TO_PDF_UNIT) / scale).toFixed(4));
 }
 
 /**
@@ -247,7 +247,7 @@ export function getQuadPoints(element, pageEl, scale) {
         corner3Dimensions.left - pageLeft,
         corner3Dimensions.top - pageTop,
         corner4Dimensions.left - pageLeft,
-        corner4Dimensions.top - pageTop
+        corner4Dimensions.top - pageTop,
     ];
 
     // Return quad points at 100% scale in PDF units
@@ -402,7 +402,7 @@ export function getDialogCoordsFromRange(range) {
 
     return {
         x,
-        y
+        y,
     };
 }
 
@@ -428,7 +428,7 @@ export function getScaledPDFCoordinates(annotatedElement, location, pageDimensio
         location.dimensions,
         pageDimensions,
         zoomScale,
-        constants.PAGE_PADDING_TOP + constants.PAGE_PADDING_BOTTOM
+        constants.PAGE_PADDING_TOP + constants.PAGE_PADDING_BOTTOM,
     );
     if (dimensionScale) {
         x *= dimensionScale.x;

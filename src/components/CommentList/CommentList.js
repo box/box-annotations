@@ -10,7 +10,7 @@ const CLASS_COMMENT_LIST_ITEM = 'ba-comment-list-item';
 
 type Props = {
     comments: Comments,
-    onDelete: Function
+    onDelete: Function,
 };
 
 class CommentList extends React.Component<Props> {
@@ -38,13 +38,13 @@ class CommentList extends React.Component<Props> {
         const { comments, onDelete } = this.props;
         return (
             <ul
-                className={CLASS_COMMENT_LIST}
-                ref={(ref) => {
+                ref={ref => {
                     this.commentsContainer = ref;
                 }}
+                className={CLASS_COMMENT_LIST}
             >
                 {comments.map(({ id, ...rest }) => (
-                    <li className={CLASS_COMMENT_LIST_ITEM} key={`annotation_${id}`}>
+                    <li key={`annotation_${id}`} className={CLASS_COMMENT_LIST_ITEM}>
                         <Comment id={id} onDelete={onDelete} {...rest} />
                     </li>
                 ))}

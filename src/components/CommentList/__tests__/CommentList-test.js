@@ -9,7 +9,7 @@ const USER = {
     type: 'user',
     id: '789ghi',
     name: 'Mia Thermopolis',
-    email: 'princess@genovia.gov'
+    email: 'princess@genovia.gov',
 };
 
 const comments = [
@@ -18,15 +18,15 @@ const comments = [
         createdAt: TIME_STRING_SEPT_27_2017,
         createdBy: USER,
         message: 'test',
-        permissions: {}
+        permissions: {},
     },
     {
         id: '456',
         createdAt: TIME_STRING_SEPT_27_2017,
         createdBy: USER,
         message: 'test',
-        permissions: {}
-    }
+        permissions: {},
+    },
 ];
 
 const onDelete = jest.fn();

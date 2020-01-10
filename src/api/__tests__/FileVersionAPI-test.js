@@ -13,10 +13,10 @@ describe('api/FileVersionAPI', () => {
             apiHost: API_HOST,
             fileId: 1,
             token: 'someToken',
-            permissions: {}
+            permissions: {},
         });
         api.axios = {
-            get: jest.fn().mockReturnValue(promise)
+            get: jest.fn().mockReturnValue(promise),
         };
         api.axiosSource = { token: '123abc' };
         api.headers = {};
@@ -47,7 +47,7 @@ describe('api/FileVersionAPI', () => {
                 expect(api.axios.get).toBeCalledWith(api.getBaseUrl(), {
                     cancelToken: '123abc',
                     headers: {},
-                    params: 'params'
+                    params: 'params',
                 });
             });
         });
@@ -58,7 +58,7 @@ describe('api/FileVersionAPI', () => {
             api.fetchFromMarker = jest.fn().mockReturnValue(Promise.resolve());
             api.emit = jest.fn();
             api.data = {
-                entries: []
+                entries: [],
             };
         });
 
@@ -80,7 +80,7 @@ describe('api/FileVersionAPI', () => {
 
         it('should emit an error if the entries in the success response is not an array', () => {
             api.fileVersionId = 123;
-            api.successHandler({ entries: 'wrong type' }).catch((err) => {
+            api.successHandler({ entries: 'wrong type' }).catch(err => {
                 expect(err.name).toEqual(ERROR_TYPE.read);
                 expect(api.fetchFromMarker).not.toBeCalled();
             });
@@ -88,7 +88,7 @@ describe('api/FileVersionAPI', () => {
 
         it('should emit an error if the success response is of type error', () => {
             api.fileVersionId = 123;
-            api.successHandler({ type: 'error' }).catch((err) => {
+            api.successHandler({ type: 'error' }).catch(err => {
                 expect(err.name).toEqual(ERROR_TYPE.read);
                 expect(api.fetchFromMarker).not.toBeCalled();
             });
@@ -103,8 +103,8 @@ describe('api/FileVersionAPI', () => {
                 details: {
                     location: { page: -1 },
                     type: TYPES.highlight,
-                    threadID: '123'
-                }
+                    threadID: '123',
+                },
             };
 
             api.data = {
@@ -114,24 +114,24 @@ describe('api/FileVersionAPI', () => {
                         ...annotationData,
                         details: {
                             type: TYPES.highlight,
-                            threadID: '123'
-                        }
+                            threadID: '123',
+                        },
                     },
                     {
                         // invalid type
                         ...annotationData,
                         details: {
                             location: { page: -1 },
-                            threadID: '123'
-                        }
+                            threadID: '123',
+                        },
                     },
                     {
                         // invalid threadID
                         ...annotationData,
                         details: {
                             location: { page: -1 },
-                            type: TYPES.highlight
-                        }
+                            type: TYPES.highlight,
+                        },
                     },
                     // plain highlight
                     { ...annotationData, id: 1 },
@@ -143,10 +143,10 @@ describe('api/FileVersionAPI', () => {
                         details: {
                             location: { page: 1 },
                             type: TYPES.highlight_comment,
-                            threadID: '123'
-                        }
-                    }
-                ]
+                            threadID: '123',
+                        },
+                    },
+                ],
             };
 
             const annotationMap = api.createAnnotationMap();

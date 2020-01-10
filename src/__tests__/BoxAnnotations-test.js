@@ -20,11 +20,11 @@ describe('BoxAnnotations', () => {
     });
 
     describe('getAnnotators()', () => {
-        it('should return the loader\'s annotators', () => {
+        it("should return the loader's annotators", () => {
             expect(loader.getAnnotators()).toStrictEqual(loader.annotators);
         });
 
-        it('should return an empty array if the loader doesn\'t have annotators', () => {
+        it("should return an empty array if the loader doesn't have annotators", () => {
             loader.annotators = [];
             expect(loader.getAnnotators()).toStrictEqual([]);
         });
@@ -60,9 +60,9 @@ describe('BoxAnnotations', () => {
             const config = {
                 CONTROLLERS: {
                     [TYPES.draw]: {
-                        CONSTRUCTOR: jest.fn()
-                    }
-                }
+                        CONSTRUCTOR: jest.fn(),
+                    },
+                },
             };
 
             expect(() => loader.instantiateControllers(config)).not.toThrow();
@@ -75,14 +75,14 @@ describe('BoxAnnotations', () => {
 
         it('Should do nothing when config has no types', () => {
             const config = {
-                TYPE: undefined
+                TYPE: undefined,
             };
             expect(() => loader.instantiateControllers(config)).not.toThrow();
         });
 
         it('Should instantiate controllers and assign them to the CONTROLLERS attribute', () => {
             const config = {
-                TYPE: [TYPES.draw, 'typeWithoutController']
+                TYPE: [TYPES.draw, 'typeWithoutController'],
             };
             loader.viewerConfig = { enabledTypes: [TYPES.draw] };
 
@@ -99,12 +99,12 @@ describe('BoxAnnotations', () => {
             NAME: 'Document',
             VIEWER: ['Document'],
             TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
-            DEFAULT_TYPES: ['point', 'highlight']
+            DEFAULT_TYPES: ['point', 'highlight'],
         };
 
         it('should use the specified types from options', () => {
             loader.viewerOptions = {
-                Document: { enabledTypes: ['draw'] }
+                Document: { enabledTypes: ['draw'] },
             };
             expect(loader.getAnnotatorTypes(config)).toStrictEqual(['draw']);
         });
@@ -120,8 +120,8 @@ describe('BoxAnnotations', () => {
 
             loader.viewerOptions = {
                 Document: {
-                    enabledTypes: ['point', 'timestamp']
-                }
+                    enabledTypes: ['point', 'timestamp'],
+                },
             };
             expect(loader.getAnnotatorTypes(config)).toStrictEqual(['point']);
         });
@@ -143,16 +143,16 @@ describe('BoxAnnotations', () => {
                 NAME: 'Document',
                 VIEWER: ['Document'],
                 TYPE: ['point'],
-                DEFAULT_TYPES: ['point']
+                DEFAULT_TYPES: ['point'],
             };
 
             options = {
                 file: {
-                    permissions: {}
+                    permissions: {},
                 },
                 viewer: {
-                    NAME: 'Document'
-                }
+                    NAME: 'Document',
+                },
             };
             loader.getAnnotatorTypes = jest.fn().mockReturnValue(['point']);
         });
@@ -183,7 +183,7 @@ describe('BoxAnnotations', () => {
                 NAME: viewer,
                 VIEWER: ['Document'],
                 TYPE: ['point', 'highlight'],
-                DEFAULT_TYPES: ['point']
+                DEFAULT_TYPES: ['point'],
             };
 
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(docAnnotator);
@@ -195,7 +195,7 @@ describe('BoxAnnotations', () => {
 
         it('should return null if the config for the viewer disables annotations', () => {
             const config = {
-                enabled: false
+                enabled: false,
             };
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(annotator);
             expect(loader.determineAnnotator(options, config)).toBeNull();

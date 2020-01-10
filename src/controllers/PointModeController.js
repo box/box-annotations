@@ -10,7 +10,7 @@ import {
     SELECTOR_POINT_MODE_HEADER,
     SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     CLASS_ANNOTATION_POINT_MODE,
-    ANNOTATOR_TYPE
+    ANNOTATOR_TYPE,
 } from '../constants';
 import { replaceHeader, isInAnnotationOrMarker } from '../util';
 
@@ -105,7 +105,7 @@ class PointModeController extends AnnotationModeController {
         }
 
         this.hadPendingThreads = this.destroyPendingThreads();
-        this.applyActionToThreads((thread) => {
+        this.applyActionToThreads(thread => {
             thread.hide();
         });
 
@@ -125,7 +125,7 @@ class PointModeController extends AnnotationModeController {
             createdBy: this.api.user,
             createdAt: new Date().toISOString(),
             isPending: true,
-            comments: []
+            comments: [],
         });
 
         if (!thread) {

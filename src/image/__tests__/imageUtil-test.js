@@ -30,7 +30,7 @@ describe('image/imageUtil', () => {
         beforeEach(() => {
             dimensions = {
                 height: 200,
-                width: 100
+                width: 100,
             };
         });
 
@@ -63,7 +63,7 @@ describe('image/imageUtil', () => {
         beforeEach(() => {
             dimensions = {
                 height: 200,
-                width: 100
+                width: 100,
             };
         });
 
@@ -96,9 +96,9 @@ describe('image/imageUtil', () => {
                 y: 30,
                 dimensions: {
                     x: 100,
-                    y: 200
+                    y: 200,
                 },
-                page: 1
+                page: 1,
             };
             const coordinates = getBrowserCoordinatesFromLocation(location, annotatedEl);
 

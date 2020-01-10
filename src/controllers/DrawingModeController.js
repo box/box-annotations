@@ -16,7 +16,7 @@ import {
     CLASS_ANNOTATION_DRAW_MODE,
     CLASS_ANNOTATION_POINT_MARKER,
     ANNOTATOR_TYPE,
-    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS
+    CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
 } from '../constants';
 
 // $FlowFixMe
@@ -142,7 +142,7 @@ class DrawingModeController extends AnnotationModeController {
     /** @inheritdoc */
     setupHandlers(): void {
         /* eslint-disable require-jsdoc */
-        this.locationFunction = (event) => this.getLocation(event, TYPES.point);
+        this.locationFunction = event => this.getLocation(event, TYPES.point);
         this.locationFunction = this.locationFunction.bind(this);
         /* eslint-enable require-jsdoc */
 
@@ -212,7 +212,7 @@ class DrawingModeController extends AnnotationModeController {
             createdBy: this.api.user,
             createdAt: new Date().toISOString(),
             isPending: true,
-            comments: []
+            comments: [],
         });
 
         if (!threadParams) {
@@ -229,7 +229,7 @@ class DrawingModeController extends AnnotationModeController {
         this.emit(THREAD_EVENT.pending, thread.getThreadEventData());
         thread.bindDrawingListeners(this.locationFunction);
 
-        thread.addListener('threadevent', (data) => this.handleThreadEvents(thread, data));
+        thread.addListener('threadevent', data => this.handleThreadEvents(thread, data));
         thread.handleStart(location);
     }
 
@@ -243,11 +243,11 @@ class DrawingModeController extends AnnotationModeController {
         const boundaries = this.annotatedElement.querySelectorAll('.ba-drawing-boundary');
 
         // $FlowFixMe
-        boundaries.forEach((boundaryEl) => boundaryEl.parentNode.removeChild(boundaryEl));
+        boundaries.forEach(boundaryEl => boundaryEl.parentNode.removeChild(boundaryEl));
 
         // Clear the in progress drawing canvases
         const pageElements = this.annotatedElement.querySelectorAll('.page');
-        pageElements.forEach((pageEl) => clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS));
+        pageElements.forEach(pageEl => clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS));
 
         this.annotatedElement.classList.remove(CLASS_ANNOTATION_DRAW_MODE);
     }
@@ -278,7 +278,9 @@ class DrawingModeController extends AnnotationModeController {
 
                 // Clear existing canvases
                 // eslint-disable-next-line
-                const pageEl = this.annotatedElement.querySelector(`[data-page-number="${thread.location.page}"]`);
+                const pageEl = this.annotatedElement.querySelector(
+                    `[data-page-number="${thread.location.page}"]`
+                );
                 clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
 
                 // Do not bind when mode is exited

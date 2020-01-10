@@ -11,7 +11,7 @@ import {
     CLASS_BOX_PREVIEW_HEADER,
     SELECTOR_ANNOTATION_MODE,
     CLASS_ANNOTATION_POINT_MARKER,
-    CLASS_ANNOTATION_POPOVER
+    CLASS_ANNOTATION_POPOVER,
 } from './constants';
 
 const HEADER_CLIENT_NAME = 'X-Box-Client-Name';
@@ -42,7 +42,7 @@ export function replaceHeader(containerEl, replacementHeader) {
 
     // First hide all possible headers
     const headers = containerEl.querySelectorAll(`.${CLASS_BOX_PREVIEW_HEADER}`);
-    [].forEach.call(headers, (header) => {
+    [].forEach.call(headers, header => {
         header.classList.add(CLASS_HIDDEN);
     });
 
@@ -364,7 +364,7 @@ export function getDimensionScale(dimensions, fileDimensions, zoomScale, heightP
         if (Math.abs(width - dimensions.x) > 1 || Math.abs(height !== dimensions.y) > 1) {
             dimensionScale = {
                 x: width / dimensions.x,
-                y: height / dimensions.y
+                y: height / dimensions.y,
             };
         }
     }
@@ -434,7 +434,7 @@ export function hasValidBoundaryCoordinates(thread) {
  * @return {Function} Event listener to convert to document location
  */
 export function eventToLocationHandler(locationFunction, callback) {
-    return (event) => {
+    return event => {
         const evt = event || window.event;
         // Do nothing when the target isn't the text layer in case the text layer receives event precedence over buttons
         // NOTE: @jpress Currently only applicable to documents.

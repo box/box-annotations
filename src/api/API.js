@@ -25,7 +25,7 @@ class API extends EventEmitter {
     permissions: BoxItemPermissions = {
         can_annotate: false,
         can_view_annotations_all: false,
-        can_view_annotations_self: false
+        can_view_annotations_self: false,
     };
 
     /** @property {CancelTokenSource} */
@@ -38,7 +38,7 @@ class API extends EventEmitter {
      * @return {string} UUID for annotation
      */
     static generateID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
             /* eslint-disable */
             var r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -61,7 +61,7 @@ class API extends EventEmitter {
         this.headers = getHeaders({}, data.token);
         this.user = {
             ...PLACEHOLDER_USER,
-            name: data.anonymousUserName
+            name: data.anonymousUserName,
         };
     }
 
@@ -96,7 +96,7 @@ class API extends EventEmitter {
     errorHandler = (error: $AxiosError): void => {
         this.emit(ANNOTATOR_EVENT.error, {
             reason: error.name,
-            error: error.toString()
+            error: error.toString(),
         });
     };
 
@@ -105,7 +105,7 @@ class API extends EventEmitter {
         return {
             ...rest,
             email: login,
-            avatarUrl: profile_image
+            avatarUrl: profile_image,
         };
     }
 
@@ -116,7 +116,7 @@ class API extends EventEmitter {
             permissions,
             created_by = PLACEHOLDER_USER,
             created_at: createdAt,
-            modified_at: modifiedAt
+            modified_at: modifiedAt,
         } = entry;
         return {
             id,
@@ -125,7 +125,7 @@ class API extends EventEmitter {
             createdBy: this.formatUserInfo(created_by),
             createdAt,
             modifiedAt,
-            isPending: false
+            isPending: false,
         };
     }
 

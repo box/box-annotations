@@ -11,6 +11,6 @@ import boxReactUILocaleData from 'box-react-ui-locale-data'; // eslint-disable-l
 declare var __LANGUAGE__: string;
 
 const language = __LANGUAGE__;
-const messages = Object.assign({}, annotationsLocaleData, boxReactUILocaleData);
+const messages = { ...annotationsLocaleData, ...boxReactUILocaleData };
 
 export default { language, messages, localeData };

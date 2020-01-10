@@ -13,7 +13,7 @@ import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
     BORDER_OFFSET,
-    STATES
+    STATES,
 } from '../constants';
 import AnnotationAPI from '../api/AnnotationAPI';
 
@@ -115,7 +115,7 @@ class AnnotationModeController extends EventEmitter {
             fileId: data.fileId,
             token: data.token,
             anonymousUserName: data.localized.anonymousUserName,
-            permissions: this.permissions
+            permissions: this.permissions,
         });
         this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
 
@@ -131,9 +131,9 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     destroy(): void {
-        Object.keys(this.annotations).forEach((pageNum) => {
+        Object.keys(this.annotations).forEach(pageNum => {
             const pageThreads = this.annotations[pageNum].all() || [];
-            pageThreads.forEach((thread) => thread.removeListener('threadevent', this.handleThreadEvents));
+            pageThreads.forEach(thread => thread.removeListener('threadevent', this.handleThreadEvents));
             this.annotations[pageNum].clear();
         });
 
@@ -281,13 +281,11 @@ class AnnotationModeController extends EventEmitter {
         const currentHandlerIndex = this.handlers.length;
         this.setupHandlers();
 
-        for (let index = currentHandlerIndex; index < this.handlers.length; index++) {
+        for (let index = currentHandlerIndex; index < this.handlers.length; index += 1) {
             const handler = this.handlers[index];
             const types = handler.type instanceof Array ? handler.type : [handler.type];
 
-            types.forEach((eventName) =>
-                handler.eventObj.addEventListener(eventName, handler.func, handler.useCapture)
-            );
+            types.forEach(eventName => handler.eventObj.addEventListener(eventName, handler.func, handler.useCapture));
         }
     }
 
@@ -301,7 +299,7 @@ class AnnotationModeController extends EventEmitter {
             const handler = this.handlers.pop();
             const types = handler.type instanceof Array ? handler.type : [handler.type];
 
-            types.forEach((eventName) => {
+            types.forEach(eventName => {
                 handler.eventObj.removeEventListener(eventName, handler.func, handler.useCapture);
             });
         }
@@ -322,7 +320,7 @@ class AnnotationModeController extends EventEmitter {
             isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
             headerHeight: this.headerElement.clientHeight,
-            ...annotation
+            ...annotation,
         };
     }
 
@@ -364,7 +362,7 @@ class AnnotationModeController extends EventEmitter {
         }
         this.annotations[page].insert(thread);
 
-        let threadEventHandler = (data) => this.handleThreadEvents(thread, data);
+        let threadEventHandler = data => this.handleThreadEvents(thread, data);
         threadEventHandler = threadEventHandler.bind(this);
         thread.addListener('threadevent', threadEventHandler);
 
@@ -427,7 +425,7 @@ class AnnotationModeController extends EventEmitter {
      * @return {void}
      */
     applyActionToThreads(func: Function): void {
-        Object.keys(this.annotations).forEach((page) => this.applyActionToPageThreads(func, page));
+        Object.keys(this.annotations).forEach(page => this.applyActionToPageThreads(func, page));
     }
 
     /**
@@ -446,7 +444,7 @@ class AnnotationModeController extends EventEmitter {
         if (pageNum) {
             thread = this.doesThreadMatch(threadID, pageNum);
         } else {
-            Object.keys(this.annotations).some((page) => {
+            Object.keys(this.annotations).some(page => {
                 // $FlowFixMe
                 const matchingThread = this.doesThreadMatch(threadID, page);
                 if (matchingThread) {
@@ -473,7 +471,7 @@ class AnnotationModeController extends EventEmitter {
             return thread;
         }
 
-        thread = pageThreads.all().filter((t) => {
+        thread = pageThreads.all().filter(t => {
             return t.threadID === threadID;
         })[0];
 
@@ -578,7 +576,7 @@ class AnnotationModeController extends EventEmitter {
         element: HTMLElement,
         type: Array<any> | string,
         handlerFn: Function,
-        useCapture: boolean = false
+        useCapture: boolean = false,
     ): void {
         if (!element) {
             return;
@@ -588,7 +586,7 @@ class AnnotationModeController extends EventEmitter {
             eventObj: element,
             func: handlerFn,
             type,
-            useCapture
+            useCapture,
         });
     }
 
@@ -614,7 +612,7 @@ class AnnotationModeController extends EventEmitter {
             return;
         }
 
-        Object.keys(this.annotations).forEach((pageNum) => this.renderPage(pageNum));
+        Object.keys(this.annotations).forEach(pageNum => this.renderPage(pageNum));
     }
 
     /**
@@ -669,9 +667,9 @@ class AnnotationModeController extends EventEmitter {
     destroyPendingThreads(): boolean {
         let hadPendingThreads = false;
 
-        Object.keys(this.annotations).forEach((pageNum) => {
+        Object.keys(this.annotations).forEach(pageNum => {
             const pageThreads = this.annotations[pageNum].all() || [];
-            pageThreads.forEach((thread) => {
+            pageThreads.forEach(thread => {
                 if (thread.state === STATES.pending || thread.id === this.pendingThreadID) {
                     this.destroyThread(thread);
                     hadPendingThreads = true;
@@ -708,7 +706,7 @@ class AnnotationModeController extends EventEmitter {
             // $FlowFixMe
             maxX: +location.x + BORDER_OFFSET,
             // $FlowFixMe
-            maxY: +location.y + BORDER_OFFSET
+            maxY: +location.y + BORDER_OFFSET,
         };
 
         // Get the threads that correspond to the point that was clicked on
@@ -763,7 +761,7 @@ class AnnotationModeController extends EventEmitter {
         super.emit('annotationcontrollerevent', {
             event,
             data,
-            mode: this.mode
+            mode: this.mode,
         });
         return super.emit(event, data);
     }

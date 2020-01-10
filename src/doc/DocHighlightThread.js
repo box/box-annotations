@@ -13,7 +13,7 @@ import {
     PAGE_PADDING_BOTTOM,
     BORDER_OFFSET,
     INLINE_POPOVER_HEIGHT,
-    SELECTOR_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER,
 } from '../constants';
 
 class DocHighlightThread extends AnnotationThread {
@@ -305,11 +305,11 @@ class DocHighlightThread extends AnnotationThread {
             this.location.dimensions,
             pageDimensions,
             zoomScale,
-            PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM
+            PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM,
         );
 
         // $FlowFixMe
-        this.location.quadPoints.forEach((quadPoint) => {
+        this.location.quadPoints.forEach(quadPoint => {
             // If needed, scale quad points comparing current dimensions with saved dimensions
             let scaledQuadPoint = quadPoint;
             if (dimensionScale) {
@@ -363,7 +363,7 @@ class DocHighlightThread extends AnnotationThread {
             this.location.dimensions,
             pageDimensions,
             zoomScale,
-            PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM
+            PAGE_PADDING_TOP + PAGE_PADDING_BOTTOM,
         );
 
         /**
@@ -396,7 +396,7 @@ class DocHighlightThread extends AnnotationThread {
             const scaledQuadPoint = [...quadPoint];
             if (dimensionScale) {
                 const qLength = quadPoint.length;
-                for (let i = 0; i < qLength; i++) {
+                for (let i = 0; i < qLength; i += 1) {
                     scaledQuadPoint[i] = scaleVertices(quadPoint[i], i);
                 }
             }
@@ -405,7 +405,16 @@ class DocHighlightThread extends AnnotationThread {
 
             const [x1, y1, x2, y2, x3, y3, x4, y4] = browserQuadPoint;
 
-            eventOccurredInHighlight = docUtil.isPointInPolyOpt([[x1, y1], [x2, y2], [x3, y3], [x4, y4]], x, y);
+            eventOccurredInHighlight = docUtil.isPointInPolyOpt(
+                [
+                    [x1, y1],
+                    [x2, y2],
+                    [x3, y3],
+                    [x4, y4],
+                ],
+                x,
+                y,
+            );
 
             index += 1;
         }
@@ -443,7 +452,7 @@ class DocHighlightThread extends AnnotationThread {
         this.maxX = 0;
         this.maxY = 0;
 
-        this.location.quadPoints.forEach((quadPoint) => {
+        this.location.quadPoints.forEach(quadPoint => {
             const [x1, y1, x2, y2, x3, y3, x4, y4] = quadPoint;
             this.minX = Math.min(x1, x2, x3, x4, this.minX);
             this.maxX = Math.max(x1, x2, x3, x4, this.maxX);
@@ -472,13 +481,13 @@ class DocHighlightThread extends AnnotationThread {
             this.annotatedElement,
             this.location,
             pageDimensions,
-            pageHeight
+            pageHeight,
         );
 
         const popoverEl = util.findElement(
             this.annotatedElement,
             SELECTOR_ANNOTATION_POPOVER,
-            this.renderAnnotationPopover
+            this.renderAnnotationPopover,
         );
         const dialogDimensions = popoverEl.getBoundingClientRect();
         const dialogWidth = dialogDimensions.width;

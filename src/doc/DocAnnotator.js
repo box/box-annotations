@@ -24,7 +24,7 @@ import {
     ANNOTATOR_EVENT,
     CONTROLLER_EVENT,
     CREATE_EVENT,
-    SELECTOR_ANNOTATION_POPOVER
+    SELECTOR_ANNOTATION_POPOVER,
 } from '../constants';
 
 const DOUBLE_CLICK_COUNT = 2;
@@ -40,7 +40,7 @@ const ID_ANNOTATED_ELEMENT = 'ba-rangy-annotated-element';
 const ANNOTATION_LAYER_CLASSES = [
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
-    CLASS_ANNOTATION_LAYER_DRAW
+    CLASS_ANNOTATION_LAYER_DRAW,
 ];
 
 class DocAnnotator extends Annotator {
@@ -174,7 +174,7 @@ class DocAnnotator extends Annotator {
                 // $FlowFixMe
                 clientEvent.clientX - pageDimensions.left,
                 // $FlowFixMe
-                clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP
+                clientEvent.clientY - pageDimensions.top - PAGE_PADDING_TOP,
             ];
 
             // If click is outside the page, ignore
@@ -197,7 +197,7 @@ class DocAnnotator extends Annotator {
             // and scale if needed (in case the representation changes size)
             const dimensions = {
                 x: pageWidth / zoomScale,
-                y: pageHeight / zoomScale
+                y: pageHeight / zoomScale,
             };
 
             location = { x, y, page: pageInfo.page, dimensions };
@@ -222,7 +222,7 @@ class DocAnnotator extends Annotator {
             }
 
             const quadPoints = [];
-            highlightEls.forEach((element) => {
+            highlightEls.forEach(element => {
                 quadPoints.push(docUtil.getQuadPoints(element, pageEl, zoomScale));
             });
 
@@ -234,7 +234,7 @@ class DocAnnotator extends Annotator {
             const pageHeight = pageDimensions.height - PAGE_PADDING_TOP - PAGE_PADDING_BOTTOM;
             const dimensions = {
                 x: pageWidth / zoomScale,
-                y: pageHeight / zoomScale
+                y: pageHeight / zoomScale,
             };
 
             location = { page, quadPoints, dimensions };
@@ -270,7 +270,7 @@ class DocAnnotator extends Annotator {
     scaleAnnotationCanvases(pageNum: number) {
         const pageEl = util.getPageEl(this.annotatedElement, pageNum);
 
-        ANNOTATION_LAYER_CLASSES.forEach((annotationLayerClass) => {
+        ANNOTATION_LAYER_CLASSES.forEach(annotationLayerClass => {
             const annotationLayerEl = pageEl.querySelector(`canvas.${annotationLayerClass}`);
             if (annotationLayerEl) {
                 docUtil.scaleCanvas(pageEl, annotationLayerEl);
@@ -297,7 +297,7 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             localized: this.localized,
             container: this.container,
-            headerHeight: this.headerElement.clientHeight
+            headerHeight: this.headerElement.clientHeight,
         });
 
         if (this.commentHighlightEnabled) {
@@ -317,8 +317,8 @@ class DocAnnotator extends Annotator {
         this.highlighter.addClassApplier(
             rangy.createClassApplier(CLASS_RANGY_HIGHLIGHT, {
                 ignoreWhiteSpace: true,
-                tagNames: ['span', 'a']
-            })
+                tagNames: ['span', 'a'],
+            }),
         );
     }
 
@@ -383,7 +383,7 @@ class DocAnnotator extends Annotator {
             this.highlightThrottleHandle = null;
         }
 
-        Object.keys(this.modeControllers).forEach((mode) => {
+        Object.keys(this.modeControllers).forEach(mode => {
             const controller = this.modeControllers[mode];
             controller.removeSelection();
         });
@@ -525,7 +525,7 @@ class DocAnnotator extends Annotator {
             canAnnotate: true,
             canDelete: true,
             createdBy: this.api.user,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
         });
         if (!thread) {
             this.handleValidationError();
@@ -598,11 +598,11 @@ class DocAnnotator extends Annotator {
 
         // Set all annotations on current page that are in the 'active' state to 'inactive'
         if (this.plainHighlightEnabled) {
-            this.modeControllers[TYPES.highlight].applyActionToThreads((thread) => thread.reset(), page);
+            this.modeControllers[TYPES.highlight].applyActionToThreads(thread => thread.reset(), page);
         }
 
         if (this.commentHighlightEnabled) {
-            this.modeControllers[TYPES.highlight_comment].applyActionToThreads((thread) => thread.reset(), page);
+            this.modeControllers[TYPES.highlight_comment].applyActionToThreads(thread => thread.reset(), page);
         }
 
         this.lastHighlightEvent = get(event, 'targetTouches[0]', event);
@@ -642,7 +642,7 @@ class DocAnnotator extends Annotator {
         }
 
         this.highlighter.highlightSelection(CLASS_RANGY_HIGHLIGHT, {
-            containerElementId: this.annotatedElement.id
+            containerElementId: this.annotatedElement.id,
         });
     }
 
@@ -689,7 +689,7 @@ class DocAnnotator extends Annotator {
      */
     isCreatingAnnotation() {
         let isPending = false;
-        Object.keys(this.modeControllers).some((mode) => {
+        Object.keys(this.modeControllers).some(mode => {
             const controller = this.modeControllers[mode];
             if (controller.hadPendingThreads) {
                 isPending = true;
@@ -831,7 +831,7 @@ class DocAnnotator extends Annotator {
         }
 
         const intersectingThreads = [].concat(plainThreads, commentThreads);
-        intersectingThreads.forEach((thread) => this.clickThread(event, thread));
+        intersectingThreads.forEach(thread => this.clickThread(event, thread));
 
         // Show active thread last
         if (this.activeThread) {
@@ -912,7 +912,7 @@ class DocAnnotator extends Annotator {
             return;
         }
 
-        const matchingHighlights = highlights.filter((internalHighlight) => {
+        const matchingHighlights = highlights.filter(internalHighlight => {
             return internalHighlight.id === highlight.id;
         });
 

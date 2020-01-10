@@ -29,7 +29,7 @@ describe('drawing/DrawingThread', () => {
             fileVersionId: 1,
             location: {},
             threadID: 2,
-            type: 'draw'
+            type: 'draw',
         });
         expect(thread.state).toEqual(STATES.inactive);
         util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
@@ -46,7 +46,7 @@ describe('drawing/DrawingThread', () => {
             thread.pathContainer = new DrawingContainer();
             thread.pathContainer.insert = jest.fn();
             thread.location = {
-                paths: [{}, {}]
+                paths: [{}, {}],
             };
         });
 
@@ -100,7 +100,7 @@ describe('drawing/DrawingThread', () => {
         beforeEach(() => {
             thread.hasTouch = false;
             thread.annotatedElement = {
-                addEventListener: jest.fn()
+                addEventListener: jest.fn(),
             };
         });
 
@@ -135,7 +135,7 @@ describe('drawing/DrawingThread', () => {
     describe('unbindDrawingListeners()', () => {
         beforeEach(() => {
             thread.annotatedElement = {
-                removeEventListener: jest.fn()
+                removeEventListener: jest.fn(),
             };
             thread.userMoveHandler = jest.fn();
             thread.userStopHandler = jest.fn();
@@ -157,11 +157,11 @@ describe('drawing/DrawingThread', () => {
             thread.delete = jest.fn();
             thread.getBrowserRectangularBoundary = jest.fn().mockReturnValue(['a', 'b', 'c', 'd']);
             thread.concreteContext = {
-                clearRect: jest.fn()
+                clearRect: jest.fn(),
             };
 
             thread.pathContainer = {
-                destroy: jest.fn()
+                destroy: jest.fn(),
             };
 
             thread.comments = [{ id: '123abc' }];
@@ -177,14 +177,14 @@ describe('drawing/DrawingThread', () => {
     describe('setContextStyles()', () => {
         const config = {
             scale: 2,
-            color: 'blue'
+            color: 'blue',
         };
 
         const context = {
             lineCap: 'not set',
             lineJoin: 'not set',
             strokeStyle: 'no color',
-            lineWidth: 'no width'
+            lineWidth: 'no width',
         };
 
         it('should do nothing when no context exists', () => {
@@ -255,7 +255,7 @@ describe('drawing/DrawingThread', () => {
             thread.renderAnnotationPopover = jest.fn();
             thread.pathContainer = {
                 isEmpty: jest.fn().mockReturnValue(true),
-                getAxisAlignedBoundingBox: jest.fn()
+                getAxisAlignedBoundingBox: jest.fn(),
             };
 
             thread.updateBoundaryAndPopover();
@@ -291,10 +291,10 @@ describe('drawing/DrawingThread', () => {
         beforeEach(() => {
             thread.pendingPath = {
                 isEmpty: jest.fn(),
-                drawPath: jest.fn()
+                drawPath: jest.fn(),
             };
             thread.pathContainer = {
-                applyToItems: jest.fn()
+                applyToItems: jest.fn(),
             };
             context = {
                 clearRect: jest.fn(),
@@ -302,8 +302,8 @@ describe('drawing/DrawingThread', () => {
                 stroke: jest.fn(),
                 canvas: {
                     width: 1,
-                    height: 2
-                }
+                    height: 2,
+                },
             };
         });
 
@@ -341,15 +341,15 @@ describe('drawing/DrawingThread', () => {
             thread.removeAllListeners('threadevent');
         });
 
-        it('should trigger an annotationevent with thenumber of available undo and redo actions', (done) => {
+        it('should trigger an annotationevent with thenumber of available undo and redo actions', done => {
             const numItems = {
                 undoCount: 3,
-                redoCount: 2
+                redoCount: 2,
             };
             thread.pathContainer = {
-                getNumberOfItems: jest.fn().mockReturnValue(numItems)
+                getNumberOfItems: jest.fn().mockReturnValue(numItems),
             };
-            thread.addListener('threadevent', (data) => {
+            thread.addListener('threadevent', data => {
                 const { eventData } = data;
                 expect(data.event).toEqual('availableactions');
                 expect(eventData.undo).toEqual(numItems.undoCount);
@@ -400,7 +400,7 @@ describe('drawing/DrawingThread', () => {
     describe('updateBoundary()', () => {
         beforeEach(() => {
             thread.pathContainer = {
-                getAxisAlignedBoundingBox: jest.fn()
+                getAxisAlignedBoundingBox: jest.fn(),
             };
             DrawingPath.extractDrawingInfo = jest.fn();
         });
@@ -442,7 +442,7 @@ describe('drawing/DrawingThread', () => {
                 minX: 5,
                 minY: 6,
                 maxX: 7,
-                maxY: 8
+                maxY: 8,
             };
 
             thread.regenerateBoundary();

@@ -12,7 +12,7 @@ import {
     DATA_TYPE_ANNOTATION_INDICATOR,
     STATES,
     THREAD_EVENT,
-    TYPES
+    TYPES,
 } from './constants';
 import AnnotationPopover from './components/AnnotationPopover';
 
@@ -160,7 +160,7 @@ class AnnotationThread extends EventEmitter {
         return util.shouldDisplayMobileUI(this.container)
             ? this.container
             : // $FlowFixMe
-            util.getPageEl(this.annotatedElement, this.location.page);
+              util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
@@ -180,25 +180,25 @@ class AnnotationThread extends EventEmitter {
         const pageEl = this.getPopoverParent();
         this.popoverComponent = render(
             <AnnotationPopover
-                id={this.id}
-                type={this.type}
-                isMobile={util.shouldDisplayMobileUI(this.container)}
+                canAnnotate={this.canAnnotate}
+                canComment={this.canComment}
+                canDelete={this.canDelete}
+                comments={this.comments}
                 createdAt={this.createdAt}
                 createdBy={this.createdBy}
-                modifiedAt={this.modifiedAt}
-                canAnnotate={this.canAnnotate}
-                canDelete={this.canDelete}
-                canComment={this.canComment}
-                comments={this.comments}
-                position={this.position}
-                onDelete={this.delete}
-                onCancel={this.cancelUnsavedAnnotation}
-                onCreate={this.save}
-                onCommentClick={this.onCommentClick}
-                isPending={isPending}
                 headerHeight={this.headerHeight}
+                id={this.id}
+                isMobile={util.shouldDisplayMobileUI(this.container)}
+                isPending={isPending}
+                modifiedAt={this.modifiedAt}
+                onCancel={this.cancelUnsavedAnnotation}
+                onCommentClick={this.onCommentClick}
+                onCreate={this.save}
+                onDelete={this.delete}
+                position={this.position}
+                type={this.type}
             />,
-            util.getPopoverLayer(pageEl)
+            util.getPopoverLayer(pageEl),
         );
         this.emit(THREAD_EVENT.renderPopover);
     }
@@ -240,10 +240,10 @@ class AnnotationThread extends EventEmitter {
             message,
             permissions: {
                 can_edit: true,
-                can_delete: true
+                can_delete: true,
             },
             createdBy: this.api.user,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
         });
 
         this.state = STATES.inactive;
@@ -254,8 +254,8 @@ class AnnotationThread extends EventEmitter {
             this.api
                 // $FlowFixMe
                 .create(annotationData)
-                .then((savedAnnotation) => this.updateTemporaryAnnotation(id, savedAnnotation))
-                .catch((error) => this.handleThreadSaveError(error, id))
+                .then(savedAnnotation => this.updateTemporaryAnnotation(id, savedAnnotation))
+                .catch(error => this.handleThreadSaveError(error, id))
         );
     }
 
@@ -318,7 +318,7 @@ class AnnotationThread extends EventEmitter {
             /* eslint-disable no-console */
             console.error(
                 THREAD_EVENT.deleteError,
-                `User does not have the correct permissions to delete annotation with ID ${annotation.id}.`
+                `User does not have the correct permissions to delete annotation with ID ${annotation.id}.`,
             );
             /* eslint-enable no-console */
             return Promise.reject();
@@ -330,7 +330,7 @@ class AnnotationThread extends EventEmitter {
             /* eslint-disable no-console */
             console.error(
                 THREAD_EVENT.deleteError,
-                `Annotation with ID ${annotation.threadNumber} not deleted from server`
+                `Annotation with ID ${annotation.threadNumber} not deleted from server`,
             );
             /* eslint-enable no-console */
             this.deleteSuccessHandler();
@@ -568,16 +568,16 @@ class AnnotationThread extends EventEmitter {
         return {
             item: {
                 id: this.fileVersionId,
-                type: 'file_version'
+                type: 'file_version',
             },
             details: {
                 type,
                 location: this.location,
-                threadID: this.threadID
+                threadID: this.threadID,
             },
             message,
             createdBy: this.api.user,
-            thread: this.threadNumber
+            thread: this.threadNumber,
         };
     }
 
@@ -636,7 +636,7 @@ class AnnotationThread extends EventEmitter {
     getThreadEventData(): Object {
         const threadData = {
             type: this.type,
-            threadID: this.threadID
+            threadID: this.threadID,
         };
 
         // $FlowFixMe

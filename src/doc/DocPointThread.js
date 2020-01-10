@@ -6,7 +6,7 @@ import {
     STATES,
     SELECTOR_ANNOTATION_POPOVER,
     ANNOTATION_POPOVER_CARET_HEIGHT,
-    CLASS_FLIPPED_POPOVER
+    CLASS_FLIPPED_POPOVER,
 } from '../constants';
 
 const PAGE_PADDING_TOP = 15;
@@ -95,7 +95,7 @@ class DocPointThread extends AnnotationThread {
             dialogWidth,
             threadIconLeftX,
             pageDimensions.width,
-            !isUpperHalf
+            !isUpperHalf,
         );
 
         // Position the dialog

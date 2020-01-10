@@ -10,22 +10,22 @@ const onDelete = jest.fn();
 
 const event = {
     stopPropagation: jest.fn(),
-    preventDefault: jest.fn()
+    preventDefault: jest.fn(),
 };
 
 describe('components/ActionControls', () => {
     const render = (props = {}) =>
         shallow(
             <ActionControls
-                isPending={false}
                 canDelete={false}
                 hasComments={false}
-                onCreate={onCreate}
-                onCommentClick={onCommentClick}
-                onDelete={onDelete}
+                isPending={false}
                 onCancel={onCancel}
+                onCommentClick={onCommentClick}
+                onCreate={onCreate}
+                onDelete={onDelete}
                 {...props}
-            />
+            />,
         );
 
     test('should render no controls if the type does not match a valid type', () => {

@@ -13,11 +13,11 @@ import './AnnotatorLabel.scss';
 const CLASS_ANNOTATOR_LABEL = 'ba-annotator-label';
 
 type Props = {
-    id?: string,
-    type: AnnotationType,
     createdBy: ?User,
+    id?: string,
+    intl: any,
     isPending: boolean,
-    intl: any
+    type: AnnotationType,
 };
 
 const AnnotatorLabel = ({ id, isPending, type, createdBy, intl }: Props) => {

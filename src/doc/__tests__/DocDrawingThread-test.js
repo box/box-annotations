@@ -25,7 +25,7 @@ describe('doc/DocDrawingThread', () => {
         api = {
             user: {},
             create: jest.fn().mockResolvedValue({}),
-            delete: jest.fn().mockResolvedValue({})
+            delete: jest.fn().mockResolvedValue({}),
         };
 
         thread = new DocDrawingThread({
@@ -36,18 +36,18 @@ describe('doc/DocDrawingThread', () => {
             location: {
                 x: 0,
                 y: 0,
-                page: 1
+                page: 1,
             },
             threadID: 2,
             type: 'draw',
             permissions: {
                 can_annotate: false,
-                can_view_annotations_all: true
+                can_view_annotations_all: true,
             },
             minX: 1,
             maxX: 10,
             minY: 1,
-            maxY: 10
+            maxY: 10,
         });
         thread.getThreadEventData = jest.fn();
         thread.renderAnnotationPopover = jest.fn();
@@ -71,21 +71,21 @@ describe('doc/DocDrawingThread', () => {
             thread.page = 1;
             thread.pendingPath = {
                 addCoordinate: jest.fn(),
-                isEmpty: jest.fn()
+                isEmpty: jest.fn(),
             };
             const { location } = thread;
 
             docUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([location.x, location.y]);
         });
 
-        it('should not add a coordinate when the state is not \'draw\'', () => {
+        it("should not add a coordinate when the state is not 'draw'", () => {
             thread.drawingFlag = DRAW_STATES.idle;
             thread.handleMove(thread.location);
 
             expect(thread.pendingPath.addCoordinate).not.toBeCalled();
         });
 
-        it('should add a coordinate frame when the state is \'draw\'', () => {
+        it("should add a coordinate frame when the state is 'draw'", () => {
             thread.hasPageChanged = jest.fn().mockReturnValue(false);
             thread.handleMove(thread.location);
 
@@ -116,7 +116,7 @@ describe('doc/DocDrawingThread', () => {
             thread.onPageChange = jest.fn();
             thread.hasPageChanged = jest.fn();
 
-            const context = 'I\'m a real context';
+            const context = "I'm a real context";
             util.getPageEl = jest.fn().mockReturnValue(context);
         });
 
@@ -163,15 +163,15 @@ describe('doc/DocDrawingThread', () => {
             thread.render = jest.fn();
             thread.drawingFlag = DRAW_STATES.drawing;
             thread.pendingPath = {
-                isEmpty: () => false
+                isEmpty: () => false,
             };
             thread.pathContainer = {
                 insert: jest.fn(),
-                isEmpty: jest.fn().mockReturnValue(false)
+                isEmpty: jest.fn().mockReturnValue(false),
             };
         });
 
-        it('should set the state to \'idle\' and clear the pendingPath', () => {
+        it("should set the state to 'idle' and clear the pendingPath", () => {
             thread.handleStop();
 
             expect(thread.emitAvailableActions).toBeCalled();
@@ -185,7 +185,7 @@ describe('doc/DocDrawingThread', () => {
     });
 
     describe('onPageChange()', () => {
-        it('should emit an annotationevent of type pagechanged and stop a pending drawing', (done) => {
+        it('should emit an annotationevent of type pagechanged and stop a pending drawing', done => {
             thread.handleStop = jest.fn();
             const location = 'location';
             thread.addListener('threadevent', () => {
@@ -205,7 +205,7 @@ describe('doc/DocDrawingThread', () => {
             docUtil.getContext = jest.fn();
             thread.lastScaleFactor = 1.1;
             thread.location = {
-                page: 1
+                page: 1,
             };
             thread.checkAndHandleScaleUpdate();
             expect(thread.lastScaleFactor).toEqual(1.4);
@@ -229,11 +229,11 @@ describe('doc/DocDrawingThread', () => {
         it('should return a browser coordinate when the DocDrawingThread has been assigned a page', () => {
             thread.pageEl = 'has been set';
             thread.location = {
-                dimensions: 'has been set'
+                dimensions: 'has been set',
             };
             const documentLocation = {
                 x: 1,
-                y: 2
+                y: 2,
             };
 
             docUtil.getBrowserCoordinatesFromLocation = jest.fn().mockReturnValue([3, 4]);
@@ -241,7 +241,7 @@ describe('doc/DocDrawingThread', () => {
 
             expect(returnValue).toStrictEqual({
                 x: 3,
-                y: 4
+                y: 4,
             });
         });
     });
@@ -254,7 +254,7 @@ describe('doc/DocDrawingThread', () => {
 
         it('should return false when there is a location but no page', () => {
             const location = {
-                page: undefined
+                page: undefined,
             };
             thread.location = location;
             const value = thread.hasPageChanged(location);
@@ -263,7 +263,7 @@ describe('doc/DocDrawingThread', () => {
 
         it('should return false when the given location page is the same as the thread location', () => {
             const location = {
-                page: 2
+                page: 2,
             };
             thread.location = location;
             const value = thread.hasPageChanged(location);
@@ -272,10 +272,10 @@ describe('doc/DocDrawingThread', () => {
 
         it('should return true when the given location page is different from the thread location', () => {
             thread.location = {
-                page: 2
+                page: 2,
             };
             const location = {
-                page: thread.location.page + 1
+                page: thread.location.page + 1,
             };
             const value = thread.hasPageChanged(location);
             expect(value).toBeTruthy();
@@ -288,7 +288,7 @@ describe('doc/DocDrawingThread', () => {
             thread.draw = jest.fn();
             thread.destroy = jest.fn();
             thread.pathContainer = {
-                applyToItems: jest.fn()
+                applyToItems: jest.fn(),
             };
         });
 
@@ -326,8 +326,8 @@ describe('doc/DocDrawingThread', () => {
                 clearRect: jest.fn(),
                 canvas: {
                     height: 100,
-                    width: 100
-                }
+                    width: 100,
+                },
             };
 
             const retValue = thread.selectContext();
@@ -341,8 +341,8 @@ describe('doc/DocDrawingThread', () => {
                 clearRect: jest.fn(),
                 canvas: {
                     height: 100,
-                    width: 100
-                }
+                    width: 100,
+                },
             };
 
             docUtil.getContext.mockReturnValue(concreteContext);
@@ -367,7 +367,7 @@ describe('doc/DocDrawingThread', () => {
             thread.annotatedElement = rootElement;
             thread.location = {
                 page: 1,
-                dimensions: {}
+                dimensions: {},
             };
             thread.pageEl = {};
 
@@ -393,10 +393,10 @@ describe('doc/DocDrawingThread', () => {
                 canvas: {
                     height: 100,
                     parentNode: {
-                        removeChild: removeFn
+                        removeChild: removeFn,
                     },
-                    width: 100
-                }
+                    width: 100,
+                },
             };
 
             thread.destroy();

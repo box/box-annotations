@@ -7,11 +7,11 @@ const createdBy = {
     type: 'user',
     id: '789ghi',
     name: 'Mia Thermopolis',
-    email: 'princess@genovia.gov'
+    email: 'princess@genovia.gov',
 };
 
 describe('components/AnnotationPopover/AnnotatorLabel', () => {
-    const render = (props = {}) => shallow(<AnnotatorLabel id='123' {...props} />).dive();
+    const render = (props = {}) => shallow(<AnnotatorLabel id="123" {...props} />).dive();
 
     test('should render nothing if label is pending', () => {
         const wrapper = render({ isPending: true });
@@ -21,7 +21,7 @@ describe('components/AnnotationPopover/AnnotatorLabel', () => {
     test('should render a highlight annotation label', () => {
         const wrapper = render({
             type: 'highlight',
-            createdBy
+            createdBy,
         });
         expect(wrapper).toMatchSnapshot();
     });
@@ -29,21 +29,21 @@ describe('components/AnnotationPopover/AnnotatorLabel', () => {
     test('should render a drawing annotation label', () => {
         const wrapper = render({
             type: 'draw',
-            createdBy
+            createdBy,
         });
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render an anonymous highlight annotation label', () => {
         const wrapper = render({
-            type: 'highlight'
+            type: 'highlight',
         });
         expect(wrapper).toMatchSnapshot();
     });
 
     test('should render an anonymous drawing annotation label', () => {
         const wrapper = render({
-            type: 'draw'
+            type: 'draw',
         });
         expect(wrapper).toMatchSnapshot();
     });

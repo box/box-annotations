@@ -9,7 +9,7 @@ import {
     POINT_ANNOTATION_ICON_HEIGHT,
     POINT_ANNOTATION_ICON_DOT_HEIGHT,
     SELECTOR_ANNOTATION_POPOVER,
-    CLASS_FLIPPED_POPOVER
+    CLASS_FLIPPED_POPOVER,
 } from '../constants';
 
 class ImagePointThread extends AnnotationThread {
