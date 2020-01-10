@@ -1,4 +1,3 @@
-require('babel-polyfill');
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -28,29 +27,29 @@ if (fs.existsSync('build/rsync.json')) {
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {
-        annotations: ['./src/BoxAnnotations.js']
+        annotations: ['./src/BoxAnnotations.js'],
     },
     output: {
         path: path.resolve('lib'),
-        filename: '[Name].js'
+        filename: '[Name].js',
     },
     resolve: {
         modules: ['src', 'node_modules'],
         alias: {
-            examples: path.join(__dirname, '../examples/src'),
-            'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
             'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
-            moment: path.resolve('src/utils/MomentShim') // Hack to leverage Intl instead
-        }
+            'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
+            examples: path.join(__dirname, '../examples/src'),
+            moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead
+        },
     },
     devServer: {
         contentBase: './test',
         disableHostCheck: true,
         host: '0.0.0.0',
         inline: true,
-        port: 8001
-    }
+        port: 8001,
+    },
 });
 
 if (isDev) {
@@ -65,8 +64,8 @@ if (isDev) {
     config.plugins.push(
         new CircularDependencyPlugin({
             exclude: /node_modules/,
-            failOnError: true
-        })
+            failOnError: true,
+        }),
     );
 }
 
@@ -77,8 +76,8 @@ if (isRelease && language === 'en-US') {
             openAnalyzer: false,
             reportFilename: path.resolve('../reports/webpack-stats.html'),
             generateStatsFile: true,
-            statsFilename: path.resolve('../reports/webpack-stats.json`')
-        })
+            statsFilename: path.resolve('../reports/webpack-stats.json`'),
+        }),
     );
 
     // https://webpack.js.org/configuration/optimization/#optimization-minimize
@@ -88,15 +87,15 @@ if (isRelease && language === 'en-US') {
                 uglifyOptions: {
                     warnings: false, // Don't output warnings
                     compress: {
-                        drop_console: true // Drop console statements
+                        drop_console: true, // Drop console statements
                     },
                     output: {
-                        comments: false // Remove comments
-                    }
+                        comments: false, // Remove comments
+                    },
                 },
-                sourceMap: false
-            })
-        ]
+                sourceMap: false,
+            }),
+        ],
     };
 
     // Optimize CSS - minimize, remove comments and duplicate rules
@@ -104,9 +103,9 @@ if (isRelease && language === 'en-US') {
         new OptimizeCssAssetsPlugin({
             cssProcessorOptions: {
                 discardComments: { removeAll: true },
-                safe: true
-            }
-        })
+                safe: true,
+            },
+        }),
     );
 
     // Add license message to top of code

@@ -13,51 +13,51 @@ module.exports = () => {
     return {
         bail: true,
         resolve: {
-            modules: ['src', 'node_modules']
+            modules: ['src', 'node_modules'],
         },
         resolveLoader: {
-            modules: [path.resolve('src'), path.resolve('node_modules')]
+            modules: [path.resolve('src'), path.resolve('node_modules')],
         },
         module: {
             rules: [
                 {
                     test: /\.js$/,
                     loader: 'babel-loader',
-                    exclude: [path.resolve('node_modules')]
+                    exclude: [path.resolve('node_modules')],
                 },
                 {
                     test: /\.s?css$/,
-                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
                 },
                 {
                     test: /\.(svg|html)$/,
                     loader: 'raw-loader',
-                    exclude: [path.resolve('node_modules')]
+                    exclude: [path.resolve('node_modules')],
                 },
                 {
                     test: /\.(jpe?g|png|gif|woff2|woff)$/,
                     loader: 'file-loader',
                     options: {
-                        name: '[name].[ext]'
+                        name: '[name].[ext]',
                     },
-                    exclude: [path.resolve('node_modules')]
-                }
-            ]
+                    exclude: [path.resolve('node_modules')],
+                },
+            ],
         },
         plugins: [
             new DefinePlugin({
-                __NAME__: JSON.stringify(packageJSON.name),
                 __LANGUAGE__: JSON.stringify(language),
+                __NAME__: JSON.stringify(packageJSON.name),
                 __VERSION__: JSON.stringify(version),
                 'process.env': {
+                    BABEL_ENV: JSON.stringify(process.env.BABEL_ENV),
                     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                    BABEL_ENV: JSON.stringify(process.env.BABEL_ENV)
-                }
+                },
             }),
             new MiniCssExtractPlugin({
-                filename: '[name].css'
+                filename: '[name].css',
             }),
-            new NormalModuleReplacementPlugin(/\/iconv-loader$/)
+            new NormalModuleReplacementPlugin(/\/iconv-loader$/),
         ],
         stats: {
             assets: true,
@@ -67,7 +67,7 @@ module.exports = () => {
             timings: true,
             chunks: false,
             chunkModules: false,
-            children: false
-        }
+            children: false,
+        },
     };
 };

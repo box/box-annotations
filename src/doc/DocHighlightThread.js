@@ -17,9 +17,6 @@ import {
 } from '../constants';
 
 class DocHighlightThread extends AnnotationThread {
-    /** @property {Location} */
-    location: ?Location;
-
     /** @property {HTMLElement} */
     pageEl: HTMLElement;
 
