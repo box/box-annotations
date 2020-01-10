@@ -62,7 +62,7 @@ class ImageAnnotator extends Annotator {
         // compare to the element being rendered on and scale as appropriate
         const dimensions = {
             x: imageDimensions.width / scale,
-            y: imageDimensions.height / scale
+            y: imageDimensions.height / scale,
         };
 
         location = {
@@ -70,7 +70,7 @@ class ImageAnnotator extends Annotator {
             y,
             imageEl,
             dimensions,
-            page
+            page,
         };
 
         return location;

@@ -10,7 +10,7 @@ import { IntlProvider, addLocaleData } from 'react-intl';
 import i18n from '../utils/i18n';
 
 type Props = {
-    children?: any
+    children?: any,
 };
 
 addLocaleData(i18n.localeData);

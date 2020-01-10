@@ -5,15 +5,15 @@ import { ERROR_TYPE, PLACEHOLDER_USER, TYPES } from '../constants';
 const FIELDS = 'item,thread,details,message,created_by,created_at,modified_at,permissions';
 
 type Params = {
+    limit?: string,
     marker?: string,
-    limit?: string
 };
 
 type Data = {
-    type: string,
-    next_marker: string,
+    entries: Array<any>,
     limit: number,
-    entries: Array<any>
+    next_marker: string,
+    type: string,
 };
 
 class FileVersionAPI extends API {
@@ -64,10 +64,10 @@ class FileVersionAPI extends API {
         const methodRequest = this.axios.get(apiUrl, {
             cancelToken: this.axiosSource.token,
             headers: this.headers,
-            params
+            params,
         });
 
-        return this.makeRequest(methodRequest, (data) => this.successHandler(data, params));
+        return this.makeRequest(methodRequest, data => this.successHandler(data, params));
     };
 
     /**
@@ -87,14 +87,14 @@ class FileVersionAPI extends API {
         const entries = this.data ? this.data.entries : [];
         this.data = {
             ...data,
-            entries: [...entries, ...data.entries]
+            entries: [...entries, ...data.entries],
         };
 
         const { next_marker } = data;
         if (next_marker) {
             const params = {
                 ...queryParams,
-                marker: next_marker
+                marker: next_marker,
             };
 
             return this.fetchFromMarker(params);
@@ -114,7 +114,7 @@ class FileVersionAPI extends API {
         const { entries } = this.data;
 
         // Construct map of thread ID to annotations
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
             const {
                 id,
                 details,
@@ -122,7 +122,7 @@ class FileVersionAPI extends API {
                 created_by = PLACEHOLDER_USER,
                 created_at: createdAt,
                 modified_at: modifiedAt,
-                thread: threadNumber
+                thread: threadNumber,
             } = entry;
             const { threadID, location, type } = details;
 
@@ -153,7 +153,7 @@ class FileVersionAPI extends API {
                 modifiedAt,
                 canAnnotate: this.permissions.can_annotate,
                 canDelete: permissions.can_delete,
-                comments: this.appendComments(entry, annotations[threadID].comments)
+                comments: this.appendComments(entry, annotations[threadID].comments),
             };
 
             // NOTE: Highlight comment annotations can be structured as a plain highlight

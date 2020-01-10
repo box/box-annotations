@@ -7,8 +7,8 @@ import CommentComponent from '../../../third-party/components/Comment';
 import { PLACEHOLDER_USER } from '../../constants';
 
 type Props = {
+    error?: ActionItemError,
     onDelete: Function,
-    error?: ActionItemError
 } & CommentProps;
 
 class Comment extends React.PureComponent<Props> {
@@ -16,26 +16,26 @@ class Comment extends React.PureComponent<Props> {
         isPending: false,
         permissions: {
             can_delete: false,
-            can_edit: false
+            can_edit: false,
         },
-        onDelete: noop
+        onDelete: noop,
     };
 
     render() {
         const { id, isPending, error, createdAt, modifiedAt, message, onDelete, permissions, createdBy } = this.props;
         return (
             <CommentComponent
-                id={id}
-                currentUser={PLACEHOLDER_USER}
-                onDelete={onDelete}
                 created_at={createdAt}
                 created_by={createdBy}
-                modified_at={modifiedAt}
-                tagged_message={message}
-                permissions={{ ...permissions }}
+                currentUser={PLACEHOLDER_USER}
+                error={error}
+                id={id}
                 isEditing={false}
                 isPending={isPending}
-                error={error}
+                modified_at={modifiedAt}
+                onDelete={onDelete}
+                permissions={{ ...permissions }}
+                tagged_message={message}
             />
         );
     }

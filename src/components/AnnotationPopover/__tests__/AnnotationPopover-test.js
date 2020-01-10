@@ -13,7 +13,7 @@ const USER = {
     type: 'user',
     id: '789ghi',
     name: 'Mia Thermopolis',
-    email: 'princess@genovia.gov'
+    email: 'princess@genovia.gov',
 };
 
 const comments = [
@@ -22,15 +22,15 @@ const comments = [
         createdAt: TIME_STRING_SEPT_27_2017,
         createdBy: USER,
         message: 'test',
-        permissions: {}
+        permissions: {},
     },
     {
         id: '456',
         createdAt: TIME_STRING_SEPT_27_2017,
         createdBy: USER,
         message: 'test',
-        permissions: {}
-    }
+        permissions: {},
+    },
 ];
 
 describe('components/AnnotationPopover', () => {
@@ -39,12 +39,12 @@ describe('components/AnnotationPopover', () => {
             <AnnotationPopover
                 canAnnotate={false}
                 canDelete={false}
-                onCreate={fnMock}
                 onCancel={fnMock}
+                onCreate={fnMock}
                 onDelete={fnMock}
                 position={position}
                 {...props}
-            />
+            />,
         );
 
     test('should position the component on componentDidUpdate()', () => {
@@ -63,7 +63,7 @@ describe('components/AnnotationPopover', () => {
     test('should render a view-only annotation with a annotator label and no comments', () => {
         const wrapper = render({
             comments: [],
-            type: TYPES.highlight
+            type: TYPES.highlight,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline-popover').length).toEqual(1);
@@ -73,7 +73,7 @@ describe('components/AnnotationPopover', () => {
         const wrapper = render({
             canAnnotate: true,
             comments: [],
-            type: TYPES.highlight
+            type: TYPES.highlight,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline-popover').length).toEqual(1);
@@ -83,7 +83,7 @@ describe('components/AnnotationPopover', () => {
         const wrapper = render({
             canAnnotate: true,
             comments,
-            isMobile: true
+            isMobile: true,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('Overlay').exists()).toBeFalsy();
@@ -92,7 +92,7 @@ describe('components/AnnotationPopover', () => {
     test('should correctly render a popover with comments and reply textarea', () => {
         const wrapper = render({
             canAnnotate: true,
-            comments
+            comments,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline-popover').length).toEqual(0);
@@ -101,7 +101,7 @@ describe('components/AnnotationPopover', () => {
     test('should correctly render a pending annotation', () => {
         const wrapper = render({
             isPending: true,
-            canAnnotate: true
+            canAnnotate: true,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-inline-popover').length).toEqual(0);

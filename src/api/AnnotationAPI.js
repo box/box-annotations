@@ -28,7 +28,7 @@ class AnnotationAPI extends API {
             data: annotation,
             method: HTTP_POST,
             cancelToken: this.axiosSource.token,
-            headers: this.headers
+            headers: this.headers,
         });
 
         return this.makeRequest(methodRequest, this.createSuccessHandler);
@@ -44,10 +44,10 @@ class AnnotationAPI extends API {
             url,
             method: HTTP_DELETE,
             cancelToken: this.axiosSource.token,
-            headers: this.headers
+            headers: this.headers,
         });
 
-        return this.makeRequest(methodRequest, (data) => this.deleteSuccessHandler(data, id));
+        return this.makeRequest(methodRequest, data => this.deleteSuccessHandler(data, id));
     }
 
     /**
@@ -80,8 +80,8 @@ class AnnotationAPI extends API {
             canAnnotate: true,
             permissions: {
                 can_delete: true,
-                can_edit: true
-            }
+                can_edit: true,
+            },
         };
     };
 

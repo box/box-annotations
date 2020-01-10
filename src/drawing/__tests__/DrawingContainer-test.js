@@ -101,7 +101,7 @@ describe('drawing/DrawingContainer', () => {
     describe('applyToItems()', () => {
         it('should apply the function only to items on the undo stack', () => {
             const counter = {
-                count: 0
+                count: 0,
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter];
@@ -113,7 +113,7 @@ describe('drawing/DrawingContainer', () => {
 
         it('should apply the function to items on the undo and redo stack', () => {
             const counter = {
-                count: 0
+                count: 0,
             };
             drawingContainer.undoStack = [counter, counter, counter, counter];
             drawingContainer.redoStack = [counter, counter];
@@ -135,7 +135,7 @@ describe('drawing/DrawingContainer', () => {
                 maxX: -Infinity,
                 minY: Infinity,
                 maxY: -Infinity,
-                paths: []
+                paths: [],
             });
         });
 
@@ -145,14 +145,14 @@ describe('drawing/DrawingContainer', () => {
                 minY: 6,
                 maxX: 8,
                 maxY: 9,
-                path: [1, 2, 3, 4]
+                path: [1, 2, 3, 4],
             };
             const path2 = {
                 minX: 3,
                 minY: 7,
                 maxX: 14,
                 maxY: 8,
-                path: [1, 2, 3]
+                path: [1, 2, 3],
             };
             drawingContainer.getItems = jest.fn().mockReturnValue([path1, path2]);
 
@@ -163,7 +163,7 @@ describe('drawing/DrawingContainer', () => {
                 maxX: path2.maxX,
                 minY: path1.minY,
                 maxY: path1.maxY,
-                paths: [{ path: path1.path }, { path: path2.path }]
+                paths: [{ path: path1.path }, { path: path2.path }],
             });
         });
     });

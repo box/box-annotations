@@ -1,5 +1,5 @@
 const workerFarm = require('worker-farm');
-const locales = require('box-locales');
+const locales = require('@box/languages');
 const numCPUs = require('os').cpus().length;
 const { execSync } = require('child_process');
 const path = require('path');
@@ -11,14 +11,15 @@ let counter = 0;
 const workers = workerFarm(
     {
         maxConcurrentWorkers: numCPUs - 2,
-        maxRetries: 0
+        maxRetries: 0,
     },
-    require.resolve('./build_locale.js')
+    require.resolve('./build_locale.js'),
 );
 
-locales.forEach((locale) => {
-    workers(locale, (error) => {
-        if (++counter === bundleCount || error) { // eslint-disable-line
+/* eslint-disable */
+locales.forEach(locale => {
+    workers(locale, error => {
+        if (++counter === bundleCount || error) {
             // terminate after all locales have been processed
             workerFarm.end(workers);
         }
@@ -29,3 +30,4 @@ locales.forEach((locale) => {
         }
     });
 });
+/* eslint-enable */

@@ -12,7 +12,7 @@ import {
     getPopoverLayer,
     isInElement,
     getPageEl,
-    shouldDisplayMobileUI
+    shouldDisplayMobileUI,
 } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import {
@@ -21,14 +21,14 @@ import {
     PAGE_PADDING_TOP,
     PAGE_PADDING_BOTTOM,
     SELECTOR_ANNOTATION_POPOVER,
-    INLINE_POPOVER_HEIGHT
+    INLINE_POPOVER_HEIGHT,
 } from '../constants';
 
 class CreateHighlightDialog extends EventEmitter {
     /** @property {Object} - Position, on the DOM, to align the dialog to the end of a highlight. */
     position = {
         x: 0,
-        y: 0
+        y: 0,
     };
 
     /** @property {boolean} - Whether or not we're on a mobile device. */
@@ -138,20 +138,20 @@ class CreateHighlightDialog extends EventEmitter {
 
         this.createPopoverComponent = render(
             <AnnotationPopover
-                type={type}
-                canAnnotate={true}
+                canAnnotate
                 canComment={this.allowComment}
-                canDelete={true}
-                position={this.updatePosition}
-                onDelete={noop}
-                onCancel={this.onCommentCancel}
-                onCreate={this.onCreate}
-                onCommentClick={this.onCommentClick}
-                isPending={true}
-                isMobile={shouldDisplayMobileUI(this.container)}
+                canDelete
                 headerHeight={this.headerHeight}
+                isMobile={shouldDisplayMobileUI(this.container)}
+                isPending
+                onCancel={this.onCommentCancel}
+                onCommentClick={this.onCommentClick}
+                onCreate={this.onCreate}
+                onDelete={noop}
+                position={this.updatePosition}
+                type={type}
             />,
-            popoverLayer
+            popoverLayer,
         );
         this.isVisible = true;
     };
@@ -194,7 +194,7 @@ class CreateHighlightDialog extends EventEmitter {
         const pageTop = pageDimensions.top - popoverDimensions.height;
         this.position = {
             x: coords.x - pageLeft,
-            y: coords.y - pageTop
+            y: coords.y - pageTop,
         };
         this.updatePosition();
     }

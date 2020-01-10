@@ -17,9 +17,9 @@ type Props = {
     canAnnotateAndDelete: boolean,
     canComment: boolean,
     isPending?: boolean,
+    onCommentClick: Function,
     onCreate: Function,
     onDelete: Function,
-    onCommentClick: Function
 };
 
 const HighlightControls = ({
@@ -28,22 +28,22 @@ const HighlightControls = ({
     onCreate,
     onDelete,
     onCommentClick,
-    isPending
+    isPending,
 }: Props) => (
     <div className={CLASS_HIGHLIGHT_CONTROLS}>
         {canAnnotateAndDelete && (
-            <PlainButton type='button' className={CLASS_HIGHLIGHT_BTN} onClick={isPending ? onCreate : onDelete}>
+            <PlainButton className={CLASS_HIGHLIGHT_BTN} onClick={isPending ? onCreate : onDelete} type="button">
                 <IconHighlightAnnotation
+                    className={classNames({
+                        [CLASS_SAVED_HIGHLIGHT]: !isPending,
+                    })}
                     height={20}
                     width={20}
-                    className={classNames({
-                        [CLASS_SAVED_HIGHLIGHT]: !isPending
-                    })}
                 />
             </PlainButton>
         )}
         {canComment && (
-            <PlainButton type='button' className={CLASS_HIGHLIGHT_COMMENT_BTN} onClick={onCommentClick}>
+            <PlainButton className={CLASS_HIGHLIGHT_COMMENT_BTN} onClick={onCommentClick} type="button">
                 <IconHighlightCommentAnnotation height={20} width={20} />
             </PlainButton>
         )}
@@ -52,7 +52,7 @@ const HighlightControls = ({
 
 HighlightControls.defaultProps = {
     canAnnotateAndDelete: false,
-    isPending: false
+    isPending: false,
 };
 
 export default HighlightControls;

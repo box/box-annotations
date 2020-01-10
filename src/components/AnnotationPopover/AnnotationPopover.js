@@ -24,17 +24,17 @@ const CLASS_MOBILE_CLOSE_BTN = 'ba-mobile-close-btn';
 const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
 
 type Props = {
-    isMobile: boolean,
     canComment: boolean,
-    position: Function,
-    onDelete: Function,
-    onCancel: Function,
-    onCreate: Function,
-    onCommentClick: Function,
+    headerHeight?: number,
+    isMobile: boolean,
     isPending: boolean,
     language?: string,
     messages?: StringMap,
-    headerHeight?: number
+    onCancel: Function,
+    onCommentClick: Function,
+    onCreate: Function,
+    onDelete: Function,
+    position: Function,
 } & Annotation;
 
 class AnnotationPopover extends React.PureComponent<Props> {
@@ -47,7 +47,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
         onCommentClick: noop,
         onDelete: noop,
         onCreate: noop,
-        comments: []
+        comments: [],
     };
 
     componentDidMount() {
@@ -78,7 +78,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
             onCommentClick,
             language,
             messages: intlMessages,
-            headerHeight
+            headerHeight,
         } = this.props;
         const hasComments = comments.length > 0;
         const isInline = !hasComments && (type === TYPES.highlight || type === TYPES.draw);
@@ -87,8 +87,8 @@ class AnnotationPopover extends React.PureComponent<Props> {
                 description: <FormattedMessage {...messages.close} />,
                 key: 'esc',
                 handler: onCancel,
-                type: 'Close'
-            })
+                type: 'Close',
+            }),
         ];
 
         return (
@@ -98,7 +98,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         className={classNames(CLASS_ANNOTATION_POPOVER, {
                             [CLASS_INLINE_POPOVER]: isInline,
                             [CLASS_ANIMATE_POPOVER]: isMobile,
-                            [CLASS_CREATE_POPOVER]: isPending
+                            [CLASS_CREATE_POPOVER]: isPending,
                         })}
                     >
                         {isMobile ? (
@@ -114,22 +114,22 @@ class AnnotationPopover extends React.PureComponent<Props> {
                             {hasComments ? (
                                 <CommentList comments={comments} onDelete={onDelete} />
                             ) : (
-                                <AnnotatorLabel id={id} type={type} createdBy={createdBy} isPending={isPending} />
+                                <AnnotatorLabel createdBy={createdBy} id={id} isPending={isPending} type={type} />
                             )}
                             {canAnnotate && (
                                 <ActionControls
-                                    id={id}
-                                    type={type}
-                                    hasComments={hasComments}
-                                    isPending={isPending}
                                     canComment={canComment}
                                     canDelete={canDelete}
-                                    createdBy={createdBy}
                                     createdAt={createdAt}
-                                    onCreate={onCreate}
+                                    createdBy={createdBy}
+                                    hasComments={hasComments}
+                                    id={id}
+                                    isPending={isPending}
                                     onCancel={onCancel}
-                                    onDelete={onDelete}
                                     onCommentClick={onCommentClick}
+                                    onCreate={onCreate}
+                                    onDelete={onDelete}
+                                    type={type}
                                 />
                             )}
                         </div>

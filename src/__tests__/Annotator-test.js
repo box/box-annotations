@@ -7,7 +7,7 @@ import {
     THREAD_EVENT,
     CONTROLLER_EVENT,
     SELECTOR_ANNOTATED_ELEMENT,
-    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER
+    SELECTOR_BOX_PREVIEW_HEADER_CONTAINER,
 } from '../constants';
 import * as util from '../util';
 import AnnotationThread from '../AnnotationThread';
@@ -48,16 +48,16 @@ describe('Annotator', () => {
         const options = {
             annotator: {
                 NAME: 'name',
-                CONTROLLERS: { something: controller }
+                CONTROLLERS: { something: controller },
             },
-            modeButtons: { something: {} }
+            modeButtons: { something: {} },
         };
 
         annotator = new Annotator({
             container: rootElement,
             api,
             file: {
-                file_version: { id: 1 }
+                file_version: { id: 1 },
             },
             isMobile: false,
             options,
@@ -67,8 +67,8 @@ describe('Annotator', () => {
                 loadError: 'load error',
                 createError: 'create error',
                 deleteError: 'delete error',
-                authError: 'auth error'
-            }
+                authError: 'auth error',
+            },
         });
     });
 
@@ -153,7 +153,7 @@ describe('Annotator', () => {
                 .then(() => {
                     expect(annotator.render).not.toBeCalled();
                 })
-                .catch((err) => {
+                .catch(err => {
                     expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, err);
                 });
         });
@@ -213,11 +213,11 @@ describe('Annotator', () => {
             it('should call hide on each thread in map', () => {
                 annotator.modeControllers = {
                     type: {
-                        render: jest.fn()
+                        render: jest.fn(),
                     },
                     type2: {
-                        render: jest.fn()
-                    }
+                        render: jest.fn(),
+                    },
                 };
 
                 annotator.render();
@@ -230,11 +230,11 @@ describe('Annotator', () => {
             it('should call hide on each thread in map on page 1', () => {
                 annotator.modeControllers = {
                     type: {
-                        renderPage: jest.fn()
+                        renderPage: jest.fn(),
                     },
                     type2: {
-                        renderPage: jest.fn()
-                    }
+                        renderPage: jest.fn(),
+                    },
                 };
                 annotator.renderPage(1);
                 expect(annotator.modeControllers.type.renderPage).toBeCalledWith(1);
@@ -248,8 +248,8 @@ describe('Annotator', () => {
                     permissions: {
                         can_annotate: false,
                         can_view_annotations_self: true,
-                        can_view_annotations_all: false
-                    }
+                        can_view_annotations_all: false,
+                    },
                 };
                 const permissions = annotator.getAnnotationPermissions(file);
                 expect(permissions.can_annotate).toBeFalsy();
@@ -270,7 +270,7 @@ describe('Annotator', () => {
             beforeEach(() => {
                 util.isInDialog = jest.fn().mockReturnValue(false);
                 annotator.modeControllers = {
-                    something: controller
+                    something: controller,
                 };
             });
 
@@ -290,14 +290,14 @@ describe('Annotator', () => {
         describe('fetchAnnotations()', () => {
             const threadMap = {
                 someID: [{}, {}],
-                someID2: [{}]
+                someID2: [{}],
             };
 
             beforeEach(() => {
                 annotator.api.fetchVersionAnnotations = jest.fn().mockResolvedValue(threadMap);
                 annotator.permissions = {
                     can_view_annotations_all: true,
-                    can_view_annotations_self: true
+                    can_view_annotations_self: true,
                 };
                 annotator.emit = jest.fn();
             });
@@ -305,7 +305,7 @@ describe('Annotator', () => {
             it('should not fetch existing annotations if the user does not have correct permissions', () => {
                 annotator.permissions = {
                     can_view_annotations_all: false,
-                    can_view_annotations_self: false
+                    can_view_annotations_self: false,
                 };
 
                 const result = annotator.fetchAnnotations();
@@ -317,7 +317,7 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.permissions = {
                     can_view_annotations_all: false,
-                    can_view_annotations_self: true
+                    can_view_annotations_self: true,
                 };
 
                 annotator.fetchAnnotations().then(() => {
@@ -329,7 +329,7 @@ describe('Annotator', () => {
             it('should fetch existing annotations if the user can view all annotations', () => {
                 annotator.permissions = {
                     can_view_annotations_all: true,
-                    can_view_annotations_self: false
+                    can_view_annotations_self: false,
                 };
 
                 annotator.fetchAnnotations().then(() => {
@@ -480,7 +480,7 @@ describe('Annotator', () => {
                 annotator.getLocationFromEvent = jest.fn().mockReturnValue({ page: 1 });
                 annotator.emit = jest.fn();
                 annotator.modeControllers = {
-                    point: controller
+                    point: controller,
                 };
             });
 
@@ -488,22 +488,22 @@ describe('Annotator', () => {
                 annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
-                    commentText: ' '
+                    commentText: ' ',
                 });
 
                 annotator.createPointThread({
                     lastPointEvent: {},
-                    pendingThreadID: '123abc'
+                    pendingThreadID: '123abc',
                 });
 
                 annotator.createPointThread({
                     lastPointEvent: {},
-                    commentText: ' '
+                    commentText: ' ',
                 });
 
                 annotator.createPointThread({
                     pendingThreadID: '123abc',
-                    commentText: ' '
+                    commentText: ' ',
                 });
                 expect(annotator.emit).not.toBeCalled();
             });
@@ -514,7 +514,7 @@ describe('Annotator', () => {
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
-                    commentText: 'text'
+                    commentText: 'text',
                 });
                 expect(annotator.emit).not.toBeCalled();
                 expect(result).toBeNull();
@@ -525,7 +525,7 @@ describe('Annotator', () => {
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
-                    commentText: 'text'
+                    commentText: 'text',
                 });
                 expect(annotator.emit).not.toBeCalled();
                 expect(result).toBeNull();
@@ -540,7 +540,7 @@ describe('Annotator', () => {
                 const result = annotator.createPointThread({
                     lastPointEvent: {},
                     pendingThreadID: '123abc',
-                    commentText: 'text'
+                    commentText: 'text',
                 });
 
                 expect(thread.state).toEqual(STATES.active);
@@ -566,8 +566,8 @@ describe('Annotator', () => {
                 annotator.modeControllers = {
                     type: {
                         getThreadByID: jest.fn().mockReturnValue(thread),
-                        threads: { 1: { '123abc': thread } }
-                    }
+                        threads: { 1: { '123abc': thread } },
+                    },
                 };
                 annotator.scrollToAnnotation(thread.threadID);
                 expect(thread.scrollIntoView).toBeCalled();
@@ -583,7 +583,7 @@ describe('Annotator', () => {
                 const data = {
                     scale: 5,
                     rotationAngle: 90,
-                    pageNum: 2
+                    pageNum: 2,
                 };
                 annotator.scaleAnnotations(data);
                 expect(annotator.setScale).toBeCalledWith(data.scale);
@@ -653,7 +653,7 @@ describe('Annotator', () => {
         describe('isModeAnnotatable()', () => {
             beforeEach(() => {
                 annotator.options.annotator = {
-                    TYPE: [TYPES.point, 'highlight']
+                    TYPE: [TYPES.point, 'highlight'],
                 };
             });
 

@@ -8,7 +8,7 @@ import {
     DRAW_RENDER_THRESHOLD,
     DRAW_BASE_LINE_WIDTH,
     BORDER_OFFSET,
-    THREAD_EVENT
+    THREAD_EVENT,
 } from '../constants';
 
 class DrawingThread extends AnnotationThread {
@@ -93,7 +93,7 @@ class DrawingThread extends AnnotationThread {
             this.unmountPopover();
         }
 
-        this.location.paths.forEach((drawingPathData) => {
+        this.location.paths.forEach(drawingPathData => {
             const pathInstance = new DrawingPath(drawingPathData);
             this.pathContainer.insert(pathInstance);
         });
@@ -215,7 +215,7 @@ class DrawingThread extends AnnotationThread {
                 x - BORDER_OFFSET,
                 y + BORDER_OFFSET,
                 width + BORDER_OFFSET * 2,
-                height - BORDER_OFFSET * 2
+                height - BORDER_OFFSET * 2,
             );
         }
 
@@ -327,7 +327,7 @@ s    *
         }
 
         context.beginPath();
-        this.pathContainer.applyToItems((drawing) => drawing.drawPath(context));
+        this.pathContainer.applyToItems(drawing => drawing.drawPath(context));
         if (this.pendingPath && !this.pendingPath.isEmpty()) {
             this.pendingPath.drawPath(context);
         }
@@ -344,7 +344,7 @@ s    *
         const availableActions = this.pathContainer.getNumberOfItems();
         this.emit('availableactions', {
             undo: availableActions.undoCount,
-            redo: availableActions.redoCount
+            redo: availableActions.redoCount,
         });
     }
 
@@ -442,16 +442,16 @@ s    *
         return {
             item: {
                 id: this.fileVersionId,
-                type: 'file_version'
+                type: 'file_version',
             },
             details: {
                 type,
                 location: this.location,
                 threadID: this.threadID,
-                drawingPaths: this.pathContainer
+                drawingPaths: this.pathContainer,
             },
             createdBy: this.api.user,
-            thread: this.threadNumber
+            thread: this.threadNumber,
         };
     }
 

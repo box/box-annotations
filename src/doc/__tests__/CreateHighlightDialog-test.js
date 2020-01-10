@@ -12,7 +12,7 @@ describe('doc/CreateHighlightDialog', () => {
     let parentEl;
     const localized = {
         highlightToggle: 'highlight toggle',
-        highlightComment: 'highlight comment'
+        highlightComment: 'highlight comment',
     };
 
     beforeEach(() => {
@@ -25,7 +25,7 @@ describe('doc/CreateHighlightDialog', () => {
         dialog = new CreateHighlightDialog(parentEl, {
             allowHighlight: true,
             allowComment: true,
-            localized
+            localized,
         });
         dialog.annotatedElement = rootElement;
         dialog.renderAnnotationPopover = jest.fn();
@@ -55,7 +55,7 @@ describe('doc/CreateHighlightDialog', () => {
             const config = {
                 allowHighlight: true,
                 allowComment: false,
-                localized
+                localized,
             };
             const instance = new CreateHighlightDialog(document.createElement('div'), config);
             expect(instance.allowHighlight).toBeTruthy();
@@ -69,7 +69,7 @@ describe('doc/CreateHighlightDialog', () => {
             dialog.createPopoverComponent = {};
 
             dialog.container = {
-                querySelectorAll: jest.fn().mockReturnValue([rootElement])
+                querySelectorAll: jest.fn().mockReturnValue([rootElement]),
             };
         });
 
@@ -81,7 +81,7 @@ describe('doc/CreateHighlightDialog', () => {
 
         it('should there are no popover layers', () => {
             dialog.container = {
-                querySelectorAll: jest.fn().mockReturnValue([])
+                querySelectorAll: jest.fn().mockReturnValue([]),
             };
             dialog.unmountPopover();
             expect(dialog.createPopoverComponent).not.toBeNull();
@@ -128,14 +128,14 @@ describe('doc/CreateHighlightDialog', () => {
     describe('setPosition()', () => {
         const selection = {
             getRangeAt: jest.fn(),
-            rangeCount: 1
+            rangeCount: 1,
         };
 
         const pageEl = {
             getBoundingClientRect: jest.fn().mockReturnValue({
                 left: 1,
-                top: 2
-            })
+                top: 2,
+            }),
         };
 
         beforeEach(() => {

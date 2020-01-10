@@ -10,7 +10,7 @@ describe('api/API', () => {
         api = new API({
             apiHost: API_HOST,
             fileId: 1,
-            token: 'someToken'
+            token: 'someToken',
         });
     });
 
@@ -50,7 +50,7 @@ describe('api/API', () => {
             api.errorHandler(error);
             expect(api.emit).toBeCalledWith(ANNOTATOR_EVENT.error, {
                 reason: error.name,
-                error: error.toString()
+                error: error.toString(),
             });
         });
     });

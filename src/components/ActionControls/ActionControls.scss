@@ -1,4 +1,4 @@
-@import '../../variables';
+@import "../../variables";
 
 .ba {
     .bcs-at-mention-tip {
@@ -6,15 +6,15 @@
     }
 
     .ba-action-controls {
-        background: white;
-        color: $fours;
         margin: 0;
+        color: $fours;
         white-space: normal;
+        background: white;
     }
 
     .ba-annotation-input-container {
-        border-top: none;
         width: 252px; // Hard-coded width to solve layout issues
+        border-top: none;
     }
 
     .bcs-comment .bcs-comment-headline {
@@ -32,34 +32,34 @@
     // TABLET-SPECIFIC CSS
     @media #{$mobile}, #{$tablet} {
         .ba-create-popover .ba-action-controls {
+            justify-content: flex-end;
             border: none;
             box-shadow: none;
-            justify-content: flex-end;
         }
 
         .ba-annotation-input-container,
         .ba-create-popover .ba-annotation-input-container {
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
             background: white;
             border-top: 1px solid $see-see;
-            bottom: 0;
             box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
-            padding: 15px;
-            width: 100%;
         }
 
         .ba-annotator-label ~ .ba-action-controls .ba-action-controls-draw,
         .ba-annotator-label ~ .ba-action-controls .ba-action-controls-highlight {
-            border-left: 0;
             margin: 0;
+            border-left: 0;
         }
     }
 
     // MOBILE CSS
     @media #{$mobile} {
         .ba-action-controls {
-            background: white;
             justify-content: flex-end;
             width: 100%;
+            background: white;
         }
     }
 }

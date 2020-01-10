@@ -8,13 +8,13 @@ const onCommentClick = jest.fn();
 
 describe('components/ActionControls/HighlightControls', () => {
     const render = (props = {}) =>
-        shallow(<HighlightControls onCreate={onCreate} onCommentClick={onCommentClick} {...props} />);
+        shallow(<HighlightControls onCommentClick={onCommentClick} onCreate={onCreate} {...props} />);
 
     test('should correctly render pending plain highlight controls', () => {
         const wrapper = render({
             canAnnotateAndDelete: true,
             canComment: false,
-            isPending: true
+            isPending: true,
         });
         expect(wrapper).toMatchSnapshot();
     });
@@ -23,7 +23,7 @@ describe('components/ActionControls/HighlightControls', () => {
         const wrapper = render({
             canAnnotateAndDelete: true,
             canComment: true,
-            isPending: true
+            isPending: true,
         });
         expect(wrapper).toMatchSnapshot();
     });
@@ -31,7 +31,7 @@ describe('components/ActionControls/HighlightControls', () => {
     test('should correctly render saved plain highlight controls', () => {
         const wrapper = render({
             canAnnotateAndDelete: true,
-            canComment: false
+            canComment: false,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-saved-highlight').length).toEqual(1);
@@ -40,7 +40,7 @@ describe('components/ActionControls/HighlightControls', () => {
     test('should correctly render saved highlight comment controls', () => {
         const wrapper = render({
             canAnnotateAndDelete: true,
-            canComment: true
+            canComment: true,
         });
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.find('.ba-saved-highlight').length).toEqual(1);

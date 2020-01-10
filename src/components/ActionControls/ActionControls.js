@@ -14,20 +14,20 @@ const CLASS_ACTION_CONTROLS = 'ba-action-controls';
 const CLASS_INPUT_CONTAINER = 'ba-annotation-input-container';
 
 type Props = {
-    id?: string,
-    type: AnnotationType,
     canComment: boolean,
     canDelete: boolean,
     hasComments: boolean,
+    id?: string,
     isPending: boolean,
-    onCreate: Function,
-    onCommentClick: Function,
     onCancel: Function,
-    onDelete: Function
+    onCommentClick: Function,
+    onCreate: Function,
+    onDelete: Function,
+    type: AnnotationType,
 };
 
 type State = {
-    isInputOpen: boolean
+    isInputOpen: boolean,
 };
 
 const NULL_USER = {};
@@ -36,11 +36,11 @@ class ActionControls extends React.Component<Props, State> {
     static defaultProps = {
         canComment: false,
         canDelete: false,
-        isPending: false
+        isPending: false,
     };
 
     state = {
-        isInputOpen: true
+        isInputOpen: true,
     };
 
     componentDidMount() {
@@ -98,9 +98,9 @@ class ActionControls extends React.Component<Props, State> {
                         canAnnotateAndDelete={canDelete}
                         canComment={canComment}
                         isPending={isPending}
-                        onDelete={this.onDelete}
-                        onCreate={this.onCreate}
                         onCommentClick={onCommentClick}
+                        onCreate={this.onCreate}
+                        onDelete={this.onDelete}
                     />
                 );
             case TYPES.highlight_comment:
@@ -112,15 +112,16 @@ class ActionControls extends React.Component<Props, State> {
                         <ApprovalCommentForm
                             className={CLASS_INPUT_CONTAINER}
                             // $FlowFixMe
-                            user={NULL_USER}
-                            isOpen={isInputOpen}
-                            isEditing={true}
                             createComment={this.onCreate}
-                            onCancel={this.onCancel}
-                            onSubmit={noop}
-                            onFocus={this.onFocus}
                             // $FlowFixMe
                             getAvatarUrl={noop}
+                            isEditing
+                            isOpen={isInputOpen}
+                            onCancel={this.onCancel}
+                            onFocus={this.onFocus}
+                            onSubmit={noop}
+                            // $FlowFixMe
+                            user={NULL_USER}
                         />
                     );
                 }
@@ -128,11 +129,11 @@ class ActionControls extends React.Component<Props, State> {
                 return (
                     <HighlightControls
                         canAnnotateAndDelete={canDelete}
-                        canComment={true}
+                        canComment
                         isPending={isPending}
-                        onDelete={this.onDelete}
-                        onCreate={this.onCreate}
                         onCommentClick={onCommentClick}
+                        onCreate={this.onCreate}
+                        onDelete={this.onDelete}
                     />
                 );
             case TYPES.draw:
@@ -157,15 +158,16 @@ class ActionControls extends React.Component<Props, State> {
                     <ApprovalCommentForm
                         className={CLASS_INPUT_CONTAINER}
                         // $FlowFixMe
-                        user={NULL_USER}
-                        isOpen={isInputOpen}
-                        isEditing={true}
                         createComment={this.onCreate}
-                        onCancel={this.onCancel}
-                        onSubmit={noop}
-                        onFocus={this.onFocus}
                         // $FlowFixMe
                         getAvatarUrl={noop}
+                        isEditing
+                        isOpen={isInputOpen}
+                        onCancel={this.onCancel}
+                        onFocus={this.onFocus}
+                        onSubmit={noop}
+                        // $FlowFixMe
+                        user={NULL_USER}
                     />
                 );
             default:

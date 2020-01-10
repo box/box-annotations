@@ -22,26 +22,26 @@ describe('image/ImageAnnotator', () => {
         const options = {
             annotator: {
                 NAME: 'name',
-                TYPE: [TYPES.point]
-            }
+                TYPE: [TYPES.point],
+            },
         };
 
         annotator = new ImageAnnotator({
             container: document,
             api: {},
             file: {
-                file_version: { id: 1 }
+                file_version: { id: 1 },
             },
             isMobile: false,
             options,
             modeButtons: {},
             location: {
-                locale: 'en-US'
+                locale: 'en-US',
             },
             localizedStrings: {
                 anonymousUserName: 'anonymous',
-                loadError: 'loaderror'
-            }
+                loadError: 'loaderror',
+            },
         });
 
         annotator.annotatedElement = annotator.getAnnotatedEl(document);
@@ -49,13 +49,13 @@ describe('image/ImageAnnotator', () => {
         annotator.threads = {};
 
         annotator.modeButtons = {
-            point: { selector: 'point_btn' }
+            point: { selector: 'point_btn' },
         };
         annotator.modeControllers = {
             point: {
                 api: {},
-                getButton: jest.fn()
-            }
+                getButton: jest.fn(),
+            },
         };
 
         annotator.permissions = annotator.getAnnotationPermissions(annotator.options.file);
@@ -81,7 +81,7 @@ describe('image/ImageAnnotator', () => {
         const y = 200;
         const dimensions = {
             x: 100,
-            y: 200
+            y: 200,
         };
 
         beforeEach(() => {
@@ -92,18 +92,18 @@ describe('image/ImageAnnotator', () => {
                     {
                         clientX: x,
                         clientY: y,
-                        target: imageEl
-                    }
-                ]
+                        target: imageEl,
+                    },
+                ],
             };
         });
 
-        it('should not return a location if image isn\'t inside viewer', () => {
+        it("should not return a location if image isn't inside viewer", () => {
             annotator.annotatedElement = document.createElement('div');
             const location = annotator.getLocationFromEvent({
                 target: {
-                    nodeName: 'not-annotated'
-                }
+                    nodeName: 'not-annotated',
+                },
             });
             expect(location).toBeNull();
         });
@@ -122,17 +122,17 @@ describe('image/ImageAnnotator', () => {
             annotator.hasTouch = true;
             const location = annotator.getLocationFromEvent({
                 target: {
-                    nodeName: 'not-annotated'
-                }
+                    nodeName: 'not-annotated',
+                },
             });
             expect(location).toBeNull();
 
             event = {
                 targetTouches: [
                     {
-                        target: imageEl
-                    }
-                ]
+                        target: imageEl,
+                    },
+                ],
             };
             expect(annotator.getLocationFromEvent(event)).toBeNull();
         });
@@ -149,20 +149,20 @@ describe('image/ImageAnnotator', () => {
                 width: 100,
                 height: 200,
                 left: 0,
-                top: 0
+                top: 0,
             });
 
             const location = annotator.getLocationFromEvent({
                 clientX: x,
                 clientY: y,
-                target: imageEl
+                target: imageEl,
             });
             expect(location).toStrictEqual({
                 x,
                 y,
                 imageEl,
                 dimensions,
-                page: 1
+                page: 1,
             });
         });
     });

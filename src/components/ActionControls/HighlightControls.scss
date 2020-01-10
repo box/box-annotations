@@ -1,4 +1,4 @@
-@import '../../variables';
+@import "../../variables";
 
 .ba {
     .ba-action-controls-highlight {
@@ -45,15 +45,15 @@
     // MOBILE & TABLET CSS
     @media #{$mobile}, #{$tablet} {
         .ba-inline-popover .ba-action-controls-highlight {
-            background: white;
-            border-top: 1px solid $seesee;
+            position: fixed;
             bottom: 0;
-            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
             left: 0;
+            width: 100%;
             margin: 0;
             padding: 15px;
-            position: fixed;
-            width: 100%;
+            background: white;
+            border-top: 1px solid $seesee;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
         }
 
         .ba-action-controls-highlight .btn-plain,

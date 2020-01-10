@@ -112,37 +112,37 @@ export const PERMISSION_CAN_VIEW_ANNOTATIONS_SELF = 'can_view_annotations_self';
 export const DRAW_STATES = {
     idle: 'idle',
     drawing: 'drawing',
-    erasing: 'erasing'
+    erasing: 'erasing',
 };
 
 export const STATES = {
     active: 'active', // mouse is over
     inactive: 'inactive', // not clicked and mouse is not over
-    pending: 'pending' // not saved
+    pending: 'pending', // not saved
 };
 
 export const TYPES = {
     point: 'point',
     highlight: 'highlight',
     draw: 'draw',
-    highlight_comment: 'highlight-comment'
+    highlight_comment: 'highlight-comment',
 };
 
 export const ANNOTATOR_TYPE = {
     document: 'Document',
-    image: 'Image'
+    image: 'Image',
 };
 
 export const HIGHLIGHT_FILL = {
     normal: 'rgba(254, 217, 78, 0.5)',
     active: 'rgba(255, 201, 0, 0.5)',
-    erase: 'rgba(255, 245, 132, 1)'
+    erase: 'rgba(255, 245, 132, 1)',
 };
 
 export const ANNOTATOR_EVENT = {
     fetch: 'annotationsfetched',
     error: 'annotationerror',
-    scale: 'scaleannotations'
+    scale: 'scaleannotations',
 };
 
 export const THREAD_EVENT = {
@@ -158,7 +158,7 @@ export const THREAD_EVENT = {
     createError: 'annotationcreateerror',
     show: 'annotationshow',
     hide: 'annotationhide',
-    reset: 'annotationreset'
+    reset: 'annotationreset',
 };
 
 export const CONTROLLER_EVENT = {
@@ -172,20 +172,20 @@ export const CONTROLLER_EVENT = {
     unregister: 'unregisterthread',
     bindDOMListeners: 'binddomlisteners',
     unbindDOMListeners: 'unbinddomlisteners',
-    renderPage: 'annotationsrenderpage'
+    renderPage: 'annotationsrenderpage',
 };
 
 export const CREATE_EVENT = {
     plain: 'plain_highlight_create',
     comment: 'comment_highlight_edit',
-    commentPost: 'comment_highlight_create'
+    commentPost: 'comment_highlight_create',
 };
 
 export const ERROR_TYPE = {
     auth: 'AuthorizationError',
     read: 'ReadError',
     create: 'CreateError',
-    delete: 'DeleteError'
+    delete: 'DeleteError',
 };
 
 export const POINT_ANNOTATION_ICON_HEIGHT = 31;
@@ -205,5 +205,5 @@ export const DRAW_DASHED_SPACING = 5;
 export const PLACEHOLDER_USER = {
     type: 'user',
     id: '0',
-    email: ''
+    email: '',
 };

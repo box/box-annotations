@@ -9,7 +9,7 @@ const USER = {
     type: 'user',
     id: '789ghi',
     name: 'Mia Thermopolis',
-    email: 'princess@genovia.gov'
+    email: 'princess@genovia.gov',
 };
 
 const comment = {
@@ -17,7 +17,7 @@ const comment = {
     createdAt: TIME_STRING_SEPT_27_2017,
     createdBy: USER,
     message: 'test',
-    permissions: {}
+    permissions: {},
 };
 
 describe('components/Comment', () => {

@@ -9,7 +9,7 @@ import {
     CLASS_ANNOTATION_POINT_MARKER,
     DATA_TYPE_ANNOTATION_INDICATOR,
     THREAD_EVENT,
-    CLASS_FLIPPED_POPOVER
+    CLASS_FLIPPED_POPOVER,
 } from '../constants';
 
 let thread;
@@ -20,8 +20,8 @@ describe('AnnotationThread', () => {
 
     let api = {
         user: {
-            id: '1'
-        }
+            id: '1',
+        },
     };
 
     beforeEach(() => {
@@ -40,7 +40,7 @@ describe('AnnotationThread', () => {
             location: {},
             threadID: '2',
             threadNumber: '1',
-            type: 'point'
+            type: 'point',
         });
 
         thread.emit = jest.fn();
@@ -108,13 +108,13 @@ describe('AnnotationThread', () => {
             thread.reset = jest.fn();
             thread.toggleFlippedThreadEl = jest.fn();
             thread.container = {
-                querySelectorAll: jest.fn().mockReturnValue([rootElement])
+                querySelectorAll: jest.fn().mockReturnValue([rootElement]),
             };
         });
 
         it('should there are no popover layers', () => {
             thread.container = {
-                querySelectorAll: jest.fn().mockReturnValue([])
+                querySelectorAll: jest.fn().mockReturnValue([]),
             };
             thread.unmountPopover();
             expect(thread.popoverComponent).not.toBeNull();
@@ -133,7 +133,7 @@ describe('AnnotationThread', () => {
     describe('renderAnnotationPopover()', () => {
         const event = {
             stopPropagation: jest.fn(),
-            preventDefault: jest.fn()
+            preventDefault: jest.fn(),
         };
 
         it('should render and display the popover for this annotation', () => {
@@ -181,7 +181,7 @@ describe('AnnotationThread', () => {
             thread.renderAnnotationPopover = jest.fn();
         });
 
-        it('should save an annotation with the specified type and text', (done) => {
+        it('should save an annotation with the specified type and text', done => {
             thread.api.create = jest.fn().mockResolvedValue({});
 
             const promise = thread.save('point', 'blah');
@@ -193,7 +193,7 @@ describe('AnnotationThread', () => {
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.create);
         });
 
-        it('should delete the temporary annotation and broadcast an error if there was an error saving', (done) => {
+        it('should delete the temporary annotation and broadcast an error if there was an error saving', done => {
             thread.api.create = jest.fn().mockRejectedValue({});
 
             const promise = thread.save('point', 'blah');
@@ -219,7 +219,7 @@ describe('AnnotationThread', () => {
                 id: '123',
                 threadNumber: '1',
                 threadID: 'abc',
-                createdAt: 'today'
+                createdAt: 'today',
             });
             expect(thread.id).toEqual('123');
             expect(thread.threadNumber).toEqual('1');
@@ -230,7 +230,7 @@ describe('AnnotationThread', () => {
 
         it('should add a comment to the annotation', () => {
             thread.updateAnnotationThread({
-                message: 'something'
+                message: 'something',
             });
             expect(thread.comments.length).toEqual(1);
         });
@@ -244,16 +244,16 @@ describe('AnnotationThread', () => {
             expect(data).toStrictEqual({
                 item: {
                     type: 'file_version',
-                    id: '1'
+                    id: '1',
                 },
                 details: {
                     type,
                     location: {},
-                    threadID: '2'
+                    threadID: '2',
                 },
                 message,
                 createdBy: { id: '1' },
-                thread: '1'
+                thread: '1',
             });
         });
     });
@@ -263,7 +263,7 @@ describe('AnnotationThread', () => {
         const serverAnnotation = {
             id: 456,
             threadNumber: 1,
-            message: 'comment'
+            message: 'comment',
         };
 
         beforeEach(() => {
@@ -310,15 +310,15 @@ describe('AnnotationThread', () => {
         beforeEach(() => {
             api = {
                 user: { id: 1 },
-                delete: jest.fn().mockResolvedValue()
+                delete: jest.fn().mockResolvedValue(),
             };
 
             annotation = {
                 id: 'someID',
                 permissions: {
-                    can_delete: true
+                    can_delete: true,
                 },
-                threadID: 1
+                threadID: 1,
             };
 
             thread.api = api;
@@ -330,7 +330,7 @@ describe('AnnotationThread', () => {
             thread.renderAnnotationPopover = jest.fn();
             thread.cleanupAnnotationOnDelete = jest.fn();
             thread.getThreadEventData = jest.fn().mockReturnValue({
-                threadNumber: 1
+                threadNumber: 1,
             });
             thread.emit = jest.fn();
         });
@@ -383,7 +383,7 @@ describe('AnnotationThread', () => {
         let comment;
         beforeEach(() => {
             comment = {
-                id: '123'
+                id: '123',
             };
             thread.comments = [comment];
             thread.threadID = '123abc';
@@ -447,7 +447,7 @@ describe('AnnotationThread', () => {
     describe('deleteErrorHandler()', () => {
         it('should re-render and broadcast delete error message', () => {
             const error = {
-                toString: jest.fn().mockReturnValue('error')
+                toString: jest.fn().mockReturnValue('error'),
             };
             thread.deleteErrorHandler(error);
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.render, thread.location);
@@ -459,7 +459,7 @@ describe('AnnotationThread', () => {
     describe('scrollIntoView()', () => {
         beforeEach(() => {
             thread.annotatedElement = {
-                scrollTop: 0
+                scrollTop: 0,
             };
         });
 
@@ -485,7 +485,7 @@ describe('AnnotationThread', () => {
         let pageEl;
         beforeEach(() => {
             pageEl = {
-                scrollIntoView: jest.fn()
+                scrollIntoView: jest.fn(),
             };
             util.getPageEl = jest.fn().mockReturnValue(pageEl);
         });
@@ -499,9 +499,9 @@ describe('AnnotationThread', () => {
             expect(pageEl.scrollIntoView).not.toBeCalled();
         });
 
-        it('should scroll annotation\'s page into view', () => {
+        it("should scroll annotation's page into view", () => {
             thread.location = {
-                page: 1
+                page: 1,
             };
             thread.scrollToPage();
             expect(pageEl.scrollIntoView).toBeCalled();
@@ -514,7 +514,7 @@ describe('AnnotationThread', () => {
                 scrollHeight: 100,
                 scrollTop: 0,
                 scrollBottom: 200,
-                clientHeight: 50
+                clientHeight: 50,
             };
         });
 
@@ -649,39 +649,39 @@ describe('AnnotationThread', () => {
     describe('getThreadEventData()', () => {
         it('should return thread type and threadID', () => {
             thread.api.user = {
-                id: -1
-            };
-            thread.threadNumber = undefined;
-            const data = thread.getThreadEventData();
-            expect(data).toStrictEqual({
-                type: thread.type,
-                threadID: thread.threadID
-            });
-        });
-
-        it('should also return annotator\'s user id', () => {
-            thread.api.user = {
-                id: 1
+                id: -1,
             };
             thread.threadNumber = undefined;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
                 type: thread.type,
                 threadID: thread.threadID,
-                userId: 1
+            });
+        });
+
+        it("should also return annotator's user id", () => {
+            thread.api.user = {
+                id: 1,
+            };
+            thread.threadNumber = undefined;
+            const data = thread.getThreadEventData();
+            expect(data).toStrictEqual({
+                type: thread.type,
+                threadID: thread.threadID,
+                userId: 1,
             });
         });
 
         it('should return thread type and threadID', () => {
             thread.api.user = {
-                id: -1
+                id: -1,
             };
             thread.threadNumber = 1;
             const data = thread.getThreadEventData();
             expect(data).toStrictEqual({
                 type: thread.type,
                 threadID: thread.threadID,
-                threadNumber: 1
+                threadNumber: 1,
             });
         });
     });
@@ -711,12 +711,12 @@ describe('AnnotationThread', () => {
             thread.regenerateBoundary();
 
             thread.location = {
-                x: 'something'
+                x: 'something',
             };
             thread.regenerateBoundary();
 
             thread.location = {
-                y: 'something'
+                y: 'something',
             };
             thread.regenerateBoundary();
 
@@ -727,7 +727,7 @@ describe('AnnotationThread', () => {
         it('should set the min/max x/y values to the thread location', () => {
             thread.location = {
                 x: 1,
-                y: 2
+                y: 2,
             };
             thread.regenerateBoundary();
             expect(thread.minX).toEqual(1);

@@ -68,7 +68,7 @@ describe('controllers/HighlightModeController', () => {
             controller.unbindListeners = jest.fn();
 
             const selection = {
-                removeAllRanges: jest.fn()
+                removeAllRanges: jest.fn(),
             };
             window.getSelection = jest.fn().mockReturnValue(selection);
 
@@ -121,7 +121,7 @@ describe('controllers/HighlightModeController', () => {
             util.clearCanvas = jest.fn();
             controller.annotations = {
                 // eslint-disable-next-line new-cap
-                1: new rbush()
+                1: new rbush(),
             };
             controller.renderPage(1);
             expect(util.clearCanvas).toBeCalled();

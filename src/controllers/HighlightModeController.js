@@ -8,7 +8,7 @@ import {
     CONTROLLER_EVENT,
     TYPES,
     CLASS_ANNOTATION_LAYER_HIGHLIGHT,
-    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT
+    CLASS_ANNOTATION_LAYER_HIGHLIGHT_COMMENT,
 } from '../constants';
 
 class HighlightModeController extends AnnotationModeController {

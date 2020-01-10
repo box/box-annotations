@@ -36,8 +36,8 @@ describe('image/ImagePointThread', () => {
             threadID: 2,
             type: 'point',
             permissions: {
-                can_annotate: true
-            }
+                can_annotate: true,
+            },
         });
     });
 
@@ -56,7 +56,7 @@ describe('image/ImagePointThread', () => {
             thread.show();
             expect(imageUtil.getBrowserCoordinatesFromLocation).toBeCalledWith(
                 thread.location,
-                thread.annotatedElement
+                thread.annotatedElement,
             );
             expect(util.showElement).toBeCalledWith(thread.element);
         });
