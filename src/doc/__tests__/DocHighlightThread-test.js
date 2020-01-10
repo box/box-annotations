@@ -319,12 +319,9 @@ describe('doc/DocHighlightThread', () => {
         const pageEl = {
             getBoundingClientRect: jest.fn().mockReturnValue({ height: 0, top: 10 }),
         };
-        let quadPoint = {};
 
         beforeEach(() => {
-            quadPoint = {};
-            thread.location.quadPoints = [quadPoint, quadPoint, quadPoint];
-
+            thread.location.quadPoints = [[], [], []];
             thread.getPageEl = jest.fn().mockReturnValue(pageEl);
             util.getDimensionScale = jest.fn().mockReturnValue(false);
             docUtil.convertPDFSpaceToDOMSpace = jest.fn().mockReturnValue([0, 0, 0, 0, 0, 0, 0, 0]);
