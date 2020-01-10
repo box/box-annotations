@@ -5,7 +5,6 @@ module.exports = {
     rules: {
         camelcase: 0, // fixme
         "class-methods-use-this": 0, // fixme
-        "import/no-extraneous-dependencies": 0, // fixme
         "import/no-unresolved": "off", // Allows JS files to import TS files
         "prefer-destructuring": ["error", { object: true, array: false }],
         "react/default-props-match-prop-types": 0
