@@ -35,6 +35,7 @@ exports[`components/Comment should correctly render comment 1`] = `
         <Tooltip
           constrainToScrollParent={false}
           constrainToWindow={true}
+          isDisabled={false}
           position="top-center"
           text={
             <FormattedMessage

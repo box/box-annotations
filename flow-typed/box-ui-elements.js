@@ -4,40 +4,40 @@
  * @author Box
  */
 /* eslint-disable no-use-before-define */
-import type { MessageDescriptor, InjectIntlProvidedProps } from 'react-intl';
+import type { MessageDescriptor } from 'react-intl';
 
-type SelectorItem = {
+type SelectorItem<T: any = any> = {
     id: string,
+    item?: T, // ie UserMini or GroupMini
     name: string,
-    item: Object,
-    value?: any
+    value?: any,
 };
 
-type SelectorItems = Array<SelectorItem>;
+type SelectorItems<T: any = any> = Array<SelectorItem<T>>;
 
 type ActionItemError = {
     title: MessageDescriptor,
     message: MessageDescriptor,
     action?: {
+        onAction: Function,
         text: MessageDescriptor,
-        onAction: Function
-    }
+    },
 };
 
 type BoxItemPermission = {
     can_comment?: boolean,
-    can_edit_comment?: boolean,
     can_delete_comment?: boolean,
+    can_delete?: boolean,
+    can_download?: boolean,
+    can_edit_comment?: boolean,
     can_preview?: boolean,
     can_rename?: boolean,
-    can_download?: boolean,
-    can_delete?: boolean,
     can_upload?: boolean,
     can_share?: boolean,
-    can_set_share_access?: boolean
+    can_set_share_access?: boolean,
 };
 
 type Translations = {
+    onTranslate?: Function,
     translationEnabled?: boolean,
-    onTranslate?: Function
 };

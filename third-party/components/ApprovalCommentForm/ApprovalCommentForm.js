@@ -9,9 +9,9 @@ import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
-import Form from 'box-react-ui/lib/components/form-elements/form/Form';
-import TextArea from 'box-react-ui/lib/components/form-elements/text-area/TextArea';
-import commonMessages from 'box-react-ui/lib/common/messages';
+import Form from 'box-ui-elements/es/components/form-elements/form/Form';
+import TextArea from 'box-ui-elements/es/components/form-elements/text-area/TextArea';
+import commonMessages from 'box-ui-elements/es/common/messages';
 
 import AddApproval from './AddApproval';
 import CommentInputControls from './CommentInputControls';
@@ -21,46 +21,46 @@ import messages from '../../messages';
 import './ApprovalCommentForm.scss';
 
 type Props = {
+    approverSelectorContacts?: SelectorItems<>,
     className: string,
     createComment?: Function,
     createTask?: Function,
-    updateTask?: Function,
+    entityId?: string,
     getApproverWithQuery?: Function,
+    getAvatarUrl: string => Promise<?string>,
     getMentionWithQuery?: Function,
     intl: any,
     isDisabled?: boolean,
+    isEditing?: boolean,
     isOpen: boolean,
-    approverSelectorContacts?: SelectorItems,
-    mentionSelectorContacts?: SelectorItems,
+    mentionSelectorContacts?: SelectorItems<>,
     onCancel: Function,
     onFocus: Function,
     onSubmit: Function,
-    user: User,
-    isEditing?: boolean,
-    entityId?: string,
     tagged_message?: string,
-    getAvatarUrl: string => Promise<?string>,
+    updateTask?: Function,
+    user: User,
 };
 
 type State = {
-    approvalDate: ?Date,
-    approvers: SelectorItems,
+    approvalDate?: Date,
     approverSelectorError: string,
-    commentText: ?string,
+    approvers: SelectorItems<>,
+    commentText: string,
     isAddApprovalVisible: boolean,
 };
 
 class ApprovalCommentForm extends React.Component<Props, State> {
     static defaultProps = {
-        isOpen: false
+        isOpen: false,
     };
 
     state = {
-        approvalDate: null,
+        approvalDate: undefined,
         approvers: [],
         approverSelectorError: '',
         commentText: '',
-        isAddApprovalVisible: false
+        isAddApprovalVisible: false,
     };
 
     componentWillReceiveProps(nextProps: Props): void {
@@ -69,26 +69,19 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         if (isOpen !== this.props.isOpen && !isOpen) {
             this.setState({
                 commentText: this.props.tagged_message || '',
-                isAddApprovalVisible: false
+                isAddApprovalVisible: false,
             });
         }
     }
 
     onFormChangeHandler = ({ addApproval, commentText }: any): void =>
-        this.setState({ 
+        this.setState({
             isAddApprovalVisible: addApproval === 'on',
-            commentText
+            commentText,
         });
 
     onFormValidSubmitHandler = (formData: any): void => {
-        const {
-            createComment = noop,
-            createTask = noop,
-            intl,
-            updateTask = noop,
-            onSubmit,
-            entityId
-        } = this.props;
+        const { createComment = noop, createTask = noop, intl, updateTask = noop, onSubmit, entityId } = this.props;
 
         const { commentText: text } = this.state;
         if (!text) {
@@ -99,9 +92,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             const { approvers, approvalDate } = this.state;
             if (approvers.length === 0) {
                 this.setState({
-                    approverSelectorError: intl.formatMessage(
-                        commonMessages.requiredFieldError,
-                    )
+                    approverSelectorError: intl.formatMessage(commonMessages.requiredFieldError),
                 });
                 return;
             }
@@ -109,7 +100,7 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             createTask({
                 text,
                 assignees: approvers,
-                dueAt: approvalDate
+                dueAt: approvalDate,
             });
         } else if (entityId) {
             updateTask({ text, id: entityId });
@@ -124,8 +115,8 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         this.setState({
             commentText: '',
             isAddApprovalVisible: false,
-            approvalDate: null,
-            approvers: []
+            approvalDate: undefined,
+            approvers: [],
         });
     };
 
@@ -143,23 +134,22 @@ class ApprovalCommentForm extends React.Component<Props, State> {
         this.setState({ approvers: this.state.approvers.concat(pills) });
     };
 
-    handleApproverSelectorRemove = (option: any, index: number): void => { // eslint-disable-line
+    handleApproverSelectorRemove = (option: any, index: number): void => {
+        // eslint-disable-line
         const approvers = this.state.approvers.slice();
         approvers.splice(index, 1);
         this.setState({ approvers });
     };
-    
+
     validateTextArea = (value: ?string) => {
         const { intl } = this.props;
         if (value && value.trim() === '') {
             return {
-                message: intl.formatMessage(
-                    commonMessages.requiredFieldError
-                )
+                message: intl.formatMessage(commonMessages.requiredFieldError),
             };
         }
         return null;
-    }
+    };
 
     render(): React.Node {
         const {
@@ -174,56 +164,38 @@ class ApprovalCommentForm extends React.Component<Props, State> {
             isEditing,
             isDisabled,
             tagged_message,
-            getAvatarUrl
+            getAvatarUrl,
         } = this.props;
-        const {
-            approvalDate,
-            approvers,
-            approverSelectorError,
-            commentText,
-            isAddApprovalVisible
-        } = this.state;
-        const inputContainerClassNames = classNames(
-            'bcs-comment-input-container',
-            className,
-            {
-                'bcs-comment-input-is-open': isOpen
-            },
-        );
+        const { approvalDate, approvers, approverSelectorError, commentText, isAddApprovalVisible } = this.state;
+        const inputContainerClassNames = classNames('bcs-comment-input-container', className, {
+            'bcs-comment-input-is-open': isOpen,
+        });
 
         return (
             <div className={inputContainerClassNames}>
                 {!isEditing && (
-                    <div className='bcs-avatar-container'>
+                    <div className="bcs-avatar-container">
                         <Avatar getAvatarUrl={getAvatarUrl} user={user} />
                     </div>
                 )}
-                <div className='bcs-comment-input-form-container'>
-                    <Form
-                        onChange={this.onFormChangeHandler}
-                        onValidSubmit={this.onFormValidSubmitHandler}
-                    >
-                        {/* TODO: Replace Draft.js in box-react-ui implementation of ApprovalCommentForm */}
+                <div className="bcs-comment-input-form-container">
+                    <Form onChange={this.onFormChangeHandler} onValidSubmit={this.onFormValidSubmitHandler}>
                         <TextArea
-                            className='bcs-comment-input'
-                            isDisabled={isDisabled}
-                            name='commentText'
-                            label='Annotation Comment'
-                            hideLabel={true}
-                            onFocus={onFocus}
-                            value={commentText}
-                            placeholder={
-                                tagged_message
-                                    ? null
-                                    : formatMessage(messages.commentWrite)
-                            }
-                            validation={this.validateTextArea}
-                            isRequired
                             autoFocus
+                            className="bcs-comment-input"
+                            hideLabel
+                            isDisabled={isDisabled}
+                            isRequired
+                            label="Annotation Comment"
+                            name="commentText"
+                            onFocus={onFocus}
+                            placeholder={tagged_message ? '' : formatMessage(messages.commentWrite)}
+                            validation={this.validateTextArea}
+                            value={commentText}
                         />
                         <aside
                             className={classNames('bcs-at-mention-tip', {
-                                'accessibility-hidden': isOpen
+                                'accessibility-hidden': isOpen,
                             })}
                         >
                             <FormattedMessage {...messages.atMentionTip} />
@@ -232,24 +204,14 @@ class ApprovalCommentForm extends React.Component<Props, State> {
                             <AddApproval
                                 approvalDate={approvalDate}
                                 approvers={approvers}
-                                approverSelectorContacts={
-                                    approverSelectorContacts
-                                }
+                                approverSelectorContacts={approverSelectorContacts}
                                 approverSelectorError={approverSelectorError}
                                 formatMessage={formatMessage}
                                 isAddApprovalVisible={isAddApprovalVisible}
-                                onApprovalDateChange={
-                                    this.onApprovalDateChangeHandler
-                                }
-                                onApproverSelectorInput={
-                                    this.handleApproverSelectorInput
-                                }
-                                onApproverSelectorRemove={
-                                    this.handleApproverSelectorRemove
-                                }
-                                onApproverSelectorSelect={
-                                    this.handleApproverSelectorSelect
-                                }
+                                onApprovalDateChange={this.onApprovalDateChangeHandler}
+                                onApproverSelectorInput={this.handleApproverSelectorInput}
+                                onApproverSelectorRemove={this.handleApproverSelectorRemove}
+                                onApproverSelectorSelect={this.handleApproverSelectorSelect}
                             />
                         ) : null}
                         <CommentInputControls onCancel={onCancel} />

@@ -1,5 +1,5 @@
 .ba {
-    @import "../../variables.scss";
+    @import '../../variables.scss';
 
     .ba-comment-list {
         width: 100%;
@@ -9,7 +9,7 @@
     }
 
     .ba-comment-list-item {
-        @import "~box-react-ui/lib/styles/common/inline-notifications";
+        @import '~box-ui-elements/es/styles/common/inline-notifications';
 
         margin-bottom: 15px; // Matches spacing of activity feed items in UI Elements
         list-style: none;

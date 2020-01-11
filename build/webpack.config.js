@@ -1,6 +1,7 @@
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -8,7 +9,6 @@ const fs = require('fs');
 
 const license = require('./license');
 const commonConfig = require('./webpack.common.config');
-const TranslationsPlugin = require('./TranslationsPlugin');
 const RsyncPlugin = require('./RsyncPlugin');
 
 const isRelease = process.env.NODE_ENV === 'production';
@@ -37,7 +37,7 @@ const config = Object.assign(commonConfig(), {
         modules: ['src', 'node_modules'],
         alias: {
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
-            'box-react-ui-locale-data': path.resolve(`node_modules/box-react-ui/i18n/${language}`),
+            'box-elements-messages': path.resolve(`node_modules/box-ui-elements/i18n/${language}`),
             'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
             examples: path.join(__dirname, '../examples/src'),
             moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead

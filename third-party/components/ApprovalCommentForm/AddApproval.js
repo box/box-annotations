@@ -6,23 +6,23 @@
 import * as React from 'react';
 import { injectIntl } from 'react-intl';
 
-import Checkbox from 'box-react-ui/lib/components/checkbox/Checkbox';
+import Checkbox from 'box-ui-elements/es/components/checkbox/Checkbox';
 
 import AddApprovalFields from './AddApprovalFields';
 import { ACTIVITY_TARGETS } from '../../interactionTargets';
 import messages from '../../messages';
 
 type Props = {
-    approvalDate: ?Date,
-    approvers: SelectorItems,
-    approverSelectorContacts?: SelectorItems,
+    approvalDate?: Date,
+    approverSelectorContacts?: SelectorItems<>,
     approverSelectorError: string,
+    approvers: SelectorItems<>,
+    intl: any,
     isAddApprovalVisible: boolean,
     onApprovalDateChange: Function,
     onApproverSelectorInput: Function,
     onApproverSelectorRemove: Function,
     onApproverSelectorSelect: Function,
-    intl: any,
 };
 
 const AddApproval = ({
@@ -35,15 +35,15 @@ const AddApproval = ({
     onApproverSelectorInput,
     onApproverSelectorRemove,
     onApproverSelectorSelect,
-    intl
+    intl,
 }: Props): React.Node => (
-    <div className='bcs-comment-add-approver'>
+    <div className="bcs-comment-add-approver">
         <Checkbox
-            className='bcs-comment-add-approver-checkbox'
+            className="bcs-comment-add-approver-checkbox"
             data-resin-target={ACTIVITY_TARGETS.APPROVAL_FORM_ADD_TASK}
-            label={intl.formatMessage(messages.approvalAddTask)}
-            name='addApproval'
             isChecked={isAddApprovalVisible}
+            label={intl.formatMessage(messages.approvalAddTask)}
+            name="addApproval"
             tooltip={intl.formatMessage(messages.approvalAddTaskTooltip)}
         />
         {isAddApprovalVisible ? (
@@ -52,10 +52,10 @@ const AddApproval = ({
                 approvers={approvers}
                 approverSelectorContacts={approverSelectorContacts}
                 approverSelectorError={approverSelectorError}
+                onApprovalDateChange={onApprovalDateChange}
                 onApproverSelectorInput={onApproverSelectorInput}
                 onApproverSelectorRemove={onApproverSelectorRemove}
                 onApproverSelectorSelect={onApproverSelectorSelect}
-                onApprovalDateChange={onApprovalDateChange}
             />
         ) : null}
     </div>

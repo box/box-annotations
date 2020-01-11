@@ -7,9 +7,9 @@ import * as React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import classNames from 'classnames';
 
-import PlainButton from 'box-react-ui/lib/components/plain-button';
-import { Flyout, Overlay } from 'box-react-ui/lib/components/flyout';
-import IconTrash from 'box-react-ui/lib/icons/general/IconTrash';
+import PlainButton from 'box-ui-elements/es/components/plain-button';
+import { Flyout, Overlay } from 'box-ui-elements/es/components/flyout';
+import IconTrash from 'box-ui-elements/es/icons/general/IconTrash';
 
 import messages from '../../messages';
 import { ACTIVITY_TARGETS } from '../../interactionTargets';

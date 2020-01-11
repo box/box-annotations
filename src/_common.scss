@@ -1,46 +1,34 @@
-@import "./variables";
+@import './variables';
 
 @font-face {
     font-weight: normal;
-    font-family: "Lato";
+    font-family: 'Lato';
     font-style: normal;
-    src:
-        local("Lato Regular"),
-        local("Lato-Regular"),
-        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff2")
-        format("woff2"),
-        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff")
-        format("woff");
+    src: local('Lato Regular'), local('Lato-Regular'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Regular.woff') format('woff');
 }
 
 @font-face {
     font-weight: bold;
-    font-family: "Lato";
+    font-family: 'Lato';
     font-style: normal;
-    src:
-        local("Lato Bold"),
-        local("Lato-Bold"),
-        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2")
-        format("woff2"),
-        url("https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff")
-        format("woff");
+    src: local('Lato Bold'), local('Lato-Bold'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff2') format('woff2'), url('https://cdn01.boxcdn.net/fonts/1.0.2/lato/Lato-Bold.woff') format('woff');
 }
 
 .flyout-overlay {
-    @import "~box-react-ui/lib/styles/common/overlay";
-    @import "~box-react-ui/lib/styles/common/links";
-    @import "~box-react-ui/lib/styles/common/buttons";
+    @import '~box-ui-elements/es/styles/common/overlay';
+    @import '~box-ui-elements/es/styles/common/links';
+    @import '~box-ui-elements/es/styles/common/buttons';
 }
 
 .ba {
     @include reset;
 
     /* stylelint-disable no-duplicate-at-import-rules */
-    @import "~box-react-ui/lib/styles/common/links";
-    @import "~box-react-ui/lib/styles/common/buttons";
+    @import '~box-ui-elements/es/styles/common/links';
+    @import '~box-ui-elements/es/styles/common/buttons';
     /* stylelint-enable no-duplicate-at-import-rules */
 
-    @import "~box-react-ui/lib/styles/common/forms";
+    @import '~box-ui-elements/es/styles/common/forms';
     /* stylelint-disable declaration-no-important */
     box-sizing: border-box !important;
     height: 100%;
@@ -49,7 +37,7 @@
     overflow: hidden;
     /* stylelint-enable declaration-no-important */
     color: $twos;
-    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 20px;
     letter-spacing: .3px;
     background: $white;
@@ -110,8 +98,8 @@
 .ba-annotation-dialog,
 .ba-create-annotation-dialog {
     // stylelint-disable no-duplicate-at-import-rules
-    @import "~box-react-ui/lib/styles/common/forms";
-    @import "~box-react-ui/lib/styles/common/buttons";
+    @import '~box-ui-elements/es/styles/common/forms';
+    @import '~box-ui-elements/es/styles/common/buttons';
 }
 
 /**************************************

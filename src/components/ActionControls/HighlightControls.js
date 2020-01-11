@@ -2,9 +2,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import PlainButton from 'box-react-ui/lib/components/plain-button';
-import IconHighlightAnnotation from 'box-react-ui/lib/icons/annotations/IconHighlightAnnotation';
-import IconHighlightCommentAnnotation from 'box-react-ui/lib/icons/annotations/IconHighlightCommentAnnotation';
+import PlainButton from 'box-ui-elements/es/components/plain-button';
+import IconHighlightAnnotation from 'box-ui-elements/es/icons/annotations/IconHighlightAnnotation';
+import IconHighlightCommentAnnotation from 'box-ui-elements/es/icons/annotations/IconHighlightCommentAnnotation';
 
 import './HighlightControls.scss';
 

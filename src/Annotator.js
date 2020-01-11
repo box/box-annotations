@@ -353,9 +353,9 @@ class Annotator extends EventEmitter {
     /**
      * Returns the current annotation mode
      *
-     * @return {AnnotationType|null} Current annotation mode
+     * @return {string|null} Current annotation mode
      */
-    getCurrentAnnotationMode(): ?AnnotationType {
+    getCurrentAnnotationMode(): ?string {
         const modes = Object.keys(this.modeControllers).filter(mode => {
             const controller = this.modeControllers[mode];
             return controller.isEnabled();

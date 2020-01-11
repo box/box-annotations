@@ -5,8 +5,8 @@
 /* eslint-disable */
 import * as React from 'react';
 
-import InlineError from 'box-react-ui/lib/components/inline-error';
-import PlainButton from 'box-react-ui/lib/components/plain-button';
+import InlineError from 'box-ui-elements/es/components/inline-error';
+import PlainButton from 'box-ui-elements/es/components/plain-button';
 import { FormattedMessage } from 'react-intl';
 
 type Props = {

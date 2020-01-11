@@ -4,12 +4,12 @@
  * @author Box
  */
 import * as React from 'react';
-import AvatarComponent from 'box-react-ui/lib/components/avatar';
+import AvatarComponent from 'box-ui-elements/es/components/avatar';
 
 type Props = {
-    user: User,
     className?: string,
     getAvatarUrl?: string => Promise<?string>,
+    user: User,
 };
 
 type State = {
@@ -18,8 +18,12 @@ type State = {
 
 class Avatar extends React.PureComponent<Props, State> {
     state = {
-        avatarUrl: null
+        avatarUrl: null,
     };
+
+    componentDidMount() {
+        this.getAvatarUrl();
+    }
 
     /**
      * Success handler for getting avatar url
@@ -29,7 +33,7 @@ class Avatar extends React.PureComponent<Props, State> {
      */
     getAvatarUrlHandler = (avatarUrl: ?string) => {
         this.setState({
-            avatarUrl
+            avatarUrl,
         });
     };
 
@@ -47,10 +51,6 @@ class Avatar extends React.PureComponent<Props, State> {
         return getAvatarUrl(user.id).then(this.getAvatarUrlHandler);
     }
 
-    componentDidMount() {
-        this.getAvatarUrl();
-    }
-
     render() {
         const { user, className, getAvatarUrl }: Props = this.props;
         const { avatarUrl }: State = this.state;
@@ -61,14 +61,7 @@ class Avatar extends React.PureComponent<Props, State> {
 
         const { id, name } = user;
 
-        return (
-            <AvatarComponent
-                className={className}
-                id={id}
-                name={name}
-                avatarUrl={avatarUrl}
-            />
-        );
+        return <AvatarComponent avatarUrl={avatarUrl} className={className} id={id} name={name} />;
     }
 }
 
