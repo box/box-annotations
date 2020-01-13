@@ -135,7 +135,6 @@ class ApprovalCommentForm extends React.Component<Props, State> {
     };
 
     handleApproverSelectorRemove = (option: any, index: number): void => {
-        // eslint-disable-line
         const approvers = this.state.approvers.slice();
         approvers.splice(index, 1);
         this.setState({ approvers });

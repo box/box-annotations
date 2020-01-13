@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import intl from './lib-intl-mock';
+
+export const intlMock = {
+    formatMessage: message => message.defaultMessage || message.message,
+    formatDate: date => date,
+};
 
 export const FormattedDate = () => <div />;
 FormattedDate.displayName = 'FormattedDate';
@@ -22,7 +26,7 @@ export const addLocaleData = () => {};
 
 export const injectIntl = Component => {
     const WrapperComponent = props => {
-        const injectedProps = { ...props, intl };
+        const injectedProps = { ...props, intl: intlMock };
         return <Component {...{ ...injectedProps }} />;
     };
     WrapperComponent.displayName = Component.displayName || Component.name || 'Component';

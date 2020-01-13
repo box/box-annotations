@@ -148,7 +148,7 @@ publish_to_npm() {
     fi
 
     # The current version being published
-    VERSION=$(./build/current_version.sh)
+    VERSION=$(./scripts/current_version.sh)
 
     if [[ $(git status --porcelain 2>/dev/null| grep "^??") != "" ]] ; then
         echo "----------------------------------------------------"

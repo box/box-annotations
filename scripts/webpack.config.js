@@ -1,23 +1,23 @@
+const fs = require('fs');
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const RsyncPlugin = require('@box/frontend/webpack/RsyncPlugin');
 const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const fs = require('fs');
 
 const license = require('./license');
 const commonConfig = require('./webpack.common.config');
-const RsyncPlugin = require('./RsyncPlugin');
 
-const isRelease = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'dev';
+const isRelease = process.env.NODE_ENV === 'production';
 const language = process.env.LANGUAGE;
 const locale = language.substr(0, language.indexOf('-'));
 
 let rsyncLocation = '';
-if (fs.existsSync('build/rsync.json')) {
+if (fs.existsSync('scripts/rsync.json')) {
     /* eslint-disable */
     const rsyncConf = require('./rsync.json');
     rsyncLocation = rsyncConf.location;
@@ -30,17 +30,17 @@ const config = Object.assign(commonConfig(), {
         annotations: ['./src/BoxAnnotations.js'],
     },
     output: {
-        path: path.resolve('lib'),
+        path: path.resolve('dist'),
         filename: '[Name].js',
     },
     resolve: {
-        modules: ['src', 'node_modules'],
         alias: {
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
             'box-elements-messages': path.resolve(`node_modules/box-ui-elements/i18n/${language}`),
             'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
             moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead
         },
+        modules: ['src', 'node_modules'],
     },
     devServer: {
         contentBase: './test',
@@ -52,9 +52,8 @@ const config = Object.assign(commonConfig(), {
 });
 
 if (isDev) {
-    // If build/rsync.json exists, rsync bundled files to specified directory
     if (rsyncLocation) {
-        config.plugins.push(new RsyncPlugin('lib/.', rsyncLocation));
+        config.plugins.push(new RsyncPlugin('dist/.', rsyncLocation, 'annotations'));
     }
 
     // Add inline source map

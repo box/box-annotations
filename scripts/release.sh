@@ -92,7 +92,7 @@ build_lint_and_test() {
 
 increment_version() {
     # Old version
-    OLD_VERSION=$(./build/current_version.sh)
+    OLD_VERSION=$(./scripts/current_version.sh)
 
     # The current branch should not match the previous release tag
     if [[ $(git log --oneline ...v$OLD_VERSION) == "" ]] ; then
@@ -120,7 +120,7 @@ increment_version() {
     fi
 
     # The current version being built
-    VERSION=$(./build/current_version.sh)
+    VERSION=$(./scripts/current_version.sh)
 }
 
 
