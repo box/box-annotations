@@ -3,9 +3,9 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
-import PlainButton from 'box-react-ui/lib/components/plain-button';
-import IconClose from 'box-react-ui/lib/icons/general/IconClose';
-import { HotkeyRecord, HotkeyLayer } from 'box-react-ui/lib/components/hotkeys';
+import PlainButton from 'box-ui-elements/es/components/plain-button';
+import IconClose from 'box-ui-elements/es/icons/general/IconClose';
+import { HotkeyRecord, HotkeyLayer } from 'box-ui-elements/es/components/hotkeys';
 
 import messages from './messages';
 import Internationalize from '../Internationalize';

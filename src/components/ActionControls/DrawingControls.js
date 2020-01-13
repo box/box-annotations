@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
 
-import PlainButton from 'box-react-ui/lib/components/plain-button';
-import IconCheck from 'box-react-ui/lib/icons/general/IconCheck';
-import IconTrash from 'box-react-ui/lib/icons/general/IconTrash';
+import PlainButton from 'box-ui-elements/es/components/plain-button';
+import IconCheck from 'box-ui-elements/es/icons/general/IconCheck';
+import IconTrash from 'box-ui-elements/es/icons/general/IconTrash';
 
 import './DrawingControls.scss';
 

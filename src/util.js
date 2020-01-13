@@ -1,5 +1,5 @@
 import 'whatwg-fetch';
-import { decode } from 'box-react-ui/lib/utils/keys';
+import { decode } from 'box-ui-elements/es/utils/keys';
 import {
     PERMISSION_ANNOTATE,
     PERMISSION_CAN_VIEW_ANNOTATIONS_ALL,

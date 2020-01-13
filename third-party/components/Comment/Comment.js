@@ -9,9 +9,8 @@ import noop from 'lodash/noop';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 import getProp from 'lodash/get';
-
-import { ReadableTime } from 'box-react-ui/lib/components/time';
-import Tooltip from 'box-react-ui/lib/components/tooltip';
+import { ReadableTime } from 'box-ui-elements/es/components/time';
+import Tooltip from 'box-ui-elements/es/components/tooltip';
 
 import UserLink from './UserLink';
 import InlineDelete from './InlineDelete';
@@ -30,26 +29,26 @@ import { PLACEHOLDER_USER } from '../../../src/constants';
 const ONE_HOUR_MS = 3600000; // 60 * 60 * 1000
 
 type Props = {
-    created_by?: User,
     created_at: string | number,
-    is_reply_comment?: boolean,
-    modified_at?: string | number,
-    permissions?: BoxItemPermission,
-    id: string,
-    isPending?: boolean,
-    inlineDeleteMessage?: MessageDescriptor,
+    created_by?: User,
+    currentUser: User,
     error?: ActionItemError,
+    getAvatarUrl?: string => Promise<?string>,
+    getMentionWithQuery?: Function,
+    getUserProfileUrl?: string => Promise<string>,
+    id: string,
+    inlineDeleteMessage?: MessageDescriptor,
+    isDisabled?: boolean,
+    isPending?: boolean,
+    is_reply_comment?: boolean,
+    mentionSelectorContacts?: SelectorItems<>,
+    modified_at?: string | number,
     onDelete?: Function,
     onEdit?: Function,
+    permissions?: BoxItemPermission,
     tagged_message: string,
     translatedTaggedMessage?: string,
     translations?: Translations,
-    currentUser: User,
-    isDisabled?: boolean,
-    mentionSelectorContacts?: SelectorItems,
-    getMentionWithQuery?: Function,
-    getAvatarUrl?: string => Promise<?string>,
-    getUserProfileUrl?: string => Promise<string>,
 };
 
 type State = {
@@ -70,12 +69,9 @@ class Comment extends React.Component<Props, State> {
         nativeEvent.stopImmediatePropagation();
     };
 
-    approvalCommentFormFocusHandler = (): void =>
-        this.setState({ isInputOpen: true });
-    approvalCommentFormCancelHandler = (): void =>
-        this.setState({ isInputOpen: false, isEditing: false });
-    approvalCommentFormSubmitHandler = (): void =>
-        this.setState({ isInputOpen: false, isEditing: false });
+    approvalCommentFormFocusHandler = (): void => this.setState({ isInputOpen: true });
+    approvalCommentFormCancelHandler = (): void => this.setState({ isInputOpen: false, isEditing: false });
+    approvalCommentFormSubmitHandler = (): void => this.setState({ isInputOpen: false, isEditing: false });
     updateTaskHandler = (args: any): void => {
         const { onEdit = noop } = this.props;
         onEdit(args);
@@ -131,20 +127,18 @@ class Comment extends React.Component<Props, State> {
                     onBlur={this.handleCommentBlur}
                     onFocus={this.handleCommentFocus}
                 >
-                    <Avatar
-                        className="bcs-comment-avatar"
-                        getAvatarUrl={getAvatarUrl}
-                        user={createdByUser}
-                    />
+                    <Avatar className="bcs-comment-avatar" getAvatarUrl={getAvatarUrl} user={createdByUser} />
                     <div className="bcs-comment-content">
                         <div className="bcs-comment-headline">
-                            {createdByUser !== PLACEHOLDER_USER && <UserLink
-                                className="bcs-comment-user-name"
-                                data-resin-target={ACTIVITY_TARGETS.PROFILE}
-                                id={createdByUser.id}
-                                name={createdByUser.name}
-                                getUserProfileUrl={getUserProfileUrl}
-                            />}
+                            {createdByUser !== PLACEHOLDER_USER && (
+                                <UserLink
+                                    className="bcs-comment-user-name"
+                                    data-resin-target={ACTIVITY_TARGETS.PROFILE}
+                                    getUserProfileUrl={getUserProfileUrl}
+                                    id={createdByUser.id}
+                                    name={createdByUser.name}
+                                />
+                            )}
                             <Tooltip
                                 text={
                                     <FormattedMessage
@@ -154,68 +148,47 @@ class Comment extends React.Component<Props, State> {
                                 }
                             >
                                 <small className="bcs-comment-created-at">
-                                    <ReadableTime
-                                        timestamp={createdAtTimestamp}
-                                        relativeThreshold={ONE_HOUR_MS}
-                                    />
+                                    <ReadableTime relativeThreshold={ONE_HOUR_MS} timestamp={createdAtTimestamp} />
                                 </small>
                             </Tooltip>
-                            {onEdit && canEdit && !isPending ? (
-                                <InlineEdit id={id} toEdit={toEdit} />
-                            ) : null}
+                            {onEdit && canEdit && !isPending ? <InlineEdit id={id} toEdit={toEdit} /> : null}
                             {onDelete && canDelete && !isPending ? (
                                 <InlineDelete
                                     id={id}
-                                    permissions={permissions}
-                                    message={
-                                        <FormattedMessage
-                                            {...inlineDeleteMessage}
-                                        />
-                                    }
+                                    message={<FormattedMessage {...inlineDeleteMessage} />}
                                     onDelete={onDelete}
+                                    permissions={permissions}
                                 />
                             ) : null}
                         </div>
                         {isEditing ? (
                             <ApprovalCommentForm
-                                onSubmit={() => {}}
+                                className={classNames('bcs-activity-feed-comment-input', {
+                                    'bcs-is-disabled': isDisabled,
+                                })}
+                                entityId={id}
+                                getAvatarUrl={getAvatarUrl || noopAvatarUrl}
+                                getMentionWithQuery={getMentionWithQuery}
                                 isDisabled={isDisabled}
-                                className={classNames(
-                                    'bcs-activity-feed-comment-input',
-                                    {
-                                        'bcs-is-disabled': isDisabled,
-                                    },
-                                )}
-                                updateTask={this.updateTaskHandler}
+                                isEditing={isEditing}
                                 isOpen={isInputOpen}
-                                user={currentUser}
+                                mentionSelectorContacts={mentionSelectorContacts}
                                 onCancel={this.approvalCommentFormCancelHandler}
                                 onFocus={this.approvalCommentFormFocusHandler}
-                                isEditing={isEditing}
-                                entityId={id}
-                                tagged_message={formatTaggedMessage(
-                                    tagged_message,
-                                    id,
-                                    true,
-                                    getUserProfileUrl,
-                                )}
-                                getAvatarUrl={getAvatarUrl || noopAvatarUrl}
-                                mentionSelectorContacts={
-                                    mentionSelectorContacts
-                                }
-                                getMentionWithQuery={getMentionWithQuery}
+                                onSubmit={() => {}}
+                                tagged_message={formatTaggedMessage(tagged_message, id, true, getUserProfileUrl)}
+                                updateTask={this.updateTaskHandler}
+                                user={currentUser}
                             />
                         ) : null}
                         {!isEditing ? (
                             <CommentText
+                                getUserProfileUrl={getUserProfileUrl}
                                 id={id}
                                 tagged_message={tagged_message}
-                                translatedTaggedMessage={
-                                    translatedTaggedMessage
-                                }
-                                {...translations}
+                                translatedTaggedMessage={translatedTaggedMessage}
                                 translationFailed={error ? true : null}
-                                getUserProfileUrl={getUserProfileUrl}
+                                {...translations}
                             />
                         ) : null}
                     </div>

@@ -278,9 +278,7 @@ class DrawingModeController extends AnnotationModeController {
 
                 // Clear existing canvases
                 // eslint-disable-next-line
-                const pageEl = this.annotatedElement.querySelector(
-                    `[data-page-number="${thread.location.page}"]`
-                );
+                const pageEl = this.annotatedElement.querySelector(`[data-page-number="${thread.location.page}"]`);
                 clearCanvas(pageEl, CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS);
 
                 // Do not bind when mode is exited

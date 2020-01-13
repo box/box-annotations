@@ -6,8 +6,8 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import Button from 'box-react-ui/lib/components/button/Button';
-import PrimaryButton from 'box-react-ui/lib/components/primary-button/PrimaryButton';
+import Button from 'box-ui-elements/es/components/button/Button';
+import PrimaryButton from 'box-ui-elements/es/components/primary-button/PrimaryButton';
 
 import messages from '../../messages';
 import { ACTIVITY_TARGETS } from '../../interactionTargets';
@@ -17,19 +17,16 @@ type Props = {
 };
 
 const CommentInputControls = ({ onCancel }: Props): React.Node => (
-    <div className='bcs-comment-input-controls'>
+    <div className="bcs-comment-input-controls">
         <Button
-            className='bcs-comment-input-cancel-btn'
+            className="bcs-comment-input-cancel-btn"
             data-resin-target={ACTIVITY_TARGETS.APPROVAL_FORM_CANCEL}
             onClick={onCancel}
-            type='button'
+            type="button"
         >
             <FormattedMessage {...messages.commentCancel} />
         </Button>
-        <PrimaryButton
-            className='bcs-comment-input-submit-btn'
-            data-resin-target={ACTIVITY_TARGETS.APPROVAL_FORM_POST}
-        >
+        <PrimaryButton className="bcs-comment-input-submit-btn" data-resin-target={ACTIVITY_TARGETS.APPROVAL_FORM_POST}>
             <FormattedMessage {...messages.commentPost} />
         </PrimaryButton>
     </div>

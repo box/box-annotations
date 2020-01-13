@@ -4,7 +4,7 @@
 
 /* eslint-disable */
 import * as React from 'react';
-import { Link } from 'box-react-ui/lib/components/link';
+import { Link } from 'box-ui-elements/es/components/link';
 import UserLink from '../components/Comment/UserLink';
 import { ACTIVITY_TARGETS } from '../interactionTargets';
 

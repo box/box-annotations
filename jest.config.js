@@ -18,7 +18,7 @@ module.exports = {
         '\\.(css|scss|less|html)$': '<rootDir>/test-utils/styleMock.js',
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)$': '<rootDir>/test-utils/fileMock.js',
         'box-annotations-locale-data': '<rootDir>/test-utils/i18nMock.js',
-        'box-react-ui-locale-data': '<rootDir>/test-utils/i18nMock.js',
+        'box-elements-messages': '<rootDir>/test-utils/i18nMock.js',
         'react-intl': '<rootDir>/test-utils/react-intl-mocks.js',
         'react-intl-locale-data': '<rootDir>/node_modules/react-intl/locale-data/en.js',
         intl: '<rootDir>/test-utils/lib-intl-mock.js',
@@ -30,5 +30,5 @@ module.exports = {
     setupFiles: ['jest-canvas-mock'],
     setupFilesAfterEnv: ['<rootDir>/build/enzyme-adapter.js'],
     snapshotSerializers: ['enzyme-to-json/serializer'],
-    transformIgnorePatterns: ['node_modules/(?!(box-react-ui)/)'],
+    transformIgnorePatterns: ['node_modules/(?!(box-ui-elements)/)'],
 };
