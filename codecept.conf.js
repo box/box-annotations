@@ -9,7 +9,7 @@ const {
     PLATFORM_VERSION,
     DEVICE_NAME,
     DEFAULT_WAIT_TIME = 90000,
-    RUN_LOCALLY=false
+    RUN_LOCALLY = false,
 } = process.env;
 const MOBILE_PLATFORMS = ['iOS', 'Android'];
 const { cleanupAnnotations } = require('./functional-tests/helpers/cleanup');
@@ -19,7 +19,7 @@ const commonConfigObj = {
     browser: BROWSER_NAME,
     url: 'http://localhost:8080',
     restart: true,
-    waitForTimeout: DEFAULT_WAIT_TIME
+    waitForTimeout: DEFAULT_WAIT_TIME,
 };
 
 const helperObj = {};
@@ -39,15 +39,15 @@ if (isLocalBuild) {
             build: TRAVIS_JOB_NUMBER,
             'tunnel-identifier': TRAVIS_JOB_NUMBER,
             browserName: BROWSER_NAME,
-            platform: BROWSER_PLATFORM
-        }
+            platform: BROWSER_PLATFORM,
+        },
     };
 
-    const mixedInSauceObj = Object.assign({}, commonConfigObj, sauceObj);
+    const mixedInSauceObj = { ...commonConfigObj, ...sauceObj };
     if (MOBILE_PLATFORMS.indexOf(BROWSER_PLATFORM) === -1) {
         // webdriver (desktop)
         Object.assign(sauceObj.desiredCapabilities, {
-            version: BROWSER_VERSION
+            version: BROWSER_VERSION,
         });
         helperObj.WebDriverIO = mixedInSauceObj;
     } else {
@@ -57,7 +57,7 @@ if (isLocalBuild) {
             deviceName: DEVICE_NAME,
             deviceOrientation: 'portrait',
             appiumVersion: '1.7.2',
-            platformName: BROWSER_PLATFORM
+            platformName: BROWSER_PLATFORM,
         });
         helperObj.Appium = mixedInSauceObj;
     }
@@ -65,9 +65,9 @@ if (isLocalBuild) {
 
 /**
  * @return {void}
-*/
+ */
 function cleanup() {
-    cleanupAnnotations() ;
+    cleanupAnnotations();
 }
 
 exports.config = {
@@ -80,5 +80,5 @@ exports.config = {
     teardown: cleanup,
     mocha: {},
     name: 'box-annotations',
-    hooks: isLocalBuild ? [] : ['./functional-tests/helpers/eventHooks.js']
+    hooks: isLocalBuild ? [] : ['./functional-tests/helpers/eventHooks.js'],
 };

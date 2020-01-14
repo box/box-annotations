@@ -44,6 +44,10 @@ module.exports = () => {
                 },
             ],
         },
+        performance: {
+            maxAssetSize: 1000000,
+            maxEntrypointSize: 1000000,
+        },
         plugins: [
             new DefinePlugin({
                 __LANGUAGE__: JSON.stringify(language),

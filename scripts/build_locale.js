@@ -7,7 +7,7 @@ const { execSync } = require('child_process');
  * @param {*} callback - callback from worker-farm master process
  * @return {void}
  */
-module.exports = (locale, callback) => {
+module.exports = (locale = 'en-US', callback) => {
     try {
         console.log(`Building ${locale}`);
         // build assets for a single locale

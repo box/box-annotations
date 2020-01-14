@@ -11,16 +11,16 @@ describe('third-party/components/ApprovalCommentForm', () => {
     const render = (props = {}) =>
         shallow(
             <ApprovalCommentForm
-                user={null}
-                isOpen={false}
-                isEditing={true}
                 createComment={fn}
-                onCancel={fn}
-                onSubmit={noop}
-                onFocus={fn}
                 getAvatarUrl={noop}
+                isEditing
+                isOpen={false}
+                onCancel={fn}
+                onFocus={fn}
+                onSubmit={noop}
+                user={null}
                 {...props}
-            />
+            />,
         );
 
     test('should correctly render empty form', () => {

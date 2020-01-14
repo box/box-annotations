@@ -1,4 +1,4 @@
-import './lib/annotations.css';
-import './lib/annotations.js';
+import './dist/annotations.css';
+import './dist/annotations.js';
 
 export default BoxAnnotations;

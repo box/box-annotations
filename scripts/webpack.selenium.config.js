@@ -3,6 +3,7 @@ const commonConfig = require('./webpack.common.config');
 
 const language = process.env.LANGUAGE;
 const locale = language.substr(0, language.indexOf('-'));
+
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {

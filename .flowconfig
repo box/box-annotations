@@ -1,9 +1,8 @@
 [ignore]
-<PROJECT_ROOT>/build/.*
-<PROJECT_ROOT>/lib/.*
+<PROJECT_ROOT>/dist/.*
 <PROJECT_ROOT>/functional-tests/.*
-<PROJECT_ROOT>/test-utils/.*
 <PROJECT_ROOT>/reports/.*
+<PROJECT_ROOT>/scripts/.*
 <PROJECT_ROOT>/node_modules/babel-plugin-flow-react-proptypes.*
 <PROJECT_ROOT>/node_modules/conventional-changelog*
 <PROJECT_ROOT>/node_modules/eslint*
