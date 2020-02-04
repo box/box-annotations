@@ -12,5 +12,5 @@ declare var __LANGUAGE__: string;
 
 const language = __LANGUAGE__;
 const messages = { ...annotationsLocaleData, ...boxElementsMessages };
-
-export default { language, messages, localeData };
+const getLocale = () => language && language.substr(0, language.indexOf('-'));
+export default { language, messages, localeData, getLocale };

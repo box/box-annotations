@@ -26,6 +26,7 @@ import {
     CREATE_EVENT,
     SELECTOR_ANNOTATION_POPOVER,
 } from '../constants';
+import messages from '../messages';
 
 const DOUBLE_CLICK_COUNT = 2;
 const SELECTION_TIMEOUT = 500;
@@ -185,7 +186,7 @@ class DocAnnotator extends Annotator {
             let [x, y] = browserCoordinates;
             // Do not create annotation if event doesn't have coordinates
             if (Number.isNaN(x) || Number.isNaN(y)) {
-                this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+                this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsCreateError }));
                 return location;
             }
 
@@ -295,7 +296,6 @@ class DocAnnotator extends Annotator {
             hasTouch: this.hasTouch,
             allowComment: this.commentHighlightEnabled,
             allowHighlight: this.plainHighlightEnabled,
-            localized: this.localized,
             container: this.container,
             headerHeight: this.headerElement.clientHeight,
         });

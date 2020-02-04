@@ -15,20 +15,20 @@ import CreateHighlightDialog from '../src/doc/CreateHighlightDialog';
 type StringMap = { [string]: string };
 type AnnotationPermissions = {
     can_edit: boolean,
-    can_delete: boolean
+    can_delete: boolean,
 };
 
 type BoxItemPermissions = {
     can_annotate: boolean,
     can_view_annotations_all: boolean,
-    can_view_annotations_self: boolean
+    can_view_annotations_self: boolean,
 };
 
 type AnnotationType = 'point' | 'plain-highlight' | 'highlight-comment' | 'draw';
 
 type Coordinates = {
     x: number,
-    y: number
+    y: number,
 };
 
 // [x1, x2, x3, x4, y1, y2, y3 ,y4]
@@ -40,37 +40,37 @@ type QuadPoint = {
     x3: number,
     y3: number,
     x4: number,
-    y4: number
+    y4: number,
 };
 type QuadPoints = Array<QuadPoint>;
 
 type Path = {
-    path: Array<Coordinates>
+    path: Array<Coordinates>,
 };
 type DrawingPaths = Array<Path>;
 
 type Dimensions = {
     x: number,
-    y: number
-}
+    y: number,
+};
 
 type LocationInfo = {
     dimensions: Dimensions,
-    page: number
+    page: number,
 };
 
 type PointLocationInfo = Coordinates & LocationInfo;
 
 type HighlightLocationInfo = {
-    quadpoints: QuadPoints
+    quadpoints: QuadPoints,
 } & LocationInfo;
 
 type DrawingLocationInfo = {
     minX: number,
     minY: number,
-    maxX: number, 
+    maxX: number,
     maxY: number,
-    paths: DrawingPaths
+    paths: DrawingPaths,
 } & LocationInfo;
 
 type Location = PointLocationInfo | HighlightLocationInfo | DrawingLocationInfo;
@@ -80,24 +80,24 @@ type User = {
     id: string,
     email: string,
     name?: string,
-    avatarUrl?: string
+    avatarUrl?: string,
 };
 
 type CommentProps = {
-    id: string, 
+    id: string,
     message: string,
     permissions: AnnotationPermissions,
-    createdBy?: User, 
+    createdBy?: User,
     createdAt: string,
     modifiedAt?: string,
-    isPending: boolean
+    isPending: boolean,
 };
 
 type Comments = Array<CommentProps>;
 
 type BoxFileVersion = {
     id: string,
-    type: 'file_version'
+    type: 'file_version',
 };
 
 type Annotation = {
@@ -106,24 +106,24 @@ type Annotation = {
     location?: Location,
     threadNumber?: string,
     comments: Comments,
-    createdBy?: User, 
+    createdBy?: User,
     createdAt?: string,
     canAnnotate: boolean,
-    canDelete: boolean
-}
+    canDelete: boolean,
+};
 
 type Options = {
     apiHost: string,
     fileId: string,
     token: string,
     anonymousUserName: string,
-    permissions: BoxItemPermissions
+    permissions: BoxItemPermissions,
 };
 
 type AnnotationDetails = {
     threadID: string,
     type: AnnotationType,
-    location: Location
+    location: Location,
 };
 
 type BoxUser = {
@@ -131,8 +131,8 @@ type BoxUser = {
     id: string,
     login: string,
     name: string,
-    profile_image: string
-}
+    profile_image: string,
+};
 
 type AnnotationData = {
     id: string,
@@ -140,10 +140,30 @@ type AnnotationData = {
     item: BoxFileVersion,
     message: string,
     permissions: AnnotationPermissions,
-    created_by: BoxUser, 
+    created_by: BoxUser,
     created_at: string,
     modified_at: string,
-    thread: string
+    thread: string,
+};
+
+type intlMessage = {
+    id: string,
+    description: string,
+    defaultMessage: string,
+};
+
+export type IntlContext = {
+    defaultLocale: string,
+    formatDate: (message: intlMessage) => {},
+    formatHTMLMessage: (message: intlMessage) => {},
+    formatMessage: (message: intlMessage) => {},
+    formatNumber: (message: intlMessage) => {},
+    formatPlural: (message: intlMessage) => {},
+    formatTime: (message: intlMessage) => {},
+    formatters: Object,
+    locale: string,
+    messages: { [id: string]: string },
+    now: () => {},
 };
 
 type StringAnyMap = { [string]: any };

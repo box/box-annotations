@@ -14,6 +14,7 @@ import {
 } from '../../constants';
 import AnnotationThread from '../../AnnotationThread';
 import AnnotationAPI from '../../api/AnnotationAPI';
+import messages from '../../messages';
 
 jest.mock('../../AnnotationThread');
 jest.mock('../../api/AnnotationAPI');
@@ -28,7 +29,9 @@ const html = `<div class="annotated-element">
 
 describe('controllers/AnnotationModeController', () => {
     let rootElement;
-
+    const intlMock = {
+        formatMessage: message => message.defaultMessage,
+    };
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
@@ -64,6 +67,7 @@ describe('controllers/AnnotationModeController', () => {
                 modeButton: {},
                 permissions: { can_annotate: true },
                 localized: { anonymousUserName: '' },
+                intl: intlMock,
             });
             expect(controller.showButton).toBeCalled();
         });
@@ -72,6 +76,7 @@ describe('controllers/AnnotationModeController', () => {
             controller.showButton = jest.fn();
             controller.init({
                 localized: { anonymousUserName: '' },
+                intl: intlMock,
             });
             expect(controller.showButton).not.toBeCalled();
         });
@@ -82,6 +87,7 @@ describe('controllers/AnnotationModeController', () => {
                 modeButton: {},
                 permissions: { can_annotate: false },
                 localized: { anonymousUserName: '' },
+                intl: intlMock,
             });
             expect(controller.showButton).not.toBeCalled();
         });
@@ -450,6 +456,7 @@ describe('controllers/AnnotationModeController', () => {
         describe('handleThreadEvents()', () => {
             beforeEach(() => {
                 controller.emit = jest.fn();
+                controller.intl = intlMock;
                 controller.renderPage = jest.fn();
                 controller.render = jest.fn();
                 controller.registerThread = jest.fn();
@@ -487,13 +494,19 @@ describe('controllers/AnnotationModeController', () => {
 
             it('should unregister thread on deleteError', () => {
                 controller.handleThreadEvents(thread, { event: THREAD_EVENT.deleteError, data: {} });
-                expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.error, controller.localized.deleteError);
+                expect(controller.emit).toBeCalledWith(
+                    CONTROLLER_EVENT.error,
+                    messages.annotationsDeleteError.defaultMessage,
+                );
                 expect(controller.emit).toBeCalledWith(THREAD_EVENT.deleteError, expect.any(Object));
             });
 
             it('should unregister thread on createError', () => {
                 controller.handleThreadEvents(thread, { event: THREAD_EVENT.createError, data: {} });
-                expect(controller.emit).toBeCalledWith(CONTROLLER_EVENT.error, controller.localized.createError);
+                expect(controller.emit).toBeCalledWith(
+                    CONTROLLER_EVENT.error,
+                    messages.annotationsCreateError.defaultMessage,
+                );
                 expect(controller.emit).toBeCalledWith(THREAD_EVENT.createError, expect.any(Object));
             });
 

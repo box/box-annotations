@@ -16,11 +16,11 @@ type Props = {
 addLocaleData(i18n.localeData);
 
 const Internationalize = ({ children }: Props) => {
-    const { language, messages } = i18n;
+    const { getLocale, language, messages } = i18n;
     const shouldInternationalize: boolean = !!language && !!messages;
 
     if (shouldInternationalize) {
-        const locale = language && language.substr(0, language.indexOf('-'));
+        const locale = getLocale();
         return (
             <IntlProvider locale={locale} messages={messages}>
                 {children}

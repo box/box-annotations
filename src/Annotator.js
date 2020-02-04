@@ -1,5 +1,8 @@
 // @flow
 import EventEmitter from 'events';
+import { IntlProvider } from 'react-intl';
+import messages from './messages';
+import i18n from './utils/i18n';
 import * as util from './util';
 import './Annotator.scss';
 import {
@@ -17,6 +20,9 @@ class Annotator extends EventEmitter {
     /** @param {HTMLElement} */
     annotatedElement: HTMLElement;
 
+    /** @param {IntlProvider} */
+    intl: IntlContext;
+
     /** @param {string} */
     fileVersionId: string;
 
@@ -33,26 +39,33 @@ class Annotator extends EventEmitter {
         this.locale = options.location.locale || 'en-US';
         this.validationErrorEmitted = false;
         this.hasTouch = options.hasTouch || false;
-        this.localized = options.localizedStrings;
 
         const { apiHost, file, token } = this.options;
         this.fileVersionId = file.file_version.id;
         this.fileId = file.id;
-
         this.permissions = this.getAnnotationPermissions(this.options.file);
 
+        const { messages: translatedMessages, getLocale } = i18n;
+        const { intl } = new IntlProvider(
+            {
+                locale: getLocale(),
+                messages: translatedMessages,
+            },
+            {},
+        ).getChildContext();
+
+        this.intl = intl;
         this.api = new FileVersionAPI({
             apiHost,
             fileId: this.fileId,
             token,
             permissions: this.permissions,
-            anonymousUserName: this.localized.anonymousUserName,
+            anonymousUserName: this.intl.formatMessage({ ...messages.anonymousUser }),
         });
 
         // Get applicable annotation mode controllers
         const { CONTROLLERS } = this.options.annotator || {};
         this.modeControllers = CONTROLLERS || {};
-
         this.fetchPromise = this.fetchAnnotations();
 
         // Explicitly binding listeners
@@ -99,7 +112,7 @@ class Annotator extends EventEmitter {
         }
 
         if (!this.container) {
-            this.emit(ANNOTATOR_EVENT.loadError, this.localized.loadError);
+            this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsLoadError }));
             return;
         }
 
@@ -212,7 +225,6 @@ class Annotator extends EventEmitter {
      */
     setupControllers() {
         this.modeButtons = this.options.modeButtons || {};
-
         const options = {
             header: this.options.header,
             hasTouch: this.hasTouch,
@@ -227,12 +239,12 @@ class Annotator extends EventEmitter {
                 mode: type,
                 modeButton: this.modeButtons[type],
                 permissions: this.permissions,
-                localized: this.localized,
                 fileId: this.fileId,
                 fileVersionId: this.fileVersionId,
                 apiHost: this.options.apiHost,
                 token: this.options.token,
                 getLocation: this.getLocationFromEvent,
+                intl: this.intl,
                 options,
             });
 
@@ -515,7 +527,7 @@ class Annotator extends EventEmitter {
             return;
         }
 
-        this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
+        this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsLoadError }));
         /* eslint-disable no-console */
         console.error('Annotation could not be created due to invalid params');
         /* eslint-enable no-console */
@@ -537,7 +549,7 @@ class Annotator extends EventEmitter {
             /* eslint-enable no-console */
         }
 
-        this.emit(ANNOTATOR_EVENT.error, this.localized.loadError);
+        this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsLoadError }));
     }
 
     /**

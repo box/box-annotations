@@ -29,13 +29,16 @@ const html = `<div class="annotated-element">
 
 describe('controllers/DrawingModeController', () => {
     let rootElement;
-
+    const intlMock = {
+        formatMessage: message => message.defaultMessage,
+    };
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
         controller = new DrawingModeController();
+        controller.intl = intlMock;
         thread = new DrawingThread();
         thread.minX = 10;
         thread.minY = 10;

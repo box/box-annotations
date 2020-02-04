@@ -3,6 +3,7 @@ import Annotator from '../Annotator';
 import * as util from '../util';
 import * as imageUtil from './imageUtil';
 import { ANNOTATOR_EVENT, TYPES } from '../constants';
+import messages from '../messages';
 
 const IMAGE_NODE_NAME = 'img';
 // Selector for image container OR multi-image container
@@ -49,7 +50,7 @@ class ImageAnnotator extends Annotator {
 
         // Do not create annotation if event doesn't have coordinates
         if (Number.isNaN(x) || Number.isNaN(y)) {
-            this.emit(ANNOTATOR_EVENT.error, this.localized.createError);
+            this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsCreateError }));
             return location;
         }
 
