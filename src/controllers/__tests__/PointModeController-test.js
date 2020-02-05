@@ -67,8 +67,6 @@ describe('controllers/PointModeController', () => {
             const blankDiv = document.createElement('div');
             util.insertTemplate = jest.fn();
             controller.getButton = jest.fn().mockReturnValue(blankDiv);
-            controller.localized = { closeButton: 'Close' };
-
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
         });

@@ -77,10 +77,6 @@ describe('controllers/DrawingModeController', () => {
             const blankDiv = document.createElement('div');
             util.insertTemplate = jest.fn();
             controller.getButton = jest.fn().mockReturnValue(blankDiv);
-            controller.localized = {
-                cancelButton: 'cancel',
-                doneButton: 'done',
-            };
 
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);

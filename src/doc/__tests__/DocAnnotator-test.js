@@ -70,10 +70,6 @@ describe('doc/DocAnnotator', () => {
             location: {
                 locale: 'en-US',
             },
-            localizedStrings: {
-                anonymousUserName: 'anonymous',
-                loadError: 'loaderror',
-            },
         });
 
         annotator.headerElement = document.createElement('div');

@@ -38,10 +38,6 @@ describe('image/ImageAnnotator', () => {
             location: {
                 locale: 'en-US',
             },
-            localizedStrings: {
-                anonymousUserName: 'anonymous',
-                loadError: 'loaderror',
-            },
         });
 
         annotator.annotatedElement = annotator.getAnnotatedEl(document);

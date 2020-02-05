@@ -52,9 +52,6 @@ class AnnotationModeController extends EventEmitter {
     /** @property {Object} */
     permissions: BoxItemPermissions;
 
-    /** @property {Object} - Localized strings */
-    localized: Object;
-
     /** @property {boolean} */
     hasTouch: boolean = false;
 

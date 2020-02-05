@@ -66,7 +66,6 @@ describe('controllers/AnnotationModeController', () => {
             controller.init({
                 modeButton: {},
                 permissions: { can_annotate: true },
-                localized: { anonymousUserName: '' },
                 intl: intlMock,
             });
             expect(controller.showButton).toBeCalled();
@@ -75,7 +74,6 @@ describe('controllers/AnnotationModeController', () => {
         it('should not show modeButton if none provided', () => {
             controller.showButton = jest.fn();
             controller.init({
-                localized: { anonymousUserName: '' },
                 intl: intlMock,
             });
             expect(controller.showButton).not.toBeCalled();
@@ -86,7 +84,6 @@ describe('controllers/AnnotationModeController', () => {
             controller.init({
                 modeButton: {},
                 permissions: { can_annotate: false },
-                localized: { anonymousUserName: '' },
                 intl: intlMock,
             });
             expect(controller.showButton).not.toBeCalled();
@@ -96,9 +93,6 @@ describe('controllers/AnnotationModeController', () => {
     describe('After init', () => {
         beforeEach(() => {
             controller.api = new AnnotationAPI();
-            controller.localized = {
-                anonymouseUserName: '',
-            };
         });
 
         describe('destroy()', () => {
