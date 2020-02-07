@@ -35,6 +35,9 @@ describe('AnnotationThread', () => {
             annotatedElement: rootElement,
             annotations: [],
             api,
+            intl: {
+                messages: {},
+            },
             fileVersionId: '1',
             isMobile: false,
             location: {},

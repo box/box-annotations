@@ -152,11 +152,16 @@ type intlMessage = {
     defaultMessage: string,
 };
 
+export type IntlOptions = {
+    intlLocaleData: Object,
+    provider: Object,
+    language: string,
+}
 export type IntlContext = {
     defaultLocale: string,
     formatDate: (message: intlMessage) => {},
     formatHTMLMessage: (message: intlMessage) => {},
-    formatMessage: (message: intlMessage) => {},
+    formatMessage: (message: intlMessage) => string,
     formatNumber: (message: intlMessage) => {},
     formatPlural: (message: intlMessage) => {},
     formatTime: (message: intlMessage) => {},

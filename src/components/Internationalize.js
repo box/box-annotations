@@ -5,18 +5,17 @@
  */
 
 import React, { Children } from 'react';
-import { IntlProvider, addLocaleData } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 
 import i18n from '../utils/i18n';
 
 type Props = {
     children?: any,
+    messages: Object,
 };
 
-addLocaleData(i18n.localeData);
-
-const Internationalize = ({ children }: Props) => {
-    const { getLocale, language, messages } = i18n;
+const Internationalize = ({ children, messages }: Props) => {
+    const { getLocale, language } = i18n;
     const shouldInternationalize: boolean = !!language && !!messages;
 
     if (shouldInternationalize) {

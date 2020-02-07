@@ -1,6 +1,5 @@
 // @flow
 import EventEmitter from 'events';
-import { IntlProvider } from 'react-intl';
 import messages from './messages';
 import i18n from './utils/i18n';
 import * as util from './util';
@@ -45,16 +44,7 @@ class Annotator extends EventEmitter {
         this.fileId = file.id;
         this.permissions = this.getAnnotationPermissions(this.options.file);
 
-        const { messages: translatedMessages, getLocale } = i18n;
-        const { intl } = new IntlProvider(
-            {
-                locale: getLocale(),
-                messages: translatedMessages,
-            },
-            {},
-        ).getChildContext();
-
-        this.intl = intl;
+        this.intl = i18n.createIntlProvider(options.intl || {});
         this.api = new FileVersionAPI({
             apiHost,
             fileId: this.fileId,

@@ -316,6 +316,7 @@ class AnnotationModeController extends EventEmitter {
             isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
             headerHeight: this.headerElement.clientHeight,
+            intl: this.intl,
             ...annotation,
         };
     }
