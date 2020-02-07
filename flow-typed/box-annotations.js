@@ -153,7 +153,7 @@ type intlMessage = {
 };
 
 export type IntlOptions = {
-    intlLocaleData: Object,
+    intlLocaleData: Array<any>,
     provider: Object,
     language: string,
 }
