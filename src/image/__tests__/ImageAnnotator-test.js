@@ -32,6 +32,7 @@ describe('image/ImageAnnotator', () => {
             file: {
                 file_version: { id: 1 },
             },
+            intl: {},
             isMobile: false,
             options,
             modeButtons: {},

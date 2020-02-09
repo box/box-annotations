@@ -61,7 +61,7 @@ class DrawingModeController extends AnnotationModeController {
     showButton(): void {
         super.showButton();
 
-        this.buttonEl.title = this.intl.formatMessage({ ...messages.annotationDrawToggle });
+        this.buttonEl.title = this.intl.formatMessage(messages.annotationDrawToggle);
     }
 
     /** @inheritdoc */
@@ -69,12 +69,12 @@ class DrawingModeController extends AnnotationModeController {
         super.setupHeader(container, header);
 
         this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.cancelButtonEl.textContent = this.intl.formatMessage({ ...messages.annotationsCancel });
+        this.cancelButtonEl.textContent = this.intl.formatMessage(messages.annotationsCancel);
 
         this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
 
         // TODO(@spramod): Remove '||' string, once doneButton is properly localized within Preview
-        this.postButtonEl.textContent = this.intl.formatMessage({ ...messages.annotationsDone });
+        this.postButtonEl.textContent = this.intl.formatMessage(messages.annotationsDone);
 
         this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);

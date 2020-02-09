@@ -179,7 +179,6 @@ class AnnotationThread extends EventEmitter {
         const isPending = this.state === STATES.pending;
 
         const pageEl = this.getPopoverParent();
-        const { messages } = this.intl;
         this.popoverComponent = render(
             <AnnotationPopover
                 canAnnotate={this.canAnnotate}
@@ -190,9 +189,9 @@ class AnnotationThread extends EventEmitter {
                 createdBy={this.createdBy}
                 headerHeight={this.headerHeight}
                 id={this.id}
+                intl={this.intl}
                 isMobile={util.shouldDisplayMobileUI(this.container)}
                 isPending={isPending}
-                messages={messages}
                 modifiedAt={this.modifiedAt}
                 onCancel={this.cancelUnsavedAnnotation}
                 onCommentClick={this.onCommentClick}

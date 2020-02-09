@@ -60,12 +60,13 @@ class CreateHighlightDialog extends EventEmitter {
     constructor(annotatedElement: HTMLElement, config: Object = {}) {
         super();
 
+        this.allowComment = config.allowComment || false;
+        this.allowHighlight = config.allowHighlight || false;
         this.annotatedElement = annotatedElement;
         this.container = config.container;
         this.hasTouch = !!config.hasTouch || false;
-        this.allowHighlight = config.allowHighlight || false;
-        this.allowComment = config.allowComment || false;
         this.headerHeight = config.headerHeight;
+        this.intl = config.intl;
     }
 
     /** @inheritdoc */
@@ -142,6 +143,7 @@ class CreateHighlightDialog extends EventEmitter {
                 canComment={this.allowComment}
                 canDelete
                 headerHeight={this.headerHeight}
+                intl={this.intl}
                 isMobile={shouldDisplayMobileUI(this.container)}
                 isPending
                 onCancel={this.onCommentCancel}

@@ -4,30 +4,21 @@
  * @author Box
  */
 
-import React, { Children } from 'react';
+import React from 'react';
 import { IntlProvider } from 'react-intl';
-
 import i18n from '../utils/i18n';
 
 type Props = {
     children?: any,
-    messages: Object,
+    intl: Object,
 };
 
-const Internationalize = ({ children, messages }: Props) => {
-    const { getLocale, language } = i18n;
-    const shouldInternationalize: boolean = !!language && !!messages;
-
-    if (shouldInternationalize) {
-        const locale = getLocale();
-        return (
-            <IntlProvider locale={locale} messages={messages}>
-                {children}
-            </IntlProvider>
-        );
-    }
-
-    return Children.only(children);
+const Internationalize = ({ children, intl }: Props) => {
+    return (
+        <IntlProvider {...intl} locale={i18n.getLocale()}>
+            {children}
+        </IntlProvider>
+    );
 };
 
 export default Internationalize;

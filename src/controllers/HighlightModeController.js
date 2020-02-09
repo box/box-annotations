@@ -36,7 +36,7 @@ class HighlightModeController extends AnnotationModeController {
 
     showButton(): void {
         super.showButton();
-        this.buttonEl.title = this.intl.formatMessage({ ...messages.annotationHighlightToggle });
+        this.buttonEl.title = this.intl.formatMessage(messages.annotationHighlightToggle);
     }
 
     /** @inheritdoc */

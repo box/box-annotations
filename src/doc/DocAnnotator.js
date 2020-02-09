@@ -186,7 +186,7 @@ class DocAnnotator extends Annotator {
             let [x, y] = browserCoordinates;
             // Do not create annotation if event doesn't have coordinates
             if (Number.isNaN(x) || Number.isNaN(y)) {
-                this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage({ ...messages.annotationsCreateError }));
+                this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage(messages.annotationsCreateError));
                 return location;
             }
 
@@ -293,11 +293,12 @@ class DocAnnotator extends Annotator {
         }
 
         this.createHighlightDialog = new CreateHighlightDialog(this.annotatedElement, {
-            hasTouch: this.hasTouch,
             allowComment: this.commentHighlightEnabled,
             allowHighlight: this.plainHighlightEnabled,
             container: this.container,
+            hasTouch: this.hasTouch,
             headerHeight: this.headerElement.clientHeight,
+            intl: this.intl,
         });
 
         if (this.commentHighlightEnabled) {

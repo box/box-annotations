@@ -146,30 +146,11 @@ type AnnotationData = {
     thread: string,
 };
 
-type intlMessage = {
-    id: string,
-    description: string,
-    defaultMessage: string,
-};
-
 export type IntlOptions = {
-    intlLocaleData: Array<any>,
-    provider: Object,
-    language: string,
+    messages: Object,
+    language?: string,
+    locale?: string,
 }
-export type IntlContext = {
-    defaultLocale: string,
-    formatDate: (message: intlMessage) => {},
-    formatHTMLMessage: (message: intlMessage) => {},
-    formatMessage: (message: intlMessage) => string,
-    formatNumber: (message: intlMessage) => {},
-    formatPlural: (message: intlMessage) => {},
-    formatTime: (message: intlMessage) => {},
-    formatters: Object,
-    locale: string,
-    messages: { [id: string]: string },
-    now: () => {},
-};
 
 type StringAnyMap = { [string]: any };
 type AnnotationMap = { [string]: AnnotationData };

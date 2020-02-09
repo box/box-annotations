@@ -5,38 +5,22 @@
  */
 
 import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
-import boxElementsMessages from 'box-elements-messages'; // eslint-disable-line
-import localeData from 'react-intl-locale-data';
-import { IntlProvider, addLocaleData } from 'react-intl';
+import boxElementsMessages from 'box-elements-messages';
+import { IntlProvider } from 'react-intl';
 
 declare var __LANGUAGE__: string;
 
-let language = __LANGUAGE__;
-const messages = { ...annotationsLocaleData, ...boxElementsMessages };
-const getLocale = (locale?: string) => {
-    let lang = locale;
-
-    if (!lang) {
-        lang = language;
-    }
-
+const language = __LANGUAGE__;
+const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
+const getLocale = (lang: string = __LANGUAGE__) => {
     return lang.substr(0, lang.indexOf('-'));
 };
 
-const createIntlProvider = ({ provider, language: lang, intlLocaleData }: IntlOptions): IntlContext => {
-    addLocaleData(intlLocaleData || localeData);
-
-    if (provider && lang) {
-        language = lang;
-        return provider.getChildContext().intl;
-    }
-    return new IntlProvider(
-        {
-            locale: getLocale(),
-            messages,
-        },
-        {},
-    ).getChildContext().intl;
+const createIntlProvider = ({ messages = annotationsMessages, locale = getLocale() }: IntlOptions) => {
+    return new IntlProvider({
+        messages,
+        locale,
+    }).getChildContext().intl;
 };
 
-export default { language, messages, localeData, getLocale, createIntlProvider };
+export default { language, getLocale, createIntlProvider };

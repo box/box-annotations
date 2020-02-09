@@ -26,6 +26,7 @@ const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
 type Props = {
     canComment: boolean,
     headerHeight?: number,
+    intl: Object,
     isMobile: boolean,
     isPending: boolean,
     language?: string,
@@ -68,6 +69,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
             createdBy,
             comments,
             isMobile,
+            intl,
             canComment,
             canAnnotate,
             isPending,
@@ -76,8 +78,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
             onCancel,
             onCreate,
             onCommentClick,
-            language,
-            messages: intlMessages,
             headerHeight,
         } = this.props;
         const hasComments = comments.length > 0;
@@ -92,7 +92,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
         ];
 
         return (
-            <Internationalize language={language} messages={intlMessages}>
+            <Internationalize intl={intl}>
                 <HotkeyLayer configs={configs}>
                     <div
                         className={classNames(CLASS_ANNOTATION_POPOVER, {

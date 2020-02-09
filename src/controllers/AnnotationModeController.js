@@ -111,7 +111,7 @@ class AnnotationModeController extends EventEmitter {
             apiHost: data.apiHost,
             fileId: data.fileId,
             token: data.token,
-            anonymousUserName: this.intl.formatMessage({ ...messages.anonymousUser }),
+            anonymousUserName: this.intl.formatMessage(messages.anonymousUser),
             permissions: this.permissions,
         });
         this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
@@ -547,11 +547,11 @@ class AnnotationModeController extends EventEmitter {
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.deleteError:
-                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage({ ...messages.annotationsDeleteError }));
+                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage(messages.annotationsDeleteError));
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.createError:
-                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage({ ...messages.annotationsCreateError }));
+                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage(messages.annotationsCreateError));
                 this.emit(event, threadData);
                 break;
             default:
@@ -722,15 +722,15 @@ class AnnotationModeController extends EventEmitter {
         let errorMessage = '';
         switch (data.reason) {
             case 'create':
-                errorMessage = this.intl.formatMessage({ ...messages.annotationsCreateError });
+                errorMessage = this.intl.formatMessage(messages.annotationsCreateError);
                 this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'delete':
-                errorMessage = this.intl.formatMessage({ ...messages.annotationsDeleteError });
+                errorMessage = this.intl.formatMessage(messages.annotationsDeleteError);
                 this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'authorization':
-                errorMessage = this.intl.formatMessage({ ...messages.annotationsAuthError });
+                errorMessage = this.intl.formatMessage(messages.annotationsAuthError);
                 break;
             default:
         }

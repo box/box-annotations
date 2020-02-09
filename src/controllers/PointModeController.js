@@ -37,7 +37,7 @@ class PointModeController extends AnnotationModeController {
 
     showButton(): void {
         super.showButton();
-        this.buttonEl.title = this.intl.formatMessage({ ...messages.annotationPointToggle });
+        this.buttonEl.title = this.intl.formatMessage(messages.annotationPointToggle);
     }
 
     /** @inheritdoc */
@@ -47,7 +47,7 @@ class PointModeController extends AnnotationModeController {
         this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
 
         // TODO(@spramod): Remove '||' string, once closeButton is properly localized
-        this.exitButtonEl.textContent = this.intl.formatMessage({ ...messages.annotationsClose });
+        this.exitButtonEl.textContent = this.intl.formatMessage(messages.annotationsClose);
     }
 
     /** @inheritdoc */
