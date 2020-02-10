@@ -160,7 +160,7 @@ class Annotator extends EventEmitter {
                 this.render();
                 this.annotatedElement.classList.add(CLASS_ANNOTATIONS_LOADED);
             })
-            .catch(error => this.emit(ANNOTATOR_EVENT.loadError, error));
+            .catch(error => this.emit(ANNOTATOR_EVENT.error, error));
     }
 
     /**
@@ -281,7 +281,7 @@ class Annotator extends EventEmitter {
                 this.emit(ANNOTATOR_EVENT.fetch);
             })
             .catch(err => {
-                this.emit(ANNOTATOR_EVENT.loadError, err);
+                this.emit(ANNOTATOR_EVENT.error, err);
             });
     }
 

@@ -149,7 +149,7 @@ describe('Annotator', () => {
                     expect(annotator.render).not.toBeCalled();
                 })
                 .catch(err => {
-                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, err);
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, err);
                 });
         });
     });

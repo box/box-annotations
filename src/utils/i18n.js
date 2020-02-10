@@ -16,11 +16,11 @@ const getLocale = (lang: string = __LANGUAGE__) => {
     return lang.substr(0, lang.indexOf('-'));
 };
 
-const createIntlProvider = ({ messages = annotationsMessages, locale = getLocale() }: IntlOptions) => {
+const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions) => {
     return new IntlProvider({
         messages,
         locale,
     }).getChildContext().intl;
 };
 
-export default { language, getLocale, createIntlProvider };
+export default { createIntlProvider, getLocale, language };
