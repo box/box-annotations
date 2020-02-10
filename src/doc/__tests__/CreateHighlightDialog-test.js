@@ -10,10 +10,6 @@ describe('doc/CreateHighlightDialog', () => {
     let rootElement;
     let dialog;
     let parentEl;
-    const localized = {
-        highlightToggle: 'highlight toggle',
-        highlightComment: 'highlight comment',
-    };
 
     beforeEach(() => {
         rootElement = document.createElement('div');
@@ -25,7 +21,6 @@ describe('doc/CreateHighlightDialog', () => {
         dialog = new CreateHighlightDialog(parentEl, {
             allowHighlight: true,
             allowComment: true,
-            localized,
         });
         dialog.annotatedElement = rootElement;
         dialog.renderAnnotationPopover = jest.fn();
@@ -55,7 +50,6 @@ describe('doc/CreateHighlightDialog', () => {
             const config = {
                 allowHighlight: true,
                 allowComment: false,
-                localized,
             };
             const instance = new CreateHighlightDialog(document.createElement('div'), config);
             expect(instance.allowHighlight).toBeTruthy();

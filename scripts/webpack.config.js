@@ -13,7 +13,7 @@ const commonConfig = require('./webpack.common.config');
 
 const isDev = process.env.NODE_ENV === 'dev';
 const isRelease = process.env.NODE_ENV === 'production';
-const language = process.env.LANGUAGE;
+const language = process.env.LANGUAGE || 'en-US';
 const locale = language.substr(0, language.indexOf('-'));
 
 let rsyncLocation = '';
@@ -30,8 +30,8 @@ const config = Object.assign(commonConfig(), {
         annotations: ['./src/BoxAnnotations.js'],
     },
     output: {
-        path: path.resolve('dist'),
         filename: '[Name].js',
+        path: path.resolve('dist'),
     },
     resolve: {
         alias: {

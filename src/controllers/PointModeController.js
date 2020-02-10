@@ -12,6 +12,7 @@ import {
     CLASS_ANNOTATION_POINT_MODE,
     ANNOTATOR_TYPE,
 } from '../constants';
+import messages from '../messages';
 import { replaceHeader, isInAnnotationOrMarker } from '../util';
 
 // $FlowFixMe
@@ -34,6 +35,11 @@ class PointModeController extends AnnotationModeController {
         }
     }
 
+    showButton(): void {
+        super.showButton();
+        this.buttonEl.title = this.intl.formatMessage(messages.annotationPointToggle);
+    }
+
     /** @inheritdoc */
     setupHeader(container: HTMLElement, header: HTMLElement): void {
         super.setupHeader(container, header);
@@ -41,7 +47,7 @@ class PointModeController extends AnnotationModeController {
         this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
 
         // TODO(@spramod): Remove '||' string, once closeButton is properly localized
-        this.exitButtonEl.textContent = this.localized.closeButton || 'Close';
+        this.exitButtonEl.textContent = this.intl.formatMessage(messages.annotationsClose);
     }
 
     /** @inheritdoc */

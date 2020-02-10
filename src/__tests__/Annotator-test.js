@@ -13,6 +13,7 @@ import * as util from '../util';
 import AnnotationThread from '../AnnotationThread';
 import FileVersionAPI from '../api/FileVersionAPI';
 import AnnotationModeController from '../controllers/AnnotationModeController';
+import messages from '../messages';
 
 jest.mock('../AnnotationThread');
 jest.mock('../api/FileVersionAPI');
@@ -61,14 +62,8 @@ describe('Annotator', () => {
             },
             isMobile: false,
             options,
+            intl: {},
             location: {},
-            localizedStrings: {
-                anonymousUserName: 'anonymous',
-                loadError: 'load error',
-                createError: 'create error',
-                deleteError: 'delete error',
-                authError: 'auth error',
-            },
         });
     });
 
@@ -126,7 +121,7 @@ describe('Annotator', () => {
         it('should emit error if no container exists', () => {
             annotator.options.container = undefined;
             annotator.init(5);
-            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, annotator.localized.loadError);
+            expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, messages.annotationsLoadError.defaultMessage);
             expect(annotator.container).toBeUndefined();
         });
     });
@@ -154,7 +149,7 @@ describe('Annotator', () => {
                     expect(annotator.render).not.toBeCalled();
                 })
                 .catch(err => {
-                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.loadError, err);
+                    expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, err);
                 });
         });
     });
@@ -386,7 +381,10 @@ describe('Annotator', () => {
 
             it('should emit annotatorerror on error event', () => {
                 annotator.handleServicesErrors({ error: {} });
-                expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, annotator.localized.loadError);
+                expect(annotator.emit).toBeCalledWith(
+                    ANNOTATOR_EVENT.error,
+                    messages.annotationsLoadError.defaultMessage,
+                );
             });
         });
 

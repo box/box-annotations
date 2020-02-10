@@ -61,6 +61,7 @@ class AnnotationThread extends EventEmitter {
         this.headerHeight = data.headerHeight;
 
         this.id = data.id;
+        this.intl = data.intl;
         this.type = data.type;
         this.location = data.location;
         this.threadNumber = data.threadNumber;
@@ -188,6 +189,7 @@ class AnnotationThread extends EventEmitter {
                 createdBy={this.createdBy}
                 headerHeight={this.headerHeight}
                 id={this.id}
+                intl={this.intl}
                 isMobile={util.shouldDisplayMobileUI(this.container)}
                 isPending={isPending}
                 modifiedAt={this.modifiedAt}

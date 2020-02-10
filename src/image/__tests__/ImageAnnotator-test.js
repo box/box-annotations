@@ -32,15 +32,12 @@ describe('image/ImageAnnotator', () => {
             file: {
                 file_version: { id: 1 },
             },
+            intl: {},
             isMobile: false,
             options,
             modeButtons: {},
             location: {
                 locale: 'en-US',
-            },
-            localizedStrings: {
-                anonymousUserName: 'anonymous',
-                loadError: 'loaderror',
             },
         });
 

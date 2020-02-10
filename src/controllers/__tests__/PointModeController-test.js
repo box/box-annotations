@@ -21,6 +21,9 @@ let thread;
 
 describe('controllers/PointModeController', () => {
     let rootElement;
+    const intlMock = {
+        formatMessage: message => message.defaultMessage,
+    };
 
     beforeEach(() => {
         rootElement = document.createElement('div');
@@ -28,6 +31,7 @@ describe('controllers/PointModeController', () => {
         document.body.appendChild(rootElement);
 
         controller = new PointModeController();
+        controller.intl = intlMock;
         controller.container = document;
         controller.emit = jest.fn();
         controller.registerThread = jest.fn();
@@ -63,8 +67,6 @@ describe('controllers/PointModeController', () => {
             const blankDiv = document.createElement('div');
             util.insertTemplate = jest.fn();
             controller.getButton = jest.fn().mockReturnValue(blankDiv);
-            controller.localized = { closeButton: 'Close' };
-
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
         });

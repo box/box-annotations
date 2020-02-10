@@ -29,13 +29,16 @@ const html = `<div class="annotated-element">
 
 describe('controllers/DrawingModeController', () => {
     let rootElement;
-
+    const intlMock = {
+        formatMessage: message => message.defaultMessage,
+    };
     beforeEach(() => {
         rootElement = document.createElement('div');
         rootElement.innerHTML = html;
         document.body.appendChild(rootElement);
 
         controller = new DrawingModeController();
+        controller.intl = intlMock;
         thread = new DrawingThread();
         thread.minX = 10;
         thread.minY = 10;
@@ -74,10 +77,6 @@ describe('controllers/DrawingModeController', () => {
             const blankDiv = document.createElement('div');
             util.insertTemplate = jest.fn();
             controller.getButton = jest.fn().mockReturnValue(blankDiv);
-            controller.localized = {
-                cancelButton: 'cancel',
-                doneButton: 'done',
-            };
 
             controller.setupHeader(blankDiv, blankDiv);
             expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);

@@ -65,14 +65,11 @@ describe('doc/DocAnnotator', () => {
                 file_version: { id: 1 },
             },
             isMobile: false,
+            intl: {},
             options,
             modeButtons: {},
             location: {
                 locale: 'en-US',
-            },
-            localizedStrings: {
-                anonymousUserName: 'anonymous',
-                loadError: 'loaderror',
             },
         });
 

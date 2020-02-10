@@ -16,6 +16,7 @@ import {
     STATES,
 } from '../constants';
 import AnnotationAPI from '../api/AnnotationAPI';
+import messages from '../messages';
 
 class AnnotationModeController extends EventEmitter {
     /** @property {Object} - Object containing annotation threads */
@@ -50,9 +51,6 @@ class AnnotationModeController extends EventEmitter {
 
     /** @property {Object} */
     permissions: BoxItemPermissions;
-
-    /** @property {Object} - Localized strings */
-    localized: Object;
 
     /** @property {boolean} */
     hasTouch: boolean = false;
@@ -105,16 +103,15 @@ class AnnotationModeController extends EventEmitter {
         this.mode = data.mode;
         this.fileVersionId = data.fileVersionId;
         this.permissions = data.permissions;
-        this.localized = data.localized || {};
         this.hasTouch = data.options ? data.options.hasTouch : false;
         this.locale = data.options ? data.options.locale : 'en-US';
+        this.intl = data.intl;
         this.getLocation = data.getLocation;
-
         this.api = new AnnotationAPI({
             apiHost: data.apiHost,
             fileId: data.fileId,
             token: data.token,
-            anonymousUserName: data.localized.anonymousUserName,
+            anonymousUserName: this.intl.formatMessage(messages.anonymousUser),
             permissions: this.permissions,
         });
         this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
@@ -170,7 +167,6 @@ class AnnotationModeController extends EventEmitter {
         this.buttonEl = this.getButton(this.modeButton.selector);
         // $FlowFixMe
         if (this.buttonEl) {
-            this.buttonEl.title = this.modeButton.title;
             this.buttonEl.classList.remove(CLASS_HIDDEN);
 
             // $FlowFixMe
@@ -320,6 +316,7 @@ class AnnotationModeController extends EventEmitter {
             isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
             headerHeight: this.headerElement.clientHeight,
+            intl: this.intl,
             ...annotation,
         };
     }
@@ -550,11 +547,11 @@ class AnnotationModeController extends EventEmitter {
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.deleteError:
-                this.emit(CONTROLLER_EVENT.error, this.localized.deleteError);
+                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage(messages.annotationsDeleteError));
                 this.emit(event, threadData);
                 break;
             case THREAD_EVENT.createError:
-                this.emit(CONTROLLER_EVENT.error, this.localized.createError);
+                this.emit(CONTROLLER_EVENT.error, this.intl.formatMessage(messages.annotationsCreateError));
                 this.emit(event, threadData);
                 break;
             default:
@@ -725,15 +722,15 @@ class AnnotationModeController extends EventEmitter {
         let errorMessage = '';
         switch (data.reason) {
             case 'create':
-                errorMessage = this.localized.createError;
+                errorMessage = this.intl.formatMessage(messages.annotationsCreateError);
                 this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'delete':
-                errorMessage = this.localized.deleteError;
+                errorMessage = this.intl.formatMessage(messages.annotationsDeleteError);
                 this.emit(CONTROLLER_EVENT.load);
                 break;
             case 'authorization':
-                errorMessage = this.localized.authError;
+                errorMessage = this.intl.formatMessage(messages.annotationsAuthError);
                 break;
             default:
         }

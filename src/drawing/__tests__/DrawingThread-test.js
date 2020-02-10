@@ -24,6 +24,9 @@ describe('drawing/DrawingThread', () => {
 
         thread = new DrawingThread({
             annotatedElement: rootElement,
+            intl: {
+                messages: {},
+            },
             annotations: [],
             api: {},
             fileVersionId: 1,

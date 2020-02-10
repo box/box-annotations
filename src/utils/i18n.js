@@ -5,12 +5,22 @@
  */
 
 import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
-import boxElementsMessages from 'box-elements-messages'; // eslint-disable-line
-import localeData from 'react-intl-locale-data'; // eslint-disable-line
+import boxElementsMessages from 'box-elements-messages';
+import { IntlProvider } from 'react-intl';
 
 declare var __LANGUAGE__: string;
 
 const language = __LANGUAGE__;
-const messages = { ...annotationsLocaleData, ...boxElementsMessages };
+const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
+const getLocale = (lang: string = __LANGUAGE__) => {
+    return lang.substr(0, lang.indexOf('-'));
+};
 
-export default { language, messages, localeData };
+const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions) => {
+    return new IntlProvider({
+        messages,
+        locale,
+    }).getChildContext().intl;
+};
+
+export default { createIntlProvider, getLocale, language };

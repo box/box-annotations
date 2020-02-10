@@ -18,6 +18,7 @@ import {
     ANNOTATOR_TYPE,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
 } from '../constants';
+import messages from '../messages';
 
 // $FlowFixMe
 import shell from './drawingShell.html';
@@ -57,17 +58,23 @@ class DrawingModeController extends AnnotationModeController {
         }
     }
 
+    showButton(): void {
+        super.showButton();
+
+        this.buttonEl.title = this.intl.formatMessage(messages.annotationDrawToggle);
+    }
+
     /** @inheritdoc */
     setupHeader(container: HTMLElement, header: HTMLElement): void {
         super.setupHeader(container, header);
 
         this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.cancelButtonEl.textContent = this.localized.cancelButton;
+        this.cancelButtonEl.textContent = this.intl.formatMessage(messages.annotationsCancel);
 
         this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
 
         // TODO(@spramod): Remove '||' string, once doneButton is properly localized within Preview
-        this.postButtonEl.textContent = this.localized.doneButton || 'Done';
+        this.postButtonEl.textContent = this.intl.formatMessage(messages.annotationsDone);
 
         this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
         this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
