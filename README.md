@@ -1,4 +1,5 @@
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](http://opensource.box.com/badges)
+[![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/box/box-annotations&style=flat)](https://mergify.io)
 [![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![build status](https://travis-ci.com/box/box-annotations.svg?branch=master)](https://travis-ci.com/box/box-annotations)
 [![version](https://img.shields.io/badge/version-v3.13.0-blue.svg)](https://github.com/box/box-annotations)
@@ -12,8 +13,8 @@ Box Content Preview currently supports four annotation types - highlight comment
 
 ## Browser Support
 
-*   Desktop Chrome, Firefox, Safari, Edge, and Internet Explorer 11
-*   Mobile support available for iOS Safari, Android Chrome
+- Desktop Chrome, Firefox, Safari, Edge, and Internet Explorer 11
+- Mobile support available for iOS Safari, Android Chrome
 
 If you are using Internet Explorer 11, which doesn't natively support promises, include a polyfill.io script (see sample code below) or a Promise library like Bluebird.
 
@@ -30,8 +31,8 @@ Box Annotations can be used by pulling from our [NPM package](https://www.npmjs.
 ```javascript
 var preview = new Box.Preview();
 preview.show('FILE_ID', 'ACCESS_TOKEN', {
-    container: '.preview-container',
-    showAnnotations: true
+  container: '.preview-container',
+  showAnnotations: true,
 });
 ```
 
@@ -47,8 +48,8 @@ const boxAnnotations = new BoxAnnotations(viewerOptions);
 
 var preview = new Box.Preview();
 preview.show(FILE_ID, ACCESS_TOKEN, {
-    container: '.preview-container',
-    boxAnnotations
+  container: '.preview-container',
+  boxAnnotations,
 });
 ```
 
@@ -72,8 +73,8 @@ Supported image file extensions: `ai, bmp, dcm, eps, gif, png, ps, psd, svs, tga
 
 ## Development
 
-* [Dev Setup](docs/dev-setup.md)
-* [Contributing](docs/contributing.md)
+- [Dev Setup](docs/dev-setup.md)
+- [Contributing](docs/contributing.md)
 
 ## Support
 
