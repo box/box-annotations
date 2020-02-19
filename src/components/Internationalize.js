@@ -5,8 +5,7 @@
  */
 
 import React from 'react';
-import { IntlProvider } from 'react-intl';
-import i18n from '../utils/i18n';
+import { RawIntlProvider } from 'react-intl';
 
 type Props = {
     children?: any,
@@ -14,11 +13,7 @@ type Props = {
 };
 
 const Internationalize = ({ children, intl }: Props) => {
-    return (
-        <IntlProvider {...intl} locale={i18n.getLocale()}>
-            {children}
-        </IntlProvider>
-    );
+    return <RawIntlProvider value={intl}>{children}</RawIntlProvider>;
 };
 
 export default Internationalize;

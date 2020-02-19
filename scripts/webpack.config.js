@@ -37,7 +37,12 @@ const config = Object.assign(commonConfig(), {
         alias: {
             'box-annotations-locale-data': path.resolve(`i18n/${language}`),
             'box-elements-messages': path.resolve(`node_modules/box-ui-elements/i18n/${language}`),
-            'react-intl-locale-data': path.resolve(`node_modules/react-intl/locale-data/${locale}`),
+            'react-intl-relativetimeformat-locale-data': path.resolve(
+                `node_modules/@formatjs/intl-relativetimeformat/dist/locale-data/${locale}`,
+            ),
+            'react-intl-pluralrules-locale-data': path.resolve(
+                `node_modules/@formatjs/intl-pluralrules/dist/locale-data/${locale}`,
+            ),
             moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead
         },
         modules: ['src', 'node_modules'],

@@ -15,16 +15,10 @@ FormattedTime.displayName = 'FormattedTime';
 export const FormattedMessage = () => <div />;
 FormattedMessage.displayName = 'FormattedMessage';
 
-export const IntlProvider = () => {
-    return {
-        render() {
-            return <div />;
-        },
-        getChildContext: () => ({ intl: intlMock }),
-    };
-};
+export const RawIntlProvider = () => <div />;
 
-IntlProvider.displayName = 'IntlProvider';
+RawIntlProvider.displayName = 'RawIntlProvider';
+export const createIntl = () => intlMock;
 
 export const defineMessages = messages => messages;
 

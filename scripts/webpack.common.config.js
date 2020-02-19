@@ -23,7 +23,7 @@ module.exports = () => {
                 {
                     test: /\.js$/,
                     loader: 'babel-loader',
-                    exclude: [path.resolve('node_modules')],
+                    exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser)\/).*/,
                 },
                 {
                     test: /\.s?css$/,
