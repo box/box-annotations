@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`components/AnnotationPopover should correctly render a div without a Focus Trap 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -87,11 +87,11 @@ exports[`components/AnnotationPopover should correctly render a div without a Fo
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
 
 exports[`components/AnnotationPopover should correctly render a pending annotation 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -134,11 +134,11 @@ exports[`components/AnnotationPopover should correctly render a pending annotati
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
 
 exports[`components/AnnotationPopover should correctly render a popover with comments and reply textarea 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -209,11 +209,11 @@ exports[`components/AnnotationPopover should correctly render a popover with com
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
 
 exports[`components/AnnotationPopover should correctly render a view-only popover with comments 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -274,11 +274,11 @@ exports[`components/AnnotationPopover should correctly render a view-only popove
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
 
 exports[`components/AnnotationPopover should correctly render an annotation with a annotator label and no comments 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -323,11 +323,11 @@ exports[`components/AnnotationPopover should correctly render an annotation with
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
 
 exports[`components/AnnotationPopover should render a view-only annotation with a annotator label and no comments 1`] = `
-<Internationalize>
+<RawIntlProvider>
   <HotkeyLayer
     configs={
       Array [
@@ -361,5 +361,5 @@ exports[`components/AnnotationPopover should render a view-only annotation with 
       </div>
     </div>
   </HotkeyLayer>
-</Internationalize>
+</RawIntlProvider>
 `;
