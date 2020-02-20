@@ -6,21 +6,36 @@
 
 import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
 import boxElementsMessages from 'box-elements-messages';
-import { IntlProvider } from 'react-intl';
+import { createIntl } from 'react-intl';
 
 declare var __LANGUAGE__: string;
 
 const language = __LANGUAGE__;
-const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
-const getLocale = (lang: string = __LANGUAGE__) => {
+const getLocale = (lang: string = language) => {
     return lang.substr(0, lang.indexOf('-'));
 };
 
+if (!window.Intl.PluralRules) {
+    require('@formatjs/intl-pluralrules/polyfill'); // eslint-disable-line
+
+    // $FlowFixMe
+    require(`react-intl-pluralrules-locale-data`); // eslint-disable-line
+}
+
+if (!window.Intl.RelativeTimeFormat) {
+    require('@formatjs/intl-relativetimeformat/polyfill'); // eslint-disable-line
+
+    // $FlowFixMe
+    require('react-intl-relativetimeformat-locale-data'); // eslint-disable-line
+}
+
+const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
+
 const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions) => {
-    return new IntlProvider({
+    return createIntl({
         messages,
         locale,
-    }).getChildContext().intl;
+    });
 };
 
 export default { createIntlProvider, getLocale, language };
