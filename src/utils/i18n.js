@@ -6,7 +6,7 @@
 
 import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
 import boxElementsMessages from 'box-elements-messages';
-import { createIntl } from 'react-intl';
+import { createIntl, createIntlCache } from 'react-intl';
 
 declare var __LANGUAGE__: string;
 
@@ -30,12 +30,15 @@ if (!window.Intl.RelativeTimeFormat) {
 }
 
 const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
-
+const intlCache = createIntlCache();
 const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions) => {
-    return createIntl({
-        messages,
-        locale,
-    });
+    return createIntl(
+        {
+            messages,
+            locale,
+        },
+        intlCache,
+    );
 };
 
 export default { createIntlProvider, getLocale, language };

@@ -2,13 +2,12 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, RawIntlProvider } from 'react-intl';
 import PlainButton from 'box-ui-elements/es/components/plain-button';
 import IconClose from 'box-ui-elements/es/icons/general/IconClose';
 import { HotkeyRecord, HotkeyLayer } from 'box-ui-elements/es/components/hotkeys';
 
 import messages from './messages';
-import Internationalize from '../Internationalize';
 import CommentList from '../CommentList';
 import { TYPES, CLASS_ANNOTATION_POPOVER, CLASS_ANNOTATION_CARET } from '../../constants';
 
@@ -92,7 +91,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
         ];
 
         return (
-            <Internationalize intl={intl}>
+            <RawIntlProvider value={intl}>
                 <HotkeyLayer configs={configs}>
                     <div
                         className={classNames(CLASS_ANNOTATION_POPOVER, {
@@ -135,7 +134,7 @@ class AnnotationPopover extends React.PureComponent<Props> {
                         </div>
                     </div>
                 </HotkeyLayer>
-            </Internationalize>
+            </RawIntlProvider>
         );
     }
 }

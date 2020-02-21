@@ -22,9 +22,9 @@ export const createIntl = () => intlMock;
 
 export const defineMessages = messages => messages;
 
-export const intlShape = PropTypes.any;
+export const createIntlCache = () => {};
 
-export const addLocaleData = () => {};
+export const intlShape = PropTypes.any;
 
 export const injectIntl = Component => {
     const WrapperComponent = props => {
