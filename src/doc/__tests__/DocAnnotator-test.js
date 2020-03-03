@@ -64,7 +64,6 @@ describe('doc/DocAnnotator', () => {
             file: {
                 file_version: { id: 1 },
             },
-            isMobile: false,
             intl: {},
             options,
             modeButtons: {},
@@ -558,7 +557,7 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.annotatedElement.addEventListener).toBeCalledWith('click', annotator.clickHandler);
         });
 
-        it('should bind highlight mouse move handlers regardless of if the user can annotate only on desktop', () => {
+        it('should bind highlight mouse move handlers regardless of if the user can annotate only', () => {
             annotator.permissions.can_annotate = false;
             annotator.plainHighlightEnabled = true;
             annotator.commentHighlightEnabled = true;
@@ -851,12 +850,12 @@ describe('doc/DocAnnotator', () => {
             annotator.mouseDownEvent = { clientX: 100, clientY: 100 };
         });
 
-        it('should call highlightCreateHandler if on desktop and the mouse moved', () => {
+        it('should call highlightCreateHandler if the mouse moved', () => {
             annotator.highlightMouseupHandler({ x: 0, y: 0 });
             expect(annotator.highlightCreateHandler).toBeCalled();
         });
 
-        it('should call highlightCreateHandler if on desktop and the user double clicked', () => {
+        it('should call highlightCreateHandler if the user double clicked', () => {
             annotator.highlightMouseupHandler({ type: 'dblclick' });
             expect(annotator.highlightCreateHandler).toBeCalled();
         });
@@ -1064,7 +1063,7 @@ describe('doc/DocAnnotator', () => {
             expect(annotator.createHighlightDialog.show).toBeCalled();
         });
 
-        it('should position the create highlight dialog, if not on mobile', () => {
+        it('should position the create highlight dialog', () => {
             docUtil.getDialogCoordsFromRange = jest.fn().mockReturnValue({ x: 50, y: 35 });
             const pageRect = {
                 top: 0,
@@ -1150,7 +1149,6 @@ describe('doc/DocAnnotator', () => {
 
         it('should reset the mobile dialog if no active thread exists', () => {
             annotator.plainHighlightEnabled = true;
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
             expect(annotator.highlightClickHandler(event)).toBeFalsy();
@@ -1205,12 +1203,6 @@ describe('doc/DocAnnotator', () => {
             annotator.clickThread({}, thread2);
             expect(annotator.activeThread).toEqual(thread2);
             expect(annotator.consumed).toBeTruthy();
-        });
-
-        it('should hide all non-pending mobile dialogs', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            annotator.clickThread({}, thread);
-            expect(thread.unmountPopover).toBeCalled();
         });
     });
 

@@ -53,7 +53,6 @@ describe('controllers/DrawingModeController', () => {
         controller.api = { user: {} };
 
         util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
-        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {

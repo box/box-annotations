@@ -11,7 +11,7 @@ import {
     THREAD_EVENT,
 } from '../constants';
 import { getBrowserCoordinatesFromLocation, getContext } from './docUtil';
-import { createLocation, getScale, repositionCaret, findElement, getPageEl, shouldDisplayMobileUI } from '../util';
+import { createLocation, getScale, repositionCaret, findElement, getPageEl } from '../util';
 
 class DocDrawingThread extends DrawingThread {
     /** @property {HTMLElement} - Page element being observed */
@@ -340,10 +340,6 @@ class DocDrawingThread extends DrawingThread {
      * @return {void}
      */
     position = () => {
-        if (shouldDisplayMobileUI(this.container)) {
-            return;
-        }
-
         if (!this.pageEl) {
             this.pageEl = this.getPopoverParent();
         }

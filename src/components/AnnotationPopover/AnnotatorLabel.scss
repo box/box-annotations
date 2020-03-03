@@ -1,24 +1,9 @@
-@import "../../variables";
+@import '../../variables';
 
 .ba {
     .ba-annotator-label {
         margin: 10px 0 10px 10px;
         padding-right: 10px;
         border-right: 1px solid $see-see;
-    }
-
-    // MOBILE & TABLET CSS
-    @media #{$mobile}, #{$tablet} {
-        .ba-annotator-label {
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            padding: 20px;
-            background: white;
-            border-bottom: 1px solid #ccc;
-        }
     }
 }

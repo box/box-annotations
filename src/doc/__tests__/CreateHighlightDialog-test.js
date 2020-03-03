@@ -25,8 +25,6 @@ describe('doc/CreateHighlightDialog', () => {
         dialog.annotatedElement = rootElement;
         dialog.renderAnnotationPopover = jest.fn();
         dialog.emit = jest.fn();
-
-        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -103,18 +101,10 @@ describe('doc/CreateHighlightDialog', () => {
             expect(dialog.renderAnnotationPopover).not.toBeCalled();
         });
 
-        it('should set the position and render the popover on desktop', () => {
+        it('should set the position and render the popover', () => {
             dialog.show(selection);
             expect(dialog.pageInfo).toEqual(pageInfo);
             expect(dialog.setPosition).toBeCalled();
-            expect(dialog.renderAnnotationPopover).toBeCalled();
-        });
-
-        it('should only render the popover on mobile', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            dialog.show(selection);
-            expect(dialog.pageInfo).toEqual(pageInfo);
-            expect(dialog.setPosition).not.toBeCalled();
             expect(dialog.renderAnnotationPopover).toBeCalled();
         });
     });
@@ -156,12 +146,6 @@ describe('doc/CreateHighlightDialog', () => {
             util.showElement = jest.fn();
             dialog.pageInfo = { page: 1, pageEl: document.createElement('div') };
             util.findElement = jest.fn().mockReturnValue(rootElement);
-        });
-
-        it('should do nothing on mobile devices', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            dialog.updatePosition();
-            expect(util.findElement).not.toBeCalled();
         });
 
         it('should update the positioning of the popover element', () => {

@@ -21,8 +21,6 @@ const CLIENT_NAME = __NAME__;
 const CLIENT_VERSION = __VERSION__;
 /* eslint-enable no-undef */
 
-const DESKTOP_MIN_WIDTH = 1025;
-
 //------------------------------------------------------------------------------
 // DOM Utils
 //------------------------------------------------------------------------------
@@ -82,18 +80,6 @@ export function getPageInfo(element) {
     }
 
     return { pageEl, page };
-}
-
-/**
- * Determines whether or not the user's browser is mobile-sized
- * so they see the appropriate UI
- *
- * @param {HTMLElement} container Preview container
- * @return {boolean} Whether or not to display the mobile UI
- */
-export function shouldDisplayMobileUI(container) {
-    const containerRect = container.getBoundingClientRect();
-    return containerRect.width < DESKTOP_MIN_WIDTH;
 }
 
 /**

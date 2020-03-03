@@ -39,7 +39,6 @@ describe('AnnotationThread', () => {
                 messages: {},
             },
             fileVersionId: '1',
-            isMobile: false,
             location: {},
             threadID: '2',
             threadNumber: '1',
@@ -47,7 +46,6 @@ describe('AnnotationThread', () => {
         });
 
         thread.emit = jest.fn();
-        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -91,18 +89,6 @@ describe('AnnotationThread', () => {
             thread.location = {};
             expect(thread.getPopoverParent()).toEqual('annotatedElement');
         });
-
-        it('should return container if user should see the mobile UI', () => {
-            thread.location = { page: 1 };
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            expect(thread.getPopoverParent()).toEqual('container');
-        });
-
-        it('should return the page element if user should NOT see the mobile UI', () => {
-            thread.location = { page: 1 };
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
-            expect(thread.getPopoverParent()).toEqual('pageEl');
-        });
     });
 
     describe('unmountPopover', () => {
@@ -142,7 +128,6 @@ describe('AnnotationThread', () => {
         it('should render and display the popover for this annotation', () => {
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
             ReactDOM.render = jest.fn();
             thread.position = jest.fn();
 
@@ -293,17 +278,10 @@ describe('AnnotationThread', () => {
             expect(thread.emit).toBeCalledWith(THREAD_EVENT.save);
         });
 
-        it('should only render popover on desktop', () => {
+        it('should only render popover', () => {
             thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
             expect(thread.renderAnnotationPopover).toBeCalled();
             expect(thread.state).toEqual(STATES.inactive);
-        });
-
-        it('should only render popover on mobile', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            thread.updateTemporaryAnnotation(tempAnnotation.id, serverAnnotation);
-            expect(thread.state).toEqual(STATES.active);
-            expect(thread.renderAnnotationPopover).toBeCalled();
         });
     });
 
@@ -601,12 +579,6 @@ describe('AnnotationThread', () => {
             thread.bindDOMListeners();
             expect(thread.element.addEventListener).toBeCalledWith('click', expect.any(Function));
         });
-
-        it('should not add mouseleave listener for mobile browsers', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            thread.bindDOMListeners();
-            expect(thread.element.addEventListener).toBeCalledWith('click', expect.any(Function));
-        });
     });
 
     describe('unbindDOMListeners()', () => {
@@ -616,12 +588,6 @@ describe('AnnotationThread', () => {
         });
 
         it('should unbind DOM listeners', () => {
-            thread.unbindDOMListeners();
-            expect(thread.element.removeEventListener).toBeCalledWith('click', expect.any(Function));
-        });
-
-        it('should not add mouseleave listener for mobile browsers', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
             thread.unbindDOMListeners();
             expect(thread.element.removeEventListener).toBeCalledWith('click', expect.any(Function));
         });

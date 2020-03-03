@@ -30,24 +30,4 @@
     .bcs-comment-content {
         text-align: left;
     }
-
-    // MOBILE CSS
-    @media #{$mobile}, #{$tablet} {
-        .ba-comment-list {
-            flex-grow: 1;
-            width: unset;
-            max-height: unset;
-            padding: 15px;
-            background: white;
-        }
-
-        .ba-comment-list-item {
-            margin-bottom: 30px;
-            padding-top: 15px;
-        }
-
-        .ba-comment-list-item + .ba-comment-list-item {
-            padding-top: 30px;
-        }
-    }
 }

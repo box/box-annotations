@@ -53,7 +53,6 @@ describe('controllers/AnnotationModeController', () => {
         controller.annotatedElement = rootElement;
 
         util.getPopoverLayer = jest.fn().mockReturnValue(rootElement);
-        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {

@@ -3,8 +3,6 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { FormattedMessage, RawIntlProvider } from 'react-intl';
-import PlainButton from 'box-ui-elements/es/components/plain-button';
-import IconClose from 'box-ui-elements/es/icons/general/IconClose';
 import { HotkeyRecord, HotkeyLayer } from 'box-ui-elements/es/components/hotkeys';
 
 import messages from './messages';
@@ -16,17 +14,13 @@ import ActionControls from '../ActionControls';
 import AnnotatorLabel from './AnnotatorLabel';
 
 const CLASS_INLINE_POPOVER = 'ba-inline-popover';
-const CLASS_ANIMATE_POPOVER = 'ba-animate-popover';
 const CLASS_CREATE_POPOVER = 'ba-create-popover';
-const CLASS_MOBILE_HEADER = 'ba-mobile-header';
-const CLASS_MOBILE_CLOSE_BTN = 'ba-mobile-close-btn';
 const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
 
 type Props = {
     canComment: boolean,
     headerHeight?: number,
     intl: Object,
-    isMobile: boolean,
     isPending: boolean,
     language?: string,
     messages?: StringMap,
@@ -39,7 +33,6 @@ type Props = {
 
 class AnnotationPopover extends React.PureComponent<Props> {
     static defaultProps = {
-        isMobile: false,
         isPending: false,
         canAnnotate: false,
         canComment: false,
@@ -67,7 +60,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
             createdAt,
             createdBy,
             comments,
-            isMobile,
             intl,
             canComment,
             canAnnotate,
@@ -77,7 +69,6 @@ class AnnotationPopover extends React.PureComponent<Props> {
             onCancel,
             onCreate,
             onCommentClick,
-            headerHeight,
         } = this.props;
         const hasComments = comments.length > 0;
         const isInline = !hasComments && (type === TYPES.highlight || type === TYPES.draw);
@@ -96,19 +87,10 @@ class AnnotationPopover extends React.PureComponent<Props> {
                     <div
                         className={classNames(CLASS_ANNOTATION_POPOVER, {
                             [CLASS_INLINE_POPOVER]: isInline,
-                            [CLASS_ANIMATE_POPOVER]: isMobile,
                             [CLASS_CREATE_POPOVER]: isPending,
                         })}
                     >
-                        {isMobile ? (
-                            <span className={CLASS_MOBILE_HEADER} style={{ height: headerHeight }}>
-                                <PlainButton className={CLASS_MOBILE_CLOSE_BTN} onClick={onCancel}>
-                                    <IconClose height={20} width={20} />
-                                </PlainButton>
-                            </span>
-                        ) : (
-                            <span className={CLASS_ANNOTATION_CARET} />
-                        )}
+                        <span className={CLASS_ANNOTATION_CARET} />
                         <div className={CLASS_POPOVER_OVERLAY}>
                             {hasComments ? (
                                 <CommentList comments={comments} onDelete={onDelete} />

@@ -5,15 +5,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import EventEmitter from 'events';
 
 import AnnotationPopover from '../components/AnnotationPopover';
-import {
-    repositionCaret,
-    getPageInfo,
-    findElement,
-    getPopoverLayer,
-    isInElement,
-    getPageEl,
-    shouldDisplayMobileUI,
-} from '../util';
+import { repositionCaret, getPageInfo, findElement, getPopoverLayer, isInElement, getPageEl } from '../util';
 import { getDialogCoordsFromRange } from './docUtil';
 import {
     CREATE_EVENT,
@@ -30,9 +22,6 @@ class CreateHighlightDialog extends EventEmitter {
         x: 0,
         y: 0,
     };
-
-    /** @property {boolean} - Whether or not we're on a mobile device. */
-    isMobile: boolean;
 
     /** @property {boolean} - Whether or not we support touch. */
     hasTouch: boolean;
@@ -54,7 +43,6 @@ class CreateHighlightDialog extends EventEmitter {
      * @param {HTMLElement} annotatedElement - Parent element
      * @param {Object} [config] - For configuring the dialog.
      * @param {boolean} [config.hasTouch] - True to add touch events.
-     * @param {boolean} [config.isMobile] - True if on a mobile device.
      * @return {CreateHighlightDialog} CreateHighlightDialog instance
      */
     constructor(annotatedElement: HTMLElement, config: Object = {}) {
@@ -115,12 +103,7 @@ class CreateHighlightDialog extends EventEmitter {
             return;
         }
 
-        if (shouldDisplayMobileUI(this.container)) {
-            this.position = { x: 0, y: 0 };
-        } else {
-            this.setPosition(this.selection);
-        }
-
+        this.setPosition(this.selection);
         this.renderAnnotationPopover(type);
     }
 
@@ -132,9 +115,7 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     renderAnnotationPopover = (type: AnnotationType = TYPES.highlight) => {
-        const pageEl = shouldDisplayMobileUI(this.container)
-            ? this.container
-            : getPageEl(this.annotatedElement, this.pageInfo.page);
+        const pageEl = getPageEl(this.annotatedElement, this.pageInfo.page);
         const popoverLayer = getPopoverLayer(pageEl);
 
         this.createPopoverComponent = render(
@@ -144,7 +125,6 @@ class CreateHighlightDialog extends EventEmitter {
                 canDelete
                 headerHeight={this.headerHeight}
                 intl={this.intl}
-                isMobile={shouldDisplayMobileUI(this.container)}
                 isPending
                 onCancel={this.onCommentCancel}
                 onCommentClick={this.onCommentClick}
@@ -208,10 +188,6 @@ class CreateHighlightDialog extends EventEmitter {
      * @return {void}
      */
     updatePosition = () => {
-        if (shouldDisplayMobileUI(this.container)) {
-            return;
-        }
-
         // Position it below lower right corner or center of the highlight - we need
         // to reposition every time since the DOM could have changed from
         // zooming

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import DrawingThread from '../DrawingThread';
 import { STATES, TYPES } from '../../constants';
-import * as util from '../../util';
 import DrawingPath from '../DrawingPath';
 import DrawingContainer from '../DrawingContainer';
 
@@ -35,7 +34,6 @@ describe('drawing/DrawingThread', () => {
             type: 'draw',
         });
         expect(thread.state).toEqual(STATES.inactive);
-        util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
     });
 
     afterEach(() => {

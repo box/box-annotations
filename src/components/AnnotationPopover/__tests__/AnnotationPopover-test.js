@@ -79,16 +79,6 @@ describe('components/AnnotationPopover', () => {
         expect(wrapper.find('.ba-inline-popover').length).toEqual(1);
     });
 
-    test('should correctly render a div without a Focus Trap', () => {
-        const wrapper = render({
-            canAnnotate: true,
-            comments,
-            isMobile: true,
-        });
-        expect(wrapper).toMatchSnapshot();
-        expect(wrapper.find('Overlay').exists()).toBeFalsy();
-    });
-
     test('should correctly render a popover with comments and reply textarea', () => {
         const wrapper = render({
             canAnnotate: true,

@@ -158,10 +158,7 @@ class AnnotationThread extends EventEmitter {
             return this.annotatedElement;
         }
 
-        return util.shouldDisplayMobileUI(this.container)
-            ? this.container
-            : // $FlowFixMe
-              util.getPageEl(this.annotatedElement, this.location.page);
+        return util.getPageEl(this.annotatedElement, this.location.page);
     }
 
     /**
@@ -190,7 +187,6 @@ class AnnotationThread extends EventEmitter {
                 headerHeight={this.headerHeight}
                 id={this.id}
                 intl={this.intl}
-                isMobile={util.shouldDisplayMobileUI(this.container)}
                 isPending={isPending}
                 modifiedAt={this.modifiedAt}
                 onCancel={this.cancelUnsavedAnnotation}
@@ -532,13 +528,7 @@ class AnnotationThread extends EventEmitter {
         }
 
         this.updateAnnotationThread(savedAnnotation);
-
-        if (util.shouldDisplayMobileUI(this.container)) {
-            // Changing state from pending
-            this.state = STATES.active;
-        } else {
-            this.state = STATES.inactive;
-        }
+        this.state = STATES.inactive;
 
         this.show();
         this.renderAnnotationPopover();
