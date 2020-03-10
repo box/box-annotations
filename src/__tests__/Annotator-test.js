@@ -60,7 +60,6 @@ describe('Annotator', () => {
             file: {
                 file_version: { id: 1 },
             },
-            isMobile: false,
             options,
             intl: {},
             location: {},

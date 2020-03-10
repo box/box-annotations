@@ -66,10 +66,7 @@ class DocHighlightThread extends AnnotationThread {
         this.reset();
         this.emit(THREAD_EVENT.cancel);
 
-        // Clear and reset mobile annotations dialog
-        if (util.shouldDisplayMobileUI(this.container)) {
-            this.unmountPopover();
-        } else if (util.isPlainHighlight(this.comments)) {
+        if (util.isPlainHighlight(this.comments)) {
             this.renderAnnotationPopover();
         } else {
             this.destroy();
@@ -464,10 +461,6 @@ class DocHighlightThread extends AnnotationThread {
      * @return {void}
      */
     position = () => {
-        if (util.shouldDisplayMobileUI(this.container)) {
-            return;
-        }
-
         // Position it below lower right corner or center of the highlight - we need
         // to reposition every time since the DOM could have changed from
         // zooming

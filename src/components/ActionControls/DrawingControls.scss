@@ -1,4 +1,4 @@
-@import "../../variables";
+@import '../../variables';
 
 .ba {
     .ba-action-controls-draw {
@@ -27,31 +27,6 @@
         .ba-drawing-delete-btn,
         .ba-drawing-delete-btn:hover {
             padding-left: $button-spacing;
-        }
-    }
-
-    // MOBILE & TABLET CSS
-    @media #{$mobile}, #{$tablet} {
-        .ba-inline-popover .ba-action-controls-draw {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            margin: 0;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid $seesee;
-            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .1);
-        }
-
-        .ba-action-controls-draw .btn-plain,
-        .ba-action-controls-draw .btn-plain:hover {
-            padding: 10px;
-        }
-
-        .ba-drawing-save-btn,
-        .ba-drawing-save-btn:hover {
-            border-right: 1px solid $seesee;
         }
     }
 }

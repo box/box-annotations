@@ -1,4 +1,4 @@
-@import "common";
+@import 'common';
 
 .ba-annotate-mode-background {
     background-color: $fours;
@@ -62,11 +62,6 @@
             fill: $off-white;
         }
     }
-
-    @media #{$mobile} {
-        margin-right: 0;
-        margin-left: 0;
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +94,7 @@
     z-index: 130;
     display: table;
     color: $fours;
-    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     border-top: 20px solid transparent; // Transparent border for hover detection
 }
 
@@ -107,7 +102,7 @@
 .ba-annotation-highlight-dialog,
 .ba-annotation-highlight-dialog:hover {
     padding: 5px 6px;
-    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: $white;
     border: 1px solid $seesee;
     border-radius: 3px;

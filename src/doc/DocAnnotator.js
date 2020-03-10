@@ -64,9 +64,6 @@ class DocAnnotator extends Annotator {
     /** @property {boolean} - True if comment highlights are allowed to be read/written */
     commentHighlightEnabled: boolean;
 
-    /** @property {Function} - Reference to filter function that has been bound TODO(@jholdstock): remove on refactor. */
-    showFirstDialogFilter: Function;
-
     /** @inheritdoc */
     constructor(options: Object) {
         super(options);
@@ -297,7 +294,6 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             container: this.container,
             hasTouch: this.hasTouch,
-            headerHeight: this.headerElement.clientHeight,
             intl: this.intl,
         });
 
@@ -333,7 +329,6 @@ class DocAnnotator extends Annotator {
 
         this.container.addEventListener('resize', this.resetAnnotationUI);
 
-        // Highlight listeners on desktop & mobile
         if (this.plainHighlightEnabled || this.commentHighlightEnabled) {
             this.annotatedElement.addEventListener('wheel', this.hideCreateDialog);
 
@@ -571,7 +566,7 @@ class DocAnnotator extends Annotator {
             this.resetHighlightOnOutsideClick(event);
         }
 
-        // Do nothing if in a text area or mobile dialog or mobile create dialog is already open
+        // Do nothing if in a text area is already open
         const pointController = this.modeControllers[TYPES.point];
         const isCreatingPoint = !!(pointController && pointController.pendingThreadID);
         const isPopoverActive = !!document.querySelector(SELECTOR_ANNOTATION_POPOVER);
@@ -942,22 +937,6 @@ class DocAnnotator extends Annotator {
             default:
         }
         super.handleControllerEvents(data);
-    }
-
-    /**
-     * For filtering out and only showing the first thread in a list of threads.
-     *
-
-     * @param {Object} thread The annotation thread to either hide or show
-     * @param {number} index The index of the annotation thread
-     * @return {void}
-     */
-    showFirstDialogFilter(thread: AnnotationThread, index: number) {
-        if (index === 0) {
-            thread.show();
-        } else {
-            thread.unmountPopover();
-        }
     }
 }
 

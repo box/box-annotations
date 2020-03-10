@@ -60,29 +60,14 @@ describe('doc/DocPointThread', () => {
             thread.show();
             expect(thread.renderAnnotationPopover).not.toBeCalled();
         });
-
-        it('should not render popover if user is on a mobile device and the thread has no annotations yet', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            thread.comments = [];
-            thread.state = STATES.inactive;
-            thread.show();
-            expect(thread.renderAnnotationPopover).not.toBeCalled();
-        });
     });
 
     describe('position()', () => {
         beforeEach(() => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(false);
             util.findElement = jest.fn().mockReturnValue(rootElement);
             thread.getPopoverParent = jest.fn().mockReturnValue(rootElement);
             util.repositionCaret = jest.fn().mockReturnValue(0);
             thread.scrollIntoView = jest.fn();
-        });
-
-        it('should not re-position the popover on mobile devices', () => {
-            util.shouldDisplayMobileUI = jest.fn().mockReturnValue(true);
-            thread.position();
-            expect(util.findElement).not.toBeCalled();
         });
 
         it('should position desktop popovers', () => {

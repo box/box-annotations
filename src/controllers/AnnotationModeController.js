@@ -3,7 +3,7 @@ import rbush from 'rbush';
 import EventEmitter from 'events';
 import noop from 'lodash/noop';
 
-import { insertTemplate, replaceHeader, hasValidBoundaryCoordinates, shouldDisplayMobileUI } from '../util';
+import { insertTemplate, replaceHeader, hasValidBoundaryCoordinates } from '../util';
 import {
     CLASS_HIDDEN,
     CLASS_ACTIVE,
@@ -54,9 +54,6 @@ class AnnotationModeController extends EventEmitter {
 
     /** @property {boolean} */
     hasTouch: boolean = false;
-
-    /** @property {boolean} */
-    isMobile: boolean = false;
 
     /** @property {string} */
     locale: string = 'en-US';
@@ -313,9 +310,7 @@ class AnnotationModeController extends EventEmitter {
             api: this.api,
             container: this.container,
             fileVersionId: this.fileVersionId,
-            isMobile: shouldDisplayMobileUI(this.container),
             hasTouch: this.hasTouch,
-            headerHeight: this.headerElement.clientHeight,
             intl: this.intl,
             ...annotation,
         };
