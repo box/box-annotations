@@ -452,7 +452,7 @@ class AnnotationThread extends EventEmitter {
     }
 
     /**
-     * Destroys mobile and pending/pending-active annotation threads
+     * Destroys pending/pending-active annotation threads
      *
      * @return {void}
      */

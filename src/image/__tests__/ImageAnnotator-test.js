@@ -104,17 +104,12 @@ describe('image/ImageAnnotator', () => {
             expect(location).toBeNull();
         });
 
-        it('should not return a location if no touch event is available and user is on a mobile device', () => {
+        it('should not return a location if no touch event is available and hasTouch is enabled', () => {
             annotator.hasTouch = true;
             expect(annotator.getLocationFromEvent({ targetTouches: [] })).toBeNull();
         });
 
-        it('should replace event with mobile touch event if user is on a mobile device', () => {
-            annotator.hasTouch = true;
-            annotator.getLocationFromEvent(event);
-        });
-
-        it('should not return a location if there are no touch event and the user is on a mobile device', () => {
+        it('should not return a location if there are no touch event and hasTouch is enabled', () => {
             annotator.hasTouch = true;
             const location = annotator.getLocationFromEvent({
                 target: {

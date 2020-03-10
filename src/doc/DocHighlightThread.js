@@ -66,7 +66,6 @@ class DocHighlightThread extends AnnotationThread {
         this.reset();
         this.emit(THREAD_EVENT.cancel);
 
-        // Clear and reset mobile annotations dialog
         if (util.isPlainHighlight(this.comments)) {
             this.renderAnnotationPopover();
         } else {

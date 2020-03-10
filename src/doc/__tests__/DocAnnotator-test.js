@@ -162,7 +162,7 @@ describe('doc/DocAnnotator', () => {
             annotator.removeRangyHighlight = jest.fn();
         });
 
-        it('should replace event with mobile touch event if user is on a touch enabled device', () => {
+        it('should replace event with a touch event if hasTouch is enabled', () => {
             annotator.hasTouch = true;
             event = {
                 targetTouches: [
@@ -176,7 +176,7 @@ describe('doc/DocAnnotator', () => {
             annotator.getLocationFromEvent(event, TYPES.point);
         });
 
-        it('should not return a location if there are no touch event and the user is on a touch enabled device', () => {
+        it('should not return a location if there are no touch event if hasTouch is enabled', () => {
             annotator.hasTouch = true;
             expect(annotator.getLocationFromEvent(event, TYPES.point)).toBeNull();
 
@@ -1147,7 +1147,7 @@ describe('doc/DocAnnotator', () => {
             expect(thread.show).toBeCalled();
         });
 
-        it('should reset the mobile dialog if no active thread exists', () => {
+        it('should reset the dialog if no active thread exists', () => {
             annotator.plainHighlightEnabled = true;
             annotator.getLocationFromEvent = jest.fn().mockReturnValue({});
 
