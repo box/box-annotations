@@ -19,7 +19,6 @@ const CLASS_POPOVER_OVERLAY = 'ba-popover-overlay';
 
 type Props = {
     canComment: boolean,
-    headerHeight?: number,
     intl: Object,
     isPending: boolean,
     language?: string,

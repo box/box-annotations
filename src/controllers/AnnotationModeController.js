@@ -311,7 +311,6 @@ class AnnotationModeController extends EventEmitter {
             container: this.container,
             fileVersionId: this.fileVersionId,
             hasTouch: this.hasTouch,
-            headerHeight: this.headerElement.clientHeight,
             intl: this.intl,
             ...annotation,
         };

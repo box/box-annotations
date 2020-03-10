@@ -53,7 +53,6 @@ class CreateHighlightDialog extends EventEmitter {
         this.annotatedElement = annotatedElement;
         this.container = config.container;
         this.hasTouch = !!config.hasTouch || false;
-        this.headerHeight = config.headerHeight;
         this.intl = config.intl;
     }
 
@@ -123,7 +122,6 @@ class CreateHighlightDialog extends EventEmitter {
                 canAnnotate
                 canComment={this.allowComment}
                 canDelete
-                headerHeight={this.headerHeight}
                 intl={this.intl}
                 isPending
                 onCancel={this.onCommentCancel}

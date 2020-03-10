@@ -297,7 +297,6 @@ class DocAnnotator extends Annotator {
             allowHighlight: this.plainHighlightEnabled,
             container: this.container,
             hasTouch: this.hasTouch,
-            headerHeight: this.headerElement.clientHeight,
             intl: this.intl,
         });
 

@@ -58,7 +58,6 @@ class AnnotationThread extends EventEmitter {
         this.container = data.container;
         this.locale = data.locale;
         this.hasTouch = data.hasTouch || false;
-        this.headerHeight = data.headerHeight;
 
         this.id = data.id;
         this.intl = data.intl;
@@ -184,7 +183,6 @@ class AnnotationThread extends EventEmitter {
                 comments={this.comments}
                 createdAt={this.createdAt}
                 createdBy={this.createdBy}
-                headerHeight={this.headerHeight}
                 id={this.id}
                 intl={this.intl}
                 isPending={isPending}
