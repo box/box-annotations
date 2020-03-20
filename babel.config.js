@@ -24,6 +24,20 @@ module.exports = api => {
                 },
             ],
         ],
+        overrides: [
+            {
+                test: ['./src/**/*.ts', './src/**/*.tsx'],
+                presets: [
+                    [
+                        '@babel/preset-typescript',
+                        {
+                            isTSX: true,
+                            allExtensions: true,
+                        },
+                    ],
+                ],
+            },
+        ],
         env: {
             production: {
                 plugins: [['react-remove-properties', { properties: ['data-testid'] }]],
