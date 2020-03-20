@@ -15,13 +15,10 @@ module.exports = () => {
         resolve: {
             modules: ['src', 'node_modules'],
         },
-        resolveLoader: {
-            modules: [path.resolve('src'), path.resolve('node_modules')],
-        },
         module: {
             rules: [
                 {
-                    test: /\.js$/,
+                    test: /\.(js|ts|tsx)$/,
                     loader: 'babel-loader',
                     exclude: /node_modules\/(?!(react-intl|intl-messageformat|intl-messageformat-parser)\/).*/,
                 },

@@ -45,6 +45,7 @@ const config = Object.assign(commonConfig(), {
             ),
             moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead
         },
+        extensions: ['.tsx', '.ts', '.js'],
         modules: ['src', 'node_modules'],
     },
     devServer: {
