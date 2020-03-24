@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-expressions */
 import BoxAnnotations from '../BoxAnnotations';
-import { TYPES } from '../constants';
-import * as util from '../util';
 import DrawingModeController from '../controllers/DrawingModeController';
+import { TYPES } from '../constants';
 
 let loader;
 
@@ -19,6 +17,37 @@ describe('BoxAnnotations', () => {
         loader = null;
     });
 
+    describe('canLoad()', () => {
+        let permissions;
+
+        beforeEach(() => {
+            permissions = {
+                can_annotate: false,
+                can_view_annotations_all: false,
+                can_view_annotations_self: false,
+            };
+        });
+
+        it('should return false if permissions do not exist', () => {
+            expect(loader.canLoad()).toBe(false);
+        });
+
+        it('should return true if user has at least can_annotate permissions', () => {
+            permissions.can_annotate = true;
+            expect(loader.canLoad(permissions)).toBe(true);
+        });
+
+        it('should return true if user has at least can_view_annotations_all permissions', () => {
+            permissions.can_view_annotations_all = true;
+            expect(loader.canLoad(permissions)).toBe(true);
+        });
+
+        it('should return true if user has at least can_view_annotations_self permissions', () => {
+            permissions.can_view_annotations_self = true;
+            expect(loader.canLoad(permissions)).toBe(true);
+        });
+    });
+
     describe('getAnnotators()', () => {
         it("should return the loader's annotators", () => {
             expect(loader.getAnnotators()).toStrictEqual(loader.annotators);
@@ -31,27 +60,15 @@ describe('BoxAnnotations', () => {
     });
 
     describe('getAnnotatorsForViewer()', () => {
-        beforeEach(() => {
-            loader.instantiateControllers = jest.fn();
-        });
-
         it('should return undefined if the annotator does not exist', () => {
             const annotator = loader.getAnnotatorsForViewer('not_supported_type');
             expect(annotator).toBeUndefined();
-            expect(loader.instantiateControllers).toBeCalled();
         });
 
         it('should return the correct annotator for the viewer name', () => {
             const name = 'Document';
             const annotator = loader.getAnnotatorsForViewer(name);
             expect(annotator.NAME).toEqual(name); // First entry is Document annotator
-            expect(loader.instantiateControllers).toBeCalled();
-        });
-
-        it('should return nothing if the viewer requested is disabled', () => {
-            const annotator = loader.getAnnotatorsForViewer('Document', ['Document']);
-            expect(annotator).toBeUndefined();
-            expect(loader.instantiateControllers).toBeCalled();
         });
     });
 
@@ -75,17 +92,16 @@ describe('BoxAnnotations', () => {
 
         it('Should do nothing when config has no types', () => {
             const config = {
-                TYPE: undefined,
+                TYPES: undefined,
             };
             expect(() => loader.instantiateControllers(config)).not.toThrow();
         });
 
         it('Should instantiate controllers and assign them to the CONTROLLERS attribute', () => {
             const config = {
-                TYPE: [TYPES.draw, 'typeWithoutController'],
+                TYPES: [TYPES.draw, 'typeWithoutController'],
             };
             loader.viewerConfig = { enabledTypes: [TYPES.draw] };
-
             loader.instantiateControllers(config);
             expect(config.CONTROLLERS).not.toEqual(undefined);
             expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).toBeTruthy();
@@ -94,55 +110,18 @@ describe('BoxAnnotations', () => {
         });
     });
 
-    describe('getAnnotatorTypes()', () => {
-        const config = {
-            NAME: 'Document',
-            VIEWER: ['Document'],
-            TYPE: ['point', 'highlight', 'highlight-comment', 'draw'],
-            DEFAULT_TYPES: ['point', 'highlight'],
-        };
-
-        it('should use the specified types from options', () => {
-            loader.viewerOptions = {
-                Document: { enabledTypes: ['draw'] },
-            };
-            expect(loader.getAnnotatorTypes(config)).toStrictEqual(['draw']);
-        });
-
-        it('should filter disabled annotation types from the annotator.TYPE', () => {
-            loader.viewerConfig = { disabledTypes: ['point'] };
-            expect(loader.getAnnotatorTypes(config)).toStrictEqual(['highlight']);
-        });
-
-        it('should filter and only keep allowed types of annotations', () => {
-            loader.viewerConfig = { enabledTypes: ['point', 'timestamp'] };
-            expect(loader.getAnnotatorTypes(config)).toStrictEqual(['point']);
-
-            loader.viewerOptions = {
-                Document: {
-                    enabledTypes: ['point', 'timestamp'],
-                },
-            };
-            expect(loader.getAnnotatorTypes(config)).toStrictEqual(['point']);
-        });
-
-        it('should respect default annotators if none provided', () => {
-            expect(loader.getAnnotatorTypes(config)).toStrictEqual(['point', 'highlight']);
-        });
-    });
-
     describe('determineAnnotator()', () => {
         let annotator;
         let options;
 
         beforeEach(() => {
-            util.canLoadAnnotations = jest.fn().mockReturnValue(true);
-            loader.instantiateControllers = jest.fn();
+            loader.canLoad = jest.fn().mockReturnValue(true);
+            loader.instantiateControllers = jest.fn(val => val);
 
             annotator = {
                 NAME: 'Document',
                 VIEWER: ['Document'],
-                TYPE: ['point'],
+                TYPES: ['point'],
                 DEFAULT_TYPES: ['point'],
             };
 
@@ -154,20 +133,47 @@ describe('BoxAnnotations', () => {
                     NAME: 'Document',
                 },
             };
-            loader.getAnnotatorTypes = jest.fn().mockReturnValue(['point']);
+        });
+
+        it('should use the specified types from options', () => {
+            loader.viewerOptions = {
+                Document: { enabledTypes: ['draw'] },
+            };
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['draw']);
+        });
+
+        it('should filter and only keep allowed types of annotations', () => {
+            const viewerConfig = { enabledTypes: ['point', 'timestamp'] };
+            expect(loader.determineAnnotator(options, viewerConfig).TYPES).toStrictEqual(['point']);
+
+            loader.viewerOptions = {
+                Document: {
+                    enabledTypes: ['point', 'timestamp'],
+                },
+            };
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['point']);
+        });
+
+        it('should respect default annotators if none provided', () => {
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual([
+                'draw',
+                'highlight',
+                'highlight-comment',
+                'point',
+            ]);
         });
 
         it('should not return an annotator if the user has incorrect permissions/scopes', () => {
+            loader.canLoad = jest.fn().mockReturnValue(false);
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(annotator);
-            util.canLoadAnnotations = jest.fn().mockReturnValue(false);
             expect(loader.determineAnnotator(options)).toBeNull();
         });
 
         it('should choose the first annotator that matches the viewer', () => {
-            const viewer = 'Document';
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(annotator);
+
             const result = loader.determineAnnotator(options);
-            expect(result.NAME).toEqual(viewer);
+            expect(result.NAME).toEqual('Document');
             expect(loader.getAnnotatorsForViewer).toBeCalled();
         });
 
@@ -177,12 +183,10 @@ describe('BoxAnnotations', () => {
         });
 
         it('should return a copy of the annotator that matches', () => {
-            const viewer = 'Document';
-
             const docAnnotator = {
-                NAME: viewer,
+                NAME: 'Document',
                 VIEWER: ['Document'],
-                TYPE: ['point', 'highlight'],
+                TYPES: ['point', 'highlight'],
                 DEFAULT_TYPES: ['point'],
             };
 

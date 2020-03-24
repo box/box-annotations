@@ -105,10 +105,6 @@ export const SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL = `.${CLASS_ANNOTATION_BUTTO
 // Data types
 export const DATA_TYPE_ANNOTATION_INDICATOR = 'annotation-indicator';
 
-export const PERMISSION_ANNOTATE = 'can_annotate';
-export const PERMISSION_CAN_VIEW_ANNOTATIONS_ALL = 'can_view_annotations_all';
-export const PERMISSION_CAN_VIEW_ANNOTATIONS_SELF = 'can_view_annotations_self';
-
 export const DRAW_STATES = {
     idle: 'idle',
     drawing: 'drawing',
@@ -122,10 +118,10 @@ export const STATES = {
 };
 
 export const TYPES = {
-    point: 'point',
-    highlight: 'highlight',
     draw: 'draw',
+    highlight: 'highlight',
     highlight_comment: 'highlight-comment',
+    point: 'point',
 };
 
 export const ANNOTATOR_TYPE = {
