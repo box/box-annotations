@@ -10,4 +10,12 @@ module.exports = {
         'prefer-destructuring': ['error', { object: true, array: false }],
         'react/default-props-match-prop-types': 0,
     },
+    overrides: [
+        {
+            files: ['*.ts', '*.tsx'],
+            rules: {
+                'flowtype/no-types-missing-file-annotation': 'off',
+            },
+        },
+    ],
 };

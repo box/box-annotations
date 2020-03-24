@@ -24,6 +24,7 @@ prepush() {
     echo "Checking types"
     echo "--------------------------------------------------------"
     yarn flow check || exit 1
+    yarn lint:ts || exit 1
 
     echo "--------------------------------------------------------"
     echo "Building"

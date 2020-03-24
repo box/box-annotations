@@ -1,9 +1,6 @@
 import 'whatwg-fetch';
 import { decode } from 'box-ui-elements/es/utils/keys';
 import {
-    PERMISSION_ANNOTATE,
-    PERMISSION_CAN_VIEW_ANNOTATIONS_ALL,
-    PERMISSION_CAN_VIEW_ANNOTATIONS_SELF,
     TYPES,
     SELECTOR_ANNOTATION_CARET,
     CLASS_DISABLED,
@@ -516,26 +513,6 @@ export function round(number, precision) {
     pair = (value + 'e').split('e');
     return +(pair[0] + 'e' + (+pair[1] - precision));
     /* eslint-enable prefer-template */
-}
-
-/**
- * Determines whether the user has file permissions to annotate, view (either
- * their own or everyone's) annotations which would allow annotations to at
- * least be fetched for the current file
- *
- * @param {Object} permissions File permissions
- * @return {boolean} Whether or not the user has either view OR annotate permissions
- */
-export function canLoadAnnotations(permissions) {
-    if (!permissions) {
-        return false;
-    }
-
-    const can_annotate = permissions[PERMISSION_ANNOTATE];
-    const can_view_annotations_all = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_ALL];
-    const can_view_annotations_self = permissions[PERMISSION_CAN_VIEW_ANNOTATIONS_SELF];
-
-    return !!can_annotate || !!can_view_annotations_all || !!can_view_annotations_self;
 }
 
 /**
