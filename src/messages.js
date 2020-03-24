@@ -1,14 +1,6 @@
-/* eslint-disable max-len */
-/**
- * @flow
- * @file i18n messages
- * @author Box
- */
-
 import { defineMessages } from 'react-intl';
-import type { MessageDescriptor } from 'react-intl';
 
-const messages: { [string]: MessageDescriptor } = defineMessages({
+export default defineMessages({
     anonymousUser: {
         id: 'ba.anonymousUser',
         description: 'Place holder for the anonymous user',
@@ -75,5 +67,3 @@ const messages: { [string]: MessageDescriptor } = defineMessages({
         defaultMessage: 'We’re sorry, the annotation could not be deleted.',
     },
 });
-
-export default messages;

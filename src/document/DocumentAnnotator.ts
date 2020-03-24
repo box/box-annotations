@@ -1,0 +1,93 @@
+// @flow
+import BaseAnnotator, { Options } from '../common/BaseAnnotator';
+import BaseManager from '../common/BaseManager';
+import RegionManager from '../region/RegionManager';
+import { ANNOTATOR_EVENT, CLASS_ANNOTATIONS_LOADED } from '../constants';
+
+export default class DocumentAnnotator extends BaseAnnotator {
+    annotatedEl?: HTMLElement;
+
+    annotations: Record<string, []> = {};
+
+    managers: Map<string, BaseManager[]> = new Map();
+
+    constructor(options: Options) {
+        super(options);
+
+        this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
+        this.hydrate(options);
+    }
+
+    destroy(): void {
+        super.destroy();
+
+        this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
+    }
+
+    getPages(): HTMLElement[] {
+        // TODO: Inject page/container elements from Preview SDK rather than DOM?
+        return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
+    }
+
+    handleScale = ({ scale }: { scale: number }): void => {
+        this.init(scale);
+    };
+
+    hydrate({ file }: Options): void {
+        this.api
+            .fetchAnnotations(file.file_version.id)
+            .then(() => {
+                // TODO: Normalize response, set in store, and render
+            })
+            .catch(error => {
+                this.emit(ANNOTATOR_EVENT.error, error);
+            });
+    }
+
+    init(scale: number): void {
+        super.init(scale);
+
+        if (!this.rootEl) {
+            return;
+        }
+
+        this.annotatedEl = this.rootEl.querySelector('.bp-doc') as HTMLElement;
+        this.annotatedEl.classList.add(CLASS_ANNOTATIONS_LOADED);
+
+        this.render();
+    }
+
+    render(): void {
+        this.getPages()
+            .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
+            .forEach(pageEl => this.renderPage(pageEl));
+    }
+
+    renderPage(pageEl: HTMLElement): void {
+        const { pageNumber = '1' } = pageEl.dataset;
+        const annotations = this.annotations[pageNumber];
+        const managers = this.managers.get(pageNumber) || [];
+
+        // Destroy any managers that were attached to page elements that no longer exist
+        if (managers.some(manager => !manager.exists(pageEl))) {
+            managers.forEach(manager => manager.destroy());
+            managers.length = 0;
+        }
+
+        // Lazily instantiate managers as pages are added or re-rendered
+        if (managers.length === 0) {
+            // Add additional managers here for other annotation types
+            managers.push(new RegionManager({ page: pageNumber, pageEl }));
+        }
+
+        // Request each manager render for every page (can be updated with visibility detection)
+        managers.forEach(manager =>
+            manager.render({
+                annotations,
+                scale: this.scale,
+            }),
+        );
+
+        this.managers.set(pageNumber, managers);
+    }
+}
