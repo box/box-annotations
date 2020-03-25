@@ -17,7 +17,9 @@ describe('BaseAnnotator', () => {
                 can_view_annotations_self: true,
             },
         },
-        intl: {},
+        intl: {
+            messages: {},
+        },
         locale: 'en-US',
         token: '1234567890',
     };
@@ -34,6 +36,23 @@ describe('BaseAnnotator', () => {
         }
     });
 
+    describe('destroy()', () => {
+        it('should destroy the api instance', () => {
+            annotator.destroy();
+
+            expect(annotator.api.destroy).toBeCalled();
+        });
+    });
+
+    describe('handleScale', () => {
+        it('should call init with the new scale', () => {
+            annotator.init = jest.fn();
+            annotator.handleScale({ scale: 5 });
+
+            expect(annotator.init).toHaveBeenCalledWith(5);
+        });
+    });
+
     describe('init()', () => {
         it('should set the root element based on class selector', () => {
             annotator.init(5);
@@ -48,14 +67,6 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             expect(annotator.rootEl).toBeNull();
-        });
-    });
-
-    describe('destroy()', () => {
-        it('should destroy the api instance', () => {
-            annotator.destroy();
-
-            expect(annotator.api.destroy).toBeCalled();
         });
     });
 

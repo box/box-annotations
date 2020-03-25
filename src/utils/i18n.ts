@@ -1,12 +1,7 @@
 import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
 import boxElementsMessages from 'box-elements-messages';
 import { createIntl, createIntlCache, IntlShape } from 'react-intl';
-
-type IntlOptions = {
-    messages: Record<string, string>;
-    language?: string;
-    locale?: string;
-};
+import { IntlOptions } from '../@types/i18n';
 
 declare const __LANGUAGE__: string; // eslint-disable-line no-underscore-dangle
 

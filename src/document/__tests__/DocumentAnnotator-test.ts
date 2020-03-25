@@ -26,7 +26,9 @@ describe('DocumentAnnotator', () => {
                 can_view_annotations_self: true,
             },
         },
-        intl: {},
+        intl: {
+            messages: {},
+        },
         locale: 'en-US',
         token: '1234567890',
     };
@@ -68,15 +70,6 @@ describe('DocumentAnnotator', () => {
             expect(annotator.rootEl).toBe(container);
             expect(annotator.annotatedEl).toBe(container.querySelector('.bp-doc'));
             expect(annotator.annotatedEl!.className).toContain(CLASS_ANNOTATIONS_LOADED); // eslint-disable-line @typescript-eslint/no-non-null-assertion
-        });
-    });
-
-    describe('handleScale', () => {
-        it('should call init with the new scale', () => {
-            annotator.init = jest.fn();
-            annotator.handleScale({ scale: 5 });
-
-            expect(annotator.init).toHaveBeenCalledWith(5);
         });
     });
 

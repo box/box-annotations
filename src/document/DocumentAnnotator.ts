@@ -14,24 +14,13 @@ export default class DocumentAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
-        this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
         this.hydrate(options);
-    }
-
-    destroy(): void {
-        super.destroy();
-
-        this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }
 
     getPages(): HTMLElement[] {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
     }
-
-    handleScale = ({ scale }: { scale: number }): void => {
-        this.init(scale);
-    };
 
     hydrate({ file }: Options): void {
         this.api

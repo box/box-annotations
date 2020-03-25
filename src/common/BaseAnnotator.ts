@@ -1,13 +1,16 @@
 import { EventEmitter } from 'events';
+import { IntlShape } from 'react-intl';
 import FileVersionAPI from '../api/FileVersionAPI';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
-import { Permissions } from '../@types';
+import { IntlOptions, Permissions } from '../@types';
+
+export type Container = string | HTMLElement;
 
 export type Options = {
     apiHost: string;
-    container: string | HTMLElement | null;
+    container: Container;
     file: {
         id: string;
         file_version: {
@@ -16,7 +19,7 @@ export type Options = {
         permissions: Permissions;
     };
     hasTouch?: boolean;
-    intl: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    intl: IntlOptions;
     locale?: string;
     token: string;
 };
@@ -24,18 +27,16 @@ export type Options = {
 export default class BaseAnnotator extends EventEmitter {
     api: FileVersionAPI;
 
-    intl: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    intl: IntlShape;
 
-    options: Options;
+    container: Container;
 
     rootEl?: HTMLElement;
 
     scale = 1;
 
-    constructor(options: Options) {
+    constructor({ apiHost, container, intl, file, token }: Options) {
         super();
-
-        const { apiHost, intl = {}, file, token } = options;
 
         this.api = new FileVersionAPI({
             apiHost,
@@ -43,19 +44,29 @@ export default class BaseAnnotator extends EventEmitter {
             permissions: file.permissions || {},
             token,
         });
+        this.container = container;
         this.intl = i18n.createIntlProvider(intl);
-        this.options = options;
+
+        // Add custom handlers for events triggered by the Preview SDK
+        this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }
 
     destroy(): void {
         this.api.destroy();
+        this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }
+
+    getEl(selector: HTMLElement | string): HTMLElement {
+        return (typeof selector === 'string' ? document.querySelector(selector) : selector) as HTMLElement;
+    }
+
+    handleScale = ({ scale }: { scale: number }): void => {
+        this.init(scale);
+    };
 
     // Called by box-content-preview
     init(scale: number): void {
-        const { container } = this.options;
-
-        this.rootEl = (typeof container === 'string' ? document.querySelector(container) : container) as HTMLElement;
+        this.rootEl = this.getEl(this.container);
         this.scale = scale;
 
         if (!this.rootEl) {
