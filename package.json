@@ -154,7 +154,7 @@
         "setup": "yarn install && yarn clean && yarn build:i18n",
         "start": "yarn setup && yarn build:dev:dist --watch",
         "start:dev": "yarn setup && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev yarn webpack-dev-server --config scripts/webpack.config.js --mode development",
-        "start:npm": "f() { yarn link && yarn setup && IS_LINKED=1 yarn build:dev:dist --watch; }; f",
+        "start:linked": "f() { yarn setup && IS_LINKED=1 yarn build:dev:dist --watch; }; f",
         "test": "BABEL_ENV=test NODE_ENV=test yarn jest",
         "test:e2e": "npm-run-all -p -r start:dev cy:run",
         "test:e2e:open": "npm-run-all -p -r start:dev cy:open",
