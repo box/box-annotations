@@ -28,7 +28,7 @@ if (fs.existsSync('scripts/rsync.json')) {
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {
-        annotations: ['./src/BoxAnnotations.js'],
+        annotations: ['./src/BoxAnnotations.ts'],
     },
     output: {
         filename: '[Name].js',

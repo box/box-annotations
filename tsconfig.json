@@ -1,5 +1,7 @@
 {
     "extends": "@box/frontend/ts/tsconfig",
     "include": ["./src/**/*.ts", "./src/**/*.tsx"],
-    "exclude": ["node_modules", "dist"]
+    "compilerOptions": {
+        "lib": ["dom", "es2017"]
+    }
 }

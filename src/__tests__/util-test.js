@@ -442,37 +442,6 @@ describe('util', () => {
         });
     });
 
-    describe('canLoadAnnotations()', () => {
-        let permissions;
-
-        beforeEach(() => {
-            permissions = {
-                can_annotate: false,
-                can_view_annotations_all: false,
-                can_view_annotations_self: false,
-            };
-        });
-
-        it('should return false if permissions do not exist', () => {
-            expect(util.canLoadAnnotations()).toBeFalsy();
-        });
-
-        it('should return true if user has at least can_annotate permissions', () => {
-            permissions.can_annotate = true;
-            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
-        });
-
-        it('should return true if user has at least can_view_annotations_all permissions', () => {
-            permissions.can_view_annotations_all = true;
-            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
-        });
-
-        it('should return true if user has at least can_view_annotations_self permissions', () => {
-            permissions.can_view_annotations_self = true;
-            expect(util.canLoadAnnotations(permissions)).toBeTruthy();
-        });
-    });
-
     describe('clearCanvas()', () => {
         let layerEl;
         let context;
