@@ -39,16 +39,25 @@ class FileVersionAPI extends API {
     }
 
     /**
+     * Fetches the annotations for the specified file version id
+     *
+     * @param {string} version - File version ID
+     * @return {Promise} Promise that resolves with annotations
+     */
+    fetchAnnotations(version: string): Promise<any> {
+        this.fileVersionId = version;
+
+        return this.fetchFromMarker({ version, fields: FIELDS });
+    }
+
+    /**
      * Fetches and organizes the annotations for the specified file version id
      *
      * @param {string} version - File version ID
      * @return {Promise} Promise that resolves with thread map
      */
     fetchVersionAnnotations(version: string): Promise<AnnotationMap> {
-        this.fileVersionId = version;
-
-        // $FlowFixMe
-        return this.fetchFromMarker({ version, fields: FIELDS }).then(this.createAnnotationMap);
+        return this.fetchAnnotations(version).then(this.createAnnotationMap);
     }
 
     /**

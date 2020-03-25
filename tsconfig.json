@@ -2,6 +2,6 @@
     "extends": "@box/frontend/ts/tsconfig",
     "include": ["./src/**/*.ts", "./src/**/*.tsx"],
     "compilerOptions": {
-        "lib": ["dom", "es2017"]
+        "lib": ["DOM", "ES2020"]
     }
 }

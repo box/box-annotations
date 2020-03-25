@@ -4,7 +4,7 @@ import DrawingModeController from './controllers/DrawingModeController';
 import PointModeController from './controllers/PointModeController';
 import HighlightModeController from './controllers/HighlightModeController';
 import { TYPES } from './constants';
-import { Permissions, PERMISSIONS } from './types';
+import { Permissions, PERMISSIONS } from './@types';
 
 type Annotator = {
     CONSTRUCTOR: typeof DocAnnotator;
