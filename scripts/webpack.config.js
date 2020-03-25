@@ -12,6 +12,7 @@ const license = require('./license');
 const commonConfig = require('./webpack.common.config');
 
 const isDev = process.env.NODE_ENV === 'dev';
+const isLinked = process.env.IS_LINKED === '1';
 const isRelease = process.env.NODE_ENV === 'production';
 const language = process.env.LANGUAGE || 'en-US';
 const locale = language.substr(0, language.indexOf('-'));
@@ -62,8 +63,7 @@ if (isDev) {
         config.plugins.push(new RsyncPlugin('dist/.', rsyncLocation, 'annotations'));
     }
 
-    // Add inline source map
-    config.devtool = 'source-map';
+    config.devtool = isLinked ? 'cheap-module-eval-source-map' : 'source-map';
     config.plugins.push(new TranslationsPlugin());
     config.plugins.push(
         new CircularDependencyPlugin({
