@@ -56,7 +56,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }
 
-    getEl(selector: HTMLElement | string): HTMLElement {
+    getElement(selector: HTMLElement | string): HTMLElement {
         return (typeof selector === 'string' ? document.querySelector(selector) : selector) as HTMLElement;
     }
 
@@ -66,7 +66,7 @@ export default class BaseAnnotator extends EventEmitter {
 
     // Called by box-content-preview
     init(scale: number): void {
-        this.rootEl = this.getEl(this.container);
+        this.rootEl = this.getElement(this.container);
         this.scale = scale;
 
         if (!this.rootEl) {

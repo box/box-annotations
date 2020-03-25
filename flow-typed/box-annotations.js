@@ -147,7 +147,7 @@ type AnnotationData = {
 };
 
 export type IntlOptions = {
-    messages: Object,
+    messages?: Object,
     language?: string,
     locale?: string,
 }

@@ -17,6 +17,29 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.hydrate(options);
     }
 
+    getPageManagers(pageEl: HTMLElement): BaseManager[] {
+        const pageNumber = this.getPageNumber(pageEl);
+        const managers = this.managers.get(pageNumber) || [];
+
+        // Destroy any managers that were attached to page elements that no longer exist
+        if (managers.some(manager => !manager.exists(pageEl))) {
+            managers.forEach(manager => manager.destroy());
+            managers.length = 0;
+        }
+
+        // Lazily instantiate managers as pages are added or re-rendered
+        if (managers.length === 0) {
+            // Add additional managers here for other annotation types
+            managers.push(new RegionManager({ page: pageNumber, pageEl }));
+        }
+
+        return managers;
+    }
+
+    getPageNumber(pageEl: HTMLElement): string {
+        return pageEl.dataset.pageNumber || '1';
+    }
+
     getPages(): HTMLElement[] {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
@@ -53,30 +76,17 @@ export default class DocumentAnnotator extends BaseAnnotator {
     }
 
     renderPage(pageEl: HTMLElement): void {
-        const { pageNumber = '1' } = pageEl.dataset;
-        const annotations = this.annotations[pageNumber];
-        const managers = this.managers.get(pageNumber) || [];
+        const pageManagers = this.getPageManagers(pageEl);
+        const pageNumber = this.getPageNumber(pageEl);
 
-        // Destroy any managers that were attached to page elements that no longer exist
-        if (managers.some(manager => !manager.exists(pageEl))) {
-            managers.forEach(manager => manager.destroy());
-            managers.length = 0;
-        }
-
-        // Lazily instantiate managers as pages are added or re-rendered
-        if (managers.length === 0) {
-            // Add additional managers here for other annotation types
-            managers.push(new RegionManager({ page: pageNumber, pageEl }));
-        }
-
-        // Request each manager render for every page (can be updated with visibility detection)
-        managers.forEach(manager =>
+        // Render annotations for every page (can be updated with visibility detection)
+        pageManagers.forEach(manager =>
             manager.render({
-                annotations,
+                annotations: this.annotations[pageNumber],
                 scale: this.scale,
             }),
         );
 
-        this.managers.set(pageNumber, managers);
+        this.managers.set(pageNumber, pageManagers);
     }
 }

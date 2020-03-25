@@ -22,7 +22,7 @@ if (!window.Intl.RelativeTimeFormat) {
 
 const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
 const intlCache = createIntlCache();
-const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions): IntlShape => {
+const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions = {}): IntlShape => {
     return createIntl(
         {
             messages,
