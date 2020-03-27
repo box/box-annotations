@@ -5,7 +5,6 @@ import noop from 'lodash/noop';
 
 import { insertTemplate, replaceHeader, hasValidBoundaryCoordinates } from '../util';
 import {
-    CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CLASS_ANNNOTATION_MODE_BACKGROUND,
@@ -36,12 +35,6 @@ class AnnotationModeController extends EventEmitter {
 
     /** @property {HTMLElement} - Header HTML DOM element */
     headerElement: HTMLElement;
-
-    /** @property {HTMLElement} - Annotation mode button HTML DOM element */
-    buttonEl: HTMLElement;
-
-    /** @property {Object} - Annotation mode button selector and title */
-    modeButton: Object;
 
     /** @property {AnnotationType} - Mode for annotation controller */
     mode: AnnotationType;
@@ -112,11 +105,6 @@ class AnnotationModeController extends EventEmitter {
             permissions: this.permissions,
         });
         this.api.addListener(CONTROLLER_EVENT.error, this.handleAPIErrors);
-
-        if (data.modeButton && this.permissions.can_annotate) {
-            this.modeButton = data.modeButton;
-            this.showButton();
-        }
     }
 
     /**
@@ -149,44 +137,6 @@ class AnnotationModeController extends EventEmitter {
     getButton(annotatorSelector: string): HTMLElement {
         // $FlowFixMe
         return this.headerElement.querySelector(annotatorSelector);
-    }
-
-    /**
-     * Shows the annotate button for the specified mode
-     *
-     * @return {void}
-     */
-    showButton(): void {
-        if (!this.permissions.can_annotate) {
-            return;
-        }
-
-        this.buttonEl = this.getButton(this.modeButton.selector);
-        // $FlowFixMe
-        if (this.buttonEl) {
-            this.buttonEl.classList.remove(CLASS_HIDDEN);
-
-            // $FlowFixMe
-            this.toggleMode = this.toggleMode.bind(this);
-            // $FlowFixMe
-            this.buttonEl.addEventListener('click', this.toggleMode);
-        }
-    }
-
-    /**
-     * Hides the annotate button for the specified mode
-     *
-     * @return {void}
-     */
-    hideButton() {
-        if (!this.permissions.can_annotate || !this.modeButton) {
-            return;
-        }
-
-        this.buttonEl = this.getButton(this.modeButton.selector);
-        if (this.buttonEl) {
-            this.buttonEl.classList.add(CLASS_HIDDEN);
-        }
     }
 
     /**
