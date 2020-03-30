@@ -7,7 +7,6 @@ import {
     CLASS_ANNOTATION_MODE,
     THREAD_EVENT,
     CONTROLLER_EVENT,
-    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     SELECTOR_POINT_MODE_HEADER,
 } from '../../constants';
 import AnnotationThread from '../../AnnotationThread';
@@ -61,16 +60,6 @@ describe('controllers/PointModeController', () => {
         });
     });
 
-    describe('setupHeader', () => {
-        it('should setup header and get all the mode buttons', () => {
-            const blankDiv = document.createElement('div');
-            util.insertTemplate = jest.fn();
-            controller.getButton = jest.fn().mockReturnValue(blankDiv);
-            controller.setupHeader(blankDiv, blankDiv);
-            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
-        });
-    });
-
     describe('setupHandlers()', () => {
         it('should successfully contain mode handlers', () => {
             controller.pushElementHandler = jest.fn();
@@ -82,11 +71,6 @@ describe('controllers/PointModeController', () => {
                 ['click', 'touchstart'],
                 controller.pointClickHandler,
                 true,
-            );
-            expect(controller.pushElementHandler).toBeCalledWith(
-                controller.exitButtonEl,
-                'click',
-                controller.toggleMode,
             );
         });
     });
