@@ -1,7 +1,8 @@
-import { createStore, applyMiddleware, compose, Store } from 'redux';
+import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
 import createRootReducer from './createRootReducer';
+import { ApplicationState } from './types';
 
-const middleware = [];
+const middleware: Middleware[] = [];
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers =
     process.env.NODE_ENV === 'dev' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -19,7 +20,7 @@ const composeEnhancers =
 
 const enhancer = composeEnhancers(applyMiddleware(...middleware));
 
-export default function configureStore(preloadedState): Store {
+export default function configureStore(preloadedState?: ApplicationState): Store {
     const store = createStore(createRootReducer(), preloadedState, enhancer);
 
     return store;

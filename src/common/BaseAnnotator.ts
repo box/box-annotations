@@ -10,6 +10,7 @@ import configureStore from '../store/configureStore';
 import toggleAnnotationModeAction from '../store/mode/actions';
 import observeStore from '../store/utils/observeStore';
 import getAnnotationMode from '../store/mode/selectors';
+import { ModeTypes } from '../store/mode/types';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -81,7 +82,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.init(scale);
     };
 
-    handleModeChange(mode): void {
+    handleModeChange(mode: ModeTypes): void {
         this.emit('modeChange', mode);
     }
 

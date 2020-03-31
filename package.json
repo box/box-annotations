@@ -29,6 +29,7 @@
     "dependencies": {
         "@formatjs/intl-pluralrules": "^1.5.2",
         "@formatjs/intl-relativetimeformat": "^4.5.9",
+        "@types/redux-actions": "^2.6.1",
         "axios": "^0.19.1",
         "bluebird": "^3.7.2",
         "box-ui-elements": "12.0.0-beta.34",

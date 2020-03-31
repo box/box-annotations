@@ -3,9 +3,7 @@ export const REGION = 'region';
 
 export type ModeTypes = typeof NONE | typeof REGION;
 
-export interface ModeState {
-    mode: ModeTypes;
-}
+export type ModeState = ModeTypes;
 
 export const TOGGLE_ANNOTATION_MODE = 'TOGGLE_ANNOTATION_MODE';
 
