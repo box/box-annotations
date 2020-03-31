@@ -1,5 +1,5 @@
 import getProp from 'lodash/get';
-import DocAnnotator from './doc/DocAnnotator';
+import DocumentAnnotator from './document/DocumentAnnotator';
 import DrawingModeController from './controllers/DrawingModeController';
 import PointModeController from './controllers/PointModeController';
 import HighlightModeController from './controllers/HighlightModeController';
@@ -7,7 +7,7 @@ import { TYPES } from './constants';
 import { Permissions, PERMISSIONS } from './@types';
 
 type Annotator = {
-    CONSTRUCTOR: typeof DocAnnotator;
+    CONSTRUCTOR: typeof DocumentAnnotator;
     CONTROLLERS?: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
     NAME: string;
     TYPES: string[];
@@ -46,7 +46,7 @@ type ViewerOptions = {
 const ANNOTATORS: Annotator[] = [
     {
         NAME: 'Document',
-        CONSTRUCTOR: DocAnnotator,
+        CONSTRUCTOR: DocumentAnnotator,
         VIEWERS: ['Document', 'Presentation'],
         TYPES: [TYPES.draw, TYPES.highlight, TYPES.highlight_comment, TYPES.point],
     },
