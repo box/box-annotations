@@ -1,15 +1,10 @@
-import { handleActions } from 'redux-actions';
+import { createReducer } from '@reduxjs/toolkit';
 import toggleAnnotationModeAction from './actions';
-import { NONE, ModeState, ModeTypes } from './types';
+import { ModeTypes } from './types';
 
-const initialState: ModeState = NONE;
-
-const reducer = handleActions(
-    {
-        [toggleAnnotationModeAction.toString()]: (state: ModeState, { payload: mode }: { payload: ModeTypes }) =>
-            state === mode ? NONE : mode,
-    },
-    initialState,
-);
+const reducer = createReducer(ModeTypes.NONE, {
+    [toggleAnnotationModeAction.type]: (state: ModeTypes, { payload: mode }: { payload: ModeTypes }) =>
+        state === mode ? ModeTypes.NONE : mode,
+});
 
 export default reducer;

@@ -1,5 +1,5 @@
-import { ModeState } from './mode/types';
+import { ModeTypes } from './mode';
 
 export interface ApplicationState {
-    mode: ModeState;
+    mode: ModeTypes;
 }

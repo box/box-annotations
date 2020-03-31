@@ -1,5 +1,5 @@
 import { combineReducers, Reducer } from 'redux';
-import modeReducer from './mode/reducer';
+import { modeReducer } from './mode';
 
 const createRootReducer = (): Reducer =>
     combineReducers({
