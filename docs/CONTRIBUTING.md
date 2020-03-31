@@ -6,7 +6,7 @@ All contributions are welcome to this project.
 
 Before a contribution can be merged into this project, please fill out the Contributor License Agreement (CLA) located at:
 
-https://developer.box.com/docs/box-sdk-cla
+https://opensource.box.com/cla/
 
 To learn more about CLAs and why they are important to the UI Element projects, please see the [Wikipedia entry](http://en.wikipedia.org/wiki/Contributor_License_Agreement).
 
@@ -16,8 +16,8 @@ This project adheres to the [Box Open Code of Conduct](http://opensource.box.com
 
 ## How to contribute
 
-* **File an issue** - if you found a bug, want to request an enhancement, or want to implement something (bug fix or feature).
-* **Send a pull request** - if you want to contribute code. Please be sure to file an issue first.
+- **File an issue** - if you found a bug, want to request an enhancement, or want to implement something (bug fix or feature).
+- **Send a pull request** - if you want to contribute code. Please be sure to file an issue first.
 
 ## Pull request best practices
 
@@ -54,16 +54,17 @@ Tag: Short description (fixes #1234)
 
 Longer description here if necessary
 ```
+
 The Tag is one of the following:
 
-* `Fix` - for a bug fix.
-* `Update` - for a backwards-compatible enhancement or a change to a rule that increases the number of reported problems.
-* `New` - implemented a new feature.
-* `Breaking` - for a backwards-incompatible enhancement or feature.
-* `Docs` - changes to documentation only.
-* `Build` - changes to build process only.
-* `Upgrade` - for a dependency upgrade.
-* `Chore` - for refactoring, adding tests, etc. (anything that isn’t user-facing).
+- `Fix` - for a bug fix.
+- `Update` - for a backwards-compatible enhancement or a change to a rule that increases the number of reported problems.
+- `New` - implemented a new feature.
+- `Breaking` - for a backwards-incompatible enhancement or feature.
+- `Docs` - changes to documentation only.
+- `Build` - changes to build process only.
+- `Upgrade` - for a dependency upgrade.
+- `Chore` - for refactoring, adding tests, etc. (anything that isn’t user-facing).
 
 The message summary should be a one-sentence description of the change, and it must be 72 characters in length or shorter. If the pull request addresses an issue, then the issue number should be mentioned at the end.
 

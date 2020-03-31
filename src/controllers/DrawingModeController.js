@@ -7,10 +7,6 @@ import {
     TYPES,
     STATES,
     THREAD_EVENT,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_LAYER_DRAW,
     CLASS_ANNOTATION_DRAW_MODE,
@@ -18,7 +14,6 @@ import {
     ANNOTATOR_TYPE,
     CLASS_ANNOTATION_LAYER_DRAW_IN_PROGRESS,
 } from '../constants';
-import messages from '../messages';
 
 // $FlowFixMe
 import shell from './drawingShell.html';
@@ -26,18 +21,6 @@ import shell from './drawingShell.html';
 class DrawingModeController extends AnnotationModeController {
     /** @property {AnnotationThread} - The currently selected DrawingThread */
     selectedThread: AnnotationThread;
-
-    /** @property {HTMLElement} - The button to cancel the pending drawing thread */
-    cancelButtonEl: HTMLElement;
-
-    /** @property {HTMLElement} - The button to commit the pending drawing thread */
-    postButtonEl: HTMLElement;
-
-    /** @property {HTMLElement} - The button to undo a stroke on the pending drawing thread */
-    undoButtonEl: HTMLElement;
-
-    /** @property {HTMLElement} - The button to redo a stroke on the pending drawing thread */
-    redoButtonEl: HTMLElement;
 
     /** @property {AnnotationThread} */
     currentThread: AnnotationThread;
@@ -56,28 +39,6 @@ class DrawingModeController extends AnnotationModeController {
         if (data.options.header !== 'none' || this.headerElement) {
             this.setupHeader(this.headerElement, shell);
         }
-    }
-
-    showButton(): void {
-        super.showButton();
-
-        this.buttonEl.title = this.intl.formatMessage(messages.annotationDrawToggle);
-    }
-
-    /** @inheritdoc */
-    setupHeader(container: HTMLElement, header: HTMLElement): void {
-        super.setupHeader(container, header);
-
-        this.cancelButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-        this.cancelButtonEl.textContent = this.intl.formatMessage(messages.annotationsCancel);
-
-        this.postButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-
-        // TODO(@spramod): Remove '||' string, once doneButton is properly localized within Preview
-        this.postButtonEl.textContent = this.intl.formatMessage(messages.annotationsDone);
-
-        this.undoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-        this.redoButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
     }
 
     /**
@@ -167,10 +128,6 @@ class DrawingModeController extends AnnotationModeController {
         this.drawingStartHandler = this.drawingStartHandler.bind(this);
 
         this.pushElementHandler(this.annotatedElement, 'click', this.stopPropagation, true);
-        this.pushElementHandler(this.cancelButtonEl, 'click', this.cancelDrawing);
-        this.pushElementHandler(this.postButtonEl, 'click', this.postDrawing);
-        this.pushElementHandler(this.undoButtonEl, 'click', this.undoDrawing);
-        this.pushElementHandler(this.redoButtonEl, 'click', this.redoDrawing);
 
         // Both click and touch listeners are bound for touch-enabled laptop edge cases
         this.pushElementHandler(this.annotatedElement, ['mousedown', 'touchstart'], this.drawingStartHandler, true);

@@ -3,7 +3,6 @@ import rbush from 'rbush';
 import AnnotationModeController from '../AnnotationModeController';
 import * as util from '../../util';
 import {
-    CLASS_HIDDEN,
     CLASS_ACTIVE,
     CLASS_ANNOTATION_MODE,
     CLASS_ANNNOTATION_MODE_BACKGROUND,
@@ -67,7 +66,6 @@ describe('controllers/AnnotationModeController', () => {
                 permissions: { can_annotate: true },
                 intl: intlMock,
             });
-            expect(controller.showButton).toBeCalled();
         });
 
         it('should not show modeButton if none provided', () => {
@@ -126,95 +124,6 @@ describe('controllers/AnnotationModeController', () => {
                 controller.headerElement.appendChild(buttonEl);
 
                 expect(controller.getButton('.class')).not.toBeNull();
-            });
-        });
-
-        describe('showButton()', () => {
-            let buttonEl;
-
-            beforeEach(() => {
-                controller.modeButton = {
-                    type: {
-                        title: 'Annotation Mode',
-                        selector: '.selector',
-                    },
-                };
-                buttonEl = document.createElement('button');
-                buttonEl.title = controller.modeButton.title;
-                buttonEl.classList.add(CLASS_HIDDEN);
-                buttonEl.classList.add('selector');
-                buttonEl.addEventListener = jest.fn();
-
-                controller.permissions = { can_annotate: true };
-                controller.getButton = jest.fn().mockReturnValue(buttonEl);
-            });
-
-            it('should do nothing if user cannot annotate', () => {
-                controller.permissions.can_annotate = false;
-                controller.showButton();
-                expect(buttonEl.classList).toContain(CLASS_HIDDEN);
-            });
-
-            it('should do nothing if the button is not in the container', () => {
-                controller.getButton = jest.fn();
-                controller.showButton();
-                expect(buttonEl.classList).toContain(CLASS_HIDDEN);
-            });
-
-            it('should set up and show an annotate button', () => {
-                controller.showButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
-                expect(buttonEl.addEventListener).toBeCalledWith('click', controller.toggleMode);
-            });
-            it('should set up and show an annotate button', () => {
-                controller.showButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
-                expect(buttonEl.addEventListener).toBeCalledWith('click', controller.toggleMode);
-            });
-        });
-
-        describe('hideButton()', () => {
-            let buttonEl;
-
-            beforeEach(() => {
-                controller.modeButton = {
-                    type: {
-                        title: 'Annotation Mode',
-                        selector: '.selector',
-                    },
-                };
-                buttonEl = document.createElement('button');
-                buttonEl.title = controller.modeButton.title;
-                buttonEl.classList.remove(CLASS_HIDDEN);
-                buttonEl.classList.add('selector');
-                buttonEl.addEventListener = jest.fn();
-
-                controller.permissions = { can_annotate: true };
-                controller.getButton = jest.fn().mockReturnValue(buttonEl);
-            });
-
-            it('should do nothing if user cannot annotate', () => {
-                controller.permissions.can_annotate = false;
-                controller.hideButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
-            });
-
-            it('should do nothing if button is not found', () => {
-                controller.getButton = jest.fn();
-                controller.hideButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
-            });
-
-            it('should add the bp-is-hidden class to the button', () => {
-                controller.hideButton();
-                expect(buttonEl.classList).toContain(CLASS_HIDDEN);
-            });
-
-            it('should do nothing if no modeButton', () => {
-                controller.modeButton = undefined;
-                controller.permissions.can_annotate = false;
-                controller.hideButton();
-                expect(buttonEl.classList).not.toContain(CLASS_HIDDEN);
             });
         });
 

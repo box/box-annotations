@@ -5,10 +5,6 @@ import DrawingModeController from '../DrawingModeController';
 import * as util from '../../util';
 import {
     STATES,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_POST,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO,
-    SELECTOR_ANNOTATION_BUTTON_DRAW_REDO,
     SELECTOR_DRAW_MODE_HEADER,
     CLASS_ANNOTATION_MODE,
     CLASS_ACTIVE,
@@ -68,20 +64,6 @@ describe('controllers/DrawingModeController', () => {
         it('should replace the draw annotations header if using the preview header', () => {
             controller.init({ options: { header: 'light' } });
             expect(controller.setupHeader).toBeCalled();
-        });
-    });
-
-    describe('setupHeader', () => {
-        it('should setup header and get all the mode buttons', () => {
-            const blankDiv = document.createElement('div');
-            util.insertTemplate = jest.fn();
-            controller.getButton = jest.fn().mockReturnValue(blankDiv);
-
-            controller.setupHeader(blankDiv, blankDiv);
-            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_CANCEL);
-            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_POST);
-            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_UNDO);
-            expect(controller.getButton).toBeCalledWith(SELECTOR_ANNOTATION_BUTTON_DRAW_REDO);
         });
     });
 
@@ -149,26 +131,6 @@ describe('controllers/DrawingModeController', () => {
                 'click',
                 expect.any(Function),
                 true,
-            );
-            expect(controller.pushElementHandler).toBeCalledWith(
-                controller.postButtonEl,
-                'click',
-                expect.any(Function),
-            );
-            expect(controller.pushElementHandler).toBeCalledWith(
-                controller.undoButtonEl,
-                'click',
-                expect.any(Function),
-            );
-            expect(controller.pushElementHandler).toBeCalledWith(
-                controller.redoButtonEl,
-                'click',
-                expect.any(Function),
-            );
-            expect(controller.pushElementHandler).toBeCalledWith(
-                controller.cancelButtonEl,
-                'click',
-                expect.any(Function),
             );
             expect(controller.pushElementHandler).toBeCalledWith(
                 controller.annotatedElement,

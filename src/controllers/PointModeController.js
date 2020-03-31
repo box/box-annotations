@@ -8,20 +8,15 @@ import {
     THREAD_EVENT,
     CLASS_ACTIVE,
     SELECTOR_POINT_MODE_HEADER,
-    SELECTOR_ANNOTATION_BUTTON_POINT_EXIT,
     CLASS_ANNOTATION_POINT_MODE,
     ANNOTATOR_TYPE,
 } from '../constants';
-import messages from '../messages';
 import { replaceHeader, isInAnnotationOrMarker } from '../util';
 
 // $FlowFixMe
 import shell from './pointShell.html';
 
 class PointModeController extends AnnotationModeController {
-    /** @property {HTMLElement} - The button to exit point annotation mode */
-    exitButtonEl: HTMLElement;
-
     /** @inheritdoc */
     init(data: Object): void {
         super.init(data);
@@ -35,21 +30,6 @@ class PointModeController extends AnnotationModeController {
         }
     }
 
-    showButton(): void {
-        super.showButton();
-        this.buttonEl.title = this.intl.formatMessage(messages.annotationPointToggle);
-    }
-
-    /** @inheritdoc */
-    setupHeader(container: HTMLElement, header: HTMLElement): void {
-        super.setupHeader(container, header);
-
-        this.exitButtonEl = this.getButton(SELECTOR_ANNOTATION_BUTTON_POINT_EXIT);
-
-        // TODO(@spramod): Remove '||' string, once closeButton is properly localized
-        this.exitButtonEl.textContent = this.intl.formatMessage(messages.annotationsClose);
-    }
-
     /** @inheritdoc */
     setupHandlers(): void {
         // $FlowFixMe
@@ -59,7 +39,6 @@ class PointModeController extends AnnotationModeController {
 
         // Get handlers
         this.pushElementHandler(this.annotatedElement, ['click', 'touchstart'], this.pointClickHandler, true);
-        this.pushElementHandler(this.exitButtonEl, 'click', this.toggleMode);
     }
 
     /** @inheritdoc */
