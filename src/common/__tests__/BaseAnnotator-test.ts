@@ -37,15 +37,25 @@ describe('BaseAnnotator', () => {
     });
 
     describe('destroy()', () => {
-        it('should destroy the api instance', () => {
+        test('should destroy the api instance', () => {
             annotator.destroy();
 
             expect(annotator.api.destroy).toBeCalled();
         });
+
+        test('should remove the base class name from the root element', () => {
+            const rootEl = document.createElement('div');
+            rootEl.classList.add('ba');
+
+            annotator.rootEl = rootEl;
+            annotator.destroy();
+
+            expect(annotator.rootEl.classList).not.toContain('ba');
+        });
     });
 
     describe('handleScale', () => {
-        it('should call init with the new scale', () => {
+        test('should call init with the new scale', () => {
             annotator.init = jest.fn();
             annotator.handleScale({ scale: 5 });
 
@@ -54,13 +64,14 @@ describe('BaseAnnotator', () => {
     });
 
     describe('init()', () => {
-        it('should set the root element based on class selector', () => {
+        test('should set the root element based on class selector', () => {
             annotator.init(5);
 
             expect(annotator.rootEl).toBe(defaults.container);
+            expect(annotator.rootEl && annotator.rootEl.classList).toContain('ba');
         });
 
-        it('should emit error if no root element exists', () => {
+        test('should emit error if no root element exists', () => {
             annotator = getAnnotator({ container: 'non-existent' });
             annotator.emit = jest.fn();
             annotator.init(5);
@@ -71,13 +82,13 @@ describe('BaseAnnotator', () => {
     });
 
     describe('scrollToAnnotation()', () => {
-        it('should exist', () => {
+        test('should exist', () => {
             expect(annotator.scrollToAnnotation).toBeTruthy();
         });
     });
 
     describe('toggleAnnotationMode()', () => {
-        it('should exist', () => {
+        test('should exist', () => {
             expect(annotator.toggleAnnotationMode).toBeTruthy();
         });
     });

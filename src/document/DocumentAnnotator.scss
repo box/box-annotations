@@ -1,0 +1,6 @@
+.bp-doc .ba-Layer {
+    & > div,
+    & > svg {
+        margin: 15px 0; // Padding on each page provided by Preview SDK
+    }
+}

@@ -5,6 +5,7 @@ import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
 import { IntlOptions, Permissions } from '../@types';
+import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
 
@@ -27,11 +28,11 @@ export type Options = {
 export default class BaseAnnotator extends EventEmitter {
     api: FileVersionAPI;
 
-    intl: IntlShape;
-
     container: Container;
 
-    rootEl?: HTMLElement;
+    intl: IntlShape;
+
+    rootEl?: HTMLElement | null;
 
     scale = 1;
 
@@ -52,12 +53,16 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     destroy(): void {
+        if (this.rootEl) {
+            this.rootEl.classList.remove('ba');
+        }
+
         this.api.destroy();
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }
 
-    getElement(selector: HTMLElement | string): HTMLElement {
-        return (typeof selector === 'string' ? document.querySelector(selector) : selector) as HTMLElement;
+    getElement(selector: HTMLElement | string): HTMLElement | null {
+        return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
     handleScale = ({ scale }: { scale: number }): void => {
@@ -71,7 +76,10 @@ export default class BaseAnnotator extends EventEmitter {
 
         if (!this.rootEl) {
             this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage(messages.annotationsLoadError));
+            return;
         }
+
+        this.rootEl.classList.add('ba');
     }
 
     scrollToAnnotation(): void {

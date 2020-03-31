@@ -150,7 +150,7 @@ export type IntlOptions = {
     messages?: Object,
     language?: string,
     locale?: string,
-}
+};
 
 type StringAnyMap = { [string]: any };
 type AnnotationMap = { [string]: AnnotationData };

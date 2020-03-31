@@ -3,6 +3,7 @@ import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import RegionManager from '../region/RegionManager';
 import { ANNOTATOR_EVENT, CLASS_ANNOTATIONS_LOADED } from '../constants';
+import './DocumentAnnotator.scss';
 
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
@@ -19,6 +20,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     getPageManagers(pageEl: HTMLElement): BaseManager[] {
         const pageNumber = this.getPageNumber(pageEl);
+        const pageReferenceEl = this.getPageReference(pageEl);
         const managers = this.managers.get(pageNumber) || [];
 
         // Destroy any managers that were attached to page elements that no longer exist
@@ -30,7 +32,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.length === 0) {
             // Add additional managers here for other annotation types
-            managers.push(new RegionManager({ page: pageNumber, pageEl }));
+            managers.push(new RegionManager({ page: pageNumber, pageEl, referenceEl: pageReferenceEl }));
         }
 
         return managers;
@@ -38,6 +40,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     getPageNumber(pageEl: HTMLElement): string {
         return pageEl.dataset.pageNumber || '1';
+    }
+
+    getPageReference(pageEl: HTMLElement): HTMLElement {
+        const canvasLayerEl = pageEl.querySelector('.canvasWrapper') as HTMLElement;
+        const textLayerEl = pageEl.querySelector('.textLayer') as HTMLElement;
+        return textLayerEl || canvasLayerEl; // Use the optional text layer if it's available
     }
 
     getPages(): HTMLElement[] {
