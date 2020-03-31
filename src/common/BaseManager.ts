@@ -1,6 +1,7 @@
 export type Options = {
     page: string;
     pageEl: HTMLElement;
+    referenceEl: HTMLElement;
 };
 
 export type Props = {

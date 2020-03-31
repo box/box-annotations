@@ -1,0 +1,21 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-RegionAnnotation {
+    &:focus,
+    &:hover {
+        outline: none;
+        cursor: pointer;
+    }
+
+    &.is-active {
+        .ba-RegionAnnotation-rect {
+            stroke-width: 4px;
+        }
+    }
+}
+
+.ba-RegionAnnotation-rect {
+    fill: none;
+    stroke: $bdl-yellorange;
+    stroke-width: 2px;
+}
