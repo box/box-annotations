@@ -25,7 +25,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         onSelect(annotationId);
     };
     const handleKeyPress = (event: React.KeyboardEvent): void => {
-        if (event.key !== KEYS.enter) {
+        if (event.key !== KEYS.enter && event.key !== KEYS.space) {
             return;
         }
 
@@ -33,6 +33,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         onSelect(annotationId);
     };
 
+    // We use an anchor to allow the target to be used inside of SVG shapes where buttons aren't supported
     return (
         <a
             ref={ref}

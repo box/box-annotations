@@ -53,6 +53,10 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     destroy(): void {
+        if (this.rootEl) {
+            this.rootEl.classList.remove('ba');
+        }
+
         this.api.destroy();
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
     }

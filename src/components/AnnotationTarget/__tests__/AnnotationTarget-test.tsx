@@ -21,7 +21,7 @@ describe('AnnotationTarget', () => {
             key            | callCount
             ${KEYS.enter}  | ${1}
             ${KEYS.escape} | ${0}
-            ${KEYS.space}  | ${0}
+            ${KEYS.space}  | ${1}
         `('should handle the $key keypress event', ({ callCount, key }) => {
             const mockEvent = {
                 key,

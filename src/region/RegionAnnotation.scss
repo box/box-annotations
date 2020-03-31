@@ -7,6 +7,8 @@
         cursor: pointer;
     }
 
+    &:focus,
+    &:hover,
     &.is-active {
         .ba-RegionAnnotation-rect {
             stroke-width: 4px;

@@ -42,6 +42,16 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.api.destroy).toBeCalled();
         });
+
+        test('should remove the base class name from the root element', () => {
+            const rootEl = document.createElement('div');
+            rootEl.classList.add('ba');
+
+            annotator.rootEl = rootEl;
+            annotator.destroy();
+
+            expect(annotator.rootEl.classList).not.toContain('ba');
+        });
     });
 
     describe('handleScale', () => {

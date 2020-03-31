@@ -30,7 +30,7 @@ export default class RegionManager implements BaseManager {
 
     format({ annotations = [], scale = 1 }: Props): Annotation[] {
         return annotations
-            .filter(annotation => annotation.type.indexOf('region') >= 0)
+            .filter(({ type }) => type === 'region')
             .map(annotation => {
                 const { target } = annotation;
                 const { shape } = target as TargetRegion;
