@@ -3,4 +3,5 @@ import { ApplicationState } from '../types';
 
 const getAnnotationMode = (state: ApplicationState): Mode => state.mode.current;
 
-export default getAnnotationMode;
+// eslint-disable-next-line import/prefer-default-export
+export { getAnnotationMode };

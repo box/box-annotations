@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import toggleAnnotationModeAction from './actions';
+import { toggleAnnotationModeAction } from './actions';
 import { Mode, ModeState } from './types';
 
 const initialState = { current: Mode.NONE };

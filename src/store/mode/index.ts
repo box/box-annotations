@@ -1,6 +1,6 @@
-import toggleAnnotationModeAction from './actions';
+import { toggleAnnotationModeAction } from './actions';
 import modeReducer from './reducer';
-import getAnnotationMode from './selectors';
+import { getAnnotationMode } from './selectors';
 
 export * from './types';
 
