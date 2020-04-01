@@ -1,10 +1,12 @@
 import { EventEmitter } from 'events';
+import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
 import FileVersionAPI from '../api/FileVersionAPI';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
 import { IntlOptions, Permissions } from '../@types';
+import { createStore, Mode, toggleAnnotationModeAction } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -36,6 +38,8 @@ export default class BaseAnnotator extends EventEmitter {
 
     scale = 1;
 
+    store: Store;
+
     constructor({ apiHost, container, intl, file, token }: Options) {
         super();
 
@@ -47,6 +51,7 @@ export default class BaseAnnotator extends EventEmitter {
         });
         this.container = container;
         this.intl = i18n.createIntlProvider(intl);
+        this.store = createStore();
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
@@ -86,7 +91,8 @@ export default class BaseAnnotator extends EventEmitter {
         // Called by box-content-preview
     }
 
-    toggleAnnotationMode(): void {
+    toggleAnnotationMode(mode: Mode): void {
         // Called by box-content-preview
+        this.store.dispatch(toggleAnnotationModeAction(mode));
     }
 }
