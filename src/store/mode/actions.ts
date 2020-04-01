@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
-import { TOGGLE_ANNOTATION_MODE, ModeTypes } from './types';
+import { TOGGLE_ANNOTATION_MODE, Mode } from './types';
 
-const toggleAnnotationModeAction = createAction<ModeTypes>(TOGGLE_ANNOTATION_MODE);
+const toggleAnnotationModeAction = createAction<Mode>(TOGGLE_ANNOTATION_MODE);
 
 export default toggleAnnotationModeAction;

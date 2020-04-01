@@ -6,7 +6,7 @@ import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
 import { IntlOptions, Permissions } from '../@types';
-import { createStore, ModeTypes, toggleAnnotationModeAction } from '../store';
+import { createStore, Mode, toggleAnnotationModeAction } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -91,7 +91,7 @@ export default class BaseAnnotator extends EventEmitter {
         // Called by box-content-preview
     }
 
-    toggleAnnotationMode(mode: ModeTypes): void {
+    toggleAnnotationMode(mode: Mode): void {
         // Called by box-content-preview
         this.store.dispatch(toggleAnnotationModeAction(mode));
     }
