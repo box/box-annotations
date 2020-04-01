@@ -177,6 +177,7 @@ describe('DocumentAnnotator', () => {
             expect(annotator.getPageNumber).toHaveBeenCalledWith(pageEl);
             expect(mockManager.render).toHaveBeenCalledWith({
                 annotations: [],
+                intl: annotator.intl,
                 scale: 1,
             });
         });

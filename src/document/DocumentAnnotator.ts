@@ -91,6 +91,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         pageManagers.forEach(manager =>
             manager.render({
                 annotations: this.annotations[pageNumber],
+                intl: this.intl,
                 scale: this.scale,
             }),
         );

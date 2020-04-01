@@ -14,11 +14,15 @@ export interface Annotation {
     type: 'annotation';
 }
 
+export interface Page {
+    type: 'page';
+    value: number;
+}
+
 export interface User {
     id: string;
     login: string;
     name: string;
-    profileImage: string;
     type: 'user';
 }
 
@@ -26,6 +30,7 @@ export interface Rect {
     fill?: string;
     height: number;
     stroke?: Stroke;
+    type: 'rect';
     width: number;
     x: number;
     y: number;
@@ -36,7 +41,10 @@ export interface Reply {
     createdBy: User;
     id: string;
     message: string;
-    parentId: string;
+    parent: {
+        id: string;
+        type: string;
+    };
     type: 'reply';
 }
 
@@ -48,7 +56,7 @@ export interface Stroke {
 export type Target = TargetDrawing | TargetHighlight | TargetPoint | TargetRegion;
 
 export interface TargetDrawing {
-    location: number;
+    location: Page;
     paths: [
         {
             points: [
@@ -64,21 +72,21 @@ export interface TargetDrawing {
 }
 
 export interface TargetHighlight {
-    location: number;
-    rects: Array<Rect>;
+    location: Page;
+    shapes: Array<Rect>;
     text: string;
     type: 'highlight';
 }
 
 export interface TargetPoint {
-    location: number;
+    location: Page;
     type: 'point';
     x: number;
     y: number;
 }
 
 export interface TargetRegion {
-    location: number;
+    location: Page;
     shape: Rect;
     type: 'region';
 }

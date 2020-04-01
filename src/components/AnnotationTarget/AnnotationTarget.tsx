@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { KEYS } from 'box-ui-elements/es/constants';
 
@@ -37,7 +38,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
     return (
         <a
             ref={ref}
-            className={className}
+            className={classNames('ba-AnnotationTarget', className)}
             onClick={handleClick}
             onFocus={handleFocus}
             onKeyPress={handleKeyPress}

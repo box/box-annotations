@@ -1,6 +1,11 @@
-.bp-doc .ba-Layer {
-    & > div,
-    & > svg {
-        margin: 15px 0; // Padding on each page provided by Preview SDK
+.bp-doc {
+    .ba-Layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 15px 0; // Margin on each page as provided by Preview SDK
+        pointer-events: none;
     }
 }

@@ -1,8 +1,26 @@
-.ba-Regions {
+.ba-RegionAnnotations-creator,
+.ba-RegionAnnotations-list,
+.ba-RegionAnnotations-target {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+.ba-RegionAnnotations-creator {
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.ba-RegionAnnotations-list {
     pointer-events: none;
+}
+
+.ba-RegionAnnotations-popup {
+    pointer-events: auto; // Swallow all pointer events that occur within the popup
+}
+
+.ba-RegionAnnotations-target {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25));
 }

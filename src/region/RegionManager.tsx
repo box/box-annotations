@@ -28,7 +28,7 @@ export default class RegionManager implements BaseManager {
         return pageEl.contains(this.rootEl);
     }
 
-    format({ annotations = [], scale = 1 }: Props): Annotation[] {
+    format({ annotations = [], scale = 1 }: Partial<Props>): Annotation[] {
         return annotations
             .filter(({ type }) => type === 'region')
             .map(annotation => {
@@ -63,7 +63,7 @@ export default class RegionManager implements BaseManager {
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);
     }
 
-    render(props: Props): void {
-        ReactDOM.render(<RegionAnnotations annotations={this.format(props)} />, this.rootEl);
+    render({ intl, ...rest }: Props): void {
+        ReactDOM.render(<RegionAnnotations annotations={this.format(rest)} intl={intl} />, this.rootEl);
     }
 }

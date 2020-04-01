@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import { createIntl } from 'react-intl';
 import { annotations, scale } from '../__mocks__/data';
 import { Options } from '../../common/BaseManager';
 import RegionManager from '../RegionManager';
@@ -9,6 +10,7 @@ jest.mock('react-dom', () => ({
 }));
 
 describe('RegionManager', () => {
+    const intl = createIntl({ locale: 'en' });
     const pageEl = document.createElement('div');
     const getWrapper = (options: Options): RegionManager => new RegionManager(options);
     let wrapper: RegionManager;
@@ -65,7 +67,7 @@ describe('RegionManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             wrapper.format = jest.fn();
-            wrapper.render({ annotations, scale });
+            wrapper.render({ annotations, intl, scale });
 
             expect(wrapper.format).toHaveBeenCalledWith({ annotations, scale });
             expect(ReactDOM.render).toHaveBeenCalled();
