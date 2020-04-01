@@ -18,12 +18,10 @@ before_install:
     - export TZ=America/Los_Angeles
 jobs:
     include:
-        - name: "Code Lint"
+        - name: 'Code Lint'
           script: yarn lint
-        - name: "Unit Tests"
+        - name: 'Unit Tests'
           script: yarn test
-        - name: "E2E Tests"
-          script: yarn test:e2e
 notifications:
     email:
         recipients:
