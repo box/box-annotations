@@ -22,12 +22,6 @@ module.exports = () => {
                     loader: 'babel-loader',
                     exclude: /node_modules\/(?!(@reduxjs\/toolkit|react-intl|intl-messageformat|intl-messageformat-parser)\/).*/,
                 },
-                // Transpile redux-toolkit
-                {
-                    test: /\.(js|ts|tsx)$/,
-                    loader: 'babel-loader',
-                    include: /@reduxjs\/toolkit/,
-                },
                 {
                     test: /\.s?css$/,
                     use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
