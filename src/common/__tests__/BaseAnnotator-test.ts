@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { ANNOTATOR_EVENT } from '../../constants';
 import BaseAnnotator from '../BaseAnnotator';
-import { createStore, toggleAnnotationModeAction } from '../../store';
+import { toggleAnnotationModeAction, Mode } from '../../store';
 
 jest.mock('../../api/FileVersionAPI');
 jest.mock('../../store', () => ({
-    createStore: jest.fn(),
+    createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     toggleAnnotationModeAction: jest.fn(),
 }));
 
@@ -32,9 +32,6 @@ describe('BaseAnnotator', () => {
     let annotator = getAnnotator();
 
     beforeEach(() => {
-        createStore.mockReturnValue({
-            dispatch: jest.fn(),
-        });
         annotator = getAnnotator();
     });
 
@@ -97,7 +94,7 @@ describe('BaseAnnotator', () => {
 
     describe('toggleAnnotationMode()', () => {
         test('should dispatch toggleAnnotationModeAction with specified mode', () => {
-            annotator.toggleAnnotationMode('region');
+            annotator.toggleAnnotationMode('region' as Mode);
 
             expect(annotator.store.dispatch).toBeCalled();
             expect(toggleAnnotationModeAction).toBeCalledWith('region');
