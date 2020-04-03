@@ -1,0 +1,13 @@
+.ba {
+    .ba-Popup-text {
+        &,
+        &:hover,
+        &:focus {
+            min-height: 40px;
+            padding: 12px;
+            border: 1px solid transparent;
+            box-shadow: none;
+            resize: none;
+        }
+    }
+}
