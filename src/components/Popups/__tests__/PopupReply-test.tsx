@@ -59,9 +59,8 @@ describe('PopupReply', () => {
             ${KEYS.space}  | ${0}
         `('should handle the $key keydown event', ({ callCount, key }) => {
             const wrapper = getWrapper();
-            const textarea = wrapper.find(`[data-testid="ba-Popup-text"]`);
 
-            textarea.simulate('keyDown', { ...mockEvent, key });
+            wrapper.simulate('keyDown', { ...mockEvent, key });
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.preventDefault).toHaveBeenCalledTimes(callCount);

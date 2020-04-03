@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import createPopper, { Instance, Options } from './Popper';
 import './PopupBase.scss';
 
-type Props = {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
     children: React.ReactNode;
     className?: string;
     options: Partial<Options>;
@@ -20,12 +20,7 @@ export default class PopupBase extends React.PureComponent<Props> {
     popupRef: React.RefObject<HTMLDivElement> = React.createRef();
 
     componentDidMount(): void {
-        const { options, reference } = this.props;
-        const { current: popupRef } = this.popupRef;
-
-        if (popupRef) {
-            this.popper = createPopper(reference, popupRef, options);
-        }
+        this.popper = this.createPopper();
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -41,7 +36,8 @@ export default class PopupBase extends React.PureComponent<Props> {
         }
 
         if (reference !== prevReference) {
-            this.popper.update();
+            this.popper.destroy();
+            this.popper = this.createPopper();
         }
     }
 
@@ -51,6 +47,17 @@ export default class PopupBase extends React.PureComponent<Props> {
         }
     }
 
+    createPopper = (): Instance | undefined => {
+        const { options, reference } = this.props;
+        const { current: popupRef } = this.popupRef;
+
+        if (!popupRef) {
+            return undefined;
+        }
+
+        return createPopper(reference, popupRef, options);
+    };
+
     handleEvent = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         event.stopPropagation();
@@ -58,7 +65,7 @@ export default class PopupBase extends React.PureComponent<Props> {
     };
 
     render(): JSX.Element {
-        const { children, className } = this.props;
+        const { children, className, options, reference, ...rest } = this.props; // eslint-disable-line @typescript-eslint/no-unused-vars
 
         return (
             <div
@@ -71,6 +78,7 @@ export default class PopupBase extends React.PureComponent<Props> {
                 onTouchMove={this.handleEvent}
                 onTouchStart={this.handleEvent}
                 role="presentation"
+                {...rest}
             >
                 <div className="ba-Popup-arrow" />
                 <div className="ba-Popup-content">{children}</div>

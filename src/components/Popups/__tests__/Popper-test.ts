@@ -1,9 +1,5 @@
-import popper, { Placement } from '@popperjs/core';
+import * as popper from '@popperjs/core';
 import createPopper, { defaults } from '../Popper';
-
-jest.mock('@popperjs/core', () => ({
-    createPopper: jest.fn(),
-}));
 
 describe('Popper', () => {
     const popupEl = document.createElement('div');
@@ -22,7 +18,7 @@ describe('Popper', () => {
 
             createPopper(referenceEl, popupEl, {
                 modifiers,
-                placement: 'left' as Placement,
+                placement: 'left',
             });
 
             expect(popper.createPopper).toHaveBeenCalledWith(referenceEl, popupEl, {

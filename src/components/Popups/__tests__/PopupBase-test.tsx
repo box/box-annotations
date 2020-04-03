@@ -2,14 +2,6 @@ import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 
-jest.mock('@popperjs/core', () => ({
-    createPopper: jest.fn(() => ({
-        destroy: jest.fn(),
-        setOptions: jest.fn(),
-        update: jest.fn(),
-    })),
-}));
-
 describe('PopupBase', () => {
     const defaults = {
         reference: document.createElement('div'),
@@ -69,7 +61,8 @@ describe('PopupBase', () => {
 
             wrapper.setProps({ reference: document.createElement('div') });
 
-            expect(instance.popper && instance.popper.update).toHaveBeenCalled();
+            expect(instance.popper && instance.popper.destroy).toHaveBeenCalled();
+            expect(instance.popper).toBeDefined();
         });
     });
 

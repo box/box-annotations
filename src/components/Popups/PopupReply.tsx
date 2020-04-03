@@ -52,7 +52,7 @@ export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Pr
     };
 
     return (
-        <PopupBase options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
+        <PopupBase onKeyDown={handleKeyDown} options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
             <div className="ba-Popup-main">
                 <textarea
                     ref={textareaRef}
@@ -60,7 +60,6 @@ export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Pr
                     data-testid="ba-Popup-text"
                     onChange={handleChange}
                     onClick={handleEvent}
-                    onKeyDown={handleKeyDown}
                 />
             </div>
             <div className="ba-Popup-footer">
