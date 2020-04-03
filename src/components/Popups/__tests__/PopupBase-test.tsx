@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
+import { Instance } from '../Popper';
 import PopupBase from '../PopupBase';
 
 describe('PopupBase', () => {
@@ -55,14 +56,16 @@ describe('PopupBase', () => {
             expect(instance.popper && instance.popper.setOptions).toHaveBeenCalled();
         });
 
-        test('should call update if the reference element changes', () => {
+        test('should call recreate the popper if the reference element changes', () => {
             const wrapper = getWrapper();
             const instance = wrapper.instance() as InstanceType<typeof PopupBase>;
+            const oldPopper = instance.popper as Instance;
 
             wrapper.setProps({ reference: document.createElement('div') });
 
-            expect(instance.popper && instance.popper.destroy).toHaveBeenCalled();
+            expect(oldPopper.destroy).toHaveBeenCalled();
             expect(instance.popper).toBeDefined();
+            expect(instance.popper).not.toEqual(oldPopper);
         });
     });
 
