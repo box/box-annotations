@@ -8,6 +8,13 @@ describe('AnnotationTarget', () => {
         annotationId: '1',
         onSelect: jest.fn(),
     };
+    const mockEvent = {
+        nativeEvent: {
+            stopImmediatePropagation: jest.fn(),
+        },
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+    };
     const getWrapper = (props = {}): ShallowWrapper => {
         return shallow(
             <AnnotationTarget {...defaults} {...props}>
@@ -23,44 +30,27 @@ describe('AnnotationTarget', () => {
             ${KEYS.escape} | ${0}
             ${KEYS.space}  | ${1}
         `('should handle the $key keypress event', ({ callCount, key }) => {
-            const mockEvent = {
-                key,
-                nativeEvent: {
-                    stopImmediatePropagation: jest.fn(),
-                },
-                preventDefault: jest.fn(),
-                stopPropagation: jest.fn(),
-            };
-            const onSelect = jest.fn();
-            const wrapper = getWrapper({ onSelect });
+            const wrapper = getWrapper();
 
-            wrapper.simulate('keyPress', mockEvent);
+            wrapper.simulate('keyPress', { ...mockEvent, key });
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.preventDefault).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
-            expect(onSelect).toHaveBeenCalledTimes(callCount);
+            expect(defaults.onSelect).toHaveBeenCalledTimes(callCount);
         });
     });
 
     describe('mouse event handlers', () => {
         test.each(['click', 'focus'])('should cancel the %s event and trigger onSelect', event => {
-            const mockEvent = {
-                nativeEvent: {
-                    stopImmediatePropagation: jest.fn(),
-                },
-                preventDefault: jest.fn(),
-                stopPropagation: jest.fn(),
-            };
-            const onSelect = jest.fn();
-            const wrapper = getWrapper({ onSelect });
+            const wrapper = getWrapper();
 
             wrapper.simulate(event, mockEvent);
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             expect(mockEvent.preventDefault).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(onSelect).toHaveBeenCalledWith('1');
+            expect(defaults.onSelect).toHaveBeenCalledWith('1');
         });
     });
 

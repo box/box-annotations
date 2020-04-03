@@ -17,6 +17,7 @@ module.exports = {
     moduleNameMapper: {
         '\\.(css|scss|less|html)$': '<rootDir>/scripts/jest/styleMock.js',
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)$': '<rootDir>/scripts/jest/fileMock.js',
+        '@popperjs/core': '<rootDir>/scripts/jest/popperMock.js',
         'box-annotations-locale-data': '<rootDir>/scripts/jest/i18nMock.js',
         'box-elements-messages': '<rootDir>/scripts/jest/i18nMock.js',
         'react-intl': '<rootDir>/scripts/jest/react-intl-mock.js',
