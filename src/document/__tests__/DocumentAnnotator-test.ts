@@ -179,6 +179,7 @@ describe('DocumentAnnotator', () => {
                 annotations: [],
                 intl: annotator.intl,
                 scale: 1,
+                store: expect.any(Object),
             });
         });
     });

@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import merge from 'lodash/merge';
 import { Annotation, TargetRegion } from '../@types';
 import BaseManager, { Options, Props } from '../common/BaseManager';
-import RegionAnnotations from './RegionAnnotations';
+import RegionContainer from './RegionContainer';
 
 export default class RegionManager implements BaseManager {
     page: string;
@@ -63,7 +63,7 @@ export default class RegionManager implements BaseManager {
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);
     }
 
-    render({ intl, ...rest }: Props): void {
-        ReactDOM.render(<RegionAnnotations annotations={this.format(rest)} intl={intl} />, this.rootEl);
+    render({ annotations, scale, ...rest }: Props): void {
+        ReactDOM.render(<RegionContainer annotations={this.format({ annotations, scale })} {...rest} />, this.rootEl);
     }
 }

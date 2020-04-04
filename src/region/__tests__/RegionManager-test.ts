@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import { createIntl } from 'react-intl';
+import { createStore } from '../../store';
 import { annotations, scale } from '../__mocks__/data';
 import { Options } from '../../common/BaseManager';
 import RegionManager from '../RegionManager';
@@ -67,7 +68,7 @@ describe('RegionManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             wrapper.format = jest.fn();
-            wrapper.render({ annotations, intl, scale });
+            wrapper.render({ annotations, intl, scale, store: createStore() });
 
             expect(wrapper.format).toHaveBeenCalledWith({ annotations, scale });
             expect(ReactDOM.render).toHaveBeenCalled();

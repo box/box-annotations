@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { IntlShape, RawIntlProvider } from 'react-intl';
 import { Annotation, Rect, TargetRegion } from '../@types';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionAnnotation from './RegionAnnotation';
@@ -8,7 +7,6 @@ import './RegionAnnotations.scss';
 
 type Props = {
     annotations: Annotation[];
-    intl: IntlShape;
     isCreating: boolean;
 };
 
@@ -21,7 +19,7 @@ type State = {
 export default class RegionAnnotations extends React.Component<Props, State> {
     static defaultProps = {
         annotations: [],
-        isCreating: false, // TODO: Pass in from manager/annotator based on current mode
+        isCreating: false,
     };
 
     targetRef: React.RefObject<HTMLAnchorElement> = React.createRef();
@@ -70,12 +68,12 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { annotations, intl, isCreating } = this.props;
+        const { annotations, isCreating } = this.props;
         const { current, hasComment, hasDrawn } = this.state;
         const { current: targetRef } = this.targetRef;
 
         return (
-            <RawIntlProvider value={intl}>
+            <>
                 {/* Layer 1: Saved annotations */}
                 <svg className="ba-RegionAnnotations-list">
                     {annotations.map(({ id, target }) => (
@@ -104,7 +102,6 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                 {isCreating && current && hasDrawn && targetRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
-                            className="ba-RegionAnnotations-popup"
                             onCancel={this.handleCancel}
                             onChange={this.handleChange}
                             onSubmit={this.handleSubmit}
@@ -112,7 +109,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                         />
                     </div>
                 )}
-            </RawIntlProvider>
+            </>
         );
     }
 }

@@ -93,6 +93,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 annotations: this.annotations[pageNumber],
                 intl: this.intl,
                 scale: this.scale,
+                store: this.store,
             }),
         );
 
