@@ -2,6 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { KEYS } from 'box-ui-elements/es/constants';
+import './AnnotationTarget.scss';
 
 type Props = {
     annotationId: string;

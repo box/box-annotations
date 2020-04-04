@@ -139,8 +139,8 @@ export default class RegionCreator extends React.Component<Props, State> {
 
         // Get the maximum x and y coordinates for any given rectangle based on the size of the stage
         const { height, width } = creatorRef.getBoundingClientRect();
-        const MAX_X = width - MIN_X;
-        const MAX_Y = height - MIN_Y;
+        const MAX_X = Math.max(0, width - MIN_X);
+        const MAX_Y = Math.max(0, height - MIN_Y);
 
         // Get the first position from mousedown and the current position
         const { x: x1, y: y1 } = position1;
