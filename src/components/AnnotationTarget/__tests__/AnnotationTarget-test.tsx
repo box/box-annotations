@@ -59,7 +59,7 @@ describe('AnnotationTarget', () => {
             const wrapper = getWrapper({ className: 'ba-Test' });
 
             expect(wrapper.props()).toMatchObject({
-                className: 'ba-Test',
+                className: 'ba-AnnotationTarget ba-Test',
                 role: 'button',
                 tabIndex: 0,
             });

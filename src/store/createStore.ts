@@ -4,11 +4,9 @@ import createRootReducer from './createRootReducer';
 import { ApplicationState } from './types';
 
 export default function createStore(preloadedState?: ApplicationState): Store {
-    const store = configureStore({
-        reducer: createRootReducer(),
-        preloadedState,
+    return configureStore({
         devTools: process.env.NODE_ENV === 'dev',
+        preloadedState,
+        reducer: createRootReducer(),
     });
-
-    return store;
 }
