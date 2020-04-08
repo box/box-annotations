@@ -65,6 +65,7 @@ export default class BaseAnnotator extends EventEmitter {
 
         this.api.destroy();
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
+        this.removeListener(ANNOTATOR_EVENT.visibilityToggle, this.toggleAnnotationVisibility);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -97,8 +98,8 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(toggleAnnotationModeAction(mode));
     }
 
-    toggleAnnotationVisibility(): void {
+    toggleAnnotationVisibility = (): void => {
         // Called by box-content-preview
         this.store.dispatch(toggleAnnotationVisibilityAction());
-    }
+    };
 }
