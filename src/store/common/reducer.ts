@@ -1,12 +1,17 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { CommonState, TOGGLE_ANNOTATION_VISIBILITY } from './types';
+import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import { CommonState, Mode } from './types';
+import { toggleAnnotationModeAction, toggleAnnotationVisibilityAction } from './actions';
 
-export const initialState = { visible: true };
+const visibilityReducer = createReducer<CommonState['visibility']>(true, builder =>
+    builder.addCase(toggleAnnotationVisibilityAction, state => !state),
+);
+const modeReducer = createReducer<CommonState['mode']>(Mode.NONE, builder =>
+    builder.addCase(toggleAnnotationModeAction, (state, { payload: mode }: { payload: Mode }) =>
+        state === mode ? Mode.NONE : mode,
+    ),
+);
 
-const reducer = createReducer(initialState, {
-    [TOGGLE_ANNOTATION_VISIBILITY]: (state: CommonState) => ({
-        visible: !state.visible,
-    }),
+export default combineReducers({
+    mode: modeReducer,
+    visibility: visibilityReducer,
 });
-
-export default reducer;

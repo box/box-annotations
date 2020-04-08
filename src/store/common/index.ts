@@ -1,7 +1,4 @@
-import { toggleAnnotationVisibilityAction } from './actions';
-import commonReducer, { initialState } from './reducer';
-import { getAnnotationVisibility } from './selectors';
-
+export { default as commonReducer } from './reducer';
+export * from './actions';
+export * from './selectors';
 export * from './types';
-
-export { commonReducer, initialState, getAnnotationVisibility, toggleAnnotationVisibilityAction };

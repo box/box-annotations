@@ -55,6 +55,7 @@ export default class BaseAnnotator extends EventEmitter {
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
+        this.addListener(ANNOTATOR_EVENT.visibilityToggle, this.toggleAnnotationVisibility);
     }
 
     destroy(): void {

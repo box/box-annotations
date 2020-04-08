@@ -1,7 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { TOGGLE_ANNOTATION_VISIBILITY } from './types';
+import { TOGGLE_ANNOTATION_VISIBILITY, TOGGLE_ANNOTATION_MODE, Mode } from './types';
 
-const toggleAnnotationVisibilityAction = createAction(TOGGLE_ANNOTATION_VISIBILITY);
-
-// eslint-disable-next-line import/prefer-default-export
-export { toggleAnnotationVisibilityAction };
+export const toggleAnnotationVisibilityAction = createAction(TOGGLE_ANNOTATION_VISIBILITY);
+export const toggleAnnotationModeAction = createAction<Mode>(TOGGLE_ANNOTATION_MODE);

@@ -129,6 +129,7 @@ export const ANNOTATOR_EVENT = {
     fetch: 'annotationsfetched',
     error: 'annotationerror',
     scale: 'scaleannotations',
+    visibilityToggle: 'annotationvisibilitytoggle',
 };
 
 export const THREAD_EVENT = {

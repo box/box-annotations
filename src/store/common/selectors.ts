@@ -1,6 +1,7 @@
 import { ApplicationState } from '../types';
+import { Mode } from './types';
 
-const getAnnotationVisibility = (state: ApplicationState): boolean => state.common.visible;
+type State = Pick<ApplicationState, 'common'>;
 
-// eslint-disable-next-line import/prefer-default-export
-export { getAnnotationVisibility };
+export const getAnnotationMode = ({ common }: State): Mode => common.mode;
+export const getAnnotationVisibility = ({ common }: State): boolean => common.visibility;
