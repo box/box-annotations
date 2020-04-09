@@ -9,19 +9,19 @@ import './PopupReply.scss';
 
 export type Props = {
     className?: string;
+    defaultValue?: string;
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
     reference: HTMLElement;
 };
 
-export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Props): JSX.Element {
+export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit, ...rest }: Props): JSX.Element {
     const [text, setText] = React.useState('');
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
     // Event Handlers
     const handleEvent = (event: React.SyntheticEvent): void => {
-        event.preventDefault();
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
     };
@@ -46,8 +46,14 @@ export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Pr
         onCancel(text);
     };
     const handleFirstUpdate = (): void => {
-        if (textareaRef.current) {
-            textareaRef.current.focus();
+        const { current: textarea } = textareaRef;
+
+        if (textarea) {
+            const { value } = textarea;
+
+            textarea.focus();
+            textarea.selectionStart = value.length; // Force cursor to the end after focus
+            textarea.selectionEnd = value.length; // Force cursor to the end after focus
         }
     };
 
@@ -58,6 +64,7 @@ export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Pr
                     ref={textareaRef}
                     className="ba-Popup-text"
                     data-testid="ba-Popup-text"
+                    defaultValue={defaultValue}
                     onChange={handleChange}
                     onClick={handleEvent}
                 />

@@ -1,16 +1,16 @@
-import { state } from '../__mocks__/state';
+import commonState from '../__mocks__/commonState';
 import { getAnnotationMode, getVisibility } from '../selectors';
 
 describe('store/common/selectors', () => {
     describe('getAnnotationMode', () => {
         test('should return annotation mode', () => {
-            expect(getAnnotationMode({ common: state })).toBe('none');
+            expect(getAnnotationMode({ common: commonState })).toBe('none');
         });
     });
 
     describe('getVisibility', () => {
         test('should return annotation visibility', () => {
-            expect(getVisibility({ common: state })).toBe(true);
+            expect(getVisibility({ common: commonState })).toBe(true);
         });
     });
 });

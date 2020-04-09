@@ -17,36 +17,23 @@ describe('RegionCreator', () => {
     });
     const defaults = {
         canDraw: true,
-        onDone: jest.fn(),
         onDraw: jest.fn(),
+        onStart: jest.fn(),
+        onStop: jest.fn(),
     };
     const getInstance = (wrapper: ShallowWrapper): InstanceType<typeof RegionCreator> => {
         return wrapper.instance() as InstanceType<typeof RegionCreator>;
     };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionCreator {...defaults} {...props} />);
 
-    describe('componentDidMount()', () => {
-        test('should add document-level event listeners', () => {
-            const addSpy = jest.spyOn(document, 'addEventListener');
-            const wrapper = getWrapper();
-            const instance = getInstance(wrapper);
+    describe('componentWillMount()', () => {
+        const wrapper = getWrapper();
+        const instance = getInstance(wrapper);
+        const removeListeners = jest.spyOn(instance, 'removeListeners');
 
-            expect(addSpy).toHaveBeenNthCalledWith(1, 'mousemove', instance.handleMouseMove);
-            expect(addSpy).toHaveBeenNthCalledWith(2, 'mouseup', instance.handleMouseUp);
-        });
-    });
+        wrapper.unmount();
 
-    describe('componentWillUnmount()', () => {
-        test('should remove document-level event listeners', () => {
-            const removeSpy = jest.spyOn(document, 'removeEventListener');
-            const wrapper = getWrapper();
-            const instance = getInstance(wrapper);
-
-            wrapper.unmount();
-
-            expect(removeSpy).toHaveBeenNthCalledWith(1, 'mousemove', instance.handleMouseMove);
-            expect(removeSpy).toHaveBeenNthCalledWith(2, 'mouseup', instance.handleMouseUp);
-        });
+        expect(removeListeners).toHaveBeenCalled();
     });
 
     describe('getPosition()', () => {
@@ -70,9 +57,14 @@ describe('RegionCreator', () => {
         const instance = getInstance(wrapper);
 
         beforeEach(() => {
+            instance.addListeners();
             instance.startDraw = jest.fn();
             instance.stopDraw = jest.fn();
             instance.updateDraw = jest.fn();
+        });
+
+        afterEach(() => {
+            instance.removeListeners();
         });
 
         describe('handleClick', () => {
@@ -170,13 +162,43 @@ describe('RegionCreator', () => {
         });
     });
 
-    describe('startDraw()', () => {
-        test('should set state based on the data provided', () => {
+    describe('addListeners()', () => {
+        test('should add document-level event listeners', () => {
+            const addSpy = jest.spyOn(document, 'addEventListener');
             const wrapper = getWrapper();
             const instance = getInstance(wrapper);
 
+            instance.addListeners();
+
+            expect(addSpy).toHaveBeenNthCalledWith(1, 'mousemove', instance.handleMouseMove);
+            expect(addSpy).toHaveBeenNthCalledWith(2, 'mouseup', instance.handleMouseUp);
+        });
+    });
+
+    describe('removeListeners()', () => {
+        test('should remove document-level event listeners', () => {
+            const removeSpy = jest.spyOn(document, 'removeEventListener');
+            const wrapper = getWrapper();
+            const instance = getInstance(wrapper);
+
+            instance.removeListeners();
+
+            expect(removeSpy).toHaveBeenNthCalledWith(1, 'mousemove', instance.handleMouseMove);
+            expect(removeSpy).toHaveBeenNthCalledWith(2, 'mouseup', instance.handleMouseUp);
+        });
+    });
+
+    describe('startDraw()', () => {
+        test('should set state based on the data provided', () => {
+            const onStart = jest.fn();
+            const wrapper = getWrapper({ onStart });
+            const instance = getInstance(wrapper);
+            const addListeners = jest.spyOn(instance, 'addListeners');
+
             instance.startDraw({ x: 10, y: 10 });
 
+            expect(addListeners).toHaveBeenCalled();
+            expect(onStart).toHaveBeenCalled();
             expect(wrapper.state()).toMatchObject({
                 isDrawing: true,
                 position: { x: 10, y: 10 },
@@ -185,14 +207,16 @@ describe('RegionCreator', () => {
     });
 
     describe('stopDraw', () => {
-        test('should set state and invoke the onDone callback', () => {
-            const onDone = jest.fn();
-            const wrapper = getWrapper({ onDone });
+        test('should set state and invoke the onStop callback', () => {
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStop });
             const instance = getInstance(wrapper);
+            const removeListeners = jest.spyOn(instance, 'removeListeners');
 
             instance.stopDraw();
 
-            expect(onDone).toHaveBeenCalled();
+            expect(removeListeners).toHaveBeenCalled();
+            expect(onStop).toHaveBeenCalled();
             expect(wrapper.state()).toMatchObject({
                 isDrawing: false,
             });
@@ -226,6 +250,7 @@ describe('RegionCreator', () => {
 
             expect(onDraw).toHaveBeenCalledWith({
                 height,
+                type: 'rect',
                 width,
                 x,
                 y,

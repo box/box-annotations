@@ -47,7 +47,6 @@ describe('PopupReply', () => {
             button.simulate('click', mockEvent);
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-            expect(mockEvent.preventDefault).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
             expect(defaults[callback]).toHaveBeenCalled();
         });
@@ -63,7 +62,6 @@ describe('PopupReply', () => {
             wrapper.simulate('keyDown', { ...mockEvent, key });
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
-            expect(mockEvent.preventDefault).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
         });

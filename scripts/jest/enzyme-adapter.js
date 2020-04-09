@@ -1,6 +1,7 @@
 import 'core-js/es/map';
 import 'core-js/es/set';
 import 'raf/polyfill';
+import 'regenerator-runtime/runtime';
 import Enzyme, { mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 

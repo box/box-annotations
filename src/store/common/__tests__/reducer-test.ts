@@ -1,7 +1,7 @@
 import reducer from '../reducer';
-import { toggleAnnotationModeAction, setVisibilityAction } from '../actions';
-import { state } from '../__mocks__/state';
+import state from '../__mocks__/commonState';
 import { Mode } from '../types';
+import { toggleAnnotationModeAction, setVisibilityAction } from '../actions';
 
 describe('store/common/reducer', () => {
     describe('toggleAnnotationModeAction', () => {

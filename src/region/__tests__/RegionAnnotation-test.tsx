@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { rect } from '../__mocks__/data';
 import AnnotationTarget from '../../components/AnnotationTarget';
 import RegionAnnotation from '../RegionAnnotation';
 
@@ -8,7 +9,7 @@ describe('RegionAnnotation', () => {
         annotationId: '1',
         isActive: false,
         onSelect: jest.fn(),
-        shape: { height: 10, width: 10, x: 10, y: 10 },
+        shape: rect,
     };
     const getWrapper = (props = {}): ShallowWrapper => {
         return shallow(<RegionAnnotation {...defaults} {...props} />);
