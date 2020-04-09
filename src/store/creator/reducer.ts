@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { setStaged, setStatus } from './actions';
+import { setStagedAction, setStatusAction } from './actions';
 import { CreatorState, CreatorStatus } from './types';
 
 export const initialState = {
@@ -9,10 +9,10 @@ export const initialState = {
 
 export default createReducer<CreatorState>(initialState, builder =>
     builder
-        .addCase(setStaged, (state, { payload }) => {
+        .addCase(setStagedAction, (state, { payload }) => {
             state.staged = payload;
         })
-        .addCase(setStatus, (state, { payload }) => {
+        .addCase(setStatusAction, (state, { payload }) => {
             state.status = payload;
         }),
 );

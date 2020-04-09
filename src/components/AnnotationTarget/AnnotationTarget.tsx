@@ -41,7 +41,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         <a
             ref={ref}
             className={classNames('ba-AnnotationTarget', className)}
-            href="#"
+            href="#" // Needed for IE11 to handle click events properly
             onClick={handleClick}
             onFocus={handleFocus}
             onKeyPress={handleKeyPress}

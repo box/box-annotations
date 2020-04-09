@@ -3,14 +3,14 @@ import { Annotation } from '../@types';
 import {
     ApplicationState,
     CreatorItem,
+    CreatorStatus,
     getAnnotationMode,
     getAnnotationsForLocation,
-    getCreatorStatus,
     getCreatorStagedForLocation,
-    saveAnnotation,
-    setStaged,
-    setStatus,
-    CreatorStatus,
+    getCreatorStatus,
+    saveAnnotationAction,
+    setStagedAction,
+    setStatusAction,
 } from '../store';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
@@ -30,9 +30,9 @@ export const mapStateToProps = (state: ApplicationState, { page }: { page: numbe
 });
 
 export const mapDispatchTopProps = {
-    saveAnnotation,
-    setStaged,
-    setStatus,
+    saveAnnotation: saveAnnotationAction,
+    setStaged: setStagedAction,
+    setStatus: setStatusAction,
 };
 
 export default connect(mapStateToProps, mapDispatchTopProps)(withProviders(RegionAnnotations));
