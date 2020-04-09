@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const mapStateToProps = (state: ApplicationState): Props => ({
-    isCreating: state.mode.current === 'region',
+    isCreating: state.common.mode === 'region',
 });
 
 export default connect(mapStateToProps)(withProviders(RegionAnnotations));

@@ -1,9 +1,9 @@
 import { combineReducers, Reducer } from 'redux';
-import { modeReducer } from './mode';
+import { commonReducer } from './common';
 
 const createRootReducer = (): Reducer =>
     combineReducers({
-        mode: modeReducer,
+        common: commonReducer,
     });
 
 export default createRootReducer;
