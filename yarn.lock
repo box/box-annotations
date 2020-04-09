@@ -1153,14 +1153,21 @@
   dependencies:
     "@formatjs/intl-utils" "^2.2.0"
 
-"@formatjs/intl-pluralrules@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@formatjs/intl-pluralrules/-/intl-pluralrules-1.5.2.tgz#3e37f38e21b6a30c484e9138187d0a1a4b0d1f76"
-  integrity sha512-kxCufLRBOaj9x4PP2QrYmYSmr2WfJnBmUx/6eaajuaHlXTfXvLD1Dz/s1YBXHipOlorh51ehHQPoRgrOCNNpkA==
+"@formatjs/intl-pluralrules@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.npmjs.org/@formatjs/intl-pluralrules/-/intl-pluralrules-1.5.4.tgz#fbcc724c80edd23c451ec03427cea5db210621cb"
+  integrity sha512-/MXOzWV8RJwzORKOgl9YdUt2riHq+CgsNJkACSNdzIQbzxaXG+LZuo4WS5FuhFx93S+elS6SVvNzLEFQttSEpw==
   dependencies:
-    "@formatjs/intl-utils" "^2.2.0"
+    "@formatjs/intl-utils" "^2.2.1"
 
-"@formatjs/intl-relativetimeformat@^4.5.7", "@formatjs/intl-relativetimeformat@^4.5.9":
+"@formatjs/intl-relativetimeformat@^4.5.11":
+  version "4.5.11"
+  resolved "https://registry.npmjs.org/@formatjs/intl-relativetimeformat/-/intl-relativetimeformat-4.5.11.tgz#8161aba04b3dd488a00e2642e007bf5359f8ad34"
+  integrity sha512-UdZtBISVHMB1n9dOldnNpEr90/qdHcOXe+EPBAy6pXsqKwL1Nh86PU5/2wJij1wl7lQDrCb2npcYnmScv4uGRg==
+  dependencies:
+    "@formatjs/intl-utils" "^2.2.1"
+
+"@formatjs/intl-relativetimeformat@^4.5.7":
   version "4.5.9"
   resolved "https://registry.yarnpkg.com/@formatjs/intl-relativetimeformat/-/intl-relativetimeformat-4.5.9.tgz#d9b74724a7cbcb4edc9d751b2979195fab4d39cc"
   integrity sha512-6rgPXQl5MrPPbCuNiHxolzO6xNCHphCVEWW6RWGy7t/Mek70gD7nq1erW8fbQJ0XL/UeAC0Cz/+ggh7vaSsKNA==
@@ -1191,6 +1198,11 @@
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@formatjs/intl-utils/-/intl-utils-2.2.0.tgz#ba6e12fe64ff7fd160be392007c47d24b7ae5c75"
   integrity sha512-+Az7tR1av1DHZu9668D8uh9atT6vp+FFmEF8BrEssv0OqzpVjpVBGVmcgPzQP8k2PQjVlm/h2w8cTt0knn132w==
+
+"@formatjs/intl-utils@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.npmjs.org/@formatjs/intl-utils/-/intl-utils-2.2.1.tgz#0eeefe92d317acfcd179c14826e719b3b130d82a"
+  integrity sha512-WF3oU6l2WqJjN4OWvnjF9AHyQjHpjcfpyuckM7euFeX6ZGRPpPj+ZCqzf41g81MSksf9aZI4fFCZXWTBusgcWA==
 
 "@formatjs/macro@^0.2.6":
   version "0.2.6"
@@ -1502,15 +1514,15 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@popperjs/core@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.2.0.tgz#1ed4498e8eea15a2678f9c3c69fb866308ea399d"
-  integrity sha512-CxL7vhVO+m7RoyCSZQqf3NRD1UzWFXdasfyj3PsadWPfRdPB9UO/PjYwTILBaHc2RDPlZUeFtz8sfPVuSyshIA==
+"@popperjs/core@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.2.2.tgz#2e254f5eb31f3abc35470060fb7116937d837739"
+  integrity sha512-LaSssaO8QHSAnRI4ZZB+jTD/hmndqOzwabDwKuySS1ME0pj+La6pV77i5CIQ61kVtz3pE13DhmkaYFGtrrCMeg==
 
-"@reduxjs/toolkit@^1.3.2":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-1.3.2.tgz#cbd062f0b806eb4611afeb2b30240e5186d6dd27"
-  integrity sha512-IRI9Nx6Ys/u4NDqPvUC0+e8MH+e1VME9vn30xAmd+MBqDsClc0Dhrlv4Scw2qltRy/mrINarU6BqJp4/dcyyFg==
+"@reduxjs/toolkit@^1.3.4":
+  version "1.3.4"
+  resolved "https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-1.3.4.tgz#23abc4892310c75310224e0551d27b990d853a45"
+  integrity sha512-QxudP0FvLywCmXDVUzY4dK5ykfOrfENnpmdb+1ZCafRKkoQUrGXXLU7mxh4N0m89F+oGU+gTu1EYQAnkk7XrbA==
   dependencies:
     immer "^6.0.1"
     redux "^4.0.0"
@@ -2530,10 +2542,10 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
   integrity sha512-ReZxvNHIOv88FlT7rxcXIIC0fPt4KZqZbOlivyWtXLt8ESx84zd3kMC6iK5jVeS2qt+g7ftS7ye4fi06X5rtRQ==
 
-axios@^0.19.1:
-  version "0.19.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.1.tgz#8a6a04eed23dfe72747e1dd43c604b8f1677b5aa"
-  integrity sha512-Yl+7nfreYKaLRvAvjNPkvfjnQHJM1yLBY3zhqAwcJSwR/6ETkanUgylgtIvkvz0xJ+p/vZuNw8X7Hnb7Whsbpw==
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.npmjs.org/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
   dependencies:
     follow-redirects "1.5.10"
 
@@ -10903,15 +10915,15 @@ rbush@^3.0.1:
   dependencies:
     quickselect "^2.0.0"
 
-react-dom@^16.12.0:
-  version "16.12.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.12.0.tgz#0da4b714b8d13c2038c9396b54a92baea633fe11"
-  integrity sha512-LMxFfAGrcS3kETtQaCkTKjMiifahaMySFDn71fZUNpPHZQEzmk/GiAeIT8JSOrHB23fnuCOMruL2a8NYlw+8Gw==
+react-dom@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.npmjs.org/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"
+  integrity sha512-81PIMmVLnCNLO/fFOQxdQkvEq/+Hfpv24XNJfpyZhTRfO0QcmQIF/PgCa1zCOj2w1hrn12MFLyaJ/G0+Mxtfag==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-    scheduler "^0.18.0"
+    scheduler "^0.19.1"
 
 react-immutable-proptypes@^2.1.0:
   version "2.1.0"
@@ -10990,10 +11002,10 @@ react-textarea-autosize@^7.1.2:
     "@babel/runtime" "^7.1.2"
     prop-types "^15.6.0"
 
-react@^16.12.0:
-  version "16.12.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
-  integrity sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
+react@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.npmjs.org/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
+  integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -11683,10 +11695,10 @@ schedule@^0.5.0:
   dependencies:
     object-assign "^4.1.1"
 
-scheduler@^0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.18.0.tgz#5901ad6659bc1d8f3fdaf36eb7a67b0d6746b1c4"
-  integrity sha512-agTSHR1Nbfi6ulI0kYNK0203joW2Y5W4po4l+v03tOoiJKpTBbxpNhWDvqc/4IcOw+KLmSiQLTasZ4cab2/UWQ==
+scheduler@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
+  integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
