@@ -99,7 +99,6 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     toggleAnnotationVisibility = (): void => {
-        // Called by box-content-preview
         this.store.dispatch(toggleAnnotationVisibilityAction());
     };
 }
