@@ -37,7 +37,7 @@ describe('DocumentAnnotator', () => {
     const getAnnotator = (options = {}): DocumentAnnotator => {
         return new DocumentAnnotator({ ...defaults, ...options });
     };
-    const getPage = (pageNumber: number | string = 1): HTMLElement => {
+    const getPage = (pageNumber = 1): HTMLElement => {
         return container.querySelector(`[data-page-number="${pageNumber}"]`) as HTMLElement;
     };
     let annotator = getAnnotator();
@@ -81,7 +81,7 @@ describe('DocumentAnnotator', () => {
         test('should destroy any existing managers if they are not present in a given page element', () => {
             const mockManager = ({ destroy: jest.fn(), exists: jest.fn(() => false) } as unknown) as RegionManager;
 
-            annotator.managers.set('1', [mockManager]);
+            annotator.managers.set(1, [mockManager]);
             annotator.getPageManagers(getPage());
 
             expect(mockManager.exists).toHaveBeenCalled();
@@ -91,14 +91,14 @@ describe('DocumentAnnotator', () => {
 
     describe('getPageNumber()', () => {
         test('should return the page number from the data attribute of a given page element', () => {
-            expect(annotator.getPageNumber(getPage(1))).toEqual('1');
-            expect(annotator.getPageNumber(getPage(2))).toEqual('2');
-            expect(annotator.getPageNumber(getPage(3))).toEqual('3');
-            expect(annotator.getPageNumber(getPage(4))).toEqual('4');
+            expect(annotator.getPageNumber(getPage(1))).toEqual(1);
+            expect(annotator.getPageNumber(getPage(2))).toEqual(2);
+            expect(annotator.getPageNumber(getPage(3))).toEqual(3);
+            expect(annotator.getPageNumber(getPage(4))).toEqual(4);
         });
 
         test('should default to page one if no page number is present', () => {
-            expect(annotator.getPageNumber(document.createElement('div'))).toEqual('1');
+            expect(annotator.getPageNumber(document.createElement('div'))).toEqual(1);
         });
     });
 
@@ -165,10 +165,9 @@ describe('DocumentAnnotator', () => {
     describe('renderPage()', () => {
         test('should initialize a manager for a new page', () => {
             const mockManager = ({ render: jest.fn() } as unknown) as BaseManager;
-            const pageNumber = '1';
+            const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
-            annotator.annotations = { [pageNumber]: [] };
             annotator.getPageManagers = jest.fn(() => [mockManager]);
             annotator.getPageNumber = jest.fn(() => pageNumber);
             annotator.renderPage(pageEl);
@@ -176,7 +175,6 @@ describe('DocumentAnnotator', () => {
             expect(annotator.getPageManagers).toHaveBeenCalledWith(pageEl);
             expect(annotator.getPageNumber).toHaveBeenCalledWith(pageEl);
             expect(mockManager.render).toHaveBeenCalledWith({
-                annotations: [],
                 intl: annotator.intl,
                 scale: 1,
                 store: expect.any(Object),

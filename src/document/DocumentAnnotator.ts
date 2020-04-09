@@ -8,9 +8,7 @@ import './DocumentAnnotator.scss';
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
-    annotations: Record<string, []> = {};
-
-    managers: Map<string, BaseManager[]> = new Map();
+    managers: Map<number, BaseManager[]> = new Map();
 
     constructor(options: Options) {
         super(options);
@@ -38,8 +36,8 @@ export default class DocumentAnnotator extends BaseAnnotator {
         return managers;
     }
 
-    getPageNumber(pageEl: HTMLElement): string {
-        return pageEl.dataset.pageNumber || '1';
+    getPageNumber(pageEl: HTMLElement): number {
+        return parseInt(pageEl.dataset.pageNumber || '', 10) || 1;
     }
 
     getPageReference(pageEl: HTMLElement): HTMLElement {
@@ -87,10 +85,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
         const pageManagers = this.getPageManagers(pageEl);
         const pageNumber = this.getPageNumber(pageEl);
 
-        // Render annotations for every page (can be updated with visibility detection)
+        // Render annotations for every page
         pageManagers.forEach(manager =>
             manager.render({
-                annotations: this.annotations[pageNumber],
                 intl: this.intl,
                 scale: this.scale,
                 store: this.store,

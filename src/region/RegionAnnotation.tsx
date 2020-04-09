@@ -9,7 +9,7 @@ type Props = {
     className?: string;
     isActive?: boolean;
     onSelect?: (annotationId: string) => void;
-    shape: Partial<Rect>;
+    shape: Rect;
 };
 
 const RegionAnnotation = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.Element => {

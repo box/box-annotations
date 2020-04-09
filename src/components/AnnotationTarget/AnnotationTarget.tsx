@@ -37,9 +37,11 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
 
     // We use an anchor to allow the target to be used inside of SVG shapes where buttons aren't supported
     return (
+        // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
             className={classNames('ba-AnnotationTarget', className)}
+            href="#"
             onClick={handleClick}
             onFocus={handleFocus}
             onKeyPress={handleKeyPress}

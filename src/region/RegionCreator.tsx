@@ -9,7 +9,7 @@ type Position = {
 type Props = {
     canDraw: boolean;
     className?: string;
-    onDraw: (shape: Partial<Rect>) => void;
+    onDraw: (shape: Rect) => void;
     onDone: () => void;
 };
 
@@ -153,6 +153,7 @@ export default class RegionCreator extends React.Component<Props, State> {
         const targetY = Math.min(Math.max(MIN_Y, y2 > y1 ? y2 : y1), MAX_Y);
 
         onDraw({
+            type: 'rect',
             height: Math.max(MIN_SIZE, targetY - originY),
             width: Math.max(MIN_SIZE, targetX - originX),
             x: originX,
@@ -160,7 +161,7 @@ export default class RegionCreator extends React.Component<Props, State> {
         });
     }
 
-    render(): JSX.Element | null {
+    render(): JSX.Element {
         const { canDraw, className } = this.props;
         const eventHandlers = canDraw
             ? {

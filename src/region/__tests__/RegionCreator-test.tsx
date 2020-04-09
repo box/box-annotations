@@ -226,6 +226,7 @@ describe('RegionCreator', () => {
 
             expect(onDraw).toHaveBeenCalledWith({
                 height,
+                type: 'rect',
                 width,
                 x,
                 y,

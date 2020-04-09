@@ -31,7 +31,6 @@ describe('PopupBase', () => {
                 wrapper.simulate(event, mockEvent);
 
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-                expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.stopPropagation).toHaveBeenCalled();
             },
         );
