@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
 import FileVersionAPI from '../api/FileVersionAPI';
+import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
@@ -27,7 +28,7 @@ export type Options = {
     token: string;
 };
 
-export default class BaseAnnotator extends EventEmitter {
+export default class BaseAnnotator {
     api: FileVersionAPI;
 
     container: Container;
@@ -41,8 +42,6 @@ export default class BaseAnnotator extends EventEmitter {
     store: Store;
 
     constructor({ apiHost, container, intl, file, token }: Options) {
-        super();
-
         this.api = new FileVersionAPI({
             apiHost,
             fileId: file.id,
@@ -63,9 +62,8 @@ export default class BaseAnnotator extends EventEmitter {
             this.rootEl.classList.remove('ba');
         }
 
+        eventManager.removeAllListeners();
         this.api.destroy();
-        this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
-        this.removeListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -101,4 +99,16 @@ export default class BaseAnnotator extends EventEmitter {
     setVisibility = (visibility: boolean): void => {
         this.store.dispatch(setVisibilityAction(visibility));
     };
+
+    addListener(eventName: string, listener: (...args) => void): void {
+        eventManager.addListener(eventName, listener);
+    }
+
+    removeListener(eventName: string, listener: (...args) => void): void {
+        eventManager.removeListener(eventName, listener);
+    }
+
+    emit(eventName: string, data: any): void {
+        eventManager.emit(eventName, data);
+    }
 }
