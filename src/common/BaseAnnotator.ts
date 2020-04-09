@@ -6,7 +6,7 @@ import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
 import { IntlOptions, Permissions } from '../@types';
-import { createStore, Mode, toggleAnnotationModeAction, toggleAnnotationVisibilityAction } from '../store';
+import { createStore, Mode, toggleAnnotationModeAction, setVisibilityAction } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -55,7 +55,7 @@ export default class BaseAnnotator extends EventEmitter {
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
-        this.addListener(ANNOTATOR_EVENT.toggleVisibility, this.toggleAnnotationVisibility);
+        this.addListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
     }
 
     destroy(): void {
@@ -65,7 +65,7 @@ export default class BaseAnnotator extends EventEmitter {
 
         this.api.destroy();
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
-        this.removeListener(ANNOTATOR_EVENT.toggleVisibility, this.toggleAnnotationVisibility);
+        this.removeListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -98,7 +98,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(toggleAnnotationModeAction(mode));
     }
 
-    toggleAnnotationVisibility = (): void => {
-        this.store.dispatch(toggleAnnotationVisibilityAction());
+    setVisibility = (visibility: boolean): void => {
+        this.store.dispatch(setVisibilityAction(visibility));
     };
 }
