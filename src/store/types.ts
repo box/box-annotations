@@ -1,5 +1,5 @@
-import { ModeState } from './mode';
+import { CommonState } from './common';
 
 export interface ApplicationState {
-    mode: ModeState;
+    common: CommonState;
 }
