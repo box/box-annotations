@@ -1,5 +1,5 @@
 import { state } from '../__mocks__/state';
-import { getAnnotationMode, getAnnotationVisibility } from '../selectors';
+import { getAnnotationMode, getVisibility } from '../selectors';
 
 describe('store/common/selectors', () => {
     describe('getAnnotationMode', () => {
@@ -8,9 +8,9 @@ describe('store/common/selectors', () => {
         });
     });
 
-    describe('getAnnotationVisibility', () => {
+    describe('getVisibility', () => {
         test('should return annotation visibility', () => {
-            expect(getAnnotationVisibility({ common: state })).toBe(true);
+            expect(getVisibility({ common: state })).toBe(true);
         });
     });
 });

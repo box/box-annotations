@@ -1,5 +1,5 @@
 import reducer from '../reducer';
-import { toggleAnnotationModeAction, toggleAnnotationVisibilityAction } from '../actions';
+import { toggleAnnotationModeAction, setVisibilityAction } from '../actions';
 import { state } from '../__mocks__/state';
 import { Mode } from '../types';
 
@@ -16,12 +16,12 @@ describe('store/common/reducer', () => {
         });
     });
 
-    describe('toggleAnnotationVisibilityAction', () => {
-        test('should toggle visibility state', () => {
-            let newState = reducer(state, toggleAnnotationVisibilityAction());
+    describe('setVisibilityAction', () => {
+        test('should set visibility state', () => {
+            let newState = reducer(state, setVisibilityAction(false));
             expect(newState.visibility).toEqual(false);
 
-            newState = reducer({ ...state, visibility: false }, toggleAnnotationVisibilityAction());
+            newState = reducer({ ...state, visibility: false }, setVisibilityAction(true));
             expect(newState.visibility).toEqual(true);
         });
     });

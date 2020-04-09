@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { ANNOTATOR_EVENT } from '../../constants';
 import BaseAnnotator from '../BaseAnnotator';
-import { toggleAnnotationModeAction, Mode } from '../../store';
+import { toggleAnnotationModeAction, setVisibilityAction, Mode } from '../../store';
 
 jest.mock('../../api/FileVersionAPI');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     toggleAnnotationModeAction: jest.fn(),
+    setVisibilityAction: jest.fn(),
 }));
 
 describe('BaseAnnotator', () => {
@@ -98,6 +99,14 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.store.dispatch).toBeCalled();
             expect(toggleAnnotationModeAction).toBeCalledWith('region');
+        });
+    });
+
+    describe('setVisibility()', () => {
+        test.each([true, false])('should dispatch setVisibilityAction with visibility %p', visibility => {
+            annotator.setVisibility(visibility);
+            expect(annotator.store.dispatch).toBeCalled();
+            expect(setVisibilityAction).toBeCalledWith(visibility);
         });
     });
 });
