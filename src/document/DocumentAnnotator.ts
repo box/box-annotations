@@ -1,8 +1,8 @@
 // @flow
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import RegionManager from '../region/RegionManager';
 import { ANNOTATOR_EVENT, CLASS_ANNOTATIONS_LOADED } from '../constants';
+import { RegionManager } from '../region';
 import './DocumentAnnotator.scss';
 
 export default class DocumentAnnotator extends BaseAnnotator {

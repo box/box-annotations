@@ -3,7 +3,7 @@ import merge from 'lodash/merge';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionAnnotation from './RegionAnnotation';
 import RegionCreator from './RegionCreator';
-import { Annotation, Rect, NewAnnotation, TargetRegion } from '../@types';
+import { Annotation, Rect, TargetRegion } from '../@types';
 import { CreatorItem, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
@@ -12,7 +12,7 @@ type Props = {
     isCreating: boolean;
     page: number;
     scale: number;
-    saveAnnotation: (annotation: NewAnnotation) => void;
+    saveRegion: (arg: { location: number; message: string; shape: Rect }) => void;
     setStaged: (staged: CreatorItem | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItem | null;
@@ -32,9 +32,9 @@ export default class RegionAnnotations extends React.Component<Props, State> {
 
     state: State = {};
 
-    setStaged(data: Partial<CreatorItem>): void {
+    setStaged(data: Partial<CreatorItem> | null): void {
         const { staged, page, setStaged } = this.props;
-        setStaged(merge({ location: page }, staged, data));
+        setStaged(data ? merge({ location: page, message: '' }, staged, data) : data);
     }
 
     setStatus(status: CreatorStatus): void {
@@ -43,7 +43,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     }
 
     handleCancel = (): void => {
-        this.reset();
+        this.setStaged(null);
+        this.setStatus(CreatorStatus.init);
     };
 
     handleChange = (text?: string): void => {
@@ -51,39 +52,25 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     };
 
     handleSubmit = (): void => {
-        const { staged, saveAnnotation } = this.props;
+        const { saveRegion, staged } = this.props;
 
         if (!staged) {
             return;
         }
 
-        const { location, message = '', shape } = staged;
-
-        saveAnnotation({
-            description: {
-                message,
-                type: 'reply',
-            },
-            target: {
-                location: {
-                    type: 'page',
-                    value: location,
-                },
-                shape,
-                type: 'region',
-            },
-        });
-
-        this.reset();
-    };
-
-    handleDone = (): void => {
-        this.setStatus(CreatorStatus.ready);
+        saveRegion(staged);
     };
 
     handleDraw = (shape: Rect): void => {
         this.setStaged({ shape: this.scaleShape(shape, true) }); // Store at a scale of 1
+    };
+
+    handleStart = (): void => {
         this.setStatus(CreatorStatus.init);
+    };
+
+    handleStop = (): void => {
+        this.setStatus(CreatorStatus.ready);
     };
 
     setTargetRef = (targetRef: HTMLAnchorElement): void => {
@@ -101,12 +88,6 @@ export default class RegionAnnotations extends React.Component<Props, State> {
             x: Math.round(x * ratio),
             y: Math.round(y * ratio),
         };
-    }
-
-    reset(): void {
-        const { setStaged, setStatus } = this.props;
-        setStaged(null);
-        setStatus(CreatorStatus.init);
     }
 
     render(): JSX.Element {
@@ -133,8 +114,9 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                     <RegionCreator
                         canDraw={!hasComment}
                         className="ba-RegionAnnotations-creator"
-                        onDone={this.handleDone}
                         onDraw={this.handleDraw}
+                        onStart={this.handleStart}
+                        onStop={this.handleStop}
                     />
                 )}
 

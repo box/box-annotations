@@ -3,6 +3,7 @@ import { CreatorStatus } from '../types';
 export default {
     staged: {
         location: 1,
+        message: 'test',
         shape: {
             height: 100,
             width: 100,

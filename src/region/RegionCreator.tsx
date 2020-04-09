@@ -10,7 +10,8 @@ type Props = {
     canDraw: boolean;
     className?: string;
     onDraw: (shape: Rect) => void;
-    onDone: () => void;
+    onStart: () => void;
+    onStop: () => void;
 };
 
 type State = {
@@ -31,16 +32,8 @@ export default class RegionCreator extends React.Component<Props, State> {
         position: null,
     };
 
-    componentDidMount(): void {
-        // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
-        // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('mouseup', this.handleMouseUp);
-    }
-
     componentWillUnmount(): void {
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mouseup', this.handleMouseUp);
+        this.removeListeners();
     }
 
     getPosition({ x, y }: Position): Position {
@@ -111,21 +104,39 @@ export default class RegionCreator extends React.Component<Props, State> {
         });
     };
 
+    addListeners(): void {
+        // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
+        // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
+        document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('mouseup', this.handleMouseUp);
+    }
+
+    removeListeners(): void {
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+
     startDraw(position: Position): void {
+        const { onStart } = this.props;
+
+        this.addListeners();
         this.setState({
             isDrawing: true,
             position: this.getPosition(position),
         });
+
+        onStart();
     }
 
     stopDraw(): void {
-        const { onDone } = this.props;
+        const { onStop } = this.props;
 
+        this.removeListeners();
         this.setState({
             isDrawing: false,
         });
 
-        onDone();
+        onStop();
     }
 
     updateDraw({ x, y }: Position): void {

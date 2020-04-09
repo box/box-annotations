@@ -7,7 +7,7 @@ export enum CreatorStatus {
 
 export type CreatorItem = {
     location: number;
-    message?: string;
+    message: string;
     shape: Rect;
 };
 

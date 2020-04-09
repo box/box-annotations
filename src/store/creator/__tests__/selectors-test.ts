@@ -16,6 +16,7 @@ describe('store/annotations/selectors', () => {
             expect(getCreatorStaged(state)).toMatchInlineSnapshot(`
                 Object {
                   "location": 1,
+                  "message": "test",
                   "shape": Object {
                     "height": 100,
                     "type": "rect",

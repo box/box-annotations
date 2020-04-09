@@ -8,7 +8,7 @@ export const setAnnotationsAction = createAction<Annotation[]>('SET_ANNOTATIONS'
 
 // Async Actions
 export const saveAnnotationAction = createAsyncThunk(
-    'annotation/save',
+    'SAVE_ANNOTATION',
     async (annotation: NewAnnotation, { dispatch }) => {
         // TODO: Replace with API call
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

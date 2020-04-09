@@ -8,7 +8,7 @@ import RegionAnnotations from '../RegionAnnotations';
 describe('RegionAnnotations', () => {
     const defaults = {
         page: 1,
-        saveAnnotation: jest.fn(),
+        saveRegion: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: {} as CreatorItem,

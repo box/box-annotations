@@ -8,10 +8,10 @@ import {
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
     getCreatorStatus,
-    saveAnnotationAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
+import { saveRegionAction } from './actions';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
 
@@ -30,7 +30,7 @@ export const mapStateToProps = (state: ApplicationState, { page }: { page: numbe
 });
 
 export const mapDispatchTopProps = {
-    saveAnnotation: saveAnnotationAction,
+    saveRegion: saveRegionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };
