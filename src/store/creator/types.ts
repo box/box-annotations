@@ -1,8 +1,10 @@
-import { Rect } from '../../@types';
+import { Rect, SerializedError } from '../../@types';
 
 export enum CreatorStatus {
     init = 'init',
-    ready = 'ready',
+    pending = 'pending',
+    rejected = 'rejected',
+    staged = 'staged',
 }
 
 export type CreatorItem = {
@@ -12,6 +14,7 @@ export type CreatorItem = {
 };
 
 export type CreatorState = {
+    error: SerializedError | null;
     staged: CreatorItem | null;
     status: CreatorStatus;
 };

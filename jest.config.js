@@ -1,13 +1,7 @@
 module.exports = {
     clearMocks: true,
     collectCoverage: false,
-    collectCoverageFrom: [
-        'src/**/*.js',
-        '!src/utils/*.js',
-        '!src/**/messages.js',
-        '!src/**/__tests__/**',
-        '!**/node_modules/**',
-    ],
+    collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!**/messages.{ts,tsx}', '!**/node_modules/**'],
     coverageDirectory: '<rootDir>/reports',
     globals: {
         __NAME__: 'name',

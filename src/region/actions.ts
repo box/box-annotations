@@ -1,15 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CreatorStatus, setStagedAction, setStatusAction } from '../store/creator';
 import { Rect } from '../@types';
-import { saveAnnotationAction } from '../store/annotations';
+import { createAnnotationAction } from '../store/annotations';
 
-export type SavePayload = {
+export type CreateArg = {
     location: number;
     message: string;
     shape: Rect;
 };
 
-export const saveRegionAction = createAsyncThunk('SAVE_REGION', async (arg: SavePayload, { dispatch }) => {
+export const createRegionAction = createAsyncThunk('CREATE_REGION', async (arg: CreateArg, { dispatch }) => {
     const { location, message, shape } = arg;
     const payload = {
         description: {
@@ -26,8 +25,5 @@ export const saveRegionAction = createAsyncThunk('SAVE_REGION', async (arg: Save
         },
     };
 
-    return dispatch(saveAnnotationAction(payload)).then(() => {
-        dispatch(setStagedAction(null));
-        dispatch(setStatusAction(CreatorStatus.init));
-    });
+    return dispatch(createAnnotationAction(payload));
 });

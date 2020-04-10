@@ -1,6 +1,7 @@
 import { CreatorStatus } from '../types';
 
 export default {
+    error: null,
     staged: {
         location: 1,
         message: 'test',
