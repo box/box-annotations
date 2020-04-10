@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import BaseManager, { Options, Props } from '../common/BaseManager';
+import { ICON_REGION_CROSSHAIR } from '../icons/icons';
 import RegionContainer from './RegionContainer';
 
 export default class RegionManager implements BaseManager {
@@ -35,6 +36,7 @@ export default class RegionManager implements BaseManager {
         const rootLayerEl = documentEl.createElement('div');
         rootLayerEl.classList.add('ba-Layer');
         rootLayerEl.classList.add('ba-Layer--region');
+        rootLayerEl.style.cursor = `url('data:image/svg+xml;utf8,${ICON_REGION_CROSSHAIR}'), crosshair`;
         rootLayerEl.dataset.testid = 'ba-Layer--region';
 
         // Insert the new layer element immediately after the reference element
