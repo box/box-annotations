@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
 import FileVersionAPI from '../api/FileVersionAPI';
@@ -100,15 +99,18 @@ export default class BaseAnnotator {
         this.store.dispatch(setVisibilityAction(visibility));
     };
 
-    addListener(eventName: string, listener: (...args) => void): void {
-        eventManager.addListener(eventName, listener);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addListener(event: string | symbol, listener: (...args: any[]) => void): void {
+        eventManager.addListener(event, listener);
     }
 
-    removeListener(eventName: string, listener: (...args) => void): void {
-        eventManager.removeListener(eventName, listener);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    removeListener(event: string | symbol, listener: (...args: any[]) => void): void {
+        eventManager.removeListener(event, listener);
     }
 
-    emit(eventName: string, data: any): void {
-        eventManager.emit(eventName, data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emit(event: string | symbol, ...args: any[]): void {
+        eventManager.emit(event, ...args);
     }
 }

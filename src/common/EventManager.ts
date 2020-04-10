@@ -1,11 +1,12 @@
 import { EventEmitter } from 'events';
 
 class EventManager extends EventEmitter {
-    emit(event: Event, data?: Record<string, any>): void {
-        super.emit(event, data);
-        super.emit('annotatorevent', {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emit(event: string | symbol, ...args: any[]): boolean {
+        super.emit(event, ...args);
+        return super.emit('annotatorevent', {
             event,
-            data,
+            ...args,
         });
     }
 }
