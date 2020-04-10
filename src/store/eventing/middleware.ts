@@ -1,30 +1,28 @@
+import noop from 'lodash/noop';
 import { Action, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
-import { toggleAnnotationModeAction } from '../common/actions';
-import handleModeEvents from './modes';
-import handleVisibilityEvents from './visibility';
-import { setVisibilityAction } from '../common';
-import { EventHandlerEntry } from './types';
+import { saveAnnotationAction } from '../annotations/actions';
+import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
+import { EventHandler, EventHandlerMap } from '../../@types';
 
 // Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
-const eventHandlers: EventHandlerEntry[] = [
-    { [toggleAnnotationModeAction.toString()]: handleModeEvents },
-    { [setVisibilityAction.toString()]: handleVisibilityEvents },
-];
+const eventHandlers: EventHandlerMap = {
+    [saveAnnotationAction.pending.toString()]: handleCreatePendingEvents,
+    [saveAnnotationAction.fulfilled.toString()]: handleCreateSuccessEvents,
+    [saveAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
+};
 
-const eventingMiddleware: Middleware = (store: MiddlewareAPI) => (next: Dispatch) => (action: Action): Action => {
+const getEventingMiddleware: Middleware = (handlers?: EventHandlerMap = eventHandlers) => (store: MiddlewareAPI) => (
+    next: Dispatch,
+) => (action: Action): Action => {
     const { type } = action;
     const prevState = store.getState();
     const result = next(action);
     const nextState = store.getState();
 
-    // Filters the eventHandlers array by the action type and then calls the handler with prevState and nextState
-    // to allow it to generate the appropriate events
-    eventHandlers
-        .filter(handlerEntry => handlerEntry[type])
-        .map(handlerEntry => handlerEntry[type])
-        .forEach(handler => handler(prevState, nextState));
+    const handler = handlers[action.type] || noop;
+    handler(prevState, nextState, action);
 
     return result;
 };
 
-export default eventingMiddleware;
+export default getEventingMiddleware;

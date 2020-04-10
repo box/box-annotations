@@ -1,2 +1,1 @@
-// eslint-disable-next-line import/prefer-default-export
-export { default as eventingMiddleware } from './middleware';
+export { default } from './middleware';
