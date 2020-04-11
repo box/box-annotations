@@ -1,7 +1,10 @@
 import { Action, SerializedError } from '@reduxjs/toolkit';
 import { ApplicationState } from '../store/types';
+import { NewAnnotation } from './new';
+import { Annotation } from './model';
 
 export enum Event {
+    ANNOTATOR = 'annotatorevent',
     CREATE_ANNOTATION = 'annotationCreate',
 }
 
@@ -25,11 +28,15 @@ export interface ThunkMeta {
     requestId: string;
 }
 
-export interface AsyncAction {
-    error: SerializedError;
-    meta: ThunkMeta;
-    payload: undefined;
+export interface AsyncAction extends Action {
+    error?: SerializedError;
+    meta?: ThunkMeta;
+    payload?: Annotation;
 }
 
-export type EventHandler = (prevState: ApplicationState, nextState: ApplicationState, action: Action) => void;
+export type EventHandler = (
+    prevState: ApplicationState,
+    nextState: ApplicationState,
+    action: Action | AsyncAction,
+) => void;
 export type EventHandlerMap = Record<Action['type'], EventHandler>;
