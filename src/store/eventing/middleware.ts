@@ -1,14 +1,14 @@
 import noop from 'lodash/noop';
 import { Action, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
-import { saveAnnotationAction } from '../annotations/actions';
+import { createAnnotationAction } from '../annotations/actions';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
 import { EventHandlerMap } from './types';
 
 // Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
 const eventHandlers: EventHandlerMap = {
-    [saveAnnotationAction.pending.toString()]: handleCreatePendingEvents,
-    [saveAnnotationAction.fulfilled.toString()]: handleCreateSuccessEvents,
-    [saveAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
+    [createAnnotationAction.pending.toString()]: handleCreatePendingEvents,
+    [createAnnotationAction.fulfilled.toString()]: handleCreateSuccessEvents,
+    [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {
