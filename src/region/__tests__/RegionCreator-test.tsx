@@ -280,5 +280,13 @@ describe('RegionCreator', () => {
             expect(wrapper.prop('onTouchMove')).not.toBeDefined();
             expect(wrapper.prop('onTouchStart')).not.toBeDefined();
         });
+
+        test('should add is-active class if canDraw is true', () => {
+            const wrapper = getWrapper({ canDraw: true });
+            expect(wrapper.prop('className')).toEqual('ba-RegionCreator is-active');
+
+            wrapper.setProps({ canDraw: false });
+            expect(wrapper.prop('className')).toEqual('ba-RegionCreator');
+        });
     });
 });
