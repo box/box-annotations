@@ -1,5 +1,5 @@
 import eventManager from '../../common/EventManager';
-import { AsyncAction, Event, Status } from '../../@types';
+import { AsyncAction, Event, Status } from './types';
 import { ApplicationState } from '../types';
 
 const emitCreateEvent = (action: AsyncAction, status: Status): void => {

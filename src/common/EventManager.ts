@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Event } from '../@types';
+import { Event } from '../store/eventing';
 
 class EventManager extends EventEmitter {
     emit(event: string | symbol, ...args: unknown[]): boolean {

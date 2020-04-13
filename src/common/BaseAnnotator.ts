@@ -61,9 +61,9 @@ export default class BaseAnnotator {
             this.rootEl.classList.remove('ba');
         }
 
+        this.api.destroy();
         this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
         this.removeListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
-        this.api.destroy();
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
