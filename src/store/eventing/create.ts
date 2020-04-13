@@ -13,28 +13,14 @@ const emitCreateEvent = (action: AsyncAction, status: Status): void => {
     });
 };
 
-const handleCreateErrorEvents = (
+const createHandler = (status: Status) => (
     prevState: ApplicationState,
     nextState: ApplicationState,
     action: AsyncAction,
-): void => {
-    emitCreateEvent(action, Status.ERROR);
-};
+): void => emitCreateEvent(action, status);
 
-const handleCreatePendingEvents = (
-    prevState: ApplicationState,
-    nextState: ApplicationState,
-    action: AsyncAction,
-): void => {
-    emitCreateEvent(action, Status.PENDING);
-};
-
-const handleCreateSuccessEvents = (
-    prevState: ApplicationState,
-    nextState: ApplicationState,
-    action: AsyncAction,
-): void => {
-    emitCreateEvent(action, Status.SUCCESS);
-};
+const handleCreateErrorEvents = createHandler(Status.ERROR);
+const handleCreatePendingEvents = createHandler(Status.PENDING);
+const handleCreateSuccessEvents = createHandler(Status.SUCCESS);
 
 export { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents };
