@@ -1,5 +1,7 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import { Rect } from '../@types';
+import './RegionCreator.scss';
 
 type Position = {
     x: number;
@@ -185,6 +187,14 @@ export default class RegionCreator extends React.Component<Props, State> {
               }
             : {};
 
-        return <div ref={this.creatorRef} className={className} {...eventHandlers} />;
+        return (
+            <div
+                ref={this.creatorRef}
+                className={classNames(className, 'ba-RegionCreator', {
+                    'is-active': canDraw,
+                })}
+                {...eventHandlers}
+            />
+        );
     }
 }
