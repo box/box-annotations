@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
 import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
 import FileVersionAPI from '../api/FileVersionAPI';
+import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { ANNOTATOR_EVENT } from '../constants';
@@ -27,7 +27,7 @@ export type Options = {
     token: string;
 };
 
-export default class BaseAnnotator extends EventEmitter {
+export default class BaseAnnotator {
     api: FileVersionAPI;
 
     container: Container;
@@ -41,8 +41,6 @@ export default class BaseAnnotator extends EventEmitter {
     store: Store;
 
     constructor({ apiHost, container, intl, file, token }: Options) {
-        super();
-
         this.api = new FileVersionAPI({
             apiHost,
             fileId: file.id,
@@ -101,4 +99,19 @@ export default class BaseAnnotator extends EventEmitter {
     setVisibility = (visibility: boolean): void => {
         this.store.dispatch(setVisibilityAction(visibility));
     };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addListener(event: string | symbol, listener: (...args: any[]) => void): void {
+        eventManager.addListener(event, listener);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    removeListener(event: string | symbol, listener: (...args: any[]) => void): void {
+        eventManager.removeListener(event, listener);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    emit(event: string | symbol, ...args: any[]): void {
+        eventManager.emit(event, ...args);
+    }
 }
