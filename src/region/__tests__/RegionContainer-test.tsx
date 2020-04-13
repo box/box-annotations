@@ -1,19 +1,38 @@
-import { createStore, Mode } from '../../store';
-import { mapStateToProps } from '../RegionContainer';
+import * as React from 'react';
+import { IntlShape } from 'react-intl';
+import { mount, ReactWrapper } from 'enzyme';
+import RegionAnnotations from '../RegionAnnotations';
+import RegionContainer, { Props } from '../RegionContainer';
+import { createStore, CreatorStatus } from '../../store';
+
+jest.mock('../../common/withProviders');
+jest.mock('../RegionAnnotations');
 
 describe('RegionContainer', () => {
-    describe('mapStateToProps()', () => {
-        test.each`
-            mode           | isCreating
-            ${undefined}   | ${false}
-            ${Mode.NONE}   | ${false}
-            ${Mode.REGION} | ${true}
-        `('should pass isCreating based on the current mode', ({ isCreating, mode }) => {
-            const props = { page: 1 };
-            const store = createStore({ common: { mode, visibility: true } });
+    const defaults = {
+        intl: {} as IntlShape,
+        page: 1,
+        scale: 1,
+        store: createStore(),
+    };
+    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionContainer {...defaults} {...props} />);
 
-            expect(mapStateToProps(store.getState(), props)).toMatchObject({
-                isCreating,
+    describe('render', () => {
+        test('should connect the underlying component and wrap it with a root provider', () => {
+            const wrapper = getWrapper();
+
+            expect(wrapper.exists('RootProvider')).toBe(true);
+            expect(wrapper.find(RegionAnnotations).props()).toMatchObject({
+                annotations: [],
+                createRegion: expect.any(Function),
+                isCreating: false,
+                page: defaults.page,
+                scale: defaults.scale,
+                staged: null,
+                status: CreatorStatus.init,
+                setStaged: expect.any(Function),
+                setStatus: expect.any(Function),
+                store: defaults.store,
             });
         });
     });

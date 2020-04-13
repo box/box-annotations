@@ -11,11 +11,11 @@ import {
     setStagedAction,
     setStatusAction,
 } from '../store';
-import { saveRegionAction } from './actions';
+import { createRegionAction } from './actions';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
 
-type Props = {
+export type Props = {
     annotations: Annotation[];
     isCreating: boolean;
     staged: CreatorItem | null;
@@ -30,7 +30,7 @@ export const mapStateToProps = (state: ApplicationState, { page }: { page: numbe
 });
 
 export const mapDispatchTopProps = {
-    saveRegion: saveRegionAction,
+    createRegion: createRegionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

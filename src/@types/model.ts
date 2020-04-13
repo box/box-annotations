@@ -2,12 +2,12 @@
 
 // New Data Model Types
 export interface Annotation {
-    createdAt: Date;
-    createdBy: User;
+    created_at: Date;
+    created_by: User;
     description?: Reply;
     id: string;
-    modifiedAt: Date;
-    modifiedBy: User;
+    modified_at: Date;
+    modified_by: User;
     permissions: Permissions;
     replies?: Array<Reply>;
     target: Target;
@@ -37,8 +37,8 @@ export interface Rect {
 }
 
 export interface Reply {
-    createdAt: Date;
-    createdBy: User;
+    created_at: Date;
+    created_by: User;
     id: string;
     message: string;
     parent: {

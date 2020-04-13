@@ -1,5 +1,5 @@
-import * as React from 'react';
 import merge from 'lodash/merge';
+import * as React from 'react';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionAnnotation from './RegionAnnotation';
 import RegionCreator from './RegionCreator';
@@ -9,10 +9,10 @@ import './RegionAnnotations.scss';
 
 type Props = {
     annotations: Annotation[];
+    createRegion: (arg: { location: number; message: string; shape: Rect }) => void;
     isCreating: boolean;
     page: number;
     scale: number;
-    saveRegion: (arg: { location: number; message: string; shape: Rect }) => void;
     setStaged: (staged: CreatorItem | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItem | null;
@@ -33,7 +33,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     state: State = {};
 
     setStaged(data: Partial<CreatorItem> | null): void {
-        const { staged, page, setStaged } = this.props;
+        const { page, setStaged, staged } = this.props;
         setStaged(data ? merge({ location: page, message: '' }, staged, data) : data);
     }
 
@@ -51,16 +51,6 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         this.setStaged({ message: text });
     };
 
-    handleSubmit = (): void => {
-        const { saveRegion, staged } = this.props;
-
-        if (!staged) {
-            return;
-        }
-
-        saveRegion(staged);
-    };
-
     handleDraw = (shape: Rect): void => {
         this.setStaged({ shape: this.scaleShape(shape, true) }); // Store at a scale of 1
     };
@@ -70,7 +60,17 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     };
 
     handleStop = (): void => {
-        this.setStatus(CreatorStatus.ready);
+        this.setStatus(CreatorStatus.staged);
+    };
+
+    handleSubmit = (): void => {
+        const { createRegion, staged } = this.props;
+
+        if (!staged) {
+            return;
+        }
+
+        createRegion(staged);
     };
 
     setTargetRef = (targetRef: HTMLAnchorElement): void => {
@@ -93,8 +93,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     render(): JSX.Element {
         const { annotations, isCreating, staged, status } = this.props;
         const { targetRef } = this.state;
-        const hasComment = staged && staged.message;
-        const hasDrawn = status === CreatorStatus.ready;
+        const canDraw = !staged || !staged.message;
+        const canReply = status === CreatorStatus.staged;
 
         return (
             <>
@@ -112,7 +112,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                 {/* Layer 2: Transparent layer to handle click/drag events */}
                 {isCreating && (
                     <RegionCreator
-                        canDraw={!hasComment}
+                        canDraw={canDraw}
                         className="ba-RegionAnnotations-creator"
                         onDraw={this.handleDraw}
                         onStart={this.handleStart}
@@ -133,7 +133,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                 )}
 
                 {/* Layer 3b: New, unsaved annotation description popup, if 3a is ready */}
-                {isCreating && staged && hasDrawn && targetRef && (
+                {isCreating && staged && canReply && targetRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
                             defaultValue={staged.message}
