@@ -5,7 +5,7 @@ import { Event } from '../../@types';
 
 const emitCreateEvent = (action: AsyncAction, status: Status): void => {
     const { error, meta: { arg: annotation } = {} } = action;
-    eventManager.emit(Event.CREATE_ANNOTATION, {
+    eventManager.emit(Event.ANNOTATION_CREATE, {
         annotation,
         error,
         meta: {

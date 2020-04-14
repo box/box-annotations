@@ -8,7 +8,7 @@ const handleActiveAnnotationEvents = (prevState: ApplicationState, nextState: Ap
     const nextActiveAnnotationId = getActiveAnnotationId(nextState);
 
     if (prevActiveAnnotationId !== nextActiveAnnotationId) {
-        eventManager.emit(Event.SELECT, nextActiveAnnotationId);
+        eventManager.emit(Event.ACTIVE_CHANGE, nextActiveAnnotationId);
     }
 };
 

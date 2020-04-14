@@ -26,7 +26,7 @@ describe('store/eventing/create', () => {
         test('should emit create event with error status', () => {
             handleCreateErrorEvents(prevState, nextState, actionWithError);
 
-            expect(eventManager.emit).toHaveBeenLastCalledWith('annotationCreate', {
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
                 annotation,
                 error,
                 meta: {
@@ -40,7 +40,7 @@ describe('store/eventing/create', () => {
         test('should emit create event with pending status', () => {
             handleCreatePendingEvents(prevState, nextState, action);
 
-            expect(eventManager.emit).toHaveBeenLastCalledWith('annotationCreate', {
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
                 annotation,
                 meta: {
                     status: 'pending',
@@ -53,7 +53,7 @@ describe('store/eventing/create', () => {
         test('should emit create event with success status', () => {
             handleCreateSuccessEvents(prevState, nextState, action);
 
-            expect(eventManager.emit).toHaveBeenLastCalledWith('annotationCreate', {
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
                 annotation,
                 meta: {
                     status: 'success',

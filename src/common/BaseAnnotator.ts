@@ -4,7 +4,7 @@ import FileVersionAPI from '../api/FileVersionAPI';
 import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Event, IntlOptions, Permissions } from '../@types';
+import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import {
     createStore,
     Mode,
@@ -57,9 +57,9 @@ export default class BaseAnnotator {
         this.store = createStore();
 
         // Add custom handlers for events triggered by the Preview SDK
-        this.addListener(Event.SCALE, this.handleScale);
-        this.addListener(Event.SET_SELECTED, this.setActiveAnnotationId);
-        this.addListener(Event.SET_VISIBILITY, this.setVisibility);
+        this.addListener(LegacyEvent.SCALE, this.handleScale);
+        this.addListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
+        this.addListener(Event.VISIBLE_SET, this.setVisibility);
     }
 
     destroy(): void {
@@ -68,9 +68,9 @@ export default class BaseAnnotator {
         }
 
         this.api.destroy();
-        this.removeListener(Event.SCALE, this.handleScale);
-        this.removeListener(Event.SET_SELECTED, this.setActiveAnnotationId);
-        this.removeListener(Event.SET_VISIBILITY, this.setVisibility);
+        this.removeListener(LegacyEvent.SCALE, this.handleScale);
+        this.removeListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
+        this.removeListener(Event.VISIBLE_SET, this.setVisibility);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -87,7 +87,7 @@ export default class BaseAnnotator {
         this.scale = scale;
 
         if (!this.rootEl) {
-            this.emit(Event.ERROR, this.intl.formatMessage(messages.annotationsLoadError));
+            this.emit(LegacyEvent.ERROR, this.intl.formatMessage(messages.annotationsLoadError));
             return;
         }
 

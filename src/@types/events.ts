@@ -1,12 +1,15 @@
 enum Event {
-    ANNOTATOR = 'annotatorevent', // Existing legacy event, don't rename
-    CREATE_ANNOTATION = 'annotationcreate',
-    ERROR = 'annotationerror', // Existing legacy event, don't rename
-    SCALE = 'scaleannotations', // Existing legacy event, don't rename
-    SELECT = 'annotationselect',
-    SET_SELECTED = 'annotationsetselected',
-    SET_VISIBILITY = 'annotationsetvisibility',
+    ANNOTATION_CREATE = 'annotations_create',
+    ACTIVE_CHANGE = 'annotations_active_change',
+    ACTIVE_SET = 'annotations_active_set',
+    VISIBLE_SET = 'annotations_visible_set',
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { Event };
+// Existing legacy events, don't rename
+enum LegacyEvent {
+    ANNOTATOR = 'annotatorevent',
+    ERROR = 'annotationerror',
+    SCALE = 'scaleannotations',
+}
+
+export { Event, LegacyEvent };
