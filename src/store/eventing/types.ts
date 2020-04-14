@@ -4,7 +4,12 @@ import { Annotation, NewAnnotation } from '../../@types';
 
 export enum Event {
     ANNOTATOR = 'annotatorevent',
-    CREATE_ANNOTATION = 'annotationCreate',
+    CREATE_ANNOTATION = 'annotationcreate',
+    ERROR = 'annotationerror',
+    SCALE = 'scaleannotations',
+    SELECT = 'annotationselect',
+    SET_SELECTED = 'annotationsetselected',
+    SET_VISIBILITY = 'annotationsetvisibility',
 }
 
 export enum Status {

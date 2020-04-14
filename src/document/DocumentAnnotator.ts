@@ -1,9 +1,10 @@
 // @flow
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { ANNOTATOR_EVENT, CLASS_ANNOTATIONS_LOADED } from '../constants';
+import { CLASS_ANNOTATIONS_LOADED } from '../constants';
 import { RegionManager } from '../region';
 import './DocumentAnnotator.scss';
+import { Event } from '../store/eventing';
 
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
@@ -58,7 +59,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 // TODO: Normalize response, set in store, and render
             })
             .catch(error => {
-                this.emit(ANNOTATOR_EVENT.error, error);
+                this.emit(Event.ERROR, error);
             });
     }
 

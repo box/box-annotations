@@ -4,10 +4,17 @@ import FileVersionAPI from '../api/FileVersionAPI';
 import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { ANNOTATOR_EVENT } from '../constants';
 import { IntlOptions, Permissions } from '../@types';
-import { createStore, Mode, toggleAnnotationModeAction, setVisibilityAction } from '../store';
+import {
+    createStore,
+    Mode,
+    toggleAnnotationModeAction,
+    setVisibilityAction,
+    setActiveAnnotationAction,
+    getAnnotation,
+} from '../store';
 import './BaseAnnotator.scss';
+import { Event } from '../store/eventing';
 
 export type Container = string | HTMLElement;
 
@@ -52,8 +59,9 @@ export default class BaseAnnotator {
         this.store = createStore();
 
         // Add custom handlers for events triggered by the Preview SDK
-        this.addListener(ANNOTATOR_EVENT.scale, this.handleScale);
-        this.addListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
+        this.addListener(Event.SCALE, this.handleScale);
+        this.addListener(Event.SET_SELECTED, this.setActiveAnnotationById);
+        this.addListener(Event.SET_VISIBILITY, this.setVisibility);
     }
 
     destroy(): void {
@@ -62,8 +70,9 @@ export default class BaseAnnotator {
         }
 
         this.api.destroy();
-        this.removeListener(ANNOTATOR_EVENT.scale, this.handleScale);
-        this.removeListener(ANNOTATOR_EVENT.setVisibility, this.setVisibility);
+        this.removeListener(Event.SCALE, this.handleScale);
+        this.removeListener(Event.SET_SELECTED, this.setActiveAnnotationById);
+        this.removeListener(Event.SET_VISIBILITY, this.setVisibility);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -80,7 +89,7 @@ export default class BaseAnnotator {
         this.scale = scale;
 
         if (!this.rootEl) {
-            this.emit(ANNOTATOR_EVENT.error, this.intl.formatMessage(messages.annotationsLoadError));
+            this.emit(Event.ERROR, this.intl.formatMessage(messages.annotationsLoadError));
             return;
         }
 
@@ -90,6 +99,15 @@ export default class BaseAnnotator {
     scrollToAnnotation(): void {
         // Called by box-content-preview
     }
+
+    setActiveAnnotationById = (annotationId: string): void => {
+        const annotationExists = getAnnotation(this.store.getState(), annotationId) !== undefined;
+        if (!annotationId || !annotationExists) {
+            return;
+        }
+
+        this.store.dispatch(setActiveAnnotationAction(annotationId));
+    };
 
     toggleAnnotationMode(mode: Mode): void {
         // Called by box-content-preview
