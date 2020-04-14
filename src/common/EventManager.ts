@@ -1,11 +1,11 @@
 import { EventEmitter } from 'events';
-import { Event } from '../store/eventing/types';
+import { LegacyEvent } from '../@types';
 
 class EventManager extends EventEmitter {
     emit(event: string | symbol, ...args: unknown[]): boolean {
         const [data] = args;
         super.emit(event, data);
-        super.emit(Event.ANNOTATOR, {
+        super.emit(LegacyEvent.ANNOTATOR, {
             event,
             data,
         });

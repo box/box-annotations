@@ -1,10 +1,11 @@
 import eventManager from '../../common/EventManager';
-import { AsyncAction, Event, Status } from './types';
+import { AsyncAction, Status } from './types';
 import { ApplicationState } from '../types';
+import { Event } from '../../@types';
 
 const emitCreateEvent = (action: AsyncAction, status: Status): void => {
     const { error, meta: { arg: annotation } = {} } = action;
-    eventManager.emit(Event.CREATE_ANNOTATION, {
+    eventManager.emit(Event.ANNOTATION_CREATE, {
         annotation,
         error,
         meta: {

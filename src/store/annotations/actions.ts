@@ -1,7 +1,6 @@
-import { createAsyncThunk, nanoid } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk, nanoid } from '@reduxjs/toolkit';
 import { Annotation, NewAnnotation } from '../../@types';
 
-// eslint-disable-next-line import/prefer-default-export
 export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', async (annotation: NewAnnotation) => {
     // TODO: Replace with actual API call
     const request = (ms = 0): Promise<{ data: Annotation }> =>
@@ -22,3 +21,5 @@ export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', asyn
     const response = await request(500);
     return response.data;
 });
+
+export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');

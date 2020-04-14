@@ -1,7 +1,8 @@
 // @flow
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { ANNOTATOR_EVENT, CLASS_ANNOTATIONS_LOADED } from '../constants';
+import { LegacyEvent } from '../@types';
+import { CLASS_ANNOTATIONS_LOADED } from '../constants';
 import { RegionManager } from '../region';
 import './DocumentAnnotator.scss';
 
@@ -58,7 +59,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 // TODO: Normalize response, set in store, and render
             })
             .catch(error => {
-                this.emit(ANNOTATOR_EVENT.error, error);
+                this.emit(LegacyEvent.ERROR, error);
             });
     }
 

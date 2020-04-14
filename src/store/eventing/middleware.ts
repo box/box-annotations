@@ -1,6 +1,7 @@
 import noop from 'lodash/noop';
 import { Action, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
-import { createAnnotationAction } from '../annotations/actions';
+import { createAnnotationAction, setActiveAnnotationIdAction } from '../annotations/actions';
+import { handleActiveAnnotationEvents } from './active';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
 import { EventHandlerMap } from './types';
 
@@ -9,6 +10,7 @@ const eventHandlers: EventHandlerMap = {
     [createAnnotationAction.pending.toString()]: handleCreatePendingEvents,
     [createAnnotationAction.fulfilled.toString()]: handleCreateSuccessEvents,
     [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
+    [setActiveAnnotationIdAction.toString()]: handleActiveAnnotationEvents,
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {
