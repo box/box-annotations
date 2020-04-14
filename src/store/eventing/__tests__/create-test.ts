@@ -21,13 +21,7 @@ describe('store/eventing/create', () => {
 
     describe('handleCreateErrorEvents()', () => {
         const error = new Error('foo');
-        const actionWithError = {
-            type: 'action',
-            meta: {
-                arg: annotation,
-            },
-            error,
-        } as Action;
+        const actionWithError = { ...action, error } as Action;
 
         test('should emit create event with error status', () => {
             handleCreateErrorEvents(prevState, nextState, actionWithError);

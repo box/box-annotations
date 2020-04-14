@@ -2,10 +2,6 @@ import getEventingMiddleware from '../middleware';
 
 describe('store/eventing/middleware', () => {
     describe('getEventingMiddleware()', () => {
-        afterEach(() => {
-            jest.resetAllMocks();
-        });
-
         const mockHandler = jest.fn();
         const customEventHandlers = {
             foo: mockHandler,
