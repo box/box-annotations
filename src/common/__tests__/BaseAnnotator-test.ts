@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
+import noop from 'lodash/noop';
 import { ANNOTATOR_EVENT } from '../../constants';
 import BaseAnnotator from '../BaseAnnotator';
+import eventManager from '../EventManager';
 import { toggleAnnotationModeAction, setVisibilityAction, Mode } from '../../store';
 
+jest.mock('../EventManager');
 jest.mock('../../api/FileVersionAPI');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
@@ -107,6 +110,30 @@ describe('BaseAnnotator', () => {
             annotator.setVisibility(visibility);
             expect(annotator.store.dispatch).toBeCalled();
             expect(setVisibilityAction).toBeCalledWith(visibility);
+        });
+    });
+
+    describe('eventing', () => {
+        describe('addListener()', () => {
+            test('should proxy addListener to eventManager', () => {
+                annotator.addListener('foo', noop);
+                expect(eventManager.addListener).toHaveBeenCalledWith('foo', noop);
+            });
+        });
+
+        describe('removeListener()', () => {
+            test('should proxy removeListener to eventManager', () => {
+                annotator.removeListener('foo', noop);
+                expect(eventManager.removeListener).toHaveBeenCalledWith('foo', noop);
+            });
+        });
+
+        describe('emit()', () => {
+            test('should proxy emit to eventManager', () => {
+                const data = { hello: 'world' };
+                annotator.emit('foo', data);
+                expect(eventManager.emit).toHaveBeenCalledWith('foo', data);
+            });
         });
     });
 });
