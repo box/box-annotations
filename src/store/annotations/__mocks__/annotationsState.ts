@@ -1,6 +1,7 @@
 import { Annotation } from '../../../@types';
 
 export default {
+    activeId: null,
     allIds: ['test1', 'test2', 'test3'],
     byId: {
         test1: { id: 'test1', target: { location: { value: 1 } } } as Annotation,

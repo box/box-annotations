@@ -4,17 +4,15 @@ import FileVersionAPI from '../api/FileVersionAPI';
 import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { IntlOptions, Permissions } from '../@types';
+import { Event, IntlOptions, Permissions } from '../@types';
 import {
     createStore,
     Mode,
-    toggleAnnotationModeAction,
+    setActiveAnnotationIdAction,
     setVisibilityAction,
-    setActiveAnnotationAction,
-    getAnnotation,
+    toggleAnnotationModeAction,
 } from '../store';
 import './BaseAnnotator.scss';
-import { Event } from '../store/eventing';
 
 export type Container = string | HTMLElement;
 
@@ -60,7 +58,7 @@ export default class BaseAnnotator {
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(Event.SCALE, this.handleScale);
-        this.addListener(Event.SET_SELECTED, this.setActiveAnnotationById);
+        this.addListener(Event.SET_SELECTED, this.setActiveAnnotationId);
         this.addListener(Event.SET_VISIBILITY, this.setVisibility);
     }
 
@@ -71,7 +69,7 @@ export default class BaseAnnotator {
 
         this.api.destroy();
         this.removeListener(Event.SCALE, this.handleScale);
-        this.removeListener(Event.SET_SELECTED, this.setActiveAnnotationById);
+        this.removeListener(Event.SET_SELECTED, this.setActiveAnnotationId);
         this.removeListener(Event.SET_VISIBILITY, this.setVisibility);
     }
 
@@ -100,13 +98,8 @@ export default class BaseAnnotator {
         // Called by box-content-preview
     }
 
-    setActiveAnnotationById = (annotationId: string): void => {
-        const annotationExists = getAnnotation(this.store.getState(), annotationId) !== undefined;
-        if (!annotationId || !annotationExists) {
-            return;
-        }
-
-        this.store.dispatch(setActiveAnnotationAction(annotationId));
+    setActiveAnnotationId = (annotationId: string | null): void => {
+        this.store.dispatch(setActiveAnnotationIdAction(annotationId));
     };
 
     toggleAnnotationMode(mode: Mode): void {

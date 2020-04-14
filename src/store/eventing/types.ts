@@ -2,16 +2,6 @@ import { Action, SerializedError } from '@reduxjs/toolkit';
 import { ApplicationState } from '../types';
 import { Annotation, NewAnnotation } from '../../@types';
 
-export enum Event {
-    ANNOTATOR = 'annotatorevent',
-    CREATE_ANNOTATION = 'annotationcreate',
-    ERROR = 'annotationerror',
-    SCALE = 'scaleannotations',
-    SELECT = 'annotationselect',
-    SET_SELECTED = 'annotationsetselected',
-    SET_VISIBILITY = 'annotationsetvisibility',
-}
-
 export enum Status {
     ERROR = 'error',
     PENDING = 'pending',

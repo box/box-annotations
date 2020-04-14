@@ -1,9 +1,9 @@
 import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import { AnnotationsState } from './types';
-import { createAnnotationAction, setActiveAnnotationAction } from './actions';
+import { createAnnotationAction, setActiveAnnotationIdAction } from './actions';
 
-const activeAnnotationId = createReducer<AnnotationsState['activeAnnotationId']>(null, builder =>
-    builder.addCase(setActiveAnnotationAction, (state, { payload: annotationId }) => annotationId),
+const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
+    builder.addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId),
 );
 
 const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder =>
@@ -19,7 +19,7 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
 );
 
 export default combineReducers({
-    activeAnnotationId,
+    activeId: activeAnnotationId,
     allIds: annotationsAllIds,
     byId: annotationsById,
 });

@@ -1,4 +1,4 @@
-import { createAsyncThunk, nanoid, createAction } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk, nanoid } from '@reduxjs/toolkit';
 import { Annotation, NewAnnotation } from '../../@types';
 
 export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', async (annotation: NewAnnotation) => {
@@ -22,4 +22,4 @@ export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', asyn
     return response.data;
 });
 
-export const setActiveAnnotationAction = createAction<string>('SET_ACTIVE_ANNOTATION');
+export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION');
