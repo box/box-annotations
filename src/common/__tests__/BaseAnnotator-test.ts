@@ -3,13 +3,14 @@ import noop from 'lodash/noop';
 import { ANNOTATOR_EVENT } from '../../constants';
 import BaseAnnotator from '../BaseAnnotator';
 import eventManager from '../EventManager';
-import { toggleAnnotationModeAction, setVisibilityAction, Mode } from '../../store';
+import { Mode, setActiveAnnotationIdAction, setVisibilityAction, toggleAnnotationModeAction } from '../../store';
 
 jest.mock('../EventManager');
 jest.mock('../../api/FileVersionAPI');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     toggleAnnotationModeAction: jest.fn(),
+    setActiveAnnotationIdAction: jest.fn(),
     setVisibilityAction: jest.fn(),
 }));
 
@@ -110,6 +111,14 @@ describe('BaseAnnotator', () => {
             annotator.setVisibility(visibility);
             expect(annotator.store.dispatch).toBeCalled();
             expect(setVisibilityAction).toBeCalledWith(visibility);
+        });
+    });
+
+    describe('setActiveAnnotationId()', () => {
+        test.each(['none', 'region'])('should dispatch setActiveAnnotationIdAction with mode %s', mode => {
+            annotator.setActiveAnnotationId(mode);
+            expect(annotator.store.dispatch).toBeCalled();
+            expect(setActiveAnnotationIdAction).toBeCalledWith(mode);
         });
     });
 

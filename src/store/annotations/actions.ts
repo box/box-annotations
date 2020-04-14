@@ -22,4 +22,4 @@ export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', asyn
     return response.data;
 });
 
-export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION');
+export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');

@@ -1,5 +1,5 @@
 import annotationsState from '../__mocks__/annotationsState';
-import { getAnnotation, getAnnotations, getAnnotationsForLocation } from '../selectors';
+import { getActiveAnnotationId, getAnnotation, getAnnotations, getAnnotationsForLocation } from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { annotations: annotationsState };
@@ -26,6 +26,17 @@ describe('store/annotations/selectors', () => {
                 expect.objectContaining({ id: 'test1' }),
                 expect.objectContaining({ id: 'test2' }),
             ]);
+        });
+    });
+
+    describe('getActiveAnnotationId', () => {
+        test('should get the null active id', () => {
+            expect(getActiveAnnotationId(state)).toEqual(null);
+        });
+
+        test('should get the active id', () => {
+            const newState = { annotations: { ...annotationsState, activeId: '123' } };
+            expect(getActiveAnnotationId(newState)).toEqual('123');
         });
     });
 });
