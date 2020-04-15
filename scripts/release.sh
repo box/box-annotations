@@ -4,13 +4,16 @@ export NODE_PATH=$NODE_PATH:./node_modules
 
 # Temp versions
 OLD_VERSION="XXX"
+NEW_VERSION="$2"
 VERSION="XXX"
 
 
-# Major, minor, or patch release
+# Release types
+custom_release=false
 major_release=false
 minor_release=false
 patch_release=false
+pre_release=false
 
 reset_tags() {
     # Wipe tags
@@ -117,6 +120,16 @@ increment_version() {
         echo "Bumping patch version..."
         echo "----------------------------------------------------------------------"
         npm --no-git-tag-version version patch
+    elif $pre_release; then
+        echo "----------------------------------------------------------------------"
+        echo "Bumping prerelease version..."
+        echo "----------------------------------------------------------------------"
+        npm --no-git-tag-version --preid=beta version prerelease
+    elif $custom_release; then
+        echo "----------------------------------------------------------------------"
+        echo "Bumping to custom version..."
+        echo "----------------------------------------------------------------------"
+        npm --no-git-tag-version version $NEW_VERSION
     fi
 
     # The current version being built
@@ -201,20 +214,15 @@ push_new_release() {
         exit 1
     fi
 
-    # Get latest commited code and tags
+    # Get latest committed code and tags
     if $patch_release; then
         echo "----------------------------------------------------------------------"
         echo "Starting patch release - skipping reset to master"
         echo "IMPORTANT - your branch should be in the state you want for the patch"
         echo "----------------------------------------------------------------------"
-    elif $minor_release; then
-        echo "----------------------------------------------------------------------"
-        echo "Starting minor release - reset to upstream master"
-        echo "----------------------------------------------------------------------"
-        reset_to_master || return 1
     else
         echo "----------------------------------------------------------------------"
-        echo "Starting major release - reset to upstream master"
+        echo "Starting release - reset to upstream master"
         echo "----------------------------------------------------------------------"
         reset_to_master || return 1
     fi
@@ -273,19 +281,28 @@ push_new_release() {
     echo "----------------------------------------------------------------------"
     ./node_modules/.bin/conventional-github-releaser
 
+    # Push NPM release
+    echo "----------------------------------------------------------------------"
+    echo "Pushing new NPM release"
+    echo "----------------------------------------------------------------------"
+    ./scripts/publish.sh
+
     return 0
 }
 
-
 # Check if we are doing major, minor, or patch release
-while getopts "mnp" opt; do
+while getopts "cmnpx" opt; do
     case "$opt" in
+        c )
+            custom_release=true ;;
         m )
             major_release=true ;;
         n )
             minor_release=true ;;
         p )
             patch_release=true ;;
+        x )
+            pre_release=true ;;
     esac
 done
 
@@ -311,7 +328,7 @@ if ! push_new_release; then
         echo "----------------------------------------------------------------------"
     else
         echo "----------------------------------------------------------------------"
-        echo "Workspace succesfully cleaned!"
+        echo "Workspace successfully cleaned!"
         echo "----------------------------------------------------------------------"
     fi;
     exit 1
