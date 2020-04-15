@@ -130,6 +130,13 @@ describe('BaseAnnotator', () => {
             });
         });
 
+        describe('removeAllListeners()', () => {
+            test('should proxy removeAllListeners to eventManager', () => {
+                annotator.removeAllListeners();
+                expect(eventManager.removeAllListeners).toHaveBeenCalled();
+            });
+        });
+
         describe('removeListener()', () => {
             test('should proxy removeListener to eventManager', () => {
                 annotator.removeListener('foo', noop);
