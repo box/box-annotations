@@ -70,23 +70,6 @@ reset_to_master() {
     git clean -f  || return 1
 }
 
-install_dependencies() {
-    echo "--------------------------------------------------------"
-    echo "Installing all package dependencies"
-    echo "--------------------------------------------------------"
-    if yarn install; then
-        echo "----------------------------------------------------"
-        echo "Installed dependencies successfully."
-        echo "----------------------------------------------------"
-    else
-        echo "----------------------------------------------------"
-        echo "Error: Failed to run 'yarn install'!"
-        echo "----------------------------------------------------"
-        exit 1;
-    fi
-}
-
-
 build_lint_and_test() {
     # The build command includes linting
     yarn build && yarn test || return 1
@@ -96,14 +79,6 @@ build_lint_and_test() {
 increment_version() {
     # Old version
     OLD_VERSION=$(./scripts/current_version.sh)
-
-    # The current branch should not match the previous release tag
-    if [[ $(git log --oneline ...v$OLD_VERSION) == "" ]] ; then
-        echo "----------------------------------------------------"
-        echo "Your release has no new commits!"
-        echo "----------------------------------------------------"
-        exit 1
-    fi
 
     if $major_release; then
         echo "----------------------------------------------------------------------"
@@ -136,25 +111,6 @@ increment_version() {
     VERSION=$(./scripts/current_version.sh)
 }
 
-
-update_changelog() {
-    echo "----------------------------------------------------------------------"
-    echo "Updating CHANGELOG.md"
-    echo "----------------------------------------------------------------------"
-
-    if ./node_modules/.bin/conventional-changelog -i CHANGELOG.md --same-file; then
-        echo "----------------------------------------------------------------------"
-        echo "Updated CHANGELOG successfully"
-        echo "----------------------------------------------------------------------"
-    else
-        echo "----------------------------------------------------------------------"
-        echo "Error: Could not update the CHANGELOG for this version"
-        echo "----------------------------------------------------------------------"
-        return 1
-    fi
-}
-
-
 update_readme() {
     echo "----------------------------------------------------------------------"
     echo "Updating README"
@@ -169,7 +125,7 @@ update_readme() {
 
 push_to_github() {
     # Add new files
-    git commit -am "Release: $VERSION"
+    git commit -am "chore(release): $VERSION"
 
     # Force update tag after updating files
     git tag -a v$VERSION -m $VERSION
@@ -222,58 +178,22 @@ push_new_release() {
         echo "----------------------------------------------------------------------"
     else
         echo "----------------------------------------------------------------------"
-        echo "Starting release - reset to upstream master"
+        echo "Starting standard release - reset to upstream master"
         echo "----------------------------------------------------------------------"
         reset_to_master || return 1
     fi
 
-    # Install node modules
-    if ! install_dependencies; then
-        echo "----------------------------------------------------"
-        echo "Error in install_dependencies!"
-        echo "----------------------------------------------------"
-        exit 1
-    fi
+    # Run build script, linting, and tests
+    build_lint_and_test || return 1
 
-    # Do testing and linting
-    if ! build_lint_and_test; then
-        echo "----------------------------------------------------"
-        echo "Error in build_lint_and_test!"
-        echo "----------------------------------------------------"
-        exit 1
-    fi
-
-    # Must bump version before changelog generation (should not create tag)
-    if ! increment_version; then
-        echo "----------------------------------------------------"
-        echo "Error in increment_version!"
-        echo "----------------------------------------------------"
-        exit 1
-    fi
-
-    # Update changelog
-    if ! update_changelog; then
-        echo "----------------------------------------------------"
-        echo "Error in update_changelog!"
-        echo "----------------------------------------------------"
-        return 1
-    fi
+    # Bump the version number
+    increment_version || return 1
 
     # Update readme
-    if ! update_readme; then
-        echo "----------------------------------------------------"
-        echo "Error in update_readme!"
-        echo "----------------------------------------------------"
-        return 1
-    fi
+    update_readme || return 1
 
-    # Push to github
-    if ! push_to_github; then
-        echo "----------------------------------------------------"
-        echo "Error in push_to_github!"
-        echo "----------------------------------------------------"
-        return 1
-    fi
+    # Push to GitHub
+    push_to_github || return 1
 
     # Push GitHub release
     echo "----------------------------------------------------------------------"
