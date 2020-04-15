@@ -116,6 +116,10 @@ export default class BaseAnnotator {
         eventManager.addListener(event, listener);
     }
 
+    removeAllListeners(event?: string | symbol): void {
+        eventManager.removeAllListeners(event);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     removeListener(event: string | symbol, listener: (...args: any[]) => void): void {
         eventManager.removeListener(event, listener);
