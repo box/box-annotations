@@ -32,10 +32,7 @@ type ViewerOption = {
     enabledTypes?: string[];
 };
 
-type ViewerOptions = {
-    [index: string]: ViewerOption;
-    Document: ViewerOption;
-};
+type ViewerOptions = Record<string, ViewerOption>;
 
 /**
  * NAME: The name of the annotator.
@@ -70,7 +67,7 @@ const ANNOTATOR_TYPE_CONTROLLERS = {
 class BoxAnnotations {
     annotators: Annotator[];
 
-    viewerOptions: ViewerOptions;
+    viewerOptions?: ViewerOptions | null;
 
     /**
      * [constructor]
@@ -78,9 +75,9 @@ class BoxAnnotations {
      * @param {Object} viewerOptions - Viewer-specific annotator options
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(viewerOptions: ViewerOptions) {
+    constructor(viewerOptions?: ViewerOptions) {
         this.annotators = ANNOTATORS;
-        this.viewerOptions = viewerOptions || {};
+        this.viewerOptions = viewerOptions;
     }
 
     canLoad(permissions?: Permissions): boolean {
@@ -140,16 +137,16 @@ class BoxAnnotations {
         const annotator = this.getAnnotatorsForViewer(getProp(previewOptions, 'viewer.NAME'));
         const canLoad = this.canLoad(getProp(previewOptions, 'file.permissions'));
 
-        if (!annotator || !annotator.TYPES || !canLoad || viewerConfig.enabled === false) {
+        if (!annotator || !canLoad || viewerConfig.enabled === false) {
             return null;
         }
 
-        const { enabledTypes: enabledTypesOption } = this.viewerOptions[annotator.NAME] || {};
-        const { enabledTypes: enabledTypesViewer } = viewerConfig;
-        const enabledTypes = enabledTypesOption || enabledTypesViewer || annotator.TYPES || [];
-        const annotatorTypes = enabledTypes.filter((type: string) => annotator.TYPES.some(allowed => allowed === type));
+        const enabledTypesOption = getProp(this.viewerOptions, [annotator.NAME, 'enabledTypes']);
+        const enabledTypesViewer = getProp(viewerConfig, 'enabledTypes');
+        const enabledTypesBase = enabledTypesOption || enabledTypesViewer || annotator.TYPES || [];
+        const enabledTypes = enabledTypesBase.filter((type: string) => annotator.TYPES.some(t => t === type));
 
-        return this.instantiateControllers({ ...annotator, TYPES: annotatorTypes });
+        return this.instantiateControllers({ ...annotator, TYPES: enabledTypes });
     }
 }
 
