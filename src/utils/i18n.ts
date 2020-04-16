@@ -1,13 +1,12 @@
-import annotationsLocaleData from 'box-annotations-locale-data'; // eslint-disable-line
+import annotationsLocaleData from 'box-annotations-locale-data';
 import boxElementsMessages from 'box-elements-messages';
 import { createIntl, createIntlCache, IntlShape } from 'react-intl';
-import { IntlOptions } from '../@types/i18n';
+import { IntlOptions } from '../@types';
 
 declare const __LANGUAGE__: string; // eslint-disable-line no-underscore-dangle
 
-const language = __LANGUAGE__;
-const getLocale = (lang: string = language): string => {
-    return lang.substr(0, lang.indexOf('-'));
+const getLocale = (language: string = __LANGUAGE__): string => {
+    return language.substr(0, language.indexOf('-'));
 };
 
 if (!window.Intl.PluralRules) {
@@ -22,14 +21,14 @@ if (!window.Intl.RelativeTimeFormat) {
 
 const annotationsMessages = { ...annotationsLocaleData, ...boxElementsMessages };
 const intlCache = createIntlCache();
-const createIntlProvider = ({ locale = getLocale(), messages = annotationsMessages }: IntlOptions = {}): IntlShape => {
+const createIntlProvider = ({ language, locale, messages = annotationsMessages }: IntlOptions = {}): IntlShape => {
     return createIntl(
         {
             messages,
-            locale,
+            locale: locale || getLocale(language),
         },
         intlCache,
     );
 };
 
-export default { createIntlProvider, getLocale, language };
+export default { createIntlProvider, getLocale };
