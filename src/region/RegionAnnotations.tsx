@@ -8,6 +8,7 @@ import { CreatorItem, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
 type Props = {
+    activeAnnotationId: string | null;
     annotations: Annotation[];
     createRegion: (arg: { location: number; message: string; shape: Rect }) => void;
     isCreating: boolean;
@@ -91,7 +92,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { annotations, isCreating, staged, status } = this.props;
+        const { activeAnnotationId, annotations, isCreating, staged, status } = this.props;
         const { targetRef } = this.state;
         const canDraw = !staged || !staged.message;
         const canReply = status === CreatorStatus.staged;
@@ -104,6 +105,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                         <RegionAnnotation
                             key={id}
                             annotationId={id}
+                            isActive={!isCreating && activeAnnotationId === id}
                             shape={this.scaleShape((target as TargetRegion).shape)}
                         />
                     ))}

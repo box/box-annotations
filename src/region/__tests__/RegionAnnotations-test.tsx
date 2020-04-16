@@ -14,6 +14,7 @@ jest.mock('../RegionCreator');
 
 describe('RegionAnnotations', () => {
     const defaults = {
+        activeAnnotationId: null,
         createRegion: jest.fn(),
         page: 1,
         scale: 1,
