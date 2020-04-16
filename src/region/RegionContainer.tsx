@@ -4,13 +4,13 @@ import {
     ApplicationState,
     CreatorItem,
     CreatorStatus,
+    getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
     getCreatorStatus,
     setStagedAction,
     setStatusAction,
-    getActiveAnnotationId,
 } from '../store';
 import { createRegionAction } from './actions';
 import RegionAnnotations from './RegionAnnotations';

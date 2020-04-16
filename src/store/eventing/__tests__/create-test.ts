@@ -2,6 +2,7 @@ import { Action } from '@reduxjs/toolkit';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from '../create';
 import eventManager from '../../../common/EventManager';
 import { ApplicationState } from '../../types';
+import { annotation as payload } from '../../../region/__mocks__/data';
 
 jest.mock('../../../common/EventManager');
 
@@ -51,10 +52,11 @@ describe('store/eventing/create', () => {
 
     describe('handleCreateSuccessEvents()', () => {
         test('should emit create event with success status', () => {
-            handleCreateSuccessEvents(prevState, nextState, action);
+            const actionWithPayload = { ...action, payload };
+            handleCreateSuccessEvents(prevState, nextState, actionWithPayload);
 
             expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
-                annotation,
+                annotation: payload,
                 meta: {
                     status: 'success',
                 },

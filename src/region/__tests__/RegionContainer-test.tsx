@@ -23,6 +23,7 @@ describe('RegionContainer', () => {
 
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(RegionAnnotations).props()).toMatchObject({
+                activeAnnotationId: null,
                 annotations: [],
                 createRegion: expect.any(Function),
                 isCreating: false,
