@@ -18,6 +18,7 @@ describe('RegionAnnotations', () => {
         createRegion: jest.fn(),
         page: 1,
         scale: 1,
+        setActiveAnnotationId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -105,6 +106,21 @@ describe('RegionAnnotations', () => {
                 instance.handleSubmit();
 
                 expect(defaults.createRegion).toHaveBeenCalledWith({});
+            });
+        });
+
+        describe('handleAnnotationSelect()', () => {
+            test('should call setActiveAnnotationId if annotation has changed', () => {
+                instance.handleAnnotationSelect('123');
+
+                expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
+            });
+
+            test('should not call setActiveAnnotationId if annotation has changed', () => {
+                const wrapper2 = getWrapper({ activeAnnotationId: '123', staged: {} as CreatorItem });
+                const instance2 = wrapper2.instance() as InstanceType<typeof RegionAnnotations>;
+                instance2.handleAnnotationSelect('123');
+                expect(defaults.setActiveAnnotationId).not.toHaveBeenCalled();
             });
         });
     });

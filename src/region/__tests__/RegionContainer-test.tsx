@@ -31,6 +31,7 @@ describe('RegionContainer', () => {
                 scale: defaults.scale,
                 staged: null,
                 status: CreatorStatus.init,
+                setActiveAnnotationId: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 store: defaults.store,
