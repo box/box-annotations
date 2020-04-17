@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { Annotation, AnnotationRegion } from '../@types';
 import {
-    ApplicationState,
+    AppState,
     CreatorItem,
     CreatorStatus,
     getActiveAnnotationId,
@@ -27,7 +27,7 @@ export type Props = {
 
 export const isRegion = (annotation: Annotation): annotation is AnnotationRegion => annotation.target.type === 'region';
 
-export const mapStateToProps = (state: ApplicationState, { page }: { page: number }): Props => ({
+export const mapStateToProps = (state: AppState, { page }: { page: number }): Props => ({
     activeAnnotationId: getActiveAnnotationId(state),
     annotations: getAnnotationsForLocation(state, page).filter(isRegion),
     isCreating: getAnnotationMode(state) === 'region',

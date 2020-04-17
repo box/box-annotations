@@ -1,5 +1,5 @@
 import { Action, SerializedError } from '@reduxjs/toolkit';
-import { ApplicationState } from '../types';
+import { AppState } from '../types';
 import { Annotation, NewAnnotation } from '../../@types';
 
 export enum Status {
@@ -28,10 +28,6 @@ export interface AsyncAction extends Action {
     payload?: Annotation;
 }
 
-export type EventHandler = (
-    prevState: ApplicationState,
-    nextState: ApplicationState,
-    action: Action | AsyncAction,
-) => void;
+export type EventHandler = (prevState: AppState, nextState: AppState, action: Action | AsyncAction) => void;
 
 export type EventHandlerMap = Record<Action['type'], EventHandler>;

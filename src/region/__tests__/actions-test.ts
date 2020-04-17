@@ -17,17 +17,15 @@ describe('region/actions', () => {
             } as Rect,
         };
         const dispatch = jest.fn();
-        const getState = jest.fn();
 
-        test('should return a promise that proxies the async createAnnotationAction', async () => {
-            const result = await createRegionAction(arg)(dispatch, getState, {});
+        test('should format its argument and dispatch', async () => {
+            await createRegionAction(arg)(dispatch);
 
-            expect(dispatch).toHaveBeenCalledTimes(3); // pending, createAnnotation, fulfilled
-            expect(result.meta.arg).toEqual(arg);
+            expect(dispatch).toHaveBeenCalled();
         });
 
         test('should round the argument target position and size to the nearest whole integer', async () => {
-            await createRegionAction(arg)(dispatch, getState, {});
+            await createRegionAction(arg)(dispatch);
 
             expect(createAnnotationAction).toHaveBeenCalledWith({
                 description: {

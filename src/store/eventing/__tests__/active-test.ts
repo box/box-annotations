@@ -1,5 +1,5 @@
 import { handleActiveAnnotationEvents } from '../active';
-import { ApplicationState } from '../../types';
+import { AppState } from '../../types';
 import eventManager from '../../../common/EventManager';
 import { getActiveAnnotationId } from '../../annotations';
 
@@ -18,7 +18,7 @@ describe('store/eventing/active', () => {
     `(
         'should event be emitted when prevId is $prevId, nextId is $nextId? $isEventEmitted',
         ({ prevId, nextId, isEventEmitted }) => {
-            const state = {} as ApplicationState;
+            const state = {} as AppState;
             (getActiveAnnotationId as jest.Mock)
                 .mockImplementationOnce(() => prevId)
                 .mockImplementationOnce(() => nextId);

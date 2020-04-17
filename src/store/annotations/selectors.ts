@@ -1,8 +1,8 @@
 import getProp from 'lodash/get';
 import { Annotation } from '../../@types';
-import { ApplicationState } from '../types';
+import { AppState } from '../types';
 
-type State = Pick<ApplicationState, 'annotations'>;
+type State = Pick<AppState, 'annotations'>;
 
 export const getActiveAnnotationId = ({ annotations }: State): string | null => annotations.activeId;
 export const getAnnotation = ({ annotations }: State, id: string): Annotation | undefined => annotations.byId[id];

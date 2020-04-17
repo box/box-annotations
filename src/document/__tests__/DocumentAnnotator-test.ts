@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';

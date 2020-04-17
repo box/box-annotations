@@ -1,16 +1,18 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import noop from 'lodash/noop';
-import { ANNOTATOR_EVENT } from '../../constants';
+import * as store from '../../store';
 import BaseAnnotator from '../BaseAnnotator';
 import eventManager from '../EventManager';
-import { Mode, setActiveAnnotationIdAction, setVisibilityAction, toggleAnnotationModeAction } from '../../store';
+import { ANNOTATOR_EVENT } from '../../constants';
+import { Mode } from '../../store/common';
 
 jest.mock('../EventManager');
+jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
-    toggleAnnotationModeAction: jest.fn(),
+    fetchAnnotationsAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
     setVisibilityAction: jest.fn(),
+    toggleAnnotationModeAction: jest.fn(),
 }));
 
 describe('BaseAnnotator', () => {
@@ -95,7 +97,7 @@ describe('BaseAnnotator', () => {
             annotator.toggleAnnotationMode('region' as Mode);
 
             expect(annotator.store.dispatch).toBeCalled();
-            expect(toggleAnnotationModeAction).toBeCalledWith('region');
+            expect(store.toggleAnnotationModeAction).toBeCalledWith('region');
         });
     });
 
@@ -103,7 +105,7 @@ describe('BaseAnnotator', () => {
         test.each([true, false])('should dispatch setVisibilityAction with visibility %p', visibility => {
             annotator.setVisibility(visibility);
             expect(annotator.store.dispatch).toBeCalled();
-            expect(setVisibilityAction).toBeCalledWith(visibility);
+            expect(store.setVisibilityAction).toBeCalledWith(visibility);
         });
     });
 
@@ -111,7 +113,7 @@ describe('BaseAnnotator', () => {
         test.each(['none', 'region'])('should dispatch setActiveAnnotationIdAction with mode %s', mode => {
             annotator.setActiveAnnotationId(mode);
             expect(annotator.store.dispatch).toBeCalled();
-            expect(setActiveAnnotationIdAction).toBeCalledWith(mode);
+            expect(store.setActiveAnnotationIdAction).toBeCalledWith(mode);
         });
     });
 

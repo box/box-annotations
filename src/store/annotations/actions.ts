@@ -1,25 +1,47 @@
-import { createAction, createAsyncThunk, nanoid } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { Annotation, NewAnnotation } from '../../@types';
+import { APICollection } from '../../api';
+import { AppThunkAPI } from '../types';
+import { getFileId, getFileVersionId } from '../options';
 
-export const createAnnotationAction = createAsyncThunk('CREATE_ANNOTATION', async (annotation: NewAnnotation) => {
-    // TODO: Replace with actual API call
-    const request = (ms = 0): Promise<{ data: Annotation }> =>
-        new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-                    // @ts-ignore
-                    data: {
-                        ...annotation,
-                        id: nanoid(),
-                        type: 'annotation',
-                    },
-                });
-            }, ms);
+export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation, AppThunkAPI>(
+    'CREATE_ANNOTATION',
+    async (newAnnotation: NewAnnotation, { extra, getState, signal }) => {
+        // Create a new client for each request
+        const client = extra.api.getAnnotationsAPI();
+        const state = getState();
+        const fileId = getFileId(state);
+        const fileVersionId = getFileVersionId(state);
+
+        signal.addEventListener('abort', () => {
+            client.destroy();
         });
 
-    const response = await request(500);
-    return response.data;
-});
+        return new Promise<Annotation>((resolve, reject) => {
+            client.createAnnotation(fileId, fileVersionId, newAnnotation, resolve, reject);
+        });
+    },
+);
+
+export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>, undefined, AppThunkAPI>(
+    'FETCH_ANNOTATIONS',
+    async (arg, { extra, getState, signal }) => {
+        // Create a new client for each request
+        const client = extra.api.getAnnotationsAPI();
+        const state = getState();
+        const fileId = getFileId(state);
+        const fileVersionId = getFileVersionId(state);
+
+        // Destroy the client if action's abort method is invoked
+        signal.addEventListener('abort', () => {
+            client.destroy();
+        });
+
+        // Wrap the client request in a promise to allow it to be returned and cancelled
+        return new Promise<APICollection<Annotation>>((resolve, reject) => {
+            client.getAnnotations(fileId, fileVersionId, resolve, reject, 1000, false);
+        });
+    },
+);
 
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');

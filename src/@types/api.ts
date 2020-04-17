@@ -10,3 +10,7 @@ export interface Permissions {
     [PERMISSIONS.CAN_VIEW_ANNOTATIONS_ALL]?: boolean;
     [PERMISSIONS.CAN_VIEW_ANNOTATIONS_SELF]?: boolean;
 }
+
+export type TokenLiteral = null | undefined | string | { read: string; write?: string };
+export type TokenResolver = () => TokenLiteral | Promise<TokenLiteral>;
+export type Token = TokenLiteral | TokenResolver;
