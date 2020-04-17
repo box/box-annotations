@@ -14,6 +14,7 @@ jest.mock('../RegionCreator');
 
 describe('RegionAnnotations', () => {
     const defaults = {
+        activeAnnotationId: null,
         createRegion: jest.fn(),
         page: 1,
         scale: 1,
@@ -178,6 +179,19 @@ describe('RegionAnnotations', () => {
             expect(wrapper.exists(PopupReply)).toBe(false);
             expect(wrapper.exists(RegionAnnotation)).toBe(false);
             expect(wrapper.exists(RegionCreator)).toBe(false);
+        });
+
+        test('should render the specified annotation based on activeAnnotationId', () => {
+            const wrapper = getWrapper({ activeAnnotationId: 'anno_1', annotations });
+            const renderedAnnotations = wrapper.find(RegionAnnotation);
+
+            expect(wrapper.exists('.ba-RegionAnnotations-list')).toBe(true);
+            expect(renderedAnnotations.length).toBe(3);
+
+            for (let i = 0; i < 3; i += 1) {
+                expect(renderedAnnotations.get(i).key).toBe(annotations[i].id);
+                expect(renderedAnnotations.get(i).props.isActive).toBe(i === 0);
+            }
         });
     });
 });

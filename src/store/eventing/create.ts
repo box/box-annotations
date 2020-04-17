@@ -4,9 +4,9 @@ import { ApplicationState } from '../types';
 import { Event } from '../../@types';
 
 const emitCreateEvent = (action: AsyncAction, status: Status): void => {
-    const { error, meta: { arg: annotation } = {} } = action;
+    const { error, meta: { arg } = {}, payload } = action;
     eventManager.emit(Event.ANNOTATION_CREATE, {
-        annotation,
+        annotation: payload || arg,
         error,
         meta: {
             status,

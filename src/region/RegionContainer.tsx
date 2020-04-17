@@ -4,6 +4,7 @@ import {
     ApplicationState,
     CreatorItem,
     CreatorStatus,
+    getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
@@ -16,6 +17,7 @@ import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
 
 export type Props = {
+    activeAnnotationId: string | null;
     annotations: Annotation[];
     isCreating: boolean;
     staged: CreatorItem | null;
@@ -23,6 +25,7 @@ export type Props = {
 };
 
 export const mapStateToProps = (state: ApplicationState, { page }: { page: number }): Props => ({
+    activeAnnotationId: getActiveAnnotationId(state),
     annotations: getAnnotationsForLocation(state, page),
     isCreating: getAnnotationMode(state) === 'region',
     staged: getCreatorStagedForLocation(state, page),
