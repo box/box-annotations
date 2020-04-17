@@ -17,34 +17,31 @@ export const rect = {
 
 export const target = {
     id: 'target_1',
+    location: {
+        type: 'page' as const,
+        value: 1,
+    },
     shape: rect,
     type: 'region' as const,
 };
 
+export const user = {
+    id: '1',
+    login: 'johndoe',
+    name: 'John Doe',
+    type: 'user' as const,
+};
+
 export const annotation = {
-    created_at: new Date(),
-    created_by: {
-        id: '1',
-        login: 'johndoe',
-        name: 'John Doe',
-        type: 'user' as const,
-    },
+    created_at: new Date('2020-04-15'),
+    created_by: user,
     id: '123',
-    modified_at: new Date(),
-    modified_by: {
-        id: '1',
-        login: 'johndoe',
-        name: 'John Doe',
-        type: 'user' as const,
-    },
+    modified_at: new Date('2020-04-16'),
+    modified_by: user,
     permissions: {
         can_delete: true,
         can_edit: true,
     },
-    target: {
-        location: { type: 'page' as const, value: 1 },
-        shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' as const },
-        type: 'region' as const,
-    },
+    target,
     type: 'annotation' as const,
 };
