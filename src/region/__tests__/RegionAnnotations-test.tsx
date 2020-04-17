@@ -109,17 +109,16 @@ describe('RegionAnnotations', () => {
             });
         });
 
-        describe('handleAnnotationSelect()', () => {
+        describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId if annotation has changed', () => {
-                instance.handleAnnotationSelect('123');
+                instance.handleAnnotationActive('123');
 
                 expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
             });
 
             test('should not call setActiveAnnotationId if annotation has changed', () => {
-                const wrapper2 = getWrapper({ activeAnnotationId: '123', staged: {} as CreatorItem });
-                const instance2 = wrapper2.instance() as InstanceType<typeof RegionAnnotations>;
-                instance2.handleAnnotationSelect('123');
+                wrapper.setProps({ activeAnnotationId: '123' });
+                instance.handleAnnotationActive('123');
                 expect(defaults.setActiveAnnotationId).not.toHaveBeenCalled();
             });
         });

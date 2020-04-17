@@ -44,7 +44,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         setStatus(status);
     }
 
-    handleAnnotationSelect = (annotationId: string): void => {
+    handleAnnotationActive = (annotationId: string): void => {
         const { activeAnnotationId, setActiveAnnotationId } = this.props;
 
         if (activeAnnotationId !== annotationId) {
@@ -115,7 +115,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                             key={id}
                             annotationId={id}
                             isActive={!isCreating && activeAnnotationId === id}
-                            onSelect={this.handleAnnotationSelect}
+                            onSelect={this.handleAnnotationActive}
                             shape={this.scaleShape((target as TargetRegion).shape)}
                         />
                     ))}
