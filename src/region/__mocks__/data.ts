@@ -33,10 +33,10 @@ export const user = {
 };
 
 export const annotation = {
-    created_at: new Date('2020-04-15'),
+    created_at: '2020-01-01T00:00:00Z',
     created_by: user,
     id: '123',
-    modified_at: new Date('2020-04-16'),
+    modified_at: '2020-01-02T00:00:00Z',
     modified_by: user,
     permissions: {
         can_delete: true,

@@ -3,11 +3,11 @@ import { Permissions } from './api';
 
 // New Data Model Types
 export interface Annotation {
-    created_at: Date;
+    created_at: string;
     created_by: User;
     description?: Reply;
     id: string;
-    modified_at: Date;
+    modified_at: string;
     modified_by: User;
     permissions: Permissions;
     replies?: Array<Reply>;
@@ -38,7 +38,7 @@ export interface Rect {
 }
 
 export interface Reply {
-    created_at: Date;
+    created_at: string;
     created_by: User;
     id: string;
     message: string;
