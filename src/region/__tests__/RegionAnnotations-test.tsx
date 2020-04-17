@@ -110,16 +110,10 @@ describe('RegionAnnotations', () => {
         });
 
         describe('handleAnnotationActive()', () => {
-            test('should call setActiveAnnotationId if annotation has changed', () => {
+            test('should call setActiveAnnotationId with annotation id', () => {
                 instance.handleAnnotationActive('123');
 
                 expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
-            });
-
-            test('should not call setActiveAnnotationId if annotation has changed', () => {
-                wrapper.setProps({ activeAnnotationId: '123' });
-                instance.handleAnnotationActive('123');
-                expect(defaults.setActiveAnnotationId).not.toHaveBeenCalled();
             });
         });
     });
