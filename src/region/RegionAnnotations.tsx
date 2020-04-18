@@ -14,6 +14,7 @@ type Props = {
     isCreating: boolean;
     page: number;
     scale: number;
+    setActiveAnnotationId: (annotationId: string | null) => void;
     setStaged: (staged: CreatorItem | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItem | null;
@@ -42,6 +43,12 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         const { setStatus } = this.props;
         setStatus(status);
     }
+
+    handleAnnotationActive = (annotationId: string): void => {
+        const { setActiveAnnotationId } = this.props;
+
+        setActiveAnnotationId(annotationId);
+    };
 
     handleCancel = (): void => {
         this.setStaged(null);
@@ -106,6 +113,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                             key={id}
                             annotationId={id}
                             isActive={!isCreating && activeAnnotationId === id}
+                            onSelect={this.handleAnnotationActive}
                             shape={this.scaleShape((target as TargetRegion).shape)}
                         />
                     ))}

@@ -18,6 +18,7 @@ describe('RegionAnnotations', () => {
         createRegion: jest.fn(),
         page: 1,
         scale: 1,
+        setActiveAnnotationId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -105,6 +106,14 @@ describe('RegionAnnotations', () => {
                 instance.handleSubmit();
 
                 expect(defaults.createRegion).toHaveBeenCalledWith({});
+            });
+        });
+
+        describe('handleAnnotationActive()', () => {
+            test('should call setActiveAnnotationId with annotation id', () => {
+                instance.handleAnnotationActive('123');
+
+                expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
             });
         });
     });

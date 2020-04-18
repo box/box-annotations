@@ -9,6 +9,7 @@ import {
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
     getCreatorStatus,
+    setActiveAnnotationIdAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
@@ -34,6 +35,7 @@ export const mapStateToProps = (state: ApplicationState, { page }: { page: numbe
 
 export const mapDispatchTopProps = {
     createRegion: createRegionAction,
+    setActiveAnnotationId: setActiveAnnotationIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };
