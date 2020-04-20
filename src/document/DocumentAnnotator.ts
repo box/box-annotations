@@ -18,12 +18,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.hydrate(options);
     }
 
-    destroy(): void {
-        super.destroy();
-
-        document.removeEventListener('click', this.handleClick);
-    }
-
     getPageManagers(pageEl: HTMLElement): BaseManager[] {
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);

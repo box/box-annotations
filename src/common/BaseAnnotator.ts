@@ -74,6 +74,7 @@ export default class BaseAnnotator {
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
         this.removeListener(Event.VISIBLE_SET, this.setVisibility);
+        document.removeEventListener('click', this.handleClick);
     }
 
     getElement(selector: HTMLElement | string): HTMLElement | null {
