@@ -18,6 +18,10 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
     };
+    const handleBlur = (event: React.SyntheticEvent): void => {
+        cancelEvent(event);
+        onSelect(null);
+    };
     const handleClick = (event: React.MouseEvent): void => {
         cancelEvent(event);
         onSelect(annotationId);
@@ -42,6 +46,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
             ref={ref}
             className={classNames('ba-AnnotationTarget', className)}
             href="#" // Needed for IE11 to handle click events properly
+            onBlur={handleBlur}
             onClick={handleClick}
             onFocus={handleFocus}
             onKeyPress={handleKeyPress}
