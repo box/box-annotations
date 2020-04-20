@@ -52,9 +52,13 @@ export function replaceHeader(containerEl, replacementHeader) {
  * @param {string} className Class name to query
  * @return {HTMLElement|null} Closest ancestor with given class or null
  */
-export function findClosestElWithClass(element, className) {
+export function findClosestElWithClass(element, classNameOrNames) {
+    const classNames = typeof classNameOrNames === 'string' ? [classNameOrNames] : classNameOrNames;
     for (let el = element; el && el !== document; el = el.parentNode) {
-        if (el.classList && el.classList.contains(className)) {
+        if (
+            el.classList &&
+            classNames.reduce((hasMatch, classname) => hasMatch || el.classList.contains(classname), false)
+        ) {
             return el;
         }
     }

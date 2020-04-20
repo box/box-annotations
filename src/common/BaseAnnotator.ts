@@ -12,6 +12,7 @@ import {
     setVisibilityAction,
     toggleAnnotationModeAction,
 } from '../store';
+import { findClosestElWithClass } from '../util';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -60,6 +61,8 @@ export default class BaseAnnotator {
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
         this.addListener(Event.VISIBLE_SET, this.setVisibility);
+
+        this.handleClick = this.handleClick.bind(this);
     }
 
     destroy(): void {
@@ -77,6 +80,19 @@ export default class BaseAnnotator {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
+    handleClick({ target }: MouseEvent): void {
+        const targetElement = target as HTMLElement;
+
+        if (
+            // If click target is not a part of the annotated element
+            (this.rootEl && !this.rootEl.contains(targetElement)) ||
+            // OR click target is part of the annotated element and not an annotation target or popup
+            !findClosestElWithClass(targetElement, ['ba-AnnotationTarget', 'ba-RegionAnnotations-popup'])
+        ) {
+            this.store.dispatch(setActiveAnnotationIdAction(null));
+        }
+    }
+
     handleScale = ({ scale }: { scale: number }): void => {
         this.init(scale);
     };
@@ -92,6 +108,8 @@ export default class BaseAnnotator {
         }
 
         this.rootEl.classList.add('ba');
+
+        document.addEventListener('click', this.handleClick);
     }
 
     scrollToAnnotation(): void {

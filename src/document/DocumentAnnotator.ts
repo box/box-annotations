@@ -4,6 +4,7 @@ import BaseManager from '../common/BaseManager';
 import { LegacyEvent } from '../@types';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
 import { RegionManager } from '../region';
+
 import './DocumentAnnotator.scss';
 
 export default class DocumentAnnotator extends BaseAnnotator {
@@ -15,6 +16,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
         super(options);
 
         this.hydrate(options);
+    }
+
+    destroy(): void {
+        super.destroy();
+
+        document.removeEventListener('click', this.handleClick);
     }
 
     getPageManagers(pageEl: HTMLElement): BaseManager[] {
