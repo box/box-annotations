@@ -20,7 +20,13 @@ export const createRegionAction = createAsyncThunk('CREATE_REGION', async (arg: 
                 type: 'page' as const,
                 value: location,
             },
-            shape,
+            shape: {
+                ...shape,
+                height: Math.round(shape.height),
+                width: Math.round(shape.width),
+                x: Math.round(shape.x),
+                y: Math.round(shape.y),
+            },
             type: 'region' as const,
         },
     };
