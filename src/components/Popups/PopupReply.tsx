@@ -1,23 +1,19 @@
 import React from 'react';
-import Button from 'box-ui-elements/es/components/button';
-import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { FormattedMessage } from 'react-intl';
-import messages from './messages';
+import ReplyForm from '../ReplyForm';
 import PopupBase from './PopupBase';
-import './PopupReply.scss';
 
 export type Props = {
     className?: string;
     defaultValue?: string;
-    onCancel: (text?: string) => void;
-    onChange: (text?: string) => void;
+    onCancel: (text: string) => void;
+    onChange: (text: string) => void;
     onSubmit: (text: string) => void;
     reference: HTMLElement;
 };
 
-export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit, ...rest }: Props): JSX.Element {
-    const [text, setText] = React.useState('');
+export default function PopupReply({ onCancel, onChange, onSubmit, ...rest }: Props): JSX.Element {
+    let text = '';
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
     // Event Handlers
@@ -25,18 +21,7 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
     };
-    const handleCancel = (event: React.MouseEvent): void => {
-        handleEvent(event);
-        onCancel(text);
-    };
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        setText(event.target.value);
-        onChange(event.target.value);
-    };
-    const handleCreate = (event: React.MouseEvent): void => {
-        handleEvent(event);
-        onSubmit(text);
-    };
+
     const handleKeyDown = (event: React.KeyboardEvent): void => {
         if (event.key !== KEYS.escape) {
             return;
@@ -45,6 +30,12 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
         handleEvent(event);
         onCancel(text);
     };
+
+    const handleChange = (newText: string): void => {
+        text = newText;
+        onChange(text);
+    };
+
     const handleFirstUpdate = (): void => {
         const { current: textarea } = textareaRef;
 
@@ -59,24 +50,13 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
 
     return (
         <PopupBase onKeyDown={handleKeyDown} options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
-            <div className="ba-Popup-main">
-                <textarea
-                    ref={textareaRef}
-                    className="ba-Popup-text"
-                    data-testid="ba-Popup-text"
-                    defaultValue={defaultValue}
-                    onChange={handleChange}
-                    onClick={handleEvent}
-                />
-            </div>
-            <div className="ba-Popup-footer">
-                <Button data-testid="ba-Popup-cancel" onClick={handleCancel} type="button">
-                    <FormattedMessage {...messages.buttonCancel} />
-                </Button>
-                <PrimaryButton data-testid="ba-Popup-submit" onClick={handleCreate} type="submit">
-                    <FormattedMessage {...messages.buttonPost} />
-                </PrimaryButton>
-            </div>
+            <ReplyForm
+                onCancel={onCancel}
+                onChange={handleChange}
+                onSubmit={onSubmit}
+                textareaRef={textareaRef}
+                {...rest}
+            />
         </PopupBase>
     );
 }

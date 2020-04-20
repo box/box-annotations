@@ -1,0 +1,26 @@
+@import '~box-ui-elements/es/styles/variables';
+
+$form-border-color: $bdl-gray-20;
+$form-footer-bg: $bdl-gray-02;
+
+.ba-ReplyForm {
+    .ba-ReplyForm-text {
+        &,
+        &:hover,
+        &:focus {
+            min-height: 40px;
+            padding: 12px;
+            border: 1px solid transparent;
+            box-shadow: none;
+            resize: none;
+        }
+    }
+
+    .ba-ReplyForm-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 5px;
+        background-color: $form-footer-bg;
+        border-top: 1px solid $form-border-color;
+    }
+}

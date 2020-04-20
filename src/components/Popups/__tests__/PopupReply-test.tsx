@@ -1,8 +1,8 @@
 import React from 'react';
 import { KEYS } from 'box-ui-elements/es/constants';
 import { shallow, ShallowWrapper } from 'enzyme';
-import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
+import ReplyForm from '../../ReplyForm';
 
 jest.mock('../PopupBase', () => ({
     __esModule: true,
@@ -32,25 +32,9 @@ describe('PopupReply', () => {
 
     beforeEach(() => {
         jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockTextarea });
-        jest.spyOn(React, 'useState').mockImplementation(() => ['', jest.fn()]);
     });
 
     describe('event handlers', () => {
-        test.each`
-            testId               | callback
-            ${'ba-Popup-cancel'} | ${'onCancel'}
-            ${'ba-Popup-submit'} | ${'onSubmit'}
-        `('should cancel the $testId button click events', ({ callback, testId }) => {
-            const wrapper = getWrapper();
-            const button = wrapper.find(`[data-testid="${testId}"]`);
-
-            button.simulate('click', mockEvent);
-
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-            expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(defaults[callback]).toHaveBeenCalled();
-        });
-
         test.each`
             key            | callCount
             ${KEYS.enter}  | ${0}
@@ -65,35 +49,13 @@ describe('PopupReply', () => {
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
         });
-
-        test('should handle the textarea onChange event', () => {
-            const wrapper = getWrapper();
-            const textarea = wrapper.find(`textarea[data-testid="ba-Popup-text"]`);
-
-            textarea.simulate('change', { target: { value: 'test' } });
-
-            expect(defaults.onChange).toHaveBeenCalledWith('test');
-        });
-
-        test('should focus the textarea when the underlying popup mounts', () => {
-            const wrapper = getWrapper();
-            const update = wrapper.find(PopupBase).prop('options').onFirstUpdate as Function;
-
-            expect(mockTextarea.focus).not.toHaveBeenCalled();
-
-            update({});
-
-            expect(mockTextarea.focus).toHaveBeenCalled();
-        });
     });
 
     describe('render()', () => {
         test('should render the popup textarea and footer buttons', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.exists('[data-testid="ba-Popup-cancel"]')).toBe(true);
-            expect(wrapper.exists('[data-testid="ba-Popup-submit"]')).toBe(true);
-            expect(wrapper.exists('[data-testid="ba-Popup-text"]')).toBe(true);
+            expect(wrapper.exists(ReplyForm)).toBe(true);
         });
     });
 });
