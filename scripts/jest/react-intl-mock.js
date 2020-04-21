@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 export const intlMock = {
     formatMessage: message => message.defaultMessage || message.message,
@@ -24,7 +23,7 @@ export const defineMessages = messages => messages;
 
 export const createIntlCache = () => {};
 
-export const intlShape = PropTypes.any;
+export const intlShape = {};
 
 export const injectIntl = Component => {
     const WrapperComponent = props => {
