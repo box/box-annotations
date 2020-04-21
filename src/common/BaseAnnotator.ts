@@ -1,6 +1,5 @@
 import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
-import FileVersionAPI from '../api/FileVersionAPI';
 import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
@@ -33,8 +32,6 @@ export type Options = {
 };
 
 export default class BaseAnnotator {
-    api: FileVersionAPI;
-
     container: Container;
 
     intl: IntlShape;
@@ -45,13 +42,7 @@ export default class BaseAnnotator {
 
     store: Store;
 
-    constructor({ apiHost, container, intl, file, token }: Options) {
-        this.api = new FileVersionAPI({
-            apiHost,
-            fileId: file.id,
-            permissions: file.permissions || {},
-            token,
-        });
+    constructor({ container, intl }: Options) {
         this.container = container;
         this.intl = i18n.createIntlProvider(intl);
         this.store = createStore();
@@ -67,7 +58,6 @@ export default class BaseAnnotator {
             this.rootEl.classList.remove('ba');
         }
 
-        this.api.destroy();
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
         this.removeListener(Event.VISIBLE_SET, this.setVisibility);

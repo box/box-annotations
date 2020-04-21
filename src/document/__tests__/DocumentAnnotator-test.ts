@@ -4,14 +4,6 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { CLASS_ANNOTATIONS_LOADED } from '../../constants';
 
-jest.mock('../../api/FileVersionAPI', () => {
-    return jest.fn().mockImplementation(() => {
-        return {
-            destroy: jest.fn(),
-            fetchAnnotations: jest.fn((): Promise<void> => new Promise(jest.fn())),
-        };
-    });
-});
 jest.mock('../../region/RegionManager');
 
 describe('DocumentAnnotator', () => {
@@ -60,14 +52,6 @@ describe('DocumentAnnotator', () => {
         if (annotator) {
             annotator.destroy();
         }
-    });
-
-    describe('destroy()', () => {
-        test('should destroy the api instance', () => {
-            annotator.destroy();
-
-            expect(annotator.api.destroy).toBeCalled();
-        });
     });
 
     describe('getPageManagers()', () => {

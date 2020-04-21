@@ -6,7 +6,6 @@ import eventManager from '../EventManager';
 import { Mode, setActiveAnnotationIdAction, setVisibilityAction, toggleAnnotationModeAction } from '../../store';
 
 jest.mock('../EventManager');
-jest.mock('../../api/FileVersionAPI');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     toggleAnnotationModeAction: jest.fn(),
@@ -47,12 +46,6 @@ describe('BaseAnnotator', () => {
     });
 
     describe('destroy()', () => {
-        test('should destroy the api instance', () => {
-            annotator.destroy();
-
-            expect(annotator.api.destroy).toBeCalled();
-        });
-
         test('should remove the base class name from the root element', () => {
             const rootEl = document.createElement('div');
             rootEl.classList.add('ba');

@@ -1,10 +1,8 @@
 import BoxAnnotations from '../BoxAnnotations';
-import DrawingModeController from '../controllers/DrawingModeController';
-import { TYPES } from '../constants';
-
-let loader;
 
 describe('BoxAnnotations', () => {
+    let loader;
+
     beforeEach(() => {
         loader = new BoxAnnotations();
     });
@@ -72,57 +70,17 @@ describe('BoxAnnotations', () => {
         });
     });
 
-    describe('instantiateControllers()', () => {
-        it('Should do nothing when a controller exists', () => {
-            const config = {
-                CONTROLLERS: {
-                    [TYPES.draw]: {
-                        CONSTRUCTOR: jest.fn(),
-                    },
-                },
-            };
-
-            expect(() => loader.instantiateControllers(config)).not.toThrow();
-        });
-
-        it('Should do nothing when given an undefined object', () => {
-            const config = undefined;
-            expect(() => loader.instantiateControllers(config)).not.toThrow();
-        });
-
-        it('Should do nothing when config has no types', () => {
-            const config = {
-                TYPES: undefined,
-            };
-            expect(() => loader.instantiateControllers(config)).not.toThrow();
-        });
-
-        it('Should instantiate controllers and assign them to the CONTROLLERS attribute', () => {
-            const config = {
-                TYPES: [TYPES.draw, 'typeWithoutController'],
-            };
-            loader.viewerConfig = { enabledTypes: [TYPES.draw] };
-            loader.instantiateControllers(config);
-            expect(config.CONTROLLERS).not.toEqual(undefined);
-            expect(config.CONTROLLERS[TYPES.draw] instanceof DrawingModeController).toBeTruthy();
-            const assignedControllers = Object.keys(config.CONTROLLERS);
-            expect(assignedControllers.length).toEqual(1);
-        });
-    });
-
     describe('determineAnnotator()', () => {
         let annotator;
         let options;
 
         beforeEach(() => {
             loader.canLoad = jest.fn().mockReturnValue(true);
-            loader.instantiateControllers = jest.fn(val => val);
 
             annotator = {
                 NAME: 'Document',
                 VIEWER: ['Document'],
-                TYPES: ['point'],
-                DEFAULT_TYPES: ['point'],
+                TYPES: ['region'],
             };
 
             options = {
@@ -137,30 +95,25 @@ describe('BoxAnnotations', () => {
 
         it('should use the specified types from options', () => {
             loader.viewerOptions = {
-                Document: { enabledTypes: ['draw'] },
+                Document: { enabledTypes: ['region'] },
             };
-            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['draw']);
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
         it('should filter and only keep allowed types of annotations', () => {
-            const viewerConfig = { enabledTypes: ['point', 'timestamp'] };
-            expect(loader.determineAnnotator(options, viewerConfig).TYPES).toStrictEqual(['point']);
+            const viewerConfig = { enabledTypes: ['region', 'timestamp'] };
+            expect(loader.determineAnnotator(options, viewerConfig).TYPES).toStrictEqual(['region']);
 
             loader.viewerOptions = {
                 Document: {
-                    enabledTypes: ['point', 'timestamp'],
+                    enabledTypes: ['region', 'timestamp'],
                 },
             };
-            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['point']);
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
         it('should respect default annotators if none provided', () => {
-            expect(loader.determineAnnotator(options).TYPES).toStrictEqual([
-                'draw',
-                'highlight',
-                'highlight-comment',
-                'point',
-            ]);
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
         it('should not return an annotator if the user has incorrect permissions/scopes', () => {
@@ -186,8 +139,7 @@ describe('BoxAnnotations', () => {
             const docAnnotator = {
                 NAME: 'Document',
                 VIEWER: ['Document'],
-                TYPES: ['point', 'highlight'],
-                DEFAULT_TYPES: ['point'],
+                TYPES: ['region'],
             };
 
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(docAnnotator);
