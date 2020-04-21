@@ -11,6 +11,7 @@ export const defaults = {
             name: 'arrow',
             options: {
                 element: '.ba-Popup-arrow',
+                padding: 20,
             },
         },
         {
