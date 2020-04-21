@@ -4,13 +4,19 @@ import PopupReply from '../../components/Popups/PopupReply';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionAnnotations from '../RegionAnnotations';
 import RegionCreator from '../RegionCreator';
+import RegionList from '../RegionList';
 import { annotations } from '../__mocks__/data';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
+import { scaleShape } from '../regionUtil';
 
 jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionAnnotation');
 jest.mock('../RegionCreator');
+jest.mock('../RegionList');
+jest.mock('../regionUtil', () => ({
+    scaleShape: jest.fn(value => value),
+}));
 
 describe('RegionAnnotations', () => {
     const defaults = {
@@ -37,22 +43,6 @@ describe('RegionAnnotations', () => {
         shape: getRect(),
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
-
-    describe('scaleShape()', () => {
-        test('should scale the underlying shape without rounding', () => {
-            const wrapper = getWrapper({ scale: 2.25 });
-            const instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
-            const shape = instance.scaleShape(getRect());
-
-            expect(shape).toMatchObject({
-                type: 'rect',
-                height: 112.5,
-                width: 112.5,
-                x: 22.5,
-                y: 22.5,
-            });
-        });
-    });
 
     describe('event handlers', () => {
         let wrapper: ShallowWrapper;
@@ -87,10 +77,6 @@ describe('RegionAnnotations', () => {
         });
 
         describe('handleDraw', () => {
-            beforeEach(() => {
-                instance.scaleShape = jest.fn(value => value);
-            });
-
             test('should update the staged annotation with the new scaled shape', () => {
                 const shape = {
                     type: 'rect' as const,
@@ -102,7 +88,7 @@ describe('RegionAnnotations', () => {
 
                 instance.handleDraw(shape);
 
-                expect(instance.scaleShape).toHaveBeenCalledWith(shape, true); // Inverse scale
+                expect(scaleShape).toHaveBeenCalledWith(shape, defaults.scale, true); // Inverse scale
                 expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ shape }));
             });
 
@@ -148,9 +134,10 @@ describe('RegionAnnotations', () => {
     describe('render()', () => {
         test('should render one RegionAnnotation per annotation', () => {
             const wrapper = getWrapper({ annotations });
+            const list = wrapper.find(RegionList);
 
-            expect(wrapper.exists('.ba-RegionAnnotations-list')).toBe(true);
-            expect(wrapper.find(RegionAnnotation).length).toBe(3);
+            expect(list.hasClass('ba-RegionAnnotations-list')).toBe(true);
+            expect(list.prop('annotations').length).toBe(3);
         });
 
         test('should render a RegionCreator if in creation mode', () => {
@@ -173,18 +160,9 @@ describe('RegionAnnotations', () => {
                 },
             });
 
+            expect(scaleShape).toHaveBeenCalledWith(shape, 1.5);
             expect(wrapper.exists(RegionCreator)).toBe(true);
-            expect(wrapper.exists(RegionAnnotation)).toBe(true);
-            expect(wrapper.find(RegionAnnotation).props()).toMatchObject({
-                isActive: true,
-                shape: {
-                    height: 75,
-                    type: 'rect' as const,
-                    width: 75,
-                    x: 15,
-                    y: 15,
-                },
-            });
+            expect(wrapper.find(RegionAnnotation).prop('shape')).toBe(shape);
         });
 
         test('should render a reply popup only if a shape has been fully drawn', () => {
@@ -202,6 +180,15 @@ describe('RegionAnnotations', () => {
             });
         });
 
+        test.each([true, false])('should pass activeId to list only if isCreating is %s', isCreating => {
+            const wrapper = getWrapper({
+                activeAnnotationId: '123',
+                isCreating,
+            });
+
+            expect(wrapper.find(RegionList).prop('activeId')).toBe(isCreating ? null : '123');
+        });
+
         test('should not render creation components if not in creation mode', () => {
             const wrapper = getWrapper({
                 annotations: [],
@@ -211,19 +198,7 @@ describe('RegionAnnotations', () => {
             expect(wrapper.exists(PopupReply)).toBe(false);
             expect(wrapper.exists(RegionAnnotation)).toBe(false);
             expect(wrapper.exists(RegionCreator)).toBe(false);
-        });
-
-        test('should render the specified annotation based on activeAnnotationId', () => {
-            const wrapper = getWrapper({ activeAnnotationId: 'anno_1', annotations });
-            const renderedAnnotations = wrapper.find(RegionAnnotation);
-
-            expect(wrapper.exists('.ba-RegionAnnotations-list')).toBe(true);
-            expect(renderedAnnotations.length).toBe(3);
-
-            for (let i = 0; i < 3; i += 1) {
-                expect(renderedAnnotations.get(i).key).toBe(annotations[i].id);
-                expect(renderedAnnotations.get(i).props.isActive).toBe(i === 0);
-            }
+            expect(wrapper.exists(RegionList)).toBe(true);
         });
     });
 });

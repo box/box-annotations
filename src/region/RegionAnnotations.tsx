@@ -3,13 +3,15 @@ import * as React from 'react';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionAnnotation from './RegionAnnotation';
 import RegionCreator from './RegionCreator';
-import { Annotation, Rect, TargetRegion } from '../@types';
+import RegionList from './RegionList';
+import { AnnotationRegion, Rect } from '../@types';
 import { CreatorItem, CreatorStatus } from '../store/creator';
+import { scaleShape } from './regionUtil';
 import './RegionAnnotations.scss';
 
 type Props = {
     activeAnnotationId: string | null;
-    annotations: Annotation[];
+    annotations: AnnotationRegion[];
     createRegion: (arg: { location: number; message: string; shape: Rect }) => void;
     isCreating: boolean;
     page: number;
@@ -60,8 +62,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     };
 
     handleDraw = (rawShape: Rect): void => {
-        const { staged } = this.props;
-        const newShape = this.scaleShape(rawShape, true);
+        const { scale, staged } = this.props;
+        const newShape = scaleShape(rawShape, scale, true);
         const prevShape = staged && staged.shape;
 
         if (
@@ -99,21 +101,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         this.setState({ targetRef });
     };
 
-    scaleShape({ height, width, x, y, ...rest }: Rect, invert = false): Rect {
-        const { scale } = this.props;
-        const ratio = invert ? 1 / scale : scale;
-
-        return {
-            ...rest,
-            height: height * ratio,
-            width: width * ratio,
-            x: x * ratio,
-            y: y * ratio,
-        };
-    }
-
     render(): JSX.Element {
-        const { activeAnnotationId, annotations, isCreating, staged, status } = this.props;
+        const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
         const { targetRef } = this.state;
         const canDraw = !staged || !staged.message;
         const canReply = status === CreatorStatus.staged;
@@ -121,17 +110,13 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         return (
             <>
                 {/* Layer 1: Saved annotations */}
-                <svg className="ba-RegionAnnotations-list">
-                    {annotations.map(({ id, target }) => (
-                        <RegionAnnotation
-                            key={id}
-                            annotationId={id}
-                            isActive={!isCreating && activeAnnotationId === id}
-                            onSelect={this.handleAnnotationActive}
-                            shape={this.scaleShape((target as TargetRegion).shape)}
-                        />
-                    ))}
-                </svg>
+                <RegionList
+                    activeId={isCreating ? null : activeAnnotationId}
+                    annotations={annotations}
+                    className="ba-RegionAnnotations-list"
+                    onSelect={this.handleAnnotationActive}
+                    scale={scale}
+                />
 
                 {/* Layer 2: Transparent layer to handle click/drag events */}
                 {isCreating && (
@@ -151,7 +136,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                             ref={this.setTargetRef}
                             annotationId="staged"
                             isActive
-                            shape={this.scaleShape(staged.shape)}
+                            shape={scaleShape(staged.shape, scale)}
                         />
                     </svg>
                 )}
