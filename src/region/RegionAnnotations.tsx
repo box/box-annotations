@@ -59,8 +59,22 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         this.setStaged({ message: text });
     };
 
-    handleDraw = (shape: Rect): void => {
-        this.setStaged({ shape: this.scaleShape(shape, true) }); // Store at a scale of 1
+    handleDraw = (rawShape: Rect): void => {
+        const { staged } = this.props;
+        const newShape = this.scaleShape(rawShape, true);
+        const prevShape = staged && staged.shape;
+
+        if (
+            prevShape &&
+            prevShape.height === newShape.height &&
+            prevShape.width === newShape.width &&
+            prevShape.x === newShape.x &&
+            prevShape.y === newShape.y
+        ) {
+            return;
+        }
+
+        this.setStaged({ shape: newShape }); // Store at a scale of 1
     };
 
     handleStart = (): void => {
@@ -91,10 +105,10 @@ export default class RegionAnnotations extends React.Component<Props, State> {
 
         return {
             ...rest,
-            height: Math.round(height * ratio),
-            width: Math.round(width * ratio),
-            x: Math.round(x * ratio),
-            y: Math.round(y * ratio),
+            height: height * ratio,
+            width: width * ratio,
+            x: x * ratio,
+            y: y * ratio,
         };
     }
 
