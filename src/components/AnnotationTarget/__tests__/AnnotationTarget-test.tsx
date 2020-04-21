@@ -44,9 +44,9 @@ describe('AnnotationTarget', () => {
     describe('mouse event handlers', () => {
         test.each`
             event      | onSelectArgument
+            ${'blur'}  | ${null}
             ${'click'} | ${'1'}
             ${'focus'} | ${'1'}
-            ${'blur'}  | ${null}
         `('should cancel the $event and trigger onSelect with $onSelectArgument', ({ event, onSelectArgument }) => {
             const wrapper = getWrapper();
 

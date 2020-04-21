@@ -19,6 +19,8 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
     };
     const handleBlur = (event: React.SyntheticEvent): void => {
+        // Rely on the native browser blur of a focused element to determine when to de-select an annotation from
+        // being the active annotation id
         cancelEvent(event);
         onSelect(null);
     };
