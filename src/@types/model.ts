@@ -15,6 +15,22 @@ export interface Annotation {
     type: 'annotation';
 }
 
+export interface AnnotationDrawing extends Annotation {
+    target: TargetDrawing;
+}
+
+export interface AnnotationHighlight extends Annotation {
+    target: TargetHighlight;
+}
+
+export interface AnnotationPoint extends Annotation {
+    target: TargetPoint;
+}
+
+export interface AnnotationRegion extends Annotation {
+    target: TargetRegion;
+}
+
 export interface Page {
     type: 'page';
     value: number;
