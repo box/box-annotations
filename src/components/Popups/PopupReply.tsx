@@ -5,6 +5,7 @@ import { KEYS } from 'box-ui-elements/es/constants';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
+import ReplyField from './ReplyField';
 import './PopupReply.scss';
 
 export type Props = {
@@ -33,7 +34,7 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
         setText(event.target.value);
         onChange(event.target.value);
     };
-    const handleCreate = (event: React.MouseEvent): void => {
+    const handleSubmit = (event: React.FormEvent): void => {
         handleEvent(event);
         onSubmit(text);
     };
@@ -59,24 +60,26 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
 
     return (
         <PopupBase onKeyDown={handleKeyDown} options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
-            <div className="ba-Popup-main">
-                <textarea
-                    ref={textareaRef}
-                    className="ba-Popup-text"
-                    data-testid="ba-Popup-text"
-                    defaultValue={defaultValue}
-                    onChange={handleChange}
-                    onClick={handleEvent}
-                />
-            </div>
-            <div className="ba-Popup-footer">
-                <Button data-testid="ba-Popup-cancel" onClick={handleCancel} type="button">
-                    <FormattedMessage {...messages.buttonCancel} />
-                </Button>
-                <PrimaryButton data-testid="ba-Popup-submit" onClick={handleCreate} type="submit">
-                    <FormattedMessage {...messages.buttonPost} />
-                </PrimaryButton>
-            </div>
+            <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
+                <div className="ba-Popup-main">
+                    <ReplyField
+                        ref={textareaRef}
+                        className="ba-Popup-text"
+                        data-testid="ba-Popup-text"
+                        defaultValue={defaultValue}
+                        onChange={handleChange}
+                        onClick={handleEvent}
+                    />
+                </div>
+                <div className="ba-Popup-footer">
+                    <Button data-testid="ba-Popup-cancel" onClick={handleCancel} type="button">
+                        <FormattedMessage {...messages.buttonCancel} />
+                    </Button>
+                    <PrimaryButton data-testid="ba-Popup-submit" type="submit">
+                        <FormattedMessage {...messages.buttonPost} />
+                    </PrimaryButton>
+                </div>
+            </form>
         </PopupBase>
     );
 }

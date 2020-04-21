@@ -13,7 +13,7 @@ type PropsIndex = {
     [key: string]: Function | HTMLElement;
 };
 
-describe('PopupReply', () => {
+describe('components/Popups/PopupReply', () => {
     const defaults: Props & PropsIndex = {
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -37,14 +37,14 @@ describe('PopupReply', () => {
 
     describe('event handlers', () => {
         test.each`
-            testId               | callback
-            ${'ba-Popup-cancel'} | ${'onCancel'}
-            ${'ba-Popup-submit'} | ${'onSubmit'}
-        `('should cancel the $testId button click events', ({ callback, testId }) => {
+            testId               | event       | callback
+            ${'ba-Popup-cancel'} | ${'click'}  | ${'onCancel'}
+            ${'ba-Popup-form'}   | ${'submit'} | ${'onSubmit'}
+        `('should cancel the $testId button $event event', ({ callback, event, testId }) => {
             const wrapper = getWrapper();
             const button = wrapper.find(`[data-testid="${testId}"]`);
 
-            button.simulate('click', mockEvent);
+            button.simulate(event, mockEvent);
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
@@ -68,7 +68,7 @@ describe('PopupReply', () => {
 
         test('should handle the textarea onChange event', () => {
             const wrapper = getWrapper();
-            const textarea = wrapper.find(`textarea[data-testid="ba-Popup-text"]`);
+            const textarea = wrapper.find(`[data-testid="ba-Popup-text"]`);
 
             textarea.simulate('change', { target: { value: 'test' } });
 
