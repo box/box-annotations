@@ -1,7 +1,5 @@
-// @flow
-import BaseAnnotator, { Options } from '../common/BaseAnnotator';
+import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { LegacyEvent } from '../@types';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
 import { RegionManager } from '../region';
 import './DocumentAnnotator.scss';
@@ -10,12 +8,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
     managers: Map<number, BaseManager[]> = new Map();
-
-    constructor(options: Options) {
-        super(options);
-
-        this.hydrate(options);
-    }
 
     getPageManagers(pageEl: HTMLElement): BaseManager[] {
         const pageNumber = this.getPageNumber(pageEl);
@@ -50,17 +42,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
     getPages(): HTMLElement[] {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
-    }
-
-    hydrate({ file }: Options): void {
-        this.api
-            .fetchAnnotations(file.file_version.id)
-            .then(() => {
-                // TODO: Normalize response, set in store, and render
-            })
-            .catch(error => {
-                this.emit(LegacyEvent.ERROR, error);
-            });
     }
 
     init(scale: number): void {

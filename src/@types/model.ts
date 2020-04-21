@@ -107,3 +107,7 @@ export interface TargetRegion {
     shape: Rect;
     type: 'region';
 }
+
+export enum Type {
+    region = 'region',
+}

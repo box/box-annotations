@@ -1,14 +1,9 @@
 import getProp from 'lodash/get';
 import DocumentAnnotator from './document/DocumentAnnotator';
-import DrawingModeController from './controllers/DrawingModeController';
-import PointModeController from './controllers/PointModeController';
-import HighlightModeController from './controllers/HighlightModeController';
-import { TYPES } from './constants';
-import { Permissions, PERMISSIONS } from './@types';
+import { Permissions, PERMISSIONS, Type } from './@types';
 
 type Annotator = {
     CONSTRUCTOR: typeof DocumentAnnotator;
-    CONTROLLERS?: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
     NAME: string;
     TYPES: string[];
     VIEWERS: string[];
@@ -45,24 +40,9 @@ const ANNOTATORS: Annotator[] = [
         NAME: 'Document',
         CONSTRUCTOR: DocumentAnnotator,
         VIEWERS: ['Document', 'Presentation'],
-        TYPES: [TYPES.draw, TYPES.highlight, TYPES.highlight_comment, TYPES.point],
+        TYPES: [Type.region],
     },
 ];
-
-const ANNOTATOR_TYPE_CONTROLLERS = {
-    [TYPES.point]: {
-        CONSTRUCTOR: PointModeController,
-    },
-    [TYPES.highlight]: {
-        CONSTRUCTOR: HighlightModeController,
-    },
-    [TYPES.highlight_comment]: {
-        CONSTRUCTOR: HighlightModeController,
-    },
-    [TYPES.draw]: {
-        CONSTRUCTOR: DrawingModeController,
-    },
-};
 
 class BoxAnnotations {
     annotators: Annotator[];
@@ -90,21 +70,6 @@ class BoxAnnotations {
             !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_ALL] ||
             !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_SELF]
         );
-    }
-
-    instantiateControllers(annotator: Annotator): Annotator | null {
-        if (!annotator || !annotator.TYPES || annotator.CONTROLLERS) {
-            return annotator;
-        }
-
-        annotator.TYPES.forEach(type => {
-            if (type in ANNOTATOR_TYPE_CONTROLLERS) {
-                annotator.CONTROLLERS = annotator.CONTROLLERS || {};
-                annotator.CONTROLLERS[type] = new ANNOTATOR_TYPE_CONTROLLERS[type].CONSTRUCTOR(annotator.NAME);
-            }
-        });
-
-        return annotator;
     }
 
     /**
@@ -146,7 +111,7 @@ class BoxAnnotations {
         const enabledTypesBase = enabledTypesOption || enabledTypesViewer || annotator.TYPES || [];
         const enabledTypes = enabledTypesBase.filter((type: string) => annotator.TYPES.some(t => t === type));
 
-        return this.instantiateControllers({ ...annotator, TYPES: enabledTypes });
+        return { ...annotator, TYPES: enabledTypes };
     }
 }
 

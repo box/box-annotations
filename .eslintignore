@@ -4,4 +4,3 @@ i18n/**
 index.js
 flow/**
 flow-typed/**
-functional-tests/**
