@@ -29,6 +29,7 @@ prepush() {
     echo "Building"
     echo "--------------------------------------------------------"
     yarn build || exit 1
+    yarn build:i18n || exit 1
 
     echo "--------------------------------------------------------"
     echo "Testing"
