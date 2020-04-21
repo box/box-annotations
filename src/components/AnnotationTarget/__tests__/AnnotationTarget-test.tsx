@@ -42,7 +42,12 @@ describe('AnnotationTarget', () => {
     });
 
     describe('mouse event handlers', () => {
-        test.each(['click', 'focus'])('should cancel the %s event and trigger onSelect', event => {
+        test.each`
+            event      | onSelectArgument
+            ${'blur'}  | ${null}
+            ${'click'} | ${'1'}
+            ${'focus'} | ${'1'}
+        `('should cancel the $event and trigger onSelect with $onSelectArgument', ({ event, onSelectArgument }) => {
             const wrapper = getWrapper();
 
             wrapper.simulate(event, mockEvent);
@@ -50,7 +55,7 @@ describe('AnnotationTarget', () => {
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             expect(mockEvent.preventDefault).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(defaults.onSelect).toHaveBeenCalledWith('1');
+            expect(defaults.onSelect).toHaveBeenCalledWith(onSelectArgument);
         });
     });
 
