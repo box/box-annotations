@@ -1,4 +1,0 @@
-// @flow
-declare export var EditorState: any
-declare export var ContentState: any
-declare export default {}

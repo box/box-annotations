@@ -1,7 +1,4 @@
 {
-    "flow.enabled": true,
-    "flow.pathToFlow": "${workspaceRoot}/node_modules/.bin/flow",
-    "flow.useNPMPackagedFlow": true,
     "prettier.eslintIntegration": true,
     "prettier.printWidth": 120,
     "prettier.singleQuote": true,
