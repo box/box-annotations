@@ -31,27 +31,39 @@ describe('RegionAnnotations', () => {
         x: 10,
         y: 10,
     });
+    const getStaged = (): CreatorItem => ({
+        location: 1,
+        message: 'test',
+        shape: getRect(),
+    });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
 
     describe('scaleShape()', () => {
-        test('should format the underlying shape based on scale', () => {
-            const wrapper = getWrapper({ scale: 2 });
+        test('should scale the underlying shape without rounding', () => {
+            const wrapper = getWrapper({ scale: 2.25 });
             const instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
             const shape = instance.scaleShape(getRect());
 
             expect(shape).toMatchObject({
                 type: 'rect',
-                height: 100,
-                width: 100,
-                x: 20,
-                y: 20,
+                height: 112.5,
+                width: 112.5,
+                x: 22.5,
+                y: 22.5,
             });
         });
     });
 
     describe('event handlers', () => {
-        const wrapper = getWrapper({ staged: {} as CreatorItem });
-        const instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
+        let wrapper: ShallowWrapper;
+        let instance: InstanceType<typeof RegionAnnotations>;
+
+        beforeEach(() => {
+            wrapper = getWrapper({
+                staged: getStaged(),
+            });
+            instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
+        });
 
         describe('handleCancel', () => {
             test('should reset the staged state and status', () => {
@@ -75,14 +87,29 @@ describe('RegionAnnotations', () => {
         });
 
         describe('handleDraw', () => {
-            test('should update the staged annotation with the new scaled shape', () => {
-                const shape = getRect();
-
+            beforeEach(() => {
                 instance.scaleShape = jest.fn(value => value);
+            });
+
+            test('should update the staged annotation with the new scaled shape', () => {
+                const shape = {
+                    type: 'rect' as const,
+                    height: 100,
+                    width: 100,
+                    x: 20,
+                    y: 20,
+                };
+
                 instance.handleDraw(shape);
 
                 expect(instance.scaleShape).toHaveBeenCalledWith(shape, true); // Inverse scale
                 expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ shape }));
+            });
+
+            test('should not update the staged annotation if the shape has not changed', () => {
+                instance.handleDraw(getRect());
+
+                expect(defaults.setStaged).not.toHaveBeenCalled();
             });
         });
         describe('handleStart', () => {
@@ -105,7 +132,7 @@ describe('RegionAnnotations', () => {
             test('should save the staged annotation', () => {
                 instance.handleSubmit();
 
-                expect(defaults.createRegion).toHaveBeenCalledWith({});
+                expect(defaults.createRegion).toHaveBeenCalledWith(getStaged());
             });
         });
 
@@ -163,11 +190,7 @@ describe('RegionAnnotations', () => {
         test('should render a reply popup only if a shape has been fully drawn', () => {
             const wrapper = getWrapper({
                 isCreating: true,
-                staged: {
-                    location: 1,
-                    message: 'test',
-                    shape: getRect(),
-                },
+                staged: getStaged(),
                 status: CreatorStatus.staged,
             });
             wrapper.setState({
