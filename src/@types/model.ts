@@ -1,4 +1,4 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation, no-use-before-define */
+/* eslint-disable no-use-before-define */
 import { Permissions } from './api';
 
 // New Data Model Types

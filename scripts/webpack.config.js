@@ -44,7 +44,6 @@ const config = Object.assign(commonConfig(), {
             'react-intl-pluralrules-locale-data': path.resolve(
                 `node_modules/@formatjs/intl-pluralrules/dist/locale-data/${locale}`,
             ),
-            moment: path.resolve('src/utils/MomentShim'), // Hack to leverage Intl instead
         },
         extensions: ['.tsx', '.ts', '.js'],
         modules: ['src', 'node_modules'],

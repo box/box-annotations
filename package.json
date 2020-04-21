@@ -8,7 +8,7 @@
         "type": "git",
         "url": "git@github.com:box/box-annotations.git"
     },
-    "files": ["dist/", "i18n/", "src/", "third-party/", "index.js", "LICENSE", "README.md", "THIRD_PARTY_LICENSES"],
+    "files": ["dist/", "i18n/", "src/", "index.js", "LICENSE", "README.md", "THIRD_PARTY_LICENSES"],
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
@@ -49,11 +49,9 @@
         "@babel/cli": "^7.7.7",
         "@babel/core": "^7.7.7",
         "@babel/plugin-proposal-class-properties": "^7.7.4",
-        "@babel/plugin-transform-flow-strip-types": "^7.7.4",
         "@babel/plugin-transform-object-assign": "^7.7.4",
         "@babel/polyfill": "^7.7.0",
         "@babel/preset-env": "^7.7.7",
-        "@babel/preset-flow": "^7.7.4",
         "@babel/preset-react": "^7.7.4",
         "@babel/preset-typescript": "^7.9.0",
         "@box/frontend": "^6.4.0",
@@ -97,8 +95,6 @@
         "eslint-plugin-prettier": "^3.1.2",
         "eslint-plugin-react": "^7.17.0",
         "eslint-plugin-react-hooks": "^1.7.0",
-        "flow-bin": "^0.95.1",
-        "flow-typed": "^2.6.2",
         "husky": "^3.1.0",
         "jest": "^24.9.0",
         "jest-canvas-mock": "^2.2.0",
