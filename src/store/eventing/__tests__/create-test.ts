@@ -17,6 +17,7 @@ describe('store/eventing/create', () => {
         type: 'action',
         meta: {
             arg: annotation,
+            requestId: '123',
         },
     } as Action;
 
@@ -31,6 +32,7 @@ describe('store/eventing/create', () => {
                 annotation,
                 error,
                 meta: {
+                    requestId: '123',
                     status: 'error',
                 },
             });
@@ -44,6 +46,7 @@ describe('store/eventing/create', () => {
             expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
                 annotation,
                 meta: {
+                    requestId: '123',
                     status: 'pending',
                 },
             });
@@ -58,6 +61,7 @@ describe('store/eventing/create', () => {
             expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_create', {
                 annotation: payload,
                 meta: {
+                    requestId: '123',
                     status: 'success',
                 },
             });
