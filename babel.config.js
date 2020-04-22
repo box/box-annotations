@@ -10,10 +10,12 @@ module.exports = api => {
                 },
             ],
             '@babel/preset-react',
+            '@babel/preset-typescript',
         ],
         plugins: [
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-object-rest-spread',
+            '@babel/plugin-transform-flow-strip-types', // Required for jest coverage, for some reason
             '@babel/plugin-transform-object-assign',
             [
                 'react-intl',
@@ -21,20 +23,6 @@ module.exports = api => {
                     messagesDir: './i18n/json',
                 },
             ],
-        ],
-        overrides: [
-            {
-                test: ['./src/**/*.ts', './src/**/*.tsx'],
-                presets: [
-                    [
-                        '@babel/preset-typescript',
-                        {
-                            isTSX: true,
-                            allExtensions: true,
-                        },
-                    ],
-                ],
-            },
         ],
         env: {
             test: {
