@@ -10,11 +10,12 @@ jest.mock('../PopupBase', () => ({
 }));
 
 type PropsIndex = {
-    [key: string]: Function | HTMLElement;
+    [key: string]: Function | HTMLElement | boolean;
 };
 
 describe('components/Popups/PopupReply', () => {
     const defaults: Props & PropsIndex = {
+        isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
         onSubmit: jest.fn(),
@@ -94,6 +95,14 @@ describe('components/Popups/PopupReply', () => {
             expect(wrapper.exists('[data-testid="ba-Popup-cancel"]')).toBe(true);
             expect(wrapper.exists('[data-testid="ba-Popup-submit"]')).toBe(true);
             expect(wrapper.exists('[data-testid="ba-Popup-text"]')).toBe(true);
+        });
+
+        test.each([true, false])('should disable/enable buttons and textarea when isPending %s', isPending => {
+            const wrapper = getWrapper({ isPending });
+
+            expect(wrapper.find('[data-testid="ba-Popup-cancel"]').prop('isDisabled')).toBe(isPending);
+            expect(wrapper.find('[data-testid="ba-Popup-submit"]').prop('isDisabled')).toBe(isPending);
+            expect(wrapper.find('[data-testid="ba-Popup-text"]').prop('disabled')).toBe(isPending);
         });
     });
 });

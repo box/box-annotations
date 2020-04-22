@@ -169,7 +169,7 @@ describe('RegionAnnotations', () => {
             const wrapper = getWrapper({
                 isCreating: true,
                 staged: getStaged(),
-                status: CreatorStatus.staged,
+                status: CreatorStatus.pending,
             });
             wrapper.setState({
                 targetRef: document.createElement('a'),
@@ -177,6 +177,7 @@ describe('RegionAnnotations', () => {
 
             expect(wrapper.find(PopupReply).props()).toMatchObject({
                 defaultValue: 'test',
+                isPending: true,
             });
         });
 
