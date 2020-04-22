@@ -180,6 +180,23 @@ describe('RegionAnnotations', () => {
             });
         });
 
+        test.each`
+            status                   | isPending
+            ${CreatorStatus.pending} | ${true}
+            ${CreatorStatus.staged}  | ${false}
+        `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
+            const wrapper = getWrapper({
+                isCreating: true,
+                staged: getStaged(),
+                status,
+            });
+            wrapper.setState({
+                targetRef: document.createElement('a'),
+            });
+
+            expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
+        });
+
         test.each([true, false])('should pass activeId to list only if isCreating is %s', isCreating => {
             const wrapper = getWrapper({
                 activeAnnotationId: '123',

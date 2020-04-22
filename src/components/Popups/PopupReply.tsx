@@ -11,13 +11,21 @@ import './PopupReply.scss';
 export type Props = {
     className?: string;
     defaultValue?: string;
+    isPending: boolean;
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
     reference: HTMLElement;
 };
 
-export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit, ...rest }: Props): JSX.Element {
+export default function PopupReply({
+    defaultValue,
+    isPending,
+    onCancel,
+    onChange,
+    onSubmit,
+    ...rest
+}: Props): JSX.Element {
     const [text, setText] = React.useState('');
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
@@ -35,6 +43,7 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
         onChange(event.target.value);
     };
     const handleSubmit = (event: React.FormEvent): void => {
+        event.preventDefault();
         handleEvent(event);
         onSubmit(text);
     };
@@ -67,15 +76,16 @@ export default function PopupReply({ defaultValue, onCancel, onChange, onSubmit,
                         className="ba-Popup-text"
                         data-testid="ba-Popup-text"
                         defaultValue={defaultValue}
+                        disabled={isPending}
                         onChange={handleChange}
                         onClick={handleEvent}
                     />
                 </div>
                 <div className="ba-Popup-footer">
-                    <Button data-testid="ba-Popup-cancel" onClick={handleCancel} type="button">
+                    <Button data-testid="ba-Popup-cancel" isDisabled={isPending} onClick={handleCancel} type="button">
                         <FormattedMessage {...messages.buttonCancel} />
                     </Button>
-                    <PrimaryButton data-testid="ba-Popup-submit" type="submit">
+                    <PrimaryButton data-testid="ba-Popup-submit" isDisabled={isPending} type="submit">
                         <FormattedMessage {...messages.buttonPost} />
                     </PrimaryButton>
                 </div>

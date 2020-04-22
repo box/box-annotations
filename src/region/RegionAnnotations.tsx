@@ -105,7 +105,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
         const { targetRef } = this.state;
         const canDraw = !staged || !staged.message;
-        const canReply = status === CreatorStatus.staged;
+        const isPending = status === CreatorStatus.pending;
+        const canReply = status === CreatorStatus.staged || isPending;
 
         return (
             <>
@@ -146,6 +147,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
                             defaultValue={staged.message}
+                            isPending={isPending}
                             onCancel={this.handleCancel}
                             onChange={this.handleChange}
                             onSubmit={this.handleSubmit}

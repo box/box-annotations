@@ -5,6 +5,7 @@ import ReplyField, { Props } from '../ReplyField';
 describe('components/Popups/ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-text',
+        disabled: false,
         defaultValue: '',
         onChange: jest.fn(),
         onClick: jest.fn(),
