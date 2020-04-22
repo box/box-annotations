@@ -14,7 +14,7 @@
     },
     "engines": {
         "node": ">=10.x",
-        "yarn": ">=1.19.x"
+        "yarn": ">=1.10.x"
     },
     "dependencies": {
         "@formatjs/intl-pluralrules": "^1.5.5",
@@ -27,8 +27,8 @@
         "classnames": "^2.2.5",
         "draft-js": "^0.10.1",
         "lodash": "^4.17.15",
-        "react": "^16.13.1",
-        "react-dom": "^16.13.1",
+        "react": "^16.9.0",
+        "react-dom": "^16.9.0",
         "react-intl": "^3.12.0",
         "react-redux": "^7.2.0",
         "react-tether": "1.0.5",
@@ -54,8 +54,8 @@
         "@types/enzyme": "^3.10.5",
         "@types/jest": "^24.9.0",
         "@types/lodash": "^4.14.150",
-        "@types/react": "^16.9.34",
-        "@types/react-dom": "^16.9.6",
+        "@types/react": "^16.9.0",
+        "@types/react-dom": "^16.9.0",
         "@typescript-eslint/eslint-plugin": "^2.29.0",
         "@typescript-eslint/parser": "^2.29.0",
         "autoprefixer": "^9.7.6",
