@@ -1,16 +1,10 @@
-import { Store } from 'redux';
 import { IntlShape } from 'react-intl';
+import * as store from '../store';
+import API from '../api';
 import eventManager from './EventManager';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import {
-    createStore,
-    Mode,
-    setActiveAnnotationIdAction,
-    setVisibilityAction,
-    toggleAnnotationModeAction,
-} from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -40,17 +34,29 @@ export default class BaseAnnotator {
 
     scale = 1;
 
-    store: Store;
+    store: store.AppStore;
 
-    constructor({ container, intl }: Options) {
+    constructor({ apiHost, container, file, intl, token }: Options) {
+        const initialState = {
+            options: {
+                fileId: file.id,
+                fileVersionId: file.file_version.id,
+            },
+        };
+
         this.container = container;
         this.intl = i18n.createIntlProvider(intl);
-        this.store = createStore();
+        this.store = store.createStore(initialState, {
+            api: new API({ apiHost, token }),
+        });
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
         this.addListener(Event.VISIBLE_SET, this.setVisibility);
+
+        // Load any required data at startup
+        this.hydrate();
     }
 
     destroy(): void {
@@ -71,6 +77,12 @@ export default class BaseAnnotator {
         this.init(scale);
     };
 
+    hydrate(): void {
+        // Redux dispatch method signature doesn't seem to like async actions
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.store.dispatch<any>(store.fetchAnnotationsAction());
+    }
+
     // Called by box-content-preview
     init(scale: number): void {
         this.rootEl = this.getElement(this.container);
@@ -89,19 +101,18 @@ export default class BaseAnnotator {
     }
 
     setActiveAnnotationId = (annotationId: string | null): void => {
-        this.store.dispatch(setActiveAnnotationIdAction(annotationId));
+        this.store.dispatch(store.setActiveAnnotationIdAction(annotationId));
     };
-
-    toggleAnnotationMode(mode: Mode): void {
-        // Called by box-content-preview
-        this.store.dispatch(toggleAnnotationModeAction(mode));
-    }
 
     setVisibility = (visibility: boolean): void => {
-        this.store.dispatch(setVisibilityAction(visibility));
+        this.store.dispatch(store.setVisibilityAction(visibility));
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    toggleAnnotationMode(mode: store.Mode): void {
+        // Called by box-content-preview
+        this.store.dispatch(store.toggleAnnotationModeAction(mode));
+    }
+
     addListener(event: string | symbol, listener: (...args: any[]) => void): void {
         eventManager.addListener(event, listener);
     }
@@ -110,12 +121,10 @@ export default class BaseAnnotator {
         eventManager.removeAllListeners();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     removeListener(event: string | symbol, listener: (...args: any[]) => void): void {
         eventManager.removeListener(event, listener);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     emit(event: string | symbol, ...args: any[]): void {
         eventManager.emit(event, ...args);
     }

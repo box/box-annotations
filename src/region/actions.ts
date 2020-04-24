@@ -1,6 +1,6 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Rect } from '../@types';
+import { AppThunkDispatch } from '../store';
 import { createAnnotationAction } from '../store/annotations';
+import { Rect } from '../@types';
 
 export type CreateArg = {
     location: number;
@@ -8,9 +8,9 @@ export type CreateArg = {
     shape: Rect;
 };
 
-export const createRegionAction = createAsyncThunk('CREATE_REGION', async (arg: CreateArg, { dispatch }) => {
+export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch) => {
     const { location, message, shape } = arg;
-    const payload = {
+    const newAnnotation = {
         description: {
             message,
             type: 'reply' as const,
@@ -31,5 +31,5 @@ export const createRegionAction = createAsyncThunk('CREATE_REGION', async (arg: 
         },
     };
 
-    return dispatch(createAnnotationAction(payload));
-});
+    return dispatch(createAnnotationAction(newAnnotation));
+};

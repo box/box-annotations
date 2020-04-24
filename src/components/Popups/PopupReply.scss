@@ -1,6 +1,7 @@
 .ba {
     .ba-Popup-text {
         &,
+        &:disabled,
         &:hover,
         &:focus {
             min-height: 40px;

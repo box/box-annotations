@@ -1,7 +1,7 @@
-import { ApplicationState } from '../types';
+import { AppState } from '../types';
 import { CreatorItem, CreatorStatus } from './types';
 
-type State = Pick<ApplicationState, 'creator'>;
+type State = Pick<AppState, 'creator'>;
 
 export const getCreatorStaged = (state: State): CreatorItem | null => state.creator.staged;
 export const getCreatorStagedForLocation = (state: State, location: number): CreatorItem | null => {

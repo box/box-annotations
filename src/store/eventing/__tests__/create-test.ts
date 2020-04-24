@@ -1,14 +1,14 @@
 import { Action } from '@reduxjs/toolkit';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from '../create';
 import eventManager from '../../../common/EventManager';
-import { ApplicationState } from '../../types';
+import { AppState } from '../../types';
 import { annotation as payload } from '../../../region/__mocks__/data';
 
 jest.mock('../../../common/EventManager');
 
 describe('store/eventing/create', () => {
-    const prevState = {} as ApplicationState;
-    const nextState = {} as ApplicationState;
+    const prevState = {} as AppState;
+    const nextState = {} as AppState;
 
     const annotation = {
         message: 'hello',
