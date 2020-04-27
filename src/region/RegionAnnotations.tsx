@@ -105,8 +105,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
         const { targetRef } = this.state;
         const canDraw = !staged || !staged.message;
+        const canReply = status !== CreatorStatus.init;
         const isPending = status === CreatorStatus.pending;
-        const canReply = status === CreatorStatus.staged || isPending;
 
         return (
             <>

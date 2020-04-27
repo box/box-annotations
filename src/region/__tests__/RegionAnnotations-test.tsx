@@ -165,25 +165,31 @@ describe('RegionAnnotations', () => {
             expect(wrapper.find(RegionAnnotation).prop('shape')).toBe(shape);
         });
 
-        test('should render a reply popup only if a shape has been fully drawn', () => {
+        test.each`
+            status                    | showReply
+            ${CreatorStatus.init}     | ${false}
+            ${CreatorStatus.pending}  | ${true}
+            ${CreatorStatus.rejected} | ${true}
+            ${CreatorStatus.staged}   | ${true}
+        `('should render a reply popup if the creator status is $status', ({ status, showReply }) => {
             const wrapper = getWrapper({
                 isCreating: true,
                 staged: getStaged(),
-                status: CreatorStatus.staged,
+                status,
             });
+
             wrapper.setState({
                 targetRef: document.createElement('a'),
             });
 
-            expect(wrapper.find(PopupReply).props()).toMatchObject({
-                defaultValue: 'test',
-            });
+            expect(wrapper.exists(PopupReply)).toBe(showReply);
         });
 
         test.each`
-            status                   | isPending
-            ${CreatorStatus.pending} | ${true}
-            ${CreatorStatus.staged}  | ${false}
+            status                    | isPending
+            ${CreatorStatus.rejected} | ${false}
+            ${CreatorStatus.pending}  | ${true}
+            ${CreatorStatus.staged}   | ${false}
         `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
             const wrapper = getWrapper({
                 isCreating: true,
