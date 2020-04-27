@@ -1,18 +1,36 @@
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
+import { Editor, EditorState } from 'draft-js';
+import 'draft-js/dist/Draft.css';
+
+import './ReplyField.scss';
 
 export type Props = {
     className?: string;
-    disabled?: boolean;
-    onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    isDisabled?: boolean;
+    editorState: EditorState;
+    onChange: (editorState: EditorState) => void;
     onClick: (event: React.SyntheticEvent) => void;
+    onMention?: (mention: string) => void;
+    placeholder?: string;
     value?: string;
 };
 
-const ReplyField = (props: Props, ref: React.Ref<HTMLTextAreaElement>): JSX.Element => {
-    const { className, ...rest } = props;
+const ReplyField = (props: Props, ref: React.Ref<Editor>): JSX.Element => {
+    const { className, editorState, isDisabled, placeholder, ...rest } = props;
 
-    return <textarea ref={ref} className={classnames('ba-TextArea', className)} {...rest} />;
+    return (
+        <div className={classnames(className, 'ba-ReplyField')}>
+            <Editor
+                ref={ref}
+                editorState={editorState}
+                placeholder={placeholder}
+                readOnly={isDisabled}
+                stripPastedStyles
+                {...rest}
+            />
+        </div>
+    );
 };
 
 export default React.forwardRef(ReplyField);

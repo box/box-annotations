@@ -1,10 +1,10 @@
 .ba {
-    .ba-Popup-text {
+    .ba-Popup-field {
         &,
         &:disabled,
         &:hover,
         &:focus {
-            min-height: 40px;
+            min-height: 80px;
             padding: 12px;
             border: 1px solid transparent;
             box-shadow: none;

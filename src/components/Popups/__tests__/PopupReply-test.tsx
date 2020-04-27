@@ -1,5 +1,6 @@
 import React from 'react';
 import { KEYS } from 'box-ui-elements/es/constants';
+import { EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
@@ -8,6 +9,18 @@ jest.mock('../PopupBase', () => ({
     __esModule: true,
     default: ({ children }: { children: React.ReactNode }): JSX.Element => <div>{children}</div>,
 }));
+
+jest.mock('react-intl', () => {
+    const reactIntl = require.requireActual('react-intl');
+    const intl = reactIntl.createIntl({
+        locale: 'en',
+    });
+
+    return {
+        ...reactIntl,
+        useIntl: () => intl,
+    };
+});
 
 type PropsIndex = {
     [key: string]: Function | HTMLElement | boolean;
@@ -28,11 +41,12 @@ describe('components/Popups/PopupReply', () => {
         preventDefault: jest.fn(),
         stopPropagation: jest.fn(),
     };
-    const mockTextarea = { focus: jest.fn(), value: '' };
+    const mockEditor = { focus: jest.fn() };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupReply {...defaults} {...props} />);
 
     beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockTextarea });
+        jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockEditor });
+        jest.spyOn(React, 'useState').mockImplementation(() => [EditorState.createEmpty(), jest.fn()]);
     });
 
     describe('event handlers', () => {
@@ -66,42 +80,44 @@ describe('components/Popups/PopupReply', () => {
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
         });
 
-        test('should handle the textarea onChange event', () => {
+        test('should handle the editor onChange event', () => {
             const wrapper = getWrapper();
-            const textarea = wrapper.find(`[data-testid="ba-Popup-text"]`);
+            const editor = wrapper.find(`[data-testid="ba-Popup-field"]`);
 
-            textarea.simulate('change', { target: { value: 'test' } });
+            editor.simulate('change', {
+                getCurrentContent: jest.fn().mockReturnValue({ getPlainText: jest.fn().mockReturnValue('test') }),
+            });
 
             expect(defaults.onChange).toHaveBeenCalledWith('test');
         });
 
-        test('should focus the textarea when the underlying popup mounts', () => {
+        test('should focus the editor when the underlying popup mounts', () => {
             const wrapper = getWrapper();
             const update = wrapper.find(PopupBase).prop('options').onFirstUpdate as Function;
-
-            expect(mockTextarea.focus).not.toHaveBeenCalled();
+            // wrapper.editorState.getCurrentConent = jest.fn();
+            expect(mockEditor.focus).not.toHaveBeenCalled();
 
             update({});
 
-            expect(mockTextarea.focus).toHaveBeenCalled();
+            expect(mockEditor.focus).toHaveBeenCalled();
         });
     });
 
     describe('render()', () => {
-        test('should render the popup textarea and footer buttons', () => {
+        test('should render the popup editor and footer buttons', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.exists('[data-testid="ba-Popup-cancel"]')).toBe(true);
             expect(wrapper.exists('[data-testid="ba-Popup-submit"]')).toBe(true);
-            expect(wrapper.exists('[data-testid="ba-Popup-text"]')).toBe(true);
+            expect(wrapper.exists('[data-testid="ba-Popup-field"]')).toBe(true);
         });
 
-        test.each([true, false])('should disable/enable buttons and textarea when isPending %s', isPending => {
+        test.each([true, false])('should disable/enable buttons and editor when isPending %s', isPending => {
             const wrapper = getWrapper({ isPending });
 
             expect(wrapper.find('[data-testid="ba-Popup-cancel"]').prop('isDisabled')).toBe(isPending);
             expect(wrapper.find('[data-testid="ba-Popup-submit"]').prop('isDisabled')).toBe(isPending);
-            expect(wrapper.find('[data-testid="ba-Popup-text"]').prop('disabled')).toBe(isPending);
+            expect(wrapper.find('[data-testid="ba-Popup-field"]').prop('isDisabled')).toBe(isPending);
         });
     });
 });
