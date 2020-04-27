@@ -15,7 +15,7 @@ export default function withProviders<P extends object>(WrappedComponent: React.
         return (
             <RawIntlProvider value={intl}>
                 <StoreProvider store={store}>
-                    <WrappedComponent {...(rest as P)} />
+                    <WrappedComponent intl={intl} {...(rest as P)} />
                 </StoreProvider>
             </RawIntlProvider>
         );

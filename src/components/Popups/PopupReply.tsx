@@ -2,7 +2,8 @@ import React from 'react';
 import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { FormattedMessage } from 'react-intl';
+import { Editor, EditorState } from 'draft-js';
+import { FormattedMessage, IntlShape } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyField from './ReplyField';
@@ -10,24 +11,25 @@ import './PopupReply.scss';
 
 export type Props = {
     className?: string;
-    defaultValue?: string;
+    editorState: EditorState;
+    intl: IntlShape;
     isPending: boolean;
-    onCancel: (text?: string) => void;
-    onChange: (text?: string) => void;
-    onSubmit: (text: string) => void;
+    onCancel: () => void;
+    onChange: (nextEditorState: EditorState) => void;
+    onSubmit: () => void;
     reference: HTMLElement;
 };
 
 export default function PopupReply({
-    defaultValue,
+    editorState,
+    intl,
     isPending,
     onCancel,
     onChange,
     onSubmit,
     ...rest
 }: Props): JSX.Element {
-    const [text, setText] = React.useState('');
-    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+    const editorRef = React.useRef<Editor>(null);
 
     // Event Handlers
     const handleEvent = (event: React.SyntheticEvent): void => {
@@ -36,16 +38,15 @@ export default function PopupReply({
     };
     const handleCancel = (event: React.MouseEvent): void => {
         handleEvent(event);
-        onCancel(text);
+        onCancel();
     };
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        setText(event.target.value);
-        onChange(event.target.value);
+    const handleChange = (nextEditorState: EditorState): void => {
+        onChange(nextEditorState);
     };
     const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
         handleEvent(event);
-        onSubmit(text);
+        onSubmit();
     };
     const handleKeyDown = (event: React.KeyboardEvent): void => {
         if (event.key !== KEYS.escape) {
@@ -53,17 +54,12 @@ export default function PopupReply({
         }
 
         handleEvent(event);
-        onCancel(text);
+        onCancel();
     };
     const handleFirstUpdate = (): void => {
-        const { current: textarea } = textareaRef;
-
-        if (textarea) {
-            const { value } = textarea;
-
-            textarea.focus();
-            textarea.selectionStart = value.length; // Force cursor to the end after focus
-            textarea.selectionEnd = value.length; // Force cursor to the end after focus
+        const { current: editor } = editorRef;
+        if (editor) {
+            editor.focus();
         }
     };
 
@@ -72,13 +68,13 @@ export default function PopupReply({
             <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
                 <div className="ba-Popup-main">
                     <ReplyField
-                        ref={textareaRef}
-                        className="ba-Popup-text"
-                        data-testid="ba-Popup-text"
-                        defaultValue={defaultValue}
-                        disabled={isPending}
+                        ref={editorRef}
+                        className="ba-Popup-field"
+                        data-testid="ba-Popup-field"
+                        editorState={editorState}
+                        isDisabled={isPending}
                         onChange={handleChange}
-                        onClick={handleEvent}
+                        placeholder={intl.formatMessage(messages.fieldPlaceholder)}
                     />
                 </div>
                 <div className="ba-Popup-footer">

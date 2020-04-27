@@ -1,6 +1,9 @@
 import merge from 'lodash/merge';
 import * as React from 'react';
+import { EditorState, ContentState } from 'draft-js';
+import { IntlShape } from 'react-intl';
 import PopupReply from '../components/Popups/PopupReply';
+import { mentionDecorator } from '../components/Popups/ReplyField';
 import RegionAnnotation from './RegionAnnotation';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
@@ -13,6 +16,7 @@ type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
     createRegion: (arg: { location: number; message: string; shape: Rect }) => void;
+    intl: IntlShape;
     isCreating: boolean;
     page: number;
     scale: number;
@@ -25,6 +29,7 @@ type Props = {
 
 type State = {
     targetRef?: HTMLAnchorElement;
+    editorState: EditorState;
 };
 
 export default class RegionAnnotations extends React.Component<Props, State> {
@@ -34,7 +39,17 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         scale: 1,
     };
 
-    state: State = {};
+    constructor(props: Props) {
+        super(props);
+
+        let editorState = EditorState.createEmpty(mentionDecorator);
+        if (props.staged && props.staged.message) {
+            const contentState = ContentState.createFromText(props.staged.message);
+            editorState = EditorState.createWithContent(contentState, mentionDecorator);
+        }
+
+        this.state = { editorState };
+    }
 
     setStaged(data: Partial<CreatorItem> | null): void {
         const { page, setStaged, staged } = this.props;
@@ -57,8 +72,9 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         this.setStatus(CreatorStatus.init);
     };
 
-    handleChange = (text?: string): void => {
-        this.setStaged({ message: text });
+    handleChange = (nextEditorState: EditorState): void => {
+        this.setState({ editorState: nextEditorState });
+        this.setStaged({ message: nextEditorState.getCurrentContent().getPlainText() });
     };
 
     handleDraw = (rawShape: Rect): void => {
@@ -102,8 +118,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
     };
 
     render(): JSX.Element {
-        const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
-        const { targetRef } = this.state;
+        const { activeAnnotationId, annotations, intl, isCreating, scale, staged, status } = this.props;
+        const { targetRef, editorState } = this.state;
         const canDraw = !staged || !staged.message;
         const isPending = status === CreatorStatus.pending;
         const canReply = status === CreatorStatus.staged || isPending;
@@ -146,7 +162,8 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                 {isCreating && staged && canReply && targetRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
-                            defaultValue={staged.message}
+                            editorState={editorState}
+                            intl={intl}
                             isPending={isPending}
                             onCancel={this.handleCancel}
                             onChange={this.handleChange}

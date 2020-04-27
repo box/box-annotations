@@ -24,7 +24,7 @@ describe('Popper', () => {
             expect(popper.createPopper).toHaveBeenCalledWith(referenceEl, popupEl, {
                 ...rest,
                 placement: 'left',
-                modifiers: [...defaultModifiers, ...modifiers],
+                modifiers: [...modifiers, ...defaultModifiers],
             });
         });
     });

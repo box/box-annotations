@@ -8,11 +8,13 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     className?: string;
     options: Partial<Options>;
     reference: HTMLElement;
+    showArrow?: boolean;
 };
 
 export default class PopupBase extends React.PureComponent<Props> {
     static defaultProps = {
         options: {},
+        showArrow: true,
     };
 
     popper?: Instance;
@@ -64,7 +66,7 @@ export default class PopupBase extends React.PureComponent<Props> {
     };
 
     render(): JSX.Element {
-        const { children, className, options, reference, ...rest } = this.props; // eslint-disable-line @typescript-eslint/no-unused-vars
+        const { children, className, options, reference, showArrow, ...rest } = this.props; // eslint-disable-line @typescript-eslint/no-unused-vars
 
         return (
             <div
@@ -79,7 +81,7 @@ export default class PopupBase extends React.PureComponent<Props> {
                 role="presentation"
                 {...rest}
             >
-                <div className="ba-Popup-arrow" />
+                {showArrow && <div className="ba-Popup-arrow" />}
                 <div className="ba-Popup-content">{children}</div>
             </div>
         );

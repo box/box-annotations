@@ -1,5 +1,7 @@
 import React from 'react';
+import { EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { IntlShape } from 'react-intl';
 import PopupReply from '../../components/Popups/PopupReply';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionAnnotations from '../RegionAnnotations';
@@ -22,6 +24,7 @@ describe('RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         createRegion: jest.fn(),
+        intl: ({ formatMessage: jest.fn() } as unknown) as IntlShape,
         page: 1,
         scale: 1,
         setActiveAnnotationId: jest.fn(),
@@ -66,7 +69,11 @@ describe('RegionAnnotations', () => {
 
         describe('handleChange', () => {
             test('should set the staged state with the new message', () => {
-                instance.handleChange('test');
+                instance.handleChange(({
+                    getCurrentContent: jest.fn().mockReturnValue({
+                        getPlainText: jest.fn().mockReturnValue('test'),
+                    }),
+                } as unknown) as EditorState);
 
                 expect(defaults.setStaged).toHaveBeenCalledWith(
                     expect.objectContaining({
@@ -175,9 +182,10 @@ describe('RegionAnnotations', () => {
                 targetRef: document.createElement('a'),
             });
 
-            expect(wrapper.find(PopupReply).props()).toMatchObject({
-                defaultValue: 'test',
-            });
+            const editorState = wrapper.find(PopupReply).prop('editorState');
+            const defaultValue = editorState.getCurrentContent().getPlainText();
+
+            expect(defaultValue).toEqual('test');
         });
 
         test.each`

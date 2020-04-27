@@ -1,0 +1,15 @@
+.ba-ReplyField {
+    div[contentEditable='true'] {
+        padding: 0;
+        border: none;
+        box-shadow: none;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:focus {
+            border: none;
+        }
+    }
+}

@@ -30,7 +30,7 @@ export const defaults = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const merger = (sourceValue: any, newValue: any): any => {
     if (Array.isArray(sourceValue) && Array.isArray(newValue)) {
-        return unionBy(sourceValue, newValue, 'name');
+        return unionBy(newValue, sourceValue, 'name');
     }
 
     return undefined; // Default to lodash/merge behavior
