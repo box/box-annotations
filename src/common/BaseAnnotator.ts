@@ -13,15 +13,13 @@ export type StartAtOption = {
     unit: string;
     value: number;
 };
-export interface FileOptions {
+export type FileOptions = {
     [key: string]: {
-        fileVersionId?: string;
-        startAt: StartAtOption;
         annotations?: {
-            activeId: string;
+            activeId?: string;
         };
     };
-}
+};
 
 export type Options = {
     apiHost: string;
