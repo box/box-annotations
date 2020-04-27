@@ -1,4 +1,5 @@
 import { IntlShape } from 'react-intl';
+import getProp from 'lodash/get';
 import * as store from '../store';
 import API from '../api';
 import eventManager from './EventManager';
@@ -8,6 +9,22 @@ import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
+
+export type StartAtOption = {
+    unit: string;
+    value: number;
+};
+
+export type AnnotationsOptions = {
+    activeId: string;
+};
+export interface FileOptions {
+    [key: string]: {
+        fileVersionId?: string;
+        startAt: StartAtOption;
+        annotations?: AnnotationsOptions;
+    };
+}
 
 export type Options = {
     apiHost: string;
@@ -19,6 +36,7 @@ export type Options = {
         };
         permissions: Permissions;
     };
+    fileOptions?: FileOptions;
     hasTouch?: boolean;
     intl: IntlOptions;
     locale?: string;
@@ -36,8 +54,16 @@ export default class BaseAnnotator {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, file, intl, token }: Options) {
+    constructor({ apiHost, container, file, fileOptions = {}, intl, token }: Options) {
+        const activeId = getProp<FileOptions, string, string | null>(
+            fileOptions,
+            `${file.id}.annotations.activeId`,
+            null,
+        ) as string;
         const initialState = {
+            annotations: {
+                activeId,
+            },
             options: {
                 fileId: file.id,
                 fileVersionId: file.file_version.id,
