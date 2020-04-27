@@ -9,10 +9,6 @@ import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
 
-export type StartAtOption = {
-    unit: string;
-    value: number;
-};
 export type FileOptions = {
     [key: string]: {
         annotations?: {
