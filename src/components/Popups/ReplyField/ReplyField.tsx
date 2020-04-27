@@ -3,10 +3,10 @@ import classnames from 'classnames';
 
 export type Props = {
     className?: string;
-    defaultValue?: string;
     disabled?: boolean;
     onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
     onClick: (event: React.SyntheticEvent) => void;
+    value?: string;
 };
 
 const ReplyField = (props: Props, ref: React.Ref<HTMLTextAreaElement>): JSX.Element => {

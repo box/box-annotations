@@ -146,12 +146,12 @@ export default class RegionAnnotations extends React.Component<Props, State> {
                 {isCreating && staged && canReply && targetRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
-                            defaultValue={staged.message}
                             isPending={isPending}
                             onCancel={this.handleCancel}
                             onChange={this.handleChange}
                             onSubmit={this.handleSubmit}
                             reference={targetRef}
+                            value={staged.message}
                         />
                     </div>
                 )}

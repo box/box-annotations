@@ -33,7 +33,6 @@ describe('components/Popups/PopupReply', () => {
 
     beforeEach(() => {
         jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockTextarea });
-        jest.spyOn(React, 'useState').mockImplementation(() => ['', jest.fn()]);
     });
 
     describe('event handlers', () => {

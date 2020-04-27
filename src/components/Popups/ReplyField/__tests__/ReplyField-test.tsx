@@ -6,9 +6,9 @@ describe('components/Popups/ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-text',
         disabled: false,
-        defaultValue: '',
         onChange: jest.fn(),
         onClick: jest.fn(),
+        value: '',
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<ReplyField {...defaults} {...props} />);

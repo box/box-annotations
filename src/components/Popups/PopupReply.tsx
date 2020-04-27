@@ -10,23 +10,22 @@ import './PopupReply.scss';
 
 export type Props = {
     className?: string;
-    defaultValue?: string;
     isPending: boolean;
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
     reference: HTMLElement;
+    value?: string;
 };
 
 export default function PopupReply({
-    defaultValue,
     isPending,
     onCancel,
     onChange,
     onSubmit,
+    value = '',
     ...rest
 }: Props): JSX.Element {
-    const [text, setText] = React.useState('');
     const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
     // Event Handlers
@@ -36,16 +35,15 @@ export default function PopupReply({
     };
     const handleCancel = (event: React.MouseEvent): void => {
         handleEvent(event);
-        onCancel(text);
+        onCancel(value);
     };
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        setText(event.target.value);
         onChange(event.target.value);
     };
     const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
         handleEvent(event);
-        onSubmit(text);
+        onSubmit(value);
     };
     const handleKeyDown = (event: React.KeyboardEvent): void => {
         if (event.key !== KEYS.escape) {
@@ -53,14 +51,12 @@ export default function PopupReply({
         }
 
         handleEvent(event);
-        onCancel(text);
+        onCancel(value);
     };
     const handleFirstUpdate = (): void => {
         const { current: textarea } = textareaRef;
 
         if (textarea) {
-            const { value } = textarea;
-
             textarea.focus();
             textarea.selectionStart = value.length; // Force cursor to the end after focus
             textarea.selectionEnd = value.length; // Force cursor to the end after focus
@@ -75,10 +71,10 @@ export default function PopupReply({
                         ref={textareaRef}
                         className="ba-Popup-text"
                         data-testid="ba-Popup-text"
-                        defaultValue={defaultValue}
                         disabled={isPending}
                         onChange={handleChange}
                         onClick={handleEvent}
+                        value={value}
                     />
                 </div>
                 <div className="ba-Popup-footer">
