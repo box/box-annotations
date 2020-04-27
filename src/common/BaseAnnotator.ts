@@ -14,15 +14,13 @@ export type StartAtOption = {
     unit: string;
     value: number;
 };
-
-export type AnnotationsOptions = {
-    activeId: string;
-};
 export interface FileOptions {
     [key: string]: {
         fileVersionId?: string;
         startAt: StartAtOption;
-        annotations?: AnnotationsOptions;
+        annotations?: {
+            activeId: string;
+        };
     };
 }
 
@@ -55,11 +53,7 @@ export default class BaseAnnotator {
     store: store.AppStore;
 
     constructor({ apiHost, container, file, fileOptions = {}, intl, token }: Options) {
-        const activeId = getProp<FileOptions, string, string | null>(
-            fileOptions,
-            `${file.id}.annotations.activeId`,
-            null,
-        ) as string;
+        const activeId = getProp(fileOptions, [file.id, 'annotations', 'activeId'], null);
         const initialState = {
             annotations: {
                 activeId,
