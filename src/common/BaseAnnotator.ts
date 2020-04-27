@@ -51,7 +51,7 @@ export default class BaseAnnotator {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, file, fileOptions = {}, intl, token }: Options) {
+    constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
         const activeId = fileOptions?.[file.id]?.annotations?.activeId ?? null;
         const initialState = {
             annotations: {
