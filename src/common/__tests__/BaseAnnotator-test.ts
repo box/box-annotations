@@ -4,6 +4,7 @@ import BaseAnnotator from '../BaseAnnotator';
 import eventManager from '../EventManager';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Mode } from '../../store/common';
+import APIFactory from '../../api';
 
 jest.mock('../EventManager');
 jest.mock('../../api');
@@ -45,6 +46,32 @@ describe('BaseAnnotator', () => {
         if (annotator) {
             annotator.destroy();
         }
+    });
+
+    describe('constructor()', () => {
+        test.each`
+            optionsFileId | expectedActiveId
+            ${'12345'}    | ${'123'}
+            ${'987'}      | ${null}
+        `(
+            'should parse fileOptions for initial activeId and set it to $expectedActiveId',
+            ({ optionsFileId, expectedActiveId }) => {
+                const fileOptions = {
+                    [optionsFileId]: {
+                        annotations: { activeId: '123' },
+                    },
+                };
+                annotator = getAnnotator({ fileOptions });
+
+                expect(store.createStore).toHaveBeenLastCalledWith(
+                    {
+                        annotations: { activeId: expectedActiveId },
+                        options: { fileId: '12345', fileVersionId: '98765' },
+                    },
+                    { api: expect.any(APIFactory) },
+                );
+            },
+        );
     });
 
     describe('destroy()', () => {

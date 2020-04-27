@@ -8,7 +8,11 @@ export type Options = {
     api?: API;
 };
 
-export default function createStore(preloadedState?: Partial<AppState>, { api }: Options = {}): AppStore {
+type RecursivePartial<T> = {
+    [P in keyof T]?: RecursivePartial<T[P]>;
+};
+
+export default function createStore(preloadedState?: RecursivePartial<AppState>, { api }: Options = {}): AppStore {
     const thunkOptions = {
         extraArgument: { api },
     };
