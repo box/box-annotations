@@ -1,5 +1,4 @@
 import { IntlShape } from 'react-intl';
-import getProp from 'lodash/get';
 import * as store from '../store';
 import API from '../api';
 import eventManager from './EventManager';
@@ -53,7 +52,7 @@ export default class BaseAnnotator {
     store: store.AppStore;
 
     constructor({ apiHost, container, file, fileOptions = {}, intl, token }: Options) {
-        const activeId = getProp(fileOptions, [file.id, 'annotations', 'activeId'], null);
+        const activeId = fileOptions?.[file.id]?.annotations?.activeId ?? null;
         const initialState = {
             annotations: {
                 activeId,
