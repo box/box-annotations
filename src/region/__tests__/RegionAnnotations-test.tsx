@@ -165,6 +165,21 @@ describe('RegionAnnotations', () => {
             expect(wrapper.find(RegionAnnotation).prop('shape')).toBe(shape);
         });
 
+        test('should pass the creator item message value to the reply popup', () => {
+            const wrapper = getWrapper({
+                isCreating: true,
+                staged: getStaged(),
+                status: CreatorStatus.staged,
+            });
+            wrapper.setState({
+                targetRef: document.createElement('a'),
+            });
+
+            expect(wrapper.find(PopupReply).props()).toMatchObject({
+                value: 'test',
+            });
+        });
+
         test.each`
             status                    | showReply
             ${CreatorStatus.init}     | ${false}
