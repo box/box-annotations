@@ -3,7 +3,11 @@ import { AnnotationsState } from './types';
 import { createAnnotationAction, fetchAnnotationsAction, setActiveAnnotationIdAction } from './actions';
 
 const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
-    builder.addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId),
+    builder
+        .addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId)
+        /* Set the active annotation back to null, Preview will set the active ID with a an event which will trigger
+        the url change */
+        .addCase(createAnnotationAction.fulfilled, () => null),
 );
 
 const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder =>

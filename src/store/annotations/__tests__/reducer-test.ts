@@ -24,6 +24,7 @@ describe('store/annotations/reducer', () => {
 
             expect(newState.allIds).toContain(payload.entries[0].id);
             expect(newState.byId.anno_1).toEqual(payload.entries[0]);
+            expect(newState.activeId).toEqual(null);
         });
     });
 

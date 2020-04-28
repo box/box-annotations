@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import scrollIntoView, { Options } from 'scroll-into-view-if-needed';
 import { KEYS } from 'box-ui-elements/es/constants';
 import './AnnotationTarget.scss';
 
@@ -8,11 +9,28 @@ type Props = {
     annotationId: string;
     children: React.ReactNode;
     className?: string;
+    isActive?: boolean;
     onSelect?: (annotationId: string) => void;
 };
 
+const scrollOptions: Options = {
+    behavior: 'smooth',
+    block: 'center',
+    inline: 'center',
+    scrollMode: 'if-needed',
+};
+
 const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.Element => {
-    const { annotationId, children, className, onSelect = noop, ...rest } = props;
+    const { annotationId, children, className, isActive, onSelect = noop, ...rest } = props;
+    const innerRef = React.useRef<HTMLAnchorElement>(null);
+
+    React.useImperativeHandle(ref, () => innerRef.current as HTMLAnchorElement, [innerRef]);
+    React.useEffect(() => {
+        if (isActive && innerRef.current) {
+            scrollIntoView(innerRef.current, scrollOptions);
+        }
+    }, [isActive]);
+
     const cancelEvent = (event: React.SyntheticEvent): void => {
         event.preventDefault();
         event.stopPropagation();
@@ -45,7 +63,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
-            ref={ref}
+            ref={innerRef}
             className={classNames('ba-AnnotationTarget', className)}
             href="#" // Needed for IE11 to handle click events properly
             onBlur={handleBlur}
