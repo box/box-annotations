@@ -8,7 +8,6 @@
         "type": "git",
         "url": "git@github.com:box/box-annotations.git"
     },
-    "files": ["dist/", "i18n/", "src/", "index.js", "LICENSE", "README.md", "THIRD_PARTY_LICENSES"],
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
