@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditorState } from 'draft-js';
+import { Editor, EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import ReplyField, { Props, State } from '../ReplyField';
 
@@ -14,6 +14,10 @@ describe('components/Popups/ReplyField', () => {
         value: '',
     };
 
+    const mockEditorState = ({
+        getCurrentContent: () => ({ getPlainText: () => 'test' }),
+    } as unknown) as EditorState;
+
     const getWrapper = (props = {}): ShallowWrapper<Props, State, ReplyField> =>
         shallow(<ReplyField {...defaults} {...props} />);
 
@@ -25,15 +29,23 @@ describe('components/Popups/ReplyField', () => {
         });
     });
 
-    describe('handleChange()', () => {
-        test('should call onChange', () => {
+    describe('event handlers', () => {
+        test('should handle the editor onChange event', () => {
             const wrapper = getWrapper();
+            const editor = wrapper.find(Editor);
 
-            wrapper.instance().handleChange(({
-                getCurrentContent: jest.fn().mockReturnValue({ getPlainText: jest.fn().mockReturnValue('test') }),
-            } as unknown) as EditorState);
+            editor.simulate('change', mockEditorState);
 
             expect(defaults.onChange).toBeCalledWith('test');
+        });
+
+        test('should handle the editor onClick event', () => {
+            const wrapper = getWrapper();
+            const editor = wrapper.find(Editor);
+
+            editor.simulate('click', 'test');
+
+            expect(defaults.onClick).toBeCalledWith('test');
         });
     });
 });

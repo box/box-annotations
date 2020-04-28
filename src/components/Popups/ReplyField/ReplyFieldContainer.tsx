@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { AppState, getStagedCursor, setStagedCursorAction } from '../../../store';
+import { AppState, getCreatorCursor, setCursorAction } from '../../../store';
 import ReplyField from './ReplyField';
 
 export type Props = {
@@ -7,11 +7,11 @@ export type Props = {
 };
 
 export const mapStateToProps = (state: AppState): Props => ({
-    cursorPosition: getStagedCursor(state),
+    cursorPosition: getCreatorCursor(state),
 });
 
 export const mapDispatchToProps = {
-    setCursorPosition: setStagedCursorAction,
+    setCursorPosition: setCursorAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReplyField);

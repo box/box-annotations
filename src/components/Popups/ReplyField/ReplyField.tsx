@@ -1,7 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 import { Editor, EditorState, ContentState, SelectionState } from 'draft-js';
-import 'draft-js/dist/Draft.css';
 
 import './ReplyField.scss';
 
@@ -22,7 +21,7 @@ export type State = {
 };
 
 export default class ReplyField extends React.Component<Props, State> {
-    private editor: React.RefObject<Editor>;
+    private editorRef: React.RefObject<Editor> = React.createRef();
 
     constructor(props: Props) {
         super(props);
@@ -41,12 +40,10 @@ export default class ReplyField extends React.Component<Props, State> {
         this.state = {
             editorState: prevEditorState,
         };
-
-        this.editor = React.createRef();
     }
 
     componentDidMount(): void {
-        const { current: editor } = this.editor;
+        const { current: editor } = this.editorRef;
         if (editor) {
             editor.focus();
         }
@@ -74,7 +71,7 @@ export default class ReplyField extends React.Component<Props, State> {
             <div className={classnames(className, 'ba-ReplyField')}>
                 <Editor
                     {...rest}
-                    ref={this.editor}
+                    ref={this.editorRef}
                     editorState={editorState}
                     onChange={this.handleChange}
                     placeholder={placeholder}

@@ -9,18 +9,6 @@ jest.mock('../PopupBase', () => ({
     default: ({ children }: { children: React.ReactNode }): JSX.Element => <div>{children}</div>,
 }));
 
-jest.mock('react-intl', () => {
-    const reactIntl = require.requireActual('react-intl');
-    const intl = reactIntl.createIntl({
-        locale: 'en',
-    });
-
-    return {
-        ...reactIntl,
-        useIntl: () => intl,
-    };
-});
-
 type PropsIndex = {
     [key: string]: Function | HTMLElement | boolean;
 };
@@ -40,11 +28,9 @@ describe('components/Popups/PopupReply', () => {
         preventDefault: jest.fn(),
         stopPropagation: jest.fn(),
     };
-    const mockEditor = { focus: jest.fn() };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupReply {...defaults} {...props} />);
 
     beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockEditor });
         jest.spyOn(React, 'useState').mockImplementation(() => [EditorState.createEmpty(), jest.fn()]);
     });
 
@@ -77,15 +63,6 @@ describe('components/Popups/PopupReply', () => {
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
-        });
-
-        test('should handle the editor onChange event', () => {
-            const wrapper = getWrapper();
-            const editor = wrapper.find(`[data-testid="ba-Popup-field"]`);
-
-            editor.simulate('change', 'test');
-
-            expect(defaults.onChange).toHaveBeenCalledWith('test');
         });
     });
 

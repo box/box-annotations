@@ -33,3 +33,5 @@ export const injectIntl = Component => {
     WrapperComponent.displayName = Component.displayName || Component.name || 'Component';
     return WrapperComponent;
 };
+
+export const useIntl = () => intlMock;
