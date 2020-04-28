@@ -2,7 +2,6 @@ import React from 'react';
 import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { Editor, EditorState, ContentState } from 'draft-js';
 import { FormattedMessage, useIntl } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
@@ -27,10 +26,6 @@ export default function PopupReply({
     value = '',
     ...rest
 }: Props): JSX.Element {
-    const editorRef = React.useRef<Editor>(null);
-    const contentState = ContentState.createFromText(value);
-    const prevEditorState = EditorState.createWithContent(contentState);
-    const [editorState, setEditorState] = React.useState<EditorState>(prevEditorState);
     const intl = useIntl();
 
     // Event Handlers
@@ -42,9 +37,8 @@ export default function PopupReply({
         handleEvent(event);
         onCancel(value);
     };
-    const handleChange = (nextEditorState: EditorState): void => {
-        setEditorState(nextEditorState);
-        onChange(nextEditorState.getCurrentContent().getPlainText());
+    const handleChange = (text?: string): void => {
+        onChange(text);
     };
     const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
@@ -59,23 +53,14 @@ export default function PopupReply({
         handleEvent(event);
         onCancel(value);
     };
-    const handleFirstUpdate = (): void => {
-        const { current: editor } = editorRef;
-        if (editor) {
-            editor.focus();
-            setEditorState(EditorState.moveFocusToEnd(editorState));
-        }
-    };
 
     return (
-        <PopupBase onKeyDown={handleKeyDown} options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
+        <PopupBase onKeyDown={handleKeyDown} {...rest}>
             <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
                 <div className="ba-Popup-main">
                     <ReplyField
-                        ref={editorRef}
                         className="ba-Popup-field"
                         data-testid="ba-Popup-field"
-                        editorState={editorState}
                         isDisabled={isPending}
                         onChange={handleChange}
                         onClick={handleEvent}

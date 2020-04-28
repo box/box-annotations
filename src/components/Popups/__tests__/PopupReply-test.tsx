@@ -2,7 +2,6 @@ import React from 'react';
 import { KEYS } from 'box-ui-elements/es/constants';
 import { EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
-import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
 
 jest.mock('../PopupBase', () => ({
@@ -84,22 +83,9 @@ describe('components/Popups/PopupReply', () => {
             const wrapper = getWrapper();
             const editor = wrapper.find(`[data-testid="ba-Popup-field"]`);
 
-            editor.simulate('change', {
-                getCurrentContent: jest.fn().mockReturnValue({ getPlainText: jest.fn().mockReturnValue('test') }),
-            });
+            editor.simulate('change', 'test');
 
             expect(defaults.onChange).toHaveBeenCalledWith('test');
-        });
-
-        test('should focus the editor when the underlying popup mounts', () => {
-            const wrapper = getWrapper();
-            const update = wrapper.find(PopupBase).prop('options').onFirstUpdate as Function;
-            // wrapper.editorState.getCurrentConent = jest.fn();
-            expect(mockEditor.focus).not.toHaveBeenCalled();
-
-            update({});
-
-            expect(mockEditor.focus).toHaveBeenCalled();
         });
     });
 

@@ -1,12 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { CreatorState, CreatorStatus } from './types';
 import { createAnnotationAction } from '../annotations';
-import { setStagedAction, setStatusAction } from './actions';
+import { setStagedAction, setStatusAction, setStagedCursorAction } from './actions';
 
 export const initialState = {
     error: null,
     staged: null,
     status: CreatorStatus.init,
+    cursor: 0,
 };
 
 export default createReducer<CreatorState>(initialState, builder =>
@@ -29,5 +30,8 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setStatusAction, (state, { payload }) => {
             state.status = payload;
+        })
+        .addCase(setStagedCursorAction, (state, { payload }) => {
+            state.cursor = payload;
         }),
 );

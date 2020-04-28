@@ -14,6 +14,7 @@ export type CreatorItem = {
 };
 
 export type CreatorState = {
+    cursor: number;
     error: SerializedError | null;
     staged: CreatorItem | null;
     status: CreatorStatus;
