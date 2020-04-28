@@ -9,6 +9,14 @@ import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
 
+export type FileOptions = {
+    [key: string]: {
+        annotations?: {
+            activeId?: string;
+        };
+    };
+};
+
 export type Options = {
     apiHost: string;
     container: Container;
@@ -19,6 +27,7 @@ export type Options = {
         };
         permissions: Permissions;
     };
+    fileOptions?: FileOptions;
     hasTouch?: boolean;
     intl: IntlOptions;
     locale?: string;
@@ -36,8 +45,12 @@ export default class BaseAnnotator {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, file, intl, token }: Options) {
+    constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
+        const activeId = fileOptions?.[file.id]?.annotations?.activeId ?? null;
         const initialState = {
+            annotations: {
+                activeId,
+            },
             options: {
                 fileId: file.id,
                 fileVersionId: file.file_version.id,
