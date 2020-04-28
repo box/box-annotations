@@ -4,6 +4,7 @@
         &:disabled,
         &:hover,
         &:focus {
+            min-width: 300px;
             min-height: 80px;
             padding: 12px;
             border: 1px solid transparent;
