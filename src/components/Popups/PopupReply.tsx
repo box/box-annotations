@@ -6,7 +6,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyField from './ReplyField';
-import './PopupReply.scss';
 
 export type Props = {
     className?: string;
@@ -16,6 +15,32 @@ export type Props = {
     onSubmit: (text: string) => void;
     reference: HTMLElement;
     value?: string;
+};
+
+export const options = {
+    modifiers: [
+        {
+            name: 'arrow',
+            options: {
+                element: '.ba-Popup-arrow',
+                padding: 20,
+            },
+        },
+        {
+            name: 'flip',
+            options: {
+                altAxis: false,
+                fallbackPlacements: ['bottom', 'top', 'left', 'right'],
+                padding: 5,
+            },
+        },
+        {
+            name: 'offset',
+            options: {
+                offset: [0, 15],
+            },
+        },
+    ],
 };
 
 export default function PopupReply({
@@ -55,7 +80,7 @@ export default function PopupReply({
     };
 
     return (
-        <PopupBase onKeyDown={handleKeyDown} {...rest}>
+        <PopupBase onKeyDown={handleKeyDown} options={options} {...rest}>
             <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
                 <div className="ba-Popup-main">
                     <ReplyField
