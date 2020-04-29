@@ -9,7 +9,8 @@
     }
 
     // Element selector needed to override inherited BUIE styles
-    div[contentEditable='true'].public-DraftEditor-content {
+    div[contentEditable='true'],
+    div[contentEditable='false'] {
         min-height: 80px;
         max-height: 200px;
         overflow-y: auto;
