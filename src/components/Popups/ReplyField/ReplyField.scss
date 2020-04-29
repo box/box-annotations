@@ -16,7 +16,6 @@
         overflow-y: auto;
 
         &,
-        &:disabled,
         &:hover,
         &:focus {
             width: 300px;
@@ -24,6 +23,15 @@
             color: $bdl-gray;
             border: none;
             box-shadow: none;
+        }
+    }
+
+    div[contentEditable='false'] {
+        &,
+        &:hover,
+        &:focus {
+            color: $bdl-gray-62;
+            cursor: default;
         }
     }
 }
