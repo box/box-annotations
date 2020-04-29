@@ -6,7 +6,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyField from './ReplyField';
-import './PopupReply.scss';
 
 export type Props = {
     className?: string;

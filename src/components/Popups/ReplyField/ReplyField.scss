@@ -1,12 +1,26 @@
+@import '~box-ui-elements/es/styles/variables';
 @import '~draft-js/dist/Draft.css';
 
 .ba-ReplyField {
-    div[contentEditable='true'] {
+    .public-DraftEditorPlaceholder-hasFocus,
+    .public-DraftEditorPlaceholder-root {
+        padding: 12px;
+        color: $bdl-gray-62;
+    }
+
+    // Element selector needed to override inherited BUIE styles
+    div[contentEditable='true'].public-DraftEditor-content {
+        min-height: 80px;
+        max-height: 200px;
+        overflow-y: auto;
+
         &,
         &:disabled,
         &:hover,
         &:focus {
-            padding: 0;
+            width: 300px;
+            padding: 12px;
+            color: $bdl-gray;
             border: none;
             box-shadow: none;
         }
