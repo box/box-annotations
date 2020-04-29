@@ -11,4 +11,9 @@ export default defineMessages({
         description: 'Button label for creating a description, comment, or reply',
         defaultMessage: 'Post',
     },
+    fieldPlaceholder: {
+        id: 'ba.popups.placeholder',
+        description: 'Placeholder for reply field editor',
+        defaultMessage: 'Type a comment...',
+    },
 });

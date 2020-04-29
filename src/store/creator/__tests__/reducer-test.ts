@@ -3,7 +3,7 @@ import { createAnnotationAction } from '../../annotations';
 import reducer from '../reducer';
 import state from '../__mocks__/creatorState';
 import { CreatorItem, CreatorStatus } from '../types';
-import { setStagedAction, setStatusAction } from '../actions';
+import { setStagedAction, setCursorAction, setStatusAction } from '../actions';
 
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -46,6 +46,14 @@ describe('store/creator/reducer', () => {
             const newState = reducer(state, setStatusAction(CreatorStatus.staged));
 
             expect(newState.status).toEqual(CreatorStatus.staged);
+        });
+    });
+
+    describe('setStagedCursorAction', () => {
+        test('should set the cursor in state', () => {
+            const newState = reducer(state, setCursorAction(2));
+
+            expect(newState.cursor).toEqual(2);
         });
     });
 });

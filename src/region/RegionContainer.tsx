@@ -35,11 +35,11 @@ export const mapStateToProps = (state: AppState, { page }: { page: number }): Pr
     status: getCreatorStatus(state),
 });
 
-export const mapDispatchTopProps = {
+export const mapDispatchToProps = {
     createRegion: createRegionAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };
 
-export default connect(mapStateToProps, mapDispatchTopProps)(withProviders(RegionAnnotations));
+export default connect(mapStateToProps, mapDispatchToProps)(withProviders(RegionAnnotations));

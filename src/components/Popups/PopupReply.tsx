@@ -2,7 +2,7 @@ import React from 'react';
 import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyField from './ReplyField';
@@ -26,7 +26,7 @@ export default function PopupReply({
     value = '',
     ...rest
 }: Props): JSX.Element {
-    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+    const intl = useIntl();
 
     // Event Handlers
     const handleEvent = (event: React.SyntheticEvent): void => {
@@ -37,8 +37,8 @@ export default function PopupReply({
         handleEvent(event);
         onCancel(value);
     };
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-        onChange(event.target.value);
+    const handleChange = (text?: string): void => {
+        onChange(text);
     };
     const handleSubmit = (event: React.FormEvent): void => {
         event.preventDefault();
@@ -53,27 +53,18 @@ export default function PopupReply({
         handleEvent(event);
         onCancel(value);
     };
-    const handleFirstUpdate = (): void => {
-        const { current: textarea } = textareaRef;
-
-        if (textarea) {
-            textarea.focus();
-            textarea.selectionStart = value.length; // Force cursor to the end after focus
-            textarea.selectionEnd = value.length; // Force cursor to the end after focus
-        }
-    };
 
     return (
-        <PopupBase onKeyDown={handleKeyDown} options={{ onFirstUpdate: handleFirstUpdate }} {...rest}>
+        <PopupBase onKeyDown={handleKeyDown} {...rest}>
             <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
                 <div className="ba-Popup-main">
                     <ReplyField
-                        ref={textareaRef}
-                        className="ba-Popup-text"
-                        data-testid="ba-Popup-text"
-                        disabled={isPending}
+                        className="ba-Popup-field"
+                        data-testid="ba-Popup-field"
+                        isDisabled={isPending}
                         onChange={handleChange}
                         onClick={handleEvent}
+                        placeholder={intl.formatMessage(messages.fieldPlaceholder)}
                         value={value}
                     />
                 </div>

@@ -1,1 +1,1 @@
-export { default } from './ReplyField';
+export { default } from './ReplyFieldContainer';
