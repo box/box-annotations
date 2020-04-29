@@ -38,6 +38,7 @@ describe('components/Popups/ReplyField', () => {
         test('should handle the editor onChange event', () => {
             const wrapper = getWrapper();
             const editor = wrapper.find(Editor);
+            jest.spyOn(wrapper.instance(), 'getActiveMentionForEditorState').mockReturnValue(null);
 
             editor.simulate('change', mockEditorState);
 
