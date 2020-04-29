@@ -14,15 +14,6 @@ export const defaults = {
                 padding: 20,
             },
         },
-        {
-            name: 'flip',
-        },
-        {
-            name: 'offset',
-            options: {
-                offset: [0, 15],
-            },
-        },
     ],
     placement: 'bottom',
 };

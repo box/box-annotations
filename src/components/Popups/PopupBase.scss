@@ -9,7 +9,8 @@
     .ba-Popup {
         z-index: 1;
 
-        &[data-popper-placement='bottom'] {
+        // Top-facing arrows
+        &[data-popper-placement*='bottom'] {
             .ba-Popup-arrow {
                 top: -#{$popup-arrow-size - 1};
 
@@ -24,7 +25,42 @@
             }
         }
 
-        &[data-popper-placement='top'] {
+        // Right-facing arrows
+        &[data-popper-placement*='left'] {
+            .ba-Popup-arrow {
+                right: 0;
+
+                &::before,
+                &::after {
+                    transform: rotate(-90deg) translateY(-100%);
+                    transform-origin: center top;
+                }
+
+                &::after {
+                    left: -1px;
+                }
+            }
+        }
+
+        // Left-facing arrows
+        &[data-popper-placement*='right'] {
+            .ba-Popup-arrow {
+                left: -#{$popup-arrow-size - 1};
+
+                &::before,
+                &::after {
+                    transform: rotate(90deg);
+                    transform-origin: center top;
+                }
+
+                &::after {
+                    left: 1px;
+                }
+            }
+        }
+
+        // Bottom-facing arrows
+        &[data-popper-placement*='top'] {
             .ba-Popup-arrow {
                 top: auto;
                 bottom: 0;
@@ -42,8 +78,6 @@
     }
 
     .ba-Popup-arrow {
-        top: -#{$popup-arrow-size - 1};
-
         &::before,
         &::after {
             position: absolute;

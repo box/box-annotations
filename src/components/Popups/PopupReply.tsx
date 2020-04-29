@@ -17,6 +17,25 @@ export type Props = {
     value?: string;
 };
 
+export const options = {
+    modifiers: [
+        {
+            name: 'flip',
+            options: {
+                altAxis: false,
+                fallbackPlacements: ['bottom', 'top', 'left', 'right'],
+                padding: 5,
+            },
+        },
+        {
+            name: 'offset',
+            options: {
+                offset: [0, 15],
+            },
+        },
+    ],
+};
+
 export default function PopupReply({
     isPending,
     onCancel,
@@ -54,7 +73,7 @@ export default function PopupReply({
     };
 
     return (
-        <PopupBase onKeyDown={handleKeyDown} {...rest}>
+        <PopupBase onKeyDown={handleKeyDown} options={options} {...rest}>
             <form className="ba-Popup-form" data-testid="ba-Popup-form" onSubmit={handleSubmit}>
                 <div className="ba-Popup-main">
                     <ReplyField
