@@ -1,7 +1,10 @@
 import React from 'react';
+import scrollIntoView from 'scroll-into-view-if-needed';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import AnnotationTarget from '../AnnotationTarget';
+
+jest.mock('scroll-into-view-if-needed');
 
 describe('AnnotationTarget', () => {
     const defaults = {
@@ -15,8 +18,8 @@ describe('AnnotationTarget', () => {
         preventDefault: jest.fn(),
         stopPropagation: jest.fn(),
     };
-    const getWrapper = (props = {}): ShallowWrapper => {
-        return shallow(
+    const getWrapper = (props = {}): ReactWrapper => {
+        return mount(
             <AnnotationTarget {...defaults} {...props}>
                 Test
             </AnnotationTarget>,
@@ -59,11 +62,22 @@ describe('AnnotationTarget', () => {
         });
     });
 
+    describe('scroll if isActive', () => {
+        test('should call scrollIntoView on isActive', () => {
+            const wrapper = getWrapper({ isActive: false });
+
+            wrapper.setProps({ isActive: true });
+            expect(scrollIntoView).toHaveBeenCalled();
+        });
+    });
+
     describe('render()', () => {
         test('should pass the required props to the underlying anchor', () => {
             const wrapper = getWrapper({ className: 'ba-Test' });
 
-            expect(wrapper.props()).toMatchObject({
+            // Get the inner anchor element
+            const innerAnchor = wrapper.childAt(0);
+            expect(innerAnchor.props()).toMatchObject({
                 className: 'ba-AnnotationTarget ba-Test',
                 role: 'button',
                 tabIndex: 0,

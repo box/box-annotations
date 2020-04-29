@@ -18,7 +18,7 @@ const RegionAnnotation = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
     const className = classNames('ba-RegionAnnotation', { 'is-active': isActive });
 
     return (
-        <AnnotationTarget ref={ref} className={className} {...rest}>
+        <AnnotationTarget ref={ref} className={className} isActive={isActive} {...rest}>
             <rect className="ba-RegionAnnotation-rect" height={height} rx={6} width={width} x={x} y={y} />
         </AnnotationTarget>
     );
