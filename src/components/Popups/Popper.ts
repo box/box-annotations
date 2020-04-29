@@ -6,24 +6,7 @@ export type Instance = popper.Instance;
 export type Options = popper.Options;
 
 export const defaults = {
-    modifiers: [
-        {
-            name: 'arrow',
-            options: {
-                element: '.ba-Popup-arrow',
-                padding: 20,
-            },
-        },
-        {
-            name: 'flip',
-        },
-        {
-            name: 'offset',
-            options: {
-                offset: [0, 15],
-            },
-        },
-    ],
+    modifiers: [],
     placement: 'bottom',
 };
 
