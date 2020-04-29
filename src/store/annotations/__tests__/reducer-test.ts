@@ -22,9 +22,9 @@ describe('store/annotations/reducer', () => {
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
             const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 
+            expect(newState.activeId).toEqual(null);
             expect(newState.allIds).toContain(payload.entries[0].id);
             expect(newState.byId.anno_1).toEqual(payload.entries[0]);
-            expect(newState.activeId).toEqual(null);
         });
     });
 

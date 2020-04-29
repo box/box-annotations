@@ -62,6 +62,15 @@ describe('AnnotationTarget', () => {
         });
     });
 
+    describe('scroll if isActive', () => {
+        test('should call scrollIntoView on isActive', () => {
+            const wrapper = getWrapper({ isActive: false });
+
+            wrapper.setProps({ isActive: true });
+            expect(scrollIntoView).toHaveBeenCalled();
+        });
+    });
+
     describe('render()', () => {
         test('should pass the required props to the underlying anchor', () => {
             const wrapper = getWrapper({ className: 'ba-Test' });
@@ -73,21 +82,6 @@ describe('AnnotationTarget', () => {
                 role: 'button',
                 tabIndex: 0,
             });
-        });
-    });
-
-    describe('scroll if isActive', () => {
-        afterEach(() => {
-            jest.resetAllMocks();
-        });
-
-        test('should call scrollIntoView on isActive', () => {
-            const wrapper = getWrapper({ isActive: false });
-
-            expect(scrollIntoView).not.toBeCalled();
-            wrapper.setProps({ isActive: true });
-            wrapper.setProps({ isActive: true });
-            expect(scrollIntoView).toBeCalledTimes(1);
         });
     });
 });
