@@ -20,6 +20,13 @@ export type Props = {
 export const options = {
     modifiers: [
         {
+            name: 'arrow',
+            options: {
+                element: '.ba-Popup-arrow',
+                padding: 20,
+            },
+        },
+        {
             name: 'flip',
             options: {
                 altAxis: false,
