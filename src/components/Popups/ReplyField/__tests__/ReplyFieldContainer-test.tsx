@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import { Provider } from 'react-redux';
 import ReplyField from '../ReplyField';
 import ReplyFieldContainer, { Props } from '../ReplyFieldContainer';
 import { createStore } from '../../../../store';
@@ -8,22 +7,18 @@ import { createStore } from '../../../../store';
 jest.mock('../ReplyField');
 
 describe('components/Popups/ReplyFieldContainer', () => {
-    const defaults = {
-        onChange: jest.fn(),
-        onClick: jest.fn(),
-    };
     const store = createStore({
         creator: {
             cursor: 0,
         },
     });
+    const defaults = {
+        onChange: jest.fn(),
+        onClick: jest.fn(),
+        store,
+    };
 
-    const getWrapper = (props = {}): ReactWrapper<Props> =>
-        mount(
-            <Provider store={store}>
-                <ReplyFieldContainer {...defaults} {...props} />{' '}
-            </Provider>,
-        );
+    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<ReplyFieldContainer {...defaults} {...props} />);
 
     describe('render', () => {
         test('should connect the underlying component', () => {

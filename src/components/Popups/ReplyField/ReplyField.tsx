@@ -21,7 +21,7 @@ export type State = {
 };
 
 export default class ReplyField extends React.Component<Props, State> {
-    private editorRef: React.RefObject<Editor> = React.createRef();
+    editorRef: React.MutableRefObject<Editor | null> = React.createRef<Editor | null>();
 
     constructor(props: Props) {
         super(props);
@@ -43,18 +43,26 @@ export default class ReplyField extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
+        this.focusEditor();
+    }
+
+    componentWillUnmount(): void {
+        this.saveCursorPosition();
+    }
+
+    focusEditor = (): void => {
         const { current: editor } = this.editorRef;
         if (editor) {
             editor.focus();
         }
-    }
+    };
 
-    componentWillUnmount(): void {
+    saveCursorPosition = (): void => {
         const { setCursorPosition } = this.props;
         const { editorState } = this.state;
 
         setCursorPosition(editorState.getSelection().getFocusOffset());
-    }
+    };
 
     handleChange = (nextEditorState: EditorState): void => {
         const { onChange } = this.props;

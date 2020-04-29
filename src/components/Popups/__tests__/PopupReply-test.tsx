@@ -1,6 +1,5 @@
 import React from 'react';
 import { KEYS } from 'box-ui-elements/es/constants';
-import { EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import PopupReply, { Props } from '../PopupReply';
 
@@ -29,10 +28,6 @@ describe('components/Popups/PopupReply', () => {
         stopPropagation: jest.fn(),
     };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupReply {...defaults} {...props} />);
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useState').mockImplementation(() => [EditorState.createEmpty(), jest.fn()]);
-    });
 
     describe('event handlers', () => {
         test.each`
@@ -63,6 +58,15 @@ describe('components/Popups/PopupReply', () => {
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
+        });
+
+        test('should handle the onChange event', () => {
+            const wrapper = getWrapper();
+            const editor = wrapper.find(`[data-testid="ba-Popup-field"]`);
+
+            editor.simulate('change', 'test');
+
+            expect(defaults.onChange).toHaveBeenCalledWith('test');
         });
     });
 
