@@ -2,17 +2,12 @@
 
 .ba {
     $popup-arrow-size: 12px;
-    $popup-button-border-radius: 6px;
     $popup-content-bg: $white;
     $popup-border-color: $bdl-gray-20;
     $popup-footer-bg: $bdl-gray-02;
 
     .ba-Popup {
         z-index: 1;
-
-        .btn {
-            border-radius: $popup-button-border-radius;
-        }
 
         .btn.btn-primary {
             &.is-disabled {
