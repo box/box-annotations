@@ -1,5 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import AutoScroller from '../components/AutoScroller';
+import RegionRect from './RegionRect';
 import { Rect } from '../@types';
 import './RegionCreator.scss';
 
@@ -11,14 +13,14 @@ type Position = {
 type Props = {
     canDraw: boolean;
     className?: string;
-    onDraw: (shape: Rect) => void;
     onStart: () => void;
-    onStop: () => void;
+    onStop: (shape: Rect) => void;
 };
 
 type State = {
     isDrawing: boolean;
-    position: Position | null;
+    position1: Position | null;
+    position2: Position | null;
 };
 
 const MIN_X = 1; // Minimum region x position must be positive
@@ -27,11 +29,12 @@ const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 const MOUSE_PRIMARY = 1; // Primary mouse button
 
 export default class RegionCreator extends React.Component<Props, State> {
-    creatorRef: React.RefObject<HTMLDivElement> = React.createRef();
+    creatorRef: React.RefObject<SVGSVGElement> = React.createRef();
 
     state: State = {
         isDrawing: false,
-        position: null,
+        position1: null,
+        position2: null,
     };
 
     componentWillUnmount(): void {
@@ -48,6 +51,37 @@ export default class RegionCreator extends React.Component<Props, State> {
         // Calculate the new position based on the mouse position less the page offset
         const { left, top } = creatorRef.getBoundingClientRect();
         return { x: x - left, y: y - top };
+    }
+
+    getShape(): Rect | null {
+        const { current: creatorRef } = this.creatorRef;
+        const { position1, position2 } = this.state;
+
+        if (!creatorRef || !position1 || !position2) {
+            return null;
+        }
+
+        const { height, width } = creatorRef.getBoundingClientRect();
+        const MAX_X = Math.max(0, width - MIN_X);
+        const MAX_Y = Math.max(0, height - MIN_Y);
+
+        // Get the first position from mousedown and the second position from mousemove
+        const { x: x1, y: y1 } = position1;
+        const { x: x2, y: y2 } = position2;
+
+        // Set the origin x/y to the lowest value and the target x/y to the highest to avoid negative height/width
+        const originX = Math.min(Math.max(MIN_X, x1 < x2 ? x1 : x2), MAX_X);
+        const originY = Math.min(Math.max(MIN_Y, y1 < y2 ? y1 : y2), MAX_Y);
+        const targetX = Math.min(Math.max(MIN_X, x2 > x1 ? x2 : x1), MAX_X);
+        const targetY = Math.min(Math.max(MIN_Y, y2 > y1 ? y2 : y1), MAX_Y);
+
+        return {
+            height: Math.max(MIN_SIZE, targetY - originY),
+            type: 'rect',
+            width: Math.max(MIN_SIZE, targetX - originX),
+            x: originX,
+            y: originY,
+        };
     }
 
     handleClick = (event: React.MouseEvent): void => {
@@ -82,6 +116,10 @@ export default class RegionCreator extends React.Component<Props, State> {
 
     handleMouseUp = (): void => {
         this.stopDraw();
+    };
+
+    handleScroll = (position: Position): void => {
+        this.updateDraw(position);
     };
 
     handleTouchCancel = (): void => {
@@ -124,7 +162,8 @@ export default class RegionCreator extends React.Component<Props, State> {
         this.addListeners();
         this.setState({
             isDrawing: true,
-            position: this.getPosition(position),
+            position1: this.getPosition(position),
+            position2: null,
         });
 
         onStart();
@@ -132,50 +171,27 @@ export default class RegionCreator extends React.Component<Props, State> {
 
     stopDraw(): void {
         const { onStop } = this.props;
+        const shape = this.getShape();
 
         this.removeListeners();
         this.setState({
             isDrawing: false,
+            position1: null,
+            position2: null,
         });
 
-        onStop();
+        if (shape) {
+            onStop(shape);
+        }
     }
 
     updateDraw({ x, y }: Position): void {
-        const { onDraw } = this.props;
-        const { position: position1 } = this.state;
-        const { current: creatorRef } = this.creatorRef;
-
-        if (!position1 || !creatorRef) {
-            return;
-        }
-
-        // Get the maximum x and y coordinates for any given rectangle based on the size of the stage
-        const { height, width } = creatorRef.getBoundingClientRect();
-        const MAX_X = Math.max(0, width - MIN_X);
-        const MAX_Y = Math.max(0, height - MIN_Y);
-
-        // Get the first position from mousedown and the current position
-        const { x: x1, y: y1 } = position1;
-        const { x: x2, y: y2 } = this.getPosition({ x, y });
-
-        // Set the origin x/y to the lowest value and the target x/y to the highest to avoid negative height/width
-        const originX = Math.min(Math.max(MIN_X, x1 < x2 ? x1 : x2), MAX_X);
-        const originY = Math.min(Math.max(MIN_Y, y1 < y2 ? y1 : y2), MAX_Y);
-        const targetX = Math.min(Math.max(MIN_X, x2 > x1 ? x2 : x1), MAX_X);
-        const targetY = Math.min(Math.max(MIN_Y, y2 > y1 ? y2 : y1), MAX_Y);
-
-        onDraw({
-            type: 'rect',
-            height: Math.max(MIN_SIZE, targetY - originY),
-            width: Math.max(MIN_SIZE, targetX - originX),
-            x: originX,
-            y: originY,
-        });
+        this.setState({ position2: this.getPosition({ x, y }) });
     }
 
     render(): JSX.Element {
         const { canDraw, className } = this.props;
+        const { isDrawing } = this.state;
         const eventHandlers = canDraw
             ? {
                   onClick: this.handleClick,
@@ -188,13 +204,16 @@ export default class RegionCreator extends React.Component<Props, State> {
             : {};
 
         return (
-            <div
+            <AutoScroller
                 ref={this.creatorRef}
-                className={classNames(className, 'ba-RegionCreator', {
-                    'is-active': canDraw,
-                })}
+                as="svg"
+                className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
+                enabled={isDrawing}
+                onScroll={this.handleScroll}
                 {...eventHandlers}
-            />
+            >
+                <RegionRect shape={this.getShape()} />
+            </AutoScroller>
         );
     }
 }

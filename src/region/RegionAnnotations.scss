@@ -6,6 +6,14 @@
     left: 0;
     width: 100%;
     height: 100%;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25));
+}
+
+.ba-RegionAnnotations-creator,
+.ba-RegionAnnotations-target {
+    .ba-RegionRect {
+        stroke-width: 4px;
+    }
 }
 
 .ba-RegionAnnotations-creator {
@@ -19,8 +27,4 @@
 
 .ba-RegionAnnotations-popup {
     pointer-events: auto; // Swallow all pointer events that occur within the popup
-}
-
-.ba-RegionAnnotations-target {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25));
 }

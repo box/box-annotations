@@ -15,7 +15,7 @@ export type Props = {
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
-    reference: HTMLElement;
+    reference: Element;
     value?: string;
 };
 
@@ -33,13 +33,18 @@ export const options = {
             options: {
                 altAxis: false,
                 fallbackPlacements: ['bottom', 'top', 'left', 'right'],
-                padding: 5,
             },
         },
         {
             name: 'offset',
             options: {
                 offset: [0, 15],
+            },
+        },
+        {
+            name: 'preventOverflow',
+            options: {
+                padding: 5,
             },
         },
     ],

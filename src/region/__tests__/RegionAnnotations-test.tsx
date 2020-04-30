@@ -1,19 +1,19 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import PopupReply from '../../components/Popups/PopupReply';
-import RegionAnnotation from '../RegionAnnotation';
 import RegionAnnotations from '../RegionAnnotations';
 import RegionCreator from '../RegionCreator';
 import RegionList from '../RegionList';
+import RegionRect from '../RegionRect';
 import { annotations } from '../__mocks__/data';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
 import { scaleShape } from '../regionUtil';
 
 jest.mock('../../components/Popups/PopupReply');
-jest.mock('../RegionAnnotation');
 jest.mock('../RegionCreator');
 jest.mock('../RegionList');
+jest.mock('../RegionRect');
 jest.mock('../regionUtil', () => ({
     scaleShape: jest.fn(value => value),
 }));
@@ -76,28 +76,6 @@ describe('RegionAnnotations', () => {
             });
         });
 
-        describe('handleDraw', () => {
-            test('should update the staged annotation with the new scaled shape', () => {
-                const shape = {
-                    type: 'rect' as const,
-                    height: 100,
-                    width: 100,
-                    x: 20,
-                    y: 20,
-                };
-
-                instance.handleDraw(shape);
-
-                expect(scaleShape).toHaveBeenCalledWith(shape, defaults.scale, true); // Inverse scale
-                expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ shape }));
-            });
-
-            test('should not update the staged annotation if the shape has not changed', () => {
-                instance.handleDraw(getRect());
-
-                expect(defaults.setStaged).not.toHaveBeenCalled();
-            });
-        });
         describe('handleStart', () => {
             test('should reset the creator status', () => {
                 instance.handleStart();
@@ -107,9 +85,19 @@ describe('RegionAnnotations', () => {
         });
 
         describe('handleStop', () => {
-            test('should set the creator status to staged', () => {
-                instance.handleStop();
+            const shape = {
+                type: 'rect' as const,
+                height: 100,
+                width: 100,
+                x: 20,
+                y: 20,
+            };
 
+            test('should update the staged status and item with the new scaled shape', () => {
+                instance.handleStop(shape);
+
+                expect(scaleShape).toHaveBeenCalledWith(shape, defaults.scale, true); // Inverse scale
+                expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ shape }));
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
@@ -162,7 +150,7 @@ describe('RegionAnnotations', () => {
 
             expect(scaleShape).toHaveBeenCalledWith(shape, 1.5);
             expect(wrapper.exists(RegionCreator)).toBe(true);
-            expect(wrapper.find(RegionAnnotation).prop('shape')).toBe(shape);
+            expect(wrapper.find(RegionRect).prop('shape')).toBe(shape);
         });
 
         test('should pass the creator item message value to the reply popup', () => {
@@ -234,9 +222,9 @@ describe('RegionAnnotations', () => {
             });
 
             expect(wrapper.exists(PopupReply)).toBe(false);
-            expect(wrapper.exists(RegionAnnotation)).toBe(false);
             expect(wrapper.exists(RegionCreator)).toBe(false);
             expect(wrapper.exists(RegionList)).toBe(true);
+            expect(wrapper.exists(RegionRect)).toBe(false);
         });
     });
 });

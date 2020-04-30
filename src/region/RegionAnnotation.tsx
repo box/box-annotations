@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import AnnotationTarget from '../components/AnnotationTarget';
+import RegionRect from './RegionRect';
 import { Rect } from '../@types';
 import './RegionAnnotation.scss';
 
@@ -14,12 +15,11 @@ type Props = {
 
 const RegionAnnotation = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.Element => {
     const { isActive, shape, ...rest } = props;
-    const { height, width, x, y } = shape;
     const className = classNames('ba-RegionAnnotation', { 'is-active': isActive });
 
     return (
         <AnnotationTarget ref={ref} className={className} isActive={isActive} {...rest}>
-            <rect className="ba-RegionAnnotation-rect" height={height} rx={6} width={width} x={x} y={y} />
+            <RegionRect shape={shape} />
         </AnnotationTarget>
     );
 };
