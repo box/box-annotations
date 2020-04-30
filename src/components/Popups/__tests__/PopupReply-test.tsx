@@ -79,8 +79,13 @@ describe('components/Popups/PopupReply', () => {
             expect(wrapper.exists('[data-testid="ba-Popup-field"]')).toBe(true);
         });
 
+        test.each([true, false])('should disable post button if isEmpty is %s', isEmpty => {
+            const wrapper = getWrapper({ value: isEmpty ? undefined : 'Test' });
+            expect(wrapper.find('[data-testid="ba-Popup-submit"]').prop('isDisabled')).toBe(isEmpty);
+        });
+
         test.each([true, false])('should disable/enable buttons and editor when isPending %s', isPending => {
-            const wrapper = getWrapper({ isPending });
+            const wrapper = getWrapper({ isPending, value: 'Test' });
 
             expect(wrapper.find('[data-testid="ba-Popup-cancel"]').prop('isDisabled')).toBe(isPending);
             expect(wrapper.find('[data-testid="ba-Popup-submit"]').prop('isDisabled')).toBe(isPending);
