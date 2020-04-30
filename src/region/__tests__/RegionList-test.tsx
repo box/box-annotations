@@ -4,6 +4,8 @@ import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
 import { AnnotationRegion } from '../../@types';
 
+jest.mock('../../utils/useOutsideClick', () => jest.fn());
+
 describe('RegionList', () => {
     const defaults = {
         activeId: 'anno_1',
