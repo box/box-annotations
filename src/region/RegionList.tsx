@@ -14,6 +14,7 @@ export type Props = {
 };
 
 export function RegionList({ activeId, annotations, className, onSelect = noop, scale }: Props): JSX.Element {
+    const ref = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.sort(({ target: targetA }, { target: targetB }) => {
         const { shape: shapeA } = targetA;
         const { shape: shapeB } = targetB;
@@ -22,18 +23,15 @@ export function RegionList({ activeId, annotations, className, onSelect = noop, 
         return shapeA.height * shapeA.width > shapeB.height * shapeB.width ? -1 : 1;
     });
 
-    const refs = sortedAnnotations.map(() => React.createRef<HTMLAnchorElement>());
-
     const handleOutsideClick = (): void => onSelect(null);
 
-    useOutsideClick(sortedAnnotations, refs, handleOutsideClick);
+    useOutsideClick(annotations, ref, handleOutsideClick);
 
     return (
-        <svg className={className}>
-            {sortedAnnotations.map(({ id, target }, index) => (
+        <svg ref={ref} className={className}>
+            {sortedAnnotations.map(({ id, target }) => (
                 <RegionAnnotation
                     key={id}
-                    ref={refs[index]}
                     annotationId={id}
                     isActive={activeId === id}
                     onSelect={onSelect}
