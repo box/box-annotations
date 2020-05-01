@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import noop from 'lodash/noop';
 
-// Returns a hook that checks when a mousedown event is fired on the document whether the mousedown event
+// Utilizes the useEffect hook to handle when a click event is fired on the document whether the click event
 // occurred outside of the provided element reference
 export default function useOutsideClick(ref: React.RefObject<Element>, callback: () => void = noop): void {
     useEffect(() => {
