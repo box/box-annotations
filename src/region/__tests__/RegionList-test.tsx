@@ -2,6 +2,7 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
+import useOutsideClick from '../../utils/useOutsideClick';
 import { AnnotationRegion } from '../../@types';
 
 jest.mock('../../utils/useOutsideClick', () => jest.fn());
@@ -27,6 +28,8 @@ describe('RegionList', () => {
             defaults.annotations.forEach((annotation, i) => {
                 expect(children.get(i).props.isActive).toBe(annotation.id === 'anno_1');
             });
+
+            expect(useOutsideClick).toHaveBeenCalled();
         });
 
         test('should render annotations by largest to smallest shape', () => {
@@ -37,6 +40,8 @@ describe('RegionList', () => {
             expect(children.get(1).props.shape).toMatchObject({ height: 50, width: 50 });
             expect(children.get(2).props.shape).toMatchObject({ height: 20, width: 20 });
             expect(children.get(3).props.shape).toMatchObject({ height: 10, width: 10 });
+
+            expect(useOutsideClick).toHaveBeenCalled();
         });
     });
 });

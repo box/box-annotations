@@ -25,7 +25,7 @@ export function RegionList({ activeId, annotations, className, onSelect = noop, 
 
     const handleOutsideClick = (): void => onSelect(null);
 
-    useOutsideClick(annotations, ref, handleOutsideClick);
+    useOutsideClick(ref, handleOutsideClick);
 
     return (
         <svg ref={ref} className={className}>

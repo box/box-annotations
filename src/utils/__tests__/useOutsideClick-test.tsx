@@ -3,22 +3,19 @@ import { mount, ReactWrapper } from 'enzyme';
 import useOutsideClick from '../useOutsideClick';
 
 describe('src/utils/useOutsideClick', () => {
-    let callback: () => void;
-
-    beforeEach(() => {
-        document.body.innerHTML = '<div id="container"></div>';
-        callback = jest.fn();
-    });
+    let callback: jest.Mock;
 
     function TestComponent(): JSX.Element {
         const ref = React.createRef<HTMLButtonElement>();
 
-        useOutsideClick([], ref, callback);
+        useOutsideClick(ref, callback);
 
         return (
-            <button ref={ref} id="test-button" type="button">
-                <span>Test</span>
-            </button>
+            <div id="container">
+                <button ref={ref} id="test-button" type="button">
+                    <span id="test-span">Test</span>
+                </button>
+            </div>
         );
     }
 
@@ -27,23 +24,28 @@ describe('src/utils/useOutsideClick', () => {
             <div>
                 <TestComponent />
             </div>,
+            { attachTo: document.getElementById('test') },
         );
 
-    test('should call provided callback if click target is not contained by the provided reference', () => {
-        getWrapper();
-
-        // eslint-disable-next-line no-unused-expressions
-        document.getElementById('container')?.click();
-
-        expect(callback).toHaveBeenCalled();
+    beforeEach(() => {
+        document.body.innerHTML = '<div id="test"></div>';
+        callback = jest.fn();
     });
 
-    test('should not call provided callback if click target is contained by the provided reference', () => {
+    test.each`
+        elementId        | isCalled
+        ${'container'}   | ${true}
+        ${'test-button'} | ${false}
+        ${'test-span'}   | ${false}
+    `('should callback be called if click target is $elementId? $isCalled', ({ elementId, isCalled }) => {
         getWrapper();
 
-        // eslint-disable-next-line no-unused-expressions
-        document.getElementById('test-button')?.click();
+        const element: HTMLElement | null = document.getElementById(elementId);
+        if (element) {
+            element.click();
+        }
 
-        expect(callback).not.toHaveBeenCalled();
+        expect(element).toBeTruthy();
+        expect(callback.mock.calls.length).toBe(isCalled ? 1 : 0);
     });
 });
