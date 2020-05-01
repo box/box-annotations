@@ -46,7 +46,7 @@ export default class RegionAnnotations extends React.Component<Props, State> {
         setStatus(status);
     }
 
-    handleAnnotationActive = (annotationId: string): void => {
+    handleAnnotationActive = (annotationId: string | null): void => {
         const { setActiveAnnotationId } = this.props;
 
         setActiveAnnotationId(annotationId);
