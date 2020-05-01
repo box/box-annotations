@@ -2,7 +2,7 @@ import * as React from 'react';
 import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
 import { scaleShape } from './regionUtil';
-import useOutsideClick from '../utils/useOutsideClick';
+import useOutsideClick from '../common/useOutsideClick';
 import { AnnotationRegion } from '../@types';
 
 export type Props = {

@@ -2,10 +2,10 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
-import useOutsideClick from '../../utils/useOutsideClick';
+import useOutsideClick from '../../common/useOutsideClick';
 import { AnnotationRegion } from '../../@types';
 
-jest.mock('../../utils/useOutsideClick', () => jest.fn());
+jest.mock('../../common/useOutsideClick', () => jest.fn());
 
 describe('RegionList', () => {
     const defaults = {

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import * as React from 'react';
 import noop from 'lodash/noop';
 
 // Utilizes the useEffect hook to handle when a click event is fired on the document whether the click event
 // occurred outside of the provided element reference
 export default function useOutsideClick(ref: React.RefObject<Element>, callback: () => void = noop): void {
-    useEffect(() => {
+    React.useEffect(() => {
         function handleClickOutside(event: MouseEvent): void {
             const hasElementClicked = !!ref?.current?.contains(event.target as Node);
 
