@@ -9,13 +9,6 @@
     .ba-Popup {
         z-index: 1;
 
-        .btn.btn-primary {
-            &.is-disabled {
-                background-color: $bdl-gray-50;
-                border-color: $bdl-gray-50;
-            }
-        }
-
         // Top-facing arrows
         &[data-popper-placement*='bottom'] {
             .ba-Popup-arrow {
