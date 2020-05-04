@@ -7,7 +7,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
     children: React.ReactNode;
     className?: string;
     options: Partial<Options>;
-    reference: HTMLElement;
+    reference: Element;
 };
 
 export default class PopupBase extends React.PureComponent<Props> {

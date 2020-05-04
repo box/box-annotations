@@ -3,6 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { rect } from '../__mocks__/data';
 import AnnotationTarget from '../../components/AnnotationTarget';
 import RegionAnnotation from '../RegionAnnotation';
+import RegionRect from '../RegionRect';
 
 describe('RegionAnnotation', () => {
     const defaults = {
@@ -22,18 +23,17 @@ describe('RegionAnnotation', () => {
             expect(getWrapper({ isActive: false }).hasClass('is-active')).toBe(false);
         });
 
-        test('should render a rect based on the provided shape', () => {
+        test('should render a RegionRect and pass it the provided shape', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.find('rect')).toMatchInlineSnapshot(`
-                <rect
-                  className="ba-RegionAnnotation-rect"
-                  height={10}
-                  rx={6}
-                  width={10}
-                  x={10}
-                  y={10}
-                />
+            expect(wrapper.find(RegionRect).prop('shape')).toMatchInlineSnapshot(`
+                Object {
+                  "height": 10,
+                  "type": "rect",
+                  "width": 10,
+                  "x": 10,
+                  "y": 10,
+                }
             `);
         });
 
