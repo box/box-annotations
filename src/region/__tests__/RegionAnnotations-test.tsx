@@ -37,6 +37,7 @@ describe('RegionAnnotations', () => {
         x: 10,
         y: 10,
     });
+    const getRectRef = (): SVGRectElement => document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     const getStaged = (): CreatorItem => ({
         location: 1,
         message: 'test',
@@ -160,7 +161,7 @@ describe('RegionAnnotations', () => {
                 status: CreatorStatus.staged,
             });
             wrapper.setState({
-                targetRef: document.createElement('a'),
+                rectRef: getRectRef(),
             });
 
             expect(wrapper.find(PopupReply).props()).toMatchObject({
@@ -182,7 +183,7 @@ describe('RegionAnnotations', () => {
             });
 
             wrapper.setState({
-                targetRef: document.createElement('a'),
+                rectRef: getRectRef(),
             });
 
             expect(wrapper.exists(PopupReply)).toBe(showReply);
@@ -200,7 +201,7 @@ describe('RegionAnnotations', () => {
                 status,
             });
             wrapper.setState({
-                targetRef: document.createElement('a'),
+                rectRef: getRectRef(),
             });
 
             expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);

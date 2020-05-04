@@ -24,7 +24,7 @@ type Props = {
 };
 
 type State = {
-    targetRef?: SVGRectElement;
+    rectRef?: SVGRectElement;
 };
 
 export default class RegionAnnotations extends React.PureComponent<Props, State> {
@@ -83,13 +83,13 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         createRegion(staged);
     };
 
-    setStagedRef = (targetRef: SVGRectElement): void => {
-        this.setState({ targetRef });
+    setRectRef = (rectRef: SVGRectElement): void => {
+        this.setState({ rectRef });
     };
 
     render(): JSX.Element {
         const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
-        const { targetRef } = this.state;
+        const { rectRef } = this.state;
         const canDraw = !staged || !staged.message;
         const canReply = status !== CreatorStatus.init;
         const isPending = status === CreatorStatus.pending;
@@ -118,19 +118,19 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {isCreating && staged && (
                     <svg className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setStagedRef} shape={scaleShape(staged.shape, scale)} />
+                        <RegionRect ref={this.setRectRef} shape={scaleShape(staged.shape, scale)} />
                     </svg>
                 )}
 
                 {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
-                {isCreating && staged && canReply && targetRef && (
+                {isCreating && staged && canReply && rectRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
                             isPending={isPending}
                             onCancel={this.handleCancel}
                             onChange={this.handleChange}
                             onSubmit={this.handleSubmit}
-                            reference={targetRef}
+                            reference={rectRef}
                             value={staged.message}
                         />
                     </div>

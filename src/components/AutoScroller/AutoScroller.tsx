@@ -29,25 +29,25 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
         handleRef.current = window.requestAnimationFrame(callback);
     };
     const checkScroll = (): void => {
+        const { current: parent } = parentRef;
+        const { current: parentRect } = parentRectRef;
         const { current: positionX } = positionXRef;
         const { current: positionY } = positionYRef;
-        const { current: parentRect } = parentRectRef;
-        const { current: parent } = parentRef;
 
         if (!parent || !parentRect || positionX === null || positionY === null) {
             return checkStep(checkScroll);
         }
 
         // Calculate the inner scroll gutters for the scroll parent
+        const edgeBottom = parentRect.bottom - SCROLL_GUTTER;
         const edgeLeft = parentRect.left + SCROLL_GUTTER;
         const edgeRight = parentRect.right - SCROLL_GUTTER;
-        const edgeBottom = parentRect.bottom - SCROLL_GUTTER;
         const edgeTop = parentRect.top + SCROLL_GUTTER;
 
         // Check if the current position is within any of the gutters
+        const isEdgeBottom = positionY > edgeBottom;
         const isEdgeLeft = positionX < edgeLeft;
         const isEdgeRight = positionX > edgeRight;
-        const isEdgeBottom = positionY > edgeBottom;
         const isEdgeTop = positionY < edgeTop;
 
         if (!isEdgeBottom && !isEdgeLeft && !isEdgeRight && !isEdgeTop) {
@@ -85,7 +85,7 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
 
         if (reference) {
             parentRef.current = getScrollParent(reference);
-            parentRectRef.current = parentRef.current.getBoundingClientRect();
+            parentRectRef.current = parentRef.current.getBoundingClientRect(); // Cache to improve performance
         }
     }, [referenceRef]);
 

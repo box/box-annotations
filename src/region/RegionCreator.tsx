@@ -137,7 +137,7 @@ export default class RegionCreator extends React.PureComponent<Props, State> {
 
     isDrawing(): boolean {
         const { x1, y1 } = this.state;
-        return !!(x1 && y1);
+        return x1 !== null && y1 !== null;
     }
 
     startDraw(x: number, y: number): void {
