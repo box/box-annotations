@@ -47,38 +47,31 @@ describe('RegionCreator', () => {
 
             jest.spyOn(creatorRef, 'getBoundingClientRect').mockImplementation(() => getDOMRect(15, 15, 50, 50));
 
-            expect(instance.getPosition({ x: 100, y: 100 })).toEqual({ x: 85, y: 85 });
+            expect(instance.getPosition(100, 100)).toEqual([85, 85]);
         });
     });
 
     describe('getShape()', () => {
         test.each`
-            position1               | position2               | height | width  | x      | y      | comment
-            ${{ x: -1, y: -1 }}     | ${{ x: 10, y: 10 }}     | ${10}  | ${10}  | ${1}   | ${1}   | ${'minimum position'}
-            ${{ x: 5, y: 5 }}       | ${{ x: 100, y: 100 }}   | ${95}  | ${95}  | ${5}   | ${5}   | ${'standard dimensions'}
-            ${{ x: 50, y: 50 }}     | ${{ x: 100, y: 100 }}   | ${50}  | ${50}  | ${50}  | ${50}  | ${'standard dimensions'}
-            ${{ x: 100, y: 100 }}   | ${{ x: 105, y: 105 }}   | ${10}  | ${10}  | ${100} | ${100} | ${'minimum size'}
-            ${{ x: 100, y: 100 }}   | ${{ x: 50, y: 50 }}     | ${50}  | ${50}  | ${50}  | ${50}  | ${'standard dimensions'}
-            ${{ x: 1500, y: 1500 }} | ${{ x: 50, y: 50 }}     | ${949} | ${949} | ${50}  | ${50}  | ${'maximum size'}
-            ${{ x: 1500, y: 1500 }} | ${{ x: 1500, y: 1500 }} | ${10}  | ${10}  | ${999} | ${999} | ${'maximum position'}
-        `('should call return a rect based on position1 and position2 with $comment', params => {
-            const { position1, position2, height, width, x, y } = params;
+            x1      | y1      | x2      | y2      | result                                       | comment
+            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 10, width: 10, x: 1, y: 1 }}     | ${'minimum position'}
+            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 95, width: 95, x: 5, y: 5 }}     | ${'standard dimensions'}
+            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 50, width: 50, x: 50, y: 50 }}   | ${'standard dimensions'}
+            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 10, width: 10, x: 100, y: 100 }} | ${'minimum size'}
+            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 50, width: 50, x: 50, y: 50 }}   | ${'standard dimensions'}
+            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 949, width: 949, x: 50, y: 50 }} | ${'maximum size'}
+            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 10, width: 10, x: 999, y: 999 }} | ${'maximum position'}
+        `('should call return a rect based on current state with $comment', ({ result, x1, x2, y1, y2 }) => {
             const creatorRef = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             const wrapper = getWrapper();
             const instance = getInstance(wrapper);
 
             jest.spyOn(creatorRef, 'getBoundingClientRect').mockImplementation(() => getDOMRect(0, 0, 1000, 1000));
 
-            wrapper.setState({ position1, position2 });
+            wrapper.setState({ x1, x2, y1, y2 });
             instance.creatorRef = { current: creatorRef };
 
-            expect(instance.getShape()).toEqual({
-                height,
-                type: 'rect',
-                width,
-                x,
-                y,
-            });
+            expect(instance.getShape()).toMatchObject(result);
         });
     });
 
@@ -88,6 +81,7 @@ describe('RegionCreator', () => {
 
         beforeEach(() => {
             instance.addListeners();
+            instance.isDrawing = jest.fn().mockReturnValue(true);
             instance.startDraw = jest.fn();
             instance.stopDraw = jest.fn();
             instance.updateDraw = jest.fn();
@@ -122,22 +116,18 @@ describe('RegionCreator', () => {
 
         describe('handleMouseMove', () => {
             test.each`
-                buttons | isDrawing | calls
-                ${1}    | ${true}   | ${1}
-                ${1}    | ${false}  | ${0}
-                ${2}    | ${true}   | ${0}
-                ${2}    | ${false}  | ${0}
-            `('should be handled based on the mouse button pressed: $buttons', ({ buttons, isDrawing, calls }) => {
-                wrapper.setState({ isDrawing });
-
+                buttons | calls
+                ${1}    | ${1}
+                ${2}    | ${0}
+                ${null} | ${0}
+            `('should be handled based on the mouse button pressed: $buttons', ({ buttons, calls }) => {
                 document.dispatchEvent(new MouseEvent('mousemove', { ...mockEvent, buttons }));
 
+                expect(instance.isDrawing).toHaveBeenCalledTimes(calls);
                 expect(instance.updateDraw).toHaveBeenCalledTimes(calls);
             });
 
             test('should call updateDraw with the event payload', () => {
-                wrapper.setState({ isDrawing: true });
-
                 document.dispatchEvent(
                     new MouseEvent('mousemove', {
                         ...mockEvent,
@@ -147,7 +137,7 @@ describe('RegionCreator', () => {
                     }),
                 );
 
-                expect(instance.updateDraw).toHaveBeenCalledWith({ x: 50, y: 50 });
+                expect(instance.updateDraw).toHaveBeenCalledWith(50, 50);
             });
         });
 
@@ -179,7 +169,7 @@ describe('RegionCreator', () => {
             test('should call updateDraw with the event payload', () => {
                 wrapper.simulate('touchmove', { ...mockEvent, targetTouches: [{ clientX: 50, clientY: 50 }] });
 
-                expect(instance.updateDraw).toHaveBeenCalledWith({ x: 50, y: 50 });
+                expect(instance.updateDraw).toHaveBeenCalledWith(50, 50);
             });
         });
 
@@ -187,7 +177,7 @@ describe('RegionCreator', () => {
             test('should call startDraw with the event payload', () => {
                 wrapper.simulate('touchstart', { ...mockEvent, targetTouches: [{ clientX: 50, clientY: 50 }] });
 
-                expect(instance.startDraw).toHaveBeenCalledWith({ x: 50, y: 50 });
+                expect(instance.startDraw).toHaveBeenCalledWith(50, 50);
             });
         });
     });
@@ -218,22 +208,39 @@ describe('RegionCreator', () => {
         });
     });
 
+    describe('isDrawing()', () => {
+        test.each`
+            x1      | y1      | result
+            ${null} | ${null} | ${false}
+            ${10}   | ${null} | ${false}
+            ${null} | ${10}   | ${false}
+            ${10}   | ${10}   | ${true}
+        `('should return a boolean based on the current state', ({ result, x1, y1 }) => {
+            const wrapper = getWrapper();
+            const instance = getInstance(wrapper);
+
+            wrapper.setState({ x1, y1 });
+
+            expect(instance.isDrawing()).toBe(result);
+        });
+    });
+
     describe('startDraw()', () => {
         test('should set state based on the data provided', () => {
             const onStart = jest.fn();
             const wrapper = getWrapper({ onStart });
             const instance = getInstance(wrapper);
             const addListeners = jest.spyOn(instance, 'addListeners');
-            const position = { x: 10, y: 10 };
 
-            instance.startDraw(position);
+            instance.startDraw(10, 10);
 
             expect(addListeners).toHaveBeenCalled();
             expect(onStart).toHaveBeenCalled();
             expect(wrapper.state()).toMatchObject({
-                isDrawing: true,
-                position1: position,
-                position2: null,
+                x1: 10,
+                y1: 10,
+                x2: null,
+                y2: null,
             });
         });
     });
@@ -252,9 +259,10 @@ describe('RegionCreator', () => {
             expect(removeListeners).toHaveBeenCalled();
             expect(onStop).toHaveBeenCalledWith(shape);
             expect(wrapper.state()).toMatchObject({
-                isDrawing: false,
-                position1: null,
-                position2: null,
+                x1: null,
+                y1: null,
+                x2: null,
+                y2: null,
             });
         });
     });
@@ -263,11 +271,11 @@ describe('RegionCreator', () => {
         test('should set state with the new position', () => {
             const wrapper = getWrapper();
             const instance = getInstance(wrapper);
-            const position = { x: 5, y: 5 };
 
-            instance.updateDraw(position);
+            instance.updateDraw(5, 5);
 
-            expect(wrapper.state('position2')).toEqual(position);
+            expect(wrapper.state('x2')).toEqual(5);
+            expect(wrapper.state('y2')).toEqual(5);
         });
     });
 

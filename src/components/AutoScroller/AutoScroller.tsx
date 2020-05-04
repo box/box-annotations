@@ -2,17 +2,12 @@ import * as React from 'react';
 import noop from 'lodash/noop';
 import { getScrollParent } from './util';
 
-type Position = {
-    x: number;
-    y: number;
-};
-
 export type Props = Partial<React.Attributes> & {
     as?: React.ElementType;
     children?: React.ReactNode;
     className?: string;
     enabled?: boolean;
-    onScroll?: (position: Position) => void;
+    onScroll?: (x: number, y: number) => void;
 };
 
 const SCROLL_DELTA = 0.2; // Intensity to ramp up scroll speed as the cursor moves deeper into the scroll gutter
@@ -78,10 +73,8 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
         parent.scrollLeft = Math.max(0, Math.min(Math.round(nextScrollLeft), parent.scrollWidth));
         parent.scrollTop = Math.max(0, Math.min(Math.round(nextScrollTop), parent.scrollHeight));
 
-        onScroll({
-            x: positionX,
-            y: positionY,
-        });
+        // Inform the parent of the scroll change, if any
+        onScroll(positionX, positionY);
 
         return checkStep(checkScroll);
     };
@@ -144,4 +137,4 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
     );
 }
 
-export default React.forwardRef(AutoScroller);
+export default React.memo(React.forwardRef(AutoScroller));

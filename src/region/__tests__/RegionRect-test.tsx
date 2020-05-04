@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { rect } from '../__mocks__/data';
 import RegionRect from '../RegionRect';
 
-describe('RegionAnnotation', () => {
+describe('RegionRect', () => {
     const getWrapper = (props = {}): ShallowWrapper => {
         return shallow(<RegionRect {...props} />);
     };
