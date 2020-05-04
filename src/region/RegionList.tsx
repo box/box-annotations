@@ -1,17 +1,20 @@
 import * as React from 'react';
+import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
-import { AnnotationRegion } from '../@types';
 import { scaleShape } from './regionUtil';
+import useOutsideClick from '../common/useOutsideClick';
+import { AnnotationRegion } from '../@types';
 
 export type Props = {
     activeId?: string | null;
     annotations: AnnotationRegion[];
     className?: string;
-    onSelect?: (annotationId: string) => void;
+    onSelect?: (annotationId: string | null) => void;
     scale: number;
 };
 
-export function RegionList({ activeId, annotations, className, onSelect, scale }: Props): JSX.Element {
+export function RegionList({ activeId, annotations, className, onSelect = noop, scale }: Props): JSX.Element {
+    const ref = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.sort(({ target: targetA }, { target: targetB }) => {
         const { shape: shapeA } = targetA;
         const { shape: shapeB } = targetB;
@@ -20,8 +23,12 @@ export function RegionList({ activeId, annotations, className, onSelect, scale }
         return shapeA.height * shapeA.width > shapeB.height * shapeB.width ? -1 : 1;
     });
 
+    const handleOutsideClick = (): void => onSelect(null);
+
+    useOutsideClick(ref, handleOutsideClick);
+
     return (
-        <svg className={className}>
+        <svg ref={ref} className={className}>
             {sortedAnnotations.map(({ id, target }) => (
                 <RegionAnnotation
                     key={id}
