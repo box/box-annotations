@@ -1,0 +1,10 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-Popup-footer {
+    .btn.btn-primary {
+        &.is-disabled {
+            background-color: $bdl-gray-50;
+            border-color: $bdl-gray-50;
+        }
+    }
+}

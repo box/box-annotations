@@ -7,6 +7,8 @@ import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyField from './ReplyField';
 
+import './PopupReply.scss';
+
 export type Props = {
     className?: string;
     isPending: boolean;
@@ -51,6 +53,7 @@ export default function PopupReply({
     value = '',
     ...rest
 }: Props): JSX.Element {
+    const isEmpty = value.length === 0;
     const intl = useIntl();
 
     // Event Handlers
@@ -97,7 +100,7 @@ export default function PopupReply({
                     <Button data-testid="ba-Popup-cancel" isDisabled={isPending} onClick={handleCancel} type="button">
                         <FormattedMessage {...messages.buttonCancel} />
                     </Button>
-                    <PrimaryButton data-testid="ba-Popup-submit" isDisabled={isPending} type="submit">
+                    <PrimaryButton data-testid="ba-Popup-submit" isDisabled={isEmpty || isPending} type="submit">
                         <FormattedMessage {...messages.buttonPost} />
                     </PrimaryButton>
                 </div>
