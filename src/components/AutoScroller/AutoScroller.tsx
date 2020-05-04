@@ -7,14 +7,13 @@ export type Props = Partial<React.Attributes> & {
     children?: React.ReactNode;
     className?: string;
     enabled?: boolean;
+    intensity?: number; // Intensity factor to ramp up scroll speed as the cursor moves deeper into the scroll gutter
     onScroll?: (x: number, y: number) => void;
+    size?: number; // Size of the invisible zone within the component where mouse events will trigger auto-scroll
 };
 
-const SCROLL_DELTA = 0.2; // Intensity to ramp up scroll speed as the cursor moves deeper into the scroll gutter
-const SCROLL_GUTTER = 50; // Invisible zone within the component that triggers auto-scroll
-
 export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element {
-    const { as: Element = 'div', children, enabled, onScroll = noop, ...rest } = props;
+    const { as: Element = 'div', children, enabled, intensity = 0.2, onScroll = noop, size = 50, ...rest } = props;
 
     // Create refs to store un-rendered data, references, and state
     const handleRef = React.useRef<number | null>(null);
@@ -39,10 +38,10 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
         }
 
         // Calculate the inner scroll gutters for the scroll parent
-        const edgeBottom = parentRect.bottom - SCROLL_GUTTER;
-        const edgeLeft = parentRect.left + SCROLL_GUTTER;
-        const edgeRight = parentRect.right - SCROLL_GUTTER;
-        const edgeTop = parentRect.top + SCROLL_GUTTER;
+        const edgeBottom = parentRect.bottom - size;
+        const edgeLeft = parentRect.left + size;
+        const edgeRight = parentRect.right - size;
+        const edgeTop = parentRect.top + size;
 
         // Check if the current position is within any of the gutters
         const isEdgeBottom = positionY > edgeBottom;
@@ -58,15 +57,15 @@ export function AutoScroller(props: Props, ref: React.Ref<Element>): JSX.Element
         let nextScrollTop = parent.scrollTop;
 
         if (isEdgeLeft) {
-            nextScrollLeft -= (edgeLeft - positionX) * SCROLL_DELTA;
+            nextScrollLeft -= (edgeLeft - positionX) * intensity;
         } else if (isEdgeRight) {
-            nextScrollLeft += (positionX - edgeRight) * SCROLL_DELTA;
+            nextScrollLeft += (positionX - edgeRight) * intensity;
         }
 
         if (isEdgeTop) {
-            nextScrollTop -= (edgeTop - positionY) * SCROLL_DELTA;
+            nextScrollTop -= (edgeTop - positionY) * intensity;
         } else if (isEdgeBottom) {
-            nextScrollTop += (positionY - edgeBottom) * SCROLL_DELTA;
+            nextScrollTop += (positionY - edgeBottom) * intensity;
         }
 
         // Sanitize inputs and use legacy scroll APIs for better browser support and smoother scrolling

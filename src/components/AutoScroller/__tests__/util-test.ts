@@ -17,7 +17,7 @@ describe('AutoScroller/util', () => {
             ${''}       | ${''}       | ${'scroll'} | ${true}
             ${''}       | ${''}       | ${'hidden'} | ${false}
             ${''}       | ${'auto'}   | ${'hidden'} | ${true}
-        `('should return %s based on the provided element', ({ overflow, overflowX, overflowY, result }) => {
+        `('should return $result based on the provided element', ({ overflow, overflowX, overflowY, result }) => {
             const el = document.createElement('div');
 
             el.style.overflow = overflow;
