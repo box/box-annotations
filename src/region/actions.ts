@@ -19,8 +19,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
         },
         // eslint-disable-next-line @typescript-eslint/camelcase
         file_version: {
-            id: getFileVersionId(state) ?? undefined,
-            type: 'file_version' as const,
+            id: getFileVersionId(state),
         },
         target: {
             location: {

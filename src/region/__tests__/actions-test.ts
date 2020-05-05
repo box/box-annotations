@@ -41,7 +41,6 @@ describe('region/actions', () => {
                 },
                 file_version: {
                     id: '123',
-                    type: 'file_version',
                 },
                 target: {
                     location: {
