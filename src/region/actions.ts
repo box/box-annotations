@@ -1,7 +1,7 @@
 import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
-import { Rect } from '../@types';
 import { getFileVersionId } from '../store/options';
+import { Rect } from '../@types';
 
 export type CreateArg = {
     location: number;
