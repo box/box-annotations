@@ -62,6 +62,7 @@ const AnnotationTarget = (props: Props, ref: React.Ref<HTMLAnchorElement>): JSX.
         <a
             ref={innerRef}
             className={classNames('ba-AnnotationTarget', className)}
+            data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#" // Needed for IE11 to handle click events properly
             onBlur={handleBlur}
             onClick={handleClick}

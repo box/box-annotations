@@ -85,6 +85,7 @@ export default class ReplyField extends React.Component<Props, State> {
                     placeholder={placeholder}
                     readOnly={isDisabled}
                     stripPastedStyles
+                    webDriverTestID="ba-ReplyField-editor"
                 />
             </div>
         );
