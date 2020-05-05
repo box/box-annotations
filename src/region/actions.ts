@@ -1,6 +1,7 @@
-import { AppThunkDispatch } from '../store';
+import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { Rect } from '../@types';
+import { getFileVersionId } from '../store/options';
 
 export type CreateArg = {
     location: number;
@@ -8,12 +9,17 @@ export type CreateArg = {
     shape: Rect;
 };
 
-export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch) => {
+export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
     const { location, message, shape } = arg;
+    const state = getState();
     const newAnnotation = {
         description: {
             message,
             type: 'reply' as const,
+        },
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        file_version: {
+            id: getFileVersionId(state),
         },
         target: {
             location: {
