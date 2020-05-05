@@ -4,6 +4,12 @@ export enum PERMISSIONS {
     CAN_VIEW_ANNOTATIONS_SELF = 'can_view_annotations_self',
 }
 
+export type BoxItemVersionMini = {
+    id: string;
+    type: 'file_version';
+    version_number: string;
+};
+
 export interface Permissions {
     [index: string]: boolean | undefined;
     [PERMISSIONS.CAN_ANNOTATE]?: boolean;
