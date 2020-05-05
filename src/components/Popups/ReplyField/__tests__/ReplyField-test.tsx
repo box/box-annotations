@@ -1,7 +1,21 @@
 import React from 'react';
-import { Editor, EditorState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { Editor, EditorState } from 'draft-js';
+import PopupList from '../PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
+import { VirtualElement } from '../../Popper';
+
+const mockMention = {
+    blockID: '12345',
+    end: 1,
+    mentionString: 'testMention',
+    mentionTrigger: '@',
+    start: 0,
+};
+
+jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector', () => ({
+    getActiveMentionForEditorState: () => mockMention,
+}));
 
 describe('components/Popups/ReplyField', () => {
     const defaults: Props = {
@@ -10,6 +24,7 @@ describe('components/Popups/ReplyField', () => {
         isDisabled: false,
         onChange: jest.fn(),
         onClick: jest.fn(),
+        onMention: jest.fn(),
         setCursorPosition: jest.fn(),
         value: '',
     };
@@ -22,26 +37,34 @@ describe('components/Popups/ReplyField', () => {
         getSelection: () => ({ getFocusOffset: () => 0 }),
     } as unknown) as EditorState;
 
-    const mockEditor = ({
-        focus: jest.fn(),
-    } as unknown) as Editor;
-
     describe('render()', () => {
         test('should render the editor with right props', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.prop('className')).toBe('ba-Popup-field ba-ReplyField');
         });
+
+        test('should render PopupList if popupreference is not null', () => {
+            const wrapper = getWrapper();
+            wrapper.setState({ popupReference: document.createElement('div') });
+
+            expect(wrapper.exists(PopupList)).toBe(true);
+        });
     });
 
     describe('event handlers', () => {
-        test('should handle the editor onChange event', () => {
+        test('should handle the editor change event', () => {
             const wrapper = getWrapper();
             const editor = wrapper.find(Editor);
+            const instance = wrapper.instance();
+            instance.getVirtualElement = jest.fn().mockReturnValue('reference');
 
             editor.simulate('change', mockEditorState);
 
             expect(defaults.onChange).toBeCalledWith('test');
+            expect(defaults.onMention).toBeCalledWith('testMention');
+            expect(instance.getVirtualElement).toBeCalledWith(mockMention);
+            expect(wrapper.state('popupReference')).toBe('reference');
         });
 
         test('should handle the editor onClick event', () => {
@@ -54,18 +77,78 @@ describe('components/Popups/ReplyField', () => {
         });
     });
 
+    describe('getVirtualElement()', () => {
+        let getSelectionSpy: jest.SpyInstance<Selection | null>;
+
+        beforeEach(() => {
+            getSelectionSpy = jest.spyOn(window, 'getSelection');
+        });
+
+        test('should return null if no selection', () => {
+            const wrapper = getWrapper();
+            const instance = wrapper.instance();
+
+            const virtualElement = instance.getVirtualElement(mockMention);
+            expect(virtualElement).toBeNull();
+        });
+
+        test('should return null if no focusNode', () => {
+            const wrapper = getWrapper();
+            const instance = wrapper.instance();
+
+            getSelectionSpy.mockReturnValue({
+                focusNode: null,
+            } as Selection);
+
+            const virtualElement = instance.getVirtualElement(mockMention);
+
+            expect(virtualElement).toBeNull();
+        });
+
+        test('should return virtual element', () => {
+            const wrapper = getWrapper();
+            const instance = wrapper.instance();
+
+            const mockMentionRect = {
+                x: 0,
+                y: 0,
+            };
+            const mockTextNode = document.createTextNode('');
+            const mockRange = {
+                endContainer: mockTextNode,
+                setStart: jest.fn(),
+                setEnd: jest.fn(),
+                getBoundingClientRect: () => mockMentionRect,
+            };
+            getSelectionSpy.mockReturnValue(({
+                focusNode: mockTextNode,
+                getRangeAt: () => mockRange,
+            } as unknown) as Selection);
+
+            const virtualElement = instance.getVirtualElement(mockMention) as VirtualElement;
+
+            expect(mockRange.setStart).toHaveBeenNthCalledWith(1, mockTextNode, 0);
+            expect(mockRange.setStart).toHaveBeenNthCalledWith(2, mockTextNode, 1);
+            expect(mockRange.setEnd).toHaveBeenNthCalledWith(1, mockTextNode, 0);
+            expect(mockRange.setEnd).toHaveBeenNthCalledWith(2, mockTextNode, 1);
+
+            expect(virtualElement.getBoundingClientRect()).toBe(mockMentionRect);
+        });
+    });
+
     describe('focusEditor()', () => {
         test('should call editor ref focus', () => {
             const wrapper = getWrapper();
             const instance = wrapper.instance();
 
-            instance.focusEditor();
-            expect(mockEditor.focus).not.toBeCalled();
+            const editorRef = ({
+                focus: jest.fn(),
+            } as unknown) as Editor;
 
-            instance.editorRef.current = mockEditor;
+            instance.editorRef = { current: editorRef };
             instance.focusEditor();
 
-            expect(mockEditor.focus).toBeCalled();
+            expect(editorRef.focus).toBeCalled();
         });
     });
 

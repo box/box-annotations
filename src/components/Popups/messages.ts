@@ -12,8 +12,13 @@ export default defineMessages({
         defaultMessage: 'Post',
     },
     fieldPlaceholder: {
-        id: 'ba.popups.placeholder',
+        id: 'ba.popups.replyField.placeholder',
         description: 'Placeholder for reply field editor',
         defaultMessage: 'Type a comment...',
+    },
+    popupListPrompt: {
+        id: 'ba.popups.popupList.prompt',
+        description: 'Prompt message for empty popup list',
+        defaultMessage: 'Mention someone to notify them',
     },
 });

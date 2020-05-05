@@ -1,0 +1,24 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-PopupList {
+    font-size: 13px;
+
+    .ba-Popup-arrow {
+        display: none;
+    }
+
+    .ba-Popup-content {
+        padding-top: 10px;
+        border: solid 1px $bdl-gray-30;
+        border-radius: $bdl-border-radius-size;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+    }
+
+    .ba-PopupList-item {
+        padding: 10px;
+    }
+
+    .ba-PopupList-prompt {
+        padding-top: 0;
+    }
+}

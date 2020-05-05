@@ -4,6 +4,9 @@ import unionBy from 'lodash/unionBy';
 
 export type Instance = popper.Instance;
 export type Options = popper.Options;
+export type VirtualElement = popper.VirtualElement;
+
+export type PopupReference = Element | VirtualElement;
 
 export const defaults = {
     modifiers: [],
@@ -19,6 +22,10 @@ export const merger = (sourceValue: any, newValue: any): any => {
     return undefined; // Default to lodash/merge behavior
 };
 
-export default function create(reference: Element, popup: HTMLElement, options: Partial<Options> = {}): Instance {
+export default function create(
+    reference: PopupReference,
+    popup: HTMLElement,
+    options: Partial<Options> = {},
+): Instance {
     return popper.createPopper(reference, popup, mergeWith({}, defaults, options, merger) as Options);
 }

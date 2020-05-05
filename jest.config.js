@@ -24,5 +24,6 @@ module.exports = {
     setupFiles: ['jest-canvas-mock'],
     setupFilesAfterEnv: ['<rootDir>/scripts/jest/enzyme-adapter.js'],
     snapshotSerializers: ['enzyme-to-json/serializer'],
+    testEnvironment: 'jest-environment-jsdom-sixteen',
     transformIgnorePatterns: ['node_modules/(?!(box-ui-elements)/)'],
 };
