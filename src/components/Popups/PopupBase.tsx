@@ -1,13 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import createPopper, { Instance, Options } from './Popper';
+import createPopper, { Instance, Options, PopupReference } from './Popper';
 import './PopupBase.scss';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
     children: React.ReactNode;
     className?: string;
     options: Partial<Options>;
-    reference: Element;
+    reference: PopupReference;
 };
 
 export default class PopupBase extends React.PureComponent<Props> {
