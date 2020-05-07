@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getFileId } from '../options';
 import { APICollection } from '../../api';
 import { AppThunkAPI } from '../types';
 import { Collaborator } from '../../@types';
+import { getFileId } from '../options';
 
 export const fetchCollaboratorsAction = createAsyncThunk<APICollection<Collaborator>, undefined, AppThunkAPI>(
     'FETCH_COLLABORATORS',
