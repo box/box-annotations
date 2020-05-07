@@ -1,9 +1,10 @@
-import { Annotation, NewAnnotation, Token } from '../@types';
+import { Annotation, Collaborator, NewAnnotation, Token } from '../@types';
 
 export type APICollection<R> = {
     entries: R[];
     limit: number;
     next_marker: string | null;
+    previous_marker: string | null;
 };
 
 export type APIError = {
@@ -38,6 +39,22 @@ export interface AnnotationsAPI {
         errorCallback: (error: APIError) => void,
         limit?: number,
         shouldFetchAll?: boolean,
+    ): Promise<void>;
+
+    destroy(): void;
+}
+
+export interface CollaboratorsAPI {
+    getFileCollaborators(
+        fileId: string | null,
+        successCallback: (result: APICollection<Collaborator>) => void,
+        errorCallback: (error: APIError) => void,
+        requestData?: {
+            filter_term?: string;
+            include_groups?: boolean;
+            include_uploader_collabs?: boolean;
+        },
+        limit?: number,
     ): Promise<void>;
 
     destroy(): void;

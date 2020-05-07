@@ -11,6 +11,7 @@ jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     fetchAnnotationsAction: jest.fn(),
+    fetchCollaboratorsAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
     setVisibilityAction: jest.fn(),
     toggleAnnotationModeAction: jest.fn(),

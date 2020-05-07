@@ -6,3 +6,4 @@ export * from './events';
 export * from './i18n';
 export * from './model';
 export * from './new';
+export * from './users';

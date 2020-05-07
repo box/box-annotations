@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import { ContentState, Editor, EditorState, SelectionState } from 'draft-js';
 import PopupList from './PopupList';
+import { Collaborator } from '../../../@types';
 import { VirtualElement } from '../Popper';
 import './ReplyField.scss';
 
@@ -16,6 +17,7 @@ export type Mention = {
 
 export type Props = {
     className?: string;
+    collaborators: Collaborator[];
     cursorPosition: number;
     isDisabled?: boolean;
     onChange: (text?: string) => void;
