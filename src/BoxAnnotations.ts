@@ -2,6 +2,11 @@ import getProp from 'lodash/get';
 import DocumentAnnotator from './document/DocumentAnnotator';
 import { Permissions, PERMISSIONS, Type } from './@types';
 
+type AnnotationsOptions = {
+    messages?: Record<string, string>;
+    locale?: string;
+};
+
 type Annotator = {
     CONSTRUCTOR: typeof DocumentAnnotator;
     NAME: string;
@@ -37,15 +42,17 @@ type ViewerOptions = Record<string, ViewerOption>;
  */
 const ANNOTATORS: Annotator[] = [
     {
-        NAME: 'Document',
         CONSTRUCTOR: DocumentAnnotator,
-        VIEWERS: ['Document', 'Presentation'],
+        NAME: 'Document',
         TYPES: [Type.region],
+        VIEWERS: ['Document', 'Presentation'],
     },
 ];
 
 class BoxAnnotations {
     annotators: Annotator[];
+
+    annotationsOptions?: AnnotationsOptions;
 
     viewerOptions?: ViewerOptions | null;
 
@@ -53,10 +60,12 @@ class BoxAnnotations {
      * [constructor]
      *
      * @param {Object} viewerOptions - Viewer-specific annotator options
+     * @param {AnnotationsOptions } options - options passed to the annotations instance
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(viewerOptions?: ViewerOptions) {
+    constructor(viewerOptions?: ViewerOptions, options?: AnnotationsOptions) {
         this.annotators = ANNOTATORS;
+        this.annotationsOptions = options;
         this.viewerOptions = viewerOptions;
     }
 
@@ -112,6 +121,10 @@ class BoxAnnotations {
         const enabledTypes = enabledTypesBase.filter((type: string) => annotator.TYPES.some(t => t === type));
 
         return { ...annotator, TYPES: enabledTypes };
+    }
+
+    getAnnotationsOptions(): AnnotationsOptions | undefined {
+        return this.annotationsOptions;
     }
 }
 
