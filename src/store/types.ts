@@ -5,12 +5,14 @@ import { AnnotationsState } from './annotations';
 import { CommonState } from './common';
 import { CreatorState } from './creator';
 import { OptionsState } from './options';
+import { UsersState } from './users';
 
 export type AppState = {
     annotations: AnnotationsState;
     creator: CreatorState;
     common: CommonState;
     options: OptionsState;
+    users: UsersState;
 };
 
 export type AppStore = Store<AppState>;

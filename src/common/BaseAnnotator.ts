@@ -94,6 +94,8 @@ export default class BaseAnnotator {
         // Redux dispatch method signature doesn't seem to like async actions
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.store.dispatch<any>(store.fetchAnnotationsAction());
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.store.dispatch<any>(store.fetchCollaboratorsAction());
     }
 
     // Called by box-content-preview

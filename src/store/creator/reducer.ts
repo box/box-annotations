@@ -4,6 +4,7 @@ import { createAnnotationAction } from '../annotations';
 import { setStagedAction, setStatusAction, setCursorAction } from './actions';
 
 export const initialState = {
+    collaborators: null,
     cursor: 0,
     error: null,
     staged: null,
