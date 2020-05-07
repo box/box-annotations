@@ -17,7 +17,7 @@ export type Mention = {
 
 export type Props = {
     className?: string;
-    collaborators: Collaborator[] | null;
+    collaborators: Collaborator[];
     cursorPosition: number;
     isDisabled?: boolean;
     onChange: (text?: string) => void;

@@ -4,7 +4,6 @@ import { APICollection } from '../../api';
 import { AppThunkAPI } from '../types';
 import { Collaborator } from '../../@types';
 
-// eslint-disable-next-line import/prefer-default-export
 export const fetchCollaboratorsAction = createAsyncThunk<APICollection<Collaborator>, undefined, AppThunkAPI>(
     'FETCH_COLLABORATORS',
     async (arg, { extra, getState, signal }) => {
@@ -21,10 +20,8 @@ export const fetchCollaboratorsAction = createAsyncThunk<APICollection<Collabora
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Collaborator>>((resolve, reject) => {
             client.getFileCollaborators(fileId, resolve, reject, {
-                // eslint-disable-next-line @typescript-eslint/camelcase
-                include_groups: false,
-                // eslint-disable-next-line @typescript-eslint/camelcase
-                include_uploader_collabs: false,
+                include_groups: false, // eslint-disable-line @typescript-eslint/camelcase
+                include_uploader_collabs: false, // eslint-disable-line @typescript-eslint/camelcase
             });
         });
     },

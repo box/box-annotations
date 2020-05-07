@@ -4,7 +4,7 @@ import ReplyField from './ReplyField';
 import { Collaborator } from '../../../@types';
 
 export type Props = {
-    collaborators: Collaborator[] | null;
+    collaborators: Collaborator[];
     cursorPosition: number;
 };
 

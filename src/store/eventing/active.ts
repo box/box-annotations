@@ -12,5 +12,4 @@ const handleActiveAnnotationEvents = (prevState: AppState, nextState: AppState):
     }
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { handleActiveAnnotationEvents };

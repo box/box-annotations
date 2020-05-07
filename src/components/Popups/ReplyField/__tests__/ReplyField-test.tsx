@@ -20,7 +20,7 @@ jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector
 describe('components/Popups/ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-field',
-        collaborators: null,
+        collaborators: [],
         cursorPosition: 0,
         isDisabled: false,
         onChange: jest.fn(),

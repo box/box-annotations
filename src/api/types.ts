@@ -44,18 +44,16 @@ export interface AnnotationsAPI {
     destroy(): void;
 }
 
-export type CollaboratorsRequestData = {
-    filter_term?: string;
-    include_groups?: boolean;
-    include_uploader_collabs?: boolean;
-};
-
 export interface CollaboratorsAPI {
     getFileCollaborators(
         fileId: string | null,
         successCallback: (result: APICollection<Collaborator>) => void,
         errorCallback: (error: APIError) => void,
-        requestData: CollaboratorsRequestData,
+        requestData?: {
+            filter_term?: string;
+            include_groups?: boolean;
+            include_uploader_collabs?: boolean;
+        },
         limit?: number,
     ): Promise<void>;
 

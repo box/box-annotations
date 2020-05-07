@@ -7,6 +7,7 @@ module.exports = {
         'flowtype/no-types-missing-file-annotation': 'off', // Allows types in TS files
         'import/no-extraneous-dependencies': ['error', { devDependencies: ['scripts/**/*.js', '**/*-test.[j|t]s*'] }],
         'import/no-unresolved': 'off', // Allows JS files to import TS files
+        'import/prefer-default-export': 'off',
         'prefer-destructuring': ['error', { object: true, array: false }],
     },
     overrides: [
