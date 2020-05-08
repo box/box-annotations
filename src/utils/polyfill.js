@@ -83,7 +83,7 @@ if (!Array.prototype.find) {
 
             // 7. Return undefined.
             return undefined;
-        }
+        },
     });
 }
 
@@ -137,7 +137,25 @@ if (!Array.prototype.includes) {
 
             // 8. Return false
             return false;
-        }
+        },
+    });
+}
+
+// Add support for SVGElement.contains in IE11
+if (!SVGElement.prototype.contains) {
+    Object.defineProperty(SVGElement.prototype, 'contains', {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function contains(node) {
+            do {
+                if (this === node) {
+                    return true;
+                }
+            } while ((node = node && node.parentNode));
+
+            return false;
+        },
     });
 }
 /* eslint-enable */

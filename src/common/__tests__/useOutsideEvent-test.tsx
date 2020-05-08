@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import useOutsideClick from '../useOutsideClick';
+import useOutsideEvent from '../useOutsideEvent';
 
 describe('src/utils/useOutsideClick', () => {
     let callback: jest.Mock;
@@ -8,7 +8,7 @@ describe('src/utils/useOutsideClick', () => {
     function TestComponent(): JSX.Element {
         const ref = React.createRef<HTMLButtonElement>();
 
-        useOutsideClick(ref, callback);
+        useOutsideEvent('click', ref, callback);
 
         return (
             <div id="container">
