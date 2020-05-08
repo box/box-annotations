@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import scrollIntoView, { Options } from 'scroll-into-view-if-needed';
 import { KEYS } from 'box-ui-elements/es/constants';
-import './AnnotationTarget.scss';
 
 type Props = {
     annotationId: string;

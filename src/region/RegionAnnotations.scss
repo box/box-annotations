@@ -23,6 +23,12 @@
 
 .ba-RegionAnnotations-list {
     pointer-events: none;
+
+    &.is-listening {
+        .ba-AnnotationTarget {
+            pointer-events: auto; // Delegate event control to avoid re-rendering every target on mousedown/up
+        }
+    }
 }
 
 .ba-RegionAnnotations-popup {
