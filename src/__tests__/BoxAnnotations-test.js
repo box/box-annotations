@@ -158,13 +158,13 @@ describe('BoxAnnotations', () => {
         });
     });
 
-    describe('getAnnotationsOptions', () => {
+    describe('getOptions', () => {
         it.each([undefined, { messages: { test: 'Hello' } }])(
             'should return the passed in options when they are %o',
             mockOptions => {
                 loader = new BoxAnnotations(null, mockOptions);
 
-                const options = loader.getAnnotationsOptions();
+                const options = loader.getOptions();
 
                 expect(options).toEqual(mockOptions);
             },

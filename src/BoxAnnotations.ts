@@ -3,8 +3,9 @@ import DocumentAnnotator from './document/DocumentAnnotator';
 import { Permissions, PERMISSIONS, Type } from './@types';
 
 type AnnotationsOptions = {
-    messages?: Record<string, string>;
+    language?: string;
     locale?: string;
+    messages?: Record<string, string>;
 };
 
 type Annotator = {
@@ -123,7 +124,7 @@ class BoxAnnotations {
         return { ...annotator, TYPES: enabledTypes };
     }
 
-    getAnnotationsOptions(): AnnotationsOptions | undefined {
+    getOptions(): AnnotationsOptions | undefined {
         return this.annotationsOptions;
     }
 }
