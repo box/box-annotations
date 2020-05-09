@@ -1,12 +1,6 @@
 import getProp from 'lodash/get';
 import DocumentAnnotator from './document/DocumentAnnotator';
-import { Permissions, PERMISSIONS, Type } from './@types';
-
-type AnnotationsOptions = {
-    language?: string;
-    locale?: string;
-    messages?: Record<string, string>;
-};
+import { IntlOptions, Permissions, PERMISSIONS, Type } from './@types';
 
 type Annotator = {
     CONSTRUCTOR: typeof DocumentAnnotator;
@@ -53,7 +47,7 @@ const ANNOTATORS: Annotator[] = [
 class BoxAnnotations {
     annotators: Annotator[];
 
-    annotationsOptions?: AnnotationsOptions;
+    annotationsOptions?: IntlOptions;
 
     viewerOptions?: ViewerOptions | null;
 
@@ -64,7 +58,7 @@ class BoxAnnotations {
      * @param {AnnotationsOptions } options - options passed to the annotations instance
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(viewerOptions?: ViewerOptions, options?: AnnotationsOptions) {
+    constructor(viewerOptions?: ViewerOptions, options?: IntlOptions) {
         this.annotators = ANNOTATORS;
         this.annotationsOptions = options;
         this.viewerOptions = viewerOptions;
@@ -124,7 +118,7 @@ class BoxAnnotations {
         return { ...annotator, TYPES: enabledTypes };
     }
 
-    getOptions(): AnnotationsOptions | undefined {
+    getOptions(): IntlOptions | undefined {
         return this.annotationsOptions;
     }
 }
