@@ -74,9 +74,11 @@ class BoxAnnotations {
         }
 
         return (
-            !!permissions[PERMISSIONS.CAN_ANNOTATE] ||
-            !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_ALL] ||
-            !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_SELF]
+            !!permissions[PERMISSIONS.CAN_ANNOTATE] || // TODO: Remove once permissions are fully migrated
+            !!permissions[PERMISSIONS.CAN_CREATE_ANNOTATIONS] ||
+            !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS] ||
+            !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_ALL] || // TODO: Remove once permissions are fully migrated
+            !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS_SELF] // TODO: Remove once permissions are fully migrated
         );
     }
 

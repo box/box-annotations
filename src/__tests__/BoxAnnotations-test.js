@@ -21,49 +21,61 @@ describe('BoxAnnotations', () => {
         beforeEach(() => {
             permissions = {
                 can_annotate: false,
+                can_create_annotations: false,
+                can_view_annotations: false,
                 can_view_annotations_all: false,
                 can_view_annotations_self: false,
             };
         });
 
-        it('should return false if permissions do not exist', () => {
+        test('should return false if permissions do not exist', () => {
             expect(loader.canLoad()).toBe(false);
         });
 
-        it('should return true if user has at least can_annotate permissions', () => {
+        test('should return true if user has at least can_annotate permissions', () => {
             permissions.can_annotate = true;
             expect(loader.canLoad(permissions)).toBe(true);
         });
 
-        it('should return true if user has at least can_view_annotations_all permissions', () => {
+        test('should return true if user has at least can_create_annotations permissions', () => {
+            permissions.can_create_annotations = true;
+            expect(loader.canLoad(permissions)).toBe(true);
+        });
+
+        test('should return true if user has at least can_view_annotations permissions', () => {
+            permissions.can_view_annotations = true;
+            expect(loader.canLoad(permissions)).toBe(true);
+        });
+
+        test('should return true if user has at least can_view_annotations_all permissions', () => {
             permissions.can_view_annotations_all = true;
             expect(loader.canLoad(permissions)).toBe(true);
         });
 
-        it('should return true if user has at least can_view_annotations_self permissions', () => {
+        test('should return true if user has at least can_view_annotations_self permissions', () => {
             permissions.can_view_annotations_self = true;
             expect(loader.canLoad(permissions)).toBe(true);
         });
     });
 
     describe('getAnnotators()', () => {
-        it("should return the loader's annotators", () => {
+        test("should return the loader's annotators", () => {
             expect(loader.getAnnotators()).toStrictEqual(loader.annotators);
         });
 
-        it("should return an empty array if the loader doesn't have annotators", () => {
+        test("should return an empty array if the loader doesn't have annotators", () => {
             loader.annotators = [];
             expect(loader.getAnnotators()).toStrictEqual([]);
         });
     });
 
     describe('getAnnotatorsForViewer()', () => {
-        it('should return undefined if the annotator does not exist', () => {
+        test('should return undefined if the annotator does not exist', () => {
             const annotator = loader.getAnnotatorsForViewer('not_supported_type');
             expect(annotator).toBeUndefined();
         });
 
-        it('should return the correct annotator for the viewer name', () => {
+        test('should return the correct annotator for the viewer name', () => {
             const name = 'Document';
             const annotator = loader.getAnnotatorsForViewer(name);
             expect(annotator.NAME).toEqual(name); // First entry is Document annotator
@@ -93,14 +105,14 @@ describe('BoxAnnotations', () => {
             };
         });
 
-        it('should use the specified types from options', () => {
+        test('should use the specified types from options', () => {
             loader.viewerOptions = {
                 Document: { enabledTypes: ['region'] },
             };
             expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
-        it('should filter and only keep allowed types of annotations', () => {
+        test('should filter and only keep allowed types of annotations', () => {
             const viewerConfig = { enabledTypes: ['region', 'timestamp'] };
             expect(loader.determineAnnotator(options, viewerConfig).TYPES).toStrictEqual(['region']);
 
@@ -112,17 +124,17 @@ describe('BoxAnnotations', () => {
             expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
-        it('should respect default annotators if none provided', () => {
+        test('should respect default annotators if none provided', () => {
             expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
         });
 
-        it('should not return an annotator if the user has incorrect permissions/scopes', () => {
+        test('should not return an annotator if the user has incorrect permissions/scopes', () => {
             loader.canLoad = jest.fn().mockReturnValue(false);
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(annotator);
             expect(loader.determineAnnotator(options)).toBeNull();
         });
 
-        it('should choose the first annotator that matches the viewer', () => {
+        test('should choose the first annotator that matches the viewer', () => {
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(annotator);
 
             const result = loader.determineAnnotator(options);
@@ -130,12 +142,12 @@ describe('BoxAnnotations', () => {
             expect(loader.getAnnotatorsForViewer).toBeCalled();
         });
 
-        it('should not return an annotator if no matching annotator is found', () => {
+        test('should not return an annotator if no matching annotator is found', () => {
             loader.getAnnotatorsForViewer = jest.fn().mockReturnValue(null);
             expect(loader.determineAnnotator(options)).toBeNull();
         });
 
-        it('should return a copy of the annotator that matches', () => {
+        test('should return a copy of the annotator that matches', () => {
             const docAnnotator = {
                 NAME: 'Document',
                 VIEWER: ['Document'],
@@ -149,7 +161,7 @@ describe('BoxAnnotations', () => {
             expect(result.NAME).not.toEqual(annotator.NAME);
         });
 
-        it('should return null if the config for the viewer disables annotations', () => {
+        test('should return null if the config for the viewer disables annotations', () => {
             const config = {
                 enabled: false,
             };

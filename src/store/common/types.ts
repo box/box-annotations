@@ -5,7 +5,6 @@ export enum Mode {
 
 export interface CommonState {
     mode: Mode;
-    visibility: boolean;
 }
 export interface ModeState {
     current: Mode;
