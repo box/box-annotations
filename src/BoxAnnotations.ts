@@ -9,6 +9,10 @@ type Annotator = {
     VIEWERS: string[];
 };
 
+type AnnotationsOptions = {
+    intl: IntlOptions;
+};
+
 type PreviewOptions = {
     file?: {
         permissions?: Permissions;
@@ -47,7 +51,7 @@ const ANNOTATORS: Annotator[] = [
 class BoxAnnotations {
     annotators: Annotator[];
 
-    annotationsOptions?: IntlOptions;
+    annotationsOptions?: AnnotationsOptions;
 
     viewerOptions?: ViewerOptions | null;
 
@@ -58,7 +62,7 @@ class BoxAnnotations {
      * @param {AnnotationsOptions } options - options passed to the annotations instance
      * @return {BoxAnnotations} BoxAnnotations instance
      */
-    constructor(viewerOptions?: ViewerOptions, options?: IntlOptions) {
+    constructor(viewerOptions?: ViewerOptions, options?: AnnotationsOptions) {
         this.annotators = ANNOTATORS;
         this.annotationsOptions = options;
         this.viewerOptions = viewerOptions;
@@ -118,7 +122,7 @@ class BoxAnnotations {
         return { ...annotator, TYPES: enabledTypes };
     }
 
-    getOptions(): IntlOptions | undefined {
+    getOptions(): AnnotationsOptions | undefined {
         return this.annotationsOptions;
     }
 }

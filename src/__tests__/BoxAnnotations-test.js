@@ -159,7 +159,7 @@ describe('BoxAnnotations', () => {
     });
 
     describe('getOptions', () => {
-        it.each([undefined, { messages: { test: 'Hello' } }])(
+        it.each([undefined, { intl: { messages: { test: 'Hello' } } }])(
             'should return the passed in options when they are %o',
             mockOptions => {
                 loader = new BoxAnnotations(null, mockOptions);
