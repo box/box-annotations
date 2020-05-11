@@ -120,8 +120,6 @@ export default class BaseAnnotator {
     };
 
     setVisibility = (visibility: boolean): void => {
-        this.store.dispatch(store.setVisibilityAction(visibility));
-
         if (!this.rootEl) {
             return;
         }

@@ -22,7 +22,7 @@
 
     &.is-hidden {
         .ba-Layer {
-            visibility: hidden;
+            display: none;
         }
     }
 }
