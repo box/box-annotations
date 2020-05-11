@@ -121,6 +121,15 @@ export default class BaseAnnotator {
 
     setVisibility = (visibility: boolean): void => {
         this.store.dispatch(store.setVisibilityAction(visibility));
+
+        if (!this.rootEl) {
+            return;
+        }
+        if (visibility) {
+            this.rootEl.classList.remove('is-hidden');
+        } else {
+            this.rootEl.classList.add('is-hidden');
+        }
     };
 
     toggleAnnotationMode(mode: store.Mode): void {

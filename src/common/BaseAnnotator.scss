@@ -19,4 +19,10 @@
     @import '~box-ui-elements/es/styles/common/links';
     @import '~box-ui-elements/es/styles/common/forms';
     @import '~box-ui-elements/es/styles/common/buttons';
+
+    &.is-hidden {
+        .ba-Layer {
+            visibility: hidden;
+        }
+    }
 }
