@@ -169,4 +169,17 @@ describe('BoxAnnotations', () => {
             expect(loader.determineAnnotator(options, config)).toBeNull();
         });
     });
+
+    describe('getOptions', () => {
+        it.each([undefined, { intl: { messages: { test: 'Hello' } } }])(
+            'should return the passed in options when they are %o',
+            mockOptions => {
+                loader = new BoxAnnotations(null, mockOptions);
+
+                const options = loader.getOptions();
+
+                expect(options).toEqual(mockOptions);
+            },
+        );
+    });
 });
