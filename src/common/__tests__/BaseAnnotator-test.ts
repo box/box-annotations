@@ -130,10 +130,10 @@ describe('BaseAnnotator', () => {
     });
 
     describe('setVisibility()', () => {
-        test.each([true, false])('should dispatch setVisibilityAction with visibility %p', visibility => {
+        test.each([true, false])('should hide/show annotations if visibility is %p', visibility => {
+            annotator.rootEl = defaults.container;
             annotator.setVisibility(visibility);
-            expect(annotator.store.dispatch).toBeCalled();
-            expect(store.setVisibilityAction).toBeCalledWith(visibility);
+            expect(annotator.rootEl.classList.contains('is-hidden')).toEqual(!visibility);
         });
     });
 
