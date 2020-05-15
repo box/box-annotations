@@ -42,13 +42,13 @@ describe('store/annotations/reducer', () => {
         });
     });
 
-    describe('deleteActiveAnnotationAction', () => {
+    describe('deleteAnnotationAction', () => {
         test('should delete an annotation from the store', () => {
             const payload = 'test1';
             const newState = reducer(state, deleteAnnotationAction(payload));
 
             expect(newState.allIds).not.toContain(payload);
-            expect(newState.byId.anno_1).toBe(undefined);
+            expect(newState.byId.test1).toBe(undefined);
         });
 
         test('should set activeId to null if deleted annotation is active', () => {

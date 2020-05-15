@@ -20,9 +20,7 @@ const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder 
         .addCase(createAnnotationAction.fulfilled, (state, { payload: { id } }) => {
             state.push(id);
         })
-        .addCase(deleteAnnotationAction, (state, { payload: id }) => {
-            return state.filter(annotationId => annotationId !== id);
-        })
+        .addCase(deleteAnnotationAction, (state, { payload: id }) => state.filter(annotationId => annotationId !== id))
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(({ id }) => state.indexOf(id) === -1 && state.push(id));
         }),

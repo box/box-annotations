@@ -88,13 +88,13 @@ describe('BaseAnnotator', () => {
             expect(annotator.rootEl.classList).not.toContain('ba');
         });
 
-        test('should remove up event handlers', () => {
+        test('should remove proper event handlers', () => {
             annotator.removeListener = jest.fn();
 
             annotator.destroy();
 
             expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, annotator.setActiveAnnotationId);
-            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_DELETE, annotator.deleteAnnotation);
+            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, annotator.deleteAnnotation);
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, annotator.setVisibility);
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, annotator.handleScale);
         });

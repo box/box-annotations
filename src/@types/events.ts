@@ -1,6 +1,6 @@
 enum Event {
     ANNOTATION_CREATE = 'annotations_create',
-    ANNOTATION_DELETE = 'annotations_delete',
+    ANNOTATION_REMOVE = 'annotations_remove',
     ACTIVE_CHANGE = 'annotations_active_change',
     ACTIVE_SET = 'annotations_active_set',
     VISIBLE_SET = 'annotations_visible_set',
