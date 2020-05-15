@@ -3,6 +3,7 @@ import * as store from '../../store';
 import BaseAnnotator from '../BaseAnnotator';
 import eventManager from '../EventManager';
 import { ANNOTATOR_EVENT } from '../../constants';
+import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
 import APIFactory from '../../api';
 
@@ -10,6 +11,7 @@ jest.mock('../EventManager');
 jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
+    deleteAnnotationAction: jest.fn(),
     fetchAnnotationsAction: jest.fn(),
     fetchCollaboratorsAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
@@ -85,6 +87,17 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.rootEl.classList).not.toContain('ba');
         });
+
+        test('should remove up event handlers', () => {
+            annotator.removeListener = jest.fn();
+
+            annotator.destroy();
+
+            expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, annotator.setActiveAnnotationId);
+            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_DELETE, annotator.deleteAnnotation);
+            expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, annotator.setVisibility);
+            expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, annotator.handleScale);
+        });
     });
 
     describe('handleScale', () => {
@@ -142,6 +155,16 @@ describe('BaseAnnotator', () => {
             annotator.setActiveAnnotationId(mode);
             expect(annotator.store.dispatch).toBeCalled();
             expect(store.setActiveAnnotationIdAction).toBeCalledWith(mode);
+        });
+    });
+
+    describe('deleteAnnotation', () => {
+        test('should dispatch deleteActiveAnnotationAction', () => {
+            const id = '123';
+            annotator.deleteAnnotation(id);
+
+            expect(annotator.store.dispatch).toBeCalled();
+            expect(store.deleteAnnotationAction).toBeCalledWith(id);
         });
     });
 

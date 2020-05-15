@@ -1,18 +1,27 @@
 import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import { AnnotationsState } from './types';
-import { createAnnotationAction, fetchAnnotationsAction, setActiveAnnotationIdAction } from './actions';
+import {
+    createAnnotationAction,
+    deleteAnnotationAction,
+    fetchAnnotationsAction,
+    setActiveAnnotationIdAction,
+} from './actions';
 
 const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
     builder
-        .addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId)
         /* Preview will set the active ID with a an event which will trigger the url change */
-        .addCase(createAnnotationAction.fulfilled, () => null),
+        .addCase(createAnnotationAction.fulfilled, () => null)
+        .addCase(deleteAnnotationAction, (state, { payload: id }) => (state === id ? null : state))
+        .addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId),
 );
 
 const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder =>
     builder
         .addCase(createAnnotationAction.fulfilled, (state, { payload: { id } }) => {
             state.push(id);
+        })
+        .addCase(deleteAnnotationAction, (state, { payload: id }) => {
+            return state.filter(annotationId => annotationId !== id);
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(({ id }) => state.indexOf(id) === -1 && state.push(id));
@@ -23,6 +32,9 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
     builder
         .addCase(createAnnotationAction.fulfilled, (state, { payload }) => {
             state[payload.id] = payload;
+        })
+        .addCase(deleteAnnotationAction, (state, { payload: id }) => {
+            delete state[id];
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(annotation => {

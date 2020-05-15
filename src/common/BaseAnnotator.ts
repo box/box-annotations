@@ -66,6 +66,7 @@ export default class BaseAnnotator {
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
+        this.addListener(Event.ANNOTATION_DELETE, this.deleteAnnotation);
         this.addListener(Event.VISIBLE_SET, this.setVisibility);
 
         // Load any required data at startup
@@ -79,6 +80,7 @@ export default class BaseAnnotator {
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
+        this.removeListener(Event.ANNOTATION_DELETE, this.deleteAnnotation);
         this.removeListener(Event.VISIBLE_SET, this.setVisibility);
     }
 
@@ -110,6 +112,11 @@ export default class BaseAnnotator {
 
         this.rootEl.classList.add('ba');
     }
+
+    deleteAnnotation = (annotationId: string): void => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.store.dispatch<any>(store.deleteAnnotationAction(annotationId));
+    };
 
     scrollToAnnotation(): void {
         // Called by box-content-preview
