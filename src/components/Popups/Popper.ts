@@ -4,6 +4,7 @@ import unionBy from 'lodash/unionBy';
 
 export type Instance = popper.Instance;
 export type Options = popper.Options;
+export type State = popper.State;
 export type VirtualElement = popper.VirtualElement;
 
 export type PopupReference = Element | VirtualElement;

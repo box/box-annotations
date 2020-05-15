@@ -6,7 +6,7 @@ import { createStore } from '../../../../store';
 
 jest.mock('../ReplyField');
 
-describe('components/Popups/ReplyFieldContainer', () => {
+describe('components/Popups/ReplyField/ReplyFieldContainer', () => {
     const store = createStore({
         creator: {
             cursor: 0,
