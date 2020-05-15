@@ -44,5 +44,5 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
     },
 );
 
-export const deleteAnnotationAction = createAction<string>('DELETE_ANNOTATION');
+export const removeAnnotationAction = createAction<string>('DELETE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');

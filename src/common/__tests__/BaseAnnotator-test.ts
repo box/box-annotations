@@ -11,7 +11,7 @@ jest.mock('../EventManager');
 jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
-    deleteAnnotationAction: jest.fn(),
+    removeAnnotationAction: jest.fn(),
     fetchAnnotationsAction: jest.fn(),
     fetchCollaboratorsAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
@@ -94,7 +94,7 @@ describe('BaseAnnotator', () => {
             annotator.destroy();
 
             expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, annotator.setActiveAnnotationId);
-            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, annotator.deleteAnnotation);
+            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, annotator.removeAnnotation);
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, annotator.setVisibility);
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, annotator.handleScale);
         });
@@ -158,13 +158,13 @@ describe('BaseAnnotator', () => {
         });
     });
 
-    describe('deleteAnnotation', () => {
+    describe('removeAnnotation', () => {
         test('should dispatch deleteActiveAnnotationAction', () => {
             const id = '123';
-            annotator.deleteAnnotation(id);
+            annotator.removeAnnotation(id);
 
             expect(annotator.store.dispatch).toBeCalled();
-            expect(store.deleteAnnotationAction).toBeCalledWith(id);
+            expect(store.removeAnnotationAction).toBeCalledWith(id);
         });
     });
 
