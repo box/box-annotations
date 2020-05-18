@@ -54,6 +54,7 @@ export default class BaseAnnotator {
             options: {
                 fileId: file.id,
                 fileVersionId: file.file_version.id,
+                permissions: file.permissions,
             },
         };
 

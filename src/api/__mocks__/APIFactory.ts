@@ -6,8 +6,8 @@ export const annotations = [
 
 export default jest.fn(() => ({
     getAnnotationsAPI: jest.fn(() => ({
-        createAnnotation: jest.fn((fileId, fileVersionId, payload, resolve) => resolve(annotations[0])),
-        getAnnotations: jest.fn((fileId, fileVersionId, resolve) =>
+        createAnnotation: jest.fn((fileId, fileVersionId, payload, permissions, resolve) => resolve(annotations[0])),
+        getAnnotations: jest.fn((fileId, fileVersionId, permissions, resolve) =>
             resolve({ entries: annotations, limit: 1000, next_marker: null }),
         ),
         destroy: jest.fn(),

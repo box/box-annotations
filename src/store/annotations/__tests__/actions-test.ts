@@ -11,6 +11,10 @@ describe('store/annotations/actions', () => {
         options: {
             fileId: '12345',
             fileVersionId: '67890',
+            permissions: {
+                can_create_annotations: true,
+                can_view_annotations: true,
+            },
         },
     });
 
