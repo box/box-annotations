@@ -126,7 +126,7 @@ describe('RegionAnnotations', () => {
             const list = wrapper.find(RegionList);
 
             expect(list.hasClass('ba-RegionAnnotations-list')).toBe(true);
-            expect(list.prop('annotations').length).toBe(3);
+            expect(list.prop('annotations').length).toBe(annotations.length);
         });
 
         test('should render a RegionCreator if in creation mode', () => {

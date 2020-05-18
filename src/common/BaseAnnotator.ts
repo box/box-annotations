@@ -1,7 +1,7 @@
 import { IntlShape } from 'react-intl';
 import * as store from '../store';
 import API from '../api';
-import eventManager from './EventManager';
+import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
@@ -34,7 +34,7 @@ export type Options = {
     token: string;
 };
 
-export default class BaseAnnotator {
+export default class BaseAnnotator extends EventEmitter {
     container: Container;
 
     intl: IntlShape;
@@ -46,10 +46,11 @@ export default class BaseAnnotator {
     store: store.AppStore;
 
     constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
-        const activeId = fileOptions?.[file.id]?.annotations?.activeId ?? null;
+        super();
+
         const initialState = {
             annotations: {
-                activeId,
+                activeId: fileOptions?.[file.id]?.annotations?.activeId ?? null,
             },
             options: {
                 fileId: file.id,
@@ -66,43 +67,26 @@ export default class BaseAnnotator {
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(LegacyEvent.SCALE, this.handleScale);
-        this.addListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
-        this.addListener(Event.ANNOTATION_REMOVE, this.removeAnnotation);
-        this.addListener(Event.VISIBLE_SET, this.setVisibility);
+        this.addListener(Event.ACTIVE_SET, this.handleSetActive);
+        this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
+        this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
 
         // Load any required data at startup
         this.hydrate();
     }
 
-    destroy(): void {
+    public destroy(): void {
         if (this.rootEl) {
             this.rootEl.classList.remove('ba');
         }
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
-        this.removeListener(Event.ACTIVE_SET, this.setActiveAnnotationId);
-        this.removeListener(Event.ANNOTATION_REMOVE, this.removeAnnotation);
-        this.removeListener(Event.VISIBLE_SET, this.setVisibility);
+        this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
+        this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
+        this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
     }
 
-    getElement(selector: HTMLElement | string): HTMLElement | null {
-        return typeof selector === 'string' ? document.querySelector(selector) : selector;
-    }
-
-    handleScale = ({ scale }: { scale: number }): void => {
-        this.init(scale);
-    };
-
-    hydrate(): void {
-        // Redux dispatch method signature doesn't seem to like async actions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.store.dispatch<any>(store.fetchAnnotationsAction());
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.store.dispatch<any>(store.fetchCollaboratorsAction());
-    }
-
-    // Called by box-content-preview
-    init(scale: number): void {
+    public init(scale: number): void {
         this.rootEl = this.getElement(this.container);
         this.scale = scale;
 
@@ -114,19 +98,21 @@ export default class BaseAnnotator {
         this.rootEl.classList.add('ba');
     }
 
-    removeAnnotation = (annotationId: string): void => {
+    public removeAnnotation = (annotationId: string): void => {
         this.store.dispatch(store.removeAnnotationAction(annotationId));
     };
 
-    scrollToAnnotation(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public scrollToAnnotation(annotationId: string | null): void {
         // Called by box-content-preview
     }
 
-    setActiveAnnotationId = (annotationId: string | null): void => {
+    public setActiveId(annotationId: string | null): void {
         this.store.dispatch(store.setActiveAnnotationIdAction(annotationId));
-    };
+        this.scrollToAnnotation(annotationId); // TODO: Require parent to call separately
+    }
 
-    setVisibility = (visibility: boolean): void => {
+    public setVisibility(visibility: boolean): void {
         if (!this.rootEl) {
             return;
         }
@@ -135,26 +121,35 @@ export default class BaseAnnotator {
         } else {
             this.rootEl.classList.add('is-hidden');
         }
-    };
+    }
 
-    toggleAnnotationMode(mode: store.Mode): void {
-        // Called by box-content-preview
+    public toggleAnnotationMode(mode: store.Mode): void {
         this.store.dispatch(store.toggleAnnotationModeAction(mode));
     }
 
-    addListener(event: string | symbol, listener: (...args: any[]) => void): void {
-        eventManager.addListener(event, listener);
+    protected getElement(selector: HTMLElement | string): HTMLElement | null {
+        return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
-    removeAllListeners(): void {
-        eventManager.removeAllListeners();
-    }
+    protected handleRemove = (annotationId: string): void => {
+        this.removeAnnotation(annotationId);
+    };
 
-    removeListener(event: string | symbol, listener: (...args: any[]) => void): void {
-        eventManager.removeListener(event, listener);
-    }
+    protected handleScale = ({ scale }: { scale: number }): void => {
+        this.init(scale);
+    };
 
-    emit(event: string | symbol, ...args: any[]): void {
-        eventManager.emit(event, ...args);
+    protected handleSetActive = (annotationId: string | null): void => {
+        this.setActiveId(annotationId);
+    };
+
+    protected handleSetVisible = (visibility: boolean): void => {
+        this.setVisibility(visibility);
+    };
+
+    protected hydrate(): void {
+        // Redux dispatch method signature doesn't seem to like async actions
+        this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
+        this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 }

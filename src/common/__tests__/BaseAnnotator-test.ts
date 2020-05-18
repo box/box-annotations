@@ -1,13 +1,11 @@
-import noop from 'lodash/noop';
 import * as store from '../../store';
 import BaseAnnotator from '../BaseAnnotator';
-import eventManager from '../EventManager';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
 import APIFactory from '../../api';
 
-jest.mock('../EventManager');
+jest.mock('../EventEmitter');
 jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
@@ -105,19 +103,10 @@ describe('BaseAnnotator', () => {
 
             annotator.destroy();
 
-            expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, annotator.setActiveAnnotationId);
-            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, annotator.removeAnnotation);
-            expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, annotator.setVisibility);
-            expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, annotator.handleScale);
-        });
-    });
-
-    describe('handleScale', () => {
-        test('should call init with the new scale', () => {
-            annotator.init = jest.fn();
-            annotator.handleScale({ scale: 5 });
-
-            expect(annotator.init).toHaveBeenCalledWith(5);
+            expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
         });
     });
 
@@ -145,15 +134,6 @@ describe('BaseAnnotator', () => {
         });
     });
 
-    describe('toggleAnnotationMode()', () => {
-        test('should dispatch toggleAnnotationModeAction with specified mode', () => {
-            annotator.toggleAnnotationMode('region' as Mode);
-
-            expect(annotator.store.dispatch).toBeCalled();
-            expect(store.toggleAnnotationModeAction).toBeCalledWith('region');
-        });
-    });
-
     describe('setVisibility()', () => {
         test.each([true, false])('should hide/show annotations if visibility is %p', visibility => {
             annotator.rootEl = defaults.container;
@@ -163,10 +143,10 @@ describe('BaseAnnotator', () => {
     });
 
     describe('setActiveAnnotationId()', () => {
-        test.each(['none', 'region'])('should dispatch setActiveAnnotationIdAction with mode %s', mode => {
-            annotator.setActiveAnnotationId(mode);
+        test.each([null, '12345'])('should dispatch setActiveAnnotationIdAction with id %s', id => {
+            annotator.setActiveId(id);
             expect(annotator.store.dispatch).toBeCalled();
-            expect(store.setActiveAnnotationIdAction).toBeCalledWith(mode);
+            expect(store.setActiveAnnotationIdAction).toBeCalledWith(id);
         });
     });
 
@@ -180,34 +160,12 @@ describe('BaseAnnotator', () => {
         });
     });
 
-    describe('eventing', () => {
-        describe('addListener()', () => {
-            test('should proxy addListener to eventManager', () => {
-                annotator.addListener('foo', noop);
-                expect(eventManager.addListener).toHaveBeenCalledWith('foo', noop);
-            });
-        });
+    describe('toggleAnnotationMode()', () => {
+        test('should dispatch toggleAnnotationModeAction with specified mode', () => {
+            annotator.toggleAnnotationMode('region' as Mode);
 
-        describe('removeAllListeners()', () => {
-            test('should proxy removeAllListeners to eventManager', () => {
-                annotator.removeAllListeners();
-                expect(eventManager.removeAllListeners).toHaveBeenCalled();
-            });
-        });
-
-        describe('removeListener()', () => {
-            test('should proxy removeListener to eventManager', () => {
-                annotator.removeListener('foo', noop);
-                expect(eventManager.removeListener).toHaveBeenCalledWith('foo', noop);
-            });
-        });
-
-        describe('emit()', () => {
-            test('should proxy emit to eventManager', () => {
-                const data = { hello: 'world' };
-                annotator.emit('foo', data);
-                expect(eventManager.emit).toHaveBeenCalledWith('foo', data);
-            });
+            expect(annotator.store.dispatch).toBeCalled();
+            expect(store.toggleAnnotationModeAction).toBeCalledWith('region');
         });
     });
 });

@@ -1,8 +1,11 @@
 import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
-import { RegionManager } from '../region';
+import { getAnnotation } from '../store/annotations';
+import { centerRegion, isRegion, RegionManager } from '../region';
 import './DocumentAnnotator.scss';
+
+export const SCROLL_THRESHOLD = 1000; // pixels
 
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
@@ -34,9 +37,14 @@ export default class DocumentAnnotator extends BaseAnnotator {
     }
 
     getPageReference(pageEl: HTMLElement): HTMLElement {
+        const annotationsLayerEl = pageEl.querySelector('.annotationLayer') as HTMLElement;
         const canvasLayerEl = pageEl.querySelector('.canvasWrapper') as HTMLElement;
         const textLayerEl = pageEl.querySelector('.textLayer') as HTMLElement;
-        return textLayerEl || canvasLayerEl; // Use the optional text layer if it's available
+        return annotationsLayerEl || textLayerEl || canvasLayerEl; // Use the optional layers if they're available
+    }
+
+    getPage(pageNumber: number): HTMLElement | undefined {
+        return this.getPages().find(pageEl => pageNumber === this.getPageNumber(pageEl));
     }
 
     getPages(): HTMLElement[] {
@@ -77,5 +85,51 @@ export default class DocumentAnnotator extends BaseAnnotator {
         );
 
         this.managers.set(pageNumber, pageManagers);
+    }
+
+    scrollToAnnotation(annotationId: string | null): void {
+        if (!annotationId) {
+            return;
+        }
+
+        const annotation = getAnnotation(this.store.getState(), annotationId);
+        const annotationPage = annotation?.target.location.value;
+
+        if (!annotation || !annotationPage) {
+            return;
+        }
+
+        if (isRegion(annotation)) {
+            this.scrollToLocation(annotationPage, centerRegion(annotation.target.shape));
+        }
+    }
+
+    scrollToLocation(page = 1, { x: offsetX, y: offsetY } = { x: 0, y: 0 }): void {
+        const pageEl = this.getPage(page);
+
+        if (!this.annotatedEl || !pageEl) {
+            return;
+        }
+
+        const canSmoothScroll = 'scrollBehavior' in this.annotatedEl.style;
+        const parentCenterX = this.annotatedEl.clientWidth / 2;
+        const parentCenterY = this.annotatedEl.clientHeight / 2;
+        const offsetCenterX = Math.round(offsetX * this.scale);
+        const offsetCenterY = Math.round(offsetY * this.scale);
+        const offsetScrollLeft = pageEl.offsetLeft - parentCenterX + offsetCenterX;
+        const offsetScrollTop = pageEl.offsetTop - parentCenterY + offsetCenterY;
+        const scrollLeft = Math.max(0, Math.min(offsetScrollLeft, this.annotatedEl.scrollWidth));
+        const scrollTop = Math.max(0, Math.min(offsetScrollTop, this.annotatedEl.scrollHeight));
+
+        if (canSmoothScroll && Math.abs(this.annotatedEl.scrollTop - scrollTop) < SCROLL_THRESHOLD) {
+            this.annotatedEl.scrollTo({
+                behavior: 'smooth',
+                left: scrollLeft,
+                top: scrollTop,
+            });
+        } else {
+            this.annotatedEl.scrollLeft = scrollLeft;
+            this.annotatedEl.scrollTop = scrollTop;
+        }
     }
 }

@@ -1,9 +1,3 @@
-export const annotations = [
-    { id: 'anno_1', target: { shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' }, type: 'region' } },
-    { id: 'anno_2', target: { shape: { height: 20, width: 20, x: 20, y: 20, type: 'rect' }, type: 'region' } },
-    { id: 'anno_3', target: { shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' }, type: 'region' } },
-];
-
 export const scale = 1;
 
 export const rect = {
@@ -44,3 +38,38 @@ export const annotation = {
     target,
     type: 'annotation' as const,
 };
+
+export const annotations = [
+    {
+        id: 'anno_1',
+        target: {
+            location: { type: 'page', value: 1 },
+            shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' },
+            type: 'region',
+        },
+    },
+    {
+        id: 'anno_2',
+        target: {
+            location: { type: 'page', value: 2 },
+            shape: { height: 20, width: 20, x: 20, y: 20, type: 'rect' },
+            type: 'region',
+        },
+    },
+    {
+        id: 'anno_3',
+        target: {
+            location: { type: 'page', value: 3 },
+            shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' },
+            type: 'region',
+        },
+    },
+    {
+        id: 'anno_4',
+        target: {
+            location: { type: 'page', value: 10 },
+            shape: { height: 100, width: 100, x: 100, y: 100, type: 'rect' },
+            type: 'region',
+        },
+    },
+];
