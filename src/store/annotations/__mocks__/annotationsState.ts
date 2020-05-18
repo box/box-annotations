@@ -1,6 +1,7 @@
 import { Annotation } from '../../../@types';
+import { AnnotationsState } from '../types';
 
-export default {
+const annotationState: AnnotationsState = {
     activeId: null,
     allIds: ['test1', 'test2', 'test3'],
     byId: {
@@ -9,3 +10,5 @@ export default {
         test3: { id: 'test3', target: { location: { value: 2 } } } as Annotation,
     },
 };
+
+export default annotationState;

@@ -2,8 +2,8 @@ import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import { AnnotationsState } from './types';
 import {
     createAnnotationAction,
-    removeAnnotationAction,
     fetchAnnotationsAction,
+    removeAnnotationAction,
     setActiveAnnotationIdAction,
 } from './actions';
 
