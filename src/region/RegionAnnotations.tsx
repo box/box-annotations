@@ -118,7 +118,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {isCreating && staged && (
                     <svg className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setRectRef} shape={scaleShape(staged.shape, scale)} />
+                        <RegionRect ref={this.setRectRef} {...scaleShape(staged.shape, scale)} />
                     </svg>
                 )}
 

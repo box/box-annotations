@@ -1,19 +1,17 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Rect } from '../@types';
 import './RegionRect.scss';
 
 type Props = {
     className?: string;
-    shape?: Rect | null;
+    height?: number;
+    width?: number;
+    x?: number;
+    y?: number;
 };
 
-export function RegionRect({ className, shape }: Props, ref: React.Ref<SVGRectElement>): JSX.Element | null {
-    if (!shape) {
-        return null;
-    }
-
-    const { height, width, x, y } = shape;
+export function RegionRect(props: Props, ref: React.Ref<SVGRectElement>): JSX.Element {
+    const { className, height = 0, width = 0, x = 0, y = 0 } = props;
 
     return (
         <rect
