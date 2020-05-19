@@ -22,7 +22,7 @@
         "@reduxjs/toolkit": "^1.3.5",
         "@types/react-redux": "^7.1.7",
         "axios": "^0.19.2",
-        "box-ui-elements": "^12.0.0-beta.62",
+        "box-ui-elements": "^12.0.0-beta.73",
         "classnames": "^2.2.5",
         "draft-js": "0.10.5",
         "lodash": "^4.17.15",
