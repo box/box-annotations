@@ -45,31 +45,14 @@ export default class ReplyField extends React.Component<Props, State> {
         value: '',
     };
 
-    editorRef: React.MutableRefObject<Editor | null> = React.createRef<Editor | null>();
-
     constructor(props: Props) {
         super(props);
 
-        const { value, cursorPosition } = props;
-        const contentState = ContentState.createFromText(value as string);
-        let prevEditorState = withMentionDecorator(EditorState.createWithContent(contentState));
-        let selectionState = prevEditorState.getSelection();
-
-        selectionState = selectionState.merge({
-            anchorOffset: cursorPosition,
-            focusOffset: cursorPosition,
-        }) as SelectionState;
-        prevEditorState = EditorState.forceSelection(prevEditorState, selectionState);
-
         this.state = {
             activeItemIndex: 0,
-            editorState: prevEditorState,
+            editorState: this.restoreEditor(),
             popupReference: null,
         };
-    }
-
-    componentDidMount(): void {
-        this.focusEditor();
     }
 
     componentWillUnmount(): void {
@@ -138,13 +121,6 @@ export default class ReplyField extends React.Component<Props, State> {
         const activeMention = getActiveMentionForEditorState(editorState);
 
         this.setState({ popupReference: activeMention ? this.getVirtualElement(activeMention) : null });
-    };
-
-    focusEditor = (): void => {
-        const { current: editor } = this.editorRef;
-        if (editor) {
-            editor.focus();
-        }
     };
 
     saveCursorPosition = (): void => {
@@ -230,6 +206,22 @@ export default class ReplyField extends React.Component<Props, State> {
         this.setPopupListActiveItem(activeItemIndex === length - 1 ? 0 : activeItemIndex + 1);
     };
 
+    restoreEditor(): EditorState {
+        const { cursorPosition: prevCursorPosition, value } = this.props;
+        const contentState = ContentState.createFromText(value as string);
+        const prevEditorState = withMentionDecorator(EditorState.createWithContent(contentState));
+        const cursorPosition = value ? prevCursorPosition : 0;
+
+        return EditorState.forceSelection(
+            prevEditorState,
+            prevEditorState.getSelection().merge({
+                anchorOffset: cursorPosition,
+                focusOffset: cursorPosition,
+                hasFocus: true,
+            }) as SelectionState,
+        );
+    }
+
     render(): JSX.Element {
         const { className, isDisabled, itemRowAs, placeholder, ...rest } = this.props;
         const { activeItemIndex, editorState, popupReference } = this.state;
@@ -238,7 +230,6 @@ export default class ReplyField extends React.Component<Props, State> {
             <div className={classnames(className, 'ba-ReplyField')}>
                 <Editor
                     {...rest}
-                    ref={this.editorRef}
                     editorState={editorState}
                     handleReturn={this.handleReturn}
                     onChange={this.handleChange}

@@ -42,6 +42,24 @@ describe('components/Popups/ReplyField', () => {
     const getWrapper = (props = {}): ShallowWrapper<Props, State, ReplyField> =>
         shallow(<ReplyField {...defaults} {...props} />);
 
+    describe('restoreEditor()', () => {
+        test('should restore value and cursor position', () => {
+            const wrapper = getWrapper({ cursorPosition: 1, value: 'test' });
+
+            const editorState = wrapper.instance().restoreEditor();
+
+            expect(editorState.getCurrentContent().getPlainText()).toEqual('test');
+            expect(editorState.getSelection().getFocusOffset()).toEqual(1);
+        });
+
+        test('should reset cursor position if value is empty', () => {
+            const wrapper = getWrapper({ cursorPosition: 1 });
+            const editorState = wrapper.instance().restoreEditor();
+
+            expect(editorState.getSelection().getFocusOffset()).toEqual(0);
+        });
+    });
+
     describe('render()', () => {
         test('should render the editor with right props', () => {
             const wrapper = getWrapper();
@@ -235,22 +253,6 @@ describe('components/Popups/ReplyField', () => {
             instance.handleSelect(0);
 
             expect(handleChangeSpy).toBeCalledWith(mockEditorState);
-        });
-    });
-
-    describe('focusEditor()', () => {
-        test('should call editor ref focus', () => {
-            const wrapper = getWrapper();
-            const instance = wrapper.instance();
-
-            const editorRef = ({
-                focus: jest.fn(),
-            } as unknown) as Editor;
-
-            instance.editorRef = { current: editorRef };
-            instance.focusEditor();
-
-            expect(editorRef.focus).toBeCalled();
         });
     });
 
