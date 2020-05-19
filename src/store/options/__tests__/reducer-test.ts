@@ -1,5 +1,5 @@
 import reducer from '../reducer';
-import { setFileIdAction, setFileVersionIdAction } from '../actions';
+import { setFileIdAction, setFileVersionIdAction, setPermissionsAction } from '../actions';
 
 describe('store/common/reducer', () => {
     describe('setFileIdAction', () => {
@@ -13,6 +13,13 @@ describe('store/common/reducer', () => {
         test('should set the file version id', () => {
             const newState = reducer(undefined, setFileVersionIdAction('12345'));
             expect(newState.fileVersionId).toEqual('12345');
+        });
+    });
+
+    describe('setPermissionsAction', () => {
+        test('should set the permissions', () => {
+            const newState = reducer(undefined, setPermissionsAction({ can_create_annotations: true }));
+            expect(newState.permissions).toEqual({ can_create_annotations: true });
         });
     });
 });

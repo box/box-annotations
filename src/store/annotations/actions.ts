@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { Annotation, NewAnnotation } from '../../@types';
 import { APICollection } from '../../api';
 import { AppThunkAPI } from '../types';
-import { getFileId, getFileVersionId } from '../options';
+import { getFileId, getFileVersionId, getPermissions } from '../options';
 
 export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation, AppThunkAPI>(
     'CREATE_ANNOTATION',
@@ -12,13 +12,14 @@ export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation
         const state = getState();
         const fileId = getFileId(state);
         const fileVersionId = getFileVersionId(state);
+        const permissions = getPermissions(state);
 
         signal.addEventListener('abort', () => {
             client.destroy();
         });
 
         return new Promise<Annotation>((resolve, reject) => {
-            client.createAnnotation(fileId, fileVersionId, newAnnotation, resolve, reject);
+            client.createAnnotation(fileId, fileVersionId, newAnnotation, permissions, resolve, reject);
         });
     },
 );
@@ -31,6 +32,7 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
         const state = getState();
         const fileId = getFileId(state);
         const fileVersionId = getFileVersionId(state);
+        const permissions = getPermissions(state);
 
         // Destroy the client if action's abort method is invoked
         signal.addEventListener('abort', () => {
@@ -39,7 +41,7 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
 
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Annotation>>((resolve, reject) => {
-            client.getAnnotations(fileId, fileVersionId, resolve, reject, 1000, false);
+            client.getAnnotations(fileId, fileVersionId, permissions, resolve, reject, 1000, false);
         });
     },
 );

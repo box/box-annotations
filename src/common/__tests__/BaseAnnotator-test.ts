@@ -26,6 +26,8 @@ describe('BaseAnnotator', () => {
             file_version: { id: '98765' },
             permissions: {
                 can_annotate: true,
+                can_create_annotations: true,
+                can_view_annotations: true,
                 can_view_annotations_all: true,
                 can_view_annotations_self: true,
             },
@@ -67,7 +69,17 @@ describe('BaseAnnotator', () => {
                 expect(store.createStore).toHaveBeenLastCalledWith(
                     {
                         annotations: { activeId: expectedActiveId },
-                        options: { fileId: '12345', fileVersionId: '98765' },
+                        options: {
+                            fileId: '12345',
+                            fileVersionId: '98765',
+                            permissions: {
+                                can_annotate: true,
+                                can_create_annotations: true,
+                                can_view_annotations: true,
+                                can_view_annotations_all: true,
+                                can_view_annotations_self: true,
+                            },
+                        },
                     },
                     { api: expect.any(APIFactory) },
                 );
