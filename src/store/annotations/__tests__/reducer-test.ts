@@ -2,7 +2,12 @@ import reducer from '../reducer';
 import state from '../__mocks__/annotationsState';
 import { Annotation, NewAnnotation } from '../../../@types';
 import { APICollection } from '../../../api';
-import { createAnnotationAction, fetchAnnotationsAction, setActiveAnnotationIdAction } from '../actions';
+import {
+    createAnnotationAction,
+    fetchAnnotationsAction,
+    removeAnnotationAction,
+    setActiveAnnotationIdAction,
+} from '../actions';
 
 describe('store/annotations/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -34,6 +39,25 @@ describe('store/annotations/reducer', () => {
             const newState = reducer(state, setActiveAnnotationIdAction(payload));
 
             expect(newState.activeId).toBe(payload);
+        });
+    });
+
+    describe('removeAnnotationAction', () => {
+        test('should remove an annotation from the store', () => {
+            const payload = 'test1';
+            const newState = reducer(state, removeAnnotationAction(payload));
+
+            expect(newState.allIds).not.toContain(payload);
+            expect(newState.byId.test1).toBe(undefined);
+        });
+
+        test('should set activeId to null if deleted annotation is active', () => {
+            const payload = 'test1';
+            state.activeId = 'test1';
+
+            const newState = reducer(state, removeAnnotationAction(payload));
+
+            expect(newState.activeId).toBe(null);
         });
     });
 });
