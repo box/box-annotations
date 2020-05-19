@@ -2,16 +2,13 @@ import * as React from 'react';
 import classnames from 'classnames';
 import {
     addMention,
-    createMentionSelectorState,
     getActiveMentionForEditorState,
-    getFormattedCommentText,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import fuzzySearch from 'box-ui-elements/es/utils/fuzzySearch';
-import { DraftHandleValue, Editor, EditorState, SelectionState } from 'draft-js';
-import PopupList from './PopupList';
-import withMentionDecorator from './withMentionDecorator';
-import { Collaborator } from '../../../@types';
-import { VirtualElement } from '../Popper';
+import { DraftHandleValue, Editor, EditorState } from 'draft-js';
+import PopupList from '../Popups/PopupList';
+import { Collaborator } from '../../@types';
+import { VirtualElement } from '../Popups/Popper';
 import './ReplyField.scss';
 
 export type Mention = {
@@ -26,35 +23,32 @@ export type Props = {
     className?: string;
     collaborators: Collaborator[];
     cursorPosition: number;
+    editorState: EditorState;
     isDisabled?: boolean;
     itemRowAs?: JSX.Element;
-    onChange: (text?: string) => void;
-    onClick: (event: React.SyntheticEvent) => void;
+    onChange: (editorState: EditorState) => void;
     placeholder?: string;
     setCursorPosition: (cursorPosition: number) => void;
-    value?: string;
 };
 
 export type State = {
     activeItemIndex: number;
-    editorState: EditorState;
     popupReference: VirtualElement | null;
 };
 
 export default class ReplyField extends React.Component<Props, State> {
     static defaultProps = {
         isDisabled: false,
-        value: '',
     };
 
-    constructor(props: Props) {
-        super(props);
+    state = { activeItemIndex: 0, popupReference: null };
 
-        this.state = {
-            activeItemIndex: 0,
-            editorState: this.restoreEditor(),
-            popupReference: null,
-        };
+    componentDidUpdate({ editorState: prevEditorState }: Props): void {
+        const { editorState } = this.props;
+
+        if (prevEditorState !== editorState) {
+            this.updatePopupReference();
+        }
     }
 
     componentWillUnmount(): void {
@@ -62,8 +56,7 @@ export default class ReplyField extends React.Component<Props, State> {
     }
 
     getCollaborators = (): Collaborator[] => {
-        const { collaborators } = this.props;
-        const { editorState } = this.state;
+        const { collaborators, editorState } = this.props;
 
         const activeMention = getActiveMentionForEditorState(editorState);
         if (!activeMention) {
@@ -118,7 +111,7 @@ export default class ReplyField extends React.Component<Props, State> {
     };
 
     updatePopupReference = (): void => {
-        const { editorState } = this.state;
+        const { editorState } = this.props;
 
         const activeMention = getActiveMentionForEditorState(editorState);
 
@@ -126,8 +119,7 @@ export default class ReplyField extends React.Component<Props, State> {
     };
 
     saveCursorPosition = (): void => {
-        const { setCursorPosition } = this.props;
-        const { editorState } = this.state;
+        const { editorState, setCursorPosition } = this.props;
 
         setCursorPosition(editorState.getSelection().getFocusOffset());
     };
@@ -142,15 +134,11 @@ export default class ReplyField extends React.Component<Props, State> {
     handleChange = (nextEditorState: EditorState): void => {
         const { onChange } = this.props;
 
-        onChange(getFormattedCommentText(nextEditorState).text);
-
-        // In order to get correct selection, getVirtualElement in this.updatePopupReference
-        // has to be called after new texts are rendered in editor
-        this.setState({ editorState: nextEditorState }, this.updatePopupReference);
+        onChange(nextEditorState);
     };
 
     handleSelect = (index: number): void => {
-        const { editorState } = this.state;
+        const { editorState } = this.props;
 
         const activeMention = getActiveMentionForEditorState(editorState);
         const collaborators = this.getCollaborators();
@@ -208,24 +196,9 @@ export default class ReplyField extends React.Component<Props, State> {
         this.setPopupListActiveItem(activeItemIndex === length - 1 ? 0 : activeItemIndex + 1);
     };
 
-    restoreEditor(): EditorState {
-        const { cursorPosition: prevCursorPosition, value } = this.props;
-        const prevEditorState = withMentionDecorator(createMentionSelectorState(value));
-        const cursorPosition = value ? prevCursorPosition : 0;
-
-        return EditorState.forceSelection(
-            prevEditorState,
-            prevEditorState.getSelection().merge({
-                anchorOffset: cursorPosition,
-                focusOffset: cursorPosition,
-                hasFocus: true,
-            }) as SelectionState,
-        );
-    }
-
     render(): JSX.Element {
-        const { className, isDisabled, itemRowAs, placeholder, ...rest } = this.props;
-        const { activeItemIndex, editorState, popupReference } = this.state;
+        const { className, editorState, isDisabled, itemRowAs, placeholder, ...rest } = this.props;
+        const { activeItemIndex, popupReference } = this.state;
 
         return (
             <div className={classnames(className, 'ba-ReplyField')}>

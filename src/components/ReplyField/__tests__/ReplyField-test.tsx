@@ -5,9 +5,9 @@ import {
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ContentState, Editor, EditorState } from 'draft-js';
-import PopupList from '../PopupList';
+import PopupList from '../../Popups/PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
-import { VirtualElement } from '../../Popper';
+import { VirtualElement } from '../../Popups/Popper';
 
 const mockMention = {
     blockID: '12345',

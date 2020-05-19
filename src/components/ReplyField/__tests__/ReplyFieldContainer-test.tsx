@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import ReplyField from '../ReplyField';
 import ReplyFieldContainer, { Props } from '../ReplyFieldContainer';
-import { createStore } from '../../../../store';
+import { createStore } from '../../../store';
 
 jest.mock('../ReplyField');
 
