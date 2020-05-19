@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import RegionRect from './RegionRect';
-import useAutoScroll from '../components/AutoScroller';
+import useAutoScroll from '../common/useAutoScroll';
 import { Rect } from '../@types';
 import './RegionCreator.scss';
 
@@ -101,11 +101,6 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
     };
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
-        const { current: regionRect } = regionRectRef;
-
-        if (!regionRect) {
-            return;
-        }
 
         positionX2Ref.current = x2;
         positionY2Ref.current = y2;
@@ -177,7 +172,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
             regionDirtyRef.current = false;
         }
 
-        return renderStep(renderRect);
+        renderStep(renderRect);
     };
 
     React.useEffect(() => {
@@ -213,6 +208,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         <svg
             ref={creatorSvgRef}
             className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
+            data-testid="ba-RegionCreator"
             {...eventHandlers}
         >
             {isDrawing && <RegionRect ref={regionRectRef} />}

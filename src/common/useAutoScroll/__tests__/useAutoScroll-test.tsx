@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import useAutoScroll from '../AutoScroller';
+import useAutoScroll from '../useAutoScroll';
 
-describe('AutoScroller', () => {
+describe('useAutoScroll', () => {
     const TestComponent = (props = {}): JSX.Element => {
         const reference = document.querySelector('#child');
 
@@ -116,8 +116,6 @@ describe('AutoScroller', () => {
 
             parent.scrollLeft = 0;
             parent.scrollTop = 0;
-
-            jest.runAllTicks();
 
             document.dispatchEvent(
                 new TouchEvent('touchmove', {
