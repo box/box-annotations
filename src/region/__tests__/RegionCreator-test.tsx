@@ -73,13 +73,6 @@ describe('RegionCreator', () => {
             expect(window.requestAnimationFrame).toHaveBeenCalled();
         });
 
-        test('should update the rendered rect when the user draws', () => {
-            const wrapper = getWrapper();
-
-            simulateDrawStart(wrapper);
-            simulateDrawMove(50, 50);
-        });
-
         test.each`
             x1      | y1      | x2      | y2      | result                                       | comment
             ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 95, width: 95, x: 5, y: 5 }}     | ${'standard dimensions'}
