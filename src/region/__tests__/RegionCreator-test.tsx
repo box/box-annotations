@@ -2,11 +2,13 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import { mockEvent } from '../__mocks__/events';
+import PopupCursor from '../../components/Popups/PopupCursor';
 import RegionCreator from '../RegionCreator';
 import RegionRect from '../RegionRect';
 import useAutoScroll from '../../common/useAutoScroll';
 
 jest.mock('../../common/useAutoScroll');
+jest.mock('../../components/Popups/PopupCursor', () => () => <div />);
 
 describe('RegionCreator', () => {
     const defaults = {
@@ -169,6 +171,22 @@ describe('RegionCreator', () => {
             expect(document.removeEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
             expect(document.removeEventListener).toHaveBeenCalledWith('mouseup', expect.any(Function));
             expect(window.cancelAnimationFrame).toHaveBeenCalled();
+        });
+
+        test('should show cursor popup when mouse over', () => {
+            const wrapper = getWrapper();
+
+            act(() => {
+                wrapper.simulate('mouseover');
+            });
+            wrapper.update();
+            expect(wrapper.exists(PopupCursor)).toBe(true);
+
+            act(() => {
+                wrapper.simulate('mouseout');
+            });
+            wrapper.update();
+            expect(wrapper.exists(PopupCursor)).toBe(false);
         });
     });
 

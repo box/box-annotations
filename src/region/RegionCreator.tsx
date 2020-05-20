@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';
 import { Rect } from '../@types';
@@ -19,6 +20,7 @@ const MOUSE_PRIMARY = 1; // Primary mouse button
 
 export default function RegionCreator({ canDraw, className, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
+    const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorSvgRef = React.useRef<SVGSVGElement | null>(null);
     const positionX1Ref = React.useRef<number | null>(null);
     const positionX2Ref = React.useRef<number | null>(null);
@@ -127,6 +129,12 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
 
         updateDraw(clientX, clientY);
     };
+    const handleMouseOut = (): void => {
+        setIsHovering(false);
+    };
+    const handleMouseOver = (): void => {
+        setIsHovering(true);
+    };
     const handleMouseUp = (): void => {
         stopDraw();
     };
@@ -149,6 +157,8 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         ? {
               onClick: handleClick,
               onMouseDown: handleMouseDown,
+              onMouseOut: handleMouseOut,
+              onMouseOver: handleMouseOver,
               onTouchCancel: handleTouchCancel,
               onTouchEnd: handleTouchEnd,
               onTouchMove: handleTouchMove,
@@ -205,13 +215,16 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
     });
 
     return (
-        <svg
-            ref={creatorSvgRef}
-            className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
-            data-testid="ba-RegionCreator"
-            {...eventHandlers}
-        >
-            {isDrawing && <RegionRect ref={regionRectRef} />}
-        </svg>
+        <>
+            <svg
+                ref={creatorSvgRef}
+                className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
+                data-testid="ba-RegionCreator"
+                {...eventHandlers}
+            >
+                {isDrawing && <RegionRect ref={regionRectRef} />}
+            </svg>
+            {isHovering && canDraw && !isDrawing && <PopupCursor />}
+        </>
     );
 }
