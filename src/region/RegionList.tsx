@@ -16,6 +16,7 @@ export type Props = {
 
 export function RegionList({ activeId, annotations, className, onSelect = noop, scale }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
+    const rootElRef = React.createRef<HTMLDivElement>();
     const sortedAnnotations = annotations.sort(({ target: targetA }, { target: targetB }) => {
         const { shape: shapeA } = targetA;
         const { shape: shapeB } = targetB;
@@ -23,15 +24,14 @@ export function RegionList({ activeId, annotations, className, onSelect = noop, 
         // Render the smallest annotations last to ensure they are always clickable
         return shapeA.height * shapeA.width > shapeB.height * shapeB.width ? -1 : 1;
     });
-    const svgRef = React.createRef<SVGSVGElement>();
 
     // Document-level event handlers for focus and pointer control
-    useOutsideEvent('click', svgRef, (): void => onSelect(null));
-    useOutsideEvent('mousedown', svgRef, (): void => setIsListening(false));
-    useOutsideEvent('mouseup', svgRef, (): void => setIsListening(true));
+    useOutsideEvent('click', rootElRef, (): void => onSelect(null));
+    useOutsideEvent('mousedown', rootElRef, (): void => setIsListening(false));
+    useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
 
     return (
-        <svg ref={svgRef} className={classNames(className, { 'is-listening': isListening })}>
+        <div ref={rootElRef} className={classNames(className, { 'is-listening': isListening })}>
             {sortedAnnotations.map(({ id, target }) => (
                 <RegionAnnotation
                     key={id}
@@ -41,7 +41,7 @@ export function RegionList({ activeId, annotations, className, onSelect = noop, 
                     shape={scaleShape(target.shape, scale)}
                 />
             ))}
-        </svg>
+        </div>
     );
 }
 

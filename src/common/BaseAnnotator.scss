@@ -20,6 +20,11 @@
     @import '~box-ui-elements/es/styles/common/forms';
     @import '~box-ui-elements/es/styles/common/buttons';
 
+    .ba-Layer {
+        @include box-sizing;
+        @include common-typography;
+    }
+
     &.is-hidden {
         .ba-Layer {
             display: none;

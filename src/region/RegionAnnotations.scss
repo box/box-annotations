@@ -6,7 +6,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .25));
 }
 
 .ba-RegionAnnotations-creator,
@@ -25,7 +24,7 @@
     pointer-events: none;
 
     &.is-listening {
-        .ba-AnnotationTarget {
+        .ba-RegionAnnotation {
             pointer-events: auto; // Delegate event control to avoid re-rendering every target on mousedown/up
         }
     }

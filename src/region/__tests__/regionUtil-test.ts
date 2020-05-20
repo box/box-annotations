@@ -1,5 +1,5 @@
 import { Rect } from '../../@types';
-import { scaleShape } from '../regionUtil';
+import { scaleShape, styleShape } from '../regionUtil';
 
 describe('regionUtil', () => {
     const getRect = (): Rect => ({
@@ -33,6 +33,22 @@ describe('regionUtil', () => {
                 x: 5,
                 y: 5,
             });
+        });
+    });
+
+    describe('styleShape()', () => {
+        test('should return styles for a shape with with border space included', () => {
+            const styles = styleShape(getRect());
+
+            expect(styles).toMatchObject({
+                height: '58px',
+                transform: 'translate(6px, 6px)',
+                width: '58px',
+            });
+        });
+
+        test('should return an empty object if the shape is not defined', () => {
+            expect(styleShape()).toEqual({});
         });
     });
 });

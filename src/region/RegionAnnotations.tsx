@@ -3,7 +3,7 @@ import * as React from 'react';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
-import RegionRect from './RegionRect';
+import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
 import { CreatorItem, CreatorStatus } from '../store/creator';
 import { scaleShape } from './regionUtil';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 type State = {
-    rectRef?: SVGRectElement;
+    rectRef?: RegionRectRef;
 };
 
 export default class RegionAnnotations extends React.PureComponent<Props, State> {
@@ -83,7 +83,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         createRegion(staged);
     };
 
-    setRectRef = (rectRef: SVGRectElement): void => {
+    setRectRef = (rectRef: RegionRectRef): void => {
         this.setState({ rectRef });
     };
 
@@ -117,9 +117,9 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {isCreating && staged && (
-                    <svg className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setRectRef} {...scaleShape(staged.shape, scale)} />
-                    </svg>
+                    <div className="ba-RegionAnnotations-target">
+                        <RegionRect ref={this.setRectRef} isActive shape={scaleShape(staged.shape, scale)} />
+                    </div>
                 )}
 
                 {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
