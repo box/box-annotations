@@ -7,6 +7,8 @@
     $popup-footer-bg: $bdl-gray-02;
 
     .ba-Popup {
+        @include common-typography;
+
         z-index: 1;
 
         // Top-facing arrows
