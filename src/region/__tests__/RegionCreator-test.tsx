@@ -2,6 +2,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import { mockEvent } from '../__mocks__/events';
+import PopupCursor from '../../components/Popups/PopupCursor';
 import RegionCreator from '../RegionCreator';
 import RegionRect from '../RegionRect';
 import useAutoScroll from '../../common/useAutoScroll';
@@ -61,6 +62,16 @@ describe('RegionCreator', () => {
             act(() => {
                 document.dispatchEvent(new MouseEvent('mouseup'));
             });
+        const simulateMouseOver = (wrapper: ReactWrapper): void => {
+            act(() => {
+                wrapper.simulate('mouseover');
+            });
+        };
+        const simulateMouseOut = (wrapper: ReactWrapper): void => {
+            act(() => {
+                wrapper.simulate('mouseout');
+            });
+        };
 
         test('should start the render loop and add all event listeners when starting', () => {
             const wrapper = getWrapper();
@@ -169,6 +180,18 @@ describe('RegionCreator', () => {
             expect(document.removeEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
             expect(document.removeEventListener).toHaveBeenCalledWith('mouseup', expect.any(Function));
             expect(window.cancelAnimationFrame).toHaveBeenCalled();
+        });
+
+        test('should show cursor popup when mouse over', () => {
+            const wrapper = getWrapper();
+
+            simulateMouseOver(wrapper);
+            wrapper.update();
+            expect(wrapper.exists(PopupCursor)).toBeTruthy();
+
+            simulateMouseOut(wrapper);
+            wrapper.update();
+            expect(wrapper.exists(PopupCursor)).toBeFalsy();
         });
     });
 

@@ -21,4 +21,9 @@ export default defineMessages({
         description: 'Prompt message for empty popup list',
         defaultMessage: 'Mention someone to notify them',
     },
+    regionCursorPrompt: {
+        id: 'ba.popups.popupCursor.regionPrompt',
+        description: 'Prompt message following cursor in region annotations mode',
+        defaultMessage: 'Draw a box to comment',
+    },
 });

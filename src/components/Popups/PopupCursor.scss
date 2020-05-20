@@ -1,0 +1,19 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-PopupCursor {
+    .ba-Popup-arrow {
+        display: none;
+    }
+
+    .ba-Popup-content {
+        padding: 3px 6px;
+        color: $white;
+        font-size: 11px;
+        line-height: normal;
+        letter-spacing: normal;
+        background-color: $bdl-gray;
+        border: solid 1px $white;
+        border-radius: 3px;
+        box-shadow: none;
+    }
+}

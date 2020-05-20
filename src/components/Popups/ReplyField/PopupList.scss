@@ -1,8 +1,6 @@
 @import '~box-ui-elements/es/styles/variables';
 
 .ba-PopupList {
-    @include common-typography;
-
     .ba-Popup-arrow {
         display: none;
     }
