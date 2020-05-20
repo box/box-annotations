@@ -5,8 +5,6 @@ import PopupBase from './PopupBase';
 import { Options, VirtualElement } from './Popper';
 import './PopupCursor.scss';
 
-type Props = {};
-
 const options: Partial<Options> = {
     modifiers: [
         {
@@ -30,7 +28,7 @@ const generateGetBoundingClientRect = (x = 0, y = 0) => {
     });
 };
 
-export default function PopupCursor(props: Props): JSX.Element {
+export default function PopupCursor(): JSX.Element {
     const popupRef = React.useRef<PopupBase>(null);
 
     const virtualElementRef = React.useRef<VirtualElement>({
@@ -55,13 +53,7 @@ export default function PopupCursor(props: Props): JSX.Element {
     });
 
     return (
-        <PopupBase
-            ref={popupRef}
-            className="ba-PopupCursor"
-            options={options}
-            reference={virtualElementRef.current}
-            {...props}
-        >
+        <PopupBase ref={popupRef} className="ba-PopupCursor" options={options} reference={virtualElementRef.current}>
             <FormattedMessage {...messages.regionCursorPrompt} />
         </PopupBase>
     );

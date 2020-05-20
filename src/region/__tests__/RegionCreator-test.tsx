@@ -8,6 +8,7 @@ import RegionRect from '../RegionRect';
 import useAutoScroll from '../../common/useAutoScroll';
 
 jest.mock('../../common/useAutoScroll');
+jest.mock('../../components/Popups/PopupCursor', () => () => <div />);
 
 describe('RegionCreator', () => {
     const defaults = {
@@ -62,16 +63,6 @@ describe('RegionCreator', () => {
             act(() => {
                 document.dispatchEvent(new MouseEvent('mouseup'));
             });
-        const simulateMouseOver = (wrapper: ReactWrapper): void => {
-            act(() => {
-                wrapper.simulate('mouseover');
-            });
-        };
-        const simulateMouseOut = (wrapper: ReactWrapper): void => {
-            act(() => {
-                wrapper.simulate('mouseout');
-            });
-        };
 
         test('should start the render loop and add all event listeners when starting', () => {
             const wrapper = getWrapper();
@@ -185,13 +176,17 @@ describe('RegionCreator', () => {
         test('should show cursor popup when mouse over', () => {
             const wrapper = getWrapper();
 
-            simulateMouseOver(wrapper);
+            act(() => {
+                wrapper.simulate('mouseover');
+            });
             wrapper.update();
-            expect(wrapper.exists(PopupCursor)).toBeTruthy();
+            expect(wrapper.exists(PopupCursor)).toBe(true);
 
-            simulateMouseOut(wrapper);
+            act(() => {
+                wrapper.simulate('mouseout');
+            });
             wrapper.update();
-            expect(wrapper.exists(PopupCursor)).toBeFalsy();
+            expect(wrapper.exists(PopupCursor)).toBe(false);
         });
     });
 

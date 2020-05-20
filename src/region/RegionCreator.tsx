@@ -20,7 +20,7 @@ const MOUSE_PRIMARY = 1; // Primary mouse button
 
 export default function RegionCreator({ canDraw, className, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
-    const [isMouseOver, setIsMouseOver] = React.useState<boolean>(false);
+    const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorSvgRef = React.useRef<SVGSVGElement | null>(null);
     const positionX1Ref = React.useRef<number | null>(null);
     const positionX2Ref = React.useRef<number | null>(null);
@@ -130,10 +130,10 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         updateDraw(clientX, clientY);
     };
     const handleMouseOut = (): void => {
-        setIsMouseOver(false);
+        setIsHovering(false);
     };
     const handleMouseOver = (): void => {
-        setIsMouseOver(true);
+        setIsHovering(true);
     };
     const handleMouseUp = (): void => {
         stopDraw();
@@ -224,7 +224,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
             >
                 {isDrawing && <RegionRect ref={regionRectRef} />}
             </svg>
-            {isMouseOver && canDraw && !isDrawing && <PopupCursor />}
+            {isHovering && canDraw && !isDrawing && <PopupCursor />}
         </>
     );
 }

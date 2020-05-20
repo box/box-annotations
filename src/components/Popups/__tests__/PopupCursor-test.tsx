@@ -13,6 +13,22 @@ describe('components/Popups/PopupCursor', () => {
         jest.spyOn(document, 'removeEventListener');
     });
 
+    describe('mouse events', () => {
+        test('should set virtualElement rect', () => {
+            const wrapper = getWrapper();
+
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousemove', { clientX: 1, clientY: 2 }));
+            });
+
+            const newVirtualElement = wrapper.find(PopupBase).prop('reference');
+            const rect = newVirtualElement.getBoundingClientRect();
+
+            expect(rect.left).toEqual(1);
+            expect(rect.top).toEqual(2);
+        });
+    });
+
     describe('render()', () => {
         test('should add eventListener when render and remove when unmount', () => {
             const wrapper = getWrapper();
@@ -20,25 +36,6 @@ describe('components/Popups/PopupCursor', () => {
 
             wrapper.unmount();
             expect(document.removeEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
-        });
-    });
-
-    describe('mouse events', () => {
-        const simulateMouseMove = (clientX: number, clientY: number): void =>
-            act(() => {
-                document.dispatchEvent(new MouseEvent('mousemove', { clientX, clientY }));
-            });
-
-        test('should set virtualElement rect', () => {
-            const wrapper = getWrapper();
-            simulateMouseMove(1, 2);
-            wrapper.update();
-
-            const newVirtualElement = wrapper.find(PopupBase).prop('reference');
-            const rect = newVirtualElement.getBoundingClientRect();
-
-            expect(rect.left).toEqual(1);
-            expect(rect.top).toEqual(2);
         });
     });
 });
