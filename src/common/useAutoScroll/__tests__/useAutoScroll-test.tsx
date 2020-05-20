@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import AutoScroller from '../AutoScroller';
+import useAutoScroll from '../useAutoScroll';
 
-describe('AutoScroller', () => {
-    const defaults = {
-        enabled: true,
-        id: 'auto-scroller',
+describe('useAutoScroll', () => {
+    const TestComponent = (props = {}): JSX.Element => {
+        const reference = document.querySelector('#child');
+
+        useAutoScroll({
+            enabled: true,
+            reference,
+            ...props,
+        });
+
+        return <></>;
     };
-    const DefaultChild = (): JSX.Element => <div id="child">Test</div>;
     const getDOMRect = (x: number, y: number, height: number, width: number): DOMRect => ({
         bottom: x + height,
         top: y,
@@ -31,13 +37,7 @@ describe('AutoScroller', () => {
 
         return parent;
     };
-    const getWrapper = (props = {}): ReactWrapper =>
-        mount(
-            <AutoScroller {...defaults} {...props}>
-                <DefaultChild />
-            </AutoScroller>,
-            { attachTo: getParent() },
-        );
+    const getWrapper = (props = {}): ReactWrapper => mount(<TestComponent {...props} />);
 
     beforeEach(() => {
         jest.useFakeTimers();
@@ -47,7 +47,7 @@ describe('AutoScroller', () => {
         jest.spyOn(window, 'cancelAnimationFrame');
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps
 
-        document.body.innerHTML = '<div id="parent" />';
+        document.body.innerHTML = '<div id="parent"><div id="child"/></div>';
     });
 
     describe('cleanup', () => {
@@ -117,8 +117,6 @@ describe('AutoScroller', () => {
             parent.scrollLeft = 0;
             parent.scrollTop = 0;
 
-            jest.runAllTicks();
-
             document.dispatchEvent(
                 new TouchEvent('touchmove', {
                     targetTouches: [{ clientX: 0, clientY: 500 } as Touch],
@@ -130,15 +128,6 @@ describe('AutoScroller', () => {
             expect(parent.scrollLeft).toEqual(0);
             expect(parent.scrollTop).toEqual(100); // SCROLL_GAP * SCROLL_DELTA * 10 (fps)
             expect(wrapper).toBeTruthy();
-        });
-    });
-
-    describe('render', () => {
-        test('should render any children that are provided', () => {
-            const wrapper = getWrapper();
-
-            expect(wrapper.exists(DefaultChild)).toBe(true);
-            expect(document.addEventListener).toHaveBeenCalledTimes(2);
         });
     });
 });

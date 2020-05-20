@@ -26,7 +26,7 @@ describe('RegionAnnotation', () => {
         test('should render a RegionRect and pass it the provided shape', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.find(RegionRect).prop('shape')).toMatchInlineSnapshot(`
+            expect(wrapper.find(RegionRect).props()).toMatchInlineSnapshot(`
                 Object {
                   "height": 10,
                   "type": "rect",

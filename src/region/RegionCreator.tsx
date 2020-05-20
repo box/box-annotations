@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import AutoScroller from '../components/AutoScroller';
 import RegionRect from './RegionRect';
+import useAutoScroll from '../common/useAutoScroll';
 import { Rect } from '../@types';
 import './RegionCreator.scss';
 
@@ -12,34 +12,25 @@ type Props = {
     onStop: (shape: Rect) => void;
 };
 
-type State = {
-    x1: number | null;
-    y1: number | null;
-    x2: number | null;
-    y2: number | null;
-};
-
 const MIN_X = 1; // Minimum region x position must be positive
 const MIN_Y = 1; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 const MOUSE_PRIMARY = 1; // Primary mouse button
 
-export default class RegionCreator extends React.PureComponent<Props, State> {
-    creatorRef: React.RefObject<SVGSVGElement> = React.createRef();
+export default function RegionCreator({ canDraw, className, onStart, onStop }: Props): JSX.Element {
+    const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
+    const creatorSvgRef = React.useRef<SVGSVGElement | null>(null);
+    const positionX1Ref = React.useRef<number | null>(null);
+    const positionX2Ref = React.useRef<number | null>(null);
+    const positionY1Ref = React.useRef<number | null>(null);
+    const positionY2Ref = React.useRef<number | null>(null);
+    const regionDirtyRef = React.useRef<boolean>(false);
+    const regionRectRef = React.useRef<SVGRectElement | null>(null);
+    const renderHandleRef = React.useRef<number | null>(null);
 
-    state: State = {
-        x1: null,
-        y1: null,
-        x2: null,
-        y2: null,
-    };
-
-    componentWillUnmount(): void {
-        this.removeListeners();
-    }
-
-    getPosition(x: number, y: number): [number, number] {
-        const { current: creatorRef } = this.creatorRef;
+    // Drawing Helpers
+    const getPosition = (x: number, y: number): [number, number] => {
+        const { current: creatorRef } = creatorSvgRef;
 
         if (!creatorRef) {
             return [x, y];
@@ -48,11 +39,13 @@ export default class RegionCreator extends React.PureComponent<Props, State> {
         // Calculate the new position based on the mouse position less the page offset
         const { left, top } = creatorRef.getBoundingClientRect();
         return [x - left, y - top];
-    }
-
-    getShape(): Rect | null {
-        const { current: creatorRef } = this.creatorRef;
-        const { x1, x2, y1, y2 } = this.state;
+    };
+    const getShape = (): Rect | null => {
+        const { current: creatorRef } = creatorSvgRef;
+        const { current: x1 } = positionX1Ref;
+        const { current: y1 } = positionY1Ref;
+        const { current: x2 } = positionX2Ref;
+        const { current: y2 } = positionY2Ref;
 
         if (!creatorRef || !x1 || !x2 || !y1 || !y2) {
             return null;
@@ -75,136 +68,150 @@ export default class RegionCreator extends React.PureComponent<Props, State> {
             x: originX,
             y: originY,
         };
-    }
-
-    handleClick = (event: React.MouseEvent): void => {
-        event.preventDefault();
-        event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
     };
 
-    handleMouseDown = ({ buttons, clientX, clientY }: React.MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY) {
-            return;
-        }
+    // Drawing Lifecycle Callbacks
+    const startDraw = (x: number, y: number): void => {
+        const [x1, y1] = getPosition(x, y);
 
-        this.startDraw(clientX, clientY);
-    };
+        setIsDrawing(true);
 
-    handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY || !this.isDrawing()) {
-            return;
-        }
-
-        this.updateDraw(clientX, clientY);
-    };
-
-    handleMouseUp = (): void => {
-        this.stopDraw();
-    };
-
-    handleScroll = (x: number, y: number): void => {
-        this.updateDraw(x, y);
-    };
-
-    handleTouchCancel = (): void => {
-        this.stopDraw();
-    };
-
-    handleTouchEnd = (): void => {
-        this.stopDraw();
-    };
-
-    handleTouchMove = ({ targetTouches }: React.TouchEvent): void => {
-        this.updateDraw(targetTouches[0].clientX, targetTouches[0].clientY);
-    };
-
-    handleTouchStart = ({ targetTouches }: React.TouchEvent): void => {
-        this.startDraw(targetTouches[0].clientX, targetTouches[0].clientY);
-    };
-
-    addListeners(): void {
-        // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
-        // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('mouseup', this.handleMouseUp);
-    }
-
-    removeListeners(): void {
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mouseup', this.handleMouseUp);
-    }
-
-    isDrawing(): boolean {
-        const { x1, y1 } = this.state;
-        return x1 !== null && y1 !== null;
-    }
-
-    startDraw(x: number, y: number): void {
-        const { onStart } = this.props;
-        const [x1, y1] = this.getPosition(x, y);
-
-        this.addListeners();
-        this.setState({
-            x1,
-            y1,
-            x2: null,
-            y2: null,
-        });
+        positionX1Ref.current = x1;
+        positionY1Ref.current = y1;
+        positionX2Ref.current = null;
+        positionY2Ref.current = null;
+        regionDirtyRef.current = true;
 
         onStart();
-    }
+    };
+    const stopDraw = (): void => {
+        const shape = getShape();
 
-    stopDraw(): void {
-        const { onStop } = this.props;
-        const shape = this.getShape();
+        setIsDrawing(false);
 
-        this.removeListeners();
-        this.setState({
-            x1: null,
-            y1: null,
-            x2: null,
-            y2: null,
-        });
+        positionX1Ref.current = null;
+        positionY1Ref.current = null;
+        positionX2Ref.current = null;
+        positionY2Ref.current = null;
+        regionDirtyRef.current = true;
 
         if (shape) {
             onStop(shape);
         }
-    }
+    };
+    const updateDraw = (x: number, y: number): void => {
+        const [x2, y2] = getPosition(x, y);
 
-    updateDraw(x: number, y: number): void {
-        const [x2, y2] = this.getPosition(x, y);
+        positionX2Ref.current = x2;
+        positionY2Ref.current = y2;
+        regionDirtyRef.current = true;
+    };
 
-        this.setState({
-            x2,
-            y2,
-        });
-    }
+    // Event Handlers
+    const handleClick = (event: React.MouseEvent): void => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+    };
+    const handleMouseDown = ({ buttons, clientX, clientY }: React.MouseEvent): void => {
+        if (buttons !== MOUSE_PRIMARY) {
+            return;
+        }
 
-    render(): JSX.Element {
-        const { canDraw, className } = this.props;
-        const eventHandlers = canDraw
-            ? {
-                  onClick: this.handleClick,
-                  onMouseDown: this.handleMouseDown,
-                  onTouchCancel: this.handleTouchCancel,
-                  onTouchEnd: this.handleTouchEnd,
-                  onTouchMove: this.handleTouchMove,
-                  onTouchStart: this.handleTouchStart,
-              }
-            : {};
+        startDraw(clientX, clientY);
+    };
+    const handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
+        if (buttons !== MOUSE_PRIMARY || !isDrawing) {
+            return;
+        }
 
-        return (
-            <AutoScroller
-                ref={this.creatorRef}
-                as="svg"
-                className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
-                enabled={this.isDrawing()}
-                onScroll={this.handleScroll}
-                {...eventHandlers}
-            >
-                <RegionRect className="ba-RegionCreator-rect" shape={this.getShape()} />
-            </AutoScroller>
-        );
-    }
+        updateDraw(clientX, clientY);
+    };
+    const handleMouseUp = (): void => {
+        stopDraw();
+    };
+    const handleScroll = (x: number, y: number): void => {
+        updateDraw(x, y);
+    };
+    const handleTouchCancel = (): void => {
+        stopDraw();
+    };
+    const handleTouchEnd = (): void => {
+        stopDraw();
+    };
+    const handleTouchMove = ({ targetTouches }: React.TouchEvent): void => {
+        updateDraw(targetTouches[0].clientX, targetTouches[0].clientY);
+    };
+    const handleTouchStart = ({ targetTouches }: React.TouchEvent): void => {
+        startDraw(targetTouches[0].clientX, targetTouches[0].clientY);
+    };
+    const eventHandlers = canDraw
+        ? {
+              onClick: handleClick,
+              onMouseDown: handleMouseDown,
+              onTouchCancel: handleTouchCancel,
+              onTouchEnd: handleTouchEnd,
+              onTouchMove: handleTouchMove,
+              onTouchStart: handleTouchStart,
+          }
+        : {};
+
+    const renderStep = (callback: () => void): void => {
+        renderHandleRef.current = window.requestAnimationFrame(callback);
+    };
+    const renderRect = (): void => {
+        const { current: isDirty } = regionDirtyRef;
+        const { current: regionRect } = regionRectRef;
+        const { height = 0, width = 0, x = 0, y = 0 } = getShape() || {};
+
+        if (regionRect && isDirty) {
+            regionRect.setAttribute('height', `${height}`);
+            regionRect.setAttribute('width', `${width}`);
+            regionRect.setAttribute('x', `${x}`);
+            regionRect.setAttribute('y', `${y}`);
+            regionDirtyRef.current = false;
+        }
+
+        renderStep(renderRect);
+    };
+
+    React.useEffect(() => {
+        // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
+        // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
+        if (isDrawing) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            renderStep(renderRect);
+        }
+
+        return () => {
+            const { current: renderHandle } = renderHandleRef;
+
+            // Cancel the render loop
+            if (renderHandle) {
+                window.cancelAnimationFrame(renderHandle);
+            }
+
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDrawing]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useAutoScroll({
+        enabled: isDrawing,
+        onScroll: handleScroll,
+        reference: creatorSvgRef.current,
+    });
+
+    return (
+        <svg
+            ref={creatorSvgRef}
+            className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
+            data-testid="ba-RegionCreator"
+            {...eventHandlers}
+        >
+            {isDrawing && <RegionRect ref={regionRectRef} />}
+        </svg>
+    );
 }

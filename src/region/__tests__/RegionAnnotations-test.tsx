@@ -151,7 +151,7 @@ describe('RegionAnnotations', () => {
 
             expect(scaleShape).toHaveBeenCalledWith(shape, 1.5);
             expect(wrapper.exists(RegionCreator)).toBe(true);
-            expect(wrapper.find(RegionRect).prop('shape')).toBe(shape);
+            expect(wrapper.find(RegionRect).props()).toEqual(shape);
         });
 
         test('should pass the creator item message value to the reply popup', () => {

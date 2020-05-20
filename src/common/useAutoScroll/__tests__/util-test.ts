@@ -1,6 +1,6 @@
 import * as util from '../util';
 
-describe('AutoScroller/util', () => {
+describe('useAutoScroll/util', () => {
     describe('isScrollable()', () => {
         test.each`
             overflow    | overflowX   | overflowY   | result

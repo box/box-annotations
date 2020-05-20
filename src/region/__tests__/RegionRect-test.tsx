@@ -10,7 +10,7 @@ describe('RegionRect', () => {
 
     describe('render()', () => {
         test('should render a rect based on the provided shape', () => {
-            const wrapper = getWrapper({ shape: rect });
+            const wrapper = getWrapper(rect);
 
             expect(wrapper).toMatchInlineSnapshot(`
                 <rect
@@ -22,12 +22,6 @@ describe('RegionRect', () => {
                   y={10}
                 />
             `);
-        });
-
-        test('should render nothing if no shape is provided', () => {
-            const wrapper = getWrapper();
-
-            expect(wrapper.isEmptyRender()).toBe(true);
         });
     });
 });
