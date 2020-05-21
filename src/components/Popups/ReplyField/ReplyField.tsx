@@ -2,10 +2,12 @@ import * as React from 'react';
 import classnames from 'classnames';
 import {
     addMention,
+    createMentionSelectorState,
     getActiveMentionForEditorState,
+    getFormattedCommentText,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import fuzzySearch from 'box-ui-elements/es/utils/fuzzySearch';
-import { ContentState, DraftHandleValue, Editor, EditorState, SelectionState } from 'draft-js';
+import { DraftHandleValue, Editor, EditorState, SelectionState } from 'draft-js';
 import PopupList from './PopupList';
 import withMentionDecorator from './withMentionDecorator';
 import { Collaborator } from '../../../@types';
@@ -140,7 +142,7 @@ export default class ReplyField extends React.Component<Props, State> {
     handleChange = (nextEditorState: EditorState): void => {
         const { onChange } = this.props;
 
-        onChange(nextEditorState.getCurrentContent().getPlainText());
+        onChange(getFormattedCommentText(nextEditorState).text);
 
         // In order to get correct selection, getVirtualElement in this.updatePopupReference
         // has to be called after new texts are rendered in editor
@@ -208,8 +210,7 @@ export default class ReplyField extends React.Component<Props, State> {
 
     restoreEditor(): EditorState {
         const { cursorPosition: prevCursorPosition, value } = this.props;
-        const contentState = ContentState.createFromText(value as string);
-        const prevEditorState = withMentionDecorator(EditorState.createWithContent(contentState));
+        const prevEditorState = withMentionDecorator(createMentionSelectorState(value));
         const cursorPosition = value ? prevCursorPosition : 0;
 
         return EditorState.forceSelection(

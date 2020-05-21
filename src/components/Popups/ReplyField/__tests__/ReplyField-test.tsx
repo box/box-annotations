@@ -1,7 +1,10 @@
 import React from 'react';
-import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import {
+    createMentionSelectorState,
+    getActiveMentionForEditorState,
+} from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Editor, EditorState } from 'draft-js';
+import { Editor, EditorState, ContentState } from 'draft-js';
 import PopupList from '../PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
 import { VirtualElement } from '../../Popper';
@@ -14,14 +17,13 @@ const mockMention = {
     start: 0,
 };
 
-const mockEditorState = ({
-    getCurrentContent: () => ({ getPlainText: () => 'test' }),
-    getSelection: () => ({ getFocusOffset: () => 0 }),
-} as unknown) as EditorState;
+const mockEditorState = EditorState.createEmpty();
 
 jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector', () => ({
     addMention: jest.fn(() => mockEditorState),
+    createMentionSelectorState: jest.fn(() => mockEditorState),
     getActiveMentionForEditorState: jest.fn(() => mockMention),
+    getFormattedCommentText: jest.fn(() => ({ hasMention: false, text: 'test' })),
 }));
 
 describe('components/Popups/ReplyField', () => {
@@ -41,39 +43,6 @@ describe('components/Popups/ReplyField', () => {
 
     const getWrapper = (props = {}): ShallowWrapper<Props, State, ReplyField> =>
         shallow(<ReplyField {...defaults} {...props} />);
-
-    describe('restoreEditor()', () => {
-        test('should restore value and cursor position', () => {
-            const wrapper = getWrapper({ cursorPosition: 1, value: 'test' });
-
-            const editorState = wrapper.instance().restoreEditor();
-
-            expect(editorState.getCurrentContent().getPlainText()).toEqual('test');
-            expect(editorState.getSelection().getFocusOffset()).toEqual(1);
-        });
-
-        test('should reset cursor position if value is empty', () => {
-            const wrapper = getWrapper({ cursorPosition: 1 });
-            const editorState = wrapper.instance().restoreEditor();
-
-            expect(editorState.getSelection().getFocusOffset()).toEqual(0);
-        });
-    });
-
-    describe('render()', () => {
-        test('should render the editor with right props', () => {
-            const wrapper = getWrapper();
-
-            expect(wrapper.prop('className')).toBe('ba-Popup-field ba-ReplyField');
-        });
-
-        test('should render PopupList if popupreference is not null', () => {
-            const wrapper = getWrapper();
-            wrapper.setState({ popupReference: document.createElement('div') });
-
-            expect(wrapper.exists(PopupList)).toBe(true);
-        });
-    });
 
     describe('event handlers', () => {
         test('should handle the editor change event', () => {
@@ -346,6 +315,43 @@ describe('components/Popups/ReplyField', () => {
 
             instance.handleUpArrow(mockKeyboardEvent);
             expect(setActiveItemSpy).toBeCalledWith(0);
+        });
+    });
+
+    describe('restoreEditor()', () => {
+        test('should restore value and cursor position', () => {
+            const wrapper = getWrapper({ cursorPosition: 1, value: 'test' });
+
+            createMentionSelectorState.mockImplementationOnce((value: string) =>
+                EditorState.createWithContent(ContentState.createFromText(value)),
+            );
+            const editorState = wrapper.instance().restoreEditor();
+
+            expect(editorState.getCurrentContent().getPlainText()).toEqual('test');
+            expect(editorState.getSelection().getFocusOffset()).toEqual(1);
+        });
+
+        test('should reset cursor position if value is empty', () => {
+            const wrapper = getWrapper({ cursorPosition: 1 });
+
+            const editorState = wrapper.instance().restoreEditor();
+
+            expect(editorState.getSelection().getFocusOffset()).toEqual(0);
+        });
+    });
+
+    describe('render()', () => {
+        test('should render the editor with right props', () => {
+            const wrapper = getWrapper();
+
+            expect(wrapper.prop('className')).toBe('ba-Popup-field ba-ReplyField');
+        });
+
+        test('should render PopupList if popupreference is not null', () => {
+            const wrapper = getWrapper();
+            wrapper.setState({ popupReference: document.createElement('div') });
+
+            expect(wrapper.exists(PopupList)).toBe(true);
         });
     });
 });
