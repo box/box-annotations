@@ -4,7 +4,7 @@ import {
     getActiveMentionForEditorState,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Editor, EditorState, ContentState } from 'draft-js';
+import { ContentState, Editor, EditorState } from 'draft-js';
 import PopupList from '../PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
 import { VirtualElement } from '../../Popper';
@@ -349,8 +349,10 @@ describe('components/Popups/ReplyField', () => {
 
         test('should render PopupList if popupreference is not null', () => {
             const wrapper = getWrapper();
-            wrapper.setState({ popupReference: document.createElement('div') });
 
+            expect(wrapper.exists(PopupList)).toBe(false);
+
+            wrapper.setState({ popupReference: document.createElement('div') });
             expect(wrapper.exists(PopupList)).toBe(true);
         });
     });
