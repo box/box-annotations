@@ -1,10 +1,7 @@
 import React from 'react';
-import {
-    createMentionSelectorState,
-    getActiveMentionForEditorState,
-} from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ContentState, Editor, EditorState } from 'draft-js';
+import { Editor, EditorState } from 'draft-js';
 import PopupList from '../../Popups/PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
 import { VirtualElement } from '../../Popups/Popper';
@@ -34,37 +31,45 @@ describe('components/Popups/ReplyField', () => {
             { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'user' } },
         ],
         cursorPosition: 0,
+        editorState: mockEditorState,
         isDisabled: false,
         onChange: jest.fn(),
-        onClick: jest.fn(),
         setCursorPosition: jest.fn(),
-        value: '',
     };
 
     const getWrapper = (props = {}): ShallowWrapper<Props, State, ReplyField> =>
         shallow(<ReplyField {...defaults} {...props} />);
 
+    describe('componentDidUpdate()', () => {
+        test('should call updatePopupReference if editorState changes', () => {
+            const wrapper = getWrapper();
+            const instance = wrapper.instance();
+            instance.updatePopupReference = jest.fn();
+
+            wrapper.setProps({ editorState: EditorState.createEmpty() });
+
+            expect(instance.updatePopupReference).toHaveBeenCalled();
+        });
+
+        test('should not call updatePopupReference if editorState changes', () => {
+            const wrapper = getWrapper();
+            const instance = wrapper.instance();
+            instance.updatePopupReference = jest.fn();
+
+            wrapper.setProps({ editorState: mockEditorState });
+
+            expect(instance.updatePopupReference).not.toHaveBeenCalled();
+        });
+    });
+
     describe('event handlers', () => {
         test('should handle the editor change event', () => {
             const wrapper = getWrapper();
             const editor = wrapper.find(Editor);
-            const instance = wrapper.instance();
-            instance.getVirtualElement = jest.fn().mockReturnValue('reference');
 
             editor.simulate('change', mockEditorState);
 
-            expect(defaults.onChange).toBeCalledWith('test');
-            expect(instance.getVirtualElement).toBeCalledWith(mockMention);
-            expect(wrapper.state('popupReference')).toBe('reference');
-        });
-
-        test('should handle the editor onClick event', () => {
-            const wrapper = getWrapper();
-            const editor = wrapper.find(Editor);
-
-            editor.simulate('click', 'test');
-
-            expect(defaults.onClick).toBeCalledWith('test');
+            expect(defaults.onChange).toBeCalledWith(mockEditorState);
         });
     });
 
@@ -228,7 +233,6 @@ describe('components/Popups/ReplyField', () => {
     describe('saveCursorPosition()', () => {
         test('should call setCursorPosition with cursor position', () => {
             const wrapper = getWrapper();
-            wrapper.setState({ editorState: mockEditorState });
 
             wrapper.instance().saveCursorPosition();
 
@@ -315,28 +319,6 @@ describe('components/Popups/ReplyField', () => {
 
             instance.handleUpArrow(mockKeyboardEvent);
             expect(setActiveItemSpy).toBeCalledWith(0);
-        });
-    });
-
-    describe('restoreEditor()', () => {
-        test('should restore value and cursor position', () => {
-            const wrapper = getWrapper({ cursorPosition: 1, value: 'test' });
-
-            createMentionSelectorState.mockImplementationOnce((value: string) =>
-                EditorState.createWithContent(ContentState.createFromText(value)),
-            );
-            const editorState = wrapper.instance().restoreEditor();
-
-            expect(editorState.getCurrentContent().getPlainText()).toEqual('test');
-            expect(editorState.getSelection().getFocusOffset()).toEqual(1);
-        });
-
-        test('should reset cursor position if value is empty', () => {
-            const wrapper = getWrapper({ cursorPosition: 1 });
-
-            const editorState = wrapper.instance().restoreEditor();
-
-            expect(editorState.getSelection().getFocusOffset()).toEqual(0);
         });
     });
 

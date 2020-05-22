@@ -41,7 +41,7 @@ export default class ReplyField extends React.Component<Props, State> {
         isDisabled: false,
     };
 
-    state = { activeItemIndex: 0, popupReference: null };
+    state: State = { activeItemIndex: 0, popupReference: null };
 
     componentDidUpdate({ editorState: prevEditorState }: Props): void {
         const { editorState } = this.props;

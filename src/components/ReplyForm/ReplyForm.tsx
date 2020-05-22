@@ -1,31 +1,56 @@
-import Button from 'box-ui-elements/es/components/button';
+import React from 'react';
 import { getFormattedCommentText } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
+import { KEYS } from 'box-ui-elements/es/constants';
 import { EditorState } from 'draft-js';
 import { Form, FormikProps } from 'formik';
-import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import messages from '../Popups/messages';
 import ReplyField from '../ReplyField';
-import { ContainerProps, FormValues } from './types';
+import { FormValues, PropsFromState as ContainerProps } from './ReplyFormContainer';
 
-type Props = ContainerProps & FormikProps<FormValues>;
+export type ReplyFormProps = {
+    isPending: boolean;
+    onCancel: (text: string) => void;
+    onChange: (text: string) => void;
+    onSubmit: (text: string) => void;
+    value?: string;
+};
+
+export type Props = ReplyFormProps &
+    ContainerProps &
+    Pick<FormikProps<FormValues>, 'errors' | 'setFieldValue' | 'values'>;
 
 const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, values }: Props): JSX.Element => {
     const intl = useIntl();
     const hasErrors = Object.keys(errors).length > 0;
-    const handleChange = (editorState: EditorState): void => {
-        onChange(getFormattedCommentText(editorState).text);
-        setFieldValue('editorState', editorState);
+    const { editorState } = values;
+
+    // Instead of deferring to the Formik handleChange helper, we need to use the setFieldValue helper
+    // method in order for DraftJS to work correctly by setting back the whole editorState
+    const handleChange = (nextEditorState: EditorState): void => {
+        onChange(getFormattedCommentText(nextEditorState).text);
+        setFieldValue('editorState', nextEditorState);
+    };
+    const handleKeyDown = (event: React.KeyboardEvent): void => {
+        if (event.key !== KEYS.escape) {
+            return;
+        }
+
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+
+        onCancel(getFormattedCommentText(editorState).text);
     };
 
     return (
-        <Form className="ba-Popup-form" data-testid="ba-Popup-form">
+        <Form className="ba-ReplyForm" data-testid="ba-ReplyForm" onKeyDown={handleKeyDown}>
             <div className="ba-Popup-main">
                 <ReplyField
                     className="ba-Popup-field"
                     data-testid="ba-Popup-field"
-                    editorState={values.editorState}
+                    editorState={editorState}
                     isDisabled={isPending}
                     onChange={handleChange}
                     placeholder={intl.formatMessage(messages.fieldPlaceholder)}

@@ -5,10 +5,23 @@ import {
 import { EditorState, SelectionState } from 'draft-js';
 import { FormikBag, withFormik } from 'formik';
 import { connect } from 'react-redux';
-import ReplyForm from './ReplyForm';
+import ReplyForm, { ReplyFormProps } from './ReplyForm';
 import withMentionDecorator from '../ReplyField/withMentionDecorator';
 import { AppState, getCreatorCursor } from '../../store';
-import { ContainerProps, FormErrors, FormValues, PropsFromState } from './types';
+
+export type PropsFromState = {
+    cursorPosition: number;
+};
+
+type Props = ReplyFormProps & PropsFromState;
+
+export type FormErrors = {
+    [V in keyof FormValues]?: string;
+};
+
+export type FormValues = {
+    editorState: EditorState;
+};
 
 const MAX_LENGTH = 10000;
 
@@ -16,7 +29,7 @@ export const mapStateToProps = (state: AppState): PropsFromState => ({
     cursorPosition: getCreatorCursor(state),
 });
 
-export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: ContainerProps): FormValues => {
+export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: Props): FormValues => {
     const mentionState = withMentionDecorator(createMentionSelectorState(value));
     const cursorPosition = value ? prevCursorPosition : 0;
 
@@ -49,11 +62,11 @@ export const validate = ({ editorState }: FormValues): FormErrors => {
 
 export const handleSubmit = (
     { editorState }: FormValues,
-    { props: { onSubmit } }: FormikBag<ContainerProps, FormValues>,
+    { props: { onSubmit } }: Pick<FormikBag<Props, FormValues>, 'props'>,
 ): void => onSubmit(getFormattedCommentText(editorState).text);
 
 const ReplyFormContainer = connect(mapStateToProps)(
-    withFormik<ContainerProps, FormValues>({
+    withFormik<Props, FormValues>({
         handleSubmit,
         mapPropsToValues,
         validate,

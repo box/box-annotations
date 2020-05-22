@@ -1,5 +1,4 @@
 import React from 'react';
-import { KEYS } from 'box-ui-elements/es/constants';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
 
@@ -54,22 +53,8 @@ export default function PopupReply({
     value = '',
     ...rest
 }: Props): JSX.Element {
-    // Event Handlers
-    const handleEvent = (event: React.SyntheticEvent): void => {
-        event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
-    };
-    const handleKeyDown = (event: React.KeyboardEvent): void => {
-        if (event.key !== KEYS.escape) {
-            return;
-        }
-
-        handleEvent(event);
-        onCancel(value);
-    };
-
     return (
-        <PopupBase onKeyDown={handleKeyDown} options={options} {...rest}>
+        <PopupBase options={options} {...rest}>
             <ReplyForm
                 isPending={isPending}
                 onCancel={onCancel}
