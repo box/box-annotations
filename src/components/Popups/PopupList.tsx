@@ -1,10 +1,10 @@
 import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { FormattedMessage } from 'react-intl';
-import ItemList from '../../ItemList/ItemList';
-import messages from '../messages';
-import PopupBase from '../PopupBase';
-import { Options, PopupReference } from '../Popper';
+import ItemList from '../ItemList';
+import messages from './messages';
+import PopupBase from './PopupBase';
+import { Options, PopupReference } from './Popper';
 import './PopupList.scss';
 
 export type Props<T extends { id: string }> = {

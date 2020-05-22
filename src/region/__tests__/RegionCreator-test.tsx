@@ -1,7 +1,7 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
-import { mockEvent } from '../__mocks__/events';
+import { mockEvent } from '../../common/__mocks__/events';
 import PopupCursor from '../../components/Popups/PopupCursor';
 import RegionCreator from '../RegionCreator';
 import useAutoScroll from '../../common/useAutoScroll';

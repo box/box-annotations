@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import PopupBase from '../../PopupBase';
+import PopupBase from '../PopupBase';
 import PopupList, { Props } from '../PopupList';
-import { Collaborator } from '../../../../@types';
+import { Collaborator } from '../../../@types';
 
 describe('components/Popups/ReplyField/PopupList', () => {
     const defaults: Props<Collaborator> = {

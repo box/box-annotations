@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { EditorState } from 'draft-js';
 import { mount, ReactWrapper } from 'enzyme';
 import ReplyField from '../ReplyField';
 import ReplyFieldContainer, { Props } from '../ReplyFieldContainer';
-import { createStore } from '../../../../store';
+import { createStore } from '../../../store';
 
 jest.mock('../ReplyField');
 
@@ -13,6 +14,7 @@ describe('components/Popups/ReplyField/ReplyFieldContainer', () => {
         },
     });
     const defaults = {
+        editorState: EditorState.createEmpty(),
         onChange: jest.fn(),
         onClick: jest.fn(),
         store,
