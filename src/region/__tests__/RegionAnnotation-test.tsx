@@ -1,9 +1,8 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { rect } from '../__mocks__/data';
-import AnnotationTarget from '../../components/AnnotationTarget';
 import RegionAnnotation from '../RegionAnnotation';
-import RegionRect from '../RegionRect';
+import { mockEvent } from '../__mocks__/events';
+import { rect } from '../__mocks__/data';
 
 describe('RegionAnnotation', () => {
     const defaults = {
@@ -16,6 +15,34 @@ describe('RegionAnnotation', () => {
         return shallow(<RegionAnnotation {...defaults} {...props} />);
     };
 
+    describe('mouse event handlers', () => {
+        test.each`
+            event      | onSelectArgument
+            ${'click'} | ${'1'}
+            ${'focus'} | ${'1'}
+        `('should cancel the $event and trigger onSelect with $onSelectArgument', ({ event, onSelectArgument }) => {
+            const wrapper = getWrapper();
+
+            wrapper.simulate(event, mockEvent);
+
+            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+            expect(defaults.onSelect).toHaveBeenCalledWith(onSelectArgument);
+        });
+
+        test('should cancel the blur event', () => {
+            const wrapper = getWrapper();
+
+            wrapper.simulate('blur', mockEvent);
+
+            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+            expect(defaults.onSelect).not.toHaveBeenCalled();
+        });
+    });
+
     describe('render()', () => {
         test('should render the class name based on the isActive prop', () => {
             expect(getWrapper().hasClass('ba-RegionAnnotation')).toBe(true);
@@ -26,29 +53,31 @@ describe('RegionAnnotation', () => {
         test('should render a RegionRect and pass it the provided shape', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.find(RegionRect).props()).toMatchInlineSnapshot(`
-                Object {
-                  "height": 10,
-                  "type": "rect",
-                  "width": 10,
-                  "x": 10,
-                  "y": 10,
-                }
-            `);
+            expect(wrapper.prop('style')).toMatchObject({
+                display: 'block',
+                height: '18px',
+                transform: 'translate(6px, 6px)',
+                width: '18px',
+            });
         });
 
-        test('should render an AnnotationTarget with the correct props', () => {
-            const onSelect = jest.fn();
-            const wrapper = getWrapper({
-                annotationId: 'abc',
-                className: 'test',
-                onSelect,
-            });
+        test('should pass the required props to the underlying anchor', () => {
+            const wrapper = getWrapper({ className: 'ba-Test' });
 
-            expect(wrapper.find(AnnotationTarget).props()).toMatchObject({
-                annotationId: 'abc',
-                className: 'test',
-                onSelect,
+            expect(wrapper.props()).toMatchObject({
+                className: 'ba-RegionAnnotation ba-Test',
+                onClick: expect.any(Function),
+                type: 'button',
+            });
+        });
+
+        test('should pass a noop method for onClick if not defined', () => {
+            const wrapper = getWrapper({ onSelect: undefined });
+
+            expect(wrapper.props()).toMatchObject({
+                className: 'ba-RegionAnnotation',
+                onClick: expect.any(Function),
+                type: 'button',
             });
         });
     });

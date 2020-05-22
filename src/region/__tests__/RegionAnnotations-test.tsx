@@ -37,7 +37,7 @@ describe('RegionAnnotations', () => {
         x: 10,
         y: 10,
     });
-    const getRectRef = (): SVGRectElement => document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const getRectRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorItem => ({
         location: 1,
         message: 'test',
@@ -151,7 +151,7 @@ describe('RegionAnnotations', () => {
 
             expect(scaleShape).toHaveBeenCalledWith(shape, 1.5);
             expect(wrapper.exists(RegionCreator)).toBe(true);
-            expect(wrapper.find(RegionRect).props()).toEqual(shape);
+            expect(wrapper.find(RegionRect).prop('shape')).toEqual(shape);
         });
 
         test('should pass the creator item message value to the reply popup', () => {

@@ -4,11 +4,12 @@ import { mount, ReactWrapper } from 'enzyme';
 import { mockEvent } from '../__mocks__/events';
 import PopupCursor from '../../components/Popups/PopupCursor';
 import RegionCreator from '../RegionCreator';
-import RegionRect from '../RegionRect';
 import useAutoScroll from '../../common/useAutoScroll';
+import { styleShape } from '../regionUtil';
 
 jest.mock('../../common/useAutoScroll');
 jest.mock('../../components/Popups/PopupCursor', () => () => <div />);
+jest.mock('../regionUtil');
 
 describe('RegionCreator', () => {
     const defaults = {
@@ -76,14 +77,14 @@ describe('RegionCreator', () => {
         });
 
         test.each`
-            x1      | y1      | x2      | y2      | result                                       | comment
-            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 95, width: 95, x: 5, y: 5 }}     | ${'standard dimensions'}
-            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 50, width: 50, x: 50, y: 50 }}   | ${'standard dimensions'}
-            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 50, width: 50, x: 50, y: 50 }}   | ${'standard dimensions'}
-            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 10, width: 10, x: 100, y: 100 }} | ${'minimum size'}
-            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 949, width: 949, x: 50, y: 50 }} | ${'maximum size'}
-            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 10, width: 10, x: 999, y: 999 }} | ${'maximum position'}
-            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 10, width: 10, x: 1, y: 1 }}     | ${'minimum position'}
+            x1      | y1      | x2      | y2      | result                                         | comment
+            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 95, width: 95, x: 5, y: 5 }}       | ${'standard dimensions'}
+            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 50, width: 50, x: 50, y: 50 }}     | ${'standard dimensions'}
+            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 50, width: 50, x: 50, y: 50 }}     | ${'standard dimensions'}
+            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 10, width: 10, x: 100, y: 100 }}   | ${'minimum size'}
+            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 950, width: 950, x: 50, y: 50 }}   | ${'maximum size'}
+            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 10, width: 10, x: 1000, y: 1000 }} | ${'maximum position'}
+            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 10, width: 10, x: 0, y: 0 }}       | ${'minimum position'}
         `('should update the rendered rect when the user draws $comment', ({ result, x1, x2, y1, y2 }) => {
             const wrapper = getWrapper();
 
@@ -93,11 +94,7 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000); // Advance by 100 frames (10 fps * 10 seconds)
             wrapper.update();
 
-            const rect = wrapper.find(RegionRect).getDOMNode();
-            expect(rect.getAttribute('height')).toEqual(`${result.height}`);
-            expect(rect.getAttribute('width')).toEqual(`${result.width}`);
-            expect(rect.getAttribute('x')).toEqual(`${result.x}`);
-            expect(rect.getAttribute('y')).toEqual(`${result.y}`);
+            expect(styleShape).toHaveBeenCalledWith(expect.objectContaining(result), true);
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
@@ -217,11 +214,16 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            const rect = wrapper.find(RegionRect).getDOMNode();
-            expect(rect.getAttribute('height')).toBe('50');
-            expect(rect.getAttribute('width')).toBe('50');
-            expect(rect.getAttribute('x')).toBe('50');
-            expect(rect.getAttribute('y')).toBe('50');
+            expect(styleShape).toHaveBeenCalledWith(
+                {
+                    height: 50,
+                    type: 'rect',
+                    width: 50,
+                    x: 50,
+                    y: 50,
+                },
+                true,
+            );
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {

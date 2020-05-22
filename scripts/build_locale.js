@@ -9,12 +9,12 @@ const { execSync } = require('child_process');
  */
 module.exports = (locale = 'en-US', callback) => {
     try {
-        console.log(`Building ${locale}`);
+        console.log(`Building ${locale}`); // eslint-disable-line
         // build assets for a single locale
         execSync(`time LANGUAGE=${locale} yarn build:prod:dist`);
         callback();
     } catch (error) {
-        console.error(`Error: Failed to build ${locale}`);
+        console.error(`Error: Failed to build ${locale}`); // eslint-disable-line
         callback(true);
     }
 };

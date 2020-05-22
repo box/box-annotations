@@ -8,5 +8,5 @@ $region_cursor_32_3x: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAY
 }
 
 .ba-RegionCreator-rect {
-    will-change: height, left, top, width;
+    will-change: height, transform, width;
 }

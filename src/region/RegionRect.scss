@@ -1,7 +1,42 @@
 @import '~box-ui-elements/es/styles/variables';
 
+@mixin ba-RegionRect {
+    $border-radius: 6px;
+    $border-size-inner: 1px;
+    $border-size-outer: 4px;
+
+    position: absolute;
+
+    &::after {
+        position: absolute;
+        top: $border-size-outer;
+        right: $border-size-outer;
+        bottom: $border-size-outer;
+        left: $border-size-outer;
+        display: block;
+        background: rgba($bdl-yellorange, 0); // Zero alpha value for transition
+        border-radius: $border-radius;
+        box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, .6), 0 0 0 0 rgba(0, 0, 0, 0);
+        transition: background 200ms ease, box-shadow 200ms ease;
+        content: '';
+    }
+
+    &:hover {
+        &::after {
+            background: rgba($bdl-yellorange, .1);
+            box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, 1), 0 8px 16px 0 rgba(0, 0, 0, .1);
+        }
+    }
+
+    &.is-active,
+    &:focus {
+        &::after {
+            background: rgba($bdl-yellorange, 0);
+            box-shadow: 0 0 0 $border-size-inner rgba($bdl-yellorange, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, 1), 0 8px 52px 0 rgba(0, 0, 0, .2);
+        }
+    }
+}
+
 .ba-RegionRect {
-    fill: transparent;
-    stroke: $bdl-yellorange;
-    stroke-width: 2px;
+    @include ba-RegionRect;
 }
