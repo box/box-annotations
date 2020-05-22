@@ -1,10 +1,10 @@
-import React from 'react';
-import { KEYS } from 'box-ui-elements/es/constants';
+import * as React from 'react';
 import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { EditorState } from 'draft-js';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Form } from 'formik';
+import { KEYS } from 'box-ui-elements/es/constants';
+import { shallow, ShallowWrapper } from 'enzyme';
 import ReplyForm, { Props } from '../ReplyForm';
 import ReplyField from '../../ReplyField';
 import { mockEvent } from '../../../common/__mocks__/events';

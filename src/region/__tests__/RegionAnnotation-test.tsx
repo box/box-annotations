@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
-import { mockEvent } from '../__mocks__/events';
+import { mockEvent } from '../../common/__mocks__/events';
 import { rect } from '../__mocks__/data';
 
 describe('RegionAnnotation', () => {
