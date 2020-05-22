@@ -10,6 +10,7 @@ export type Shape = {
 
 export const BORDER_SIZE = 4;
 export const BORDER_TOTAL = BORDER_SIZE * 2;
+export const EMPTY_STYLE = { display: 'none' };
 
 export function scaleShape(shape: Rect, scale = 1, invert = false): Rect {
     const { height, width, x, y, ...rest } = shape;
@@ -26,13 +27,14 @@ export function scaleShape(shape: Rect, scale = 1, invert = false): Rect {
 
 export function styleShape(shape?: Shape): React.CSSProperties {
     if (!shape) {
-        return {};
+        return EMPTY_STYLE;
     }
 
     const { height, width, x, y } = shape;
     return {
+        display: 'block', // Override inline "display: none" from EMPTY_STYLE
         height: `${height + BORDER_TOTAL}px`,
-        transform: `translate(${x - BORDER_SIZE}px, ${y - BORDER_SIZE}px)`,
+        transform: `translate3d(${x - BORDER_SIZE}px, ${y - BORDER_SIZE}px, 0)`, // GPU acceleration with translate3d
         width: `${width + BORDER_TOTAL}px`,
     };
 }

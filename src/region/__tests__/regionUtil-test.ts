@@ -41,14 +41,15 @@ describe('regionUtil', () => {
             const styles = styleShape(getRect());
 
             expect(styles).toMatchObject({
+                display: 'block',
                 height: '58px',
-                transform: 'translate(6px, 6px)',
+                transform: 'translate3d(6px, 6px, 0)',
                 width: '58px',
             });
         });
 
-        test('should return an empty object if the shape is not defined', () => {
-            expect(styleShape()).toEqual({});
+        test('should return the default empty styles if the shape is not defined', () => {
+            expect(styleShape()).toEqual({ display: 'none' });
         });
     });
 });

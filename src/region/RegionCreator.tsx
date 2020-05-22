@@ -22,7 +22,6 @@ const MOUSE_PRIMARY = 1; // Primary mouse button
 export default function RegionCreator({ canDraw, className, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
-    const [isReady, setIsReady] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
     const positionX1Ref = React.useRef<number | null>(null);
     const positionX2Ref = React.useRef<number | null>(null);
@@ -79,7 +78,6 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         const [x1, y1] = getPosition(x, y);
 
         setIsDrawing(true);
-        setIsReady(false);
 
         positionX1Ref.current = x1;
         positionY1Ref.current = y1;
@@ -93,7 +91,6 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         const shape = getShape();
 
         setIsDrawing(false);
-        setIsReady(false);
 
         positionX1Ref.current = null;
         positionY1Ref.current = null;
@@ -111,8 +108,6 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         positionX2Ref.current = x2;
         positionY2Ref.current = y2;
         regionDirtyRef.current = true;
-
-        setIsReady(true);
     };
 
     // Event Handlers
@@ -180,7 +175,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         const { current: regionRect } = regionRectRef;
         const shape = getShape();
 
-        if (regionRect && shape && isDirty) {
+        if (isDirty && regionRect && shape) {
             // Directly set the style attribute
             Object.assign(regionRect.style, styleShape(shape));
 
@@ -197,16 +192,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
         if (isDrawing) {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
-        }
 
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [isDrawing]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    React.useEffect(() => {
-        if (isReady) {
             renderStep(renderRect);
         }
 
@@ -217,8 +203,11 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
             if (renderHandle) {
                 window.cancelAnimationFrame(renderHandle);
             }
+
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isDrawing]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useAutoScroll({
         enabled: isDrawing,
@@ -233,8 +222,8 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
             data-testid="ba-RegionCreator"
             {...eventHandlers}
         >
-            {isReady && <RegionRect ref={regionRectRef} isActive />}
-            {isHovering && canDraw && !isDrawing && <PopupCursor />}
+            {isDrawing && <RegionRect ref={regionRectRef} className="ba-RegionCreator-rect" isActive />}
+            {!isDrawing && isHovering && canDraw && <PopupCursor />}
         </div>
     );
 }
