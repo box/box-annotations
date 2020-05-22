@@ -177,7 +177,7 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
 
         if (isDirty && regionRect && shape) {
             // Directly set the style attribute
-            Object.assign(regionRect.style, styleShape(shape));
+            Object.assign(regionRect.style, styleShape(shape, true));
 
             // Reset the dirty state to avoid multiple renders
             regionDirtyRef.current = false;

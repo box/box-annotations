@@ -25,16 +25,19 @@ export function scaleShape(shape: Rect, scale = 1, invert = false): Rect {
     };
 }
 
-export function styleShape(shape?: Shape): React.CSSProperties {
+export function styleShape(shape?: Shape, useGpu = false): React.CSSProperties {
     if (!shape) {
         return EMPTY_STYLE;
     }
 
     const { height, width, x, y } = shape;
+    const totalX = x - BORDER_SIZE;
+    const totalY = y - BORDER_SIZE;
+
     return {
         display: 'block', // Override inline "display: none" from EMPTY_STYLE
         height: `${height + BORDER_TOTAL}px`,
-        transform: `translate3d(${x - BORDER_SIZE}px, ${y - BORDER_SIZE}px, 0)`, // GPU acceleration with translate3d
+        transform: useGpu ? `translate3d(${totalX}px, ${totalY}px, 0)` : `translate(${totalX}px, ${totalY}px)`,
         width: `${width + BORDER_TOTAL}px`,
     };
 }

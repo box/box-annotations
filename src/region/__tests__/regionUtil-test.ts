@@ -43,6 +43,17 @@ describe('regionUtil', () => {
             expect(styles).toMatchObject({
                 display: 'block',
                 height: '58px',
+                transform: 'translate(6px, 6px)',
+                width: '58px',
+            });
+        });
+
+        test('should return gpu-accelerated styles for a shape with with border space included', () => {
+            const styles = styleShape(getRect(), true);
+
+            expect(styles).toMatchObject({
+                display: 'block',
+                height: '58px',
                 transform: 'translate3d(6px, 6px, 0)',
                 width: '58px',
             });

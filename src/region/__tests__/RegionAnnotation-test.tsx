@@ -56,7 +56,7 @@ describe('RegionAnnotation', () => {
             expect(wrapper.prop('style')).toMatchObject({
                 display: 'block',
                 height: '18px',
-                transform: 'translate3d(6px, 6px, 0)',
+                transform: 'translate(6px, 6px)',
                 width: '18px',
             });
         });

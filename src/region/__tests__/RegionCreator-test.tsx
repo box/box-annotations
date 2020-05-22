@@ -94,7 +94,7 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000); // Advance by 100 frames (10 fps * 10 seconds)
             wrapper.update();
 
-            expect(styleShape).toHaveBeenCalledWith(expect.objectContaining(result));
+            expect(styleShape).toHaveBeenCalledWith(expect.objectContaining(result), true);
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
@@ -214,13 +214,16 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(styleShape).toHaveBeenCalledWith({
-                height: 50,
-                type: 'rect',
-                width: 50,
-                x: 50,
-                y: 50,
-            });
+            expect(styleShape).toHaveBeenCalledWith(
+                {
+                    height: 50,
+                    type: 'rect',
+                    width: 50,
+                    x: 50,
+                    y: 50,
+                },
+                true,
+            );
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
