@@ -2,7 +2,7 @@
 [![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/box/box-annotations&style=flat)](https://mergify.io)
 [![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![build status](https://travis-ci.com/box/box-annotations.svg?branch=master)](https://travis-ci.com/box/box-annotations)
-[![version](https://img.shields.io/badge/version-v4.0.0-beta.5-blue.svg)](https://github.com/box/box-annotations)
+[![version](https://img.shields.io/badge/version-v4.0.0-beta.6-blue.svg)](https://github.com/box/box-annotations)
 [![npm version](https://img.shields.io/npm/v/box-annotations.svg)](https://www.npmjs.com/package/box-annotations)
 
 # [Box Annotations](https://developer.box.com/docs/getting-started-with-new-box-view#section-annotations)
