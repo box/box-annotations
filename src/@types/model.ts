@@ -36,6 +36,11 @@ export interface Page {
     value: number;
 }
 
+export interface Position {
+    x: number;
+    y: number;
+}
+
 export interface User {
     id: string;
     login: string;
@@ -43,14 +48,12 @@ export interface User {
     type: 'user';
 }
 
-export interface Rect {
+export interface Rect extends Position {
     fill?: string;
     height: number;
     stroke?: Stroke;
     type: 'rect';
     width: number;
-    x: number;
-    y: number;
 }
 
 export interface Reply {
@@ -76,12 +79,7 @@ export interface TargetDrawing {
     location: Page;
     paths: [
         {
-            points: [
-                {
-                    x: number;
-                    y: number;
-                },
-            ];
+            points: [Position];
         },
     ];
     stroke: Stroke;
@@ -95,11 +93,9 @@ export interface TargetHighlight {
     type: 'highlight';
 }
 
-export interface TargetPoint {
+export interface TargetPoint extends Position {
     location: Page;
     type: 'point';
-    x: number;
-    y: number;
 }
 
 export interface TargetRegion {

@@ -1,7 +1,10 @@
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
+import { Annotation } from '../../@types';
+import { annotations as regions } from '../../region/__mocks__/data';
 import { CLASS_ANNOTATIONS_LOADED } from '../../constants';
+import { fetchAnnotationsAction } from '../../store';
 
 jest.mock('../../region/RegionManager');
 
@@ -168,9 +171,86 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('scrollToAnnotation()', () => {
-        test('should exist', () => {
-            expect(annotator.scrollToAnnotation).toBeTruthy();
+        beforeEach(() => {
+            const payload = {
+                entries: regions as Annotation[],
+                limit: 1000,
+                next_marker: null,
+                previous_marker: null,
+            };
+
+            annotator.scrollToLocation = jest.fn();
+            annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
         });
+
+        test('should call scrollToLocation for region annotations', () => {
+            annotator.scrollToAnnotation('anno_1');
+            expect(annotator.scrollToLocation).toHaveBeenCalledWith(1, { x: 15, y: 15 });
+        });
+
+        test('should do nothing if the annotation id is undefined or not available in the store', () => {
+            annotator.scrollToAnnotation('nonsense');
+            expect(annotator.scrollToLocation).not.toHaveBeenCalled();
+
+            annotator.scrollToAnnotation(null);
+            expect(annotator.scrollToLocation).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('scrollToLocation', () => {
+        const getPageMock = (pageNumber = 1): HTMLElement => {
+            const page = document.createElement('div');
+
+            Object.defineProperty(page, 'offsetLeft', { configurable: true, value: 0 });
+            Object.defineProperty(page, 'offsetTop', { configurable: true, value: (pageNumber - 1) * 100 }); // 100 pixels per page
+
+            return page;
+        };
+
+        beforeEach(() => {
+            jest.spyOn(annotator, 'getPage').mockImplementation(getPageMock);
+            jest.spyOn(container, 'scrollHeight', 'get').mockReturnValue(2000);
+            jest.spyOn(container, 'scrollWidth', 'get').mockReturnValue(2000);
+            jest.spyOn(container, 'scrollLeft', 'set');
+            jest.spyOn(container, 'scrollTop', 'set');
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            container.scrollTo = jest.fn((options?: ScrollToOptions) => {
+                const { left, top } = options || {};
+
+                container.scrollLeft = left || 0;
+                container.scrollTop = top || 0;
+            });
+
+            annotator.annotatedEl = container;
+        });
+
+        test.each`
+            page  | scrollTop
+            ${1}  | ${0}
+            ${2}  | ${100}
+            ${20} | ${1900}
+            ${30} | ${2000}
+        `('should scroll the annotated element to $scrollTop for page $page', ({ page, scrollTop }) => {
+            annotator.scrollToLocation(page);
+            expect(annotator.annotatedEl?.scrollTop).toEqual(scrollTop);
+        });
+
+        test.each`
+            page  | scrollLeft | scrollTop
+            ${1}  | ${50}      | ${50}
+            ${2}  | ${50}      | ${150}
+            ${20} | ${50}      | ${1950}
+            ${30} | ${50}      | ${2000}
+        `(
+            'should scroll the annotated element to $scrollLeft/$scrollTop for page $page with offsets',
+            ({ page, scrollLeft, scrollTop }) => {
+                annotator.scrollToLocation(page, { x: 50, y: 50 });
+                expect(annotator.annotatedEl?.scrollLeft).toEqual(scrollLeft);
+                expect(annotator.annotatedEl?.scrollTop).toEqual(scrollTop);
+            },
+        );
     });
 
     describe('toggleAnnotationMode()', () => {

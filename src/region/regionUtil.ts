@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Rect } from '../@types';
+import { Annotation, AnnotationRegion, Position, Rect } from '../@types';
 
 export type Shape = {
     height: number;
@@ -11,6 +11,29 @@ export type Shape = {
 export const BORDER_SIZE = 4;
 export const BORDER_TOTAL = BORDER_SIZE * 2;
 export const EMPTY_STYLE = { display: 'none' };
+
+export const centerShape = (shape: Shape): Position => {
+    const { height, width } = shape;
+
+    return {
+        x: width / 2,
+        y: height / 2,
+    };
+};
+
+export const centerRegion = (shape: Shape): Position => {
+    const { x: shapeX, y: shapeY } = shape;
+    const { x: centerX, y: centerY } = centerShape(shape);
+
+    return {
+        x: centerX + shapeX,
+        y: centerY + shapeY,
+    };
+};
+
+export function isRegion(annotation: Annotation): annotation is AnnotationRegion {
+    return annotation?.target?.type === 'region';
+}
 
 export function scaleShape(shape: Rect, scale = 1, invert = false): Rect {
     const { height, width, x, y, ...rest } = shape;

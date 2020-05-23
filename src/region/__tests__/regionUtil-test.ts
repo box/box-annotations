@@ -1,5 +1,6 @@
 import { Rect } from '../../@types';
-import { scaleShape, styleShape } from '../regionUtil';
+import { annotation } from '../__mocks__/data';
+import { centerRegion, centerShape, isRegion, scaleShape, styleShape } from '../regionUtil';
 
 describe('regionUtil', () => {
     const getRect = (): Rect => ({
@@ -8,6 +9,35 @@ describe('regionUtil', () => {
         width: 50,
         x: 10,
         y: 10,
+    });
+
+    describe('centerShape()', () => {
+        test('should return the position of the center of the shape', () => {
+            const shape = centerShape(getRect());
+
+            expect(shape).toMatchObject({ x: 25, y: 25 });
+        });
+    });
+
+    describe('centerRegion()', () => {
+        test('should return the position of the center of the shape offset by its x/y coordinates', () => {
+            const shape = centerRegion(getRect());
+
+            expect(shape).toMatchObject({ x: 35, y: 35 });
+        });
+    });
+
+    describe('isRegion()', () => {
+        test.each`
+            type         | result
+            ${'region'}  | ${true}
+            ${'point'}   | ${false}
+            ${''}        | ${false}
+            ${undefined} | ${false}
+            ${null}      | ${false}
+        `('should return $result for annotation of type $type', ({ result, type }) => {
+            expect(isRegion({ ...annotation, target: { ...annotation.target, type } })).toEqual(result);
+        });
     });
 
     describe('scaleShape()', () => {

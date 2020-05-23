@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Annotation, AnnotationRegion } from '../@types';
+import { AnnotationRegion } from '../@types';
 import {
     AppState,
     CreatorItem,
@@ -13,9 +13,10 @@ import {
     setStagedAction,
     setStatusAction,
 } from '../store';
-import { createRegionAction } from './actions';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
+import { createRegionAction } from './actions';
+import { isRegion } from './regionUtil';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -24,8 +25,6 @@ export type Props = {
     staged: CreatorItem | null;
     status: CreatorStatus;
 };
-
-export const isRegion = (annotation: Annotation): annotation is AnnotationRegion => annotation.target.type === 'region';
 
 export const mapStateToProps = (state: AppState, { page }: { page: number }): Props => ({
     activeAnnotationId: getActiveAnnotationId(state),
