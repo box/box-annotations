@@ -284,7 +284,6 @@ describe('RegionCreator', () => {
             expect(rootEl.hasClass('ba-RegionCreator')).toBe(true);
 
             expect(rootEl.prop('onClick')).toBeDefined();
-            expect(rootEl.prop('onFocus')).toBeDefined();
             expect(rootEl.prop('onMouseDown')).toBeDefined();
             expect(rootEl.prop('onMouseOut')).toBeDefined();
             expect(rootEl.prop('onMouseOver')).toBeDefined();

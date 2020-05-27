@@ -1,8 +1,7 @@
-import merge from 'lodash/merge';
 import { createReducer } from '@reduxjs/toolkit';
 import { CreatorState, CreatorStatus } from './types';
 import { createAnnotationAction } from '../annotations';
-import { setMessageAction, setCursorAction, setStagedAction, setStatusAction, updateStagedAction } from './actions';
+import { setMessageAction, setCursorAction, setStagedAction, setStatusAction } from './actions';
 
 export const initialState = {
     cursor: 0,
@@ -38,8 +37,5 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setCursorAction, (state, { payload }) => {
             state.cursor = payload;
-        })
-        .addCase(updateStagedAction, (state, { payload }) => {
-            state.staged = merge(state.staged, payload);
         }),
 );

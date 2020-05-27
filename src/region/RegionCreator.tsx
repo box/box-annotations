@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';
@@ -204,13 +203,12 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
     });
 
     return (
+        // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <div
             ref={creatorElRef}
             className={classNames(className, 'ba-RegionCreator')}
             data-testid="ba-RegionCreator"
-            onBlur={noop}
             onClick={handleClick}
-            onFocus={noop}
             onMouseDown={handleMouseDown}
             onMouseOut={handleMouseOut}
             onMouseOver={handleMouseOver}
