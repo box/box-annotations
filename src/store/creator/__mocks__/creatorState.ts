@@ -3,9 +3,9 @@ import { CreatorStatus } from '../types';
 export default {
     cursor: 0,
     error: null,
+    message: 'test',
     staged: {
         location: 1,
-        message: 'test',
         shape: {
             height: 100,
             width: 100,

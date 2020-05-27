@@ -9,13 +9,13 @@ export enum CreatorStatus {
 
 export type CreatorItem = {
     location: number;
-    message: string;
     shape: Rect;
 };
 
 export type CreatorState = {
     cursor: number;
     error: SerializedError | null;
+    message: string;
     staged: CreatorItem | null;
     status: CreatorStatus;
 };

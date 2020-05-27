@@ -8,7 +8,6 @@ import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
 
 type Props = {
-    canDraw: boolean;
     className?: string;
     onStart: () => void;
     onStop: (shape: Rect) => void;
@@ -19,7 +18,7 @@ const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 const MOUSE_PRIMARY = 1; // Primary mouse button
 
-export default function RegionCreator({ canDraw, className, onStart, onStop }: Props): JSX.Element {
+export default function RegionCreator({ className, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
@@ -154,18 +153,6 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
     const handleTouchStart = ({ targetTouches }: React.TouchEvent): void => {
         startDraw(targetTouches[0].clientX, targetTouches[0].clientY);
     };
-    const eventHandlers = canDraw
-        ? {
-              onClick: handleClick,
-              onMouseDown: handleMouseDown,
-              onMouseOut: handleMouseOut,
-              onMouseOver: handleMouseOver,
-              onTouchCancel: handleTouchCancel,
-              onTouchEnd: handleTouchEnd,
-              onTouchMove: handleTouchMove,
-              onTouchStart: handleTouchStart,
-          }
-        : {};
 
     const renderStep = (callback: () => void): void => {
         renderHandleRef.current = window.requestAnimationFrame(callback);
@@ -216,14 +203,23 @@ export default function RegionCreator({ canDraw, className, onStart, onStop }: P
     });
 
     return (
+        // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <div
             ref={creatorElRef}
-            className={classNames(className, 'ba-RegionCreator', { 'is-active': canDraw })}
+            className={classNames(className, 'ba-RegionCreator')}
             data-testid="ba-RegionCreator"
-            {...eventHandlers}
+            onClick={handleClick}
+            onMouseDown={handleMouseDown}
+            onMouseOut={handleMouseOut}
+            onMouseOver={handleMouseOver}
+            onTouchCancel={handleTouchCancel}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
+            onTouchStart={handleTouchStart}
+            role="presentation"
         >
             {isDrawing && <RegionRect ref={regionRectRef} className="ba-RegionCreator-rect" isActive />}
-            {!isDrawing && isHovering && canDraw && <PopupCursor />}
+            {!isDrawing && isHovering && <PopupCursor />}
         </div>
     );
 }

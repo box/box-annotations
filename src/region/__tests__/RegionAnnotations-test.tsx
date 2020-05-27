@@ -18,13 +18,15 @@ jest.mock('../regionUtil', () => ({
     scaleShape: jest.fn(value => value),
 }));
 
-describe('RegionAnnotations', () => {
+describe('components/region/RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         createRegion: jest.fn(),
+        message: 'test',
         page: 1,
         scale: 1,
         setActiveAnnotationId: jest.fn(),
+        setMessage: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -40,7 +42,6 @@ describe('RegionAnnotations', () => {
     const getRectRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorItem => ({
         location: 1,
-        message: 'test',
         shape: getRect(),
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
@@ -60,6 +61,7 @@ describe('RegionAnnotations', () => {
             test('should reset the staged state and status', () => {
                 instance.handleCancel();
 
+                expect(defaults.setMessage).toHaveBeenCalledWith('');
                 expect(defaults.setStaged).toHaveBeenCalledWith(null);
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
             });
@@ -69,11 +71,7 @@ describe('RegionAnnotations', () => {
             test('should set the staged state with the new message', () => {
                 instance.handleChange('test');
 
-                expect(defaults.setStaged).toHaveBeenCalledWith(
-                    expect.objectContaining({
-                        message: 'test',
-                    }),
-                );
+                expect(defaults.setMessage).toHaveBeenCalledWith('test');
             });
         });
 
@@ -81,6 +79,7 @@ describe('RegionAnnotations', () => {
             test('should reset the creator status', () => {
                 instance.handleStart();
 
+                expect(defaults.setStaged).toHaveBeenCalledWith(null);
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
             });
         });
@@ -98,7 +97,10 @@ describe('RegionAnnotations', () => {
                 instance.handleStop(shape);
 
                 expect(scaleShape).toHaveBeenCalledWith(shape, defaults.scale, true); // Inverse scale
-                expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ shape }));
+                expect(defaults.setStaged).toHaveBeenCalledWith({
+                    location: defaults.page,
+                    shape,
+                });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
@@ -107,7 +109,10 @@ describe('RegionAnnotations', () => {
             test('should save the staged annotation', () => {
                 instance.handleSubmit();
 
-                expect(defaults.createRegion).toHaveBeenCalledWith(getStaged());
+                expect(defaults.createRegion).toHaveBeenCalledWith({
+                    ...getStaged(),
+                    message: defaults.message,
+                });
             });
         });
 
@@ -134,7 +139,6 @@ describe('RegionAnnotations', () => {
             const creator = wrapper.find(RegionCreator);
 
             expect(creator.hasClass('ba-RegionAnnotations-creator')).toBe(true);
-            expect(creator.prop('canDraw')).toBe(true);
         });
 
         test('should scale and render a RegionAnnotation if one has been drawn', () => {

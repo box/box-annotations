@@ -7,9 +7,11 @@ import {
     getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
+    getCreatorMessage,
     getCreatorStagedForLocation,
     getCreatorStatus,
     setActiveAnnotationIdAction,
+    setMessageAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
@@ -22,6 +24,7 @@ export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
     isCreating: boolean;
+    message: string;
     staged: CreatorItem | null;
     status: CreatorStatus;
 };
@@ -30,6 +33,7 @@ export const mapStateToProps = (state: AppState, { page }: { page: number }): Pr
     activeAnnotationId: getActiveAnnotationId(state),
     annotations: getAnnotationsForLocation(state, page).filter(isRegion),
     isCreating: getAnnotationMode(state) === 'region',
+    message: getCreatorMessage(state),
     staged: getCreatorStagedForLocation(state, page),
     status: getCreatorStatus(state),
 });
@@ -37,6 +41,7 @@ export const mapStateToProps = (state: AppState, { page }: { page: number }): Pr
 export const mapDispatchToProps = {
     createRegion: createRegionAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
+    setMessage: setMessageAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

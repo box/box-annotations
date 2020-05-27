@@ -13,7 +13,6 @@ jest.mock('../regionUtil');
 
 describe('RegionCreator', () => {
     const defaults = {
-        canDraw: true,
         onDraw: jest.fn(),
         onStart: jest.fn(),
         onStop: jest.fn(),
@@ -278,36 +277,21 @@ describe('RegionCreator', () => {
             });
         });
 
-        test('should add event listeners if canDraw is true', () => {
+        test('should add class and event listeners', () => {
             const wrapper = getWrapper();
             const rootEl = getWrapperRoot(wrapper);
 
+            expect(rootEl.hasClass('ba-RegionCreator')).toBe(true);
+
             expect(rootEl.prop('onClick')).toBeDefined();
             expect(rootEl.prop('onMouseDown')).toBeDefined();
+            expect(rootEl.prop('onMouseOut')).toBeDefined();
+            expect(rootEl.prop('onMouseOver')).toBeDefined();
+            expect(rootEl.prop('onTouchCancel')).toBeDefined();
             expect(rootEl.prop('onTouchCancel')).toBeDefined();
             expect(rootEl.prop('onTouchEnd')).toBeDefined();
             expect(rootEl.prop('onTouchMove')).toBeDefined();
             expect(rootEl.prop('onTouchStart')).toBeDefined();
-        });
-
-        test('should not add event listeners if canDraw is false', () => {
-            const wrapper = getWrapper({ canDraw: false });
-            const rootEl = getWrapperRoot(wrapper);
-
-            expect(rootEl.prop('onClick')).not.toBeDefined();
-            expect(rootEl.prop('onMouseDown')).not.toBeDefined();
-            expect(rootEl.prop('onTouchCancel')).not.toBeDefined();
-            expect(rootEl.prop('onTouchEnd')).not.toBeDefined();
-            expect(rootEl.prop('onTouchMove')).not.toBeDefined();
-            expect(rootEl.prop('onTouchStart')).not.toBeDefined();
-        });
-
-        test.each([true, false])('should add the is-active class based on canDraw: %s', canDraw => {
-            const wrapper = getWrapper({ canDraw });
-            const rootEl = getWrapperRoot(wrapper);
-
-            expect(rootEl.hasClass('ba-RegionCreator')).toBe(true);
-            expect(rootEl.hasClass('is-active')).toBe(canDraw);
         });
     });
 });
