@@ -2,8 +2,8 @@ import { NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import reducer from '../reducer';
 import state from '../__mocks__/creatorState';
-import { CreatorItem, CreatorStatus } from '../types';
-import { setStagedAction, setCursorAction, setStatusAction } from '../actions';
+import { CreatorStatus } from '../types';
+import { setMessageAction, setCursorAction, setStagedAction, setStatusAction, updateStagedAction } from '../actions';
 
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -32,9 +32,18 @@ describe('store/creator/reducer', () => {
         });
     });
 
+    describe('setMessageAction', () => {
+        test('should set the message in state', () => {
+            const payload = 'message';
+            const newState = reducer(state, setMessageAction(payload));
+
+            expect(newState.message).toEqual(payload);
+        });
+    });
+
     describe('setStagedAction', () => {
         test('should set the staged item in state', () => {
-            const payload = { location: 2 } as CreatorItem;
+            const payload = { ...state.staged, location: 2 };
             const newState = reducer(state, setStagedAction(payload));
 
             expect(newState.staged).toEqual(payload);
@@ -54,6 +63,15 @@ describe('store/creator/reducer', () => {
             const newState = reducer(state, setCursorAction(2));
 
             expect(newState.cursor).toEqual(2);
+        });
+    });
+
+    describe('updateStagedAction', () => {
+        test('should update the staged item in state', () => {
+            const payload = { location: 2 };
+            const newState = reducer(state, updateStagedAction(payload));
+
+            expect(newState.staged).toEqual({ ...state.staged, location: 2 });
         });
     });
 });

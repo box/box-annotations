@@ -1,11 +1,13 @@
+import merge from 'lodash/merge';
 import { createReducer } from '@reduxjs/toolkit';
 import { CreatorState, CreatorStatus } from './types';
 import { createAnnotationAction } from '../annotations';
-import { setStagedAction, setStatusAction, setCursorAction } from './actions';
+import { setMessageAction, setCursorAction, setStagedAction, setStatusAction, updateStagedAction } from './actions';
 
 export const initialState = {
     cursor: 0,
     error: null,
+    message: '',
     staged: null,
     status: CreatorStatus.init,
 };
@@ -25,6 +27,9 @@ export default createReducer<CreatorState>(initialState, builder =>
             state.error = error;
             state.status = CreatorStatus.rejected;
         })
+        .addCase(setMessageAction, (state, { payload }) => {
+            state.message = payload;
+        })
         .addCase(setStagedAction, (state, { payload }) => {
             state.staged = payload;
         })
@@ -33,5 +38,8 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setCursorAction, (state, { payload }) => {
             state.cursor = payload;
+        })
+        .addCase(updateStagedAction, (state, { payload }) => {
+            state.staged = merge(state.staged, payload);
         }),
 );

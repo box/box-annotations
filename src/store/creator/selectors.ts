@@ -10,3 +10,4 @@ export const getCreatorStagedForLocation = (state: State, location: number): Cre
 };
 export const getCreatorStatus = (state: State): CreatorStatus => state.creator.status;
 export const getCreatorCursor = (state: State): number => state.creator.cursor;
+export const getCreatorMessage = (state: State): string => state.creator.message;

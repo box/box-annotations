@@ -1,6 +1,6 @@
 import creatorState from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
-import { getCreatorStatus, getCreatorStaged, getCreatorStagedForLocation } from '../selectors';
+import { getCreatorMessage, getCreatorStaged, getCreatorStagedForLocation, getCreatorStatus } from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { creator: creatorState };
@@ -16,7 +16,6 @@ describe('store/annotations/selectors', () => {
             expect(getCreatorStaged(state)).toMatchInlineSnapshot(`
                 Object {
                   "location": 1,
-                  "message": "test",
                   "shape": Object {
                     "height": 100,
                     "type": "rect",
@@ -33,6 +32,12 @@ describe('store/annotations/selectors', () => {
         test('should return all annotations for a given location', () => {
             expect(getCreatorStagedForLocation(state, 1)).toMatchObject({ location: 1 });
             expect(getCreatorStagedForLocation(state, 2)).toEqual(null);
+        });
+    });
+
+    describe('getCreatorMessage', () => {
+        test('should return creator message', () => {
+            expect(getCreatorMessage(state)).toEqual('test');
         });
     });
 });

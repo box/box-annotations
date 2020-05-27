@@ -1,10 +1,10 @@
-import merge from 'lodash/merge';
 import * as React from 'react';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
+import { CreateArg } from './actions';
 import { CreatorItem, CreatorStatus } from '../store/creator';
 import { scaleShape } from './regionUtil';
 import './RegionAnnotations.scss';
@@ -12,11 +12,13 @@ import './RegionAnnotations.scss';
 type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
-    createRegion: (arg: { location: number; message: string; shape: Rect }) => void;
+    createRegion: (arg: CreateArg) => void;
     isCreating: boolean;
+    message: string;
     page: number;
     scale: number;
     setActiveAnnotationId: (annotationId: string | null) => void;
+    setMessage: (message: string) => void;
     setStaged: (staged: CreatorItem | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItem | null;
@@ -36,11 +38,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
     state: State = {};
 
-    setStaged(data: Partial<CreatorItem> | null): void {
-        const { page, setStaged, staged } = this.props;
-        setStaged(data ? merge({ location: page, message: '' }, staged, data) : data);
-    }
-
     setStatus(status: CreatorStatus): void {
         const { setStatus } = this.props;
         setStatus(status);
@@ -53,34 +50,37 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     handleCancel = (): void => {
-        this.setStaged(null);
+        const { setMessage, setStaged } = this.props;
+        setMessage('');
+        setStaged(null);
         this.setStatus(CreatorStatus.init);
     };
 
     handleChange = (text?: string): void => {
-        this.setStaged({ message: text });
+        const { setMessage } = this.props;
+        setMessage(text || '');
     };
 
     handleStart = (): void => {
-        this.setStaged(null);
+        const { setStaged } = this.props;
+        setStaged(null);
         this.setStatus(CreatorStatus.init);
     };
 
     handleStop = (shape: Rect): void => {
-        const { scale } = this.props;
-
-        this.setStaged({ shape: scaleShape(shape, scale, true) });
+        const { page, scale, setStaged } = this.props;
+        setStaged({ location: page, shape: scaleShape(shape, scale, true) });
         this.setStatus(CreatorStatus.staged);
     };
 
     handleSubmit = (): void => {
-        const { createRegion, staged } = this.props;
+        const { createRegion, message, staged } = this.props;
 
         if (!staged) {
             return;
         }
 
-        createRegion(staged);
+        createRegion({ ...staged, message });
     };
 
     setRectRef = (rectRef: RegionRectRef): void => {
@@ -88,9 +88,8 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     render(): JSX.Element {
-        const { activeAnnotationId, annotations, isCreating, scale, staged, status } = this.props;
+        const { activeAnnotationId, annotations, isCreating, message, scale, staged, status } = this.props;
         const { rectRef } = this.state;
-        const canDraw = !staged || !staged.message;
         const canReply = status !== CreatorStatus.init;
         const isPending = status === CreatorStatus.pending;
 
@@ -108,7 +107,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
                 {isCreating && (
                     <RegionCreator
-                        canDraw={canDraw}
                         className="ba-RegionAnnotations-creator"
                         onStart={this.handleStart}
                         onStop={this.handleStop}
@@ -131,7 +129,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                             onChange={this.handleChange}
                             onSubmit={this.handleSubmit}
                             reference={rectRef}
-                            value={staged.message}
+                            value={message}
                         />
                     </div>
                 )}
