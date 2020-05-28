@@ -114,7 +114,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         const parentCenterX = Math.round(this.annotatedEl.clientWidth / 2);
         const parentCenterY = Math.round(this.annotatedEl.clientHeight / 2);
         const offsetCenterX = Math.round(pageEl.clientWidth * (offsetX / 100));
-        const offsetCenterY = Math.round(pageEl.clientHeight * (offsetY / 100)); // 500px * 0.01 = 5px offset
+        const offsetCenterY = Math.round(pageEl.clientHeight * (offsetY / 100));
         const offsetScrollLeft = pageEl.offsetLeft - parentCenterX + offsetCenterX;
         const offsetScrollTop = pageEl.offsetTop - parentCenterY + offsetCenterY;
         const scrollLeft = Math.max(0, Math.min(offsetScrollLeft, this.annotatedEl.scrollWidth));

@@ -51,6 +51,23 @@ describe('RegionList', () => {
             expect(wrapper.hasClass('is-listening')).toBe(isListening);
         });
 
+        test('should filter all invalid annotations', () => {
+            const invalid = [
+                { id: 'anno_5', target: { shape: { height: 105, width: 0, x: 0, y: 0 } } },
+                { id: 'anno_6', target: { shape: { height: 0, width: 105, x: 0, y: 0 } } },
+                { id: 'anno_7', target: { shape: { height: 0, width: 0, x: 105, y: 0 } } },
+                { id: 'anno_8', target: { shape: { height: 0, width: 0, x: 0, y: 105 } } },
+                { id: 'anno_9', target: { shape: { height: -5, width: 0, x: 0, y: 0 } } },
+                { id: 'anno_10', target: { shape: { height: 0, width: -5, x: 0, y: 0 } } },
+                { id: 'anno_11', target: { shape: { height: 0, width: 0, x: -5, y: 0 } } },
+                { id: 'anno_12', target: { shape: { height: 0, width: 0, x: 0, y: -5 } } },
+            ] as AnnotationRegion[];
+            const wrapper = getWrapper({ annotations: defaults.annotations.concat(invalid) });
+            const children = wrapper.find(RegionAnnotation);
+
+            expect(children.length).toEqual(defaults.annotations.length);
+        });
+
         test('should render the specified annotation based on activeId', () => {
             const wrapper = getWrapper({ activeId: 'anno_1' });
             const children = wrapper.find(RegionAnnotation);

@@ -6,3 +6,7 @@ $region_cursor_32_3x: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAY
     cursor: url($region_cursor_32) 16 16, crosshair; /* Legacy */
     cursor: image-set(url($region_cursor_32) 1x, url($region_cursor_32_2x) 2x, url($region_cursor_32_3x) 3x) 16 16, crosshair; /* Webkit */ /* stylelint-disable-line */
 }
+
+.ba-RegionCreator-rect {
+    transform: translateZ(0);
+}

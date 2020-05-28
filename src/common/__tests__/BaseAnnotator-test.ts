@@ -1,11 +1,10 @@
 import * as store from '../../store';
+import APIFactory from '../../api';
 import BaseAnnotator from '../BaseAnnotator';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
-import APIFactory from '../../api';
 
-jest.mock('../EventEmitter');
 jest.mock('../../api');
 jest.mock('../../store', () => ({
     createStore: jest.fn(() => ({ dispatch: jest.fn() })),
@@ -125,6 +124,29 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             expect(annotator.rootEl).toBeNull();
+        });
+    });
+
+    describe('event handlers', () => {
+        beforeEach(() => {
+            jest.spyOn(annotator, 'init');
+            jest.spyOn(annotator, 'removeAnnotation');
+            jest.spyOn(annotator, 'setActiveId');
+            jest.spyOn(annotator, 'setVisibility');
+        });
+
+        test('should call their underlying methods', () => {
+            annotator.emit(LegacyEvent.SCALE, { scale: 1 });
+            expect(annotator.init).toHaveBeenCalledWith(1);
+
+            annotator.emit(Event.ACTIVE_SET, 12345);
+            expect(annotator.setActiveId).toHaveBeenCalledWith(12345);
+
+            annotator.emit(Event.ANNOTATION_REMOVE, 12345);
+            expect(annotator.removeAnnotation).toHaveBeenCalledWith(12345);
+
+            annotator.emit(Event.VISIBLE_SET, true);
+            expect(annotator.setVisibility).toHaveBeenCalledWith(true);
         });
     });
 
