@@ -164,7 +164,6 @@ describe('DocumentAnnotator', () => {
             expect(annotator.getPageNumber).toHaveBeenCalledWith(pageEl);
             expect(mockManager.render).toHaveBeenCalledWith({
                 intl: annotator.intl,
-                scale: 1,
                 store: expect.any(Object),
             });
         });
@@ -201,6 +200,8 @@ describe('DocumentAnnotator', () => {
         const getPageMock = (pageNumber = 1): HTMLElement => {
             const page = document.createElement('div');
 
+            Object.defineProperty(page, 'clientHeight', { configurable: true, value: 100 });
+            Object.defineProperty(page, 'clientWidth', { configurable: true, value: 100 });
             Object.defineProperty(page, 'offsetLeft', { configurable: true, value: 0 });
             Object.defineProperty(page, 'offsetTop', { configurable: true, value: (pageNumber - 1) * 100 }); // 100 pixels per page
 

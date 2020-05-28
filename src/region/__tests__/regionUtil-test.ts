@@ -1,6 +1,6 @@
 import { Rect } from '../../@types';
 import { annotation } from '../__mocks__/data';
-import { centerRegion, centerShape, isRegion, scaleShape, styleShape } from '../regionUtil';
+import { centerRegion, centerShape, isRegion, styleShape } from '../regionUtil';
 
 describe('regionUtil', () => {
     const getRect = (): Rect => ({
@@ -40,52 +40,16 @@ describe('regionUtil', () => {
         });
     });
 
-    describe('scaleShape()', () => {
-        test('should scale up the underlying shape without rounding', () => {
-            const shape = scaleShape(getRect(), 2.25);
-
-            expect(shape).toMatchObject({
-                type: 'rect',
-                height: 112.5,
-                width: 112.5,
-                x: 22.5,
-                y: 22.5,
-            });
-        });
-
-        test('should scale down the underlying shape if the invert option is true', () => {
-            const shape = scaleShape(getRect(), 2, true);
-
-            expect(shape).toMatchObject({
-                type: 'rect',
-                height: 25,
-                width: 25,
-                x: 5,
-                y: 5,
-            });
-        });
-    });
-
     describe('styleShape()', () => {
-        test('should return styles for a shape with with border space included', () => {
+        test('should return styles for a shape', () => {
             const styles = styleShape(getRect());
 
             expect(styles).toMatchObject({
                 display: 'block',
-                height: '58px',
-                transform: 'translate(6px, 6px)',
-                width: '58px',
-            });
-        });
-
-        test('should return gpu-accelerated styles for a shape with with border space included', () => {
-            const styles = styleShape(getRect(), true);
-
-            expect(styles).toMatchObject({
-                display: 'block',
-                height: '58px',
-                transform: 'translate3d(6px, 6px, 0)',
-                width: '58px',
+                height: '50%',
+                left: '10%',
+                top: '10%',
+                width: '50%',
             });
         });
 

@@ -8,15 +8,11 @@ import RegionRect from '../RegionRect';
 import { annotations } from '../__mocks__/data';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
-import { scaleShape } from '../regionUtil';
 
 jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionCreator');
 jest.mock('../RegionList');
 jest.mock('../RegionRect');
-jest.mock('../regionUtil', () => ({
-    scaleShape: jest.fn(value => value),
-}));
 
 describe('components/region/RegionAnnotations', () => {
     const defaults = {
@@ -24,7 +20,6 @@ describe('components/region/RegionAnnotations', () => {
         createRegion: jest.fn(),
         message: 'test',
         page: 1,
-        scale: 1,
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setStaged: jest.fn(),
@@ -87,16 +82,15 @@ describe('components/region/RegionAnnotations', () => {
         describe('handleStop', () => {
             const shape = {
                 type: 'rect' as const,
-                height: 100,
-                width: 100,
+                height: 10,
+                width: 10,
                 x: 20,
                 y: 20,
             };
 
-            test('should update the staged status and item with the new scaled shape', () => {
+            test('should update the staged status and item with the new shape', () => {
                 instance.handleStop(shape);
 
-                expect(scaleShape).toHaveBeenCalledWith(shape, defaults.scale, true); // Inverse scale
                 expect(defaults.setStaged).toHaveBeenCalledWith({
                     location: defaults.page,
                     shape,
@@ -141,11 +135,10 @@ describe('components/region/RegionAnnotations', () => {
             expect(creator.hasClass('ba-RegionAnnotations-creator')).toBe(true);
         });
 
-        test('should scale and render a RegionAnnotation if one has been drawn', () => {
+        test('should render a RegionAnnotation if one has been drawn', () => {
             const shape = getRect();
             const wrapper = getWrapper({
                 isCreating: true,
-                scale: 1.5,
                 staged: {
                     location: 1,
                     message: null,
@@ -153,7 +146,6 @@ describe('components/region/RegionAnnotations', () => {
                 },
             });
 
-            expect(scaleShape).toHaveBeenCalledWith(shape, 1.5);
             expect(wrapper.exists(RegionCreator)).toBe(true);
             expect(wrapper.find(RegionRect).prop('shape')).toEqual(shape);
         });

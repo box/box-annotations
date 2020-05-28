@@ -12,7 +12,6 @@ describe('RegionContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
         page: 1,
-        scale: 1,
         store: createStore(),
     };
     const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionContainer {...defaults} {...props} />);
@@ -29,7 +28,6 @@ describe('RegionContainer', () => {
                 isCreating: false,
                 message: '',
                 page: defaults.page,
-                scale: defaults.scale,
                 staged: null,
                 status: CreatorStatus.init,
                 setActiveAnnotationId: expect.any(Function),

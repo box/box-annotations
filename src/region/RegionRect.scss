@@ -7,6 +7,11 @@
 
     position: absolute;
 
+    // stylelint-disable-next-line declaration-no-important
+    box-sizing: content-box !important; // Padding needs to increase the hit area of the button to include the borders
+    margin: -#{$border-size-outer};
+    padding: $border-size-outer;
+
     &::after {
         position: absolute;
         top: $border-size-outer;

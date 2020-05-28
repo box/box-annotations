@@ -79,7 +79,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
         pageManagers.forEach(manager =>
             manager.render({
                 intl: this.intl,
-                scale: this.scale,
                 store: this.store,
             }),
         );
@@ -112,10 +111,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
 
         const canSmoothScroll = 'scrollBehavior' in this.annotatedEl.style;
-        const parentCenterX = this.annotatedEl.clientWidth / 2;
-        const parentCenterY = this.annotatedEl.clientHeight / 2;
-        const offsetCenterX = Math.round(offsetX * this.scale);
-        const offsetCenterY = Math.round(offsetY * this.scale);
+        const parentCenterX = Math.round(this.annotatedEl.clientWidth / 2);
+        const parentCenterY = Math.round(this.annotatedEl.clientHeight / 2);
+        const offsetCenterX = Math.round(pageEl.clientWidth * (offsetX / 100));
+        const offsetCenterY = Math.round(pageEl.clientHeight * (offsetY / 100)); // 500px * 0.01 = 5px offset
         const offsetScrollLeft = pageEl.offsetLeft - parentCenterX + offsetCenterX;
         const offsetScrollTop = pageEl.offsetTop - parentCenterY + offsetCenterY;
         const scrollLeft = Math.max(0, Math.min(offsetScrollLeft, this.annotatedEl.scrollWidth));
