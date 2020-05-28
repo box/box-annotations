@@ -49,7 +49,7 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
         const { current: x2 } = positionX2Ref;
         const { current: y2 } = positionY2Ref;
 
-        if (!creatorEl || !x1 || !x2 || !y1 || !y2) {
+        if (!creatorEl || x1 === null || x2 === null || y1 === null || y2 === null) {
             return null;
         }
 
@@ -63,12 +63,16 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
         const targetX = Math.min(Math.max(MIN_X, x2 > x1 ? x2 : x1), MAX_X);
         const targetY = Math.min(Math.max(MIN_Y, y2 > y1 ? y2 : y1), MAX_Y);
 
+        // Derive the shape height/width from the two coordinates
+        const shapeHeight = Math.max(MIN_SIZE, targetY - originY);
+        const shapeWidth = Math.max(MIN_SIZE, targetX - originX);
+
         return {
-            height: Math.max(MIN_SIZE, targetY - originY),
+            height: (shapeHeight / height) * 100,
             type: 'rect',
-            width: Math.max(MIN_SIZE, targetX - originX),
-            x: originX,
-            y: originY,
+            width: (shapeWidth / width) * 100,
+            x: (originX / width) * 100,
+            y: (originY / height) * 100,
         };
     };
 
@@ -164,7 +168,7 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
 
         if (isDirty && regionRect && shape) {
             // Directly set the style attribute
-            Object.assign(regionRect.style, styleShape(shape, true));
+            Object.assign(regionRect.style, styleShape(shape));
 
             // Reset the dirty state to avoid multiple renders
             regionDirtyRef.current = false;

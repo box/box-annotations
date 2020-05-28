@@ -1,6 +1,6 @@
 import { Rect } from '../../@types';
-import { createRegionAction } from '../actions';
 import { createAnnotationAction } from '../../store/annotations';
+import { createRegionAction } from '../actions';
 
 jest.mock('../../store/annotations');
 jest.mock('../../store/options', () => ({
@@ -13,8 +13,8 @@ describe('region/actions', () => {
             location: 5,
             message: 'message',
             shape: {
-                height: 100.25,
-                width: 100.25,
+                height: 50.25,
+                width: 50.25,
                 x: 10.75,
                 y: 10.75,
             } as Rect,
@@ -27,13 +27,6 @@ describe('region/actions', () => {
 
             expect(dispatch).toHaveBeenCalled();
             expect(getState).toHaveBeenCalled();
-        });
-
-        test('should round the argument target position and size to the nearest whole integer', async () => {
-            await createRegionAction(arg)(dispatch, getState);
-
-            expect(getState).toHaveBeenCalled();
-
             expect(createAnnotationAction).toHaveBeenCalledWith({
                 description: {
                     message: 'message',
@@ -47,12 +40,7 @@ describe('region/actions', () => {
                         type: 'page',
                         value: 5,
                     },
-                    shape: {
-                        height: 100,
-                        width: 100,
-                        x: 11,
-                        y: 11,
-                    },
+                    shape: arg.shape,
                     type: 'region',
                 },
             });

@@ -4,26 +4,36 @@ import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationRegion } from '../@types';
-import { scaleShape } from './regionUtil';
 
 export type Props = {
     activeId?: string | null;
     annotations: AnnotationRegion[];
     className?: string;
     onSelect?: (annotationId: string | null) => void;
-    scale: number;
 };
 
-export function RegionList({ activeId, annotations, className, onSelect = noop, scale }: Props): JSX.Element {
+export function checkValue(value: number): boolean {
+    return value >= 0 && value <= 100; // Values cannot be negative or larger than 100%
+}
+
+export function filterRegion({ target }: AnnotationRegion): boolean {
+    const { shape } = target;
+    const { height, width, x, y } = shape;
+
+    return checkValue(height) && checkValue(width) && checkValue(x) && checkValue(y);
+}
+
+export function sortRegion({ target: targetA }: AnnotationRegion, { target: targetB }: AnnotationRegion): number {
+    const { shape: shapeA } = targetA;
+    const { shape: shapeB } = targetB;
+
+    // Render the smallest annotations last to ensure they are always clickable
+    return shapeA.height * shapeA.width > shapeB.height * shapeB.width ? -1 : 1;
+}
+
+export function RegionList({ activeId, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const rootElRef = React.createRef<HTMLDivElement>();
-    const sortedAnnotations = annotations.sort(({ target: targetA }, { target: targetB }) => {
-        const { shape: shapeA } = targetA;
-        const { shape: shapeB } = targetB;
-
-        // Render the smallest annotations last to ensure they are always clickable
-        return shapeA.height * shapeA.width > shapeB.height * shapeB.width ? -1 : 1;
-    });
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('click', rootElRef, (): void => onSelect(null));
@@ -32,15 +42,18 @@ export function RegionList({ activeId, annotations, className, onSelect = noop, 
 
     return (
         <div ref={rootElRef} className={classNames(className, { 'is-listening': isListening })}>
-            {sortedAnnotations.map(({ id, target }) => (
-                <RegionAnnotation
-                    key={id}
-                    annotationId={id}
-                    isActive={activeId === id}
-                    onSelect={onSelect}
-                    shape={scaleShape(target.shape, scale)}
-                />
-            ))}
+            {annotations
+                .filter(filterRegion)
+                .sort(sortRegion)
+                .map(({ id, target }) => (
+                    <RegionAnnotation
+                        key={id}
+                        annotationId={id}
+                        isActive={activeId === id}
+                        onSelect={onSelect}
+                        shape={target.shape}
+                    />
+                ))}
         </div>
     );
 }

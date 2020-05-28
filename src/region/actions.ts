@@ -26,13 +26,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
                 type: 'page' as const,
                 value: location,
             },
-            shape: {
-                ...shape,
-                height: Math.round(shape.height),
-                width: Math.round(shape.width),
-                x: Math.round(shape.x),
-                y: Math.round(shape.y),
-            },
+            shape,
             type: 'region' as const,
         },
     };

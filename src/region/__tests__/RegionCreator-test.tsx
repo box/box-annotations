@@ -9,15 +9,11 @@ import { styleShape } from '../regionUtil';
 
 jest.mock('../../common/useAutoScroll');
 jest.mock('../../components/Popups/PopupCursor', () => () => <div />);
+jest.mock('../RegionRect');
 jest.mock('../regionUtil');
 
 describe('RegionCreator', () => {
-    const defaults = {
-        onDraw: jest.fn(),
-        onStart: jest.fn(),
-        onStop: jest.fn(),
-    };
-    const getDOMRect = (x: number, y: number, height: number, width: number): DOMRect => ({
+    const getDOMRect = (x = 0, y = 0, height = 1000, width = 1000): DOMRect => ({
         bottom: y + height,
         top: y,
         left: x,
@@ -30,20 +26,14 @@ describe('RegionCreator', () => {
     });
 
     // Render helpers
-    const getWrapper = (props = {}): ReactWrapper => mount(<RegionCreator {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper =>
+        mount(<RegionCreator onStart={jest.fn()} onStop={jest.fn()} {...props} />);
     const getWrapperRoot = (wrapper: ReactWrapper): ReactWrapper => wrapper.find('[data-testid="ba-RegionCreator"]');
-
-    // Layout helpers (defaults to 1000x1000px with no padding)
-    const setWrapperSize = (wrapper: ReactWrapper, x = 0, y = 0, height = 1000, width = 1000): ReactWrapper => {
-        jest.spyOn(getWrapperRoot(wrapper).getDOMNode(), 'getBoundingClientRect').mockImplementation(() =>
-            getDOMRect(x, y, height, width),
-        );
-        return wrapper;
-    };
 
     beforeEach(() => {
         jest.useFakeTimers();
 
+        jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
         jest.spyOn(document, 'addEventListener');
         jest.spyOn(document, 'removeEventListener');
         jest.spyOn(window, 'cancelAnimationFrame');
@@ -77,49 +67,49 @@ describe('RegionCreator', () => {
 
         test.each`
             x1      | y1      | x2      | y2      | result                                         | comment
-            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 95, width: 95, x: 5, y: 5 }}       | ${'standard dimensions'}
-            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 50, width: 50, x: 50, y: 50 }}     | ${'standard dimensions'}
-            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 50, width: 50, x: 50, y: 50 }}     | ${'standard dimensions'}
-            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 10, width: 10, x: 100, y: 100 }}   | ${'minimum size'}
-            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 950, width: 950, x: 50, y: 50 }}   | ${'maximum size'}
-            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 10, width: 10, x: 1000, y: 1000 }} | ${'maximum position'}
-            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 10, width: 10, x: 0, y: 0 }}       | ${'minimum position'}
+            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 9.5, width: 9.5, x: 0.5, y: 0.5 }} | ${'standard dimensions'}
+            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 5, width: 5, x: 5, y: 5 }}         | ${'standard dimensions'}
+            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 5, width: 5, x: 5, y: 5 }}         | ${'standard dimensions'}
+            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 1, width: 1, x: 10, y: 10 }}       | ${'minimum size'}
+            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 95, width: 95, x: 5, y: 5 }}       | ${'maximum size'}
+            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 1, width: 1, x: 100, y: 100 }}     | ${'maximum position'}
+            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 1, width: 1, x: 0, y: 0 }}         | ${'minimum position'}
         `('should update the rendered rect when the user draws $comment', ({ result, x1, x2, y1, y2 }) => {
             const wrapper = getWrapper();
 
-            setWrapperSize(wrapper, 0, 0, 1000, 1000);
             simulateDrawStart(wrapper, x1, y1);
             simulateDrawMove(x2, y2);
             jest.advanceTimersByTime(1000); // Advance by 100 frames (10 fps * 10 seconds)
             wrapper.update();
 
-            expect(styleShape).toHaveBeenCalledWith(expect.objectContaining(result), true);
+            expect(styleShape).toHaveBeenCalledWith({ ...result, type: 'rect' });
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
-            const wrapper = getWrapper();
+            const onStart = jest.fn();
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStart, onStop });
 
-            setWrapperSize(wrapper);
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(100, 100);
             simulateDrawStop();
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).toHaveBeenCalled();
-            expect(defaults.onStop).toHaveBeenCalledWith({
-                height: 50,
+            expect(onStart).toHaveBeenCalled();
+            expect(onStop).toHaveBeenCalledWith({
+                height: 5,
                 type: 'rect',
-                width: 50,
-                x: 50,
-                y: 50,
+                width: 5,
+                x: 5,
+                y: 5,
             });
         });
 
         test('should do nothing if primary button is not pressed', () => {
-            const wrapper = getWrapper();
-
-            setWrapperSize(wrapper);
+            const onStart = jest.fn();
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStart, onStop });
 
             act(() => {
                 wrapper.simulate('mousedown', { buttons: 2, clientX: 50, clientY: 50 });
@@ -129,20 +119,21 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).not.toHaveBeenCalled();
-            expect(defaults.onStop).not.toHaveBeenCalled();
+            expect(onStart).not.toHaveBeenCalled();
+            expect(onStop).not.toHaveBeenCalled();
         });
 
         test('should do nothing if the mouse is moved without being pressed over the wrapper first', () => {
-            const wrapper = getWrapper();
+            const onStart = jest.fn();
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStart, onStop });
 
-            setWrapperSize(wrapper);
             simulateDrawMove(50, 50);
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).not.toHaveBeenCalled();
-            expect(defaults.onStop).not.toHaveBeenCalled();
+            expect(onStart).not.toHaveBeenCalled();
+            expect(onStop).not.toHaveBeenCalled();
         });
 
         test('should prevent click events from surfacing to the parent document', () => {
@@ -187,6 +178,13 @@ describe('RegionCreator', () => {
     });
 
     describe('touch events', () => {
+        const shape = {
+            height: 5,
+            type: 'rect',
+            width: 5,
+            x: 5,
+            y: 5,
+        };
         const simulateDrawStart = (wrapper: ReactWrapper, clientX = 10, clientY = 10): void =>
             act(() => {
                 wrapper.simulate('touchstart', { targetTouches: [{ clientX, clientY }] });
@@ -207,62 +205,42 @@ describe('RegionCreator', () => {
         test('should update the rendered rect when the user draws with touch events', () => {
             const wrapper = getWrapper();
 
-            setWrapperSize(wrapper);
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(wrapper, 100, 100);
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(styleShape).toHaveBeenCalledWith(
-                {
-                    height: 50,
-                    type: 'rect',
-                    width: 50,
-                    x: 50,
-                    y: 50,
-                },
-                true,
-            );
+            expect(styleShape).toHaveBeenCalledWith(shape);
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
-            const wrapper = getWrapper();
+            const onStart = jest.fn();
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStart, onStop });
 
-            setWrapperSize(wrapper);
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(wrapper, 100, 100);
             simulateDrawStop(wrapper);
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).toHaveBeenCalled();
-            expect(defaults.onStop).toHaveBeenCalledWith({
-                height: 50,
-                type: 'rect',
-                width: 50,
-                x: 50,
-                y: 50,
-            });
+            expect(onStart).toHaveBeenCalled();
+            expect(onStop).toHaveBeenCalledWith(shape);
         });
 
         test('should call the onStart and onStop callback even if drawing is cancelled', () => {
-            const wrapper = getWrapper();
+            const onStart = jest.fn();
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStart, onStop });
 
-            setWrapperSize(wrapper);
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(wrapper, 100, 100);
             simulateDrawCancel(wrapper);
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).toHaveBeenCalled();
-            expect(defaults.onStop).toHaveBeenCalledWith({
-                height: 50,
-                type: 'rect',
-                width: 50,
-                x: 50,
-                y: 50,
-            });
+            expect(onStart).toHaveBeenCalled();
+            expect(onStop).toHaveBeenCalledWith(shape);
         });
     });
 

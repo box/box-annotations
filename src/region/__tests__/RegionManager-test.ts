@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom';
 import { createIntl } from 'react-intl';
 import { createStore } from '../../store';
-import { scale } from '../__mocks__/data';
 import { Options } from '../../common/BaseManager';
 import RegionManager from '../RegionManager';
 
@@ -51,7 +50,7 @@ describe('RegionManager', () => {
 
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
-            wrapper.render({ intl, scale, store: createStore() });
+            wrapper.render({ intl, store: createStore() });
 
             expect(ReactDOM.render).toHaveBeenCalled();
         });

@@ -9,7 +9,6 @@ export type Options = {
 
 export type Props = {
     intl: IntlShape;
-    scale: number;
     store: Store;
 };
 

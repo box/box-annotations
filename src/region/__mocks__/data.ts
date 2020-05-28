@@ -1,5 +1,3 @@
-export const scale = 1;
-
 export const rect = {
     type: 'rect' as const,
     height: 10,
@@ -68,7 +66,7 @@ export const annotations = [
         id: 'anno_4',
         target: {
             location: { type: 'page', value: 10 },
-            shape: { height: 100, width: 100, x: 100, y: 100, type: 'rect' },
+            shape: { height: 40, width: 40, x: 40, y: 40, type: 'rect' },
             type: 'region',
         },
     },
