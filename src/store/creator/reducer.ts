@@ -13,11 +13,7 @@ export const initialState = {
 
 export default createReducer<CreatorState>(initialState, builder =>
     builder
-        .addCase(createAnnotationAction.fulfilled, state => {
-            state.error = null;
-            state.staged = null;
-            state.status = CreatorStatus.init;
-        })
+        .addCase(createAnnotationAction.fulfilled, () => initialState)
         .addCase(createAnnotationAction.pending, state => {
             state.error = null;
             state.status = CreatorStatus.pending;

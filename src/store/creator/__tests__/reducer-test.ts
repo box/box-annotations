@@ -8,9 +8,19 @@ import { setCursorAction, setMessageAction, setStagedAction, setStatusAction } f
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
         test('should set state when fulfilled', () => {
-            const newState = reducer(state, createAnnotationAction.fulfilled);
+            const newState = reducer(
+                {
+                    ...state,
+                    cursor: 1,
+                    error: new Error('error'),
+                    status: CreatorStatus.rejected,
+                },
+                createAnnotationAction.fulfilled,
+            );
 
+            expect(newState.cursor).toEqual(0);
             expect(newState.error).toEqual(null);
+            expect(newState.message).toEqual('');
             expect(newState.staged).toEqual(null);
             expect(newState.status).toEqual(CreatorStatus.init);
         });
