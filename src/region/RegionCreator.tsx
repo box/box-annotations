@@ -54,14 +54,20 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
         }
 
         const { height, width } = creatorEl.getBoundingClientRect();
+        const MAX_HEIGHT = height - MIN_SIZE;
+        const MAX_WIDTH = width - MIN_SIZE;
         const MAX_X = Math.max(0, width - MIN_X);
         const MAX_Y = Math.max(0, height - MIN_Y);
 
-        // Set the origin x/y to the lowest value and the target x/y to the highest to avoid negative height/width
-        const originX = Math.min(Math.max(MIN_X, x1 < x2 ? x1 : x2), MAX_X);
-        const originY = Math.min(Math.max(MIN_Y, y1 < y2 ? y1 : y2), MAX_Y);
-        const targetX = Math.min(Math.max(MIN_X, x2 > x1 ? x2 : x1), MAX_X);
-        const targetY = Math.min(Math.max(MIN_Y, y2 > y1 ? y2 : y1), MAX_Y);
+        // Add a buffer to the origin to avoid exceeding the dimensions of the page
+        const initialX = x1 >= MAX_WIDTH && x2 >= MAX_WIDTH ? x1 - MIN_SIZE : x1;
+        const initialY = y1 >= MAX_HEIGHT && y2 >= MAX_HEIGHT ? y1 - MIN_SIZE : y1;
+
+        // Set the origin to the lowest value and the target to the highest to avoid negative height/width
+        const originX = Math.min(Math.max(MIN_X, initialX < x2 ? initialX : x2), MAX_X);
+        const originY = Math.min(Math.max(MIN_Y, initialY < y2 ? initialY : y2), MAX_Y);
+        const targetX = Math.min(Math.max(MIN_X, x2 > initialX ? x2 : initialX), MAX_X);
+        const targetY = Math.min(Math.max(MIN_Y, y2 > initialY ? y2 : initialY), MAX_Y);
 
         // Derive the shape height/width from the two coordinates
         const shapeHeight = Math.max(MIN_SIZE, targetY - originY);
