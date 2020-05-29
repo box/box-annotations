@@ -66,14 +66,18 @@ describe('RegionCreator', () => {
         });
 
         test.each`
-            x1      | y1      | x2      | y2      | result                                         | comment
-            ${5}    | ${5}    | ${100}  | ${100}  | ${{ height: 9.5, width: 9.5, x: 0.5, y: 0.5 }} | ${'standard dimensions'}
-            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 5, width: 5, x: 5, y: 5 }}         | ${'standard dimensions'}
-            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 5, width: 5, x: 5, y: 5 }}         | ${'standard dimensions'}
-            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 1, width: 1, x: 10, y: 10 }}       | ${'minimum size'}
-            ${1500} | ${1500} | ${50}   | ${50}   | ${{ height: 95, width: 95, x: 5, y: 5 }}       | ${'maximum size'}
-            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 1, width: 1, x: 100, y: 100 }}     | ${'maximum position'}
-            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 1, width: 1, x: 0, y: 0 }}         | ${'minimum position'}
+            x1      | y1      | x2      | y2      | result                                           | comment
+            ${0}    | ${0}    | ${1000} | ${1000} | ${{ height: 100, width: 100, x: 0, y: 0 }}       | ${'maximum size'}
+            ${0}    | ${0}    | ${1500} | ${1500} | ${{ height: 100, width: 100, x: 0, y: 0 }}       | ${'maximum size (over)'}
+            ${100}  | ${100}  | ${105}  | ${105}  | ${{ height: 1, width: 1, x: 10, y: 10 }}         | ${'minimum size'}
+            ${50}   | ${50}   | ${100}  | ${100}  | ${{ height: 5, width: 5, x: 5, y: 5 }}           | ${'standard dimensions'}
+            ${100}  | ${100}  | ${50}   | ${50}   | ${{ height: 5, width: 5, x: 5, y: 5 }}           | ${'standard dimensions'}
+            ${152}  | ${152}  | ${245}  | ${245}  | ${{ height: 9.3, width: 9.3, x: 15.2, y: 15.2 }} | ${'standard dimensions'}
+            ${1000} | ${100}  | ${1000} | ${150}  | ${{ height: 5, width: 1, x: 99, y: 10 }}         | ${'maximum position (x)'}
+            ${100}  | ${1000} | ${150}  | ${1000} | ${{ height: 1, width: 5, x: 10, y: 99 }}         | ${'maximum position (y)'}
+            ${1000} | ${1000} | ${1000} | ${1000} | ${{ height: 1, width: 1, x: 99, y: 99 }}         | ${'maximum position (both)'}
+            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 1, width: 1, x: 99, y: 99 }}         | ${'maximum position (over)'}
+            ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 1, width: 1, x: 0, y: 0 }}           | ${'minimum position'}
         `('should update the rendered rect when the user draws $comment', ({ result, x1, x2, y1, y2 }) => {
             const wrapper = getWrapper();
 
