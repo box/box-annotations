@@ -4,7 +4,7 @@ import API from '../api';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Annotation, Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -103,13 +103,12 @@ export default class BaseAnnotator extends EventEmitter {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public scrollToAnnotation(annotationId: string | null): void {
+    public scrollToAnnotation(annotation: Annotation): void {
         // Called by box-content-preview
     }
 
     public setActiveId(annotationId: string | null): void {
         this.store.dispatch(store.setActiveAnnotationIdAction(annotationId));
-        this.scrollToAnnotation(annotationId); // TODO: Require parent to call separately
     }
 
     public setVisibility(visibility: boolean): void {
