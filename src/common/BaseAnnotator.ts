@@ -4,7 +4,7 @@ import API from '../api';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Annotation, Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
