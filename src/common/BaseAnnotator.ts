@@ -103,7 +103,7 @@ export default class BaseAnnotator extends EventEmitter {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public scrollToAnnotation(annotation: Annotation): void {
+    public scrollToAnnotation(annotationId: string | null): void {
         // Called by box-content-preview
     }
 

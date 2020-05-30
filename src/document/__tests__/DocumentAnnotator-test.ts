@@ -2,8 +2,9 @@ import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
-import { annotations } from '../../region/__mocks__/data';
+import { annotations as regions } from '../../region/__mocks__/data';
 import { CLASS_ANNOTATIONS_LOADED } from '../../constants';
+import { fetchAnnotationsAction } from '../../store';
 
 jest.mock('../../region/RegionManager');
 
@@ -169,11 +170,29 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('scrollToAnnotation()', () => {
-        test('should call scrollToLocation for region annotations', () => {
-            annotator.scrollToLocation = jest.fn();
+        beforeEach(() => {
+            const payload = {
+                entries: regions as Annotation[],
+                limit: 1000,
+                next_marker: null,
+                previous_marker: null,
+            };
 
-            annotator.scrollToAnnotation(annotations[0] as Annotation);
+            annotator.scrollToLocation = jest.fn();
+            annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+        });
+
+        test('should call scrollToLocation for region annotations', () => {
+            annotator.scrollToAnnotation('anno_1');
             expect(annotator.scrollToLocation).toHaveBeenCalledWith(1, { x: 15, y: 15 });
+        });
+
+        test('should do nothing if the annotation id is undefined or not available in the store', () => {
+            annotator.scrollToAnnotation('nonsense');
+            expect(annotator.scrollToLocation).not.toHaveBeenCalled();
+
+            annotator.scrollToAnnotation(null);
+            expect(annotator.scrollToLocation).not.toHaveBeenCalled();
         });
     });
 

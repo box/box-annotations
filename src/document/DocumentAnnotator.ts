@@ -1,7 +1,7 @@
 import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { Annotation } from '../@types';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
+import { getAnnotation } from '../store/annotations';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import './DocumentAnnotator.scss';
 
@@ -86,8 +86,17 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.managers.set(pageNumber, pageManagers);
     }
 
-    scrollToAnnotation(annotation: Annotation): void {
-        const annotationPage = annotation.target.location.value;
+    scrollToAnnotation(annotationId: string | null): void {
+        if (!annotationId) {
+            return;
+        }
+
+        const annotation = getAnnotation(this.store.getState(), annotationId);
+        const annotationPage = annotation?.target.location.value;
+
+        if (!annotation || !annotationPage) {
+            return;
+        }
 
         if (isRegion(annotation)) {
             this.scrollToLocation(annotationPage, centerRegion(annotation.target.shape));
