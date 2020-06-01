@@ -20,21 +20,13 @@ describe('BoxAnnotations', () => {
 
         beforeEach(() => {
             permissions = {
-                can_annotate: false,
                 can_create_annotations: false,
                 can_view_annotations: false,
-                can_view_annotations_all: false,
-                can_view_annotations_self: false,
             };
         });
 
         test('should return false if permissions do not exist', () => {
             expect(loader.canLoad()).toBe(false);
-        });
-
-        test('should return true if user has at least can_annotate permissions', () => {
-            permissions.can_annotate = true;
-            expect(loader.canLoad(permissions)).toBe(true);
         });
 
         test('should return true if user has at least can_create_annotations permissions', () => {
@@ -44,16 +36,6 @@ describe('BoxAnnotations', () => {
 
         test('should return true if user has at least can_view_annotations permissions', () => {
             permissions.can_view_annotations = true;
-            expect(loader.canLoad(permissions)).toBe(true);
-        });
-
-        test('should return true if user has at least can_view_annotations_all permissions', () => {
-            permissions.can_view_annotations_all = true;
-            expect(loader.canLoad(permissions)).toBe(true);
-        });
-
-        test('should return true if user has at least can_view_annotations_self permissions', () => {
-            permissions.can_view_annotations_self = true;
             expect(loader.canLoad(permissions)).toBe(true);
         });
     });
