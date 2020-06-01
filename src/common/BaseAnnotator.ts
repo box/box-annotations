@@ -109,7 +109,6 @@ export default class BaseAnnotator extends EventEmitter {
 
     public setActiveId(annotationId: string | null): void {
         this.store.dispatch(store.setActiveAnnotationIdAction(annotationId));
-        this.scrollToAnnotation(annotationId); // TODO: Require parent to call separately
     }
 
     public setVisibility(visibility: boolean): void {
