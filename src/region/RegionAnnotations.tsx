@@ -89,7 +89,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
             <>
                 {/* Layer 1: Saved annotations */}
                 <RegionList
-                    activeId={isCreating ? null : activeAnnotationId}
+                    activeId={activeAnnotationId}
                     annotations={annotations}
                     className="ba-RegionAnnotations-list"
                     onSelect={this.handleAnnotationActive}
