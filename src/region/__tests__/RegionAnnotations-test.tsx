@@ -203,13 +203,10 @@ describe('components/region/RegionAnnotations', () => {
             expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
 
-        test.each([true, false])('should pass activeId to list only if isCreating is %s', isCreating => {
-            const wrapper = getWrapper({
-                activeAnnotationId: '123',
-                isCreating,
-            });
+        test('should pass activeId to the region list', () => {
+            const wrapper = getWrapper({ activeAnnotationId: '123' });
 
-            expect(wrapper.find(RegionList).prop('activeId')).toBe(isCreating ? null : '123');
+            expect(wrapper.find(RegionList).prop('activeId')).toBe('123');
         });
 
         test('should not render creation components if not in creation mode', () => {
