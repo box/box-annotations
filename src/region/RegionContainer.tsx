@@ -29,12 +29,12 @@ export type Props = {
     status: CreatorStatus;
 };
 
-export const mapStateToProps = (state: AppState, { page }: { page: number }): Props => ({
+export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => ({
     activeAnnotationId: getActiveAnnotationId(state),
-    annotations: getAnnotationsForLocation(state, page).filter(isRegion),
+    annotations: getAnnotationsForLocation(state, location).filter(isRegion),
     isCreating: getAnnotationMode(state) === 'region',
     message: getCreatorMessage(state),
-    staged: getCreatorStagedForLocation(state, page),
+    staged: getCreatorStagedForLocation(state, location),
     status: getCreatorStatus(state),
 });
 

@@ -1,9 +1,12 @@
+import 'regenerator-runtime/runtime';
 import getProp from 'lodash/get';
+import BaseAnnotator from './common/BaseAnnotator';
+import ImageAnnotator from './image/ImageAnnotator';
 import DocumentAnnotator from './document/DocumentAnnotator';
 import { IntlOptions, Permissions, PERMISSIONS, Type } from './@types';
 
 type Annotator = {
-    CONSTRUCTOR: typeof DocumentAnnotator;
+    CONSTRUCTOR: typeof BaseAnnotator;
     NAME: string;
     TYPES: string[];
     VIEWERS: string[];
@@ -45,6 +48,12 @@ const ANNOTATORS: Annotator[] = [
         NAME: 'Document',
         TYPES: [Type.region],
         VIEWERS: ['AutoCAD', 'Document', 'Presentation'],
+    },
+    {
+        CONSTRUCTOR: ImageAnnotator,
+        NAME: 'Image',
+        TYPES: [Type.region],
+        VIEWERS: ['Image'],
     },
 ];
 

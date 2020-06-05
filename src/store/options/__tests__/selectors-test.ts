@@ -1,4 +1,4 @@
-import { getFileId, getFileVersionId, getPermissions } from '../selectors';
+import { getFileId, getFileVersionId, getPermissions, getRotation, getScale } from '../selectors';
 
 describe('store/options/selectors', () => {
     const optionsState = {
@@ -8,6 +8,8 @@ describe('store/options/selectors', () => {
             can_create_annotations: true,
             can_view_annotations: true,
         },
+        rotation: 0,
+        scale: 1,
     };
 
     describe('getFileVersionId', () => {
@@ -28,6 +30,18 @@ describe('store/options/selectors', () => {
                 can_create_annotations: true,
                 can_view_annotations: true,
             });
+        });
+    });
+
+    describe('getRotation', () => {
+        test('should return the current rotation', () => {
+            expect(getRotation({ options: optionsState })).toBe(0);
+        });
+    });
+
+    describe('getScale', () => {
+        test('should return the current scale', () => {
+            expect(getScale({ options: optionsState })).toBe(1);
         });
     });
 });

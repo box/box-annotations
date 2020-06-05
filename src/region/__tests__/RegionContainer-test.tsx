@@ -11,7 +11,7 @@ jest.mock('../RegionAnnotations');
 describe('RegionContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
-        page: 1,
+        location: 1,
         store: createStore(),
     };
     const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionContainer {...defaults} {...props} />);
@@ -26,8 +26,8 @@ describe('RegionContainer', () => {
                 annotations: [],
                 createRegion: expect.any(Function),
                 isCreating: false,
+                location: 1,
                 message: '',
-                page: defaults.page,
                 staged: null,
                 status: CreatorStatus.init,
                 setActiveAnnotationId: expect.any(Function),

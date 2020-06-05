@@ -2,8 +2,7 @@ import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 
 export type Options = {
-    page: number;
-    pageEl: HTMLElement;
+    location?: number;
     referenceEl: HTMLElement;
 };
 
@@ -14,6 +13,7 @@ export type Props = {
 
 export default interface BaseManager {
     destroy(): void;
-    exists(pageEl: HTMLElement): boolean;
+    exists(parentEl: HTMLElement): boolean;
     render(props: Props): void;
+    style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration;
 }

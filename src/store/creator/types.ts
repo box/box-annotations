@@ -5,6 +5,7 @@ export enum CreatorStatus {
     pending = 'pending',
     rejected = 'rejected',
     staged = 'staged',
+    started = 'started',
 }
 
 export type CreatorItem = {

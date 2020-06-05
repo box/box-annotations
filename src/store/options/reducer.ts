@@ -1,11 +1,19 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { OptionsState } from './types';
-import { setFileIdAction, setFileVersionIdAction, setPermissionsAction } from './actions';
+import {
+    setFileIdAction,
+    setFileVersionIdAction,
+    setPermissionsAction,
+    setRotationAction,
+    setScaleAction,
+} from './actions';
 
 export const initialState = {
     fileId: null,
     fileVersionId: null,
     permissions: {},
+    rotation: 0,
+    scale: 1,
 };
 
 export default createReducer<OptionsState>(initialState, builder =>
@@ -18,5 +26,11 @@ export default createReducer<OptionsState>(initialState, builder =>
         })
         .addCase(setPermissionsAction, (state, { payload }) => {
             state.permissions = payload;
+        })
+        .addCase(setRotationAction, (state, { payload }) => {
+            state.rotation = payload;
+        })
+        .addCase(setScaleAction, (state, { payload }) => {
+            state.scale = payload;
         }),
 );

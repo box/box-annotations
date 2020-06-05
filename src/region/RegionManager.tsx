@@ -4,31 +4,28 @@ import BaseManager, { Options, Props } from '../common/BaseManager';
 import RegionContainer from './RegionContainer';
 
 export default class RegionManager implements BaseManager {
-    page: number;
+    location: number;
 
-    pageEl: HTMLElement;
+    reactEl: HTMLElement;
 
-    rootEl: HTMLElement;
-
-    constructor({ page, pageEl, referenceEl }: Options) {
-        this.page = page;
-        this.pageEl = pageEl;
-        this.rootEl = this.insert(referenceEl);
+    constructor({ location = 1, referenceEl }: Options) {
+        this.location = location;
+        this.reactEl = this.insert(referenceEl);
     }
 
     destroy(): void {
-        ReactDOM.unmountComponentAtNode(this.rootEl);
+        ReactDOM.unmountComponentAtNode(this.reactEl);
 
-        this.rootEl.remove();
+        this.reactEl.remove();
     }
 
-    exists(pageEl: HTMLElement): boolean {
-        return pageEl.contains(this.rootEl);
+    exists(parentEl: HTMLElement): boolean {
+        return parentEl.contains(this.reactEl);
     }
 
     insert(referenceEl: HTMLElement): HTMLElement {
         // Find the nearest applicable reference and document elements
-        const documentEl = this.pageEl.ownerDocument || document;
+        const documentEl = referenceEl.ownerDocument || document;
         const parentEl = referenceEl.parentNode || documentEl;
 
         // Construct a layer element where we can inject a root React component
@@ -42,6 +39,10 @@ export default class RegionManager implements BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<RegionContainer page={this.page} {...props} />, this.rootEl);
+        ReactDOM.render(<RegionContainer location={this.location} {...props} />, this.reactEl);
+    }
+
+    style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration {
+        return Object.assign(this.reactEl.style, styles);
     }
 }

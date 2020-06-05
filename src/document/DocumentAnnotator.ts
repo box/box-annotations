@@ -1,32 +1,35 @@
 import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { CLASS_ANNOTATIONS_LOADED } from '../constants';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { getAnnotation } from '../store/annotations';
+import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
-
-export const SCROLL_THRESHOLD = 1000; // pixels
 
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
-    managers: Map<number, BaseManager[]> = new Map();
+    managers: Map<number, Set<BaseManager>> = new Map();
 
-    getPageManagers(pageEl: HTMLElement): BaseManager[] {
+    getAnnotatedElement(): HTMLElement | null | undefined {
+        return this.containerEl?.querySelector('.bp-doc');
+    }
+
+    getPageManagers(pageEl: HTMLElement): Set<BaseManager> {
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);
-        const managers = this.managers.get(pageNumber) || [];
+        const managers = this.managers.get(pageNumber) || new Set();
 
         // Destroy any managers that were attached to page elements that no longer exist
-        if (managers.some(manager => !manager.exists(pageEl))) {
-            managers.forEach(manager => manager.destroy());
-            managers.length = 0;
-        }
+        managers.forEach(manager => {
+            if (!manager.exists(pageEl)) {
+                manager.destroy();
+                managers.delete(manager);
+            }
+        });
 
         // Lazily instantiate managers as pages are added or re-rendered
-        if (managers.length === 0) {
-            // Add additional managers here for other annotation types
-            managers.push(new RegionManager({ page: pageNumber, pageEl, referenceEl: pageReferenceEl }));
+        if (managers.size === 0) {
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
         }
 
         return managers;
@@ -50,20 +53,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
     getPages(): HTMLElement[] {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
-    }
-
-    init(scale: number): void {
-        super.init(scale);
-
-        if (!this.rootEl) {
-            return;
-        }
-
-        this.annotatedEl = this.rootEl.querySelector('.bp-doc') as HTMLElement;
-        this.annotatedEl.classList.add(CLASS_ANNOTATIONS_LOADED);
-
-        this.render();
-        this.handleInitialized();
     }
 
     render(): void {
@@ -93,43 +82,17 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
 
         const annotation = getAnnotation(this.store.getState(), annotationId);
-        const annotationPage = annotation?.target.location.value;
+        const annotationPage = annotation?.target.location.value ?? 1;
+        const annotationPageEl = this.getPage(annotationPage);
 
-        if (!annotation || !annotationPage) {
+        if (!annotation || !annotationPage || !annotationPageEl || !this.annotatedEl) {
             return;
         }
 
         if (isRegion(annotation)) {
-            this.scrollToLocation(annotationPage, centerRegion(annotation.target.shape));
-        }
-    }
-
-    scrollToLocation(page = 1, { x: offsetX, y: offsetY } = { x: 0, y: 0 }): void {
-        const pageEl = this.getPage(page);
-
-        if (!this.annotatedEl || !pageEl) {
-            return;
-        }
-
-        const canSmoothScroll = 'scrollBehavior' in this.annotatedEl.style;
-        const parentCenterX = Math.round(this.annotatedEl.clientWidth / 2);
-        const parentCenterY = Math.round(this.annotatedEl.clientHeight / 2);
-        const offsetCenterX = Math.round(pageEl.clientWidth * (offsetX / 100));
-        const offsetCenterY = Math.round(pageEl.clientHeight * (offsetY / 100));
-        const offsetScrollLeft = pageEl.offsetLeft - parentCenterX + offsetCenterX;
-        const offsetScrollTop = pageEl.offsetTop - parentCenterY + offsetCenterY;
-        const scrollLeft = Math.max(0, Math.min(offsetScrollLeft, this.annotatedEl.scrollWidth));
-        const scrollTop = Math.max(0, Math.min(offsetScrollTop, this.annotatedEl.scrollHeight));
-
-        if (canSmoothScroll && Math.abs(this.annotatedEl.scrollTop - scrollTop) < SCROLL_THRESHOLD) {
-            this.annotatedEl.scrollTo({
-                behavior: 'smooth',
-                left: scrollLeft,
-                top: scrollTop,
+            scrollToLocation(this.annotatedEl, annotationPageEl, {
+                offsets: centerRegion(annotation.target.shape),
             });
-        } else {
-            this.annotatedEl.scrollLeft = scrollLeft;
-            this.annotatedEl.scrollTop = scrollTop;
         }
     }
 }

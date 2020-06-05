@@ -18,8 +18,8 @@ describe('components/region/RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         createRegion: jest.fn(),
+        location: 1,
         message: 'test',
-        page: 1,
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setStaged: jest.fn(),
@@ -75,7 +75,7 @@ describe('components/region/RegionAnnotations', () => {
                 instance.handleStart();
 
                 expect(defaults.setStaged).toHaveBeenCalledWith(null);
-                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
+                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.started);
             });
         });
 
@@ -92,7 +92,7 @@ describe('components/region/RegionAnnotations', () => {
                 instance.handleStop(shape);
 
                 expect(defaults.setStaged).toHaveBeenCalledWith({
-                    location: defaults.page,
+                    location: defaults.location,
                     shape,
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
