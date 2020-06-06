@@ -1,5 +1,6 @@
 enum Event {
     ANNOTATION_CREATE = 'annotations_create',
+    ANNOTATION_FETCH_ERROR = 'annotations_fetch_error',
     ANNOTATION_REMOVE = 'annotations_remove',
     ACTIVE_CHANGE = 'annotations_active_change',
     ACTIVE_SET = 'annotations_active_set',
