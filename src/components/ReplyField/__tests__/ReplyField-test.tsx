@@ -281,8 +281,8 @@ describe('components/Popups/ReplyField', () => {
             instance = wrapper.instance();
 
             getCollaboratorsSpy = jest.spyOn(instance, 'getCollaborators').mockReturnValue([
-                { id: 'testid1', name: 'test1' },
-                { id: 'testid2', name: 'test2' },
+                { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' } },
+                { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'group' } },
             ]);
             stopDefaultEventSpy = jest.spyOn(instance, 'stopDefaultEvent');
             setActiveItemSpy = jest.spyOn(instance, 'setPopupListActiveItem');
