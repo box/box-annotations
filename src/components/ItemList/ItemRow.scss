@@ -1,11 +1,23 @@
 @import '~box-ui-elements/es/styles/variables';
 
-.ba-ItemRow-name {
-    line-height: 15px;
-}
+// increase specificity to override .bp styles
+.ba {
+    .ba-ItemRow {
+        padding: 5px 35px 5px 15px;
 
-.ba-ItemRow-email {
-    color: $bdl-gray-62;
-    font-size: 11px;
-    line-height: 15px;
+        &.is-active {
+            background-color: fade-out($bdl-gray, .95);
+            cursor: pointer;
+        }
+    }
+
+    .ba-ItemRow-name {
+        line-height: 15px;
+    }
+
+    .ba-ItemRow-email {
+        color: $bdl-gray-62;
+        font-size: 11px;
+        line-height: 15px;
+    }
 }

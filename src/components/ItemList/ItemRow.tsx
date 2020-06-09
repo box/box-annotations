@@ -1,21 +1,30 @@
 import React from 'react';
-import DatalistItem from 'box-ui-elements/es/components/datalist-item';
+import classNames from 'classnames';
+import omit from 'lodash/omit';
 import { UserMini, GroupMini } from '../../@types';
 import './ItemRow.scss';
 
 export type Props = {
-    id?: string;
+    className?: string;
+    isActive?: boolean;
     item?: UserMini | GroupMini;
-    name?: string;
 };
 
-const ItemRow = ({ item, ...rest }: Props): JSX.Element | null => {
+const ItemRow = ({ className, isActive, item, ...rest }: Props): JSX.Element | null => {
     if (!item || !item.name) {
         return null;
     }
 
+    const itemProps = omit(rest, Object.keys(item));
+
     return (
-        <DatalistItem {...rest}>
+        <li
+            aria-selected={isActive ? 'true' : 'false'}
+            className={classNames(className, 'ba-ItemRow', { 'is-active': isActive })}
+            data-testid="ba-ItemRow"
+            role="option"
+            {...itemProps}
+        >
             <div className="ba-ItemRow-name" data-testid="ba-ItemRow-name">
                 {item.name}
             </div>
@@ -24,7 +33,7 @@ const ItemRow = ({ item, ...rest }: Props): JSX.Element | null => {
                     {item.email}
                 </div>
             )}
-        </DatalistItem>
+        </li>
     );
 };
 
