@@ -1,5 +1,5 @@
 import React from 'react';
-import { getFormattedCommentText } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import { getFormattedCommentText } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import Button from 'box-ui-elements/es/components/button';
 import PrimaryButton from 'box-ui-elements/es/components/primary-button';
 import { KEYS } from 'box-ui-elements/es/constants';

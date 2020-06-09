@@ -1,5 +1,5 @@
 import React from 'react';
-import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Editor, EditorState } from 'draft-js';
 import PopupList from '../../Popups/PopupList';
@@ -16,7 +16,7 @@ const mockMention = {
 
 const mockEditorState = EditorState.createEmpty();
 
-jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector', () => ({
+jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils', () => ({
     addMention: jest.fn(() => mockEditorState),
     createMentionSelectorState: jest.fn(() => mockEditorState),
     getActiveMentionForEditorState: jest.fn(() => mockMention),
