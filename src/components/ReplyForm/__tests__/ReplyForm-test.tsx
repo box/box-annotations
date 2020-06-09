@@ -9,7 +9,7 @@ import ReplyForm, { Props } from '../ReplyForm';
 import ReplyField from '../../ReplyField';
 import { mockEvent } from '../../../common/__mocks__/events';
 
-jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector', () => ({
+jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils', () => ({
     getFormattedCommentText: jest.fn().mockReturnValue({ text: 'foo' }),
 }));
 

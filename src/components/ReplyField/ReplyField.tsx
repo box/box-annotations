@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import {
     addMention,
     getActiveMentionForEditorState,
-} from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+} from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import fuzzySearch from 'box-ui-elements/es/utils/fuzzySearch';
 import { DraftHandleValue, Editor, EditorState } from 'draft-js';
 import PopupList from '../Popups/PopupList';
