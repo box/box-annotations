@@ -25,7 +25,6 @@ export type Props = {
     cursorPosition: number;
     editorState: EditorState;
     isDisabled?: boolean;
-    itemRowAs?: JSX.Element;
     onChange: (editorState: EditorState) => void;
     placeholder?: string;
     setCursorPosition: (cursorPosition: number) => void;
@@ -197,7 +196,7 @@ export default class ReplyField extends React.Component<Props, State> {
     };
 
     render(): JSX.Element {
-        const { className, editorState, isDisabled, itemRowAs, placeholder, ...rest } = this.props;
+        const { className, editorState, isDisabled, placeholder, ...rest } = this.props;
         const { activeItemIndex, popupReference } = this.state;
 
         return (
@@ -218,7 +217,6 @@ export default class ReplyField extends React.Component<Props, State> {
                 {popupReference && (
                     <PopupList
                         activeItemIndex={activeItemIndex}
-                        itemRowAs={itemRowAs}
                         items={this.getCollaborators()}
                         onActivate={this.setPopupListActiveItem}
                         onSelect={this.handleSelect}

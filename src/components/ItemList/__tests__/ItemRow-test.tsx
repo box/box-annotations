@@ -1,37 +1,25 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import DatalistItem from 'box-ui-elements/es/components/datalist-item';
+import { UserMini } from '../../../@types';
 import ItemRow, { Props } from '../ItemRow';
 
-describe('components/Popups/ReplyField/ItemRow', () => {
+describe('components/ItemList/ItemRow', () => {
+    const item = { email: 'test@box.com', id: 'testid', name: 'testname', type: 'user' } as UserMini;
     const defaults: Props = {
-        id: 'testid',
-        item: { email: 'test@box.com', id: 'testid', name: 'testname', type: 'user' },
-        name: 'testname',
+        item: {
+            id: 'testid',
+            item,
+            name: 'testname',
+        },
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<ItemRow {...defaults} {...props} />);
 
     describe('render()', () => {
-        test('should render DatalistItem with correct props', () => {
-            const wrapper = getWrapper();
-
-            expect(wrapper.find(DatalistItem).props()).toMatchObject({
-                id: 'testid',
-                name: 'testname',
-            });
-        });
-
-        test('should not render anything if no item', () => {
-            const wrapper = getWrapper({ item: null });
-
-            expect(wrapper.exists(DatalistItem)).toBeFalsy();
-        });
-
         test('should not render anything if no item name', () => {
             const wrapper = getWrapper({ item: {} });
 
-            expect(wrapper.exists(DatalistItem)).toBeFalsy();
+            expect(wrapper.isEmptyRender()).toBe(true);
         });
 
         test('should render item name and email', () => {

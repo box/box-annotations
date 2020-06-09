@@ -3,11 +3,11 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import ItemList, { Props } from '../ItemList';
 import { Collaborator } from '../../../@types';
 
-describe('components/ItemList', () => {
+describe('components/ItemList/ItemList', () => {
     const defaults: Props<Collaborator> = {
         items: [
-            { id: 'testid1', name: 'test1' },
-            { id: 'testid2', name: 'test2' },
+            { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' } },
+            { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'group' } },
         ],
         onSelect: jest.fn(),
     };
