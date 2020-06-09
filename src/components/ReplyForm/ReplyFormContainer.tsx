@@ -68,6 +68,7 @@ const ReplyFormContainer = connect(mapStateToProps)(
         handleSubmit,
         mapPropsToValues,
         validate,
+        validateOnMount: true,
     })(ReplyForm),
 );
 

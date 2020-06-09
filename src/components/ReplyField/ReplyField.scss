@@ -1,7 +1,8 @@
 @import '~box-ui-elements/es/styles/variables';
-@import '~draft-js/dist/Draft.css';
 
 .ba-ReplyField {
+    @import '~draft-js/dist/Draft';
+
     .public-DraftEditorPlaceholder-hasFocus,
     .public-DraftEditorPlaceholder-root {
         margin: 0;
