@@ -27,7 +27,7 @@ describe('store/eventing/active', () => {
         ${null}  | ${'123'}
         ${'123'} | ${'456'}
         ${'456'} | ${null}
-    `('should emit evet when prevId is $prevId, nextId is $nextId', ({ prevId, nextId }) => {
+    `('should emit event when prevId is $prevId, nextId is $nextId', ({ prevId, nextId }) => {
         const state = {} as AppState;
         (getActiveAnnotationId as jest.Mock).mockImplementationOnce(() => prevId).mockImplementationOnce(() => nextId);
 
