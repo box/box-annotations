@@ -4,7 +4,8 @@ import API from '../api';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Annotation, Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { getAnnotation } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -84,6 +85,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
         this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
+    }
+
+    public getAnnotationById(annotationId: string): Annotation | undefined {
+        return getAnnotation(this.store.getState(), annotationId);
     }
 
     public init(scale: number): void {

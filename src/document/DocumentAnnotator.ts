@@ -1,7 +1,6 @@
 import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
-import { getAnnotation } from '../store/annotations';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import './DocumentAnnotator.scss';
 
@@ -91,7 +90,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
-        const annotation = getAnnotation(this.store.getState(), annotationId);
+        const annotation = this.getAnnotationById(annotationId);
         const annotationPage = annotation?.target.location.value;
 
         if (!annotation || !annotationPage) {
