@@ -4,8 +4,8 @@ import API from '../api';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Annotation, Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { getAnnotation } from '../store';
+import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { getAnnotations } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -39,6 +39,8 @@ export default class BaseAnnotator extends EventEmitter {
     container: Container;
 
     intl: IntlShape;
+
+    loaded = false;
 
     rootEl?: HTMLElement | null;
 
@@ -85,10 +87,6 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
         this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
-    }
-
-    public getAnnotationById(annotationId: string): Annotation | undefined {
-        return getAnnotation(this.store.getState(), annotationId);
     }
 
     public init(scale: number): void {
@@ -155,5 +153,13 @@ export default class BaseAnnotator extends EventEmitter {
         // Redux dispatch method signature doesn't seem to like async actions
         this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
         this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
+    }
+
+    protected setLoaded(): void {
+        if (!this.loaded) {
+            this.emit(Event.ANNOTATIONS_READY, getAnnotations(this.store.getState()));
+
+            this.loaded = true;
+        }
     }
 }

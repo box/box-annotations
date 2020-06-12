@@ -7,8 +7,7 @@ import { Mode } from '../../store/common';
 
 jest.mock('../../api');
 jest.mock('../../store', () => ({
-    createStore: jest.fn(() => ({ dispatch: jest.fn(), getState: jest.fn() })),
-    getAnnotation: jest.fn(),
+    createStore: jest.fn(() => ({ dispatch: jest.fn() })),
     removeAnnotationAction: jest.fn(),
     fetchAnnotationsAction: jest.fn(),
     fetchCollaboratorsAction: jest.fn(),
@@ -142,18 +141,6 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.VISIBLE_SET, true);
             expect(annotator.setVisibility).toHaveBeenCalledWith(true);
-        });
-    });
-    describe('getAnnotationById()', () => {
-        test('should return an annotation by id', () => {
-            const getAnnotationSpy = jest.spyOn(store, 'getAnnotation');
-            annotator.getAnnotationById('123');
-
-            expect(getAnnotationSpy).toBeCalled();
-        });
-
-        test('should return undefined if annotation not found', () => {
-            expect(annotator.getAnnotationById('nonsense')).toBeUndefined();
         });
     });
 
