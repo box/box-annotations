@@ -3,7 +3,7 @@ enum Event {
     ACTIVE_SET = 'annotations_active_set',
     ANNOTATION_CREATE = 'annotations_create',
     ANNOTATION_FETCH_ERROR = 'annotations_fetch_error',
-    ANNOTATIONS_READY = 'annotations_ready',
+    ANNOTATIONS_INITIALIZED = 'annotations_initialized',
     ANNOTATION_REMOVE = 'annotations_remove',
     VISIBLE_SET = 'annotations_visible_set',
 }

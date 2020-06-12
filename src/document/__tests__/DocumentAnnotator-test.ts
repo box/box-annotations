@@ -144,7 +144,7 @@ describe('DocumentAnnotator', () => {
             expect(annotator.annotatedEl!.className).toContain(CLASS_ANNOTATIONS_LOADED); // eslint-disable-line @typescript-eslint/no-non-null-assertion
         });
 
-        test('should emit annotations_ready event once', () => {
+        test('should emit annotations_initialized event once', () => {
             annotator.emit = jest.fn();
             annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 
@@ -152,8 +152,8 @@ describe('DocumentAnnotator', () => {
             annotator.init(1);
             annotator.init(1);
 
-            expect(annotator.loaded).toEqual(true);
-            expect(annotator.emit).toBeCalledWith('annotations_ready', regions);
+            expect(annotator.initialized).toEqual(true);
+            expect(annotator.emit).toBeCalledWith('annotations_initialized', { annotations: regions });
             expect(annotator.emit).toBeCalledTimes(1);
         });
     });

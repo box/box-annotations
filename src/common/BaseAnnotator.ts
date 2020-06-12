@@ -38,9 +38,9 @@ export type Options = {
 export default class BaseAnnotator extends EventEmitter {
     container: Container;
 
-    intl: IntlShape;
+    initialized = false;
 
-    loaded = false;
+    intl: IntlShape;
 
     rootEl?: HTMLElement | null;
 
@@ -155,11 +155,11 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
-    protected setLoaded(): void {
-        if (!this.loaded) {
-            this.emit(Event.ANNOTATIONS_READY, getAnnotations(this.store.getState()));
+    protected isInitialized(): void {
+        if (!this.initialized) {
+            this.initialized = true;
 
-            this.loaded = true;
+            this.emit(Event.ANNOTATIONS_INITIALIZED, { annotations: getAnnotations(this.store.getState()) });
         }
     }
 }

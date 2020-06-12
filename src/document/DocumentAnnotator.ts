@@ -64,7 +64,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         this.render();
 
-        this.setLoaded();
+        this.isInitialized();
     }
 
     render(): void {
