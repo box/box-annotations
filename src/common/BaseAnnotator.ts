@@ -38,8 +38,6 @@ export type Options = {
 export default class BaseAnnotator extends EventEmitter {
     container: Container;
 
-    initialized = false;
-
     intl: IntlShape;
 
     rootEl?: HTMLElement | null;
