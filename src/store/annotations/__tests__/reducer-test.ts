@@ -7,9 +7,18 @@ import {
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
+    setAnnotationsInitialized,
 } from '../actions';
 
 describe('store/annotations/reducer', () => {
+    describe('annotationsInitialized', () => {
+        test('should set isInitialized', () => {
+            const newState = reducer(state, setAnnotationsInitialized(true));
+
+            expect(newState.isInitialized).toEqual(true);
+        });
+    });
+
     describe('createAnnotationAction', () => {
         test('should set state when fulfilled', () => {
             const arg = {} as NewAnnotation;

@@ -145,16 +145,13 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should emit annotations_initialized event once', () => {
-            annotator.emit = jest.fn();
-            annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+            const mockDispatch = jest.spyOn(annotator.store, 'dispatch');
 
             annotator.init(1);
             annotator.init(1);
             annotator.init(1);
 
-            expect(annotator.initialized).toEqual(true);
-            expect(annotator.emit).toBeCalledWith('annotations_initialized', { annotations: regions });
-            expect(annotator.emit).toBeCalledTimes(1);
+            expect(mockDispatch).toBeCalledTimes(1);
         });
     });
 

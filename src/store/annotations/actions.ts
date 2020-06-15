@@ -48,3 +48,4 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
 
 export const removeAnnotationAction = createAction<string>('REMOVE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');
+export const setAnnotationsInitialized = createAction<boolean | null>('SET_ANNOTATIONS_INITIALIZED');
