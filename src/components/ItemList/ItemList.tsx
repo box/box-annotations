@@ -1,11 +1,11 @@
-import React, { SyntheticEvent } from 'react';
+import React from 'react';
 import noop from 'lodash/noop';
 import ItemRow from './ItemRow';
 import './ItemList.scss';
 
 export type Props<T extends { id: string }> = {
     activeItemIndex?: number;
-    itemRowAs?: JSX.Element;
+    itemRowAs?: React.ElementType;
     items: T[];
     onActivate?: (index: number) => void;
     onSelect: (index: number, event: React.SyntheticEvent) => void;
@@ -13,31 +13,30 @@ export type Props<T extends { id: string }> = {
 
 const ItemList = <T extends { id: string }>({
     activeItemIndex = 0,
-    itemRowAs = <ItemRow />,
+    itemRowAs: ItemRowComponent = ItemRow,
     items,
     onActivate = noop,
     onSelect,
     ...rest
 }: Props<T>): JSX.Element => (
-    <ul data-testid="ba-ItemList" role="listbox" {...rest}>
-        {items.map((item, index) =>
-            React.cloneElement(itemRowAs, {
-                ...item,
-                key: item.id,
-                className: 'ba-ItemList-row',
-                isActive: index === activeItemIndex,
-                onClick: (event: SyntheticEvent) => {
+    <ul className="ba-ItemList" data-testid="ba-ItemList" role="listbox" {...rest}>
+        {items.map((item, index) => (
+            <ItemRowComponent
+                key={item.id}
+                className="ba-ItemList-row"
+                isActive={index === activeItemIndex}
+                item={item}
+                onClick={(event: React.SyntheticEvent) => {
                     onSelect(index, event);
-                },
-                /* preventDefault on mousedown so blur doesn't happen before click */
-                onMouseDown: (event: SyntheticEvent) => {
-                    event.preventDefault();
-                },
-                onMouseEnter: () => {
+                }}
+                onMouseDown={(event: React.SyntheticEvent) => {
+                    event.preventDefault(); // preventDefault on mousedown so blur doesn't happen before click
+                }}
+                onMouseEnter={() => {
                     onActivate(index);
-                },
-            }),
-        )}
+                }}
+            />
+        ))}
     </ul>
 );
 
