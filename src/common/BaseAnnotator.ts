@@ -5,7 +5,7 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { getIsAnnotationsInitialized, setAnnotationsInitialized } from '../store';
+import { getIsInitialized, setIsInitialized } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -153,9 +153,9 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
-    protected handleInitialized(status = false): void {
-        if (!getIsAnnotationsInitialized(this.store.getState())) {
-            this.store.dispatch(setAnnotationsInitialized(status));
+    protected handleInitialized(): void {
+        if (!getIsInitialized(this.store.getState())) {
+            this.store.dispatch(setIsInitialized());
         }
     }
 }

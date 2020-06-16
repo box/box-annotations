@@ -144,7 +144,7 @@ describe('DocumentAnnotator', () => {
             expect(annotator.annotatedEl!.className).toContain(CLASS_ANNOTATIONS_LOADED); // eslint-disable-line @typescript-eslint/no-non-null-assertion
         });
 
-        test('should emit annotations_initialized event once', () => {
+        test('should dispatch once on first init', () => {
             const mockDispatch = jest.spyOn(annotator.store, 'dispatch');
 
             annotator.init(1);

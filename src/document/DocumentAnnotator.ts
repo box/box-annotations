@@ -63,7 +63,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.annotatedEl.classList.add(CLASS_ANNOTATIONS_LOADED);
 
         this.render();
-        this.handleInitialized(true);
+        this.handleInitialized();
     }
 
     render(): void {

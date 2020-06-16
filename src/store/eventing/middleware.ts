@@ -4,7 +4,7 @@ import {
     createAnnotationAction,
     fetchAnnotationsAction,
     setActiveAnnotationIdAction,
-    setAnnotationsInitialized,
+    setIsInitialized,
 } from '../annotations/actions';
 import { handleActiveAnnotationEvents } from './active';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
@@ -19,7 +19,7 @@ const eventHandlers: EventHandlerMap = {
     [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
     [fetchAnnotationsAction.rejected.toString()]: handleFetchErrorEvents,
     [setActiveAnnotationIdAction.toString()]: handleActiveAnnotationEvents,
-    [setAnnotationsInitialized.toString()]: handleAnnotationsInitialized,
+    [setIsInitialized.toString()]: handleAnnotationsInitialized,
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {

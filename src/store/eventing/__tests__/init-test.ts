@@ -6,7 +6,7 @@ import { handleAnnotationsInitialized } from '../init';
 jest.mock('../../../common/EventManager');
 
 describe('store/eventing/init', () => {
-    test('should emit annotations_initialized event', () => {
+    test('should emit annotations_initialized event with annotations', () => {
         handleAnnotationsInitialized({} as AppState, { annotations: annotationState } as AppState);
 
         expect(eventManager.emit).toBeCalledWith('annotations_initialized', {
