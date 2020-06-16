@@ -1,8 +1,8 @@
 import BaseAnnotator from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { CLASS_ANNOTATIONS_LOADED } from '../constants';
-import { getAnnotation } from '../store/annotations';
 import { centerRegion, isRegion, RegionManager } from '../region';
+import { getAnnotation } from '../store/annotations';
 import './DocumentAnnotator.scss';
 
 export const SCROLL_THRESHOLD = 1000; // pixels
@@ -63,6 +63,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.annotatedEl.classList.add(CLASS_ANNOTATIONS_LOADED);
 
         this.render();
+        this.handleInitialized();
     }
 
     render(): void {

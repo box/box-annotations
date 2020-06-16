@@ -9,6 +9,7 @@ const annotationState: AnnotationsState = {
         test2: { id: 'test2', target: { location: { value: 1 } } } as Annotation,
         test3: { id: 'test3', target: { location: { value: 2 } } } as Annotation,
     },
+    isInitialized: false,
 };
 
 export default annotationState;

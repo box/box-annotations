@@ -1,5 +1,11 @@
 import annotationsState from '../__mocks__/annotationsState';
-import { getActiveAnnotationId, getAnnotation, getAnnotations, getAnnotationsForLocation } from '../selectors';
+import {
+    getActiveAnnotationId,
+    getAnnotation,
+    getAnnotations,
+    getAnnotationsForLocation,
+    getIsInitialized,
+} from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { annotations: annotationsState };
@@ -37,6 +43,12 @@ describe('store/annotations/selectors', () => {
         test('should get the active id', () => {
             const newState = { annotations: { ...annotationsState, activeId: '123' } };
             expect(getActiveAnnotationId(newState)).toEqual('123');
+        });
+    });
+
+    describe('getIsInitialized', () => {
+        test('should return isInitialized status', () => {
+            expect(getIsInitialized(state)).toBe(false);
         });
     });
 });
