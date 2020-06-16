@@ -78,6 +78,31 @@ describe('BaseAnnotator', () => {
                 );
             },
         );
+
+        test('should set annotator fileVersionId based on fileOptions first', () => {
+            const fileOptions = {
+                '12345': {
+                    fileVersionId: '456',
+                },
+            };
+
+            annotator = getAnnotator({ fileOptions });
+
+            expect(store.createStore).toHaveBeenLastCalledWith(
+                {
+                    annotations: { activeId: null },
+                    options: {
+                        fileId: '12345',
+                        fileVersionId: '456',
+                        permissions: {
+                            can_create_annotations: true,
+                            can_view_annotations: true,
+                        },
+                    },
+                },
+                { api: expect.any(APIFactory) },
+            );
+        });
     });
 
     describe('destroy()', () => {
