@@ -1,35 +1,41 @@
-import { handleActiveAnnotationEvents } from '../active';
-import { AppState } from '../../types';
 import eventManager from '../../../common/EventManager';
+import { AppState } from '../../types';
 import { getActiveAnnotationId } from '../../annotations';
+import { getFileVersionId } from '../../options';
+import { handleActiveAnnotationEvents } from '../active';
 
 jest.mock('../../../common/EventManager');
-jest.mock('../../annotations', () => ({
-    getActiveAnnotationId: jest.fn(),
-}));
+jest.mock('../../annotations');
+jest.mock('../../options');
 
 describe('store/eventing/active', () => {
+    beforeEach(() => {
+        (getFileVersionId as jest.Mock).mockReturnValue('456');
+    });
+
+    test('should not emit event if prev and next ids are the same', () => {
+        const state = {} as AppState;
+        (getActiveAnnotationId as jest.Mock).mockImplementationOnce(() => '123').mockImplementationOnce(() => '123');
+
+        handleActiveAnnotationEvents(state, state);
+
+        expect(eventManager.emit).not.toBeCalled();
+    });
+
     test.each`
-        prevId   | nextId   | isEventEmitted
-        ${null}  | ${'123'} | ${true}
-        ${'123'} | ${'123'} | ${false}
-        ${'123'} | ${'456'} | ${true}
-        ${'456'} | ${null}  | ${true}
-    `(
-        'should event be emitted when prevId is $prevId, nextId is $nextId? $isEventEmitted',
-        ({ prevId, nextId, isEventEmitted }) => {
-            const state = {} as AppState;
-            (getActiveAnnotationId as jest.Mock)
-                .mockImplementationOnce(() => prevId)
-                .mockImplementationOnce(() => nextId);
+        prevId   | nextId
+        ${null}  | ${'123'}
+        ${'123'} | ${'456'}
+        ${'456'} | ${null}
+    `('should emit event when prevId is $prevId, nextId is $nextId', ({ prevId, nextId }) => {
+        const state = {} as AppState;
+        (getActiveAnnotationId as jest.Mock).mockImplementationOnce(() => prevId).mockImplementationOnce(() => nextId);
 
-            handleActiveAnnotationEvents(state, state);
+        handleActiveAnnotationEvents(state, state);
 
-            if (isEventEmitted) {
-                expect(eventManager.emit).toBeCalledWith('annotations_active_change', nextId);
-            } else {
-                expect(eventManager.emit).not.toBeCalled();
-            }
-        },
-    );
+        expect(eventManager.emit).toBeCalledWith('annotations_active_change', {
+            annotationId: nextId,
+            fileVersionId: '456',
+        });
+    });
 });
