@@ -36,8 +36,10 @@ export function RegionList({ activeId, annotations, className, onSelect = noop }
     const rootElRef = React.createRef<HTMLDivElement>();
 
     // Document-level event handlers for focus and pointer control
-    useOutsideEvent('click', rootElRef, (): void => onSelect(null));
-    useOutsideEvent('mousedown', rootElRef, (): void => setIsListening(false));
+    useOutsideEvent('mousedown', rootElRef, (): void => {
+        onSelect(null);
+        setIsListening(false);
+    });
     useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
 
     return (
