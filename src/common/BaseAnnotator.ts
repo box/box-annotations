@@ -5,6 +5,7 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { getIsInitialized, setIsInitialized } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -152,5 +153,11 @@ export default class BaseAnnotator extends EventEmitter {
         // Redux dispatch method signature doesn't seem to like async actions
         this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
         this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
+    }
+
+    protected handleInitialized(): void {
+        if (!getIsInitialized(this.store.getState())) {
+            this.store.dispatch(setIsInitialized());
+        }
     }
 }

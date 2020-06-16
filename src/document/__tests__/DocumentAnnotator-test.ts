@@ -33,6 +33,14 @@ describe('DocumentAnnotator', () => {
     const getPage = (pageNumber = 1): HTMLElement => {
         return container.querySelector(`[data-page-number="${pageNumber}"]`) as HTMLElement;
     };
+
+    const payload = {
+        entries: regions as Annotation[],
+        limit: 1000,
+        next_marker: null,
+        previous_marker: null,
+    };
+
     let annotator = getAnnotator();
 
     beforeEach(() => {
@@ -135,6 +143,16 @@ describe('DocumentAnnotator', () => {
             expect(annotator.annotatedEl).toBe(container.querySelector('.bp-doc'));
             expect(annotator.annotatedEl!.className).toContain(CLASS_ANNOTATIONS_LOADED); // eslint-disable-line @typescript-eslint/no-non-null-assertion
         });
+
+        test('should dispatch once on first init', () => {
+            const mockDispatch = jest.spyOn(annotator.store, 'dispatch');
+
+            annotator.init(1);
+            annotator.init(1);
+            annotator.init(1);
+
+            expect(mockDispatch).toBeCalledTimes(1);
+        });
     });
 
     describe('render()', () => {
@@ -168,13 +186,6 @@ describe('DocumentAnnotator', () => {
 
     describe('scrollToAnnotation()', () => {
         beforeEach(() => {
-            const payload = {
-                entries: regions as Annotation[],
-                limit: 1000,
-                next_marker: null,
-                previous_marker: null,
-            };
-
             annotator.scrollToLocation = jest.fn();
             annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
         });

@@ -5,6 +5,7 @@ import {
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
+    setIsInitialized,
 } from './actions';
 
 const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
@@ -41,8 +42,13 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         }),
 );
 
+const setAnnotationsIsInitialized = createReducer(false, builder => {
+    builder.addCase(setIsInitialized, () => true);
+});
+
 export default combineReducers({
     activeId: activeAnnotationId,
     allIds: annotationsAllIds,
     byId: annotationsById,
+    isInitialized: setAnnotationsIsInitialized,
 });

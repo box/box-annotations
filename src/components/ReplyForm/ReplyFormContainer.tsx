@@ -1,7 +1,5 @@
-import {
-    createMentionSelectorState,
-    getFormattedCommentText,
-} from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector';
+import createMentionSelectorState from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/createMentionSelectorState';
+import { getFormattedCommentText } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { EditorState, SelectionState } from 'draft-js';
 import { FormikBag, withFormik } from 'formik';
 import { connect } from 'react-redux';
@@ -70,6 +68,7 @@ const ReplyFormContainer = connect(mapStateToProps)(
         handleSubmit,
         mapPropsToValues,
         validate,
+        validateOnMount: true,
     })(ReplyForm),
 );
 

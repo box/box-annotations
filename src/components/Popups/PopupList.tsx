@@ -9,11 +9,9 @@ import './PopupList.scss';
 
 export type Props<T extends { id: string }> = {
     activeItemIndex?: number;
-    itemRowAs?: JSX.Element;
     items: T[];
     onActivate?: (index: number) => void;
     onSelect: (index: number, event: React.SyntheticEvent) => void;
-    options?: Partial<Options>;
     reference: PopupReference;
 };
 

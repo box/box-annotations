@@ -5,7 +5,10 @@ import { fetchCollaboratorsAction } from '../actions';
 describe('store/users/reducer', () => {
     describe('fetchCollaboratorsAction', () => {
         test('should set state when fulfilled', () => {
-            const collaborators = [{ id: '1234567890', name: 'Test User' }];
+            const collaborators = [
+                { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' as const } },
+                { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'group' as const } },
+            ];
 
             const newState = reducer(
                 state,
