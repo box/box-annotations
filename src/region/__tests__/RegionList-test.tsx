@@ -35,10 +35,10 @@ describe('RegionList', () => {
 
             getWrapper({ onSelect });
 
-            expect(onSelect).toHaveBeenCalledWith(null); // click
+            expect(onSelect).toHaveBeenCalledWith(null); // mousedown
             expect(setIsListening).toHaveBeenNthCalledWith(1, false); // mousedown
             expect(setIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
-            expect(useOutsideEvent).toHaveBeenCalledTimes(3);
+            expect(useOutsideEvent).toHaveBeenCalledTimes(2);
         });
     });
 

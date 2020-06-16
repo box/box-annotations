@@ -15,6 +15,7 @@ export type FileOptions = {
         annotations?: {
             activeId?: string;
         };
+        fileVersionId?: string;
     };
 };
 
@@ -49,13 +50,14 @@ export default class BaseAnnotator extends EventEmitter {
     constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
         super();
 
+        const fileOptionsValue = fileOptions?.[file.id];
         const initialState = {
             annotations: {
-                activeId: fileOptions?.[file.id]?.annotations?.activeId ?? null,
+                activeId: fileOptionsValue?.annotations?.activeId ?? null,
             },
             options: {
                 fileId: file.id,
-                fileVersionId: file.file_version.id,
+                fileVersionId: fileOptionsValue?.fileVersionId ?? file.file_version.id,
                 permissions: file.permissions,
             },
         };
