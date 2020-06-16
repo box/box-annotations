@@ -5,7 +5,7 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { areAnnotationsInitialized, setAnnotationsInitialized } from '../store';
+import { getIsAnnotationsInitialized, setAnnotationsInitialized } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -154,9 +154,7 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     protected handleInitialized(status = false): void {
-        const isInitialized = areAnnotationsInitialized(this.store.getState());
-
-        if (!isInitialized) {
+        if (!getIsAnnotationsInitialized(this.store.getState())) {
             this.store.dispatch(setAnnotationsInitialized(status));
         }
     }

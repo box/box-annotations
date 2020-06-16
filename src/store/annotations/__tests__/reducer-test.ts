@@ -11,7 +11,7 @@ import {
 } from '../actions';
 
 describe('store/annotations/reducer', () => {
-    describe('annotationsInitialized', () => {
+    describe('setAnnotationsInitialized', () => {
         test('should set isInitialized', () => {
             const newState = reducer(state, setAnnotationsInitialized(true));
 

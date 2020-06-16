@@ -1,6 +1,6 @@
 import annotationsState from '../__mocks__/annotationsState';
 import {
-    areAnnotationsInitialized,
+    getIsAnnotationsInitialized,
     getActiveAnnotationId,
     getAnnotation,
     getAnnotations,
@@ -10,9 +10,9 @@ import {
 describe('store/annotations/selectors', () => {
     const state = { annotations: annotationsState };
 
-    describe('areAnnotationsInitialized', () => {
+    describe('getIsAnnotationsInitialized', () => {
         test('should return isInitialized status', () => {
-            expect(areAnnotationsInitialized(state)).toBe(false);
+            expect(getIsAnnotationsInitialized(state)).toBe(false);
         });
     });
 

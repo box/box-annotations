@@ -42,7 +42,7 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         }),
 );
 
-const annotationsInitialized = createReducer(false, builder => {
+const setIsInitialized = createReducer(false, builder => {
     builder.addCase(setAnnotationsInitialized, (state, { payload }) => !!payload);
 });
 
@@ -50,5 +50,5 @@ export default combineReducers({
     activeId: activeAnnotationId,
     allIds: annotationsAllIds,
     byId: annotationsById,
-    isInitialized: annotationsInitialized,
+    isInitialized: setIsInitialized,
 });
