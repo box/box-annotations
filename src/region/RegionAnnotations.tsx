@@ -13,8 +13,8 @@ type Props = {
     annotations: AnnotationRegion[];
     createRegion: (arg: CreateArg) => void;
     isCreating: boolean;
+    location: number;
     message: string;
-    page: number;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
     setStaged: (staged: CreatorItem | null) => void;
@@ -56,12 +56,12 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     handleStart = (): void => {
         const { setStaged, setStatus } = this.props;
         setStaged(null);
-        setStatus(CreatorStatus.init);
+        setStatus(CreatorStatus.started);
     };
 
     handleStop = (shape: Rect): void => {
-        const { page, setStaged, setStatus } = this.props;
-        setStaged({ location: page, shape });
+        const { location, setStaged, setStatus } = this.props;
+        setStaged({ location, shape });
         setStatus(CreatorStatus.staged);
     };
 
@@ -82,7 +82,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     render(): JSX.Element {
         const { activeAnnotationId, annotations, isCreating, message, staged, status } = this.props;
         const { rectRef } = this.state;
-        const canReply = status !== CreatorStatus.init;
+        const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
         const isPending = status === CreatorStatus.pending;
 
         return (

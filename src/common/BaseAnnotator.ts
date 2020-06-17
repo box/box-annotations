@@ -5,7 +5,7 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { getIsInitialized, setIsInitialized } from '../store';
+import { setIsInitialized } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -36,14 +36,17 @@ export type Options = {
     token: string;
 };
 
+export const CSS_CONTAINER_CLASS = 'ba';
+export const CSS_LOADED_CLASS = 'ba-annotations-loaded';
+
 export default class BaseAnnotator extends EventEmitter {
+    annotatedEl?: HTMLElement | null;
+
+    containerEl?: HTMLElement | null;
+
     container: Container;
 
     intl: IntlShape;
-
-    rootEl?: HTMLElement | null;
-
-    scale = 1;
 
     store: store.AppStore;
 
@@ -79,8 +82,12 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public destroy(): void {
-        if (this.rootEl) {
-            this.rootEl.classList.remove('ba');
+        if (this.containerEl) {
+            this.containerEl.classList.remove(CSS_CONTAINER_CLASS);
+        }
+
+        if (this.annotatedEl) {
+            this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
@@ -89,16 +96,28 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
     }
 
-    public init(scale: number): void {
-        this.rootEl = this.getElement(this.container);
-        this.scale = scale;
+    public init(scale = 1, rotation = 0): void {
+        this.containerEl = this.getElement(this.container);
+        this.annotatedEl = this.getAnnotatedElement();
 
-        if (!this.rootEl) {
+        if (!this.annotatedEl || !this.containerEl) {
             this.emit(LegacyEvent.ERROR, this.intl.formatMessage(messages.annotationsLoadError));
             return;
         }
 
-        this.rootEl.classList.add('ba');
+        // Add classes to the parent elements to support CSS scoping
+        this.annotatedEl.classList.add(CSS_LOADED_CLASS);
+        this.containerEl.classList.add(CSS_CONTAINER_CLASS);
+
+        // Update the store with the options provided by preview
+        this.store.dispatch(store.setRotationAction(rotation));
+        this.store.dispatch(store.setScaleAction(scale));
+
+        // Defer to the child class to render annotations
+        this.render();
+
+        // Update the store now that annotations have been rendered
+        this.store.dispatch(setIsInitialized());
     }
 
     public removeAnnotation = (annotationId: string): void => {
@@ -115,18 +134,23 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public setVisibility(visibility: boolean): void {
-        if (!this.rootEl) {
+        if (!this.containerEl) {
             return;
         }
+
         if (visibility) {
-            this.rootEl.classList.remove('is-hidden');
+            this.containerEl.classList.remove('is-hidden');
         } else {
-            this.rootEl.classList.add('is-hidden');
+            this.containerEl.classList.add('is-hidden');
         }
     }
 
     public toggleAnnotationMode(mode: store.Mode): void {
         this.store.dispatch(store.toggleAnnotationModeAction(mode));
+    }
+
+    protected getAnnotatedElement(): HTMLElement | null | undefined {
+        return undefined; // Must be implemented in child class
     }
 
     protected getElement(selector: HTMLElement | string): HTMLElement | null {
@@ -137,8 +161,8 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeAnnotation(annotationId);
     };
 
-    protected handleScale = ({ scale }: { scale: number }): void => {
-        this.init(scale);
+    protected handleScale = ({ rotationAngle, scale }: { rotationAngle: number; scale: number }): void => {
+        this.init(scale, rotationAngle);
     };
 
     protected handleSetActive = (annotationId: string | null): void => {
@@ -155,9 +179,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
-    protected handleInitialized(): void {
-        if (!getIsInitialized(this.store.getState())) {
-            this.store.dispatch(setIsInitialized());
-        }
+    protected render(): void {
+        // Must be implemented in child class
     }
 }

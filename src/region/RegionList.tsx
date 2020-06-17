@@ -1,9 +1,11 @@
 import React from 'react';
+import * as Redux from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationRegion } from '../@types';
+import { getRotation } from '../store/options';
 
 export type Props = {
     activeId?: string | null;
@@ -34,6 +36,7 @@ export function sortRegion({ target: targetA }: AnnotationRegion, { target: targ
 export function RegionList({ activeId, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const rootElRef = React.createRef<HTMLDivElement>();
+    const rotation = Redux.useSelector(getRotation);
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('mousedown', rootElRef, (): void => {
@@ -43,7 +46,11 @@ export function RegionList({ activeId, annotations, className, onSelect = noop }
     useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
 
     return (
-        <div ref={rootElRef} className={classNames(className, { 'is-listening': isListening })}>
+        <div
+            ref={rootElRef}
+            className={classNames(className, { 'is-listening': isListening })}
+            style={{ transform: `rotate(${rotation}deg)` }}
+        >
             {annotations
                 .filter(filterRegion)
                 .sort(sortRegion)

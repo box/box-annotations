@@ -1,0 +1,11 @@
+.bp-image {
+    .ba-Layer {
+        position: absolute;
+        pointer-events: none;
+    }
+
+    // Applied to img element, which is managed by Preview SDK
+    .ba-is-drawing {
+        user-select: none; // Prevent visible selection highlight
+    }
+}

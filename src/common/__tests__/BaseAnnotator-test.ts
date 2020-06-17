@@ -1,25 +1,27 @@
 import * as store from '../../store';
 import APIFactory from '../../api';
-import BaseAnnotator from '../BaseAnnotator';
+import BaseAnnotator, { CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
+import { setIsInitialized } from '../../store';
 
 jest.mock('../../api');
-jest.mock('../../store', () => ({
-    createStore: jest.fn(() => ({ dispatch: jest.fn() })),
-    removeAnnotationAction: jest.fn(),
-    fetchAnnotationsAction: jest.fn(),
-    fetchCollaboratorsAction: jest.fn(),
-    setActiveAnnotationIdAction: jest.fn(),
-    setVisibilityAction: jest.fn(),
-    toggleAnnotationModeAction: jest.fn(),
-}));
+jest.mock('../../store/createStore');
+
+class MockAnnotator extends BaseAnnotator {
+    protected getAnnotatedElement(): HTMLElement | null | undefined {
+        return this.containerEl?.querySelector('.inner');
+    }
+}
 
 describe('BaseAnnotator', () => {
+    const container = document.createElement('div');
+    container.innerHTML = `<div class="inner" />`;
+
     const defaults = {
         apiHost: 'https://api.box.com',
-        container: document.createElement('div'),
+        container,
         file: {
             id: '12345',
             file_version: { id: '98765' },
@@ -34,7 +36,7 @@ describe('BaseAnnotator', () => {
         locale: 'en-US',
         token: '1234567890',
     };
-    const getAnnotator = (options = {}): BaseAnnotator => new BaseAnnotator({ ...defaults, ...options });
+    const getAnnotator = (options = {}): MockAnnotator => new MockAnnotator({ ...defaults, ...options });
     let annotator = getAnnotator();
 
     beforeEach(() => {
@@ -107,13 +109,13 @@ describe('BaseAnnotator', () => {
 
     describe('destroy()', () => {
         test('should remove the base class name from the root element', () => {
-            const rootEl = document.createElement('div');
-            rootEl.classList.add('ba');
+            const containerEl = document.createElement('div');
+            containerEl.classList.add(CSS_CONTAINER_CLASS);
 
-            annotator.rootEl = rootEl;
+            annotator.containerEl = containerEl;
             annotator.destroy();
 
-            expect(annotator.rootEl.classList).not.toContain('ba');
+            expect(annotator.containerEl.classList).not.toContain(CSS_CONTAINER_CLASS);
         });
 
         test('should remove proper event handlers', () => {
@@ -129,11 +131,20 @@ describe('BaseAnnotator', () => {
     });
 
     describe('init()', () => {
-        test('should set the root element based on class selector', () => {
+        test('should set its reference elements based on class selector', () => {
             annotator.init(5);
 
-            expect(annotator.rootEl).toBe(defaults.container);
-            expect(annotator.rootEl && annotator.rootEl.classList).toContain('ba');
+            expect(annotator.containerEl).toBeDefined();
+            expect(annotator.containerEl?.classList).toContain(CSS_CONTAINER_CLASS);
+            expect(annotator.annotatedEl?.classList).toContain(CSS_LOADED_CLASS);
+        });
+
+        test('should dispatch all necessary actions', () => {
+            annotator.init(1, 180);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setRotationAction(180));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setScaleAction(1));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(setIsInitialized());
         });
 
         test('should emit error if no root element exists', () => {
@@ -142,7 +153,7 @@ describe('BaseAnnotator', () => {
             annotator.init(5);
 
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
-            expect(annotator.rootEl).toBeNull();
+            expect(annotator.containerEl).toBeNull();
         });
     });
 
@@ -155,8 +166,8 @@ describe('BaseAnnotator', () => {
         });
 
         test('should call their underlying methods', () => {
-            annotator.emit(LegacyEvent.SCALE, { scale: 1 });
-            expect(annotator.init).toHaveBeenCalledWith(1);
+            annotator.emit(LegacyEvent.SCALE, { rotationAngle: 0, scale: 1 });
+            expect(annotator.init).toHaveBeenCalledWith(1, 0);
 
             annotator.emit(Event.ACTIVE_SET, 12345);
             expect(annotator.setActiveId).toHaveBeenCalledWith(12345);
@@ -177,36 +188,37 @@ describe('BaseAnnotator', () => {
 
     describe('setVisibility()', () => {
         test.each([true, false])('should hide/show annotations if visibility is %p', visibility => {
-            annotator.rootEl = defaults.container;
+            annotator.init(1);
             annotator.setVisibility(visibility);
-            expect(annotator.rootEl.classList.contains('is-hidden')).toEqual(!visibility);
+            expect(annotator.containerEl?.classList.contains('is-hidden')).toEqual(!visibility);
+        });
+
+        test('should do nothing if the root element is not defined', () => {
+            annotator.containerEl = document.querySelector('nonsense') as HTMLElement;
+            annotator.setVisibility(true);
+            expect(annotator.containerEl?.classList).toBeFalsy();
         });
     });
 
     describe('setActiveAnnotationId()', () => {
         test.each([null, '12345'])('should dispatch setActiveAnnotationIdAction with id %s', id => {
             annotator.setActiveId(id);
-            expect(annotator.store.dispatch).toBeCalled();
-            expect(store.setActiveAnnotationIdAction).toBeCalledWith(id);
+            expect(annotator.store.dispatch).toBeCalledWith(store.setActiveAnnotationIdAction(id));
         });
     });
 
     describe('removeAnnotation', () => {
-        test('should dispatch deleteActiveAnnotationAction', () => {
+        test('should dispatch removeActiveAnnotationAction with the specified id', () => {
             const id = '123';
             annotator.removeAnnotation(id);
-
-            expect(annotator.store.dispatch).toBeCalled();
-            expect(store.removeAnnotationAction).toBeCalledWith(id);
+            expect(annotator.store.dispatch).toBeCalledWith(store.removeAnnotationAction(id));
         });
     });
 
     describe('toggleAnnotationMode()', () => {
         test('should dispatch toggleAnnotationModeAction with specified mode', () => {
             annotator.toggleAnnotationMode('region' as Mode);
-
-            expect(annotator.store.dispatch).toBeCalled();
-            expect(store.toggleAnnotationModeAction).toBeCalledWith('region');
+            expect(annotator.store.dispatch).toBeCalledWith(store.toggleAnnotationModeAction('region' as Mode));
         });
     });
 });
