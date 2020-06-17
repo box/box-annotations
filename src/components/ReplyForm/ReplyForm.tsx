@@ -41,6 +41,7 @@ const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, value
             return;
         }
 
+        event.preventDefault();
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
 

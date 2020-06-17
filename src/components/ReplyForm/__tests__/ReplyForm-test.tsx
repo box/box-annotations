@@ -79,6 +79,7 @@ describe('components/ReplyForm/ReplyForm', () => {
             wrapper.find(Form).simulate('keyDown', { ...mockEvent, key });
 
             expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalledTimes(callCount);
+            expect(mockEvent.preventDefault).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
             expect(defaults.onCancel).toHaveBeenCalledTimes(callCount);
         });
