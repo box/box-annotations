@@ -176,7 +176,6 @@ export default class BaseAnnotator extends EventEmitter {
     protected hydrate(): void {
         // Redux dispatch method signature doesn't seem to like async actions
         this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
-        this.store.dispatch<any>(store.fetchCollaboratorsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     protected render(): void {

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import classnames from 'classnames';
+import debounce from 'lodash/debounce';
 import {
     addMention,
     getActiveMentionForEditorState,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
-import fuzzySearch from 'box-ui-elements/es/utils/fuzzySearch';
 import { DraftHandleValue, Editor, EditorState } from 'draft-js';
 import PopupList from '../Popups/PopupList';
 import { Collaborator } from '../../@types';
@@ -24,6 +24,7 @@ export type Props = {
     collaborators: Collaborator[];
     cursorPosition: number;
     editorState: EditorState;
+    fetchCollaborators: (searchString: string) => void;
     isDisabled?: boolean;
     onChange: (editorState: EditorState) => void;
     placeholder?: string;
@@ -35,12 +36,26 @@ export type State = {
     popupReference: VirtualElement | null;
 };
 
+export const DEFAULT_COLLAB_DEBOUNCE = 500;
+
 export default class ReplyField extends React.Component<Props, State> {
     static defaultProps = {
         isDisabled: false,
     };
 
     state: State = { activeItemIndex: 0, popupReference: null };
+
+    fetchCollaborators = debounce((editorState: EditorState): void => {
+        const { fetchCollaborators } = this.props;
+
+        const activeMention = getActiveMentionForEditorState(editorState);
+        const trimmedQuery = activeMention?.mentionString.trim();
+        if (!trimmedQuery) {
+            return;
+        }
+
+        fetchCollaborators(trimmedQuery);
+    }, DEFAULT_COLLAB_DEBOUNCE);
 
     componentDidUpdate({ editorState: prevEditorState }: Props): void {
         const { editorState } = this.props;
@@ -53,33 +68,6 @@ export default class ReplyField extends React.Component<Props, State> {
     componentWillUnmount(): void {
         this.saveCursorPosition();
     }
-
-    getCollaborators = (): Collaborator[] => {
-        const { collaborators, editorState } = this.props;
-
-        const activeMention = getActiveMentionForEditorState(editorState);
-        if (!activeMention) {
-            return [];
-        }
-
-        const trimmedQuery = activeMention.mentionString.trim();
-        // fuzzySearch doesn't match anything if query length is less than 2
-        // Compared to empty list, full list has a better user experience
-        if (trimmedQuery.length < 2) {
-            return collaborators;
-        }
-
-        return collaborators.filter(({ item }) => {
-            if (!item) {
-                return false;
-            }
-
-            const isNameMatch = fuzzySearch(trimmedQuery, item.name, 0);
-            const isEmailMatch = 'email' in item && fuzzySearch(trimmedQuery, item.email, 0);
-
-            return isNameMatch || isEmailMatch;
-        });
-    };
 
     getVirtualElement = (activeMention: Mention): VirtualElement | null => {
         const selection = window.getSelection();
@@ -133,14 +121,14 @@ export default class ReplyField extends React.Component<Props, State> {
     handleChange = (nextEditorState: EditorState): void => {
         const { onChange } = this.props;
 
+        this.fetchCollaborators(nextEditorState);
         onChange(nextEditorState);
     };
 
     handleSelect = (index: number): void => {
-        const { editorState } = this.props;
+        const { collaborators, editorState } = this.props;
 
         const activeMention = getActiveMentionForEditorState(editorState);
-        const collaborators = this.getCollaborators();
         const editorStateWithLink = addMention(editorState, activeMention, collaborators[index]);
 
         this.handleChange(editorStateWithLink);
@@ -161,8 +149,9 @@ export default class ReplyField extends React.Component<Props, State> {
     };
 
     handleArrow = (event: React.KeyboardEvent): number => {
+        const { collaborators } = this.props;
         const { popupReference } = this.state;
-        const { length } = this.getCollaborators();
+        const { length } = collaborators;
 
         if (!popupReference || !length) {
             return 0;
@@ -196,7 +185,7 @@ export default class ReplyField extends React.Component<Props, State> {
     };
 
     render(): JSX.Element {
-        const { className, editorState, isDisabled, placeholder, ...rest } = this.props;
+        const { className, collaborators, editorState, isDisabled, placeholder, ...rest } = this.props;
         const { activeItemIndex, popupReference } = this.state;
 
         return (
@@ -217,7 +206,7 @@ export default class ReplyField extends React.Component<Props, State> {
                 {popupReference && (
                     <PopupList
                         activeItemIndex={activeItemIndex}
-                        items={this.getCollaborators()}
+                        items={collaborators}
                         onActivate={this.setPopupListActiveItem}
                         onSelect={this.handleSelect}
                         reference={popupReference}

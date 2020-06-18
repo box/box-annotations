@@ -13,9 +13,9 @@ describe('store/users/reducer', () => {
             const newState = reducer(
                 state,
                 fetchCollaboratorsAction.fulfilled(
-                    { entries: collaborators, limit: 10, next_marker: null, previous_marker: null },
+                    { entries: collaborators, limit: 25, next_marker: null, previous_marker: null },
                     'fulfilled',
-                    undefined,
+                    'test',
                 ),
             );
 

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { AppState, getCollaborators, getCreatorCursor, setCursorAction } from '../../store';
+import { AppState, fetchCollaboratorsAction, getCollaborators, getCreatorCursor, setCursorAction } from '../../store';
 import ReplyField from './ReplyField';
 import { Collaborator } from '../../@types';
 
@@ -14,6 +14,7 @@ export const mapStateToProps = (state: AppState): Props => ({
 });
 
 export const mapDispatchToProps = {
+    fetchCollaborators: fetchCollaboratorsAction,
     setCursorPosition: setCursorAction,
 };
 
