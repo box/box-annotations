@@ -23,6 +23,8 @@ jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector
     getFormattedCommentText: jest.fn(() => ({ hasMention: false, text: 'test' })),
 }));
 
+jest.mock('lodash/debounce', () => (func: Function) => func);
+
 describe('components/Popups/ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-field',
@@ -32,6 +34,7 @@ describe('components/Popups/ReplyField', () => {
         ],
         cursorPosition: 0,
         editorState: mockEditorState,
+        fetchCollaborators: jest.fn(),
         isDisabled: false,
         onChange: jest.fn(),
         setCursorPosition: jest.fn(),
@@ -66,80 +69,36 @@ describe('components/Popups/ReplyField', () => {
         test('should handle the editor change event', () => {
             const wrapper = getWrapper();
             const editor = wrapper.find(Editor);
+            const instance = wrapper.instance();
+
+            const fetchCollaboratorsSpy = jest.spyOn(instance, 'fetchCollaborators');
 
             editor.simulate('change', mockEditorState);
 
             expect(defaults.onChange).toBeCalledWith(mockEditorState);
+            expect(fetchCollaboratorsSpy).toHaveBeenCalled();
         });
     });
 
-    describe('getCollaborators()', () => {
-        test('should return empty list if no activeMention', () => {
+    describe('fetchCollaborators()', () => {
+        test('should not call fetchCollaborators if no activeMention or empty query', () => {
             const wrapper = getWrapper();
             const instance = wrapper.instance();
 
             getActiveMentionForEditorState.mockReturnValueOnce(null);
+            instance.fetchCollaborators(mockEditorState);
 
-            expect(instance.getCollaborators()).toHaveLength(0);
-        });
+            expect(defaults.fetchCollaborators).not.toHaveBeenCalled();
 
-        test('should return full collaborators list if mentionString length is less than 2', () => {
-            const wrapper = getWrapper();
-            const instance = wrapper.instance();
+            getActiveMentionForEditorState.mockReturnValueOnce({ mentionString: '' });
+            instance.fetchCollaborators(mockEditorState);
 
-            const mockMentionShort = {
-                ...mockMention,
-                mentionString: '',
-            };
+            expect(defaults.fetchCollaborators).not.toHaveBeenCalled();
 
-            getActiveMentionForEditorState.mockReturnValueOnce(mockMentionShort);
+            getActiveMentionForEditorState.mockReturnValueOnce({ mentionString: 'test' });
+            instance.fetchCollaborators(mockEditorState);
 
-            expect(instance.getCollaborators()).toMatchObject(defaults.collaborators);
-        });
-
-        test('should filter invalid items in collaborators', () => {
-            const wrapper = getWrapper();
-            const instance = wrapper.instance();
-
-            // mockMention and defaults.collaborators don't match
-
-            expect(instance.getCollaborators()).toHaveLength(0);
-        });
-
-        test('should filter items based on item name', () => {
-            const mockMentionTest2 = {
-                ...mockMention,
-                mentionString: 'test2',
-            };
-
-            const wrapper = getWrapper();
-            const instance = wrapper.instance();
-
-            getActiveMentionForEditorState.mockReturnValueOnce(mockMentionTest2);
-
-            expect(instance.getCollaborators()).toMatchObject([defaults.collaborators[1]]);
-        });
-
-        test('should filter items based on item email', () => {
-            const mockCollabs = [
-                {
-                    id: 'testid3',
-                    name: 'test3',
-                    item: { id: 'testid3', name: 'test3', type: 'group', email: 'test3@box.com' },
-                },
-                ...defaults.collaborators,
-            ];
-            const mockMentionEmail = {
-                ...mockMention,
-                mentionString: 'box.com',
-            };
-
-            const wrapper = getWrapper({ collaborators: mockCollabs });
-            const instance = wrapper.instance();
-
-            getActiveMentionForEditorState.mockReturnValueOnce(mockMentionEmail);
-
-            expect(instance.getCollaborators()).toMatchObject([mockCollabs[0]]);
+            expect(defaults.fetchCollaborators).toHaveBeenCalledWith('test');
         });
     });
 
@@ -266,7 +225,6 @@ describe('components/Popups/ReplyField', () => {
         let mockKeyboardEvent: React.KeyboardEvent<HTMLDivElement>;
         let wrapper: ShallowWrapper<Props, State, ReplyField>;
         let instance: ReplyField;
-        let getCollaboratorsSpy: jest.SpyInstance;
         let stopDefaultEventSpy: jest.SpyInstance;
         let setActiveItemSpy: jest.SpyInstance;
 
@@ -280,10 +238,6 @@ describe('components/Popups/ReplyField', () => {
             wrapper.setState({ activeItemIndex: 0, popupReference: ('popupReference' as unknown) as VirtualElement });
             instance = wrapper.instance();
 
-            getCollaboratorsSpy = jest.spyOn(instance, 'getCollaborators').mockReturnValue([
-                { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' } },
-                { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'group' } },
-            ]);
             stopDefaultEventSpy = jest.spyOn(instance, 'stopDefaultEvent');
             setActiveItemSpy = jest.spyOn(instance, 'setPopupListActiveItem');
         });
@@ -302,7 +256,7 @@ describe('components/Popups/ReplyField', () => {
         });
 
         test('should do nothing if collaborators length is 0', () => {
-            getCollaboratorsSpy.mockReturnValueOnce([]);
+            wrapper.setProps({ collaborators: [] });
             instance.handleArrow(mockKeyboardEvent);
 
             expect(stopDefaultEventSpy).not.toBeCalled();
