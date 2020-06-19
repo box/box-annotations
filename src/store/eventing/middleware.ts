@@ -6,11 +6,13 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from '../annotations/actions';
+import { EventHandlerMap } from './types';
 import { handleActiveAnnotationEvents } from './active';
+import { handleAnnotationsInitialized } from './init';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
 import { handleFetchErrorEvents } from './fetch';
-import { handleAnnotationsInitialized } from './init';
-import { EventHandlerMap } from './types';
+import { handleToggleAnnotationModeAction } from './mode';
+import { toggleAnnotationModeAction } from '../common/actions';
 
 // Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
 const eventHandlers: EventHandlerMap = {
@@ -20,6 +22,7 @@ const eventHandlers: EventHandlerMap = {
     [fetchAnnotationsAction.rejected.toString()]: handleFetchErrorEvents,
     [setActiveAnnotationIdAction.toString()]: handleActiveAnnotationEvents,
     [setIsInitialized.toString()]: handleAnnotationsInitialized,
+    [toggleAnnotationModeAction.toString()]: handleToggleAnnotationModeAction,
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {
