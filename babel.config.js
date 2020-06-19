@@ -17,6 +17,7 @@ module.exports = api => {
             '@babel/plugin-proposal-object-rest-spread',
             '@babel/plugin-transform-flow-strip-types', // Required for jest coverage, for some reason
             '@babel/plugin-transform-object-assign',
+            '@babel/plugin-transform-runtime',
             [
                 'react-intl',
                 {
