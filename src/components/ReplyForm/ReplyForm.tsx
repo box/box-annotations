@@ -23,6 +23,7 @@ export type Props = ReplyFormProps &
     Pick<FormikProps<FormValues>, 'errors' | 'setFieldValue' | 'values'>;
 
 const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, values }: Props): JSX.Element => {
+    const formRef = React.useRef<HTMLFormElement>(null);
     const intl = useIntl();
     const hasErrors = Object.keys(errors).length > 0;
     const { editorState } = values;
@@ -36,20 +37,38 @@ const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, value
         onChange(getFormattedCommentText(nextEditorState).text);
         setFieldValue('editorState', nextEditorState);
     };
-    const handleKeyDown = (event: React.KeyboardEvent): void => {
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
         if (event.key !== KEYS.escape) {
             return;
         }
 
         event.preventDefault();
         event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
 
-        onCancel(getFormattedCommentText(editorState).text);
+        handleCancel();
     };
 
+    // The entire annotation mode keydown event listener is attached to real dom's document
+    // Have to attach this event listener to real dom too, in order to capture the keydown event
+    // before annotation mode event listner captures it
+    React.useEffect(() => {
+        const { current: formEl } = formRef;
+
+        if (formEl) {
+            // Add event listener to real DOM
+            formEl.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            if (formEl) {
+                formEl.removeEventListener('keydown', handleKeyDown);
+            }
+        };
+    }, [formRef]); // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
-        <Form className="ba-ReplyForm" data-testid="ba-ReplyForm" onKeyDown={handleKeyDown}>
+        <Form ref={formRef} className="ba-ReplyForm" data-testid="ba-ReplyForm">
             <div className="ba-Popup-main">
                 <ReplyField
                     className="ba-Popup-field"
