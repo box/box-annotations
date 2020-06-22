@@ -1,6 +1,8 @@
 .bp-image {
     .ba-Layer {
         position: absolute;
+        white-space: initial; // Overrides white-space: no-wrap inherited .bp-image
+        text-align: initial; // Overrides text-align: center inherited .bp-image
         pointer-events: none;
     }
 
