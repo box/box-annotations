@@ -6,9 +6,9 @@ import {
     getActiveMentionForEditorState,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { DraftHandleValue, Editor, EditorState } from 'draft-js';
+import { VirtualElement } from '@popperjs/core';
 import PopupList from '../Popups/PopupList';
 import { Collaborator } from '../../@types';
-import { VirtualElement } from '../Popups/Popper';
 import './ReplyField.scss';
 
 export type Mention = {

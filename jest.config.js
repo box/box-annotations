@@ -16,6 +16,7 @@ module.exports = {
         'box-elements-messages': '<rootDir>/scripts/jest/i18nMock.js',
         'react-intl': '<rootDir>/scripts/jest/react-intl-mock.js',
         'react-intl-locale-data': '<rootDir>/node_modules/react-intl/locale-data/en.js',
+        'react-popper': '<rootDir>/scripts/jest/popperReactMock.js',
         mousetrap: '<rootDir>/scripts/jest/moduleMock.js',
         rangy: '<rootDir>/scripts/jest/moduleMock.js',
     },

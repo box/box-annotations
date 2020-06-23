@@ -1,31 +1,34 @@
 import React from 'react';
+import * as ReactPopper from 'react-popper';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupCursor from '../PopupCursor';
-import PopupBase from '../PopupBase';
 
 describe('components/Popups/PopupCursor', () => {
-    // Render helpers
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupCursor {...props} />);
+    const popperInstance = {
+        attributes: { popper: { 'data-placement': 'bottom' } },
+        update: jest.fn(),
+        styles: { popper: { top: '10px' } },
+    };
+    const popperSpy = jest.spyOn(ReactPopper, 'usePopper') as jest.Mock;
 
     beforeEach(() => {
         jest.spyOn(document, 'addEventListener');
         jest.spyOn(document, 'removeEventListener');
+
+        popperSpy.mockReturnValue(popperInstance);
     });
 
-    describe('mouse events', () => {
-        test('should set virtualElement rect', () => {
-            const wrapper = getWrapper();
+    describe('mousemove handler', () => {
+        test('should call update on the underlying popper instance', () => {
+            getWrapper();
 
             act(() => {
                 document.dispatchEvent(new MouseEvent('mousemove', { clientX: 1, clientY: 2 }));
             });
 
-            const newVirtualElement = wrapper.find(PopupBase).prop('reference');
-            const rect = newVirtualElement.getBoundingClientRect();
-
-            expect(rect.left).toEqual(1);
-            expect(rect.top).toEqual(2);
+            expect(popperInstance.update).toHaveBeenCalled();
         });
     });
 
@@ -36,6 +39,16 @@ describe('components/Popups/PopupCursor', () => {
 
             wrapper.unmount();
             expect(document.removeEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
+        });
+
+        test('should call usePopper with the reference and pass its attributes to the popup', () => {
+            const reference = { getBoundingClientRect: expect.any(Function) };
+            const wrapper = getWrapper();
+            const popup = wrapper.find('[data-testid="ba-PopupCursor"]');
+
+            expect(ReactPopper.usePopper).toHaveBeenCalledWith(reference, popup.getDOMNode(), expect.any(Object));
+            expect(popup.prop('data-placement')).toEqual('bottom');
+            expect(popup.prop('style')).toMatchObject({ top: '10px' });
         });
     });
 });

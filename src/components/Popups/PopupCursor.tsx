@@ -1,11 +1,11 @@
 import * as React from 'react';
+import * as Popper from '@popperjs/core';
+import * as ReactPopper from 'react-popper';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
-import PopupBase from './PopupBase';
-import { Options, VirtualElement } from './Popper';
 import './PopupCursor.scss';
 
-const options: Partial<Options> = {
+const options: Partial<Popper.Options> = {
     modifiers: [
         {
             name: 'offset',
@@ -17,30 +17,29 @@ const options: Partial<Options> = {
     placement: 'right',
 };
 
-const generateGetBoundingClientRect = (x = 0, y = 0) => {
-    return () => ({
-        width: 0,
-        height: 0,
-        top: y,
-        right: x,
-        bottom: y,
-        left: x,
-    });
+const generateElement = (x = 0, y = 0): Popper.VirtualElement => {
+    return {
+        getBoundingClientRect: () => ({
+            width: 0,
+            height: 0,
+            top: y,
+            right: x,
+            bottom: y,
+            left: x,
+        }),
+    };
 };
 
 export default function PopupCursor(): JSX.Element {
-    const popupRef = React.useRef<PopupBase>(null);
-
-    const virtualElementRef = React.useRef<VirtualElement>({
-        getBoundingClientRect: generateGetBoundingClientRect(),
-    });
+    const [popupElement, setPopupElement] = React.useState<HTMLDivElement | null>(null);
+    const virtualElementRef = React.useRef<Popper.VirtualElement>(generateElement());
+    const { attributes, styles, update } = ReactPopper.usePopper(virtualElementRef.current, popupElement, options);
 
     const handleMouseMove = ({ clientX: x, clientY: y }: MouseEvent): void => {
-        virtualElementRef.current.getBoundingClientRect = generateGetBoundingClientRect(x, y);
+        virtualElementRef.current = generateElement(x, y);
 
-        const { current } = popupRef;
-        if (current?.popper) {
-            current.popper.update();
+        if (update) {
+            update();
         }
     };
 
@@ -53,8 +52,14 @@ export default function PopupCursor(): JSX.Element {
     });
 
     return (
-        <PopupBase ref={popupRef} className="ba-PopupCursor" options={options} reference={virtualElementRef.current}>
+        <div
+            ref={setPopupElement}
+            className="ba-PopupCursor"
+            data-testid="ba-PopupCursor"
+            style={styles.popper}
+            {...attributes.popper}
+        >
             <FormattedMessage {...messages.regionCursorPrompt} />
-        </PopupBase>
+        </div>
     );
 }

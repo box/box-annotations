@@ -14,11 +14,11 @@
         // Top-facing arrows
         &[data-popper-placement*='bottom'] {
             .ba-Popup-arrow {
-                top: -#{$popup-arrow-size - 1};
+                top: -#{$popup-arrow-size};
 
                 &::before,
                 &::after {
-                    transform: rotate(180deg) translateX(50%);
+                    transform: rotate(180deg);
                 }
 
                 &::after {
@@ -30,11 +30,11 @@
         // Right-facing arrows
         &[data-popper-placement*='left'] {
             .ba-Popup-arrow {
-                right: 0;
+                right: -#{$popup-arrow-size};
 
                 &::before,
                 &::after {
-                    transform: rotate(-90deg) translateY(-100%);
+                    transform: rotate(-90deg);
                     transform-origin: center top;
                 }
 
@@ -47,7 +47,7 @@
         // Left-facing arrows
         &[data-popper-placement*='right'] {
             .ba-Popup-arrow {
-                left: -#{$popup-arrow-size - 1};
+                left: -#{$popup-arrow-size};
 
                 &::before,
                 &::after {
@@ -64,12 +64,11 @@
         // Bottom-facing arrows
         &[data-popper-placement*='top'] {
             .ba-Popup-arrow {
-                top: auto;
-                bottom: 0;
+                bottom: -#{$popup-arrow-size * 2};
 
                 &::before,
                 &::after {
-                    transform: rotate(0) translateX(-50%);
+                    transform: rotate(0);
                 }
 
                 &::after {
@@ -81,6 +80,9 @@
     }
 
     .ba-Popup-arrow {
+        width: $popup-arrow-size * 2;
+        height: $popup-arrow-size * 2;
+
         &::before,
         &::after {
             position: absolute;

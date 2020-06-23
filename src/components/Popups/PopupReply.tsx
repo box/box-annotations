@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as Popper from '@popperjs/core';
 import * as ReactRedux from 'react-redux';
+import * as ReactPopper from 'react-popper';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
 import usePrevious from '../../common/usePrevious';
@@ -53,25 +54,28 @@ export default function PopupReply({
     onCancel,
     onChange,
     onSubmit,
+    reference,
     value = '',
     ...rest
 }: Props): JSX.Element {
-    const popupRef = React.useRef<PopupBase>(null);
+    // Store-based state
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
 
-    React.useEffect(() => {
-        const { current: popup } = popupRef;
+    // Popper-related state
+    const [popupElement, setPopupElement] = React.useState<HTMLDivElement | null>(null);
+    const { attributes, update, styles } = ReactPopper.usePopper(reference, popupElement, options);
 
-        if (popup?.popper && (rotation !== prevRotation || scale !== prevScale)) {
-            popup.popper.update();
+    React.useEffect(() => {
+        if (update && (scale !== prevScale || rotation !== prevRotation)) {
+            update();
         }
-    }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [rotation, scale, update]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <PopupBase ref={popupRef} options={options} {...rest}>
+        <PopupBase ref={setPopupElement} attributes={attributes} styles={styles} {...rest}>
             <ReplyForm
                 isPending={isPending}
                 onCancel={onCancel}

@@ -2,9 +2,9 @@ import React from 'react';
 import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Editor, EditorState } from 'draft-js';
+import { VirtualElement } from '@popperjs/core';
 import PopupList from '../../Popups/PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
-import { VirtualElement } from '../../Popups/Popper';
 
 const mockMention = {
     blockID: '12345',
