@@ -74,6 +74,7 @@
 
                 &::after {
                     top: -1px;
+                    border-top-color: $popup-footer-bg;
                 }
             }
         }
