@@ -3,6 +3,10 @@
 .ba-ReplyField {
     @import '~draft-js/dist/Draft';
 
+    .DraftEditor-editorContainer {
+        border-left: none;
+    }
+
     .public-DraftEditorPlaceholder-hasFocus,
     .public-DraftEditorPlaceholder-root {
         margin: 0;
