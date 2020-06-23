@@ -81,7 +81,7 @@ export default class ReplyField extends React.Component<Props, State> {
 
         const { mentionString, mentionTrigger } = activeMention;
         const offset = mentionString.length + mentionTrigger.length;
-        const mentionStart = currentCursor - offset;
+        const mentionStart = Math.max(0, currentCursor - offset);
 
         range.setStart(textNode, mentionStart);
         range.setEnd(textNode, mentionStart);
