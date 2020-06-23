@@ -5,7 +5,6 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { setIsInitialized } from '../store';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -109,15 +108,13 @@ export default class BaseAnnotator extends EventEmitter {
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
 
-        // Update the store with the options provided by preview
-        this.store.dispatch(store.setRotationAction(rotation));
-        this.store.dispatch(store.setScaleAction(scale));
-
         // Defer to the child class to render annotations
         this.render();
 
         // Update the store now that annotations have been rendered
-        this.store.dispatch(setIsInitialized());
+        this.store.dispatch(store.setRotationAction(rotation));
+        this.store.dispatch(store.setScaleAction(scale));
+        this.store.dispatch(store.setIsInitialized());
     }
 
     public removeAnnotation = (annotationId: string): void => {
