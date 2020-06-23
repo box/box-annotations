@@ -1,19 +1,19 @@
-import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import * as React from 'react';
+import * as ReactRedux from 'react-redux';
+import { mount, ReactWrapper } from 'enzyme';
+import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
 import ReplyForm from '../../ReplyForm';
 
-jest.mock('../PopupBase', () => ({
-    __esModule: true,
-    default: ({ children }: { children: React.ReactNode }): JSX.Element => <div>{children}</div>,
+jest.mock('react-redux', () => ({
+    useSelector: jest.fn(),
 }));
 
-type PropsIndex = {
-    [key: string]: Function | HTMLElement | boolean;
-};
+jest.mock('../PopupBase');
+jest.mock('../../ReplyForm');
 
 describe('components/Popups/PopupReply', () => {
-    const defaults: Props & PropsIndex = {
+    const defaults: Props = {
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -21,12 +21,35 @@ describe('components/Popups/PopupReply', () => {
         reference: document.createElement('div'),
     };
 
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupReply {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper => mount(<PopupReply {...defaults} {...props} />);
+
+    beforeEach(() => {
+        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+    });
+
+    describe('state changes', () => {
+        test('should call update on the underlying popper instance when the store changes', () => {
+            const popupMock = { popper: { update: jest.fn() } };
+            const reduxSpy = jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => false);
+            const refSpy = jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
+            const wrapper = getWrapper();
+
+            reduxSpy.mockReturnValueOnce(true);
+            wrapper.setProps({ value: '1' });
+
+            reduxSpy.mockReturnValueOnce(false);
+            wrapper.setProps({ value: '2' });
+
+            expect(refSpy).toHaveBeenCalled();
+            expect(popupMock.popper.update).toHaveBeenCalledTimes(3);
+        });
+    });
 
     describe('render()', () => {
         test('should render the ReplyForm', () => {
             const wrapper = getWrapper();
 
+            expect(wrapper.exists(PopupBase)).toBe(true);
             expect(wrapper.exists(ReplyForm)).toBe(true);
         });
     });
