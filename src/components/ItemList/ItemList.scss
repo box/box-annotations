@@ -1,7 +1,9 @@
 .ba {
     .ba-ItemList {
+        max-height: 300px;
         margin: 0;
         padding: 0;
+        overflow-y: auto;
         list-style: none;
     }
 }
