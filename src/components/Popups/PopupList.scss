@@ -6,15 +6,12 @@
     }
 
     .ba-Popup-content {
-        padding-top: 10px;
-        padding-bottom: 10px;
         border: solid 1px $bdl-gray-30;
         border-radius: $bdl-border-radius-size;
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
     }
 
     .ba-PopupList-prompt {
-        padding-right: 10px;
-        padding-left: 10px;
+        padding: 10px;
     }
 }
