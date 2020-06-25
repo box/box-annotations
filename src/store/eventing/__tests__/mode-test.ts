@@ -6,7 +6,7 @@ import { handleToggleAnnotationModeAction } from '../mode';
 jest.mock('../../../common/EventManager');
 
 describe('store/eventing/init', () => {
-    test('should emit annotations_mode_change when ', () => {
+    test('should emit annotations_mode_change when changing annotation modes.', () => {
         const action = {
             type: 'action',
             payload: 'region',
