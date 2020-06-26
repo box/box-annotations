@@ -215,10 +215,13 @@ describe('components/Popups/ReplyField', () => {
     });
 
     describe('setPopupListActiveItem()', () => {
-        const wrapper = getWrapper();
-        wrapper.instance().setPopupListActiveItem(1);
+        test('should set state', () => {
+            const wrapper = getWrapper();
+            wrapper.instance().setPopupListActiveItem(1, true);
 
-        expect(wrapper.state('activeItemIndex')).toBe(1);
+            expect(wrapper.state('activeItemIndex')).toBe(1);
+            expect(wrapper.state('popupAutoScroll')).toBe(true);
+        });
     });
 
     describe('handleKeyDown', () => {
@@ -265,14 +268,14 @@ describe('components/Popups/ReplyField', () => {
 
         test('should increase index if key is down', () => {
             instance.handleDownArrow(mockKeyboardEvent);
-            expect(setActiveItemSpy).toBeCalledWith(1);
+            expect(setActiveItemSpy).toBeCalledWith(1, true);
         });
 
         test('should decrease index if key is up', () => {
             wrapper.setState({ activeItemIndex: 1 });
 
             instance.handleUpArrow(mockKeyboardEvent);
-            expect(setActiveItemSpy).toBeCalledWith(0);
+            expect(setActiveItemSpy).toBeCalledWith(0, true);
         });
     });
 

@@ -12,14 +12,11 @@ export type Props = {
     onMouseEnter?: (event: React.SyntheticEvent) => void;
 };
 
-const ItemRow = ({
-    className,
-    isActive,
-    item: collaborator,
-    onClick,
-    onMouseDown,
-    onMouseEnter,
-}: Props): JSX.Element | null => {
+export type ItemRowRef = HTMLLIElement;
+
+const ItemRow = (props: Props, ref: React.Ref<ItemRowRef>): JSX.Element | null => {
+    const { className, isActive, item: collaborator, onClick, onMouseDown, onMouseEnter } = props;
+
     if (!collaborator || !collaborator.item || !collaborator.item.name) {
         return null;
     }
@@ -29,6 +26,7 @@ const ItemRow = ({
     return (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <li
+            ref={ref}
             aria-selected={isActive}
             className={classNames(className, 'ba-ItemRow', { 'is-active': isActive })}
             data-testid="ba-ItemRow"
@@ -50,4 +48,4 @@ const ItemRow = ({
     );
 };
 
-export default ItemRow;
+export default React.forwardRef(ItemRow);
