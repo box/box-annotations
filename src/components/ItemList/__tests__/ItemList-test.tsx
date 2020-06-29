@@ -1,7 +1,10 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import scrollIntoView from 'scroll-into-view-if-needed';
+import { mount, ReactWrapper } from 'enzyme';
 import ItemList, { Props } from '../ItemList';
 import { Collaborator } from '../../../@types';
+
+jest.mock('scroll-into-view-if-needed', () => jest.fn());
 
 describe('components/ItemList/ItemList', () => {
     const defaults: Props<Collaborator> = {
@@ -12,7 +15,7 @@ describe('components/ItemList/ItemList', () => {
         onSelect: jest.fn(),
     };
 
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<ItemList {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper => mount(<ItemList {...defaults} {...props} />);
 
     describe('render()', () => {
         test('should render elements with correct props', () => {
@@ -41,13 +44,23 @@ describe('components/ItemList/ItemList', () => {
             const firstChild = wrapper.find('[data-testid="ba-ItemList"]').childAt(0);
 
             firstChild.simulate('click', mockEvent);
-            expect(defaults.onSelect).toBeCalledWith(0, mockEvent);
+            expect(defaults.onSelect).toBeCalledWith(0, expect.objectContaining(mockEvent));
 
             firstChild.simulate('mousedown', mockEvent);
             expect(mockEvent.preventDefault).toBeCalled();
 
             firstChild.simulate('mouseenter');
             expect(mockSetIndex).toBeCalledWith(0);
+        });
+
+        test('should call scrollIntoView if autoScroll is true', () => {
+            const wrapper = getWrapper();
+
+            expect(scrollIntoView).not.toBeCalled();
+
+            wrapper.setProps({ autoScroll: true });
+
+            expect(scrollIntoView).toBeCalled();
         });
     });
 });

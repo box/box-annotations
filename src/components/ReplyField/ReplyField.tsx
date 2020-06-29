@@ -33,6 +33,7 @@ export type Props = {
 
 export type State = {
     activeItemIndex: number;
+    popupAutoScroll: boolean;
     popupReference: VirtualElement | null;
 };
 
@@ -43,7 +44,7 @@ export default class ReplyField extends React.Component<Props, State> {
         isDisabled: false,
     };
 
-    state: State = { activeItemIndex: 0, popupReference: null };
+    state: State = { activeItemIndex: 0, popupAutoScroll: false, popupReference: null };
 
     fetchCollaborators = debounce((editorState: EditorState): void => {
         const { fetchCollaborators } = this.props;
@@ -116,7 +117,8 @@ export default class ReplyField extends React.Component<Props, State> {
         event.stopPropagation();
     };
 
-    setPopupListActiveItem = (index: number): void => this.setState({ activeItemIndex: index });
+    setPopupListActiveItem = (index: number, autoScroll = false): void =>
+        this.setState({ activeItemIndex: index, popupAutoScroll: autoScroll });
 
     handleChange = (nextEditorState: EditorState): void => {
         const { onChange } = this.props;
@@ -170,7 +172,7 @@ export default class ReplyField extends React.Component<Props, State> {
             return;
         }
 
-        this.setPopupListActiveItem(activeItemIndex === 0 ? length - 1 : activeItemIndex - 1);
+        this.setPopupListActiveItem(activeItemIndex === 0 ? length - 1 : activeItemIndex - 1, true);
     };
 
     handleDownArrow = (event: React.KeyboardEvent): void => {
@@ -181,12 +183,12 @@ export default class ReplyField extends React.Component<Props, State> {
             return;
         }
 
-        this.setPopupListActiveItem(activeItemIndex === length - 1 ? 0 : activeItemIndex + 1);
+        this.setPopupListActiveItem(activeItemIndex === length - 1 ? 0 : activeItemIndex + 1, true);
     };
 
     render(): JSX.Element {
         const { className, collaborators, editorState, isDisabled, placeholder, ...rest } = this.props;
-        const { activeItemIndex, popupReference } = this.state;
+        const { activeItemIndex, popupAutoScroll, popupReference } = this.state;
 
         return (
             <div className={classnames(className, 'ba-ReplyField')}>
@@ -206,6 +208,7 @@ export default class ReplyField extends React.Component<Props, State> {
                 {popupReference && (
                     <PopupList
                         activeItemIndex={activeItemIndex}
+                        autoScroll={popupAutoScroll}
                         items={collaborators}
                         onActivate={this.setPopupListActiveItem}
                         onSelect={this.handleSelect}

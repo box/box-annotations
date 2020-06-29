@@ -9,6 +9,7 @@ import './PopupList.scss';
 
 export type Props<T extends { id: string }> = {
     activeItemIndex?: number;
+    autoScroll?: boolean;
     items: T[];
     onActivate?: (index: number) => void;
     onSelect: (index: number, event: React.SyntheticEvent) => void;
