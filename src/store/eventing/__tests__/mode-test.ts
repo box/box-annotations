@@ -1,19 +1,19 @@
-import { Action } from '@reduxjs/toolkit';
 import eventManager from '../../../common/EventManager';
 import { AppState } from '../../types';
 import { handleToggleAnnotationModeAction } from '../mode';
 
 jest.mock('../../../common/EventManager');
 
-describe('store/eventing/init', () => {
-    test('should emit annotations_mode_change when changing annotation modes.', () => {
-        const action = {
-            type: 'action',
-            payload: 'region',
-        } as Action;
+describe('store/eventing/mode', () => {
+    test('should emit annotations_mode_change with the next mode when changing annotation modes.', () => {
+        const nextState = {
+            common: {
+                mode: 'region',
+            },
+        } as AppState;
 
-        handleToggleAnnotationModeAction({} as AppState, {} as AppState, action);
+        handleToggleAnnotationModeAction({} as AppState, nextState);
 
-        expect(eventManager.emit).toBeCalledWith('annotations_mode_change', action);
+        expect(eventManager.emit).toBeCalledWith('annotations_mode_change', 'region');
     });
 });
