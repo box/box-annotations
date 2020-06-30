@@ -33,6 +33,7 @@ export default class RegionManager implements BaseManager {
         rootLayerEl.classList.add('ba-Layer');
         rootLayerEl.classList.add('ba-Layer--region');
         rootLayerEl.dataset.testid = 'ba-Layer--region';
+        rootLayerEl.setAttribute('data-resin-feature', 'annotations');
 
         // Insert the new layer element immediately after the reference element
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);

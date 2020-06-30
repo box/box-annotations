@@ -70,6 +70,7 @@ describe('BaseAnnotator', () => {
                         options: {
                             fileId: '12345',
                             fileVersionId: '98765',
+                            isCurrentFileVersion: true,
                             permissions: {
                                 can_create_annotations: true,
                                 can_view_annotations: true,
@@ -96,6 +97,7 @@ describe('BaseAnnotator', () => {
                     options: {
                         fileId: '12345',
                         fileVersionId: '456',
+                        isCurrentFileVersion: false,
                         permissions: {
                             can_create_annotations: true,
                             can_view_annotations: true,
@@ -105,6 +107,33 @@ describe('BaseAnnotator', () => {
                 { api: expect.any(APIFactory) },
             );
         });
+
+        test.each`
+            fileOptionsVersionId | fileVersionId | isCurrentFileVersion
+            ${'0'}               | ${'0'}        | ${true}
+            ${undefined}         | ${'0'}        | ${true}
+            ${'1'}               | ${'0'}        | ${false}
+        `(
+            'should set isCurrentFileVersion to $isCurrentFileVersion',
+            ({ fileOptionsVersionId, fileVersionId, isCurrentFileVersion }) => {
+                const file = {
+                    ...defaults.file,
+                    file_version: { id: fileVersionId },
+                };
+                const fileOptions = {
+                    '12345': {
+                        fileVersionId: fileOptionsVersionId,
+                    },
+                };
+
+                annotator = getAnnotator({ file, fileOptions });
+
+                expect(store.createStore).toHaveBeenLastCalledWith(
+                    expect.objectContaining({ options: expect.objectContaining({ isCurrentFileVersion }) }),
+                    expect.any(Object),
+                );
+            },
+        );
     });
 
     describe('destroy()', () => {

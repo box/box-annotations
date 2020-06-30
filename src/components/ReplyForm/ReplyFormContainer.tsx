@@ -5,10 +5,12 @@ import { FormikBag, withFormik } from 'formik';
 import { connect } from 'react-redux';
 import ReplyForm, { ReplyFormProps } from './ReplyForm';
 import withMentionDecorator from '../ReplyField/withMentionDecorator';
-import { AppState, getCreatorCursor } from '../../store';
+import { AppState, getCreatorCursor, getFileId, getIsCurrentFileVersion } from '../../store';
 
 export type PropsFromState = {
     cursorPosition: number;
+    fileId: string | null;
+    isCurrentFileVersion: boolean;
 };
 
 type Props = ReplyFormProps & PropsFromState;
@@ -25,6 +27,8 @@ const MAX_LENGTH = 10000;
 
 export const mapStateToProps = (state: AppState): PropsFromState => ({
     cursorPosition: getCreatorCursor(state),
+    fileId: getFileId(state),
+    isCurrentFileVersion: getIsCurrentFileVersion(state),
 });
 
 export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: Props): FormValues => {

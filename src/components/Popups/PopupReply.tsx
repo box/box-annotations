@@ -48,14 +48,8 @@ export const options: Partial<Popper.Options> = {
     ],
 };
 
-export default function PopupReply({
-    isPending,
-    onCancel,
-    onChange,
-    onSubmit,
-    value = '',
-    ...rest
-}: Props): JSX.Element {
+export default function PopupReply(props: Props): JSX.Element {
+    const { isPending, onCancel, onChange, onSubmit, value = '', ...rest } = props;
     const popupRef = React.useRef<PopupBase>(null);
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
@@ -71,7 +65,7 @@ export default function PopupReply({
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <PopupBase ref={popupRef} options={options} {...rest}>
+        <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
             <ReplyForm
                 isPending={isPending}
                 onCancel={onCancel}

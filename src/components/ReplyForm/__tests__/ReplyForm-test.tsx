@@ -17,6 +17,8 @@ describe('components/ReplyForm/ReplyForm', () => {
     const defaults: Props = {
         cursorPosition: 0,
         errors: {},
+        fileId: '0',
+        isCurrentFileVersion: true,
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),

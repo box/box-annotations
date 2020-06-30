@@ -60,6 +60,8 @@ export default class BaseAnnotator extends EventEmitter {
             options: {
                 fileId: file.id,
                 fileVersionId: fileOptionsValue?.fileVersionId ?? file.file_version.id,
+                isCurrentFileVersion:
+                    !fileOptionsValue?.fileVersionId || fileOptionsValue?.fileVersionId === file.file_version.id,
                 permissions: file.permissions,
             },
         };
