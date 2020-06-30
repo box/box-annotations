@@ -1,7 +1,7 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import { getAnnotation } from '../store/annotations';
+import { getAnnotation, getRotation } from '../store';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
 import { scrollToLocation } from '../utils/scroll';
@@ -69,6 +69,7 @@ export default class ImageAnnotator extends BaseAnnotator {
 
     render(): void {
         const referenceEl = this.getReference();
+        const rotation = getRotation(this.store.getState()) || 0;
 
         if (!this.annotatedEl || !referenceEl) {
             return;
@@ -79,6 +80,7 @@ export default class ImageAnnotator extends BaseAnnotator {
                 height: `${referenceEl.offsetHeight}px`,
                 left: `${referenceEl.offsetLeft}px`,
                 top: `${referenceEl.offsetTop}px`,
+                transform: `rotate(${rotation}deg)`,
                 width: `${referenceEl.offsetWidth}px`,
             });
 

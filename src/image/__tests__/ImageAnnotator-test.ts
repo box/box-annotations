@@ -169,6 +169,7 @@ describe('ImageAnnotator', () => {
                 height: '100px',
                 left: '50px',
                 top: '50px',
+                transform: 'rotate(0deg)',
                 width: '100px',
             });
         });

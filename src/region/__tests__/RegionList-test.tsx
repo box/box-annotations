@@ -1,5 +1,4 @@
 import React from 'react';
-import * as ReactRedux from 'react-redux';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
@@ -28,7 +27,6 @@ describe('RegionList', () => {
         setIsListeningValue.current = null; // Reset the mocked state
 
         jest.spyOn(React, 'useState').mockImplementation(() => [setIsListeningValue.current, setIsListening]);
-        jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => 0);
     });
 
     describe('event handlers', () => {
