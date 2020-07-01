@@ -48,8 +48,14 @@ export const options: Partial<Popper.Options> = {
     ],
 };
 
-export default function PopupReply(props: Props): JSX.Element {
-    const { isPending, onCancel, onChange, onSubmit, value = '', ...rest } = props;
+export default function PopupReply({
+    isPending,
+    onCancel,
+    onChange,
+    onSubmit,
+    value = '',
+    ...rest
+}: Props): JSX.Element {
     const popupRef = React.useRef<PopupBase>(null);
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);

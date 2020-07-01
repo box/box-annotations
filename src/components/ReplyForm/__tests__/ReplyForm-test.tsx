@@ -53,6 +53,27 @@ describe('components/ReplyForm/ReplyForm', () => {
         expect(wrapper.find(ReplyButton).length).toBe(2);
     });
 
+    test('should render buttons with resin tags', () => {
+        const wrapper = getWrapper();
+
+        const cancelButton = wrapper.find('[data-testid="ba-Popup-cancel"]');
+        const postButton = wrapper.find('[data-testid="ba-Popup-submit"]');
+
+        const resinTags = {
+            'data-resin-fileId': defaults.fileId,
+            'data-resin-isCurrent': defaults.isCurrentFileVersion,
+        };
+
+        expect(cancelButton.props()).toMatchObject({
+            ...resinTags,
+            'data-resin-target': 'cancel',
+        });
+        expect(postButton.props()).toMatchObject({
+            ...resinTags,
+            'data-resin-target': 'post',
+        });
+    });
+
     test('should disable the buttons and form if isPending is true', () => {
         const wrapper = getWrapper({ isPending: true });
         const cancel = wrapper.find(ReplyButton).at(0);
