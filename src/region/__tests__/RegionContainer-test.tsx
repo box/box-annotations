@@ -37,5 +37,22 @@ describe('RegionContainer', () => {
                 store: defaults.store,
             });
         });
+
+        test.each`
+            rotation     | isRotated
+            ${null}      | ${false}
+            ${undefined} | ${false}
+            ${0}         | ${false}
+            ${90}        | ${true}
+            ${360}       | ${true}
+            ${-360}      | ${true}
+            ${-90}       | ${true}
+            ${-0}        | ${false}
+        `('should set the isRotated prop based on the rotation angle value', ({ isRotated, rotation }) => {
+            const store = createStore({ options: { rotation } });
+            const wrapper = getWrapper({ store });
+
+            expect(wrapper.find(RegionAnnotations).prop('isRotated')).toEqual(isRotated);
+        });
     });
 });
