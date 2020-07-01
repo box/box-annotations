@@ -13,6 +13,7 @@ type Props = {
     annotations: AnnotationRegion[];
     createRegion: (arg: CreateArg) => void;
     isCreating: boolean;
+    isRotated: boolean;
     location: number;
     message: string;
     setActiveAnnotationId: (annotationId: string | null) => void;
@@ -31,6 +32,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     static defaultProps = {
         annotations: [],
         isCreating: false,
+        isRotated: false,
     };
 
     state: State = {};
@@ -80,8 +82,9 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     render(): JSX.Element {
-        const { activeAnnotationId, annotations, isCreating, message, staged, status } = this.props;
+        const { activeAnnotationId, annotations, isCreating, isRotated, message, staged, status } = this.props;
         const { rectRef } = this.state;
+        const canCreate = isCreating && !isRotated;
         const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
         const isPending = status === CreatorStatus.pending;
 
@@ -96,7 +99,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 />
 
                 {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
-                {isCreating && (
+                {canCreate && (
                     <RegionCreator
                         className="ba-RegionAnnotations-creator"
                         onStart={this.handleStart}
@@ -105,14 +108,14 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 )}
 
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
-                {isCreating && staged && (
+                {canCreate && staged && (
                     <div className="ba-RegionAnnotations-target">
                         <RegionRect ref={this.setRectRef} isActive shape={staged.shape} />
                     </div>
                 )}
 
                 {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
-                {isCreating && staged && canReply && rectRef && (
+                {canCreate && staged && canReply && rectRef && (
                     <div className="ba-RegionAnnotations-popup">
                         <PopupReply
                             isPending={isPending}

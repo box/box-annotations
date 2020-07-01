@@ -220,5 +220,17 @@ describe('components/region/RegionAnnotations', () => {
             expect(wrapper.exists(RegionList)).toBe(true);
             expect(wrapper.exists(RegionRect)).toBe(false);
         });
+
+        test('should not render creation components if file is rotated', () => {
+            const wrapper = getWrapper({
+                annotations: [],
+                isRotated: false,
+            });
+
+            expect(wrapper.exists(PopupReply)).toBe(false);
+            expect(wrapper.exists(RegionCreator)).toBe(false);
+            expect(wrapper.exists(RegionList)).toBe(true);
+            expect(wrapper.exists(RegionRect)).toBe(false);
+        });
     });
 });
