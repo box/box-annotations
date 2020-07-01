@@ -10,11 +10,11 @@ import {
     getCreatorMessage,
     getCreatorStagedForLocation,
     getCreatorStatus,
+    getRotation,
     setActiveAnnotationIdAction,
     setMessageAction,
     setStagedAction,
     setStatusAction,
-    getRotation,
 } from '../store';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
