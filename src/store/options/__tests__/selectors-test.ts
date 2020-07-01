@@ -4,6 +4,7 @@ describe('store/options/selectors', () => {
     const optionsState = {
         fileId: '12345',
         fileVersionId: '67890',
+        isCurrentFileVersion: true,
         permissions: {
             can_create_annotations: true,
             can_view_annotations: true,

@@ -53,13 +53,17 @@ export default class BaseAnnotator extends EventEmitter {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
+        const fileOptionsVersionId = fileOptionsValue?.fileVersionId;
+        const fileVersionId = file.file_version.id;
+
         const initialState = {
             annotations: {
                 activeId: fileOptionsValue?.annotations?.activeId ?? null,
             },
             options: {
                 fileId: file.id,
-                fileVersionId: fileOptionsValue?.fileVersionId ?? file.file_version.id,
+                fileVersionId: fileOptionsVersionId ?? fileVersionId,
+                isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === fileVersionId,
                 permissions: file.permissions,
             },
         };

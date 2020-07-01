@@ -71,7 +71,7 @@ export default function PopupReply({
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <PopupBase ref={popupRef} options={options} {...rest}>
+        <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
             <ReplyForm
                 isPending={isPending}
                 onCancel={onCancel}
