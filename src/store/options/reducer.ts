@@ -11,6 +11,7 @@ import {
 export const initialState = {
     fileId: null,
     fileVersionId: null,
+    isCurrentFileVersion: true,
     permissions: {},
     rotation: 0,
     scale: 1,

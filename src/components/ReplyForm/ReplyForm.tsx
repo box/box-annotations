@@ -22,7 +22,9 @@ export type Props = ReplyFormProps &
     ContainerProps &
     Pick<FormikProps<FormValues>, 'errors' | 'setFieldValue' | 'values'>;
 
-const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, values }: Props): JSX.Element => {
+const ReplyForm = (props: Props): JSX.Element => {
+    const { errors, fileId, isCurrentFileVersion, isPending, onCancel, onChange, setFieldValue, values } = props;
+
     const formRef = React.useRef<HTMLFormElement>(null);
     const intl = useIntl();
     const hasErrors = Object.keys(errors).length > 0;
@@ -80,10 +82,26 @@ const ReplyForm = ({ errors, isPending, onCancel, onChange, setFieldValue, value
                 />
             </div>
             <div className="ba-Popup-footer">
-                <ReplyButton data-testid="ba-Popup-cancel" isDisabled={isPending} onClick={handleCancel} type="button">
+                <ReplyButton
+                    data-resin-fileId={fileId}
+                    data-resin-isCurrent={isCurrentFileVersion}
+                    data-resin-target="cancel"
+                    data-testid="ba-Popup-cancel"
+                    isDisabled={isPending}
+                    onClick={handleCancel}
+                    type="button"
+                >
                     <FormattedMessage {...messages.buttonCancel} />
                 </ReplyButton>
-                <ReplyButton data-testid="ba-Popup-submit" isDisabled={hasErrors || isPending} isPrimary type="submit">
+                <ReplyButton
+                    data-resin-fileId={fileId}
+                    data-resin-isCurrent={isCurrentFileVersion}
+                    data-resin-target="post"
+                    data-testid="ba-Popup-submit"
+                    isDisabled={hasErrors || isPending}
+                    isPrimary
+                    type="submit"
+                >
                     <FormattedMessage {...messages.buttonPost} />
                 </ReplyButton>
             </div>

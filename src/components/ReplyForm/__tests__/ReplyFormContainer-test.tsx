@@ -4,11 +4,15 @@ import { AppState } from '../../../store';
 
 jest.mock('../../../store', () => ({
     getCreatorCursor: jest.fn().mockReturnValue(1),
+    getFileId: jest.fn().mockReturnValue('0'),
+    getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
 }));
 
 describe('components/ReplyForm/ReplyFormContainer', () => {
     const defaults = {
         cursorPosition: 0,
+        fileId: '0',
+        isCurrentFileVersion: true,
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -16,8 +20,12 @@ describe('components/ReplyForm/ReplyFormContainer', () => {
     };
 
     describe('mapStateToProps()', () => {
-        test('should set the cursorPosition as prop', () => {
-            expect(mapStateToProps({} as AppState)).toEqual({ cursorPosition: 1 });
+        test('should set props', () => {
+            expect(mapStateToProps({} as AppState)).toEqual({
+                cursorPosition: 1,
+                fileId: '0',
+                isCurrentFileVersion: true,
+            });
         });
     });
 
