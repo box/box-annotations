@@ -14,6 +14,6 @@ describe('store/eventing/mode', () => {
 
         handleToggleAnnotationModeAction({} as AppState, nextState);
 
-        expect(eventManager.emit).toBeCalledWith('annotations_mode_change', 'region');
+        expect(eventManager.emit).toBeCalledWith('annotations_mode_change', { mode: 'region' });
     });
 });
