@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import * as ReactRedux from 'react-redux';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import { mockEvent } from '../../common/__mocks__/events';
@@ -14,6 +15,10 @@ describe('RegionAnnotation', () => {
     const getWrapper = (props = {}): ShallowWrapper => {
         return shallow(<RegionAnnotation {...defaults} {...props} />);
     };
+
+    beforeEach(() => {
+        jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
+    });
 
     describe('mouse event handlers', () => {
         test.each`
@@ -79,6 +84,16 @@ describe('RegionAnnotation', () => {
                 className: 'ba-RegionAnnotation',
                 onClick: expect.any(Function),
                 type: 'button',
+            });
+        });
+
+        test('shoud render resin tags', () => {
+            const wrapper = getWrapper();
+
+            expect(wrapper.props()).toMatchObject({
+                'data-resin-iscurrent': true,
+                'data-resin-itemid': defaults.annotationId,
+                'data-resin-target': 'highlightRegion',
             });
         });
     });
