@@ -43,7 +43,11 @@ export function RegionList({ activeId, annotations, className, onSelect = noop }
     useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
 
     return (
-        <div ref={rootElRef} className={classNames(className, { 'is-listening': isListening })}>
+        <div
+            ref={rootElRef}
+            className={classNames(className, { 'is-listening': isListening })}
+            data-resin-component="regionList"
+        >
             {annotations
                 .filter(filterRegion)
                 .sort(sortRegion)

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import * as ReactRedux from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { getIsCurrentFileVersion } from '../store';
 import { Shape, styleShape } from './regionUtil';
 import './RegionAnnotation.scss';
 
@@ -16,6 +18,7 @@ export type RegionAnnotationRef = HTMLButtonElement;
 
 export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRef>): JSX.Element => {
     const { annotationId, className, isActive, onSelect = noop, shape } = props;
+    const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const cancelEvent = (event: React.SyntheticEvent): void => {
         event.preventDefault();
@@ -38,6 +41,9 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
         <button
             ref={ref}
             className={classNames('ba-RegionAnnotation', className, { 'is-active': isActive })}
+            data-resin-iscurrent={isCurrentFileVersion}
+            data-resin-itemid={annotationId}
+            data-resin-target="highlightRegion"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             onBlur={handleBlur}
             onClick={handleClick}
