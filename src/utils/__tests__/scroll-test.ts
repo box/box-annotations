@@ -2,18 +2,24 @@ import { scrollToLocation } from '../scroll';
 
 describe('scrollToLocation', () => {
     const container = document.createElement('div');
-    const getReference = (offsetTop = 0): HTMLElement => {
+    const getReference = ({ offsetLeft = 0, offsetTop = 0 }): HTMLElement => {
         const page = document.createElement('div');
 
+        Object.defineProperty(page, 'getBoundingClientRect', {
+            configurable: true,
+            value: () => ({ height: 100, left: offsetLeft, top: offsetTop, width: 100 }),
+        });
         Object.defineProperty(page, 'clientHeight', { configurable: true, value: 100 });
         Object.defineProperty(page, 'clientWidth', { configurable: true, value: 100 });
-        Object.defineProperty(page, 'offsetLeft', { configurable: true, value: 0 });
+        Object.defineProperty(page, 'offsetLeft', { configurable: true, value: offsetLeft });
         Object.defineProperty(page, 'offsetTop', { configurable: true, value: offsetTop });
 
         return page;
     };
 
     beforeEach(() => {
+        jest.spyOn(container, 'clientHeight', 'get').mockReturnValue(200);
+        jest.spyOn(container, 'clientWidth', 'get').mockReturnValue(200);
         jest.spyOn(container, 'scrollHeight', 'get').mockReturnValue(2000);
         jest.spyOn(container, 'scrollWidth', 'get').mockReturnValue(2000);
         jest.spyOn(container, 'scrollLeft', 'set');
@@ -27,17 +33,29 @@ describe('scrollToLocation', () => {
             container.scrollLeft = left || 0;
             container.scrollTop = top || 0;
         });
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        container.getBoundingClientRect = jest.fn(() => ({
+            height: 200,
+            left: 0,
+            top: 0,
+            width: 200,
+        }));
+
+        container.scrollLeft = 0;
+        container.scrollTop = 0;
     });
 
     test.each`
-        parentTop | scrollTop
+        offsetTop | scrollTop
         ${-200}   | ${0}
         ${0}      | ${0}
-        ${200}    | ${200}
-        ${2000}   | ${2000}
+        ${200}    | ${100}
+        ${2000}   | ${1900}
         ${3000}   | ${2000}
-    `('should scroll to $scrollTop with a reference parentTop of $parentTop', ({ parentTop, scrollTop }) => {
-        const reference = getReference(parentTop);
+    `('should scroll to $scrollTop with a reference offsetTop of $offsetTop', ({ offsetTop, scrollTop }) => {
+        const reference = getReference({ offsetTop });
 
         scrollToLocation(container, reference);
 
@@ -45,16 +63,16 @@ describe('scrollToLocation', () => {
     });
 
     test.each`
-        parentTop | scrollLeft | scrollTop
-        ${-200}   | ${50}      | ${0}
-        ${0}      | ${50}      | ${50}
-        ${200}    | ${50}      | ${250}
-        ${2000}   | ${50}      | ${2000}
-        ${3000}   | ${50}      | ${2000}
+        offsetTop | offsetLeft | scrollLeft | scrollTop
+        ${-200}   | ${-200}    | ${0}       | ${0}
+        ${0}      | ${0}       | ${0}       | ${0}
+        ${200}    | ${200}     | ${150}     | ${150}
+        ${2000}   | ${2000}    | ${1950}    | ${1950}
+        ${3000}   | ${3000}    | ${2000}    | ${2000}
     `(
-        'should scroll to $scrollLeft/$scrollTop with a reference parentTop of $parentTop with offsets',
-        ({ parentTop, scrollLeft, scrollTop }) => {
-            const reference = getReference(parentTop);
+        'should scroll to $scrollLeft/$scrollTop with a reference offsetTop of $offsetTop with offsets',
+        ({ offsetTop, offsetLeft, scrollLeft, scrollTop }) => {
+            const reference = getReference({ offsetLeft, offsetTop });
 
             scrollToLocation(container, reference, { offsets: { x: 50, y: 50 } });
 
