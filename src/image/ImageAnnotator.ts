@@ -2,7 +2,7 @@ import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { getAnnotation, getRotation } from '../store';
-import { centerRegion, isRegion, RegionManager } from '../region';
+import { centerRegion, getTransformedShape, isRegion, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
 import { scrollToLocation } from '../utils/scroll';
 import './ImageAnnotator.scss';
@@ -99,15 +99,17 @@ export default class ImageAnnotator extends BaseAnnotator {
         const annotation = getAnnotation(this.store.getState(), annotationId);
         const annotationLocation = annotation?.target.location.value ?? 1;
         const referenceEl = this.getReference();
+        const rotation = getRotation(this.store.getState()) || 0;
 
         if (!annotation || !annotationLocation || !referenceEl || !this.annotatedEl) {
             return;
         }
 
         if (isRegion(annotation)) {
-            // TODO: Add support for scroll when image is rotated
+            const transformedShape = getTransformedShape(annotation.target.shape, rotation);
+
             scrollToLocation(this.annotatedEl, referenceEl, {
-                offsets: centerRegion(annotation.target.shape),
+                offsets: centerRegion(transformedShape),
             });
         }
     }

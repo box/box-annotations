@@ -16,6 +16,7 @@ module.exports = {
             rules: {
                 '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
                 '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
+                '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
             },
         },
         {
