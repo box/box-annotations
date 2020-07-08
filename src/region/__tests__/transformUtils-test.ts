@@ -1,7 +1,7 @@
-import { invertYCoordinate, rotatePoint, translatePoint } from '../transformUtils';
+import { invertYCoordinate, rotatePoint, translatePoint } from '../transformUtil';
 
-describe('src/region/transformUtils', () => {
-    const parsedFloat = (value: number): number => parseFloat(value.toFixed(3));
+describe('src/region/transformUtil', () => {
+    const parseValue = (value: number): number => parseFloat(value.toFixed(3));
 
     describe('invertYCoordinate()', () => {
         test.each`
@@ -30,8 +30,8 @@ describe('src/region/transformUtils', () => {
             const { x, y } = rotatePoint(point, angle);
             const { x: expX, y: expY } = expectedPoint;
 
-            expect(parsedFloat(x)).toEqual(parsedFloat(expX));
-            expect(parsedFloat(y)).toEqual(parsedFloat(expY));
+            expect(parseValue(x)).toEqual(parseValue(expX));
+            expect(parseValue(y)).toEqual(parseValue(expY));
         });
     });
 

@@ -9,12 +9,16 @@ export const invertYCoordinate = ({ x, y }: Point, height: number): Point => ({
 });
 
 export const rotatePoint = ({ x, y }: Point, rotationInDegrees: number): Point => {
-    const { cos, sin } = Math;
-    const angle = (rotationInDegrees * Math.PI) / 180;
+    const radians = (rotationInDegrees * Math.PI) / 180;
+    const cosine = Math.cos(radians);
+    const sine = Math.sin(radians);
 
+    // Formula to apply a rotation to a point is:
+    // x' = x * cos(θ) - y * sin(θ)
+    // y' = x * sin(θ) + y * cos(θ)
     return {
-        x: x * cos(angle) - y * sin(angle),
-        y: x * sin(angle) + y * cos(angle),
+        x: x * cosine - y * sine,
+        y: x * sine + y * cosine,
     };
 };
 

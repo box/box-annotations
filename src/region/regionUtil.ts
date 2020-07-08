@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { Annotation, AnnotationRegion, Position } from '../@types';
-import { invertYCoordinate, Point, rotatePoint, translatePoint } from './transformUtils';
+import { invertYCoordinate, Point, rotatePoint, translatePoint } from './transformUtil';
 
+// Possible rotation values as supplied by box-content-preview
 const ROTATION_ONCE_DEG = -90;
 const ROTATION_TWICE_DEG = -180;
 const ROTATION_THRICE_DEG = -270;
 
-export type CoordinateSpace = {
+// Region annotation shapes are, by default, percentages, so a 100x100 space
+const DEFAULT_DIMENSIONS = { height: 100, width: 100 };
+
+export type Dimensions = {
     height: number;
     width: number;
 };
@@ -61,14 +65,14 @@ export const getPoints = (shape: Shape): [Point, Point, Point, Point] => {
     return [p1, p2, p3, p4];
 };
 
-export function selectTransformationPoint(shape: Shape, rotation: number): Point | null {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function selectTransformationPoint(shape: Shape, rotation: number): Point {
     const [p1, p2, p3, p4] = getPoints(shape);
 
     // Determine which point will be the new x,y (as defined as the top left point) after rotation
     // If -90deg: use p2
     // If -180deg: use p3
     // If -270deg: use p4
+    // Otherwise: use p1
     switch (rotation) {
         case ROTATION_ONCE_DEG:
             return p2;
@@ -77,14 +81,14 @@ export function selectTransformationPoint(shape: Shape, rotation: number): Point
         case ROTATION_THRICE_DEG:
             return p4;
         default:
-            return null;
+            return p1;
     }
 }
 
 // Determines the translation needed to anchor the bottom left corner of the
 // coordinate space at the (0, 0) origin after rotation.
-export function selectTranslation(coordinateSpace: CoordinateSpace, rotation: number): Translation {
-    const { height, width } = coordinateSpace;
+export function selectTranslation(dimensions: Dimensions, rotation: number): Translation {
+    const { height, width } = dimensions;
 
     switch (rotation) {
         case ROTATION_ONCE_DEG:
@@ -99,19 +103,15 @@ export function selectTranslation(coordinateSpace: CoordinateSpace, rotation: nu
     return { dx: 0, dy: 0 };
 }
 
-export function getTransformedShape(
-    shape: Shape,
-    rotation: number,
-    coordinateSpace: CoordinateSpace = { height: 100, width: 100 },
-): Shape {
+export function getTransformedShape(shape: Shape, rotation: number): Shape {
     const { height: shapeHeight, width: shapeWidth } = shape;
-    const { height: spaceHeight, width: spaceWidth } = coordinateSpace;
+    const { height: spaceHeight, width: spaceWidth } = DEFAULT_DIMENSIONS;
     const isInverted = rotation % 180 === 0;
     const isNoRotation = rotation % 360 === 0;
-    const translation = selectTranslation(coordinateSpace, rotation);
+    const translation = selectTranslation(DEFAULT_DIMENSIONS, rotation);
     const point = selectTransformationPoint(shape, rotation);
 
-    if (isNoRotation || !point) {
+    if (isNoRotation) {
         return shape;
     }
 

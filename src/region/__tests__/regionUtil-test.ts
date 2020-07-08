@@ -18,9 +18,8 @@ describe('regionUtil', () => {
         x: 10,
         y: 10,
     });
-    const parsedFloat = (value: number): number => parseFloat(value.toFixed(3));
+    const parseValue = (value: number): number => parseFloat(value.toFixed(3));
 
-    const coordinateSpace = { height: 100, width: 100 };
     const regionShape = { height: 2, width: 3, x: 1, y: 1 };
     const regionShapeRotated90 = { height: 3, width: 2, x: 1, y: 96 };
     const regionShapeRotated180 = { height: 2, width: 3, x: 96, y: 97 };
@@ -55,11 +54,11 @@ describe('regionUtil', () => {
     describe('selectTransformationPoint()', () => {
         test.each`
             rotation | expectedPoint
-            ${0}     | ${null}
+            ${0}     | ${{ x: 1, y: 1 }}
             ${-90}   | ${{ x: 4, y: 1 }}
             ${-180}  | ${{ x: 4, y: 3 }}
             ${-270}  | ${{ x: 1, y: 3 }}
-            ${-360}  | ${null}
+            ${-360}  | ${{ x: 1, y: 1 }}
         `(
             'should return the appropriate point if shape=$shape and rotation=$rotation',
             ({ rotation, expectedPoint }) => {
@@ -80,21 +79,20 @@ describe('regionUtil', () => {
             'should return the transformed shape based on rotation=$rotation and reference element',
             ({ rotation, expectedShape }) => {
                 const { height: expHeight, width: expWidth, x: expX, y: expY } = expectedShape;
-                const { height, width, x = NaN, y = NaN } =
-                    getTransformedShape(regionShape, rotation, coordinateSpace) || {};
+                const { height, width, x = NaN, y = NaN } = getTransformedShape(regionShape, rotation) || {};
 
                 expect({ height, width }).toEqual({ height: expHeight, width: expWidth });
-                expect(parsedFloat(x)).toEqual(parsedFloat(expX));
-                expect(parsedFloat(y)).toEqual(parsedFloat(expY));
+                expect(parseValue(x)).toEqual(parseValue(expX));
+                expect(parseValue(y)).toEqual(parseValue(expY));
             },
         );
 
         test('should transform -90deg shape back to an unrotated state', () => {
-            const { height, width, x, y } = getTransformedShape(regionShapeRotated90, -270, coordinateSpace);
+            const { height, width, x, y } = getTransformedShape(regionShapeRotated90, -270);
             const { height: expHeight, width: expWidth, x: expX, y: expY } = regionShape;
             expect({ height, width }).toEqual({ height: expHeight, width: expWidth });
-            expect(parsedFloat(x)).toEqual(parsedFloat(expX));
-            expect(parsedFloat(y)).toEqual(parsedFloat(expY));
+            expect(parseValue(x)).toEqual(parseValue(expX));
+            expect(parseValue(y)).toEqual(parseValue(expY));
         });
     });
 

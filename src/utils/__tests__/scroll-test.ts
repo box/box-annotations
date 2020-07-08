@@ -2,6 +2,17 @@ import { scrollToLocation } from '../scroll';
 
 describe('scrollToLocation', () => {
     const container = document.createElement('div');
+    const getDOMRect = (x: number, y: number, height: number, width: number): DOMRect => ({
+        bottom: x + height,
+        top: y,
+        left: x,
+        right: y + width,
+        height,
+        width,
+        toJSON: jest.fn(),
+        x,
+        y,
+    });
     const getReference = ({ offsetLeft = 0, offsetTop = 0 }): HTMLElement => {
         const page = document.createElement('div');
 
@@ -34,14 +45,8 @@ describe('scrollToLocation', () => {
             container.scrollTop = top || 0;
         });
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        container.getBoundingClientRect = jest.fn(() => ({
-            height: 200,
-            left: 0,
-            top: 0,
-            width: 200,
-        }));
+        const containerRect = getDOMRect(0, 0, 200, 200);
+        container.getBoundingClientRect = jest.fn(() => containerRect);
 
         container.scrollLeft = 0;
         container.scrollTop = 0;

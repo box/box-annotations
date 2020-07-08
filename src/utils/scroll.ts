@@ -22,23 +22,26 @@ export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement
     } = referenceEl.getBoundingClientRect();
 
     const canSmoothScroll = 'scrollBehavior' in parentEl.style;
+
     // Get the midpoint of the scrollable area (parent element)
     const parentCenterX = Math.round(parentEl.clientWidth / 2);
     const parentCenterY = Math.round(parentEl.clientHeight / 2);
+
     // Get any specified offset relative to the reference element
     const offsetX = Math.round(referenceWidth * (offsetXPercentage / 100)); // offsetX is assumed to be a percentage
     const offsetY = Math.round(referenceHeight * (offsetYPercentage / 100)); // offsetY is assumed to be a percentage
-    // Get the offsets of the reference element relative to the viewport
+
+    // Get the positioning of the reference element relative to the parent and the viewport
     const referenceOffsetLeft = referenceLeft - parentLeft;
     const referenceOffsetTop = referenceTop - parentTop;
+
     // Get the scroll offsets to center the parent element on the top left corner of the reference element and then apply any provided offset
     const offsetScrollLeft = referenceOffsetLeft - parentCenterX + offsetX;
     const offsetScrollTop = referenceOffsetTop - parentCenterY + offsetY;
-    const scrollLeftDelta = Math.min(offsetScrollLeft, parentEl.scrollWidth);
-    const scrollTopDelta = Math.min(offsetScrollTop, parentEl.scrollHeight);
+
     // Get the absolute scroll offsets by applying the delta to the current value
-    const scrollLeft = Math.max(0, parentEl.scrollLeft + scrollLeftDelta);
-    const scrollTop = Math.max(0, parentEl.scrollTop + scrollTopDelta);
+    const scrollLeft = Math.max(0, Math.min(parentEl.scrollLeft + offsetScrollLeft, parentEl.scrollWidth));
+    const scrollTop = Math.max(0, Math.min(parentEl.scrollTop + offsetScrollTop, parentEl.scrollHeight));
 
     if (canSmoothScroll && Math.abs(parentEl.scrollTop - scrollTop) < threshold) {
         parentEl.scrollTo({
