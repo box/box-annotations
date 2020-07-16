@@ -3,6 +3,7 @@ import * as ReactRedux from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
+import { MOUSE_PRIMARY } from '../constants';
 import { Shape, styleShape } from './regionUtil';
 import './RegionAnnotation.scss';
 
@@ -20,21 +21,17 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
     const { annotationId, className, isActive, onSelect = noop, shape } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
-    const cancelEvent = (event: React.SyntheticEvent): void => {
-        event.preventDefault();
-        event.stopPropagation();
+    const handleFocus = (): void => {
+        onSelect(annotationId);
+    };
+    const handleMouseDown = (event: React.MouseEvent<RegionAnnotationRef>): void => {
+        if (event.buttons !== MOUSE_PRIMARY) {
+            return;
+        }
+
+        event.preventDefault(); // Prevents focus from leaving the button immediately in some browsers
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
-    };
-    const handleBlur = (event: React.SyntheticEvent): void => {
-        cancelEvent(event);
-    };
-    const handleClick = (event: React.MouseEvent): void => {
-        cancelEvent(event);
-        onSelect(annotationId);
-    };
-    const handleFocus = (event: React.SyntheticEvent): void => {
-        cancelEvent(event);
-        onSelect(annotationId);
+        event.currentTarget.focus(); // Buttons do not receive focus in Firefox and Safari on MacOS; triggers handleFocus
     };
 
     return (
@@ -45,9 +42,8 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
             data-resin-itemid={annotationId}
             data-resin-target="highlightRegion"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
-            onBlur={handleBlur}
-            onClick={handleClick}
             onFocus={handleFocus}
+            onMouseDown={handleMouseDown}
             style={styleShape(shape)}
             type="button"
         />

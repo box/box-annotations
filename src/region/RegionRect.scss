@@ -1,5 +1,12 @@
 @import '~box-ui-elements/es/styles/variables';
 
+$ba-RegionRect-color: $bdl-yellorange;
+$ba-RegionRect-bgColor--default: rgba($ba-RegionRect-color, 0); // Default color uses zero alpha value for transition
+$ba-RegionRect-bgColor--hover: rgba($ba-RegionRect-color, .1);
+$ba-RegionRect-bgColor--active: rgba($ba-RegionRect-color, 0);
+$ba-RegionRect-transitionDelay: 25ms;
+$ba-RegionRect-transitionDuration: 200ms;
+
 @mixin ba-RegionRect {
     $border-radius: 6px;
     $border-size-inner: 1px;
@@ -19,26 +26,51 @@
         bottom: $border-size-outer;
         left: $border-size-outer;
         display: block;
-        background: rgba($bdl-yellorange, 0); // Zero alpha value for transition
+        background-color: $ba-RegionRect-bgColor--default;
         border-radius: $border-radius;
-        box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, .6), 0 0 0 0 rgba(0, 0, 0, 0);
-        transition: background 200ms ease, box-shadow 200ms ease;
+        box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($ba-RegionRect-color, .6), 0 0 0 0 rgba(0, 0, 0, 0);
+        transition: background-color $ba-RegionRect-transitionDuration ease, box-shadow $ba-RegionRect-transitionDuration ease;
         content: '';
     }
 
     &:hover {
         &::after {
-            background: rgba($bdl-yellorange, .1);
-            box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, 1), 0 8px 16px 0 rgba(0, 0, 0, .1);
+            background-color: $ba-RegionRect-bgColor--hover;
+            box-shadow: 0 0 0 $border-size-inner rgba($white, 1), 0 0 0 $border-size-outer rgba($ba-RegionRect-color, 1), 0 8px 16px 0 rgba(0, 0, 0, .1);
         }
     }
 
-    &.is-active,
-    &:focus {
+    &.is-active {
         &::after {
-            background: rgba($bdl-yellorange, 0);
-            box-shadow: 0 0 0 $border-size-inner rgba($bdl-yellorange, 1), 0 0 0 $border-size-outer rgba($bdl-yellorange, 1), 0 8px 52px 0 rgba(0, 0, 0, .2);
+            background-color: $ba-RegionRect-bgColor--active;
+            box-shadow: 0 0 0 $border-size-inner rgba($ba-RegionRect-color, 1), 0 0 0 $border-size-outer rgba($ba-RegionRect-color, 1), 0 8px 52px 0 rgba(0, 0, 0, .2);
+            transition-delay: $ba-RegionRect-transitionDelay;
         }
+    }
+}
+
+@mixin ba-RegionRect-callout {
+    &::after {
+        animation: ba-RegionRect-callout 1s ease-in-out $ba-RegionRect-transitionDelay 0 normal none; // Disabled by default
+    }
+
+    &:not(:focus-within) {
+        &::after {
+            animation-iteration-count: 1; // Only play the animation if the user is not interacting directly with the element or its descendents
+            animation-fill-mode: forwards;
+        }
+    }
+}
+
+@keyframes ba-RegionRect-callout {
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    30%,
+    70% {
+        background-color: $ba-RegionRect-bgColor--hover;
     }
 }
 

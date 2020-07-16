@@ -15,4 +15,8 @@
     &:focus {
         outline: none;
     }
+
+    &.is-active {
+        @include ba-RegionRect-callout;
+    }
 }
