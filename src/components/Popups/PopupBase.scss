@@ -9,7 +9,13 @@
     .ba-Popup {
         @include common-typography;
 
-        z-index: 1;
+        z-index: 1; // Make sure popup is showing above Preview controls and left/right arrows
+
+        // Changing z-index causes page to flicker in IE11
+        // The following media query is specific to IE10+
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+            z-index: 0;
+        }
 
         // Top-facing arrows
         &[data-popper-placement*='bottom'] {
