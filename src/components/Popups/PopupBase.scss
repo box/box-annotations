@@ -11,6 +11,12 @@
 
         z-index: 1;
 
+        // Changing z-index causes page to flicker in IE11
+        // The following media query is specific to IE10+
+        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+            z-index: 0;
+        }
+
         // Top-facing arrows
         &[data-popper-placement*='bottom'] {
             .ba-Popup-arrow {
