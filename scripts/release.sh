@@ -111,18 +111,6 @@ increment_version() {
     VERSION=$(./scripts/current_version.sh)
 }
 
-update_readme() {
-    echo "----------------------------------------------------------------------"
-    echo "Updating README"
-    echo "----------------------------------------------------------------------"
-
-    # Replace 'v{VERSION}' string
-    sed -i -e "s@v$OLD_VERSION@v$VERSION@g" README.md
-
-    rm README.md-e
-}
-
-
 push_to_github() {
     # Add new files
     git commit -am "chore(release): $VERSION"
@@ -188,9 +176,6 @@ push_new_release() {
 
     # Bump the version number
     increment_version || return 1
-
-    # Update readme
-    update_readme || return 1
 
     # Push to GitHub
     push_to_github || return 1
