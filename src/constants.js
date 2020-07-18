@@ -4,3 +4,5 @@ export const ANNOTATOR_EVENT = {
     scale: 'scaleannotations',
     setVisibility: 'annotationsetvisibility',
 };
+
+export const MOUSE_PRIMARY = 1;

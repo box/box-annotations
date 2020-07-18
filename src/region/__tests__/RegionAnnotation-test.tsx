@@ -21,30 +21,24 @@ describe('RegionAnnotation', () => {
     });
 
     describe('mouse event handlers', () => {
-        test.each`
-            event      | onSelectArgument
-            ${'click'} | ${'1'}
-            ${'focus'} | ${'1'}
-        `('should cancel the $event and trigger onSelect with $onSelectArgument', ({ event, onSelectArgument }) => {
+        test('should select the annotation on focus', () => {
             const wrapper = getWrapper();
 
-            wrapper.simulate(event, mockEvent);
+            wrapper.simulate('focus', mockEvent);
 
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-            expect(mockEvent.preventDefault).toHaveBeenCalled();
-            expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(defaults.onSelect).toHaveBeenCalledWith(onSelectArgument);
+            expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
         });
 
-        test('should cancel the blur event', () => {
+        test('should focus the button on mousedown', () => {
+            const button = { focus: jest.fn() };
+            const event = { buttons: 1, currentTarget: button, ...mockEvent };
             const wrapper = getWrapper();
 
-            wrapper.simulate('blur', mockEvent);
+            wrapper.simulate('mousedown', event);
 
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-            expect(mockEvent.preventDefault).toHaveBeenCalled();
-            expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(defaults.onSelect).not.toHaveBeenCalled();
+            expect(button.focus).toHaveBeenCalled();
+            expect(event.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
         });
     });
 
@@ -72,7 +66,8 @@ describe('RegionAnnotation', () => {
 
             expect(wrapper.props()).toMatchObject({
                 className: 'ba-RegionAnnotation ba-Test',
-                onClick: expect.any(Function),
+                onFocus: expect.any(Function),
+                onMouseDown: expect.any(Function),
                 type: 'button',
             });
         });
@@ -82,7 +77,8 @@ describe('RegionAnnotation', () => {
 
             expect(wrapper.props()).toMatchObject({
                 className: 'ba-RegionAnnotation',
-                onClick: expect.any(Function),
+                onFocus: expect.any(Function),
+                onMouseDown: expect.any(Function),
                 type: 'button',
             });
         });

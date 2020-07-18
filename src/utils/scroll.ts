@@ -6,10 +6,9 @@ export type ScrollOptions = {
 };
 
 const DEFAULT_OFFSETS = { x: 0, y: 0 };
-const DEFAULT_THRESHOLD = 1000; // pixels
 
 export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement, options: ScrollOptions = {}): void {
-    const { offsets = DEFAULT_OFFSETS, threshold = DEFAULT_THRESHOLD } = options;
+    const { offsets = DEFAULT_OFFSETS } = options;
     const { x: offsetXPercentage, y: offsetYPercentage } = offsets;
     // Get the bounding client rects so that the offsetLeft of the reference element can be calculated --
     // even if it has been transformed via rotation
@@ -20,8 +19,6 @@ export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement
         top: referenceTop,
         width: referenceWidth,
     } = referenceEl.getBoundingClientRect();
-
-    const canSmoothScroll = 'scrollBehavior' in parentEl.style;
 
     // Get the midpoint of the scrollable area (parent element)
     const parentCenterX = Math.round(parentEl.clientWidth / 2);
@@ -43,14 +40,6 @@ export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement
     const scrollLeft = Math.max(0, Math.min(parentEl.scrollLeft + offsetScrollLeft, parentEl.scrollWidth));
     const scrollTop = Math.max(0, Math.min(parentEl.scrollTop + offsetScrollTop, parentEl.scrollHeight));
 
-    if (canSmoothScroll && Math.abs(parentEl.scrollTop - scrollTop) < threshold) {
-        parentEl.scrollTo({
-            behavior: 'smooth',
-            left: scrollLeft,
-            top: scrollTop,
-        });
-    } else {
-        parentEl.scrollLeft = scrollLeft;
-        parentEl.scrollTop = scrollTop;
-    }
+    parentEl.scrollLeft = scrollLeft;
+    parentEl.scrollTop = scrollTop;
 }

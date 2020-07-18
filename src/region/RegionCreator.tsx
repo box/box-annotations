@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';
+import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
@@ -16,7 +17,6 @@ type Props = {
 const MIN_X = 0; // Minimum region x position must be positive
 const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
-const MOUSE_PRIMARY = 1; // Primary mouse button
 
 export default function RegionCreator({ className, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
