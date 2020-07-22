@@ -109,19 +109,20 @@ describe('BaseAnnotator', () => {
         });
 
         test.each`
-            fileOptionsVersionId | fileVersionId | isCurrentFileVersion
-            ${'0'}               | ${'0'}        | ${true}
-            ${undefined}         | ${'0'}        | ${true}
-            ${'1'}               | ${'0'}        | ${false}
+            fileOptionsVersionId | currentFileVersionId | isCurrentFileVersion
+            ${'0'}               | ${'0'}               | ${true}
+            ${undefined}         | ${'0'}               | ${true}
+            ${'1'}               | ${'0'}               | ${false}
         `(
             'should set isCurrentFileVersion to $isCurrentFileVersion',
-            ({ fileOptionsVersionId, fileVersionId, isCurrentFileVersion }) => {
+            ({ currentFileVersionId, fileOptionsVersionId, isCurrentFileVersion }) => {
                 const file = {
                     ...defaults.file,
-                    file_version: { id: fileVersionId },
+                    file_version: { id: fileOptionsVersionId },
                 };
                 const fileOptions = {
                     '12345': {
+                        currentFileVersionId,
                         fileVersionId: fileOptionsVersionId,
                     },
                 };
