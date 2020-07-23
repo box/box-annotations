@@ -67,6 +67,7 @@
         "babel-plugin-istanbul": "^6.0.0",
         "babel-plugin-react-intl": "^7.5.1",
         "babel-plugin-transform-require-ignore": "^0.1.1",
+        "box-node-sdk": "^1.33.0",
         "circular-dependency-plugin": "^5.2.0",
         "conventional-github-releaser": "^3.1.3",
         "core-js": "^3.6.5",
@@ -141,6 +142,7 @@
         "start:linked": "IS_LINKED=1 yarn start",
         "test": "BABEL_ENV=test NODE_ENV=test yarn jest",
         "test:e2e": "npm-run-all -p -r start:dev cy:run",
+        "test:e2e:ci": "node scripts/cypress-ci.js",
         "test:e2e:open": "npm-run-all -p -r start:dev cy:open",
         "test:watch": "yarn test --watch"
     },
