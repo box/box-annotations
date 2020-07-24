@@ -18,11 +18,14 @@ before_install:
     - export TZ=America/Los_Angeles
 jobs:
     include:
-        - name: 'Lint & Tests'
-          script: yarn lint && yarn test
+        - name: 'Code Lint'
+          script: yarn lint
+        - name: 'Unit Tests'
+          script: yarn test
         - name: 'E2E Tests'
-          script: yarn test:e2e:ci
+          if: fork = false # Note: We can only run E2E tests on canonical due to security concerns
+          script: yarn test:e2e
 notifications:
     email:
         recipients:
-            - preview-alerts@box.com
+            - preview-dev@box.com

@@ -141,9 +141,8 @@
         "start:dev": "yarn setup && LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev yarn webpack-dev-server --config scripts/webpack.config.js --mode development",
         "start:linked": "IS_LINKED=1 yarn start",
         "test": "BABEL_ENV=test NODE_ENV=test yarn jest",
-        "test:e2e": "npm-run-all -p -r start:dev cy:run",
-        "test:e2e:ci": "node scripts/cypress-ci.js",
-        "test:e2e:open": "npm-run-all -p -r start:dev cy:open",
+        "test:e2e": "node scripts/cypress.js",
+        "test:e2e:open": "node scripts/cypress.js -o",
         "test:watch": "yarn test --watch"
     },
     "husky": {
