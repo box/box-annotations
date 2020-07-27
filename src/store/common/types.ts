@@ -1,4 +1,5 @@
 export enum Mode {
+    HIGHLIGHT = 'highlight',
     NONE = 'none',
     REGION = 'region',
 }
