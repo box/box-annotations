@@ -22,7 +22,10 @@ jobs:
           script: yarn lint
         - name: 'Unit Tests'
           script: yarn test
+        - name: 'E2E Tests'
+          if: fork = false # Note: We can only run E2E tests on canonical due to security concerns
+          script: yarn test:e2e
 notifications:
     email:
         recipients:
-            - preview-alerts@box.com
+            - preview-dev@box.com

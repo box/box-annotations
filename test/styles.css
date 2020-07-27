@@ -1,5 +1,4 @@
 .setters-container {
-    height: 25vh;
     display: flex;
     font-size: 75%;
     justify-content: space-around;
@@ -13,15 +12,17 @@
     box-sizing: border-box;
 }
 
-.setters-container button,input {
+.setters-container button,
+.setters-container input {
     padding: 5px;
 }
 
-.container {
+.setters-container .container {
+    flex: 1 1 50%;
     text-align: center;
 }
 
-.container > input {
+.setters-container .container > input {
     text-align: center;
 }
 
