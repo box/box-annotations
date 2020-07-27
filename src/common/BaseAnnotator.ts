@@ -14,6 +14,7 @@ export type FileOptions = {
         annotations?: {
             activeId?: string;
         };
+        currentFileVersionId?: string;
         fileVersionId?: string;
     };
 };
@@ -53,8 +54,9 @@ export default class BaseAnnotator extends EventEmitter {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
+        const currentFileVersionId = fileOptionsValue?.currentFileVersionId;
         const fileOptionsVersionId = fileOptionsValue?.fileVersionId;
-        const fileVersionId = file.file_version.id;
+        const fileVersionId = file.file_version.id; // This is always the currently-previewed version id, not current version id
 
         const initialState = {
             annotations: {
@@ -63,7 +65,7 @@ export default class BaseAnnotator extends EventEmitter {
             options: {
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
-                isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === fileVersionId,
+                isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === currentFileVersionId,
                 permissions: file.permissions,
             },
         };
