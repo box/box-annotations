@@ -8,7 +8,7 @@ jest.mock('../../../store', () => ({
     getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
 }));
 
-describe('components/ReplyForm/ReplyFormContainer', () => {
+describe('ReplyFormContainer', () => {
     const defaults = {
         cursorPosition: 0,
         fileId: '0',

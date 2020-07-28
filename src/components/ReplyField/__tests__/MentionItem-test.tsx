@@ -3,7 +3,7 @@ import { ContentState } from 'draft-js';
 import { shallow, ShallowWrapper } from 'enzyme';
 import MentionItem, { Props } from '../MentionItem';
 
-describe('components/Popups/ReplyField/MentionItem', () => {
+describe('MentionItem', () => {
     const defaults: Props = {
         children: <div />,
         contentState: ({

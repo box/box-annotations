@@ -12,7 +12,7 @@ jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector
     getFormattedCommentText: jest.fn().mockReturnValue({ text: 'foo' }),
 }));
 
-describe('components/ReplyForm/ReplyForm', () => {
+describe('ReplyForm', () => {
     const mockEditorState = EditorState.createEmpty();
     const defaults: Props = {
         cursorPosition: 0,

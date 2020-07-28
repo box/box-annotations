@@ -7,7 +7,7 @@ jest.mock('../regionUtil', () => ({
     styleShape: jest.fn(value => value),
 }));
 
-describe('src/region/RegionRect', () => {
+describe('RegionRect', () => {
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionRect {...props} />);
 
     describe('render', () => {

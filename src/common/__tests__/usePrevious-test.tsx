@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import usePrevious from '../usePrevious';
 
-describe('src/common/usePrevious', () => {
+describe('usePrevious', () => {
     function TestComponent({ value }: { value: string }): JSX.Element {
         const previousValue = usePrevious(value);
 

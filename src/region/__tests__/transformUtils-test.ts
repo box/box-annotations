@@ -1,6 +1,6 @@
 import { invertYCoordinate, rotatePoint, translatePoint } from '../transformUtil';
 
-describe('src/region/transformUtil', () => {
+describe('region/transformUtil', () => {
     const parseValue = (value: number): number => parseFloat(value.toFixed(3));
 
     describe('invertYCoordinate()', () => {

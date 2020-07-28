@@ -25,7 +25,7 @@ jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
 
-describe('components/Popups/ReplyField', () => {
+describe('ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-field',
         collaborators: [

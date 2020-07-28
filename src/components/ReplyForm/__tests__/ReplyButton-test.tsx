@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import ReplyButton from '../ReplyButton';
 
-describe('components/ReplyForm/ReplyButton', () => {
+describe('ReplyButton', () => {
     const defaults = {
         isDisabled: false,
         isPrimary: false,
