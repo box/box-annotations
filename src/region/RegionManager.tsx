@@ -26,7 +26,7 @@ export default class RegionManager implements BaseManager {
     insert(referenceEl: HTMLElement): HTMLElement {
         // Find the nearest applicable reference and document elements
         const documentEl = referenceEl.ownerDocument || document;
-        const parentEl = referenceEl.parentNode || documentEl;
+        const parentEl = referenceEl.parentNode || documentEl.body;
 
         // Construct a layer element where we can inject a root React component
         const rootLayerEl = documentEl.createElement('div');
@@ -35,8 +35,8 @@ export default class RegionManager implements BaseManager {
         rootLayerEl.dataset.testid = 'ba-Layer--region';
         rootLayerEl.setAttribute('data-resin-feature', 'annotations');
 
-        // Insert the new layer element immediately after the reference element
-        return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);
+        // Append the new layer node to the end of the list of children of the parent node
+        return parentEl.appendChild(rootLayerEl);
     }
 
     render(props: Props): void {

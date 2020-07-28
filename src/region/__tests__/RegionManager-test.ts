@@ -52,6 +52,16 @@ describe('RegionManager', () => {
         });
     });
 
+    describe('insert()', () => {
+        test('should insert node at the end', () => {
+            rootEl.appendChild(document.createElement('div'));
+
+            const wrapper = getWrapper();
+
+            expect(rootEl.lastChild).toBe(wrapper.reactEl);
+        });
+    });
+
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             const wrapper = getWrapper();

@@ -1,5 +1,6 @@
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
+import HighlightManager from '../../highlight/HighlightManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
@@ -70,8 +71,11 @@ describe('DocumentAnnotator', () => {
         test('should create new managers given a new page element', () => {
             const managers = annotator.getPageManagers(getPage());
 
+            const managerIterator = managers.values();
+
             expect(managers.size).toBe(2);
-            expect(managers.values().next().value).toBeInstanceOf(RegionManager);
+            expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
         test('should destroy any existing managers if they are not present in a given page element', () => {

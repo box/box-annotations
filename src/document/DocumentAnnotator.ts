@@ -30,8 +30,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
-            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            // Highlight layer should be rendered under region layer, so highlight manager should be added first
             managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
         }
 
         return managers;
