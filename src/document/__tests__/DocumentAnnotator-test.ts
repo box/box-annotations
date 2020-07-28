@@ -6,6 +6,7 @@ import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction } from '../../store';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../highlight/HighlightManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
 
@@ -69,7 +70,7 @@ describe('DocumentAnnotator', () => {
         test('should create new managers given a new page element', () => {
             const managers = annotator.getPageManagers(getPage());
 
-            expect(managers.size).toBe(1);
+            expect(managers.size).toBe(2);
             expect(managers.values().next().value).toBeInstanceOf(RegionManager);
         });
 
