@@ -12,7 +12,7 @@ jest.mock('react-redux', () => ({
 jest.mock('../PopupBase');
 jest.mock('../../ReplyForm');
 
-describe('components/Popups/PopupReply', () => {
+describe('PopupReply', () => {
     const defaults: Props = {
         isPending: false,
         onCancel: jest.fn(),

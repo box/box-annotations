@@ -1,7 +1,7 @@
 import { EditorState, CompositeDecorator, ContentState } from 'draft-js';
 import withMentionDecorator, { mentionStrategy } from '../withMentionDecorator';
 
-describe('components/Popups/ReplyField/withMentionDecorator', () => {
+describe('ReplyField/withMentionDecorator', () => {
     test('should set decorator', () => {
         const mockEditorState = EditorState.createEmpty();
 

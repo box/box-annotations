@@ -4,7 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import PopupCursor from '../PopupCursor';
 import PopupBase from '../PopupBase';
 
-describe('components/Popups/PopupCursor', () => {
+describe('PopupCursor', () => {
     // Render helpers
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupCursor {...props} />);
 

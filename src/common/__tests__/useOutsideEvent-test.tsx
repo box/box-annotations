@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import useOutsideEvent from '../useOutsideEvent';
 
-describe('src/utils/useOutsideClick', () => {
+describe('useOutsideClick', () => {
     let callback: jest.Mock;
 
     function TestComponent(): JSX.Element {

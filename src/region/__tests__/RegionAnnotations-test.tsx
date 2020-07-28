@@ -14,7 +14,7 @@ jest.mock('../RegionCreator');
 jest.mock('../RegionList');
 jest.mock('../RegionRect');
 
-describe('components/region/RegionAnnotations', () => {
+describe('RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         createRegion: jest.fn(),

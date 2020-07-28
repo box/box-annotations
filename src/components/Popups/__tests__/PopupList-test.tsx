@@ -4,7 +4,7 @@ import PopupBase from '../PopupBase';
 import PopupList, { Props } from '../PopupList';
 import { Collaborator } from '../../../@types';
 
-describe('components/Popups/ReplyField/PopupList', () => {
+describe('PopupList', () => {
     const defaults: Props<Collaborator> = {
         items: [],
         onSelect: jest.fn(),

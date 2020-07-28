@@ -4,7 +4,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { UserMini } from '../../../@types';
 import ItemRow, { Props } from '../ItemRow';
 
-describe('components/ItemList/ItemRow', () => {
+describe('ItemRow', () => {
     const item = { email: 'test@box.com', id: 'testid', name: 'testname', type: 'user' } as UserMini;
     const defaults: Props = {
         item: {
