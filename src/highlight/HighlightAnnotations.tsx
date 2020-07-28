@@ -15,13 +15,6 @@ export default class HighlightAnnotations extends React.PureComponent<Props> {
     render(): JSX.Element {
         const { isCreating } = this.props;
 
-        return (
-            <>
-                {/* Layer 1: Saved annotations */}
-
-                {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
-                {isCreating && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
-            </>
-        );
+        return <>{isCreating && <HighlightCreator className="ba-HighlightAnnotations-creator" />}</>;
     }
 }
