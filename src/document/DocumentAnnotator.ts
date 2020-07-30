@@ -3,6 +3,7 @@ import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { getAnnotation } from '../store/annotations';
 import { HighlightManager } from '../highlight';
+import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -55,6 +56,18 @@ export default class DocumentAnnotator extends BaseAnnotator {
     getPages(): HTMLElement[] {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
+    }
+
+    handleChangeMode({ mode }: { mode: Mode }): void {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (mode === Mode.HIGHLIGHT) {
+            this.annotatedEl.classList.add('is-highlighting');
+        } else {
+            this.annotatedEl.classList.remove('is-highlighting');
+        }
     }
 
     render(): void {
