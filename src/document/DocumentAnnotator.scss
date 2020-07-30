@@ -10,7 +10,7 @@
         pointer-events: none;
     }
 
-    &.is-highlighting {
+    &.ba-is-highlighting {
         .textLayer > span {
             @include ba-HighlightCreator-cursor;
         }

@@ -76,13 +76,10 @@ export default class BaseAnnotator extends EventEmitter {
             api: new API({ apiHost, token }),
         });
 
-        this.handleChangeMode = this.handleChangeMode.bind(this);
-
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.handleSetActive);
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
-        this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
 
         // Load any required data at startup
@@ -161,11 +158,6 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected getElement(selector: HTMLElement | string): HTMLElement | null {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected handleChangeMode({ mode }: { mode: store.Mode }): void {
-        // Can be implemented in child class
     }
 
     protected handleRemove = (annotationId: string): void => {
