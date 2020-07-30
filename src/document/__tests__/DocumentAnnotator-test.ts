@@ -1,7 +1,7 @@
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
-import { Annotation } from '../../@types';
+import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction } from '../../store';
 import { scrollToLocation } from '../../utils/scroll';
@@ -64,6 +64,23 @@ describe('DocumentAnnotator', () => {
         if (annotator) {
             annotator.destroy();
         }
+    });
+
+    describe('event handlers', () => {
+        beforeEach(() => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            jest.spyOn(annotator.annotatedEl.classList, 'add');
+            jest.spyOn(annotator.annotatedEl.classList, 'remove');
+        });
+
+        test('should add/remove highlight class', () => {
+            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: 'highlight' });
+            expect(annotator.annotatedEl?.classList.add).toHaveBeenCalledWith('ba-is-highlighting');
+
+            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: 'region' });
+            expect(annotator.annotatedEl?.classList.remove).toHaveBeenCalledWith('ba-is-highlighting');
+        });
     });
 
     describe('getPageManagers()', () => {

@@ -1,8 +1,10 @@
-import BaseAnnotator from '../common/BaseAnnotator';
+import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
+import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { HighlightManager } from '../highlight';
+import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -10,6 +12,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
     managers: Map<number, Set<BaseManager>> = new Map();
+
+    constructor(options: Options) {
+        super(options);
+
+        this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
+    }
 
     getAnnotatedElement(): HTMLElement | null | undefined {
         return this.containerEl?.querySelector('.bp-doc');
@@ -56,6 +64,18 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // TODO: Inject page/container elements from Preview SDK rather than DOM?
         return this.annotatedEl ? Array.from(this.annotatedEl.querySelectorAll('.page')) : [];
     }
+
+    handleChangeMode = ({ mode }: { mode: Mode }): void => {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (mode === Mode.HIGHLIGHT) {
+            this.annotatedEl.classList.add('ba-is-highlighting');
+        } else {
+            this.annotatedEl.classList.remove('ba-is-highlighting');
+        }
+    };
 
     render(): void {
         this.getPages()
