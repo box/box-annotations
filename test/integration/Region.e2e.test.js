@@ -18,9 +18,9 @@ describe('Regions', () => {
         // Enter region creation mode
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
 
-        // Draw a 50x50 region on the first page starting at x50, y50
-        cy.drawRegion({ x: 50, y: 50, width: 50, height: 50 });
-        cy.typeAndSubmitReplyForm();
+        // Add a region annotation on the document
+        cy.drawRegion();
+        cy.submitReply();
 
         // Assert that at least one annotation is present on the document and is active
         cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
@@ -54,7 +54,7 @@ describe('Regions', () => {
 
         // Add a region annotation on the image
         cy.drawRegion();
-        cy.typeAndSubmitReplyForm();
+        cy.submitReply();
 
         // Assert that at least one annotation is present on the image and is active
         cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');

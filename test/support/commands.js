@@ -12,7 +12,7 @@ Cypress.Commands.add('showPreview', (fileId, { token } = {}) => {
 
 // Annotations-specific commands
 Cypress.Commands.add('drawRegion', ({ x = 200, y = 200, width = 100, height = 100 } = {}) => {
-    // Draw a width * height region on the image starting at (x, y)
+    // Draw a width * height region starting at (x, y)
     cy.getByTestId('ba-RegionCreator')
         .first()
         .trigger('mousedown', {
@@ -28,7 +28,7 @@ Cypress.Commands.add('drawRegion', ({ x = 200, y = 200, width = 100, height = 10
         .trigger('mouseup');
 });
 
-Cypress.Commands.add('typeAndSubmitReplyForm', (message = 'Automated test annotations') => {
+Cypress.Commands.add('submitReply', (message = 'Automated test annotations') => {
     // Type a message in the reply form and save the new annotation
     cy.getByTestId('ba-ReplyField-editor').type(message);
     cy.getByTestId('ba-Popup-submit').click();
