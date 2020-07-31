@@ -19,26 +19,23 @@ describe('Regions', () => {
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
 
         // Draw a 50x50 region on the first page starting at x50, y50
-        cy.getByTestId('ba-RegionCreator')
-            .first()
-            .trigger('mousedown', {
-                buttons: 1,
-                clientX: 50,
-                clientY: 50,
-            })
-            .trigger('mousemove', {
-                buttons: 1,
-                clientX: 100,
-                clientY: 100,
-            })
-            .trigger('mouseup');
+        cy.drawRegion({ x: 50, y: 50, width: 50, height: 50 });
+        cy.typeAndSubmitReplyForm();
 
-        // Type a message in the reply form and save the new annotation
-        cy.getByTestId('ba-ReplyField-editor').type('This is an automated test annotation.');
-        cy.getByTestId('ba-Popup-submit').click();
+        // Assert that at least one annotation is present on the document and is active
+        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
 
-        // Assert that at least one annotation is present on the image
-        cy.get('[data-testid^="ba-AnnotationTarget"]');
+        // Exit region creation mode
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
+
+        // Assert that annotation target is not active
+        cy.get('[data-testid^="ba-AnnotationTarget"]').should('not.have.class', 'is-active');
+
+        // Select annotation target
+        cy.get('[data-testid^="ba-AnnotationTarget"]').click();
+
+        // Assert that annotation target is active
+        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
     });
 
     it('should create a new region on an image', () => {
@@ -55,27 +52,12 @@ describe('Regions', () => {
         // Enter region creation mode
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
 
-        // Draw a 100x100 region on the image starting at (200, 200)
-        cy.getByTestId('ba-RegionCreator')
-            .first()
-            .trigger('mousedown', {
-                buttons: 1,
-                clientX: 200,
-                clientY: 200,
-            })
-            .trigger('mousemove', {
-                buttons: 1,
-                clientX: 300,
-                clientY: 300,
-            })
-            .trigger('mouseup');
+        // Add a region annotation on the image
+        cy.drawRegion();
+        cy.typeAndSubmitReplyForm();
 
-        // Type a message in the reply form and save the new annotation
-        cy.getByTestId('ba-ReplyField-editor').type('This is an automated test annotation.');
-        cy.getByTestId('ba-Popup-submit').click();
-
-        // Assert that at least one annotation is present on the image
-        cy.get('[data-testid^="ba-AnnotationTarget"]');
+        // Assert that at least one annotation is present on the image and is active
+        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
     });
 
     it('should hide region button for rotated image', () => {
