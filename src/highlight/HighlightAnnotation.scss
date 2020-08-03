@@ -1,0 +1,11 @@
+.ba-HighlightAnnotation:focus {
+    outline: none;
+
+    .ba-HighlightAnnotation-rect {
+        fill: rgba(255, 235, 127, 1);
+    }
+}
+
+.ba-HighlightAnnotation-rect {
+    fill: rgba(255, 235, 127, .5);
+}

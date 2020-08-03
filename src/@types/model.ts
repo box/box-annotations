@@ -105,5 +105,6 @@ export interface TargetRegion {
 }
 
 export enum Type {
+    highlight = 'highlight',
     region = 'region',
 }

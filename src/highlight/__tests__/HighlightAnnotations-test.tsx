@@ -8,6 +8,7 @@ jest.mock('../HighlightCreator');
 describe('components/highlight/HighlightAnnotations', () => {
     const defaults = {
         isCreating: false,
+        setActiveAnnotationId: jest.fn(),
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotations {...defaults} {...props} />);

@@ -1,0 +1,14 @@
+.ba-HighlightList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: multiply;
+
+    &.is-listening {
+        .ba-HighlightAnnotation-rect {
+            pointer-events: auto;
+        }
+    }
+}

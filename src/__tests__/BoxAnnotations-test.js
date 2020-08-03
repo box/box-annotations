@@ -107,7 +107,7 @@ describe('BoxAnnotations', () => {
         });
 
         test('should respect default annotators if none provided', () => {
-            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['region']);
+            expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['highlight', 'region']);
         });
 
         test('should not return an annotator if the user has incorrect permissions/scopes', () => {
