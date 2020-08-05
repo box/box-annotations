@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as ReactRedux from 'react-redux';
-import { bdlYellorange } from 'box-ui-elements/es/styles/variables';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { bdlYellorange } from 'box-ui-elements/es/styles/variables';
 import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
@@ -18,7 +18,7 @@ type Props = {
 
 export type HighlightAnnotationRef = HTMLAnchorElement;
 
-export const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef>): JSX.Element => {
+const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef>): JSX.Element => {
     const { annotationId, className, isActive, onSelect = noop, rects } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
     const [isHover, setIsHover] = React.useState<boolean>(false);
@@ -63,7 +63,7 @@ export const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnota
             className={classNames('ba-HighlightAnnotation', className, { 'is-active': isActive, 'is-hover': isHover })}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
-            data-resin-target="highlightHighlight"
+            data-resin-target="highlightText"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
             onClick={handleClick}
@@ -92,5 +92,7 @@ export const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnota
         </a>
     );
 };
+
+export { HighlightAnnotation as HighlightAnnotationComponent };
 
 export default React.forwardRef(HighlightAnnotation);

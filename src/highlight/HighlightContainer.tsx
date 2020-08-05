@@ -7,6 +7,7 @@ import {
     getActiveAnnotationId,
     getAnnotationsForLocation,
     getAnnotationMode,
+    Mode,
     setActiveAnnotationIdAction,
 } from '../store';
 import { isHighlight } from './highlightUtil';
@@ -20,7 +21,7 @@ export type Props = {
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => ({
     activeAnnotationId: getActiveAnnotationId(state),
     annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
-    isCreating: getAnnotationMode(state) === 'highlight',
+    isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
 });
 
 export const mapDispatchToProps = {

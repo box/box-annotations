@@ -1,3 +1,5 @@
+@import '~box-ui-elements/es/styles/variables';
+
 @mixin ba-HighlightAnnotation-ie-edge {
     .ba-HighlightAnnotation {
         &.is-active {
@@ -30,7 +32,7 @@
 .ba-HighlightAnnotation-rect {
     fill-opacity: .33;
     transition: fill-opacity 200ms ease 25ms;
-    stroke: #fff;
+    stroke: $white;
     stroke-width: 1;
 }
 

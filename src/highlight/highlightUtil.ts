@@ -1,5 +1,5 @@
-import { Annotation, AnnotationHighlight } from '../@types';
+import { Annotation, AnnotationHighlight, Type } from '../@types';
 
 export function isHighlight(annotation: Annotation): annotation is AnnotationHighlight {
-    return annotation?.target?.type === 'highlight';
+    return annotation?.target?.type === Type.highlight;
 }

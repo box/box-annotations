@@ -8,7 +8,7 @@ import { createStore } from '../../store';
 jest.mock('../../common/withProviders');
 jest.mock('../HighlightAnnotations');
 
-describe('HighlightContainer', () => {
+describe('highlight/HighlightContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
         location: 1,
@@ -22,7 +22,10 @@ describe('HighlightContainer', () => {
 
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(HighlightAnnotations).props()).toMatchObject({
+                activeAnnotationId: null,
+                annotations: [],
                 isCreating: false,
+                setActiveAnnotationId: expect.any(Function),
             });
         });
     });
