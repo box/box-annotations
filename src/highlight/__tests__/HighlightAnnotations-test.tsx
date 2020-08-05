@@ -7,6 +7,7 @@ jest.mock('../HighlightCreator');
 
 describe('components/highlight/HighlightAnnotations', () => {
     const defaults = {
+        activeAnnotationId: null,
         isCreating: false,
         setActiveAnnotationId: jest.fn(),
     };

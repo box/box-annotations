@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactRedux from 'react-redux';
+import { bdlYellorange } from 'box-ui-elements/es/styles/variables';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
@@ -20,29 +21,52 @@ export type HighlightAnnotationRef = HTMLAnchorElement;
 export const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef>): JSX.Element => {
     const { annotationId, className, isActive, onSelect = noop, rects } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
+    const [isHover, setIsHover] = React.useState<boolean>(false);
+
+    const handleClick = (event: React.MouseEvent<HighlightAnnotationRef>): void => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+    };
 
     const handleFocus = (): void => {
         onSelect(annotationId);
     };
+
     const handleMouseDown = (event: React.MouseEvent<HighlightAnnotationRef>): void => {
         if (event.buttons !== MOUSE_PRIMARY) {
             return;
         }
 
-        event.preventDefault(); // Prevents focus from leaving the button immediately in some browsers
+        onSelect(annotationId);
+
+        event.preventDefault(); // Prevents focus from leaving the anchor immediately in some browsers
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
-        event.currentTarget.focus(); // Buttons do not receive focus in Firefox and Safari on MacOS; triggers handleFocus
+    };
+
+    const handleMouseOut = (): void => {
+        if (isHover) {
+            setIsHover(false);
+        }
+    };
+
+    const handleMouseOver = (): void => {
+        if (!isHover) {
+            setIsHover(true);
+        }
     };
 
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
-            className={classNames('ba-HighlightAnnotation', className, { 'is-active': isActive })}
+            className={classNames('ba-HighlightAnnotation', className, { 'is-active': isActive, 'is-hover': isHover })}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightHighlight"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
+            href="#"
+            onClick={handleClick}
             onFocus={handleFocus}
             onMouseDown={handleMouseDown}
             role="button"
@@ -51,10 +75,14 @@ export const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnota
             {rects.map(rect => {
                 const { height, width, x, y } = rect;
                 return (
+                    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
                     <rect
                         key={`${annotationId}-${x}-${y}-${width}-${height}`}
                         className="ba-HighlightAnnotation-rect"
+                        fill={bdlYellorange}
                         height={`${height}%`}
+                        onMouseOut={handleMouseOut}
+                        onMouseOver={handleMouseOver}
                         width={`${width}%`}
                         x={`${x}%`}
                         y={`${y}%`}

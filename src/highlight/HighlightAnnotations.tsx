@@ -6,6 +6,7 @@ import { AnnotationHighlight } from '../@types';
 import './HighlightAnnotations.scss';
 
 type Props = {
+    activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
     isCreating: boolean;
     setActiveAnnotationId: (annotationId: string | null) => void;
@@ -24,14 +25,14 @@ export default class HighlightAnnotations extends React.PureComponent<Props> {
     };
 
     render(): JSX.Element {
-        const { annotations, isCreating } = this.props;
+        const { activeAnnotationId, annotations, isCreating } = this.props;
 
         return (
             <>
                 {/* Layer 1: Saved annotations */}
                 <HighlightList
+                    activeId={activeAnnotationId}
                     annotations={annotations}
-                    className="ba-HighlightAnnotations-list"
                     onSelect={this.handleAnnotationActive}
                 />
 

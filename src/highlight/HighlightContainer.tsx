@@ -2,15 +2,23 @@ import { connect } from 'react-redux';
 import HighlightAnnotations from './HighlightAnnotations';
 import withProviders from '../common/withProviders';
 import { AnnotationHighlight } from '../@types';
-import { AppState, getAnnotationsForLocation, getAnnotationMode, setActiveAnnotationIdAction } from '../store';
+import {
+    AppState,
+    getActiveAnnotationId,
+    getAnnotationsForLocation,
+    getAnnotationMode,
+    setActiveAnnotationIdAction,
+} from '../store';
 import { isHighlight } from './highlightUtil';
 
 export type Props = {
+    activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
     isCreating: boolean;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => ({
+    activeAnnotationId: getActiveAnnotationId(state),
     annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
     isCreating: getAnnotationMode(state) === 'highlight',
 });
