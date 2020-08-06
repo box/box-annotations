@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactRedux from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import { bdlYellorange } from 'box-ui-elements/es/styles/variables';
 import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
@@ -11,7 +10,6 @@ import './HighlightAnnotation.scss';
 type Props = {
     annotationId: string;
     className?: string;
-    isActive?: boolean;
     onSelect?: (annotationId: string) => void;
     rects: Array<Rect>;
 };
@@ -19,9 +17,8 @@ type Props = {
 export type HighlightAnnotationRef = HTMLAnchorElement;
 
 const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef>): JSX.Element => {
-    const { annotationId, className, isActive, onSelect = noop, rects } = props;
+    const { annotationId, className, onSelect = noop, rects } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
-    const [isHover, setIsHover] = React.useState<boolean>(false);
 
     const handleClick = (event: React.MouseEvent<HighlightAnnotationRef>): void => {
         event.preventDefault();
@@ -44,23 +41,11 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
     };
 
-    const handleMouseOut = (): void => {
-        if (isHover) {
-            setIsHover(false);
-        }
-    };
-
-    const handleMouseOver = (): void => {
-        if (!isHover) {
-            setIsHover(true);
-        }
-    };
-
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
-            className={classNames('ba-HighlightAnnotation', className, { 'is-active': isActive, 'is-hover': isHover })}
+            className={classNames('ba-HighlightAnnotation', className)}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
@@ -79,10 +64,8 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
                     <rect
                         key={`${annotationId}-${x}-${y}-${width}-${height}`}
                         className="ba-HighlightAnnotation-rect"
-                        fill={bdlYellorange}
+                        fill="none"
                         height={`${height}%`}
-                        onMouseOut={handleMouseOut}
-                        onMouseOver={handleMouseOver}
                         width={`${width}%`}
                         x={`${x}%`}
                         y={`${y}%`}

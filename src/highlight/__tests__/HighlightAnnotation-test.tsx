@@ -44,42 +44,9 @@ describe('components/highlight/HighlightAnnotation', () => {
             expect(rect.prop('x')).toBe('5%');
             expect(rect.prop('y')).toBe('5%');
         });
-
-        test('should render anchor with is-active if isActive is true', () => {
-            const wrapper = getWrapper({ isActive: true });
-            const anchor = wrapper.find('a');
-
-            expect(anchor.hasClass('is-active')).toBe(true);
-            expect(anchor.hasClass('is-hover')).toBe(false);
-        });
     });
 
     describe('interactivity', () => {
-        test('should call setIsHover based on mouseover event', () => {
-            const wrapper = getWrapper();
-            const anchor = wrapper.find('a');
-            const rect = wrapper.find('rect');
-
-            rect.simulate('mouseover');
-
-            expect(anchor.hasClass('is-active')).toBe(false);
-            expect(anchor.hasClass('is-hover')).toBe(false);
-            expect(mockSetIsHover).toHaveBeenCalledWith(true);
-        });
-
-        test('should call setIsHover based on mouseout event', () => {
-            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetIsHover]);
-            const wrapper = getWrapper();
-            const anchor = wrapper.find('a');
-            const rect = wrapper.find('rect');
-
-            rect.simulate('mouseout');
-
-            expect(anchor.hasClass('is-active')).toBe(false);
-            expect(anchor.hasClass('is-hover')).toBe(true);
-            expect(mockSetIsHover).toHaveBeenCalledWith(false);
-        });
-
         test('should call onSelect when anchor is focused', () => {
             const wrapper = getWrapper();
             const anchor = wrapper.find('a');

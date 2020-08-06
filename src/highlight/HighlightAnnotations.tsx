@@ -1,7 +1,9 @@
 import * as React from 'react';
+import HighlightCanvas from './HighlightCanvas';
 import HighlightCreator from './HighlightCreator';
 import HighlightList from './HighlightList';
 import { AnnotationHighlight } from '../@types';
+import { isValidHighlight, sortHighlight } from './highlightUtil';
 
 import './HighlightAnnotations.scss';
 
@@ -26,17 +28,17 @@ export default class HighlightAnnotations extends React.PureComponent<Props> {
 
     render(): JSX.Element {
         const { activeAnnotationId, annotations, isCreating } = this.props;
+        const sortedAnnotations = annotations.filter(isValidHighlight).sort(sortHighlight);
 
         return (
             <>
-                {/* Layer 1: Saved annotations */}
-                <HighlightList
-                    activeId={activeAnnotationId}
-                    annotations={annotations}
-                    onSelect={this.handleAnnotationActive}
-                />
+                {/* Layer 1: Saved annotations -- visual highlights */}
+                <HighlightCanvas activeId={activeAnnotationId} annotations={sortedAnnotations} />
 
-                {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
+                {/* Layer 2: Saved annotations -- interactable highlights */}
+                <HighlightList annotations={sortedAnnotations} onSelect={this.handleAnnotationActive} />
+
+                {/* Layer 3: Drawn (unsaved) incomplete annotation target, if any */}
                 {isCreating && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
             </>
         );
