@@ -8,7 +8,7 @@ jest.mock('react', () => ({
     useState: jest.fn(),
 }));
 
-describe('components/highlight/HighlightAnnotation', () => {
+describe('HighlightAnnotation', () => {
     const defaults = {
         annotationId: '123',
         onSelect: jest.fn(),

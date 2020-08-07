@@ -12,7 +12,7 @@ jest.mock('react', () => ({
 
 jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));
 
-describe('highlight/HighlightList', () => {
+describe('HighlightList', () => {
     const defaults: Props = {
         annotations: [mockAnnotation],
         onSelect: jest.fn(),

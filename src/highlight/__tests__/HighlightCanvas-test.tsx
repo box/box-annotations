@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightCanvas, { Props } from '../HighlightCanvas';
 import { annotation as mockAnnotation } from '../__mocks__/data';
 
-describe('highlight/HighlightCanvas', () => {
+describe('HighlightCanvas', () => {
     const defaults: Props = {
         activeId: null,
         annotations: [mockAnnotation],

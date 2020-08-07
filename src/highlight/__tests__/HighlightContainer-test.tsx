@@ -8,7 +8,7 @@ import { createStore } from '../../store';
 jest.mock('../../common/withProviders');
 jest.mock('../HighlightAnnotations');
 
-describe('highlight/HighlightContainer', () => {
+describe('HighlightContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
         location: 1,

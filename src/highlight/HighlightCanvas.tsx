@@ -37,8 +37,6 @@ export default class HighlightCanvas extends React.Component<Props> {
             return;
         }
 
-        canvasRef.style.width = '100%';
-        canvasRef.style.height = '100%';
         canvasRef.width = canvasRef.offsetWidth;
         canvasRef.height = canvasRef.offsetHeight;
     }
