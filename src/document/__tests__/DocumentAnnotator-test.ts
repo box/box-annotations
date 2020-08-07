@@ -86,9 +86,10 @@ describe('DocumentAnnotator', () => {
     describe('getPageManagers()', () => {
         test('should create new managers given a new page element', () => {
             const managers = annotator.getPageManagers(getPage());
+            const managerIterator = managers.values();
 
-            expect(managers.size).toBe(2);
-            expect(managers.values().next().value).toBeInstanceOf(RegionManager);
+            expect(managers.size).toBe(1);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
         test('should destroy any existing managers if they are not present in a given page element', () => {

@@ -40,7 +40,7 @@ export default class HighlightManager implements BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<HighlightContainer {...props} />, this.reactEl);
+        ReactDOM.render(<HighlightContainer location={this.location} {...props} />, this.reactEl);
     }
 
     style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration {

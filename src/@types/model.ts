@@ -89,7 +89,7 @@ export interface TargetDrawing {
 export interface TargetHighlight {
     location: Page;
     shapes: Array<Rect>;
-    text: string;
+    text?: string;
     type: 'highlight';
 }
 
@@ -105,5 +105,6 @@ export interface TargetRegion {
 }
 
 export enum Type {
+    highlight = 'highlight',
     region = 'region',
 }

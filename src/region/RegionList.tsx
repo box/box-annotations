@@ -4,6 +4,7 @@ import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationRegion } from '../@types';
+import { checkValue } from '../utils/util';
 
 export type Props = {
     activeId?: string | null;
@@ -11,10 +12,6 @@ export type Props = {
     className?: string;
     onSelect?: (annotationId: string | null) => void;
 };
-
-export function checkValue(value: number): boolean {
-    return value >= 0 && value <= 100; // Values cannot be negative or larger than 100%
-}
 
 export function filterRegion({ target }: AnnotationRegion): boolean {
     const { shape } = target;

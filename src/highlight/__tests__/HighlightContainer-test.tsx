@@ -22,7 +22,10 @@ describe('HighlightContainer', () => {
 
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(HighlightAnnotations).props()).toMatchObject({
+                activeAnnotationId: null,
+                annotations: [],
                 isCreating: false,
+                setActiveAnnotationId: expect.any(Function),
             });
         });
     });

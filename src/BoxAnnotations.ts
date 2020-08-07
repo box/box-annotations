@@ -45,7 +45,7 @@ const ANNOTATORS: Annotator[] = [
     {
         CONSTRUCTOR: DocumentAnnotator,
         NAME: 'Document',
-        TYPES: [Type.region],
+        TYPES: [Type.highlight, Type.region],
         VIEWERS: ['AutoCAD', 'Document', 'Presentation'],
     },
     {
