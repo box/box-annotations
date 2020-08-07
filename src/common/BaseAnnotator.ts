@@ -33,6 +33,7 @@ export type Options = {
     hasTouch?: boolean;
     intl: IntlOptions;
     locale?: string;
+    showAnnotationsHighlightText?: boolean;
     token: string;
 };
 
@@ -48,9 +49,11 @@ export default class BaseAnnotator extends EventEmitter {
 
     intl: IntlShape;
 
+    showHighlight: boolean;
+
     store: store.AppStore;
 
-    constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
+    constructor({ apiHost, container, file, fileOptions, intl, showAnnotationsHighlightText = false, token }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -75,6 +78,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.store = store.createStore(initialState, {
             api: new API({ apiHost, token }),
         });
+        this.showHighlight = showAnnotationsHighlightText;
 
         // Add custom handlers for events triggered by the Preview SDK
         this.addListener(LegacyEvent.SCALE, this.handleScale);

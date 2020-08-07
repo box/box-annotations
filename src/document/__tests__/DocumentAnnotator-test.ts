@@ -4,6 +4,7 @@ import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction } from '../../store';
+import { HighlightManager } from '../../highlight';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../highlight/HighlightManager');
@@ -27,6 +28,7 @@ describe('DocumentAnnotator', () => {
             messages: {},
         },
         locale: 'en-US',
+        showAnnotationsHighlightText: false,
         token: '1234567890',
     };
     const getAnnotator = (options = {}): DocumentAnnotator => {
@@ -87,8 +89,18 @@ describe('DocumentAnnotator', () => {
         test('should create new managers given a new page element', () => {
             const managers = annotator.getPageManagers(getPage());
 
-            expect(managers.size).toBe(2);
+            expect(managers.size).toBe(1);
             expect(managers.values().next().value).toBeInstanceOf(RegionManager);
+        });
+
+        test('should create highlight manager if showAnnotationsHighlightText is true', () => {
+            annotator = getAnnotator({ showAnnotationsHighlightText: true });
+            const managers = annotator.getPageManagers(getPage());
+            const managerIterator = managers.values();
+
+            expect(managers.size).toBe(2);
+            expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
         test('should destroy any existing managers if they are not present in a given page element', () => {
