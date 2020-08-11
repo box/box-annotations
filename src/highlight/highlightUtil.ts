@@ -5,6 +5,11 @@ export function isHighlight(annotation: Annotation): annotation is AnnotationHig
     return annotation?.target?.type === Type.highlight;
 }
 
+export function isInRect(x: number, y: number, rect: DOMRect): boolean {
+    const { bottom, left, right, top } = rect;
+    return x >= left && x <= right && y >= top && y <= bottom;
+}
+
 export function isValidHighlight({ target }: AnnotationHighlight): boolean {
     const { shapes = [] } = target;
 
@@ -16,6 +21,14 @@ export function isValidHighlight({ target }: AnnotationHighlight): boolean {
 
 export function getHighlightArea(shapes: Rect[]): number {
     return shapes.reduce((area, { height, width }) => area + height * width, 0);
+}
+
+export function getSelectionRange(): Range | null {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+        return null;
+    }
+    return selection.getRangeAt(0);
 }
 
 export function sortHighlight(

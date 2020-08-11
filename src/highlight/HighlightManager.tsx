@@ -1,15 +1,22 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import BaseManager, { Options, Props } from '../common/BaseManager';
+import BaseManager, { Options as BaseOptions, Props } from '../common/BaseManager';
 import HighlightContainer from './HighlightContainer';
+
+export type Options = {
+    pageEl: HTMLElement;
+} & BaseOptions;
 
 export default class HighlightManager implements BaseManager {
     location: number;
 
+    pageEl: HTMLElement;
+
     reactEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl }: Options) {
+    constructor({ location = 1, pageEl, referenceEl }: Options) {
         this.location = location;
+        this.pageEl = pageEl;
         this.reactEl = this.insert(referenceEl);
     }
 
@@ -40,7 +47,7 @@ export default class HighlightManager implements BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<HighlightContainer location={this.location} {...props} />, this.reactEl);
+        ReactDOM.render(<HighlightContainer location={this.location} pageEl={this.pageEl} {...props} />, this.reactEl);
     }
 
     style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration {

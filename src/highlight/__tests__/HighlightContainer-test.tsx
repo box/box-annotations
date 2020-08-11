@@ -12,6 +12,7 @@ describe('HighlightContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
         location: 1,
+        pageEl: document.createElement('div'),
         store: createStore(),
     };
     const getWrapper = (props = {}): ReactWrapper<Props> => mount(<HighlightContainer {...defaults} {...props} />);

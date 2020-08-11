@@ -1,8 +1,7 @@
 import ReactDOM from 'react-dom';
 import { createIntl } from 'react-intl';
-import HighlightManager from '../HighlightManager';
+import HighlightManager, { Options } from '../HighlightManager';
 import { createStore } from '../../store';
-import { Options } from '../../common/BaseManager';
 
 jest.mock('react-dom', () => ({
     render: jest.fn(),
@@ -13,6 +12,7 @@ describe('HighlightManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
+        pageEl: rootEl as HTMLElement,
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });

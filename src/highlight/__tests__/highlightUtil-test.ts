@@ -1,4 +1,4 @@
-import { isValidHighlight, getHighlightArea, sortHighlight } from '../highlightUtil';
+import { isValidHighlight, getHighlightArea, getSelectionRange, sortHighlight } from '../highlightUtil';
 import { annotation as mockAnnotation, rect as mockRect, target as mockTarget } from '../__mocks__/data';
 import { Rect, AnnotationHighlight } from '../../@types';
 
@@ -33,6 +33,19 @@ describe('highlight/highlightUtil', () => {
         test('should get total highlighted area', () => {
             const shapes = [mockRect, mockRect];
             expect(getHighlightArea(shapes)).toBe(400);
+        });
+    });
+
+    describe('getSelectionRange()', () => {
+        test.each`
+            selection                        | result
+            ${null}                          | ${null}
+            ${{ isCollapsed: true }}         | ${null}
+            ${{ getRangeAt: () => 'range' }} | ${'range'}
+        `('should return selection as $result', ({ selection, result }) => {
+            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection);
+
+            expect(getSelectionRange()).toBe(result);
         });
     });
 
