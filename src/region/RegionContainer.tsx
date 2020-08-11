@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { AnnotationRegion } from '../@types';
 import {
     AppState,
-    CreatorItem,
+    CreatorRegion,
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
@@ -27,19 +27,23 @@ export type Props = {
     isCreating: boolean;
     isRotated: boolean;
     message: string;
-    staged: CreatorItem | null;
+    staged: CreatorRegion | null;
     status: CreatorStatus;
 };
 
-export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => ({
-    activeAnnotationId: getActiveAnnotationId(state),
-    annotations: getAnnotationsForLocation(state, location).filter(isRegion),
-    isCreating: getAnnotationMode(state) === 'region',
-    isRotated: !!getRotation(state),
-    message: getCreatorMessage(state),
-    staged: getCreatorStagedForLocation(state, location),
-    status: getCreatorStatus(state),
-});
+export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
+    const staged = getCreatorStagedForLocation(state, location);
+
+    return {
+        activeAnnotationId: getActiveAnnotationId(state),
+        annotations: getAnnotationsForLocation(state, location).filter(isRegion),
+        isCreating: getAnnotationMode(state) === 'region',
+        isRotated: !!getRotation(state),
+        message: getCreatorMessage(state),
+        staged: (staged as CreatorRegion)?.shape ? (staged as CreatorRegion) : null,
+        status: getCreatorStatus(state),
+    };
+};
 
 export const mapDispatchToProps = {
     createRegion: createRegionAction,

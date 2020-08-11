@@ -8,10 +8,18 @@ export enum CreatorStatus {
     started = 'started',
 }
 
-export type CreatorItem = {
+export type CreatorRegion = {
     location: number;
     shape: Rect;
 };
+
+export type CreatorHighlight = {
+    location: number;
+    shapes: Rect[];
+    text?: string;
+};
+
+export type CreatorItem = CreatorHighlight | CreatorRegion;
 
 export type CreatorState = {
     cursor: number;

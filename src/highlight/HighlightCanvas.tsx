@@ -5,11 +5,12 @@ import './HighlightCanvas.scss';
 
 export type Props = {
     activeId: string | null;
-    annotations: AnnotationHighlight[];
+    annotations: Pick<AnnotationHighlight, 'id' | 'target'>[];
 };
 
-export default class HighlightCanvas extends React.Component<Props> {
+class HighlightCanvas extends React.Component<Props> {
     static defaultProps = {
+        activeId: null,
         annotations: [],
     };
 
@@ -142,3 +143,5 @@ export default class HighlightCanvas extends React.Component<Props> {
         return <canvas ref={this.canvasRef} className="ba-HighlightCanvas" />;
     }
 }
+
+export default React.memo(HighlightCanvas);

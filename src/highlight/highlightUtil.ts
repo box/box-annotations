@@ -5,7 +5,7 @@ export function isHighlight(annotation: Annotation): annotation is AnnotationHig
     return annotation?.target?.type === Type.highlight;
 }
 
-export function isValidHighlight({ target }: AnnotationHighlight): boolean {
+export function isValidHighlight({ target }: Pick<AnnotationHighlight, 'target'>): boolean {
     const { shapes = [] } = target;
 
     return shapes.reduce((isValid: boolean, rect: Rect) => {
@@ -19,8 +19,8 @@ export function getHighlightArea(shapes: Rect[]): number {
 }
 
 export function sortHighlight(
-    { target: targetA }: AnnotationHighlight,
-    { target: targetB }: AnnotationHighlight,
+    { target: targetA }: Pick<AnnotationHighlight, 'target'>,
+    { target: targetB }: Pick<AnnotationHighlight, 'target'>,
 ): number {
     const { shapes: shapesA } = targetA;
     const { shapes: shapesB } = targetB;
