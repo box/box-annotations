@@ -5,11 +5,6 @@ export function isHighlight(annotation: Annotation): annotation is AnnotationHig
     return annotation?.target?.type === Type.highlight;
 }
 
-export function isInRect(x: number, y: number, rect: DOMRect): boolean {
-    const { bottom, left, right, top } = rect;
-    return x >= left && x <= right && y >= top && y <= bottom;
-}
-
 export function isValidHighlight({ target }: AnnotationHighlight): boolean {
     const { shapes = [] } = target;
 

@@ -1,67 +1,63 @@
 import React from 'react';
 import classNames from 'classnames';
-import { getSelectionRange, isInRect } from './highlightUtil';
+import useOutsideEvent from '../common/useOutsideEvent';
+import { getSelectionRange } from './highlightUtil';
 import { MOUSE_PRIMARY } from '../constants';
 import './HighlightPromoter.scss';
 
 type Props = {
     className?: string;
-    onSelectionChange?: (range: Range | null) => void;
     pageEl: HTMLElement;
 };
 
-export default function HighlightPromoter({ className, onSelectionChange, pageEl }: Props): JSX.Element {
-    const [isSelecting, setIsSelecting] = React.useState<boolean>(false);
+export default function HighlightPromoter({ className, pageEl }: Props): JSX.Element {
+    const isSelectingRef = React.useRef<boolean>(false);
+    const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const handleMouseDown = ({ buttons }: MouseEvent): void => {
-        if (!onSelectionChange || buttons !== MOUSE_PRIMARY) {
-            return;
-        }
-
-        setIsSelecting(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleRangeChange = (_range: Range | null): void => {
+        // show highlight promotion popover
     };
 
-    const handleMouseUp = ({ clientX, clientY }: MouseEvent): void => {
-        if (!onSelectionChange || !isSelecting) {
+    const handleMouseDown = ({ buttons }: MouseEvent): void => {
+        if (buttons !== MOUSE_PRIMARY) {
             return;
         }
 
-        setIsSelecting(false);
+        isSelectingRef.current = true;
+    };
 
-        // Multi-page highlight is not supported
-        if (!isInRect(clientX, clientY, pageEl.getBoundingClientRect())) {
+    const handleMouseUp = (): void => {
+        if (!isSelectingRef.current) {
             return;
         }
 
-        setTimeout(() => {
-            onSelectionChange(getSelectionRange());
+        isSelectingRef.current = false;
+
+        timerRef.current = setTimeout(() => {
+            handleRangeChange(getSelectionRange());
+            timerRef.current = null;
         }, 300); // Pdf.js textLayer enhancement waits 300ms (they hardcode this magic number)
     };
 
-    const handleSelectionChange = (): void => {
-        if (!onSelectionChange) {
-            return;
-        }
-
-        const selection = document.getSelection();
-
-        if (!selection || selection.isCollapsed) {
-            onSelectionChange(null);
-        }
-    };
-
     React.useEffect(() => {
-        // Only document has selectionchange event. Document-level event listener
-        // allows the creator to respond even if the selection is on the other pages
-        document.addEventListener('selectionchange', handleSelectionChange);
-        document.addEventListener('mouseup', handleMouseUp);
+        pageEl.addEventListener('mouseup', handleMouseUp);
         pageEl.addEventListener('mousedown', handleMouseDown);
 
         return () => {
-            document.removeEventListener('selectionchange', handleSelectionChange);
-            document.removeEventListener('mouseup', handleMouseUp);
+            pageEl.removeEventListener('mouseup', handleMouseUp);
             pageEl.removeEventListener('mousedown', handleMouseDown);
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+            }
         };
+    });
+
+    // Multi-page highlight is not supported, reset isSelecting
+    useOutsideEvent('mousedown', { current: pageEl }, () => {
+        isSelectingRef.current = false;
+        handleRangeChange(null);
     });
 
     return <div className={classNames(className, 'ba-HighlightPromoter')} data-testid="ba-HighlightPromoter" />;

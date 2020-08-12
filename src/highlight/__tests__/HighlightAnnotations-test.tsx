@@ -7,7 +7,7 @@ import { HighlightList } from '../HighlightList';
 
 jest.mock('../HighlightCreator');
 
-describe('components/highlight/HighlightAnnotations', () => {
+describe('HighlightAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         isCreating: false,
@@ -24,15 +24,15 @@ describe('components/highlight/HighlightAnnotations', () => {
 
             expect(wrapper.exists(HighlightList)).toBe(true);
             expect(wrapper.exists(HighlightCreator)).toBe(true);
-            expect(wrapper.exists(HighlightPromoter)).toBe(true);
+            expect(wrapper.exists(HighlightPromoter)).toBe(false);
         });
 
         test('should not render creation components if not in creation mode', () => {
             const wrapper = getWrapper({ isCreating: false });
 
             expect(wrapper.exists(HighlightList)).toBe(true);
-            expect(wrapper.exists(HighlightPromoter)).toBe(true);
             expect(wrapper.exists(HighlightCreator)).toBe(false);
+            expect(wrapper.exists(HighlightPromoter)).toBe(true);
         });
     });
 

@@ -44,7 +44,7 @@ export default class HighlightAnnotations extends React.PureComponent<Props> {
                 {isCreating && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
 
                 {/* Layer 3b: Listen to selection events when not in highlight mode */}
-                <HighlightPromoter pageEl={pageEl} />
+                {!isCreating && <HighlightPromoter pageEl={pageEl} />}
             </>
         );
     }

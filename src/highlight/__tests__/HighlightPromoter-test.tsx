@@ -1,24 +1,18 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightPromoter from '../HighlightPromoter';
-// import { isInRect } from '../highlightUtil';
+import useOutsideEvent from '../../common/useOutsideEvent';
 
-jest.mock('../highlightUtil', () => ({
-    isInRect: jest.fn(() => true),
-    getSelectionRange: jest.fn(),
-}));
+jest.mock('../../common/useOutsideEvent');
 
 jest.useFakeTimers();
 
 describe('HighlightPromoter', () => {
     const defaults = {
-        onSelectionChange: jest.fn(),
         pageEl: document.createElement('div'),
     };
-    const isSelecting: { current: unknown } = { current: false };
-    const setIsSelecting = jest.fn((value: unknown) => {
-        isSelecting.current = value;
-    });
+    const isSelectingRef = { current: false };
+    const timerRef = { current: null };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightPromoter {...defaults} {...props} />);
     let removeEventListeners: void | (() => void | undefined);
 
@@ -26,12 +20,13 @@ describe('HighlightPromoter', () => {
         jest.spyOn(React, 'useEffect').mockImplementation(func => {
             removeEventListeners = func();
         });
-        jest.spyOn(React, 'useState').mockImplementation(() => [isSelecting.current, setIsSelecting]);
-        defaults.onSelectionChange = jest.fn();
+        jest.spyOn(React, 'useRef').mockImplementationOnce(() => isSelectingRef);
+        jest.spyOn(React, 'useRef').mockImplementationOnce(() => timerRef);
     });
 
     afterEach(() => {
-        setIsSelecting(false);
+        isSelectingRef.current = false;
+        timerRef.current = null;
         if (removeEventListeners) {
             removeEventListeners();
         }
@@ -39,27 +34,12 @@ describe('HighlightPromoter', () => {
 
     describe('event handlers', () => {
         test('should add event listeners', () => {
-            jest.spyOn(document, 'addEventListener');
             jest.spyOn(defaults.pageEl, 'addEventListener');
 
             getWrapper();
 
-            expect(document.addEventListener).toHaveBeenCalledWith('selectionchange', expect.any(Function));
-            expect(document.addEventListener).toHaveBeenCalledWith('mouseup', expect.any(Function));
+            expect(defaults.pageEl.addEventListener).toHaveBeenCalledWith('mouseup', expect.any(Function));
             expect(defaults.pageEl.addEventListener).toHaveBeenCalledWith('mousedown', expect.any(Function));
-        });
-
-        test('should do nothing if onSelectionChange is undefined', () => {
-            getWrapper({ onSelectionChange: undefined });
-
-            defaults.pageEl.dispatchEvent(new MouseEvent('mousedown', { buttons: 1 }));
-            document.dispatchEvent(new MouseEvent('mouseup'));
-            document.dispatchEvent(new Event('selectionchange'));
-
-            jest.runAllTimers();
-
-            expect(defaults.onSelectionChange).not.toHaveBeenCalled();
-            expect(setIsSelecting).not.toHaveBeenCalled();
         });
 
         test('should call set isSelecting true when mousedown', () => {
@@ -67,33 +47,29 @@ describe('HighlightPromoter', () => {
 
             defaults.pageEl.dispatchEvent(new MouseEvent('mousedown', { buttons: 1 }));
 
-            expect(setIsSelecting).toHaveBeenCalledWith(true);
+            expect(isSelectingRef.current).toBe(true);
         });
 
-        test('should call onSelectionChange when mouseup', () => {
-            setIsSelecting(true);
+        test('should set isSelecting and timer when mouseup', () => {
+            isSelectingRef.current = true;
             getWrapper();
 
-            document.dispatchEvent(new MouseEvent('mouseup'));
+            defaults.pageEl.dispatchEvent(new MouseEvent('mouseup'));
+
+            expect(timerRef.current).not.toBe(null);
 
             jest.runAllTimers();
 
-            expect(defaults.onSelectionChange).toHaveBeenCalled();
-            expect(setIsSelecting).toHaveBeenCalledWith(false);
+            expect(isSelectingRef.current).toBe(false);
+            expect(timerRef.current).toBe(null);
         });
+    });
 
-        test.each`
-            selection                 | calledTimes
-            ${null}                   | ${1}
-            ${{ isCollapsed: true }}  | ${1}
-            ${{ isCollapsed: false }} | ${0}
-        `('should call onSelectionChange $calledTimes times when selectionchange', ({ selection, calledTimes }) => {
+    describe('render', () => {
+        test('should call useOutsideEvent', () => {
             getWrapper();
 
-            jest.spyOn(document, 'getSelection').mockImplementation(() => selection);
-
-            document.dispatchEvent(new Event('selectionchange'));
-            expect(defaults.onSelectionChange).toHaveBeenCalledTimes(calledTimes);
+            expect(useOutsideEvent).toHaveBeenCalled();
         });
     });
 });
