@@ -1,15 +1,24 @@
 import * as React from 'react';
+import noop from 'lodash/noop';
 import HighlightCreator from './HighlightCreator';
 import HighlightList from './HighlightList';
 import PopupReply from '../components/Popups/PopupReply';
 import SingleHighlightAnnotation from './SingleHighlightAnnotation';
-import { AnnotationHighlight } from '../@types';
+import { AnnotationHighlight, Rect } from '../@types';
 import { CreatorHighlight, CreatorStatus, Mode } from '../store';
 import './HighlightAnnotations.scss';
+
+type CreateArg = {
+    location: number;
+    message: string;
+    shapes: Rect[];
+    text?: string;
+};
 
 type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
+    createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
     location: number;
     message: string;
@@ -94,14 +103,13 @@ export default class HighlightAnnotations extends React.PureComponent<Props, Sta
     };
 
     handleSubmit = (): void => {
-        const { message, staged } = this.props;
+        const { createHighlight = noop, message, staged } = this.props;
 
         if (!staged) {
             return;
         }
 
-        // TODO: make API call to create highlight annotation
-        console.log({ ...(staged as CreatorHighlight), message });
+        createHighlight({ ...(staged as CreatorHighlight), message });
     };
 
     setHighlightRef = (highlightRef: HTMLAnchorElement): void => {

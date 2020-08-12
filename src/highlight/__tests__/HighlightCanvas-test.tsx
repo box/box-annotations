@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightCanvas, { Props } from '../HighlightCanvas';
+import { HighlightCanvasComponent as HighlightCanvas, Props } from '../HighlightCanvas';
 import { annotation as mockAnnotation } from '../__mocks__/data';
 
 describe('HighlightCanvas', () => {

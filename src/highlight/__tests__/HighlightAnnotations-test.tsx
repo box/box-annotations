@@ -3,6 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCreator from '../HighlightCreator';
 import { HighlightList } from '../HighlightList';
+import { CreatorStatus } from '../../store';
 
 jest.mock('../HighlightCreator');
 
@@ -10,7 +11,15 @@ describe('components/highlight/HighlightAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         isCreating: false,
+        location: 1,
+        message: 'test',
         setActiveAnnotationId: jest.fn(),
+        setMessage: jest.fn(),
+        setMode: jest.fn(),
+        setStaged: jest.fn(),
+        setStatus: jest.fn(),
+        staged: null,
+        status: CreatorStatus.init,
     };
 
     const getWrapper = (props = {}): ShallowWrapper<{}, {}, HighlightAnnotations> =>

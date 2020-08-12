@@ -144,4 +144,6 @@ class HighlightCanvas extends React.Component<Props> {
     }
 }
 
+export { HighlightCanvas as HighlightCanvasComponent };
+
 export default React.memo(HighlightCanvas);

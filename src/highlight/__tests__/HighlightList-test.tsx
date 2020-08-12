@@ -2,6 +2,7 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightAnnotation from '../HighlightAnnotation';
 import HighlightList, { Props } from '../HighlightList';
+import HighlightSvg from '../HighlightSvg';
 import useOutsideEvent from '../../common/useOutsideEvent';
 import { annotation as mockAnnotation } from '../__mocks__/data';
 
@@ -26,10 +27,10 @@ describe('HighlightList', () => {
             jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetIsListening]);
         });
 
-        test('should render svg and HighlightAnnotation', () => {
+        test('should render HighlightSvg and HighlightAnnotation', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.find('svg').hasClass('is-listening')).toBe(true);
+            expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(true);
             expect(wrapper.find(HighlightAnnotation).exists()).toBe(true);
         });
 
@@ -38,7 +39,7 @@ describe('HighlightList', () => {
 
             const wrapper = getWrapper();
 
-            expect(wrapper.find('svg').hasClass('is-listening')).toBe(false);
+            expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(false);
         });
 
         test('should call useOutsideEvent', () => {
