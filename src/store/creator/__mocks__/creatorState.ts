@@ -4,6 +4,7 @@ export default {
     cursor: 0,
     error: null,
     message: 'test',
+    selection: null,
     staged: {
         location: 1,
         shape: {

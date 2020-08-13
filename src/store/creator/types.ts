@@ -16,7 +16,13 @@ export type CreatorItem = {
 export type CreatorState = {
     cursor: number;
     error: SerializedError | null;
+    selection: SelectionItem | null;
     message: string;
     staged: CreatorItem | null;
     status: CreatorStatus;
+};
+
+export type SelectionItem = {
+    location: number;
+    rect: Rect;
 };

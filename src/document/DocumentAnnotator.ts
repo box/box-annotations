@@ -3,7 +3,8 @@ import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
-import { Mode } from '../store';
+import { getSelectionItem } from './docUtil';
+import { Mode, setSelectionAction } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -12,10 +13,31 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     managers: Map<number, Set<BaseManager>> = new Map();
 
+    selectionChangeTimer: NodeJS.Timer | null = null;
+
     constructor(options: Options) {
         super(options);
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
+        document.addEventListener('selectionchange', this.handleSelectionChange);
+    }
+
+    destroy(): void {
+        if (this.selectionChangeTimer) {
+            clearTimeout(this.selectionChangeTimer);
+        }
+
+        this.removeListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
+        document.removeEventListener('selectionchange', this.handleSelectionChange);
+
+        super.destroy();
+    }
+
+    init(scale = 1, rotation = 0): void {
+        super.init(scale, rotation);
+
+        // Clear previous selection
+        this.store.dispatch(setSelectionAction(null));
     }
 
     getAnnotatedElement(): HTMLElement | null | undefined {
@@ -73,6 +95,21 @@ export default class DocumentAnnotator extends BaseAnnotator {
         } else {
             this.annotatedEl.classList.remove('ba-is-highlighting');
         }
+    };
+
+    handleSelectionChange = (): void => {
+        if (this.selectionChangeTimer) {
+            clearTimeout(this.selectionChangeTimer);
+        }
+
+        // Clear current selection immediately
+        this.store.dispatch(setSelectionAction(null));
+
+        // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
+        this.selectionChangeTimer = setTimeout(() => {
+            this.store.dispatch(setSelectionAction(getSelectionItem()));
+            this.selectionChangeTimer = null;
+        }, 300);
     };
 
     render(): void {
