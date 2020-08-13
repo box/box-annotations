@@ -5,6 +5,7 @@ import { AnnotationHighlight } from '../@types';
 import {
     AppState,
     CreatorHighlight,
+    CreatorItem,
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
@@ -30,6 +31,10 @@ export type Props = {
     status: CreatorStatus;
 };
 
+export const isCreatorStagedHighlight = (staged: CreatorItem | null): staged is CreatorHighlight => {
+    return staged?.target.type === 'highlight';
+};
+
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     const staged = getCreatorStagedForLocation(state, location);
 
@@ -38,7 +43,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
         isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
         message: getCreatorMessage(state),
-        staged: (staged as CreatorHighlight)?.shapes ? (staged as CreatorHighlight) : null,
+        staged: isCreatorStagedHighlight(staged) ? staged : null,
         status: getCreatorStatus(state),
     };
 };

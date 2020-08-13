@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { AnnotationRegion } from '../@types';
 import {
     AppState,
+    CreatorItem,
     CreatorRegion,
     CreatorStatus,
     getActiveAnnotationId,
@@ -31,6 +32,10 @@ export type Props = {
     status: CreatorStatus;
 };
 
+export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorRegion => {
+    return staged?.target.type === 'region';
+};
+
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     const staged = getCreatorStagedForLocation(state, location);
 
@@ -40,7 +45,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         isCreating: getAnnotationMode(state) === 'region',
         isRotated: !!getRotation(state),
         message: getCreatorMessage(state),
-        staged: (staged as CreatorRegion)?.shape ? (staged as CreatorRegion) : null,
+        staged: isCreatorStagedRegion(staged) ? staged : null,
         status: getCreatorStatus(state),
     };
 };

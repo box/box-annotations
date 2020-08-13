@@ -3,14 +3,15 @@ import { bdlYellorange, black, white } from 'box-ui-elements/es/styles/variables
 import { AnnotationHighlight, Rect } from '../@types';
 import './HighlightCanvas.scss';
 
+type DrawableHighlight = Partial<AnnotationHighlight> & Pick<AnnotationHighlight, 'target'>;
+
 export type Props = {
     activeId: string | null;
-    annotations: Pick<AnnotationHighlight, 'id' | 'target'>[];
+    annotations: DrawableHighlight[] | DrawableHighlight;
 };
 
-class HighlightCanvas extends React.Component<Props> {
+export default class HighlightCanvas extends React.PureComponent<Props> {
     static defaultProps = {
-        activeId: null,
         annotations: [],
     };
 
@@ -91,12 +92,13 @@ class HighlightCanvas extends React.Component<Props> {
         const context = canvasRef && canvasRef.getContext('2d');
         const canvasHeight = canvasRef?.height ?? 0;
         const canvasWidth = canvasRef?.width ?? 0;
+        const annotationsArray = !Array.isArray(annotations) ? [annotations] : annotations;
 
         if (!context) {
             return;
         }
 
-        annotations.forEach(annotation => {
+        annotationsArray.forEach(annotation => {
             const { id, target } = annotation;
             const { shapes } = target;
 
@@ -143,7 +145,3 @@ class HighlightCanvas extends React.Component<Props> {
         return <canvas ref={this.canvasRef} className="ba-HighlightCanvas" />;
     }
 }
-
-export { HighlightCanvas as HighlightCanvasComponent };
-
-export default React.memo(HighlightCanvas);

@@ -5,7 +5,7 @@ import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorItem, CreatorRegion, CreatorStatus } from '../store/creator';
+import { CreatorRegion, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
     message: string;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
-    setStaged: (staged: CreatorItem | null) => void;
+    setStaged: (staged: CreatorRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorRegion | null;
     status: CreatorStatus;
@@ -63,7 +63,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus } = this.props;
-        setStaged({ location, shape });
+        setStaged({ target: { location: { value: location, type: 'page' }, shape, type: 'region' } });
         setStatus(CreatorStatus.staged);
     };
 
@@ -74,7 +74,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
             return;
         }
 
-        createRegion({ ...(staged as CreatorRegion), message });
+        createRegion({ ...staged, message });
     };
 
     setRectRef = (rectRef: RegionRectRef): void => {
@@ -110,7 +110,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {canCreate && staged && (
                     <div className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setRectRef} isActive shape={(staged as CreatorRegion).shape} />
+                        <RegionRect ref={this.setRectRef} isActive shape={staged?.target.shape} />
                     </div>
                 )}
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightAnnotation from '../HighlightAnnotation';
+import HighlightTarget from '../HighlightTarget';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
     useState: jest.fn(),
 }));
 
-describe('HighlightAnnotation', () => {
+describe('HighlightTarget', () => {
     const defaults = {
         annotationId: '123',
         onSelect: jest.fn(),
@@ -23,7 +23,7 @@ describe('HighlightAnnotation', () => {
         ],
     };
     const mockSetIsHover = jest.fn();
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotation {...defaults} {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...defaults} {...props} />);
 
     beforeEach(() => {
         jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);

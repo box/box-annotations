@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import HighlightAnnotation from './HighlightAnnotation';
 import HighlightCanvas from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
+import HighlightTarget from './HighlightTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationHighlight } from '../@types';
 import { isValidHighlight, sortHighlight } from './highlightUtil';
@@ -35,7 +35,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
                 data-resin-component="highlightList"
             >
                 {sortedAnnotations.map(({ id, target }) => (
-                    <HighlightAnnotation key={id} annotationId={id} onSelect={onSelect} rects={target.shapes} />
+                    <HighlightTarget key={id} annotationId={id} onSelect={onSelect} rects={target.shapes} />
                 ))}
             </HighlightSvg>
         </>

@@ -8,6 +8,6 @@ export const getCreatorMessage = (state: State): string => state.creator.message
 export const getCreatorStaged = (state: State): CreatorItem | null => state.creator.staged;
 export const getCreatorStagedForLocation = (state: State, location: number): CreatorItem | null => {
     const staged = getCreatorStaged(state);
-    return staged && staged.location === location ? staged : null;
+    return staged && staged.target.location.value === location ? staged : null;
 };
 export const getCreatorStatus = (state: State): CreatorStatus => state.creator.status;
