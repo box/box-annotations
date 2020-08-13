@@ -3,12 +3,8 @@ import { SelectionItem } from '../store';
 /**
  * Finds the closest ancestor DOM element with the specified class.
  */
-export function findClosestElWithClass(element: HTMLElement | null, className: string): HTMLElement | null {
-    for (
-        let el = element;
-        el && el !== ((document as unknown) as HTMLElement);
-        el = el.parentNode as HTMLElement | null
-    ) {
+export function findClosestElWithClass(element: Element | null, className: string): Element | null {
+    for (let el = element; el && el !== ((document as unknown) as Element); el = el.parentNode as Element | null) {
         if (el.classList && el.classList.contains(className)) {
             return el;
         }
@@ -21,7 +17,7 @@ export function findClosestElWithClass(element: HTMLElement | null, className: s
  * Returns the page element and page number that the element is on.
  * If not found return null/-1
  */
-export function getPageInfo(element: HTMLElement): { pageEl: HTMLElement | null; page: number } {
+export function getPageInfo(element: Element | null): { pageEl: Element | null; page: number } {
     const pageEl = findClosestElWithClass(element, 'page') || null;
     const page = parseInt((pageEl && pageEl.getAttribute('data-page-number')) || '-1', 10);
 
@@ -30,12 +26,11 @@ export function getPageInfo(element: HTMLElement): { pageEl: HTMLElement | null;
 
 export function getRange(): Range | null {
     const selection = window.getSelection();
-    if (!selection?.anchorNode || !selection?.focusNode) {
+    if (!selection || selection.isCollapsed) {
         return null;
     }
-    const range = selection.getRangeAt(0);
 
-    return range.collapsed ? null : range;
+    return selection.getRangeAt(0);
 }
 
 export function getSelectionItem(): SelectionItem | null {
@@ -45,10 +40,10 @@ export function getSelectionItem(): SelectionItem | null {
         return null;
     }
 
-    const { page: startPage } = getPageInfo(range.startContainer as HTMLElement);
-    const { page: endPage } = getPageInfo(range.endContainer as HTMLElement);
+    const { page: startPage } = getPageInfo(range.startContainer as Element);
+    const { page: endPage } = getPageInfo(range.endContainer as Element);
 
-    if (startPage !== endPage) {
+    if (startPage < 1 || endPage < 1 || startPage !== endPage) {
         return null;
     }
 

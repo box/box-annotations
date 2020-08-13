@@ -3,7 +3,7 @@ import state from '../__mocks__/creatorState';
 import { createAnnotationAction } from '../../annotations';
 import { CreatorStatus } from '../types';
 import { NewAnnotation } from '../../../@types';
-import { setCursorAction, setMessageAction, setStagedAction, setStatusAction } from '../actions';
+import { setCursorAction, setMessageAction, setSelectionAction, setStagedAction, setStatusAction } from '../actions';
 
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -73,6 +73,15 @@ describe('store/creator/reducer', () => {
             const newState = reducer(state, setCursorAction(2));
 
             expect(newState.cursor).toEqual(2);
+        });
+    });
+
+    describe('setSelection', () => {
+        test('should set selection in state', () => {
+            const payload = { ...state.selection, location: 2 };
+            const newState = reducer(state, setSelectionAction(payload));
+
+            expect(newState.selection).toEqual(payload);
         });
     });
 });

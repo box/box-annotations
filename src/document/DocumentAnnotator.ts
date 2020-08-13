@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
@@ -8,12 +9,14 @@ import { Mode, setSelectionAction } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
+const TEXT_LAYER_ENHANCEMENT = 300;
+
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
     managers: Map<number, Set<BaseManager>> = new Map();
 
-    selectionChangeTimer: NodeJS.Timer | null = null;
+    selectionChangeTimer: number | null = null;
 
     constructor(options: Options) {
         super(options);
@@ -97,20 +100,23 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
     };
 
-    handleSelectionChange = (): void => {
-        if (this.selectionChangeTimer) {
-            clearTimeout(this.selectionChangeTimer);
-        }
+    handleSelectionChange = debounce(
+        (): void => {
+            // Clear current selection immediately
+            this.store.dispatch(setSelectionAction(null));
 
-        // Clear current selection immediately
-        this.store.dispatch(setSelectionAction(null));
-
-        // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
-        this.selectionChangeTimer = setTimeout(() => {
-            this.store.dispatch(setSelectionAction(getSelectionItem()));
-            this.selectionChangeTimer = null;
-        }, 300);
-    };
+            // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
+            this.selectionChangeTimer = window.setTimeout(() => {
+                this.store.dispatch(setSelectionAction(getSelectionItem()));
+                this.selectionChangeTimer = null;
+            }, TEXT_LAYER_ENHANCEMENT);
+        },
+        TEXT_LAYER_ENHANCEMENT,
+        {
+            leading: true,
+            trailing: false,
+        },
+    );
 
     render(): void {
         this.getPages()

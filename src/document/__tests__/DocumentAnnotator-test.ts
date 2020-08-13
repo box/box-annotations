@@ -3,12 +3,18 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { fetchAnnotationsAction } from '../../store';
+import { fetchAnnotationsAction, setSelectionAction } from '../../store';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
+jest.mock('../docUtil', () => ({
+    getSelectionItem: () => 'selection',
+}));
+
+jest.useFakeTimers();
 
 describe('DocumentAnnotator', () => {
     const container = document.createElement('div');
@@ -64,6 +70,42 @@ describe('DocumentAnnotator', () => {
         if (annotator) {
             annotator.destroy();
         }
+    });
+
+    describe('constructor()', () => {
+        test('should add selectionchange event listener', () => {
+            jest.spyOn(document, 'addEventListener');
+
+            annotator = getAnnotator();
+
+            expect(document.addEventListener).toHaveBeenCalledWith('selectionchange', annotator.handleSelectionChange);
+        });
+    });
+
+    describe('destroy()', () => {
+        test('should call clearTimeout if timer is not null', () => {
+            annotator.selectionChangeTimer = 1;
+
+            annotator.destroy();
+
+            expect(clearTimeout).toHaveBeenCalledWith(1);
+        });
+
+        test('should remove event handlers', () => {
+            jest.spyOn(annotator, 'removeListener');
+            jest.spyOn(document, 'removeEventListener');
+
+            annotator.destroy();
+
+            expect(annotator.removeListener).toHaveBeenCalledWith(
+                'annotations_mode_change',
+                annotator.handleChangeMode,
+            );
+            expect(document.removeEventListener).toHaveBeenCalledWith(
+                'selectionchange',
+                annotator.handleSelectionChange,
+            );
+        });
     });
 
     describe('event handlers', () => {
@@ -156,12 +198,36 @@ describe('DocumentAnnotator', () => {
         });
     });
 
+    describe('handleSelectionChange()', () => {
+        test('should clear selection and dispatch new selection', () => {
+            jest.spyOn(annotator.store, 'dispatch');
+
+            annotator.handleSelectionChange();
+
+            expect(annotator.store.dispatch).toHaveBeenLastCalledWith(setSelectionAction(null));
+            expect(annotator.selectionChangeTimer).not.toBe(null);
+
+            jest.runAllTimers();
+
+            expect(annotator.store.dispatch).toHaveBeenLastCalledWith({ payload: 'selection', type: 'SET_SELECTION' });
+            expect(annotator.selectionChangeTimer).toBe(null);
+        });
+    });
+
     describe('init()', () => {
         test('should set the root and annotated element based on class name', () => {
             annotator.init(5);
 
             expect(annotator.containerEl).toBe(container);
             expect(annotator.annotatedEl).toBe(container.querySelector('.bp-doc'));
+        });
+
+        test('should clear previous selection', () => {
+            jest.spyOn(annotator.store, 'dispatch');
+
+            annotator.init();
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(setSelectionAction(null));
         });
     });
 
