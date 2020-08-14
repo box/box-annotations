@@ -36,8 +36,14 @@ describe('RegionAnnotations', () => {
     });
     const getRectRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorItem => ({
-        location: 1,
-        shape: getRect(),
+        target: {
+            location: {
+                type: 'page' as const,
+                value: 1,
+            },
+            shape: getRect(),
+            type: 'region' as const,
+        },
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
 
@@ -92,8 +98,14 @@ describe('RegionAnnotations', () => {
                 instance.handleStop(shape);
 
                 expect(defaults.setStaged).toHaveBeenCalledWith({
-                    location: defaults.location,
-                    shape,
+                    target: {
+                        location: {
+                            type: 'page',
+                            value: defaults.location,
+                        },
+                        shape,
+                        type: 'region',
+                    },
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
@@ -140,9 +152,15 @@ describe('RegionAnnotations', () => {
             const wrapper = getWrapper({
                 isCreating: true,
                 staged: {
-                    location: 1,
-                    message: null,
-                    shape,
+                    target: {
+                        location: {
+                            type: 'page',
+                            value: 1,
+                        },
+                        message: null,
+                        shape,
+                        type: 'region',
+                    },
                 },
             });
 

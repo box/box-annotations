@@ -9,9 +9,15 @@ import { Rect } from '../../@types';
 
 jest.mock('../HighlightCreator');
 
-describe('components/highlight/HighlightAnnotations', () => {
+jest.mock('react', () => ({
+    ...jest.requireActual('react'),
+    useState: jest.fn(),
+}));
+
+describe('HighlightAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
+        annotations: [],
         createHighlight: jest.fn(),
         isCreating: false,
         location: 1,
@@ -32,16 +38,22 @@ describe('components/highlight/HighlightAnnotations', () => {
         x: 10,
         y: 10,
     });
-    const getHighlightRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorHighlight => ({
-        location: 1,
-        shapes: [getRect()],
-        type: 'highlight',
+        target: {
+            location: { value: 1, type: 'page' },
+            shapes: [getRect()],
+            type: 'highlight',
+        },
     });
-    const getWrapper = (props = {}): ShallowWrapper<{}, {}, HighlightAnnotations> =>
-        shallow(<HighlightAnnotations {...defaults} {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotations {...defaults} {...props} />);
 
     describe('render()', () => {
+        const mockSetHighlightRef = jest.fn();
+
+        beforeEach(() => {
+            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
+        });
+
         test('should render a RegionCreator if in creation mode', () => {
             const wrapper = getWrapper({ isCreating: true });
             const creator = wrapper.find(HighlightCreator);
@@ -55,16 +67,16 @@ describe('components/highlight/HighlightAnnotations', () => {
 
             expect(wrapper.find(HighlightList).exists()).toBe(true);
             expect(wrapper.exists(HighlightCreator)).toBe(false);
-            // expect(wrapper.exists(SingleHighlightAnnotation)).toBe(false);
+            expect(wrapper.exists('.ba-HighlightAnnotations-target')).toBe(false);
             expect(wrapper.exists(PopupReply)).toBe(false);
         });
 
-        test('should render a SingleHighlightAnnotation if staged object exists', () => {
-            // const wrapper = getWrapper({
-            //     isCreating: true,
-            //     staged: getStaged(),
-            // });
-            // expect(wrapper.exists(SingleHighlightAnnotation)).toBe(true);
+        test('should render a staged highlight if staged object exists', () => {
+            const wrapper = getWrapper({
+                isCreating: true,
+                staged: getStaged(),
+            });
+            expect(wrapper.exists('.ba-HighlightAnnotations-target')).toBe(true);
         });
 
         test.each`
@@ -78,10 +90,6 @@ describe('components/highlight/HighlightAnnotations', () => {
                 isCreating: true,
                 staged: getStaged(),
                 status,
-            });
-
-            wrapper.setState({
-                highlightRef: getHighlightRef(),
             });
 
             expect(wrapper.exists(PopupReply)).toBe(showReply);
@@ -98,9 +106,6 @@ describe('components/highlight/HighlightAnnotations', () => {
                 staged: getStaged(),
                 status,
             });
-            wrapper.setState({
-                highlightRef: getHighlightRef(),
-            });
 
             expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
@@ -115,25 +120,23 @@ describe('components/highlight/HighlightAnnotations', () => {
     describe('handleAnnotationActive()', () => {
         test('should call setActiveAnnotationId', () => {
             const wrapper = getWrapper();
-            const instance = wrapper.instance();
-
-            instance.handleAnnotationActive('123');
+            wrapper.find(HighlightList).simulate('select', '123');
 
             expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
         });
     });
 
     describe('event handlers', () => {
-        let wrapper: ShallowWrapper<{}, {}, HighlightAnnotations>;
-        let instance: InstanceType<typeof HighlightAnnotations>;
+        const mockSetHighlightRef = jest.fn();
+        let wrapper: ShallowWrapper;
 
         beforeEach(() => {
-            wrapper = getWrapper({ staged: getStaged() });
-            instance = wrapper.instance();
+            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
+            wrapper = getWrapper({ isCreating: true, staged: getStaged(), status: CreatorStatus.staged });
         });
 
         test('handleCancel()', () => {
-            instance.handleCancel();
+            wrapper.find(PopupReply).simulate('cancel');
 
             expect(defaults.setMessage).toHaveBeenCalledWith('');
             expect(defaults.setStaged).toHaveBeenCalledWith(null);
@@ -142,13 +145,13 @@ describe('components/highlight/HighlightAnnotations', () => {
 
         describe('handleChange', () => {
             test('should set the staged state with the new message', () => {
-                instance.handleChange('test');
+                wrapper.find(PopupReply).simulate('change', 'foo');
 
-                expect(defaults.setMessage).toHaveBeenCalledWith('test');
+                expect(defaults.setMessage).toHaveBeenCalledWith('foo');
             });
 
             test('should set the staged state with empty string', () => {
-                instance.handleChange();
+                wrapper.find(PopupReply).simulate('change');
 
                 expect(defaults.setMessage).toHaveBeenCalledWith('');
             });
@@ -156,21 +159,12 @@ describe('components/highlight/HighlightAnnotations', () => {
 
         describe('handleSubmit', () => {
             test('should save the staged annotation', () => {
-                instance.handleSubmit();
+                wrapper.find(PopupReply).simulate('submit');
 
                 expect(defaults.createHighlight).toHaveBeenCalledWith({
                     ...getStaged(),
                     message: defaults.message,
                 });
-            });
-
-            test('should not save if staged is falsy', () => {
-                wrapper = getWrapper();
-                instance = wrapper.instance();
-
-                instance.handleSubmit();
-
-                expect(defaults.createHighlight).not.toHaveBeenCalled();
             });
         });
     });

@@ -6,7 +6,7 @@ import './HighlightCanvas.scss';
 type DrawableHighlight = Partial<AnnotationHighlight> & Pick<AnnotationHighlight, 'target'>;
 
 export type Props = {
-    activeId: string | null;
+    activeId?: string | null;
     annotations: DrawableHighlight[] | DrawableHighlight;
 };
 
