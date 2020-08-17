@@ -92,7 +92,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
         const context = canvasRef && canvasRef.getContext('2d');
         const canvasHeight = canvasRef?.height ?? 0;
         const canvasWidth = canvasRef?.width ?? 0;
-        const annotationsArray = !Array.isArray(annotations) ? [annotations] : annotations;
+        const annotationsArray = Array.isArray(annotations) ? annotations : [annotations];
 
         if (!context) {
             return;

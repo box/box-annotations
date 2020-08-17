@@ -16,6 +16,7 @@ type Props = {
     isRotated: boolean;
     location: number;
     message: string;
+    resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
     setStaged: (staged: CreatorRegion | null) => void;
@@ -44,15 +45,13 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     handleCancel = (): void => {
-        const { setMessage, setStaged, setStatus } = this.props;
-        setMessage('');
-        setStaged(null);
-        setStatus(CreatorStatus.init);
+        const { resetCreator } = this.props;
+        resetCreator();
     };
 
-    handleChange = (text?: string): void => {
+    handleChange = (text = ''): void => {
         const { setMessage } = this.props;
-        setMessage(text || '');
+        setMessage(text);
     };
 
     handleStart = (): void => {

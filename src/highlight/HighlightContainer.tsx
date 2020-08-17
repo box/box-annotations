@@ -14,12 +14,14 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     Mode,
+    resetCreatorAction,
     setActiveAnnotationIdAction,
     setMessageAction,
     setStagedAction,
     setStatusAction,
     toggleAnnotationModeAction,
 } from '../store';
+import { createHighlightAction } from './actions';
 import { isHighlight } from './highlightUtil';
 
 export type Props = {
@@ -49,6 +51,8 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 };
 
 export const mapDispatchToProps = {
+    createHighlight: createHighlightAction,
+    resetCreator: resetCreatorAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setMessage: setMessageAction,
     setMode: toggleAnnotationModeAction,

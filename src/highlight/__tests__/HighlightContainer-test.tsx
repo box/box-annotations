@@ -1,20 +1,11 @@
-import * as React from 'react';
-import { mapStateToProps } from '../HighlightContainer';
-import { getAnnotationsForLocation, getAnnotationMode, getCreatorStagedForLocation, AppState } from '../../store';
+import { AppState, getAnnotationsForLocation, getAnnotationMode, getCreatorStagedForLocation, Mode } from '../../store';
 import { annotation as highlightAnnotation, target as highlightTarget } from '../__mocks__/data';
 import { annotation as regionAnnotation, target as regionTarget } from '../../region/__mocks__/data';
+import { mapStateToProps } from '../HighlightContainer';
 
 jest.mock('../../common/withProviders');
-jest.mock('../HighlightAnnotations', () => jest.fn().mockImplementation(() => <div className="foo" />));
-jest.mock('../../store', () => ({
-    ...jest.requireActual('../../store'),
-    getActiveAnnotationId: jest.fn(),
-    getAnnotationsForLocation: jest.fn().mockReturnValue([]),
-    getAnnotationMode: jest.fn(),
-    getCreatorMessage: jest.fn(),
-    getCreatorStagedForLocation: jest.fn(),
-    getCreatorStatus: jest.fn(),
-}));
+jest.mock('../HighlightAnnotations');
+jest.mock('../../store');
 
 const stagedHighlight = {
     target: highlightTarget,
@@ -34,10 +25,10 @@ describe('HighlightContainer', () => {
         });
 
         test.each`
-            mode           | isCreating
-            ${'none'}      | ${false}
-            ${'highlight'} | ${true}
-            ${'region'}    | ${false}
+            mode              | isCreating
+            ${Mode.NONE}      | ${false}
+            ${Mode.HIGHLIGHT} | ${true}
+            ${Mode.REGION}    | ${false}
         `('should pass down isCreating as $isCreating if mode is $mode', ({ mode, isCreating }) => {
             (getAnnotationMode as jest.Mock).mockReturnValue(mode);
             const props = mapStateToProps({} as AppState, { location: 1 });

@@ -22,6 +22,7 @@ describe('HighlightAnnotations', () => {
         isCreating: false,
         location: 1,
         message: 'test',
+        resetCreator: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setMode: jest.fn(),
@@ -138,9 +139,7 @@ describe('HighlightAnnotations', () => {
         test('handleCancel()', () => {
             wrapper.find(PopupReply).simulate('cancel');
 
-            expect(defaults.setMessage).toHaveBeenCalledWith('');
-            expect(defaults.setStaged).toHaveBeenCalledWith(null);
-            expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
+            expect(defaults.resetCreator).toHaveBeenCalled();
         });
 
         describe('handleChange', () => {

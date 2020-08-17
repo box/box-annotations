@@ -7,12 +7,9 @@ import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
+import { CreateArg } from './actions';
 import { CreatorHighlight, CreatorStatus, Mode } from '../store';
 import './HighlightAnnotations.scss';
-
-export interface CreateArg extends Pick<AnnotationHighlight, 'target'> {
-    message: string;
-}
 
 type Props = {
     activeAnnotationId: string | null;
@@ -21,6 +18,7 @@ type Props = {
     isCreating: boolean;
     location: number;
     message: string;
+    resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
     setMode: (mode: Mode) => void;
@@ -38,6 +36,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         isCreating = false,
         location,
         message,
+        resetCreator,
         setActiveAnnotationId,
         setMessage,
         setMode,
@@ -56,13 +55,11 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     };
 
     const handleCancel = (): void => {
-        setMessage('');
-        setStaged(null);
-        setStatus(CreatorStatus.init);
+        resetCreator();
     };
 
-    const handleChange = (text?: string): void => {
-        setMessage(text || '');
+    const handleChange = (text = ''): void => {
+        setMessage(text);
     };
 
     // TODO: For testing purposes only

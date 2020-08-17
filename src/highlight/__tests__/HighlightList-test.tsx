@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightAnnotation from '../HighlightTarget';
-import HighlightList, { isValidHighlight, getHighlightArea, Props, sortHighlight } from '../HighlightList';
+import HighlightList, { filterHighlight, getHighlightArea, Props, sortHighlight } from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import useOutsideEvent from '../../common/useOutsideEvent';
 import { annotation as mockAnnotation, rect as mockRect, target as mockTarget } from '../__mocks__/data';
@@ -52,7 +52,7 @@ describe('HighlightList', () => {
         });
     });
 
-    describe('isValidHighlight()', () => {
+    describe('filterHighlight()', () => {
         test.each`
             height | width | x     | y     | isValid
             ${10}  | ${20} | ${5}  | ${5}  | ${true}
@@ -74,7 +74,7 @@ describe('HighlightList', () => {
                 target,
             };
 
-            expect(isValidHighlight(highlight)).toBe(isValid);
+            expect(filterHighlight(highlight)).toBe(isValid);
         });
     });
 

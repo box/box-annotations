@@ -12,6 +12,7 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     getRotation,
+    resetCreatorAction,
     setActiveAnnotationIdAction,
     setMessageAction,
     setStagedAction,
@@ -52,6 +53,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 
 export const mapDispatchToProps = {
     createRegion: createRegionAction,
+    resetCreator: resetCreatorAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setMessage: setMessageAction,
     setStaged: setStagedAction,

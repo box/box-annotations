@@ -4,7 +4,7 @@ import HighlightCanvas from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
-import { AnnotationHighlight, Rect } from '../@types';
+import { AnnotationHighlight, Rect, TargetHighlight } from '../@types';
 import { checkValue } from '../utils/util';
 import './HighlightList.scss';
 
@@ -15,7 +15,7 @@ export type Props = {
     onSelect?: (annotationId: string | null) => void;
 };
 
-export function isValidHighlight({ target }: Pick<AnnotationHighlight, 'target'>): boolean {
+export function filterHighlight({ target }: { target: TargetHighlight }): boolean {
     const { shapes = [] } = target;
 
     return shapes.reduce((isValid: boolean, rect: Rect) => {
@@ -29,8 +29,8 @@ export function getHighlightArea(shapes: Rect[]): number {
 }
 
 export function sortHighlight(
-    { target: targetA }: Pick<AnnotationHighlight, 'target'>,
-    { target: targetB }: Pick<AnnotationHighlight, 'target'>,
+    { target: targetA }: { target: TargetHighlight },
+    { target: targetB }: { target: TargetHighlight },
 ): number {
     const { shapes: shapesA } = targetA;
     const { shapes: shapesB } = targetB;
@@ -42,7 +42,7 @@ export function sortHighlight(
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const rootElRef = React.createRef<SVGSVGElement>();
-    const sortedAnnotations = annotations.filter(isValidHighlight).sort(sortHighlight);
+    const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('mousedown', rootElRef, (): void => {
