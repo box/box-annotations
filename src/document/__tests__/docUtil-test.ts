@@ -1,4 +1,4 @@
-import { findClosestElWithClass, getPageInfo } from '../docUtil';
+import { findClosestElWithClass, getPageNumber } from '../docUtil';
 
 describe('docUtil', () => {
     describe('findClosestElWithClass()', () => {
@@ -26,19 +26,14 @@ describe('docUtil', () => {
                     <div class="foo" />
                 </div>`;
 
-        it('should return page element and page number that the specified element is on', () => {
+        it('should return page number that the specified element is on', () => {
             const fooEl = rootElement.querySelector('.foo');
-            const pageEl = rootElement.querySelector('.page');
-            const result = getPageInfo(fooEl);
-            expect(result.pageEl).toEqual(pageEl);
-            expect(result.page).toEqual(2);
+            expect(getPageNumber(fooEl)).toEqual(2);
         });
 
-        it('should return no page element and -1 page number if no page is found', () => {
+        it('should return undefined if no page is found', () => {
             const barEl = rootElement.querySelector('.bar');
-            const result = getPageInfo(barEl);
-            expect(result.pageEl).toBeNull();
-            expect(result.page).toEqual(-1);
+            expect(getPageNumber(barEl)).toBeUndefined();
         });
     });
 });

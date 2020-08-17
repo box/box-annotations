@@ -16,7 +16,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     managers: Map<number, Set<BaseManager>> = new Map();
 
-    selectionChangeTimer: number | null = null;
+    selectionChangeTimer?: number | undefined;
 
     constructor(options: Options) {
         super(options);
@@ -102,17 +102,20 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     handleSelectionChange = debounce(
         (): void => {
-            // Clear current selection immediately
+            // Clear previous selection immediately
             this.store.dispatch(setSelectionAction(null));
 
             // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
             this.selectionChangeTimer = window.setTimeout(() => {
                 this.store.dispatch(setSelectionAction(getSelectionItem()));
-                this.selectionChangeTimer = null;
+                this.selectionChangeTimer = undefined;
             }, TEXT_LAYER_ENHANCEMENT);
         },
         TEXT_LAYER_ENHANCEMENT,
         {
+            // The previous selection needs to be cleared immediately when selection changes
+            // Below options make sure the function is triggered on the leading edge of the timeout,
+            // instead of on the trailing edge
             leading: true,
             trailing: false,
         },

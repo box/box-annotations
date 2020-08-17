@@ -38,10 +38,11 @@ describe('highlight/highlightUtil', () => {
 
     describe('getRange()', () => {
         test.each`
-            selection                        | result
-            ${null}                          | ${null}
-            ${{ isCollapsed: true }}         | ${null}
-            ${{ getRangeAt: () => 'range' }} | ${'range'}
+            selection                                       | result
+            ${null}                                         | ${null}
+            ${{ isCollapsed: true, type: 'Range' }}         | ${null}
+            ${{ type: 'Caret' }}                            | ${null}
+            ${{ getRangeAt: () => 'range', type: 'Range' }} | ${'range'}
         `('should return range as $result', ({ selection, result }) => {
             jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection);
 
@@ -68,8 +69,10 @@ describe('highlight/highlightUtil', () => {
                     range.setStart(rootElement.querySelector(startClass) as Node, 0);
                     range.setEnd(rootElement.querySelector(endClass) as Node, 0);
                     range.getBoundingClientRect = jest.fn().mockReturnValueOnce({});
+                    range.getClientRects = jest.fn().mockReturnValueOnce([]);
                     return range;
                 },
+                type: 'Range',
             } as unknown) as Selection;
         };
 

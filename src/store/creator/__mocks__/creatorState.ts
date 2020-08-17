@@ -4,16 +4,6 @@ export default {
     cursor: 0,
     error: null,
     message: 'test',
-    selection: {
-        location: 1,
-        rect: {
-            height: 10,
-            width: 10,
-            type: 'rect' as const,
-            x: 100,
-            y: 100,
-        },
-    },
     staged: {
         location: 1,
         shape: {

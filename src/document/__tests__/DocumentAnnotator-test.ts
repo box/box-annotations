@@ -205,12 +205,12 @@ describe('DocumentAnnotator', () => {
             annotator.handleSelectionChange();
 
             expect(annotator.store.dispatch).toHaveBeenLastCalledWith(setSelectionAction(null));
-            expect(annotator.selectionChangeTimer).not.toBe(null);
+            expect(annotator.selectionChangeTimer).not.toBeUndefined();
 
             jest.runAllTimers();
 
             expect(annotator.store.dispatch).toHaveBeenLastCalledWith({ payload: 'selection', type: 'SET_SELECTION' });
-            expect(annotator.selectionChangeTimer).toBe(null);
+            expect(annotator.selectionChangeTimer).toBeUndefined();
         });
     });
 

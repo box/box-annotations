@@ -1,13 +1,6 @@
 import creatorState from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
-import {
-    getCreatorMessage,
-    getCreatorStaged,
-    getCreatorStagedForLocation,
-    getCreatorStatus,
-    getSelection,
-    getSelectionForLocation,
-} from '../selectors';
+import { getCreatorMessage, getCreatorStaged, getCreatorStagedForLocation, getCreatorStatus } from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { creator: creatorState };
@@ -45,30 +38,6 @@ describe('store/annotations/selectors', () => {
     describe('getCreatorMessage', () => {
         test('should return creator message', () => {
             expect(getCreatorMessage(state)).toEqual('test');
-        });
-    });
-
-    describe('getSelection', () => {
-        test('should return the current selection item', () => {
-            expect(getSelection(state)).toMatchInlineSnapshot(`
-                Object {
-                  "location": 1,
-                  "rect": Object {
-                    "height": 10,
-                    "type": "rect",
-                    "width": 10,
-                    "x": 100,
-                    "y": 100,
-                  },
-                }
-            `);
-        });
-    });
-
-    describe('getSelectionForLocation', () => {
-        test('should return selection for a given location', () => {
-            expect(getSelectionForLocation(state, 1)).toMatchObject({ location: 1 });
-            expect(getSelectionForLocation(state, 2)).toEqual(null);
         });
     });
 });
