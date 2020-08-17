@@ -10,7 +10,7 @@ jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
-jest.mock('../docUtil', () => ({
+jest.mock('../../highlight/highlightUtil.ts', () => ({
     getSelectionItem: () => 'selection',
 }));
 

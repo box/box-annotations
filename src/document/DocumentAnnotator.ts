@@ -4,7 +4,7 @@ import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
-import { getSelectionItem } from './docUtil';
+import { getSelectionItem } from '../highlight/highlightUtil';
 import { Mode, setSelectionAction } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
