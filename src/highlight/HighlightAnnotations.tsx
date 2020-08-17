@@ -8,7 +8,7 @@ import HighlightTarget from './HighlightTarget';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorHighlight, CreatorStatus, Mode } from '../store';
+import { CreatorItemHighlight, CreatorStatus, Mode } from '../store';
 import './HighlightAnnotations.scss';
 
 type Props = {
@@ -22,9 +22,9 @@ type Props = {
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
     setMode: (mode: Mode) => void;
-    setStaged: (staged: CreatorHighlight | null) => void;
+    setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    staged?: CreatorHighlight | null;
+    staged?: CreatorItemHighlight | null;
     status: CreatorStatus;
 };
 
@@ -34,14 +34,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         annotations = [],
         createHighlight = noop,
         isCreating = false,
-        location,
         message,
         resetCreator,
         setActiveAnnotationId,
         setMessage,
-        setMode,
-        setStaged,
-        setStatus,
         staged,
         status,
     } = props;
@@ -62,24 +58,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setMessage(text);
     };
 
-    // TODO: For testing purposes only
-    const handleClick = (): void => {
-        // Page 1 "troublesome personality" of the Van Gogh doc
-        const shapes = [
-            {
-                height: 2.0239190432,
-                width: 21.1208338959,
-                x: 38.7415889335,
-                y: 75.0991835327,
-                type: 'rect' as const,
-            },
-        ];
-
-        setMode(Mode.HIGHLIGHT);
-        setStatus(CreatorStatus.staged);
-        setStaged({ target: { location: { value: location, type: 'page' }, shapes, type: 'highlight' } });
-    };
-
     const handleSubmit = (): void => {
         if (!staged) {
             return;
@@ -90,14 +68,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
     return (
         <>
-            <button
-                onClick={handleClick}
-                style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'auto' }}
-                type="button"
-            >
-                Set Staged
-            </button>
-
             {/* Layer 1: Saved annotations */}
             <HighlightList activeId={activeAnnotationId} annotations={annotations} onSelect={handleAnnotationActive} />
 
@@ -107,9 +77,9 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             {/* Layer 3a: Staged (unsaved) highlight target, if any */}
             {isCreating && staged && (
                 <div className="ba-HighlightAnnotations-target">
-                    <HighlightCanvas annotations={staged} />
+                    <HighlightCanvas shapes={staged.shapes} />
                     <HighlightSvg>
-                        <HighlightTarget ref={setHighlightRef} annotationId="staged" rects={staged.target.shapes} />
+                        <HighlightTarget ref={setHighlightRef} annotationId="staged" rects={staged.shapes} />
                     </HighlightSvg>
                 </div>
             )}

@@ -20,6 +20,7 @@ describe('RegionAnnotations', () => {
         createRegion: jest.fn(),
         location: 1,
         message: 'test',
+        resetCreator: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setStaged: jest.fn(),
@@ -36,14 +37,9 @@ describe('RegionAnnotations', () => {
     });
     const getRectRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorItem => ({
-        target: {
-            location: {
-                type: 'page' as const,
-                value: 1,
-            },
-            shape: getRect(),
-            type: 'region' as const,
-        },
+        location: 1,
+        shape: getRect(),
+        type: 'region' as const,
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
 
@@ -62,9 +58,7 @@ describe('RegionAnnotations', () => {
             test('should reset the staged state and status', () => {
                 instance.handleCancel();
 
-                expect(defaults.setMessage).toHaveBeenCalledWith('');
-                expect(defaults.setStaged).toHaveBeenCalledWith(null);
-                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
+                expect(defaults.resetCreator).toHaveBeenCalled();
             });
         });
 
@@ -98,14 +92,9 @@ describe('RegionAnnotations', () => {
                 instance.handleStop(shape);
 
                 expect(defaults.setStaged).toHaveBeenCalledWith({
-                    target: {
-                        location: {
-                            type: 'page',
-                            value: defaults.location,
-                        },
-                        shape,
-                        type: 'region',
-                    },
+                    location: defaults.location,
+                    shape,
+                    type: 'region',
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
@@ -152,15 +141,10 @@ describe('RegionAnnotations', () => {
             const wrapper = getWrapper({
                 isCreating: true,
                 staged: {
-                    target: {
-                        location: {
-                            type: 'page',
-                            value: 1,
-                        },
-                        message: null,
-                        shape,
-                        type: 'region',
-                    },
+                    location: 1,
+                    message: null,
+                    shape,
+                    type: 'region',
                 },
             });
 

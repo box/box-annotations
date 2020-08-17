@@ -3,7 +3,7 @@ import { AnnotationRegion } from '../@types';
 import {
     AppState,
     CreatorItem,
-    CreatorRegion,
+    CreatorItemRegion,
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
@@ -12,6 +12,7 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     getRotation,
+    Mode,
     resetCreatorAction,
     setActiveAnnotationIdAction,
     setMessageAction,
@@ -29,12 +30,12 @@ export type Props = {
     isCreating: boolean;
     isRotated: boolean;
     message: string;
-    staged: CreatorRegion | null;
+    staged: CreatorItemRegion | null;
     status: CreatorStatus;
 };
 
-export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorRegion => {
-    return staged?.target.type === 'region';
+export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorItemRegion => {
+    return staged?.type === 'region';
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
@@ -43,7 +44,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isRegion),
-        isCreating: getAnnotationMode(state) === 'region',
+        isCreating: getAnnotationMode(state) === Mode.REGION,
         isRotated: !!getRotation(state),
         message: getCreatorMessage(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,

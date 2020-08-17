@@ -1,11 +1,11 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightAnnotation from '../HighlightTarget';
-import HighlightList, { filterHighlight, getHighlightArea, Props, sortHighlight } from '../HighlightList';
+import HighlightCanvas from '../HighlightCanvas';
+import HighlightList, { Props } from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
+import HighlightTarget from '../HighlightTarget';
 import useOutsideEvent from '../../common/useOutsideEvent';
-import { annotation as mockAnnotation, rect as mockRect, target as mockTarget } from '../__mocks__/data';
-import { AnnotationHighlight, Rect } from '../../@types';
+import { AnnotationHighlight } from '../../@types';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
@@ -16,7 +16,12 @@ jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb())
 
 describe('HighlightList', () => {
     const defaults: Props = {
-        annotations: [mockAnnotation],
+        annotations: [
+            { id: 'anno_1', target: { shapes: [{ height: 20, width: 20, x: 0, y: 0 }] } },
+            { id: 'anno_2', target: { shapes: [{ height: 50, width: 50, x: 0, y: 0 }] } },
+            { id: 'anno_3', target: { shapes: [{ height: 10, width: 10, x: 0, y: 0 }] } },
+            { id: 'anno_4', target: { shapes: [{ height: 60, width: 60, x: 0, y: 0 }] } },
+        ] as AnnotationHighlight[],
         onSelect: jest.fn(),
     };
     const getWrapper = (props?: Partial<Props>): ShallowWrapper => shallow(<HighlightList {...defaults} {...props} />);
@@ -32,7 +37,7 @@ describe('HighlightList', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(true);
-            expect(wrapper.find(HighlightAnnotation).exists()).toBe(true);
+            expect(wrapper.find(HighlightTarget).exists()).toBe(true);
         });
 
         test('should not have is-listening class if isListening state is false', () => {
@@ -50,72 +55,38 @@ describe('HighlightList', () => {
             expect(mockSetIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
             expect(useOutsideEvent).toHaveBeenCalledTimes(2);
         });
-    });
 
-    describe('filterHighlight()', () => {
-        test.each`
-            height | width | x     | y     | isValid
-            ${10}  | ${20} | ${5}  | ${5}  | ${true}
-            ${-1}  | ${20} | ${5}  | ${5}  | ${false}
-            ${10}  | ${-1} | ${5}  | ${5}  | ${false}
-            ${10}  | ${20} | ${-1} | ${5}  | ${false}
-            ${10}  | ${20} | ${5}  | ${-1} | ${false}
-        `('should return $isValid based on the rect properties', ({ height, width, x, y, isValid }) => {
-            const rect: Rect = {
-                ...mockRect,
-                height,
-                width,
-                x,
-                y,
-            };
-            const target = { ...mockTarget, shapes: [rect] };
-            const highlight: AnnotationHighlight = {
-                ...mockAnnotation,
-                target,
-            };
+        test('should filter all invalid annotations', () => {
+            const invalid = [
+                { id: 'anno_5', target: { shapes: [{ height: 105, width: 0, x: 0, y: 0 }] } },
+                { id: 'anno_6', target: { shapes: [{ height: 0, width: 105, x: 0, y: 0 }] } },
+                { id: 'anno_7', target: { shapes: [{ height: 0, width: 0, x: 105, y: 0 }] } },
+                { id: 'anno_8', target: { shapes: [{ height: 0, width: 0, x: 0, y: 105 }] } },
+                { id: 'anno_9', target: { shapes: [{ height: -5, width: 0, x: 0, y: 0 }] } },
+                { id: 'anno_10', target: { shapes: [{ height: 0, width: -5, x: 0, y: 0 }] } },
+                { id: 'anno_11', target: { shapes: [{ height: 0, width: 0, x: -5, y: 0 }] } },
+                { id: 'anno_12', target: { shapes: [{ height: 0, width: 0, x: 0, y: -5 }] } },
+            ] as AnnotationHighlight[];
+            const wrapper = getWrapper({ annotations: defaults.annotations.concat(invalid) });
+            const children = wrapper.find(HighlightTarget);
 
-            expect(filterHighlight(highlight)).toBe(isValid);
+            expect(children.length).toEqual(defaults.annotations.length);
         });
-    });
 
-    describe('getHighlightArea()', () => {
-        test('should get total highlighted area', () => {
-            const shapes = [mockRect, mockRect];
-            expect(getHighlightArea(shapes)).toBe(400);
+        test('should render canvas with the active id', () => {
+            const wrapper = getWrapper({ activeId: 'anno_1' });
+
+            expect(wrapper.find(HighlightCanvas).prop('activeId')).toBe('anno_1');
         });
-    });
 
-    describe('sortHighlight()', () => {
-        test.each`
-            widthA | heightA | widthB | heightB | returnValue
-            ${1}   | ${1}    | ${1}   | ${2}    | ${1}
-            ${2}   | ${1}    | ${1}   | ${1}    | ${-1}
-            ${1}   | ${1}    | ${1}   | ${1}    | ${1}
-        `(
-            'should compare highlights based on area $areaA and $areaB with return $returnValue',
-            ({ widthA, heightA, widthB, heightB, returnValue }) => {
-                const rectA = {
-                    ...mockRect,
-                    height: heightA,
-                    width: widthA,
-                };
-                const rectB = {
-                    ...mockRect,
-                    height: heightB,
-                    width: widthB,
-                };
-                const targetA = {
-                    ...mockTarget,
-                    shapes: [rectA],
-                };
-                const targetB = {
-                    ...mockTarget,
-                    shapes: [rectB],
-                };
-                expect(
-                    sortHighlight({ ...mockAnnotation, target: targetA }, { ...mockAnnotation, target: targetB }),
-                ).toBe(returnValue);
-            },
-        );
+        test('should render annotations by largest to smallest shape', () => {
+            const wrapper = getWrapper();
+            const children = wrapper.find(HighlightTarget);
+
+            expect(children.get(0).props.rects).toMatchObject([{ height: 60, width: 60 }]);
+            expect(children.get(1).props.rects).toMatchObject([{ height: 50, width: 50 }]);
+            expect(children.get(2).props.rects).toMatchObject([{ height: 20, width: 20 }]);
+            expect(children.get(3).props.rects).toMatchObject([{ height: 10, width: 10 }]);
+        });
     });
 });

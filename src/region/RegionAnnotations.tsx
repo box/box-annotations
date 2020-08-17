@@ -5,7 +5,7 @@ import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorRegion, CreatorStatus } from '../store/creator';
+import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
 type Props = {
@@ -19,9 +19,9 @@ type Props = {
     resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
-    setStaged: (staged: CreatorRegion | null) => void;
+    setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    staged?: CreatorRegion | null;
+    staged?: CreatorItemRegion | null;
     status: CreatorStatus;
 };
 
@@ -62,7 +62,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus } = this.props;
-        setStaged({ target: { location: { value: location, type: 'page' }, shape, type: 'region' } });
+        setStaged({ location, shape, type: 'region' });
         setStatus(CreatorStatus.staged);
     };
 
@@ -109,7 +109,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {canCreate && staged && (
                     <div className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setRectRef} isActive shape={staged?.target.shape} />
+                        <RegionRect ref={this.setRectRef} isActive shape={staged?.shape} />
                     </div>
                 )}
 

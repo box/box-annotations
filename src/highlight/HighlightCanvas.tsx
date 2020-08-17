@@ -1,14 +1,22 @@
 import * as React from 'react';
 import { bdlYellorange, black, white } from 'box-ui-elements/es/styles/variables';
-import { AnnotationHighlight, Rect } from '../@types';
+import { Rect } from '../@types';
 import './HighlightCanvas.scss';
 
-type DrawableHighlight = Partial<AnnotationHighlight> & Pick<AnnotationHighlight, 'target'>;
+type CanvasShapeBase = {
+    id?: string;
+};
+
+export type CanvasShapeRect = CanvasShapeBase & Rect;
+
+export type CanvasShape = CanvasShapeRect;
 
 export type Props = {
     activeId?: string | null;
-    annotations: DrawableHighlight[] | DrawableHighlight;
+    shapes: CanvasShape[] | CanvasShape;
 };
+
+export const isRect = (shape: CanvasShape): shape is CanvasShapeRect => shape.type === 'rect';
 
 export default class HighlightCanvas extends React.PureComponent<Props> {
     static defaultProps = {
@@ -23,7 +31,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
     }
 
     componentDidUpdate(): void {
-        this.clearRects();
+        this.clearCanvas();
         this.renderRects();
     }
 
@@ -43,7 +51,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
         canvasRef.height = canvasRef.offsetHeight;
     }
 
-    clearRects(): void {
+    clearCanvas(): void {
         const { current: canvasRef } = this.canvasRef;
         const context = canvasRef && canvasRef.getContext('2d');
 
@@ -87,57 +95,53 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
     }
 
     renderRects(): void {
-        const { activeId, annotations } = this.props;
+        const { activeId, shapes } = this.props;
         const { current: canvasRef } = this.canvasRef;
         const context = canvasRef && canvasRef.getContext('2d');
         const canvasHeight = canvasRef?.height ?? 0;
         const canvasWidth = canvasRef?.width ?? 0;
-        const annotationsArray = Array.isArray(annotations) ? annotations : [annotations];
+        const shapesArray = Array.isArray(shapes) ? shapes : [shapes];
 
         if (!context) {
             return;
         }
 
-        annotationsArray.forEach(annotation => {
-            const { id, target } = annotation;
-            const { shapes } = target;
+        shapesArray.filter(isRect).forEach(rect => {
+            const { height, id, width, x, y } = rect;
+            const isActive = activeId === id;
+            const rectHeight = (height / 100) * canvasHeight;
+            const rectWidth = (width / 100) * canvasWidth;
+            const x1 = (x / 100) * canvasWidth;
+            const y1 = (y / 100) * canvasHeight;
 
-            shapes.forEach(({ height, width, x, y }: Rect) => {
-                const isActive = activeId === id;
-                const rectHeight = (height / 100) * canvasHeight;
-                const rectWidth = (width / 100) * canvasWidth;
-                const x1 = (x / 100) * canvasWidth;
-                const y1 = (y / 100) * canvasHeight;
+            context.save();
+
+            // Draw the highlight rect
+            context.fillStyle = bdlYellorange;
+            context.globalAlpha = isActive ? 0.66 : 0.33;
+            this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, true, false);
+            context.restore();
+            context.save();
+
+            // Draw the white border
+            context.strokeStyle = white;
+            context.lineWidth = 1;
+            this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
+
+            // If annotation is active, apply a shadow
+            if (isActive) {
+                const imgdata = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
 
                 context.save();
+                context.shadowColor = black;
+                context.shadowBlur = 10;
 
-                // Draw the highlight rect
-                context.fillStyle = bdlYellorange;
-                context.globalAlpha = isActive ? 0.66 : 0.33;
-                this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, true, false);
-                context.restore();
-                context.save();
-
-                // Draw the white border
-                context.strokeStyle = white;
-                context.lineWidth = 1;
                 this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-
-                // If annotation is active, apply a shadow
-                if (isActive) {
-                    const imgdata = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
-
-                    context.save();
-                    context.shadowColor = black;
-                    context.shadowBlur = 10;
-
-                    this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-                    context.putImageData(imgdata, x1 - 1, y1 - 1);
-                    context.restore();
-                }
-
+                context.putImageData(imgdata, x1 - 1, y1 - 1);
                 context.restore();
-            });
+            }
+
+            context.restore();
         });
     }
 

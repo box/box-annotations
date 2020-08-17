@@ -10,20 +10,15 @@ jest.mock('../../store/options', () => ({
 describe('region/actions', () => {
     describe('createRegionAction', () => {
         const arg = {
+            location: 5,
             message: 'message',
-            target: {
-                location: {
-                    type: 'page' as const,
-                    value: 5,
-                },
-                shape: {
-                    height: 50.25,
-                    width: 50.25,
-                    x: 10.75,
-                    y: 10.75,
-                } as Rect,
-                type: 'region' as const,
-            },
+            shape: {
+                height: 50.25,
+                width: 50.25,
+                x: 10.75,
+                y: 10.75,
+            } as Rect,
+            type: 'region' as const,
         };
         const dispatch = jest.fn();
         const getState = jest.fn();
@@ -46,7 +41,7 @@ describe('region/actions', () => {
                         type: 'page',
                         value: 5,
                     },
-                    shape: arg.target.shape,
+                    shape: arg.shape,
                     type: 'region',
                 },
             });

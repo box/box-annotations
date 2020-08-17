@@ -1,4 +1,4 @@
-import { SerializedError, AnnotationHighlight, AnnotationRegion } from '../../@types';
+import { Rect, SerializedError } from '../../@types';
 
 export enum CreatorStatus {
     init = 'init',
@@ -8,16 +8,26 @@ export enum CreatorStatus {
     started = 'started',
 }
 
-export type CreatorRegion = Pick<AnnotationRegion, 'target'>;
+export type CreatorItemBase = {
+    location: number;
+};
 
-export type CreatorHighlight = Pick<AnnotationHighlight, 'target'>;
+export type CreatorItemRegion = CreatorItemBase & {
+    shape: Rect;
+    type: 'region';
+};
 
-export type CreatorItem = CreatorRegion | CreatorHighlight;
+export type CreatorItemHighlight = CreatorItemBase & {
+    shapes: Rect[];
+    type: 'highlight';
+};
+
+export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | null;
 
 export type CreatorState = {
     cursor: number;
     error: SerializedError | null;
     message: string;
-    staged: CreatorItem | null;
+    staged: CreatorItem;
     status: CreatorStatus;
 };

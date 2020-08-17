@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightCanvas, { Props } from '../HighlightCanvas';
-import { annotation as mockAnnotation } from '../__mocks__/data';
+import { rect as mockRect } from '../__mocks__/data';
 
 describe('HighlightCanvas', () => {
     const defaults: Props = {
         activeId: null,
-        annotations: [mockAnnotation],
+        shapes: [mockRect],
     };
     const getWrapper = (props?: Props): ShallowWrapper<Props, {}, HighlightCanvas> =>
         shallow(<HighlightCanvas {...defaults} {...props} />);
@@ -28,12 +28,12 @@ describe('HighlightCanvas', () => {
         const wrapper = getWrapper();
         const instance = wrapper.instance() as HighlightCanvas;
 
-        jest.spyOn(instance, 'clearRects');
+        jest.spyOn(instance, 'clearCanvas');
         jest.spyOn(instance, 'renderRects');
 
         wrapper.setProps({ activeId: '123' });
 
-        expect(instance.clearRects).toHaveBeenCalledTimes(1);
+        expect(instance.clearCanvas).toHaveBeenCalledTimes(1);
         expect(instance.renderRects).toHaveBeenCalledTimes(1);
     });
 

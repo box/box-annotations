@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import HighlightCanvas from './HighlightCanvas';
+import HighlightCanvas, { CanvasShapeRect } from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
@@ -10,7 +10,7 @@ import './HighlightList.scss';
 
 export type Props = {
     activeId?: string | null;
-    annotations: Pick<AnnotationHighlight, 'id' | 'target'>[];
+    annotations: AnnotationHighlight[];
     className?: string;
     onSelect?: (annotationId: string | null) => void;
 };
@@ -18,10 +18,9 @@ export type Props = {
 export function filterHighlight({ target }: { target: TargetHighlight }): boolean {
     const { shapes = [] } = target;
 
-    return shapes.reduce((isValid: boolean, rect: Rect) => {
-        const { height, width, x, y } = rect;
-        return isValid && checkValue(height) && checkValue(width) && checkValue(x) && checkValue(y);
-    }, true);
+    return shapes.every(
+        ({ height, width, x, y }: Rect) => checkValue(height) && checkValue(width) && checkValue(x) && checkValue(y),
+    );
 }
 
 export function getHighlightArea(shapes: Rect[]): number {
@@ -39,10 +38,24 @@ export function sortHighlight(
     return getHighlightArea(shapesA) > getHighlightArea(shapesB) ? -1 : 1;
 }
 
+export function getRectsFromAnnotations(annotations: AnnotationHighlight[]): CanvasShapeRect[] {
+    return annotations.reduce<CanvasShapeRect[]>((rects, annotation) => {
+        const {
+            id,
+            target: { shapes },
+        } = annotation;
+
+        shapes.forEach(rect => rects.push({ ...rect, id }));
+
+        return rects;
+    }, []);
+}
+
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const rootElRef = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
+    const canvasShapes = getRectsFromAnnotations(sortedAnnotations);
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('mousedown', rootElRef, (): void => {
@@ -52,7 +65,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
 
     return (
         <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">
-            <HighlightCanvas activeId={activeId} annotations={sortedAnnotations} />
+            <HighlightCanvas activeId={activeId} shapes={canvasShapes} />
             <HighlightSvg ref={rootElRef} className={classNames({ 'is-listening': isListening })}>
                 {sortedAnnotations.map(({ id, target }) => (
                     <HighlightTarget key={id} annotationId={id} onSelect={onSelect} rects={target.shapes} />

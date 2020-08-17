@@ -1,6 +1,6 @@
 import { AppState, getAnnotationsForLocation, getAnnotationMode, getCreatorStagedForLocation, Mode } from '../../store';
-import { annotation as highlightAnnotation, target as highlightTarget } from '../__mocks__/data';
-import { annotation as regionAnnotation, target as regionTarget } from '../../region/__mocks__/data';
+import { annotation as highlightAnnotation, rect as highlightRect } from '../__mocks__/data';
+import { annotation as regionAnnotation, rect as regionRect } from '../../region/__mocks__/data';
 import { mapStateToProps } from '../HighlightContainer';
 
 jest.mock('../../common/withProviders');
@@ -8,11 +8,15 @@ jest.mock('../HighlightAnnotations');
 jest.mock('../../store');
 
 const stagedHighlight = {
-    target: highlightTarget,
+    location: 1,
+    shapes: [highlightRect],
+    type: 'highlight',
 };
 
 const stagedRegion = {
-    target: regionTarget,
+    location: 1,
+    shape: regionRect,
+    type: 'rect',
 };
 
 describe('HighlightContainer', () => {

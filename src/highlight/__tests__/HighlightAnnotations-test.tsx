@@ -4,7 +4,7 @@ import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCreator from '../HighlightCreator';
 import PopupReply from '../../components/Popups/PopupReply';
 import { HighlightList } from '../HighlightList';
-import { CreatorStatus, CreatorHighlight } from '../../store';
+import { CreatorStatus, CreatorItemHighlight } from '../../store';
 import { Rect } from '../../@types';
 
 jest.mock('../HighlightCreator');
@@ -39,12 +39,10 @@ describe('HighlightAnnotations', () => {
         x: 10,
         y: 10,
     });
-    const getStaged = (): CreatorHighlight => ({
-        target: {
-            location: { value: 1, type: 'page' },
-            shapes: [getRect()],
-            type: 'highlight',
-        },
+    const getStaged = (): CreatorItemHighlight => ({
+        location: 1,
+        shapes: [getRect()],
+        type: 'highlight',
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotations {...defaults} {...props} />);
 
