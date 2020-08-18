@@ -10,19 +10,20 @@ import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
 const TEXT_LAYER_ENHANCEMENT = 300;
+const SELECTION_CHANGE_DEBOUNCE = 100;
 
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
     managers: Map<number, Set<BaseManager>> = new Map();
 
-    selectionChangeTimer?: number | undefined;
+    selectionChangeTimer?: number;
 
     constructor(options: Options) {
         super(options);
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
-        document.addEventListener('selectionchange', this.handleSelectionChange);
+        document.addEventListener('selectionchange', this.debounceHandleSelectionChange);
     }
 
     destroy(): void {
@@ -31,16 +32,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
 
         this.removeListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
-        document.removeEventListener('selectionchange', this.handleSelectionChange);
+        document.removeEventListener('selectionchange', this.debounceHandleSelectionChange);
 
         super.destroy();
-    }
-
-    init(scale = 1, rotation = 0): void {
-        super.init(scale, rotation);
-
-        // Clear previous selection
-        this.store.dispatch(setSelectionAction(null));
     }
 
     getAnnotatedElement(): HTMLElement | null | undefined {
@@ -100,28 +94,29 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
     };
 
-    handleSelectionChange = debounce(
-        (): void => {
-            // Clear previous selection immediately
-            this.store.dispatch(setSelectionAction(null));
+    handleSelectionChange = (): void => {
+        // Clear previous selection immediately
+        this.store.dispatch(setSelectionAction(null));
+        clearTimeout(this.selectionChangeTimer);
 
-            // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
-            this.selectionChangeTimer = window.setTimeout(() => {
-                this.store.dispatch(setSelectionAction(getSelectionItem()));
-                this.selectionChangeTimer = undefined;
-            }, TEXT_LAYER_ENHANCEMENT);
-        },
-        TEXT_LAYER_ENHANCEMENT,
-        {
-            // The previous selection needs to be cleared immediately when selection changes
-            // Below options make sure the function is triggered on the leading edge of the timeout,
-            // instead of on the trailing edge
-            leading: true,
-            trailing: false,
-        },
-    );
+        // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
+        this.selectionChangeTimer = window.setTimeout(() => {
+            this.store.dispatch(setSelectionAction(getSelectionItem()));
+        }, TEXT_LAYER_ENHANCEMENT);
+    };
+
+    debounceHandleSelectionChange = debounce(this.handleSelectionChange, SELECTION_CHANGE_DEBOUNCE, {
+        // The previous selection needs to be cleared immediately when selection changes
+        // Below options make sure the function is triggered on the leading edge of the timeout,
+        // instead of on the trailing edge
+        leading: true,
+        trailing: false,
+    });
 
     render(): void {
+        // Clear previous selection
+        this.store.dispatch(setSelectionAction(null));
+
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));

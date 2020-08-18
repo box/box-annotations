@@ -1,8 +1,8 @@
 import reducer from '../reducer';
-import state from '../__mocks__/promoterState';
+import state from '../__mocks__/selectionState';
 import { setSelectionAction } from '../actions';
 
-describe('store/promoter/reducer', () => {
+describe('store/selection/reducer', () => {
     describe('setSelection', () => {
         test('should set selection in state', () => {
             const payload = { ...state.selection, location: 2 };

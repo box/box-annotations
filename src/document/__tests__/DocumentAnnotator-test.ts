@@ -8,11 +8,11 @@ import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../highlight/HighlightManager');
-jest.mock('../../region/RegionManager');
-jest.mock('../../utils/scroll');
-jest.mock('../../highlight/highlightUtil.ts', () => ({
+jest.mock('../../highlight/highlightUtil', () => ({
     getSelectionItem: () => 'selection',
 }));
+jest.mock('../../region/RegionManager');
+jest.mock('../../utils/scroll');
 
 jest.useFakeTimers();
 
@@ -206,11 +206,11 @@ describe('DocumentAnnotator', () => {
 
             expect(annotator.store.dispatch).toHaveBeenLastCalledWith(setSelectionAction(null));
             expect(annotator.selectionChangeTimer).not.toBeUndefined();
+            expect(clearTimeout).toHaveBeenCalled();
 
             jest.runAllTimers();
 
             expect(annotator.store.dispatch).toHaveBeenLastCalledWith({ payload: 'selection', type: 'SET_SELECTION' });
-            expect(annotator.selectionChangeTimer).toBeUndefined();
         });
     });
 
@@ -221,14 +221,6 @@ describe('DocumentAnnotator', () => {
             expect(annotator.containerEl).toBe(container);
             expect(annotator.annotatedEl).toBe(container.querySelector('.bp-doc'));
         });
-
-        test('should clear previous selection', () => {
-            jest.spyOn(annotator.store, 'dispatch');
-
-            annotator.init();
-
-            expect(annotator.store.dispatch).toHaveBeenCalledWith(setSelectionAction(null));
-        });
     });
 
     describe('render()', () => {
@@ -238,6 +230,14 @@ describe('DocumentAnnotator', () => {
             annotator.render();
 
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
+        });
+
+        test('should clear previous selection', () => {
+            jest.spyOn(annotator.store, 'dispatch');
+
+            annotator.render();
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(setSelectionAction(null));
         });
     });
 

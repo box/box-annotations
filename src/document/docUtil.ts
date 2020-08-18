@@ -18,9 +18,5 @@ export function getPageNumber(element: Element | null): number | undefined {
     const pageEl = findClosestElWithClass(element, 'page');
     const pageNumber = pageEl && pageEl.getAttribute('data-page-number');
 
-    if (!pageNumber) {
-        return undefined;
-    }
-
-    return parseInt(pageNumber, 10);
+    return pageNumber ? parseInt(pageNumber, 10) : undefined;
 }

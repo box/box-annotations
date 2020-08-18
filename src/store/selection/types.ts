@@ -1,6 +1,6 @@
 import { Rect } from '../../@types';
 
-export type PromoterState = {
+export type SelectionState = {
     selection: SelectionItem | null;
 };
 
