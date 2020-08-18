@@ -1,9 +1,11 @@
+export type DOMRectMini = Required<DOMRectInit>;
+
 export type SelectionState = {
     selection: SelectionItem | null;
 };
 
 export type SelectionItem = {
-    boundingRect: Required<DOMRectInit>;
+    boundingRect: DOMRectMini;
     location: number;
-    rects: Array<Required<DOMRectInit>>;
+    rects: Array<DOMRectMini>;
 };
