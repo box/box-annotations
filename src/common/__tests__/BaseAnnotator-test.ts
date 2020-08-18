@@ -19,9 +19,11 @@ describe('BaseAnnotator', () => {
     const container = document.createElement('div');
     container.innerHTML = `<div class="inner" />`;
 
+    const features = { enabledFeature: true };
     const defaults = {
         apiHost: 'https://api.box.com',
         container,
+        features,
         file: {
             id: '12345',
             file_version: { id: '98765' },
@@ -135,6 +137,12 @@ describe('BaseAnnotator', () => {
                 );
             },
         );
+
+        test('should set features option', () => {
+            annotator = getAnnotator({ features });
+
+            expect(annotator.features).toEqual(features);
+        });
     });
 
     describe('destroy()', () => {
@@ -249,6 +257,13 @@ describe('BaseAnnotator', () => {
         test('should dispatch toggleAnnotationModeAction with specified mode', () => {
             annotator.toggleAnnotationMode('region' as Mode);
             expect(annotator.store.dispatch).toBeCalledWith(store.toggleAnnotationModeAction('region' as Mode));
+        });
+    });
+
+    describe('isFeatureEnabled()', () => {
+        test('should return whether feature is enabled or not', () => {
+            expect(annotator.isFeatureEnabled('enabledFeature')).toBeTruthy();
+            expect(annotator.isFeatureEnabled('notEnabledFeature')).toBeFalsy();
         });
     });
 });
