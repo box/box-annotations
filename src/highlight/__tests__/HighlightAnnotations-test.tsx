@@ -42,7 +42,6 @@ describe('HighlightAnnotations', () => {
     const getStaged = (): CreatorItemHighlight => ({
         location: 1,
         shapes: [getRect()],
-        type: 'highlight',
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotations {...defaults} {...props} />);
 

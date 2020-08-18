@@ -39,7 +39,6 @@ describe('RegionAnnotations', () => {
     const getStaged = (): CreatorItem => ({
         location: 1,
         shape: getRect(),
-        type: 'region' as const,
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
 
@@ -94,7 +93,6 @@ describe('RegionAnnotations', () => {
                 expect(defaults.setStaged).toHaveBeenCalledWith({
                     location: defaults.location,
                     shape,
-                    type: 'region',
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });

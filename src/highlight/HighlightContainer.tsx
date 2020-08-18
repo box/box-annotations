@@ -4,7 +4,6 @@ import withProviders from '../common/withProviders';
 import { AnnotationHighlight } from '../@types';
 import {
     AppState,
-    CreatorItem,
     CreatorItemHighlight,
     CreatorStatus,
     getActiveAnnotationId,
@@ -13,6 +12,7 @@ import {
     getCreatorMessage,
     getCreatorStagedForLocation,
     getCreatorStatus,
+    isCreatorStagedHighlight,
     Mode,
     resetCreatorAction,
     setActiveAnnotationIdAction,
@@ -31,10 +31,6 @@ export type Props = {
     message: string;
     staged: CreatorItemHighlight | null;
     status: CreatorStatus;
-};
-
-export const isCreatorStagedHighlight = (staged: CreatorItem | null): staged is CreatorItemHighlight => {
-    return staged?.type === 'highlight';
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {

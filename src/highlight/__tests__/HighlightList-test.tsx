@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightCanvas from '../HighlightCanvas';
+import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
 import HighlightList, { Props } from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import HighlightTarget from '../HighlightTarget';
@@ -73,10 +73,14 @@ describe('HighlightList', () => {
             expect(children.length).toEqual(defaults.annotations.length);
         });
 
-        test('should render canvas with the active id', () => {
+        test('should render canvas shapes reflecting the active id', () => {
             const wrapper = getWrapper({ activeId: 'anno_1' });
+            const shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
 
-            expect(wrapper.find(HighlightCanvas).prop('activeId')).toBe('anno_1');
+            expect(shapes[0].isActive).toBe(false);
+            expect(shapes[1].isActive).toBe(false);
+            expect(shapes[2].isActive).toBe(true); // anno_1
+            expect(shapes[3].isActive).toBe(false);
         });
 
         test('should render annotations by largest to smallest shape', () => {

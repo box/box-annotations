@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import { AnnotationRegion } from '../@types';
 import {
     AppState,
-    CreatorItem,
     CreatorItemRegion,
     CreatorStatus,
     getActiveAnnotationId,
@@ -12,6 +11,7 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     getRotation,
+    isCreatorStagedRegion,
     Mode,
     resetCreatorAction,
     setActiveAnnotationIdAction,
@@ -32,10 +32,6 @@ export type Props = {
     message: string;
     staged: CreatorItemRegion | null;
     status: CreatorStatus;
-};
-
-export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorItemRegion => {
-    return staged?.type === 'region';
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {

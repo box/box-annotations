@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import HighlightCanvas, { CanvasShapeRect } from './HighlightCanvas';
+import HighlightCanvas, { CanvasShape } from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
@@ -38,16 +38,17 @@ export function sortHighlight(
     return getHighlightArea(shapesA) > getHighlightArea(shapesB) ? -1 : 1;
 }
 
-export function getRectsFromAnnotations(annotations: AnnotationHighlight[]): CanvasShapeRect[] {
-    return annotations.reduce<CanvasShapeRect[]>((rects, annotation) => {
+export function getHighlightShapesFromAnnotations(
+    annotations: AnnotationHighlight[],
+    activeId: string | null,
+): CanvasShape[] {
+    return annotations.reduce<CanvasShape[]>((currentShapes, annotation) => {
         const {
             id,
             target: { shapes },
         } = annotation;
 
-        shapes.forEach(rect => rects.push({ ...rect, id }));
-
-        return rects;
+        return currentShapes.concat(shapes.map(shape => ({ ...shape, isActive: activeId === id })));
     }, []);
 }
 
@@ -55,7 +56,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
     const [isListening, setIsListening] = React.useState(true);
     const rootElRef = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
-    const canvasShapes = getRectsFromAnnotations(sortedAnnotations);
+    const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId);
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('mousedown', rootElRef, (): void => {
@@ -65,7 +66,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
 
     return (
         <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">
-            <HighlightCanvas activeId={activeId} shapes={canvasShapes} />
+            <HighlightCanvas shapes={canvasShapes} />
             <HighlightSvg ref={rootElRef} className={classNames({ 'is-listening': isListening })}>
                 {sortedAnnotations.map(({ id, target }) => (
                     <HighlightTarget key={id} annotationId={id} onSelect={onSelect} rects={target.shapes} />

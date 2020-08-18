@@ -1,4 +1,5 @@
 import createStore from './createStore';
+import { isCreatorStagedHighlight, isCreatorStagedRegion } from '../creator/selectors';
 import { Mode } from '../common/types';
 
 module.exports = {
@@ -12,5 +13,7 @@ module.exports = {
     getCreatorStatus: jest.fn(),
     getFileId: jest.fn().mockReturnValue('0'),
     getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
+    isCreatorStagedHighlight,
+    isCreatorStagedRegion,
     Mode,
 };

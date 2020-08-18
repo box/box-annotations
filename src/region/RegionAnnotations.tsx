@@ -62,7 +62,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus } = this.props;
-        setStaged({ location, shape, type: 'region' });
+        setStaged({ location, shape });
         setStatus(CreatorStatus.staged);
     };
 
@@ -109,7 +109,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
                 {canCreate && staged && (
                     <div className="ba-RegionAnnotations-target">
-                        <RegionRect ref={this.setRectRef} isActive shape={staged?.shape} />
+                        <RegionRect ref={this.setRectRef} isActive shape={staged.shape} />
                     </div>
                 )}
 

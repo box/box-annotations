@@ -3,24 +3,15 @@ import { bdlYellorange, black, white } from 'box-ui-elements/es/styles/variables
 import { Rect } from '../@types';
 import './HighlightCanvas.scss';
 
-type CanvasShapeBase = {
-    id?: string;
-};
-
-export type CanvasShapeRect = CanvasShapeBase & Rect;
-
-export type CanvasShape = CanvasShapeRect;
+export type CanvasShape = Rect & { isActive?: boolean };
 
 export type Props = {
-    activeId?: string | null;
     shapes: CanvasShape[] | CanvasShape;
 };
 
-export const isRect = (shape: CanvasShape): shape is CanvasShapeRect => shape.type === 'rect';
-
 export default class HighlightCanvas extends React.PureComponent<Props> {
     static defaultProps = {
-        annotations: [],
+        shapes: [],
     };
 
     canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
@@ -95,7 +86,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
     }
 
     renderRects(): void {
-        const { activeId, shapes } = this.props;
+        const { shapes } = this.props;
         const { current: canvasRef } = this.canvasRef;
         const context = canvasRef && canvasRef.getContext('2d');
         const canvasHeight = canvasRef?.height ?? 0;
@@ -106,9 +97,8 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
             return;
         }
 
-        shapesArray.filter(isRect).forEach(rect => {
-            const { height, id, width, x, y } = rect;
-            const isActive = activeId === id;
+        shapesArray.forEach(rect => {
+            const { height, isActive, width, x, y } = rect;
             const rectHeight = (height / 100) * canvasHeight;
             const rectWidth = (width / 100) * canvasWidth;
             const x1 = (x / 100) * canvasWidth;
@@ -130,14 +120,14 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
 
             // If annotation is active, apply a shadow
             if (isActive) {
-                const imgdata = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
+                const imgData = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
 
                 context.save();
                 context.shadowColor = black;
                 context.shadowBlur = 10;
 
                 this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-                context.putImageData(imgdata, x1 - 1, y1 - 1);
+                context.putImageData(imgData, x1 - 1, y1 - 1);
                 context.restore();
             }
 

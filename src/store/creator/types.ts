@@ -14,12 +14,10 @@ export type CreatorItemBase = {
 
 export type CreatorItemRegion = CreatorItemBase & {
     shape: Rect;
-    type: 'region';
 };
 
 export type CreatorItemHighlight = CreatorItemBase & {
     shapes: Rect[];
-    type: 'highlight';
 };
 
 export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | null;

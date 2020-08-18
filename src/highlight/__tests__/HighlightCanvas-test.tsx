@@ -5,7 +5,6 @@ import { rect as mockRect } from '../__mocks__/data';
 
 describe('HighlightCanvas', () => {
     const defaults: Props = {
-        activeId: null,
         shapes: [mockRect],
     };
     const getWrapper = (props?: Props): ShallowWrapper<Props, {}, HighlightCanvas> =>
@@ -31,7 +30,7 @@ describe('HighlightCanvas', () => {
         jest.spyOn(instance, 'clearCanvas');
         jest.spyOn(instance, 'renderRects');
 
-        wrapper.setProps({ activeId: '123' });
+        wrapper.setProps({ shapes: [] });
 
         expect(instance.clearCanvas).toHaveBeenCalledTimes(1);
         expect(instance.renderRects).toHaveBeenCalledTimes(1);
