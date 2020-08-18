@@ -20,3 +20,32 @@ export function getPageNumber(element: Element | null): number | undefined {
 
     return pageNumber ? parseInt(pageNumber, 10) : undefined;
 }
+
+export function getRange(): Range | null {
+    const selection = window.getSelection();
+    if (!selection || selection.type !== 'Range' || selection.isCollapsed) {
+        return null;
+    }
+
+    return selection.getRangeAt(0);
+}
+
+export function getSelection(): {
+    range: Range;
+    location: number;
+} | null {
+    const range = getRange();
+
+    if (!range) {
+        return null;
+    }
+
+    const startPage = getPageNumber(range.startContainer as Element);
+    const endPage = getPageNumber(range.endContainer as Element);
+
+    if (!startPage || !endPage || startPage !== endPage) {
+        return null;
+    }
+
+    return { range, location: endPage };
+}

@@ -10,7 +10,6 @@ describe('store/selection/selectors', () => {
                 Object {
                   "boundingRect": Object {
                     "height": 100,
-                    "type": "rect",
                     "width": 100,
                     "x": 200,
                     "y": 200,
@@ -19,7 +18,6 @@ describe('store/selection/selectors', () => {
                   "rects": Array [
                     Object {
                       "height": 100,
-                      "type": "rect",
                       "width": 100,
                       "x": 200,
                       "y": 200,

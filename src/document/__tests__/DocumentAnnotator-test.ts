@@ -3,13 +3,14 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { createSelectionAction, fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { mockRange } from '../../store/selection/__mocks__/range';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../highlight/HighlightManager');
-jest.mock('../../highlight/highlightUtil', () => ({
-    getSelectionItem: () => 'selection',
+jest.mock('../docUtil', () => ({
+    getSelection: () => ({ location: 1, range: mockRange }),
 }));
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
@@ -210,7 +211,9 @@ describe('DocumentAnnotator', () => {
 
             jest.runAllTimers();
 
-            expect(annotator.store.dispatch).toHaveBeenLastCalledWith({ payload: 'selection', type: 'SET_SELECTION' });
+            expect(annotator.store.dispatch).toHaveBeenLastCalledWith(
+                createSelectionAction({ location: 1, range: mockRange }),
+            );
         });
     });
 
