@@ -5,22 +5,22 @@ import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
-import './HighlightAnnotation.scss';
+import './HighlightTarget.scss';
 
 type Props = {
     annotationId: string;
     className?: string;
     onSelect?: (annotationId: string) => void;
-    rects: Array<Rect>;
+    shapes: Array<Rect>;
 };
 
-export type HighlightAnnotationRef = HTMLAnchorElement;
+export type HighlightTargetRef = HTMLAnchorElement;
 
-const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef>): JSX.Element => {
-    const { annotationId, className, onSelect = noop, rects } = props;
+const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
+    const { annotationId, className, onSelect = noop, shapes } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
-    const handleClick = (event: React.MouseEvent<HighlightAnnotationRef>): void => {
+    const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
         event.preventDefault();
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
@@ -30,7 +30,7 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
         onSelect(annotationId);
     };
 
-    const handleMouseDown = (event: React.MouseEvent<HighlightAnnotationRef>): void => {
+    const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
         if (event.buttons !== MOUSE_PRIMARY) {
             return;
         }
@@ -45,7 +45,7 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
-            className={classNames('ba-HighlightAnnotation', className)}
+            className={classNames('ba-HighlightTarget', className)}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
@@ -57,13 +57,13 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
             role="button"
             tabIndex={0}
         >
-            {rects.map(rect => {
+            {shapes.map(rect => {
                 const { height, width, x, y } = rect;
                 return (
                     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
                     <rect
                         key={`${annotationId}-${x}-${y}-${width}-${height}`}
-                        className="ba-HighlightAnnotation-rect"
+                        className="ba-HighlightTarget-rect"
                         fill="none"
                         height={`${height}%`}
                         width={`${width}%`}
@@ -76,6 +76,6 @@ const HighlightAnnotation = (props: Props, ref: React.Ref<HighlightAnnotationRef
     );
 };
 
-export { HighlightAnnotation as HighlightAnnotationComponent };
+export { HighlightTarget as HighlightTargetComponent };
 
-export default React.forwardRef(HighlightAnnotation);
+export default React.forwardRef(HighlightTarget);

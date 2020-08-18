@@ -20,6 +20,7 @@ describe('RegionAnnotations', () => {
         createRegion: jest.fn(),
         location: 1,
         message: 'test',
+        resetCreator: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setStaged: jest.fn(),
@@ -56,9 +57,7 @@ describe('RegionAnnotations', () => {
             test('should reset the staged state and status', () => {
                 instance.handleCancel();
 
-                expect(defaults.setMessage).toHaveBeenCalledWith('');
-                expect(defaults.setStaged).toHaveBeenCalledWith(null);
-                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
+                expect(defaults.resetCreator).toHaveBeenCalled();
             });
         });
 

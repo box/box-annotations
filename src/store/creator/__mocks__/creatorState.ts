@@ -13,6 +13,7 @@ export default {
             x: 10,
             y: 10,
         },
+        type: 'region' as const,
     },
     status: CreatorStatus.init,
 };

@@ -8,15 +8,24 @@ export enum CreatorStatus {
     started = 'started',
 }
 
-export type CreatorItem = {
+export type CreatorItemBase = {
     location: number;
+};
+
+export type CreatorItemRegion = CreatorItemBase & {
     shape: Rect;
 };
+
+export type CreatorItemHighlight = CreatorItemBase & {
+    shapes: Rect[];
+};
+
+export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | null;
 
 export type CreatorState = {
     cursor: number;
     error: SerializedError | null;
     message: string;
-    staged: CreatorItem | null;
+    staged: CreatorItem;
     status: CreatorStatus;
 };

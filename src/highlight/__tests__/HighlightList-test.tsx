@@ -1,9 +1,11 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightAnnotation from '../HighlightAnnotation';
+import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
 import HighlightList, { Props } from '../HighlightList';
+import HighlightSvg from '../HighlightSvg';
+import HighlightTarget from '../HighlightTarget';
 import useOutsideEvent from '../../common/useOutsideEvent';
-import { annotation as mockAnnotation } from '../__mocks__/data';
+import { AnnotationHighlight } from '../../@types';
 
 jest.mock('react', () => ({
     ...jest.requireActual('react'),
@@ -14,7 +16,12 @@ jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb())
 
 describe('HighlightList', () => {
     const defaults: Props = {
-        annotations: [mockAnnotation],
+        annotations: [
+            { id: 'anno_1', target: { shapes: [{ height: 20, width: 20, x: 0, y: 0 }] } },
+            { id: 'anno_2', target: { shapes: [{ height: 50, width: 50, x: 0, y: 0 }] } },
+            { id: 'anno_3', target: { shapes: [{ height: 10, width: 10, x: 0, y: 0 }] } },
+            { id: 'anno_4', target: { shapes: [{ height: 60, width: 60, x: 0, y: 0 }] } },
+        ] as AnnotationHighlight[],
         onSelect: jest.fn(),
     };
     const getWrapper = (props?: Partial<Props>): ShallowWrapper => shallow(<HighlightList {...defaults} {...props} />);
@@ -26,11 +33,11 @@ describe('HighlightList', () => {
             jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetIsListening]);
         });
 
-        test('should render svg and HighlightAnnotation', () => {
+        test('should render HighlightSvg and HighlightAnnotation', () => {
             const wrapper = getWrapper();
 
-            expect(wrapper.find('svg').hasClass('is-listening')).toBe(true);
-            expect(wrapper.find(HighlightAnnotation).exists()).toBe(true);
+            expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(true);
+            expect(wrapper.find(HighlightTarget).exists()).toBe(true);
         });
 
         test('should not have is-listening class if isListening state is false', () => {
@@ -38,7 +45,7 @@ describe('HighlightList', () => {
 
             const wrapper = getWrapper();
 
-            expect(wrapper.find('svg').hasClass('is-listening')).toBe(false);
+            expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(false);
         });
 
         test('should call useOutsideEvent', () => {
@@ -47,6 +54,43 @@ describe('HighlightList', () => {
             expect(mockSetIsListening).toHaveBeenNthCalledWith(1, false); // mousedown
             expect(mockSetIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
             expect(useOutsideEvent).toHaveBeenCalledTimes(2);
+        });
+
+        test('should filter all invalid annotations', () => {
+            const invalid = [
+                { id: 'anno_5', target: { shapes: [{ height: 105, width: 0, x: 0, y: 0 }] } },
+                { id: 'anno_6', target: { shapes: [{ height: 0, width: 105, x: 0, y: 0 }] } },
+                { id: 'anno_7', target: { shapes: [{ height: 0, width: 0, x: 105, y: 0 }] } },
+                { id: 'anno_8', target: { shapes: [{ height: 0, width: 0, x: 0, y: 105 }] } },
+                { id: 'anno_9', target: { shapes: [{ height: -5, width: 0, x: 0, y: 0 }] } },
+                { id: 'anno_10', target: { shapes: [{ height: 0, width: -5, x: 0, y: 0 }] } },
+                { id: 'anno_11', target: { shapes: [{ height: 0, width: 0, x: -5, y: 0 }] } },
+                { id: 'anno_12', target: { shapes: [{ height: 0, width: 0, x: 0, y: -5 }] } },
+            ] as AnnotationHighlight[];
+            const wrapper = getWrapper({ annotations: defaults.annotations.concat(invalid) });
+            const children = wrapper.find(HighlightTarget);
+
+            expect(children.length).toEqual(defaults.annotations.length);
+        });
+
+        test('should render canvas shapes reflecting the active id', () => {
+            const wrapper = getWrapper({ activeId: 'anno_1' });
+            const shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
+
+            expect(shapes[0].isActive).toBe(false);
+            expect(shapes[1].isActive).toBe(false);
+            expect(shapes[2].isActive).toBe(true); // anno_1
+            expect(shapes[3].isActive).toBe(false);
+        });
+
+        test('should render annotations by largest to smallest shape', () => {
+            const wrapper = getWrapper();
+            const children = wrapper.find(HighlightTarget);
+
+            expect(children.get(0).props.shapes).toMatchObject([{ height: 60, width: 60 }]);
+            expect(children.get(1).props.shapes).toMatchObject([{ height: 50, width: 50 }]);
+            expect(children.get(2).props.shapes).toMatchObject([{ height: 20, width: 20 }]);
+            expect(children.get(3).props.shapes).toMatchObject([{ height: 10, width: 10 }]);
         });
     });
 });

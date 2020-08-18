@@ -2,11 +2,7 @@ import { EditorState, ContentState } from 'draft-js';
 import { mapStateToProps, mapPropsToValues, validate, handleSubmit } from '../ReplyFormContainer';
 import { AppState } from '../../../store';
 
-jest.mock('../../../store', () => ({
-    getCreatorCursor: jest.fn().mockReturnValue(1),
-    getFileId: jest.fn().mockReturnValue('0'),
-    getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
-}));
+jest.mock('../../../store');
 
 describe('ReplyFormContainer', () => {
     const defaults = {
