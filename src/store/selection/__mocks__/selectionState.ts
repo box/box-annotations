@@ -1,20 +1,20 @@
 export default {
     selection: {
         boundingRect: {
-            height: 10,
-            width: 10,
+            height: 100,
+            width: 100,
             type: 'rect' as const,
-            x: 100,
-            y: 100,
+            x: 200,
+            y: 200,
         },
         location: 1,
         rects: [
             {
-                height: 10,
-                width: 10,
+                height: 100,
+                width: 100,
                 type: 'rect' as const,
-                x: 100,
-                y: 100,
+                x: 200,
+                y: 200,
             },
         ],
     },

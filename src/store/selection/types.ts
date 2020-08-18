@@ -1,11 +1,11 @@
-import { Rect } from '../../@types';
+import { DOMRectMini } from '../../@types';
 
 export type SelectionState = {
     selection: SelectionItem | null;
 };
 
 export type SelectionItem = {
-    boundingRect: Rect;
+    boundingRect: DOMRectInit;
     location: number;
-    rects: Array<Rect>;
+    rects: Array<DOMRectMini>;
 };

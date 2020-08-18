@@ -9,20 +9,20 @@ describe('store/selection/selectors', () => {
             expect(getSelection(state)).toMatchInlineSnapshot(`
                 Object {
                   "boundingRect": Object {
-                    "height": 10,
+                    "height": 100,
                     "type": "rect",
-                    "width": 10,
-                    "x": 100,
-                    "y": 100,
+                    "width": 100,
+                    "x": 200,
+                    "y": 200,
                   },
                   "location": 1,
                   "rects": Array [
                     Object {
-                      "height": 10,
+                      "height": 100,
                       "type": "rect",
-                      "width": 10,
-                      "x": 100,
-                      "y": 100,
+                      "width": 100,
+                      "x": 200,
+                      "y": 200,
                     },
                   ],
                 }
