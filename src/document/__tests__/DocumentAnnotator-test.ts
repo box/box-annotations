@@ -3,16 +3,15 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { clearSelectionAction, createSelectionAction } from '../../highlight/actions';
+import { fetchAnnotationsAction } from '../../store';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
+jest.mock('../../highlight/actions');
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
-jest.mock('../../highlight/highlightUtil.ts', () => ({
-    getSelectionItem: () => 'selection',
-}));
 
 jest.useFakeTimers();
 
@@ -200,16 +199,14 @@ describe('DocumentAnnotator', () => {
 
     describe('handleSelectionChange()', () => {
         test('should clear selection and dispatch new selection', () => {
-            jest.spyOn(annotator.store, 'dispatch');
-
             annotator.handleSelectionChange();
 
-            expect(annotator.store.dispatch).toHaveBeenLastCalledWith(setSelectionAction(null));
+            expect(clearSelectionAction).toHaveBeenCalled();
             expect(annotator.selectionChangeTimer).not.toBeUndefined();
 
             jest.runAllTimers();
 
-            expect(annotator.store.dispatch).toHaveBeenLastCalledWith({ payload: 'selection', type: 'SET_SELECTION' });
+            expect(createSelectionAction).toHaveBeenCalled();
             expect(annotator.selectionChangeTimer).toBeUndefined();
         });
     });
@@ -223,11 +220,9 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should clear previous selection', () => {
-            jest.spyOn(annotator.store, 'dispatch');
-
             annotator.init();
 
-            expect(annotator.store.dispatch).toHaveBeenCalledWith(setSelectionAction(null));
+            expect(clearSelectionAction).toHaveBeenCalled();
         });
     });
 
