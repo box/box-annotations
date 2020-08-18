@@ -5,7 +5,7 @@ import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorItem, CreatorStatus } from '../store/creator';
+import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
 type Props = {
@@ -16,11 +16,12 @@ type Props = {
     isRotated: boolean;
     location: number;
     message: string;
+    resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setMessage: (message: string) => void;
-    setStaged: (staged: CreatorItem | null) => void;
+    setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    staged?: CreatorItem | null;
+    staged?: CreatorItemRegion | null;
     status: CreatorStatus;
 };
 
@@ -44,15 +45,13 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     handleCancel = (): void => {
-        const { setMessage, setStaged, setStatus } = this.props;
-        setMessage('');
-        setStaged(null);
-        setStatus(CreatorStatus.init);
+        const { resetCreator } = this.props;
+        resetCreator();
     };
 
-    handleChange = (text?: string): void => {
+    handleChange = (text = ''): void => {
         const { setMessage } = this.props;
-        setMessage(text || '');
+        setMessage(text);
     };
 
     handleStart = (): void => {

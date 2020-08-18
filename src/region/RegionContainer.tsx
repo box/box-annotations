@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { AnnotationRegion } from '../@types';
 import {
     AppState,
-    CreatorItem,
+    CreatorItemRegion,
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
@@ -11,6 +11,9 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     getRotation,
+    isCreatorStagedRegion,
+    Mode,
+    resetCreatorAction,
     setActiveAnnotationIdAction,
     setMessageAction,
     setStagedAction,
@@ -27,22 +30,27 @@ export type Props = {
     isCreating: boolean;
     isRotated: boolean;
     message: string;
-    staged: CreatorItem | null;
+    staged: CreatorItemRegion | null;
     status: CreatorStatus;
 };
 
-export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => ({
-    activeAnnotationId: getActiveAnnotationId(state),
-    annotations: getAnnotationsForLocation(state, location).filter(isRegion),
-    isCreating: getAnnotationMode(state) === 'region',
-    isRotated: !!getRotation(state),
-    message: getCreatorMessage(state),
-    staged: getCreatorStagedForLocation(state, location),
-    status: getCreatorStatus(state),
-});
+export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
+    const staged = getCreatorStagedForLocation(state, location);
+
+    return {
+        activeAnnotationId: getActiveAnnotationId(state),
+        annotations: getAnnotationsForLocation(state, location).filter(isRegion),
+        isCreating: getAnnotationMode(state) === Mode.REGION,
+        isRotated: !!getRotation(state),
+        message: getCreatorMessage(state),
+        staged: isCreatorStagedRegion(staged) ? staged : null,
+        status: getCreatorStatus(state),
+    };
+};
 
 export const mapDispatchToProps = {
     createRegion: createRegionAction,
+    resetCreator: resetCreatorAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setMessage: setMessageAction,
     setStaged: setStagedAction,

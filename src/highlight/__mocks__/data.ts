@@ -27,7 +27,7 @@ export const user: User = {
 export const annotation: AnnotationHighlight = {
     created_at: '2020-01-01T00:00:00Z',
     created_by: user,
-    id: '123',
+    id: '223',
     modified_at: '2020-01-02T00:00:00Z',
     modified_by: user,
     permissions: {
