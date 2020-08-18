@@ -54,22 +54,22 @@ export function getHighlightShapesFromAnnotations(
 
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
-    const rootElRef = React.createRef<SVGSVGElement>();
+    const svgElRef = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
     const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId);
 
     // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', rootElRef, (): void => {
+    useOutsideEvent('mousedown', svgElRef, (): void => {
         setIsListening(false);
     });
-    useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
+    useOutsideEvent('mouseup', svgElRef, (): void => setIsListening(true));
 
     return (
         <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">
             <HighlightCanvas shapes={canvasShapes} />
-            <HighlightSvg ref={rootElRef} className={classNames({ 'is-listening': isListening })}>
+            <HighlightSvg ref={svgElRef} className={classNames({ 'is-listening': isListening })}>
                 {sortedAnnotations.map(({ id, target }) => (
-                    <HighlightTarget key={id} annotationId={id} onSelect={onSelect} rects={target.shapes} />
+                    <HighlightTarget key={id} annotationId={id} onSelect={onSelect} shapes={target.shapes} />
                 ))}
             </HighlightSvg>
         </div>

@@ -12,7 +12,7 @@ describe('HighlightTarget', () => {
     const defaults = {
         annotationId: '123',
         onSelect: jest.fn(),
-        rects: [
+        shapes: [
             {
                 height: 10,
                 type: 'rect' as const,

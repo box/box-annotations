@@ -142,7 +142,6 @@ describe('RegionAnnotations', () => {
                     location: 1,
                     message: null,
                     shape,
-                    type: 'region',
                 },
             });
 

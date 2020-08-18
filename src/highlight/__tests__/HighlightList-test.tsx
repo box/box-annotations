@@ -87,10 +87,10 @@ describe('HighlightList', () => {
             const wrapper = getWrapper();
             const children = wrapper.find(HighlightTarget);
 
-            expect(children.get(0).props.rects).toMatchObject([{ height: 60, width: 60 }]);
-            expect(children.get(1).props.rects).toMatchObject([{ height: 50, width: 50 }]);
-            expect(children.get(2).props.rects).toMatchObject([{ height: 20, width: 20 }]);
-            expect(children.get(3).props.rects).toMatchObject([{ height: 10, width: 10 }]);
+            expect(children.get(0).props.shapes).toMatchObject([{ height: 60, width: 60 }]);
+            expect(children.get(1).props.shapes).toMatchObject([{ height: 50, width: 50 }]);
+            expect(children.get(2).props.shapes).toMatchObject([{ height: 20, width: 20 }]);
+            expect(children.get(3).props.shapes).toMatchObject([{ height: 10, width: 10 }]);
         });
     });
 });

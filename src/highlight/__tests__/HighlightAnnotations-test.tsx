@@ -1,7 +1,9 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
+import HighlightCanvas from '../HighlightCanvas';
 import HighlightCreator from '../HighlightCreator';
+import HighlightSvg from '../HighlightSvg';
 import PopupReply from '../../components/Popups/PopupReply';
 import { HighlightList } from '../HighlightList';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
@@ -65,7 +67,8 @@ describe('HighlightAnnotations', () => {
 
             expect(wrapper.find(HighlightList).exists()).toBe(true);
             expect(wrapper.exists(HighlightCreator)).toBe(false);
-            expect(wrapper.exists('.ba-HighlightAnnotations-target')).toBe(false);
+            expect(wrapper.exists(HighlightCanvas)).toBe(false);
+            expect(wrapper.exists(HighlightSvg)).toBe(false);
             expect(wrapper.exists(PopupReply)).toBe(false);
         });
 

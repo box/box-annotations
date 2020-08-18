@@ -11,13 +11,13 @@ type Props = {
     annotationId: string;
     className?: string;
     onSelect?: (annotationId: string) => void;
-    rects: Array<Rect>;
+    shapes: Array<Rect>;
 };
 
 export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
-    const { annotationId, className, onSelect = noop, rects } = props;
+    const { annotationId, className, onSelect = noop, shapes } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -57,7 +57,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             role="button"
             tabIndex={0}
         >
-            {rects.map(rect => {
+            {shapes.map(rect => {
                 const { height, width, x, y } = rect;
                 return (
                     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
