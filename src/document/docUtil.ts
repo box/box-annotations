@@ -1,3 +1,8 @@
+type Selection = {
+    range: Range;
+    location: number;
+};
+
 /**
  * Finds the closest ancestor DOM element with the specified class.
  */
@@ -30,10 +35,7 @@ export function getRange(): Range | null {
     return selection.getRangeAt(0);
 }
 
-export function getSelection(): {
-    range: Range;
-    location: number;
-} | null {
+export function getSelection(): Selection | null {
     const range = getRange();
 
     if (!range) {

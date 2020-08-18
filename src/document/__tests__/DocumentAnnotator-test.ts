@@ -3,7 +3,7 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { createSelectionAction, fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { fetchAnnotationsAction, setSelectionAction } from '../../store';
 import { mockRange } from '../../store/selection/__mocks__/range';
 import { scrollToLocation } from '../../utils/scroll';
 
@@ -84,20 +84,14 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('destroy()', () => {
-        test('should call clearTimeout if timer is not null', () => {
+        test('should clear timeout and remove event handlers', () => {
             annotator.selectionChangeTimer = 1;
-
-            annotator.destroy();
-
-            expect(clearTimeout).toHaveBeenCalledWith(1);
-        });
-
-        test('should remove event handlers', () => {
             jest.spyOn(annotator, 'removeListener');
             jest.spyOn(document, 'removeEventListener');
 
             annotator.destroy();
 
+            expect(clearTimeout).toHaveBeenCalledWith(1);
             expect(annotator.removeListener).toHaveBeenCalledWith(
                 'annotations_mode_change',
                 annotator.handleChangeMode,
@@ -212,7 +206,7 @@ describe('DocumentAnnotator', () => {
             jest.runAllTimers();
 
             expect(annotator.store.dispatch).toHaveBeenLastCalledWith(
-                createSelectionAction({ location: 1, range: mockRange }),
+                setSelectionAction({ location: 1, range: mockRange }),
             );
         });
     });
