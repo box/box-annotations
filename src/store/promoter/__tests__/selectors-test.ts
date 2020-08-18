@@ -1,7 +1,7 @@
 import promoterState from '../__mocks__/promoterState';
 import { getSelection, getSelectionForLocation } from '../selectors';
 
-describe('store/promoter/selectors', () => {
+describe('store/annotations/selectors', () => {
     const state = { promoter: promoterState };
 
     describe('getSelection', () => {

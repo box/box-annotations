@@ -4,8 +4,8 @@ import BaseManager from '../common/BaseManager';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
-import { clearSelectionAction as clearSelection, createSelectionAction as createSelection } from '../highlight/actions';
-import { Mode } from '../store';
+import { getSelectionItem } from '../highlight/highlightUtil';
+import { Mode, setSelectionAction } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -40,7 +40,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         super.init(scale, rotation);
 
         // Clear previous selection
-        clearSelection();
+        this.store.dispatch(setSelectionAction(null));
     }
 
     getAnnotatedElement(): HTMLElement | null | undefined {
@@ -103,11 +103,11 @@ export default class DocumentAnnotator extends BaseAnnotator {
     handleSelectionChange = debounce(
         (): void => {
             // Clear previous selection immediately
-            clearSelection();
+            this.store.dispatch(setSelectionAction(null));
 
             // Wait Pdf.js textLayer enhancement for 300ms (they hardcode this magic number)
             this.selectionChangeTimer = window.setTimeout(() => {
-                createSelection();
+                this.store.dispatch(setSelectionAction(getSelectionItem()));
                 this.selectionChangeTimer = undefined;
             }, TEXT_LAYER_ENHANCEMENT);
         },
