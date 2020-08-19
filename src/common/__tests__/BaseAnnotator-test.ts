@@ -262,8 +262,8 @@ describe('BaseAnnotator', () => {
 
     describe('isFeatureEnabled()', () => {
         test('should return whether feature is enabled or not', () => {
-            expect(annotator.isFeatureEnabled('enabledFeature')).toBeTruthy();
-            expect(annotator.isFeatureEnabled('notEnabledFeature')).toBeFalsy();
+            expect(annotator.isFeatureEnabled('enabledFeature')).toBe(true);
+            expect(annotator.isFeatureEnabled('notEnabledFeature')).toBe(false);
         });
     });
 });

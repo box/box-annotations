@@ -12,7 +12,12 @@ type Annotator = {
 };
 
 type AnnotationsOptions = {
+    features: Features;
     intl: IntlOptions;
+};
+
+export type Features = {
+    [key: string]: boolean;
 };
 
 type PreviewOptions = {

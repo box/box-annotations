@@ -6,13 +6,10 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Features } from '../BoxAnnotations';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
-
-export type Features = {
-    [key: string]: boolean;
-};
 
 export type FileOptions = {
     [key: string]: {
@@ -58,7 +55,7 @@ export default class BaseAnnotator extends EventEmitter {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, features = {}, file, fileOptions, intl, token }: Options) {
+    constructor({ apiHost, container, features, file, fileOptions, intl, token }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -79,7 +76,7 @@ export default class BaseAnnotator extends EventEmitter {
         };
 
         this.container = container;
-        this.features = features;
+        this.features = features || {};
         this.intl = i18n.createIntlProvider(intl);
         this.store = store.createStore(initialState, {
             api: new API({ apiHost, token }),
