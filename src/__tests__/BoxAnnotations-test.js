@@ -153,7 +153,8 @@ describe('BoxAnnotations', () => {
     });
 
     describe('getOptions', () => {
-        it.each([undefined, { intl: { messages: { test: 'Hello' } } }])(
+        const features = { enabledFeature: true };
+        test.each([undefined, { features, intl: { messages: { test: 'Hello' } } }])(
             'should return the passed in options when they are %o',
             mockOptions => {
                 loader = new BoxAnnotations(null, mockOptions);

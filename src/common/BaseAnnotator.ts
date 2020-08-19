@@ -1,3 +1,4 @@
+import getProp from 'lodash/get';
 import { IntlShape } from 'react-intl';
 import * as store from '../store';
 import API from '../api';
@@ -5,6 +6,7 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Features } from '../BoxAnnotations';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -22,6 +24,7 @@ export type FileOptions = {
 export type Options = {
     apiHost: string;
     container: Container;
+    features?: Features;
     file: {
         id: string;
         file_version: {
@@ -46,11 +49,13 @@ export default class BaseAnnotator extends EventEmitter {
 
     container: Container;
 
+    features: Features;
+
     intl: IntlShape;
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, file, fileOptions, intl, token }: Options) {
+    constructor({ apiHost, container, features, file, fileOptions, intl, token }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -71,6 +76,7 @@ export default class BaseAnnotator extends EventEmitter {
         };
 
         this.container = container;
+        this.features = features || {};
         this.intl = i18n.createIntlProvider(intl);
         this.store = store.createStore(initialState, {
             api: new API({ apiHost, token }),
@@ -121,6 +127,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(store.setRotationAction(rotation));
         this.store.dispatch(store.setScaleAction(scale));
         this.store.dispatch(store.setIsInitialized());
+    }
+
+    public isFeatureEnabled(feature = ''): boolean {
+        return getProp(this.features, feature, false);
     }
 
     public removeAnnotation = (annotationId: string): void => {

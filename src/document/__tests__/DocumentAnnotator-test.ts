@@ -4,6 +4,7 @@ import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { HighlightManager } from '../../highlight';
 import { mockRange } from '../../store/selection/__mocks__/range';
 import { scrollToLocation } from '../../utils/scroll';
 
@@ -126,6 +127,17 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managers.size).toBe(1);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+        });
+
+        test('should create HighlightManager if feature is enabled', () => {
+            annotator = getAnnotator({ features: { highlightText: true } });
+
+            const managers = annotator.getPageManagers(getPage());
+            const managerIterator = managers.values();
+
+            expect(managers.size).toBe(2);
+            expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
