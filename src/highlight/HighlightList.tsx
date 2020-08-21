@@ -1,12 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
+import noop from 'lodash/noop';
 import HighlightCanvas, { CanvasShape } from './HighlightCanvas';
-import HighlightSvg from './HighlightSvg';
-import HighlightTarget from './HighlightTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationHighlight, Rect, TargetHighlight } from '../@types';
 import { checkValue } from '../utils/util';
 import './HighlightList.scss';
+import HighlightRect from './HighlightRect';
 
 export type Props = {
     activeId?: string | null;
@@ -48,11 +48,11 @@ export function getHighlightShapesFromAnnotations(
             target: { shapes },
         } = annotation;
 
-        return currentShapes.concat(shapes.map(shape => ({ ...shape, isActive: activeId === id })));
+        return currentShapes.concat(shapes.map(shape => ({ ...shape, annotationId: id, isActive: activeId === id })));
     }, []);
 }
 
-export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
+export function HighlightList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const svgElRef = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
@@ -65,13 +65,17 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
     useOutsideEvent('mouseup', svgElRef, (): void => setIsListening(true));
 
     return (
-        <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">
+        <div
+            className={classNames('ba-HighlightList', className, { 'is-listening': isListening })}
+            data-resin-component="highlightList"
+        >
             <HighlightCanvas shapes={canvasShapes} />
-            <HighlightSvg ref={svgElRef} className={classNames({ 'is-listening': isListening })}>
-                {sortedAnnotations.map(({ id, target }) => (
-                    <HighlightTarget key={id} annotationId={id} onSelect={onSelect} shapes={target.shapes} />
-                ))}
-            </HighlightSvg>
+            {canvasShapes.map(canvasShape => {
+                const { height, width, x, y } = canvasShape;
+                return (
+                    <HighlightRect key={`${x}-${y}-${height}-${width}`} canvasShape={canvasShape} onSelect={onSelect} />
+                );
+            })}
         </div>
     );
 }

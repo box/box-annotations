@@ -5,6 +5,12 @@
     width: 100%;
     height: 100%;
 
+    &.is-listening {
+        .ba-HighlightRect {
+            pointer-events: all;
+        }
+    }
+
     .ba-HighlightSvg.is-listening {
         .ba-HighlightTarget-rect {
             pointer-events: all;

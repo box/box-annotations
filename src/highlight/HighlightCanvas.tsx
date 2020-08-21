@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { bdlYellorange, black, white } from 'box-ui-elements/es/styles/variables';
+import { bdlYellorange, white } from 'box-ui-elements/es/styles/variables';
 import { Rect } from '../@types';
 import './HighlightCanvas.scss';
 
-export type CanvasShape = Rect & { isActive?: boolean };
+export type CanvasShape = Rect & { annotationId?: string; isActive?: boolean };
 
 export type Props = {
     shapes: CanvasShape[] | CanvasShape;
@@ -117,19 +117,6 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
             context.strokeStyle = white;
             context.lineWidth = 1;
             this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-
-            // If annotation is active, apply a shadow
-            if (isActive) {
-                const imgData = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
-
-                context.save();
-                context.shadowColor = black;
-                context.shadowBlur = 10;
-
-                this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-                context.putImageData(imgData, x1 - 1, y1 - 1);
-                context.restore();
-            }
 
             context.restore();
         });

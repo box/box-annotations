@@ -1,0 +1,53 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-HighlightRect {
+    $ba-HighlightRect-color: $bdl-yellorange;
+    $ba-HighlightRect-bgColor--default: rgba($ba-HighlightRect-color, 0); // Default color uses zero alpha value for transition
+    $ba-HighlightRect-bgColor--hover: rgba($ba-HighlightRect-color, .1);
+    $ba-HighlightRect-bgColor--active: rgba($ba-HighlightRect-color, 0);
+    $ba-HighlightRect-transitionDelay: 25ms;
+    $ba-HighlightRect-transitionDuration: 200ms;
+
+    $border-radius: 6px;
+    $border-size-inner: 1px;
+    $border-size-outer: 4px;
+
+    position: absolute;
+    // stylelint-disable-next-line declaration-no-important
+    box-sizing: content-box !important; // Padding needs to increase the hit area of the button to include the borders
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        background-color: $ba-HighlightRect-bgColor--default;
+        border-radius: $border-radius;
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        transition: background-color $ba-HighlightRect-transitionDuration ease, box-shadow $ba-HighlightRect-transitionDuration ease;
+        content: '';
+    }
+
+    &.is-active {
+        &::after {
+            background-color: $ba-HighlightRect-bgColor--active;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .2);
+            transition-delay: $ba-HighlightRect-transitionDelay;
+        }
+    }
+}
