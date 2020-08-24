@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 import { DOMRectMini, SelectionItem } from './types';
 
-export type CreateArg = {
+export type SelectionArg = {
     location: number;
     range: Range;
 };
@@ -19,7 +19,7 @@ export const getDOMRectMini = ({ height, width, x, y }: DOMRect): DOMRectMini =>
 
 export const setSelectionAction = createAction(
     'SET_SELECTION',
-    (arg: CreateArg | null): Payload => {
+    (arg: SelectionArg | null): Payload => {
         if (!arg) {
             return {
                 payload: null,

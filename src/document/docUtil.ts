@@ -28,11 +28,13 @@ export function getPageNumber(element: Element | null): number | undefined {
 
 export function getRange(): Range | null {
     const selection = window.getSelection();
-    if (!selection || selection.type !== 'Range' || selection.isCollapsed) {
+    if (!selection || selection.type !== 'Range' || selection.isCollapsed || !selection.rangeCount) {
         return null;
     }
 
-    return selection.getRangeAt(0);
+    // Firefox allows to select multiple ranges in the document by using Ctrl/Cmd+click
+    // We only care about the last range
+    return selection.getRangeAt(selection.rangeCount - 1);
 }
 
 export function getSelection(): Selection | null {

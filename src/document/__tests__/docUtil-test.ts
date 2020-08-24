@@ -39,11 +39,12 @@ describe('docUtil', () => {
 
     describe('getRange()', () => {
         test.each`
-            selection                                       | result
-            ${null}                                         | ${null}
-            ${{ isCollapsed: true, type: 'Range' }}         | ${null}
-            ${{ type: 'Caret' }}                            | ${null}
-            ${{ getRangeAt: () => 'range', type: 'Range' }} | ${'range'}
+            selection                                                      | result
+            ${null}                                                        | ${null}
+            ${{ type: 'Caret' }}                                           | ${null}
+            ${{ isCollapsed: true, type: 'Range' }}                        | ${null}
+            ${{ isCollapsed: true, rangeCount: 0, type: 'Range' }}         | ${null}
+            ${{ getRangeAt: () => 'range', rangeCount: 1, type: 'Range' }} | ${'range'}
         `('should return range as $result', ({ selection, result }) => {
             jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection);
 
@@ -73,6 +74,7 @@ describe('docUtil', () => {
                     range.getClientRects = jest.fn().mockReturnValueOnce([]);
                     return range;
                 },
+                rangeCount: 1,
                 type: 'Range',
             } as unknown) as Selection;
         };
