@@ -1,22 +1,16 @@
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
+import HighlightListener from '../../highlight/HighlightListener';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { fetchAnnotationsAction, setSelectionAction } from '../../store';
+import { fetchAnnotationsAction } from '../../store';
 import { HighlightManager } from '../../highlight';
-import { mockRange } from '../../store/selection/__mocks__/range';
 import { scrollToLocation } from '../../utils/scroll';
 
-jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../highlight/HighlightManager');
-jest.mock('../docUtil', () => ({
-    getSelection: () => ({ location: 1, range: mockRange }),
-}));
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
-
-jest.useFakeTimers();
 
 describe('DocumentAnnotator', () => {
     const container = document.createElement('div');
@@ -75,32 +69,27 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('constructor()', () => {
-        test('should add selectionchange event listener', () => {
-            jest.spyOn(document, 'addEventListener');
+        test('should create HighlightListener if feature is enabled', () => {
+            annotator = getAnnotator({ features: { highlightText: true } });
 
-            annotator = getAnnotator();
-
-            expect(document.addEventListener).toHaveBeenCalledWith('selectionchange', annotator.handleSelectionChange);
+            expect(annotator.highlightListener).toBeInstanceOf(HighlightListener);
         });
     });
 
     describe('destroy()', () => {
-        test('should clear timeout and remove event handlers', () => {
-            annotator.selectionChangeTimer = 1;
+        test('should remove event handler ', () => {
+            annotator = getAnnotator({ features: { highlightText: true } });
+
             jest.spyOn(annotator, 'removeListener');
-            jest.spyOn(document, 'removeEventListener');
+            jest.spyOn(annotator.highlightListener as HighlightListener, 'destroy');
 
             annotator.destroy();
 
-            expect(clearTimeout).toHaveBeenCalledWith(1);
             expect(annotator.removeListener).toHaveBeenCalledWith(
                 'annotations_mode_change',
                 annotator.handleChangeMode,
             );
-            expect(document.removeEventListener).toHaveBeenCalledWith(
-                'selectionchange',
-                annotator.handleSelectionChange,
-            );
+            expect(annotator.highlightListener?.destroy).toHaveBeenCalled();
         });
     });
 
@@ -205,24 +194,6 @@ describe('DocumentAnnotator', () => {
         });
     });
 
-    describe('handleSelectionChange()', () => {
-        test('should clear selection and dispatch new selection', () => {
-            jest.spyOn(annotator.store, 'dispatch');
-
-            annotator.handleSelectionChange();
-
-            expect(annotator.store.dispatch).toHaveBeenLastCalledWith(setSelectionAction(null));
-            expect(annotator.selectionChangeTimer).not.toBeUndefined();
-            expect(clearTimeout).toHaveBeenCalled();
-
-            jest.runAllTimers();
-
-            expect(annotator.store.dispatch).toHaveBeenLastCalledWith(
-                setSelectionAction({ location: 1, range: mockRange }),
-            );
-        });
-    });
-
     describe('init()', () => {
         test('should set the root and annotated element based on class name', () => {
             annotator.init(5);
@@ -241,12 +212,14 @@ describe('DocumentAnnotator', () => {
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
         });
 
-        test('should clear previous selection', () => {
-            jest.spyOn(annotator.store, 'dispatch');
+        test('should init HighlightListener', () => {
+            annotator = getAnnotator({ features: { highlightText: true } });
+            annotator.annotatedEl = document.createElement('div');
+            jest.spyOn(annotator.highlightListener as HighlightListener, 'init');
 
             annotator.render();
 
-            expect(annotator.store.dispatch).toHaveBeenCalledWith(setSelectionAction(null));
+            expect(annotator.highlightListener?.init).toHaveBeenCalledWith(annotator.annotatedEl);
         });
     });
 
