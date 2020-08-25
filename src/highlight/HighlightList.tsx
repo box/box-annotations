@@ -41,6 +41,7 @@ export function sortHighlight(
 export function getHighlightShapesFromAnnotations(
     annotations: AnnotationHighlight[],
     activeId: string | null,
+    hoverId: string | null,
 ): CanvasShape[] {
     return annotations.reduce<CanvasShape[]>((currentShapes, annotation) => {
         const {
@@ -48,15 +49,26 @@ export function getHighlightShapesFromAnnotations(
             target: { shapes },
         } = annotation;
 
-        return currentShapes.concat(shapes.map(shape => ({ ...shape, isActive: activeId === id })));
+        return currentShapes.concat(
+            shapes.map(shape => ({
+                ...shape,
+                isActive: activeId === id,
+                isHover: hoverId === id,
+            })),
+        );
     }, []);
 }
 
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
+    const [hoverId, setHoverId] = React.useState<string | null>(null);
     const svgElRef = React.createRef<SVGSVGElement>();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
-    const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId);
+    const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId, hoverId);
+
+    const onHover = (annotationId: string | null): void => {
+        setHoverId(annotationId);
+    };
 
     // Document-level event handlers for focus and pointer control
     useOutsideEvent('mousedown', svgElRef, (): void => {
@@ -69,7 +81,13 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
             <HighlightCanvas shapes={canvasShapes} />
             <HighlightSvg ref={svgElRef} className={classNames({ 'is-listening': isListening })}>
                 {sortedAnnotations.map(({ id, target }) => (
-                    <HighlightTarget key={id} annotationId={id} onSelect={onSelect} shapes={target.shapes} />
+                    <HighlightTarget
+                        key={id}
+                        annotationId={id}
+                        onHover={onHover}
+                        onSelect={onSelect}
+                        shapes={target.shapes}
+                    />
                 ))}
             </HighlightSvg>
         </div>
