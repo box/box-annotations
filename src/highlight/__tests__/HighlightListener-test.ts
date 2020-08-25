@@ -1,16 +1,20 @@
+import createStore from '../../store/__mocks__/createStore';
 import HighlightListener from '../HighlightListener';
-import { createStore, getIsInitialized } from '../../store';
+import { AppStore, getIsInitialized } from '../../store';
 import { mockRange } from '../../store/selection/__mocks__/range';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
-jest.mock('../../store');
+jest.mock('../../store', () => ({
+    getIsInitialized: jest.fn().mockReturnValue(false),
+    setSelectionAction: jest.fn(arg => arg),
+}));
 
 jest.useFakeTimers();
 
 describe('HighlightListener', () => {
     const defaults = {
         getSelection: jest.fn(() => ({ location: 1, range: mockRange })),
-        store: createStore(),
+        store: (createStore() as unknown) as AppStore,
     };
     const mockAnnotatedEl = document.createElement('div');
 
