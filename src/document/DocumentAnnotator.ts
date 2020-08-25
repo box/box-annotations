@@ -1,11 +1,10 @@
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
-import HighlightListener from '../highlight/HighlightListener';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
-import { HighlightManager } from '../highlight';
+import { HighlightListener, HighlightManager } from '../highlight';
 import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
