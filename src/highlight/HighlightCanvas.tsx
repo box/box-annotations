@@ -3,7 +3,7 @@ import { bdlYellow, black, white } from 'box-ui-elements/es/styles/variables';
 import { Rect } from '../@types';
 import './HighlightCanvas.scss';
 
-export type CanvasShape = Rect & { isActive?: boolean };
+export type CanvasShape = Rect & { isActive?: boolean; isHover?: boolean };
 
 export type Props = {
     shapes: CanvasShape[] | CanvasShape;
@@ -98,7 +98,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
         }
 
         shapesArray.forEach(rect => {
-            const { height, isActive, width, x, y } = rect;
+            const { height, isActive, isHover, width, x, y } = rect;
             const rectHeight = (height / 100) * canvasHeight;
             const rectWidth = (width / 100) * canvasWidth;
             const x1 = (x / 100) * canvasWidth;
@@ -108,7 +108,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
 
             // Draw the highlight rect
             context.fillStyle = bdlYellow;
-            context.globalAlpha = isActive ? 0.66 : 0.33;
+            context.globalAlpha = isActive || isHover ? 0.66 : 0.33;
             this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, true, false);
             context.restore();
             context.save();

@@ -1,18 +1,15 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import noop from 'lodash/noop';
+import { act } from 'react-dom/test-utils';
+import { mount, ReactWrapper } from 'enzyme';
 import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
-import HighlightList, { Props } from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import HighlightTarget from '../HighlightTarget';
-import useOutsideEvent from '../../common/useOutsideEvent';
 import { AnnotationHighlight } from '../../@types';
+import { HighlightList, Props } from '../HighlightList';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
-
-jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));
+jest.mock('../HighlightCanvas');
+jest.mock('../HighlightTarget');
 
 describe('HighlightList', () => {
     const defaults: Props = {
@@ -24,36 +21,24 @@ describe('HighlightList', () => {
         ] as AnnotationHighlight[],
         onSelect: jest.fn(),
     };
-    const getWrapper = (props?: Partial<Props>): ShallowWrapper => shallow(<HighlightList {...defaults} {...props} />);
+    const getWrapper = (props?: Partial<Props>): ReactWrapper => mount(<HighlightList {...defaults} {...props} />);
 
     describe('render()', () => {
-        const mockSetIsListening = jest.fn();
-
-        beforeEach(() => {
-            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetIsListening]);
-        });
-
-        test('should render HighlightSvg and HighlightAnnotation', () => {
+        test('should render HighlightCanvas, HighlightSvg and HighlightTarget', () => {
             const wrapper = getWrapper();
 
+            expect(wrapper.find(HighlightCanvas).exists()).toBe(true);
             expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(true);
             expect(wrapper.find(HighlightTarget).exists()).toBe(true);
         });
 
-        test('should not have is-listening class if isListening state is false', () => {
-            jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, mockSetIsListening]);
-
+        test('should not have is-listening class if isListening state is false', async () => {
             const wrapper = getWrapper();
-
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown'));
+            });
+            wrapper.update();
             expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(false);
-        });
-
-        test('should call useOutsideEvent', () => {
-            getWrapper();
-
-            expect(mockSetIsListening).toHaveBeenNthCalledWith(1, false); // mousedown
-            expect(mockSetIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
-            expect(useOutsideEvent).toHaveBeenCalledTimes(2);
         });
 
         test('should filter all invalid annotations', () => {
@@ -91,6 +76,31 @@ describe('HighlightList', () => {
             expect(children.get(1).props.shapes).toMatchObject([{ height: 50, width: 50 }]);
             expect(children.get(2).props.shapes).toMatchObject([{ height: 20, width: 20 }]);
             expect(children.get(3).props.shapes).toMatchObject([{ height: 10, width: 10 }]);
+        });
+
+        test('should render canvas shapes reflecting the hover id', () => {
+            const wrapper = getWrapper();
+            let shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
+
+            expect(shapes[0].isHover).toBe(false);
+            expect(shapes[1].isHover).toBe(false);
+            expect(shapes[2].isHover).toBe(false); // anno_1
+            expect(shapes[3].isHover).toBe(false);
+
+            act(() => {
+                const target = wrapper.find(HighlightTarget).at(2);
+                const handleTargetHover = target.prop('onHover') || noop;
+                handleTargetHover('anno_1');
+            });
+
+            wrapper.update();
+
+            shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
+
+            expect(shapes[0].isHover).toBe(false);
+            expect(shapes[1].isHover).toBe(false);
+            expect(shapes[2].isHover).toBe(true); // anno_1
+            expect(shapes[3].isHover).toBe(false);
         });
     });
 });
