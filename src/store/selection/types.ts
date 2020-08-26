@@ -1,11 +1,11 @@
-export type DOMRectMini = Required<DOMRectInit>;
+import { Shape } from '../../@types';
 
 export type SelectionState = {
     selection: SelectionItem | null;
 };
 
 export type SelectionItem = {
-    boundingRect: DOMRectMini;
+    boundingRect: Shape;
     location: number;
-    rects: Array<DOMRectMini>;
+    rects: Array<Shape>;
 };

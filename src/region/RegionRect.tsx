@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Shape, styleShape } from './regionUtil';
+import { Shape } from '../@types';
+import { styleShape } from './regionUtil';
 import './RegionRect.scss';
 
 type Props = {

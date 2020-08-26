@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Annotation, AnnotationRegion, Position } from '../@types';
+import { Annotation, AnnotationRegion, Position, Shape } from '../@types';
 import { invertYCoordinate, Point, rotatePoint, translatePoint } from './transformUtil';
 
 // Possible rotation values as supplied by box-content-preview
@@ -13,13 +13,6 @@ const DEFAULT_DIMENSIONS = { height: 100, width: 100 };
 export type Dimensions = {
     height: number;
     width: number;
-};
-
-export type Shape = {
-    height: number;
-    width: number;
-    x: number;
-    y: number;
 };
 
 export type Translation = {

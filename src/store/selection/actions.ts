@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
-import { DOMRectMini, SelectionItem } from './types';
+import { SelectionItem } from './types';
+import { Shape } from '../../@types';
 
 export type SelectionArg = {
     location: number;
@@ -10,7 +11,7 @@ type Payload = {
     payload: SelectionItem | null;
 };
 
-export const getDOMRectMini = ({ height, width, x, y }: DOMRect): DOMRectMini => ({
+export const getShape = ({ height, width, x, y }: DOMRect): Shape => ({
     height,
     width,
     x,
@@ -30,9 +31,9 @@ export const setSelectionAction = createAction(
 
         return {
             payload: {
-                boundingRect: getDOMRectMini(range.getBoundingClientRect()),
+                boundingRect: getShape(range.getBoundingClientRect()),
                 location,
-                rects: Array.from(range.getClientRects()).map(getDOMRectMini),
+                rects: Array.from(range.getClientRects()).map(getShape),
             },
         };
     },

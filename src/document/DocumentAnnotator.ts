@@ -1,5 +1,6 @@
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
+import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
@@ -144,6 +145,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
         if (isRegion(annotation)) {
             scrollToLocation(this.annotatedEl, annotationPageEl, {
                 offsets: centerRegion(annotation.target.shape),
+            });
+        } else if (isHighlight(annotation)) {
+            scrollToLocation(this.annotatedEl, annotationPageEl, {
+                offsets: centerHighlight(annotation.target.shapes),
             });
         }
     }
