@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
-import { Shape, styleShape } from './regionUtil';
+import { Shape } from '../utils/util';
+import { styleShape } from './regionUtil';
 import './RegionAnnotation.scss';
 
 type Props = {
