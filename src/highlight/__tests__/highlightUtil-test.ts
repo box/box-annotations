@@ -1,13 +1,14 @@
 import { centerHighlight, getBoundingRect } from '../highlightUtil';
+import { Shape } from '../../@types';
 
-const shape1: Required<DOMRectInit> = {
+const shape1: Shape = {
     height: 10,
     width: 10,
     x: 0,
     y: 0,
 };
 
-const shape2: Required<DOMRectInit> = {
+const shape2: Shape = {
     height: 10,
     width: 20,
     x: 10,

@@ -41,6 +41,8 @@ export interface Position {
     y: number;
 }
 
+export type Shape = Required<DOMRectInit>;
+
 export interface User {
     id: string;
     login: string;

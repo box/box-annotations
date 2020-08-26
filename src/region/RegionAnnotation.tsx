@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
+import { Shape } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionAnnotation.scss';
 
@@ -12,7 +13,7 @@ type Props = {
     className?: string;
     isActive?: boolean;
     onSelect?: (annotationId: string) => void;
-    shape: Required<DOMRectInit>;
+    shape: Shape;
 };
 
 export type RegionAnnotationRef = HTMLButtonElement;
