@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { bdlYellorange, black, white } from 'box-ui-elements/es/styles/variables';
+import { bdlYellow, black, white } from 'box-ui-elements/es/styles/variables';
 import { Rect } from '../@types';
 import './HighlightCanvas.scss';
 
@@ -107,7 +107,7 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
             context.save();
 
             // Draw the highlight rect
-            context.fillStyle = bdlYellorange;
+            context.fillStyle = bdlYellow;
             context.globalAlpha = isActive ? 0.66 : 0.33;
             this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, true, false);
             context.restore();
