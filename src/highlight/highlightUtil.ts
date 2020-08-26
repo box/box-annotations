@@ -1,5 +1,6 @@
 import { Annotation, AnnotationHighlight, Position, Type } from '../@types';
-import { centerShape, Shape } from '../utils/util';
+
+type Shape = Required<DOMRectInit>;
 
 export const getBoundingRect = (shapes: Shape[]): Shape => {
     let minX = Number.MAX_VALUE;
@@ -33,6 +34,15 @@ export const getBoundingRect = (shapes: Shape[]): Shape => {
         y: minY,
         width: maxX - minX,
         height: maxY - minY,
+    };
+};
+
+const centerShape = (shape: Required<DOMRectInit>): Position => {
+    const { height, width } = shape;
+
+    return {
+        x: width / 2,
+        y: height / 2,
     };
 };
 

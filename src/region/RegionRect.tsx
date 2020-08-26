@@ -1,13 +1,12 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Shape } from '../utils/util';
 import { styleShape } from './regionUtil';
 import './RegionRect.scss';
 
 type Props = {
     className?: string;
     isActive?: boolean;
-    shape?: Shape;
+    shape?: Required<DOMRectInit>;
 };
 
 export type RegionRectRef = HTMLDivElement;
