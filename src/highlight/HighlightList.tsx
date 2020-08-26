@@ -66,14 +66,12 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
     const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId, hoverId);
 
-    const onHover = (annotationId: string | null): void => {
+    const handleTargetHover = (annotationId: string | null): void => {
         setHoverId(annotationId);
     };
 
     // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', svgElRef, (): void => {
-        setIsListening(false);
-    });
+    useOutsideEvent('mousedown', svgElRef, (): void => setIsListening(false));
     useOutsideEvent('mouseup', svgElRef, (): void => setIsListening(true));
 
     return (
@@ -84,7 +82,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
                     <HighlightTarget
                         key={id}
                         annotationId={id}
-                        onHover={onHover}
+                        onHover={handleTargetHover}
                         onSelect={onSelect}
                         shapes={target.shapes}
                     />

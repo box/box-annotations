@@ -1,18 +1,15 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import noop from 'lodash/noop';
+import { act } from 'react-dom/test-utils';
+import { mount, ReactWrapper } from 'enzyme';
 import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
-import HighlightList, { Props } from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import HighlightTarget from '../HighlightTarget';
-import useOutsideEvent from '../../common/useOutsideEvent';
 import { AnnotationHighlight } from '../../@types';
+import { HighlightList, Props } from '../HighlightList';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
-
-jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));
+jest.mock('../HighlightCanvas');
+jest.mock('../HighlightTarget');
 
 describe('HighlightList', () => {
     const defaults: Props = {
@@ -24,47 +21,27 @@ describe('HighlightList', () => {
         ] as AnnotationHighlight[],
         onSelect: jest.fn(),
     };
-    const getWrapper = (props?: Partial<Props>): ShallowWrapper => shallow(<HighlightList {...defaults} {...props} />);
+    const getWrapper = (props?: Partial<Props>): ReactWrapper => mount(<HighlightList {...defaults} {...props} />);
 
     describe('render()', () => {
-        const mockSetHoverAnnotationId = jest.fn();
-        const mockSetIsListening = jest.fn();
-        const setupMocks = ({
-            isListening = true,
-            hoverAnnotationId = null,
-        }: { isListening?: boolean; hoverAnnotationId?: string | null } = {}): void => {
-            jest.spyOn(React, 'useState')
-                .mockImplementationOnce(() => [isListening, mockSetIsListening])
-                .mockImplementationOnce(() => [hoverAnnotationId, mockSetHoverAnnotationId]);
-        };
-
-        test('should render HighlightSvg and HighlightAnnotation', () => {
-            setupMocks();
+        test('should render HighlightCanvas, HighlightSvg and HighlightTarget', () => {
             const wrapper = getWrapper();
 
+            expect(wrapper.find(HighlightCanvas).exists()).toBe(true);
             expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(true);
             expect(wrapper.find(HighlightTarget).exists()).toBe(true);
         });
 
-        test('should not have is-listening class if isListening state is false', () => {
-            setupMocks({ isListening: false });
-
+        test('should not have is-listening class if isListening state is false', async () => {
             const wrapper = getWrapper();
-
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown'));
+            });
+            wrapper.update();
             expect(wrapper.find(HighlightSvg).hasClass('is-listening')).toBe(false);
         });
 
-        test('should call useOutsideEvent', () => {
-            setupMocks();
-            getWrapper();
-
-            expect(mockSetIsListening).toHaveBeenNthCalledWith(1, false); // mousedown
-            expect(mockSetIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
-            expect(useOutsideEvent).toHaveBeenCalledTimes(2);
-        });
-
         test('should filter all invalid annotations', () => {
-            setupMocks();
             const invalid = [
                 { id: 'anno_5', target: { shapes: [{ height: 105, width: 0, x: 0, y: 0 }] } },
                 { id: 'anno_6', target: { shapes: [{ height: 0, width: 105, x: 0, y: 0 }] } },
@@ -82,7 +59,6 @@ describe('HighlightList', () => {
         });
 
         test('should render canvas shapes reflecting the active id', () => {
-            setupMocks();
             const wrapper = getWrapper({ activeId: 'anno_1' });
             const shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
 
@@ -93,7 +69,6 @@ describe('HighlightList', () => {
         });
 
         test('should render annotations by largest to smallest shape', () => {
-            setupMocks();
             const wrapper = getWrapper();
             const children = wrapper.find(HighlightTarget);
 
@@ -104,25 +79,28 @@ describe('HighlightList', () => {
         });
 
         test('should render canvas shapes reflecting the hover id', () => {
-            setupMocks({ hoverAnnotationId: 'anno_1' });
-
             const wrapper = getWrapper();
-            const shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
+            let shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
+
+            expect(shapes[0].isHover).toBe(false);
+            expect(shapes[1].isHover).toBe(false);
+            expect(shapes[2].isHover).toBe(false); // anno_1
+            expect(shapes[3].isHover).toBe(false);
+
+            act(() => {
+                const target = wrapper.find(HighlightTarget).at(2);
+                const handleTargetHover = target.prop('onHover') || noop;
+                handleTargetHover('anno_1');
+            });
+
+            wrapper.update();
+
+            shapes = wrapper.find(HighlightCanvas).prop('shapes') as CanvasShape[];
 
             expect(shapes[0].isHover).toBe(false);
             expect(shapes[1].isHover).toBe(false);
             expect(shapes[2].isHover).toBe(true); // anno_1
             expect(shapes[3].isHover).toBe(false);
-        });
-
-        test('should setHoverAnnotationId if onHover is triggered', () => {
-            setupMocks();
-
-            const wrapper = getWrapper();
-            const highlightTarget = wrapper.find(HighlightTarget).at(0);
-            highlightTarget.simulate('hover', 'anno_1');
-
-            expect(mockSetHoverAnnotationId).toBeCalledWith('anno_1');
         });
     });
 });
