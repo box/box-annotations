@@ -11,6 +11,7 @@ jest.mock('react', () => ({
 describe('HighlightTarget', () => {
     const defaults = {
         annotationId: '123',
+        onHover: jest.fn(),
         onSelect: jest.fn(),
         shapes: [
             {
@@ -93,6 +94,28 @@ describe('HighlightTarget', () => {
                 expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            });
+        });
+
+        describe('handleMouseEnter()', () => {
+            test('should call onHover with annotationId', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+
+                anchor.simulate('mouseenter');
+
+                expect(defaults.onHover).toHaveBeenCalledWith(defaults.annotationId);
+            });
+        });
+
+        describe('handleMouseLeave()', () => {
+            test('should call onHover with null', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+
+                anchor.simulate('mouseleave');
+
+                expect(defaults.onHover).toHaveBeenCalledWith(null);
             });
         });
     });

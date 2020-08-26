@@ -10,6 +10,7 @@ import './HighlightTarget.scss';
 type Props = {
     annotationId: string;
     className?: string;
+    onHover?: (annotationId: string | null) => void;
     onSelect?: (annotationId: string) => void;
     shapes: Array<Rect>;
 };
@@ -17,7 +18,7 @@ type Props = {
 export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
-    const { annotationId, className, onSelect = noop, shapes } = props;
+    const { annotationId, className, onHover = noop, onSelect = noop, shapes } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -28,6 +29,14 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
 
     const handleFocus = (): void => {
         onSelect(annotationId);
+    };
+
+    const handleMouseEnter = (): void => {
+        onHover(annotationId);
+    };
+
+    const handleMouseLeave = (): void => {
+        onHover(null);
     };
 
     const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -54,6 +63,8 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             onClick={handleClick}
             onFocus={handleFocus}
             onMouseDown={handleMouseDown}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             role="button"
             tabIndex={0}
         >
