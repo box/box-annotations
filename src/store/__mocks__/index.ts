@@ -13,6 +13,7 @@ module.exports = {
     getCreatorStatus: jest.fn(),
     getFileId: jest.fn().mockReturnValue('0'),
     getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
+    getSelectionForLocation: jest.fn(),
     isCreatorStagedHighlight,
     isCreatorStagedRegion,
     Mode,

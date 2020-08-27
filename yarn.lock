@@ -3018,10 +3018,10 @@ box-node-sdk@^1.33.0:
     url-template "^2.0.8"
     uuid "^3.3.3"
 
-box-ui-elements@^12.0.0-beta.77:
-  version "12.0.0-beta.77"
-  resolved "https://registry.yarnpkg.com/box-ui-elements/-/box-ui-elements-12.0.0-beta.77.tgz#bdddab73a30f60d555b671b46a0d0402b4a3d24b"
-  integrity sha512-msxjvfQS2iMfafd7B+8C4cSdefjzseKPTOdR7JQTIg7Trg3fq2BUq+7TyhMJ45U/XUkUweB/AZjClH+2MRayzw==
+box-ui-elements@^12.0.0-beta.146:
+  version "12.0.0-beta.146"
+  resolved "https://registry.yarnpkg.com/box-ui-elements/-/box-ui-elements-12.0.0-beta.146.tgz#ad95652f3a1e618251c5677be18b18c37ac9a026"
+  integrity sha512-U5RiGjEfIZKzPvVGh9jEGsdoIlwYUjbZPSviu9wjnRjjc7DDmSvV5gEKL95GCDYmpDzydYgNhVnG/uRBdVAA2A==
 
 brace-expansion@^1.1.7:
   version "1.1.11"

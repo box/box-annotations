@@ -1,0 +1,91 @@
+@mixin ba-PopupArrow($size, $top-bg, $right-bg, $bottom-bg, $left-bg, $border-color) {
+    // Top-facing arrows
+    &[data-popper-placement*='bottom'] {
+        .ba-Popup-arrow {
+            top: -#{$size - 1};
+
+            &::before,
+            &::after {
+                transform: rotate(180deg) translateX(50%);
+            }
+
+            &::after {
+                top: 1px;
+                border-top-color: $top-bg;
+            }
+        }
+    }
+
+    // Right-facing arrows
+    &[data-popper-placement*='left'] {
+        .ba-Popup-arrow {
+            right: 0;
+
+            &::before,
+            &::after {
+                transform: rotate(-90deg) translateY(-100%);
+                transform-origin: center top;
+            }
+
+            &::after {
+                left: -1px;
+                border-top-color: $right-bg;
+            }
+        }
+    }
+
+    // Left-facing arrows
+    &[data-popper-placement*='right'] {
+        .ba-Popup-arrow {
+            left: -#{$size - 1};
+
+            &::before,
+            &::after {
+                transform: rotate(90deg);
+                transform-origin: center top;
+            }
+
+            &::after {
+                left: 1px;
+                border-top-color: $left-bg;
+            }
+        }
+    }
+
+    // Bottom-facing arrows
+    &[data-popper-placement*='top'] {
+        .ba-Popup-arrow {
+            top: auto;
+            bottom: 0;
+
+            &::before,
+            &::after {
+                transform: rotate(0) translateX(-50%);
+            }
+
+            &::after {
+                top: -1px;
+                border-top-color: $bottom-bg;
+            }
+        }
+    }
+
+    .ba-Popup-arrow {
+        &::before,
+        &::after {
+            position: absolute;
+            display: block;
+            border-right: $size solid transparent;
+            border-left: $size solid transparent;
+            content: '';
+        }
+
+        &::before {
+            border-top: $size solid $border-color;
+        }
+
+        &::after {
+            border-top: $size solid;
+        }
+    }
+}

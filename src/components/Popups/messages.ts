@@ -16,6 +16,11 @@ export default defineMessages({
         description: 'Placeholder for reply field editor',
         defaultMessage: 'Type a comment...',
     },
+    popupHighlightPromoter: {
+        id: 'ba.popups.popupHighlight.promoter',
+        description: 'Popup message for highlight promoter',
+        defaultMessage: 'Highlight and Comment',
+    },
     popupListPrompt: {
         id: 'ba.popups.popupList.prompt',
         description: 'Prompt message for empty popup list',

@@ -31,7 +31,6 @@ export const setSelectionAction = createAction(
 
         return {
             payload: {
-                boundingRect: getShape(range.getBoundingClientRect()),
                 location,
                 rects: Array.from(range.getClientRects()).map(getShape),
             },

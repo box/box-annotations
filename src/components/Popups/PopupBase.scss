@@ -1,13 +1,14 @@
 @import '~box-ui-elements/es/styles/variables';
+@import './PopupArrow';
 
 .ba {
-    $popup-arrow-size: 12px;
     $popup-content-bg: $white;
     $popup-border-color: $bdl-gray-20;
     $popup-footer-bg: $bdl-gray-02;
 
     .ba-Popup {
         @include common-typography;
+        @include ba-PopupArrow(12px, $popup-content-bg, $popup-content-bg, $popup-footer-bg, $popup-content-bg, $popup-border-color);
 
         z-index: 1; // Make sure popup is showing above Preview controls and left/right arrows
 
@@ -15,93 +16,6 @@
         // The following media query is specific to IE10+
         @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
             z-index: 0;
-        }
-
-        // Top-facing arrows
-        &[data-popper-placement*='bottom'] {
-            .ba-Popup-arrow {
-                top: -#{$popup-arrow-size - 1};
-
-                &::before,
-                &::after {
-                    transform: rotate(180deg) translateX(50%);
-                }
-
-                &::after {
-                    top: 1px;
-                }
-            }
-        }
-
-        // Right-facing arrows
-        &[data-popper-placement*='left'] {
-            .ba-Popup-arrow {
-                right: 0;
-
-                &::before,
-                &::after {
-                    transform: rotate(-90deg) translateY(-100%);
-                    transform-origin: center top;
-                }
-
-                &::after {
-                    left: -1px;
-                }
-            }
-        }
-
-        // Left-facing arrows
-        &[data-popper-placement*='right'] {
-            .ba-Popup-arrow {
-                left: -#{$popup-arrow-size - 1};
-
-                &::before,
-                &::after {
-                    transform: rotate(90deg);
-                    transform-origin: center top;
-                }
-
-                &::after {
-                    left: 1px;
-                }
-            }
-        }
-
-        // Bottom-facing arrows
-        &[data-popper-placement*='top'] {
-            .ba-Popup-arrow {
-                top: auto;
-                bottom: 0;
-
-                &::before,
-                &::after {
-                    transform: rotate(0) translateX(-50%);
-                }
-
-                &::after {
-                    top: -1px;
-                    border-top-color: $popup-footer-bg;
-                }
-            }
-        }
-    }
-
-    .ba-Popup-arrow {
-        &::before,
-        &::after {
-            position: absolute;
-            display: block;
-            border-right: $popup-arrow-size solid transparent;
-            border-left: $popup-arrow-size solid transparent;
-            content: '';
-        }
-
-        &::before {
-            border-top: $popup-arrow-size solid $popup-border-color;
-        }
-
-        &::after {
-            border-top: $popup-arrow-size solid $popup-content-bg;
         }
     }
 

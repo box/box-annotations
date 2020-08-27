@@ -8,12 +8,6 @@ describe('store/selection/selectors', () => {
         test('should return the current selection item', () => {
             expect(getSelection(state)).toMatchInlineSnapshot(`
                 Object {
-                  "boundingRect": Object {
-                    "height": 100,
-                    "width": 100,
-                    "x": 200,
-                    "y": 200,
-                  },
                   "location": 1,
                   "rects": Array [
                     Object {
