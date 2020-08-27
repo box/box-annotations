@@ -4,11 +4,14 @@ import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCanvas from '../HighlightCanvas';
 import HighlightCreator from '../HighlightCreator';
 import HighlightSvg from '../HighlightSvg';
+import PopupHighlight from '../../components/Popups/PopupHighlight';
 import PopupReply from '../../components/Popups/PopupReply';
-import { HighlightList } from '../HighlightList';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
+import { HighlightList } from '../HighlightList';
 import { Rect } from '../../@types';
+import { selection as selectionMock } from '../__mocks__/data';
 
+jest.mock('../../components/Popups/PopupHighlight');
 jest.mock('../HighlightCreator');
 
 jest.mock('react', () => ({
@@ -25,9 +28,11 @@ describe('HighlightAnnotations', () => {
         location: 1,
         message: 'test',
         resetCreator: jest.fn(),
+        selection: null,
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setMode: jest.fn(),
+        setSelection: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -111,6 +116,21 @@ describe('HighlightAnnotations', () => {
             expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
 
+        test.each`
+            isCreating | selection        | showPopup
+            ${true}    | ${null}          | ${false}
+            ${true}    | ${selectionMock} | ${false}
+            ${false}   | ${null}          | ${false}
+            ${false}   | ${selectionMock} | ${true}
+        `('should render popup promoter with isCreating $isCreating', ({ isCreating, selection, showPopup }) => {
+            const wrapper = getWrapper({
+                isCreating,
+                selection,
+            });
+
+            expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
+        });
+
         test('should pass activeId to the region list', () => {
             const wrapper = getWrapper({ activeAnnotationId: '123' });
 
@@ -124,6 +144,15 @@ describe('HighlightAnnotations', () => {
             wrapper.find(HighlightList).simulate('select', '123');
 
             expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
+        });
+    });
+
+    describe('handlePromote()', () => {
+        test('should call setSelection', () => {
+            const wrapper = getWrapper({ selection: selectionMock });
+            wrapper.find(PopupHighlight).simulate('click');
+
+            expect(defaults.setSelection).toHaveBeenCalled();
         });
     });
 

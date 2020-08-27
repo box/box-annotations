@@ -12,11 +12,14 @@ import {
     getCreatorMessage,
     getCreatorStagedForLocation,
     getCreatorStatus,
+    getSelectionForLocation,
     isCreatorStagedHighlight,
     Mode,
     resetCreatorAction,
+    SelectionItem,
     setActiveAnnotationIdAction,
     setMessageAction,
+    setSelectionAction,
     setStagedAction,
     setStatusAction,
     toggleAnnotationModeAction,
@@ -29,6 +32,7 @@ export type Props = {
     annotations: AnnotationHighlight[];
     isCreating: boolean;
     message: string;
+    selection: SelectionItem | null;
     staged: CreatorItemHighlight | null;
     status: CreatorStatus;
 };
@@ -41,6 +45,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
         isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
         message: getCreatorMessage(state),
+        selection: getSelectionForLocation(state, location),
         staged: isCreatorStagedHighlight(staged) ? staged : null,
         status: getCreatorStatus(state),
     };
@@ -52,6 +57,7 @@ export const mapDispatchToProps = {
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setMessage: setMessageAction,
     setMode: toggleAnnotationModeAction,
+    setSelection: setSelectionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };
