@@ -83,8 +83,8 @@ const ReplyForm = (props: Props): JSX.Element => {
             </div>
             <div className="ba-Popup-footer">
                 <ReplyButton
-                    data-resin-fileId={fileId}
-                    data-resin-isCurrent={isCurrentFileVersion}
+                    data-resin-fileid={fileId}
+                    data-resin-iscurrent={isCurrentFileVersion}
                     data-resin-target="cancel"
                     data-testid="ba-Popup-cancel"
                     isDisabled={isPending}
@@ -94,8 +94,8 @@ const ReplyForm = (props: Props): JSX.Element => {
                     <FormattedMessage {...messages.buttonCancel} />
                 </ReplyButton>
                 <ReplyButton
-                    data-resin-fileId={fileId}
-                    data-resin-isCurrent={isCurrentFileVersion}
+                    data-resin-fileid={fileId}
+                    data-resin-iscurrent={isCurrentFileVersion}
                     data-resin-target="post"
                     data-testid="ba-Popup-submit"
                     isDisabled={hasErrors || isPending}

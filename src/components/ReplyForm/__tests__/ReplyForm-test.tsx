@@ -60,8 +60,8 @@ describe('ReplyForm', () => {
         const postButton = wrapper.find('[data-testid="ba-Popup-submit"]');
 
         const resinTags = {
-            'data-resin-fileId': defaults.fileId,
-            'data-resin-isCurrent': defaults.isCurrentFileVersion,
+            'data-resin-fileid': defaults.fileId,
+            'data-resin-iscurrent': defaults.isCurrentFileVersion,
         };
 
         expect(cancelButton.props()).toMatchObject({
