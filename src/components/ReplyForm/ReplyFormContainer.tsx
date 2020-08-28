@@ -31,6 +31,8 @@ export const mapStateToProps = (state: AppState): PropsFromState => ({
     isCurrentFileVersion: getIsCurrentFileVersion(state),
 });
 
+export const mapPropsToErrors = (): FormErrors => ({ editorState: 'initial' });
+
 export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: Props): FormValues => {
     const mentionState = withMentionDecorator(createMentionSelectorState(value));
     const cursorPosition = value ? prevCursorPosition : 0;
@@ -70,6 +72,7 @@ export const handleSubmit = (
 const ReplyFormContainer = connect(mapStateToProps)(
     withFormik<Props, FormValues>({
         handleSubmit,
+        mapPropsToErrors,
         mapPropsToValues,
         validate,
         validateOnMount: true,
