@@ -75,9 +75,10 @@ export default class HighlightListener {
             return;
         }
 
-        this.isMouseSelecting = false;
-
-        this.selectionChangeTimer = window.setTimeout(this.setSelection, this.selectionChangeDelay);
+        this.selectionChangeTimer = window.setTimeout(() => {
+            this.setSelection();
+            this.isMouseSelecting = false;
+        }, this.selectionChangeDelay);
     };
 
     handleSelectionChange = (): void => {
