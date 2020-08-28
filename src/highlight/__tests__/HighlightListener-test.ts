@@ -1,7 +1,7 @@
 import createStore from '../../store/__mocks__/createStore';
 import HighlightListener from '../HighlightListener';
 import { AppStore, getIsInitialized } from '../../store';
-import { mockRange } from '../../store/selection/__mocks__/range';
+import { mockRange } from '../../store/promoter/__mocks__/range';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
 jest.mock('../../store', () => ({

@@ -5,6 +5,6 @@ export * from './annotations';
 export * from './common';
 export * from './creator';
 export * from './options';
-export * from './selection';
+export * from './promoter';
 export * from './types';
 export * from './users';
