@@ -105,7 +105,7 @@ describe('HighlightListener', () => {
         });
     });
 
-    describe('handleMouseDown', () => {
+    describe('handleMouseDown()', () => {
         test('should clear timeout and selection', () => {
             highlightListener.selectionChangeTimer = 1;
 
@@ -130,11 +130,12 @@ describe('HighlightListener', () => {
 
             highlightListener.handleMouseUp();
 
-            expect(highlightListener.isMouseSelecting).toBe(false);
+            expect(highlightListener.isMouseSelecting).toBe(true);
 
             jest.runAllTimers();
 
             expect(highlightListener.setSelection).toHaveBeenCalled();
+            expect(highlightListener.isMouseSelecting).toBe(false);
         });
 
         test('should do nothing if select not using mouse', () => {
