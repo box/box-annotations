@@ -1,4 +1,5 @@
 export default {
+    isPromoting: false,
     selection: {
         location: 1,
         rects: [

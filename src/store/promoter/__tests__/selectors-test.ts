@@ -1,8 +1,14 @@
-import selectionState from '../__mocks__/selectionState';
-import { getSelection, getSelectionForLocation } from '../selectors';
+import promoterState from '../__mocks__/promoterState';
+import { getIsPromoting, getSelection, getSelectionForLocation } from '../selectors';
 
-describe('store/selection/selectors', () => {
-    const state = { selection: selectionState };
+describe('store/promoter/selectors', () => {
+    const state = { promoter: promoterState };
+
+    describe('getIsPromoting', () => {
+        test('should return default isPromoting', () => {
+            expect(getIsPromoting(state)).toBe(false);
+        });
+    });
 
     describe('getSelection', () => {
         test('should return the current selection item', () => {

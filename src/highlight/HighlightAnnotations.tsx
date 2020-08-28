@@ -18,11 +18,13 @@ type Props = {
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
+    isPromoting: boolean;
     location: number;
     message: string;
     resetCreator: () => void;
     selection: SelectionItem | null;
     setActiveAnnotationId: (annotationId: string | null) => void;
+    setIsPromoting: (isPromoting: boolean) => void;
     setMessage: (message: string) => void;
     setMode: (mode: Mode) => void;
     setSelection: (selection: SelectionArg | null) => void;
@@ -38,10 +40,12 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         annotations = [],
         createHighlight = noop,
         isCreating = false,
+        isPromoting,
         message,
         resetCreator,
         selection,
         setActiveAnnotationId,
+        setIsPromoting,
         setSelection,
         setMessage,
         staged,
@@ -58,6 +62,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
     const handleCancel = (): void => {
         resetCreator();
+
+        if (isPromoting) {
+            setIsPromoting(false);
+        }
     };
 
     const handleChange = (text = ''): void => {
@@ -70,9 +78,14 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         }
 
         createHighlight({ ...staged, message });
+
+        if (isPromoting) {
+            setIsPromoting(false);
+        }
     };
 
     const handlePromote = (): void => {
+        setIsPromoting(true);
         setSelection(null);
     };
 

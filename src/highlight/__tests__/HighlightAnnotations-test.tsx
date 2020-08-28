@@ -25,11 +25,13 @@ describe('HighlightAnnotations', () => {
         annotations: [],
         createHighlight: jest.fn(),
         isCreating: false,
+        isPromoting: false,
         location: 1,
         message: 'test',
         resetCreator: jest.fn(),
         selection: null,
         setActiveAnnotationId: jest.fn(),
+        setIsPromoting: jest.fn(),
         setMessage: jest.fn(),
         setMode: jest.fn(),
         setSelection: jest.fn(),
@@ -148,11 +150,12 @@ describe('HighlightAnnotations', () => {
     });
 
     describe('handlePromote()', () => {
-        test('should call setSelection', () => {
+        test('should clear selection and set isPromoting', () => {
             const wrapper = getWrapper({ selection: selectionMock });
             wrapper.find(PopupHighlight).simulate('click');
 
-            expect(defaults.setSelection).toHaveBeenCalled();
+            expect(defaults.setIsPromoting).toHaveBeenCalledWith(true);
+            expect(defaults.setSelection).toHaveBeenCalledWith(null);
         });
     });
 
@@ -162,13 +165,21 @@ describe('HighlightAnnotations', () => {
 
         beforeEach(() => {
             jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
-            wrapper = getWrapper({ isCreating: true, staged: getStaged(), status: CreatorStatus.staged });
+            wrapper = getWrapper({
+                isCreating: true,
+                isPromoting: true,
+                staged: getStaged(),
+                status: CreatorStatus.staged,
+            });
         });
 
-        test('handleCancel()', () => {
-            wrapper.find(PopupReply).simulate('cancel');
+        describe('handleCancel()', () => {
+            test('should reset creator and reset isPromoting', () => {
+                wrapper.find(PopupReply).simulate('cancel');
 
-            expect(defaults.resetCreator).toHaveBeenCalled();
+                expect(defaults.resetCreator).toHaveBeenCalled();
+                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
+            });
         });
 
         describe('handleChange', () => {
@@ -186,13 +197,14 @@ describe('HighlightAnnotations', () => {
         });
 
         describe('handleSubmit', () => {
-            test('should save the staged annotation', () => {
+            test('should save the staged annotation and reset isPromoting', () => {
                 wrapper.find(PopupReply).simulate('submit');
 
                 expect(defaults.createHighlight).toHaveBeenCalledWith({
                     ...getStaged(),
                     message: defaults.message,
                 });
+                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
             });
         });
     });

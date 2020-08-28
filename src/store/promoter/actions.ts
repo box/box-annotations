@@ -37,3 +37,5 @@ export const setSelectionAction = createAction(
         };
     },
 );
+
+export const setIsPromotingAction = createAction<boolean>('SET_IS_PROMOTING');

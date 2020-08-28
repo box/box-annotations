@@ -5,7 +5,7 @@ import { AnnotationsState } from './annotations';
 import { CommonState } from './common';
 import { CreatorState } from './creator';
 import { OptionsState } from './options';
-import { SelectionState } from './selection';
+import { PromoterState } from './promoter';
 import { UsersState } from './users';
 
 export type AppState = {
@@ -13,7 +13,7 @@ export type AppState = {
     creator: CreatorState;
     common: CommonState;
     options: OptionsState;
-    selection: SelectionState;
+    promoter: PromoterState;
     users: UsersState;
 };
 
