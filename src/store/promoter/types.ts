@@ -6,6 +6,7 @@ export type PromoterState = {
 };
 
 export type SelectionItem = {
+    containerRect: Shape;
     location: number;
     rects: Array<Shape>;
 };

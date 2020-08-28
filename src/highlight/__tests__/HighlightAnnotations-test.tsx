@@ -34,7 +34,6 @@ describe('HighlightAnnotations', () => {
         setIsPromoting: jest.fn(),
         setMessage: jest.fn(),
         setMode: jest.fn(),
-        setSelection: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -154,8 +153,21 @@ describe('HighlightAnnotations', () => {
             const wrapper = getWrapper({ selection: selectionMock });
             wrapper.find(PopupHighlight).simulate('click');
 
+            expect(defaults.setMode).toHaveBeenCalledWith('highlight');
+            expect(defaults.setStaged).toHaveBeenCalledWith({
+                location: 1,
+                shapes: [
+                    {
+                        height: 10,
+                        type: 'rect',
+                        width: 10,
+                        x: 20,
+                        y: 20,
+                    },
+                ],
+            });
+            expect(defaults.setStatus).toHaveBeenCalledWith('staged');
             expect(defaults.setIsPromoting).toHaveBeenCalledWith(true);
-            expect(defaults.setSelection).toHaveBeenCalledWith(null);
         });
     });
 
@@ -178,7 +190,7 @@ describe('HighlightAnnotations', () => {
                 wrapper.find(PopupReply).simulate('cancel');
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
-                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
+                expect(defaults.setMode).toHaveBeenCalledWith('none');
             });
         });
 
@@ -204,7 +216,7 @@ describe('HighlightAnnotations', () => {
                     ...getStaged(),
                     message: defaults.message,
                 });
-                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
+                expect(defaults.setMode).toHaveBeenCalledWith('none');
             });
         });
     });

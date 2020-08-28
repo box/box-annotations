@@ -54,6 +54,7 @@ describe('docUtil', () => {
 
     describe('getSelection()', () => {
         const rootElement = document.createElement('div');
+        rootElement.classList.add('textLayer');
         rootElement.innerHTML = `
             <div class="range0" />
             <div class="page" data-page-number="1">
@@ -82,6 +83,15 @@ describe('docUtil', () => {
         test('should return null if range is null', () => {
             jest.spyOn(window, 'getSelection').mockImplementationOnce(() => null);
             expect(getSelection()).toBe(null);
+        });
+
+        test('should return null if no text layer', () => {
+            rootElement.classList.remove('textLayer');
+
+            expect(getSelection()).toBe(null);
+
+            // reset
+            rootElement.classList.add('textLayer');
         });
 
         test.each`

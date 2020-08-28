@@ -1,8 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
+import { combineRectsByRow } from '../../highlight/highlightUtil';
 import { SelectionItem } from './types';
 import { Shape } from '../../@types';
 
 export type SelectionArg = {
+    containerRect: DOMRect;
     location: number;
     range: Range;
 };
@@ -27,12 +29,13 @@ export const setSelectionAction = createAction(
             };
         }
 
-        const { location, range } = arg;
+        const { containerRect, location, range } = arg;
 
         return {
             payload: {
+                containerRect: getShape(containerRect),
                 location,
-                rects: Array.from(range.getClientRects()).map(getShape),
+                rects: combineRectsByRow(Array.from(range.getClientRects()).map(getShape)),
             },
         };
     },

@@ -1,3 +1,15 @@
+export const mockContainerRect: DOMRect = {
+    bottom: 1000,
+    height: 1000,
+    left: 0,
+    right: 1000,
+    toJSON: jest.fn(),
+    top: 0,
+    width: 1000,
+    x: 0,
+    y: 0,
+};
+
 export const mockDOMRect: DOMRect = {
     bottom: 300,
     height: 100,

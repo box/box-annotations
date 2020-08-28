@@ -9,8 +9,8 @@ import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorItemHighlight, CreatorStatus, Mode, SelectionArg, SelectionItem } from '../store';
-import { getBoundingRect } from './highlightUtil';
+import { CreatorItemHighlight, CreatorStatus, Mode, SelectionItem } from '../store';
+import { getBoundingRect, getShapeRelativeToContainer } from './highlightUtil';
 import './HighlightAnnotations.scss';
 
 type Props = {
@@ -27,7 +27,6 @@ type Props = {
     setIsPromoting: (isPromoting: boolean) => void;
     setMessage: (message: string) => void;
     setMode: (mode: Mode) => void;
-    setSelection: (selection: SelectionArg | null) => void;
     setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemHighlight | null;
@@ -46,8 +45,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         selection,
         setActiveAnnotationId,
         setIsPromoting,
-        setSelection,
         setMessage,
+        setMode,
+        setStaged,
+        setStatus,
         staged,
         status,
     } = props;
@@ -64,7 +65,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         resetCreator();
 
         if (isPromoting) {
-            setIsPromoting(false);
+            setMode(Mode.NONE);
         }
     };
 
@@ -80,13 +81,28 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         createHighlight({ ...staged, message });
 
         if (isPromoting) {
-            setIsPromoting(false);
+            setMode(Mode.NONE);
         }
     };
 
     const handlePromote = (): void => {
+        if (!selection) {
+            return;
+        }
+
+        const { containerRect, location, rects } = selection;
+
+        setMode(Mode.HIGHLIGHT);
+        setStaged({
+            location,
+            shapes: rects.map(rect => ({
+                ...getShapeRelativeToContainer(rect, containerRect),
+                type: 'rect',
+            })),
+        });
+        setStatus(CreatorStatus.staged);
+
         setIsPromoting(true);
-        setSelection(null);
     };
 
     return (

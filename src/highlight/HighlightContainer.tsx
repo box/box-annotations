@@ -21,7 +21,6 @@ import {
     setActiveAnnotationIdAction,
     setIsPromotingAction,
     setMessageAction,
-    setSelectionAction,
     setStagedAction,
     setStatusAction,
     toggleAnnotationModeAction,
@@ -62,7 +61,6 @@ export const mapDispatchToProps = {
     setIsPromoting: setIsPromotingAction,
     setMessage: setMessageAction,
     setMode: toggleAnnotationModeAction,
-    setSelection: setSelectionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };
