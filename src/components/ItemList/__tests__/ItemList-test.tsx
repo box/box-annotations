@@ -5,7 +5,7 @@ import ItemList, { Props } from '../ItemList';
 import { Collaborator } from '../../../@types';
 
 jest.mock('scroll-into-view-if-needed', () => jest.fn());
-jest.mock('../ItemRow', () => 'div');
+jest.mock('../ItemRow');
 
 describe('ItemList', () => {
     const defaults: Props<Collaborator> = {
