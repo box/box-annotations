@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { Mode, toggleAnnotationModeAction } from '../common';
+import { createAnnotationAction } from '../annotations';
 import { PromoterState } from './types';
 import { setIsPromotingAction, setSelectionAction } from './actions';
 
@@ -19,9 +19,7 @@ export default createReducer<PromoterState>(initialState, builder =>
         .addCase(setSelectionAction, (state, { payload }) => {
             state.selection = payload;
         })
-        .addCase(toggleAnnotationModeAction, (state, { payload }) => {
-            if (payload === Mode.NONE) {
-                state.isPromoting = false;
-            }
+        .addCase(createAnnotationAction.fulfilled, state => {
+            state.isPromoting = false;
         }),
 );

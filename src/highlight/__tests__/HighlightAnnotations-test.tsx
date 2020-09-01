@@ -25,7 +25,6 @@ describe('HighlightAnnotations', () => {
         annotations: [],
         createHighlight: jest.fn(),
         isCreating: false,
-        isPromoting: false,
         location: 1,
         message: 'test',
         resetCreator: jest.fn(),
@@ -33,7 +32,6 @@ describe('HighlightAnnotations', () => {
         setActiveAnnotationId: jest.fn(),
         setIsPromoting: jest.fn(),
         setMessage: jest.fn(),
-        setMode: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -153,7 +151,6 @@ describe('HighlightAnnotations', () => {
             const wrapper = getWrapper({ selection: selectionMock });
             wrapper.find(PopupHighlight).simulate('click');
 
-            expect(defaults.setMode).toHaveBeenCalledWith('highlight');
             expect(defaults.setStaged).toHaveBeenCalledWith({
                 location: 1,
                 shapes: [
@@ -190,7 +187,7 @@ describe('HighlightAnnotations', () => {
                 wrapper.find(PopupReply).simulate('cancel');
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
-                expect(defaults.setMode).toHaveBeenCalledWith('none');
+                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
             });
         });
 
@@ -216,7 +213,6 @@ describe('HighlightAnnotations', () => {
                     ...getStaged(),
                     message: defaults.message,
                 });
-                expect(defaults.setMode).toHaveBeenCalledWith('none');
             });
         });
     });

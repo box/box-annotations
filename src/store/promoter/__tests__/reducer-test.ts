@@ -1,7 +1,8 @@
 import reducer from '../reducer';
 import state from '../__mocks__/promoterState';
+import { Annotation, NewAnnotation } from '../../../@types';
+import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
-import { Mode, toggleAnnotationModeAction } from '../../common';
 import { setIsPromotingAction, setSelectionAction } from '../actions';
 
 describe('store/promoter/reducer', () => {
@@ -27,16 +28,14 @@ describe('store/promoter/reducer', () => {
         });
     });
 
-    describe('toggleAnnotationMode', () => {
-        test.each`
-            payload           | isPromoting
-            ${Mode.HIGHLIGHT} | ${true}
-            ${Mode.REGION}    | ${true}
-            ${Mode.NONE}      | ${false}
-        `('should set isPromoting $isPromoting if mode is $payload', ({ payload, isPromoting }) => {
-            const newState = reducer({ ...state, isPromoting: true }, toggleAnnotationModeAction(payload));
+    describe('createAnnotationAction', () => {
+        test('should reset isPromoting when creation success', () => {
+            const newState = reducer(
+                { ...state, isPromoting: true },
+                createAnnotationAction.fulfilled({} as Annotation, 'test', {} as NewAnnotation),
+            );
 
-            expect(newState.isPromoting).toEqual(isPromoting);
+            expect(newState.isPromoting).toEqual(false);
         });
     });
 });
