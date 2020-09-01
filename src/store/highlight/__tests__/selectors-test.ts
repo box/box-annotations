@@ -1,8 +1,8 @@
-import promoterState from '../__mocks__/promoterState';
+import highlightState from '../__mocks__/highlightState';
 import { getIsPromoting, getSelection, getSelectionForLocation } from '../selectors';
 
-describe('store/promoter/selectors', () => {
-    const state = { promoter: promoterState };
+describe('store/highlight/selectors', () => {
+    const state = { highlight: highlightState };
 
     describe('getIsPromoting', () => {
         test('should return default isPromoting', () => {

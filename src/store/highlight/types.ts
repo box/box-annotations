@@ -1,6 +1,6 @@
 import { Shape } from '../../@types';
 
-export type PromoterState = {
+export type HighlightState = {
     isPromoting: boolean;
     selection: SelectionItem | null;
 };
