@@ -1,6 +1,12 @@
 export default {
     isPromoting: false,
     selection: {
+        containerRect: {
+            height: 1000,
+            width: 1000,
+            x: 0,
+            y: 0,
+        },
         location: 1,
         rects: [
             {

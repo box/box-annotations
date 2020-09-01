@@ -14,6 +14,12 @@ describe('store/promoter/selectors', () => {
         test('should return the current selection item', () => {
             expect(getSelection(state)).toMatchInlineSnapshot(`
                 Object {
+                  "containerRect": Object {
+                    "height": 1000,
+                    "width": 1000,
+                    "x": 0,
+                    "y": 0,
+                  },
                   "location": 1,
                   "rects": Array [
                     Object {

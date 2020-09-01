@@ -1,6 +1,7 @@
 type Selection = {
-    range: Range;
+    containerRect: DOMRect;
     location: number;
+    range: Range;
 };
 
 /**
@@ -44,12 +45,13 @@ export function getSelection(): Selection | null {
         return null;
     }
 
+    const containerEl = findClosestElWithClass(range.endContainer as Element, 'textLayer');
     const startPage = getPageNumber(range.startContainer as Element);
     const endPage = getPageNumber(range.endContainer as Element);
 
-    if (!startPage || !endPage || startPage !== endPage) {
+    if (!containerEl || !startPage || !endPage || startPage !== endPage) {
         return null;
     }
 
-    return { range, location: endPage };
+    return { containerRect: containerEl.getBoundingClientRect(), location: endPage, range };
 }

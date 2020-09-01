@@ -58,3 +58,63 @@ export const centerHighlight = (shapes: Shape[]): Position => {
 export function isHighlight(annotation: Annotation): annotation is AnnotationHighlight {
     return annotation?.target?.type === Type.highlight;
 }
+
+export const getThreshold = (prev: number, curr: number, threshold: number): number =>
+    Math.max(Math.round(prev * threshold), Math.round(curr * threshold), 1);
+
+export const dedupeRects = (rects: Shape[], threshold = 0.1): Shape[] => {
+    const dedupedRects: Shape[] = [];
+
+    rects.forEach(curr => {
+        const prev = dedupedRects.pop();
+        // empty list, push current
+        if (!prev) {
+            dedupedRects.push(curr);
+            // The return in forEach callback is acting like a continue in for loop
+            return;
+        }
+
+        const { width: prevWidth, height: prevHeight, x: prevX, y: prevY } = prev;
+        const { width, height, x, y } = curr;
+
+        const xThreshold = getThreshold(prevWidth, width, threshold);
+        const yThreshold = getThreshold(prevHeight, height, threshold);
+
+        if (Math.abs(prevX - x) <= xThreshold && Math.abs(prevY - y) <= yThreshold) {
+            // the same rect, push the larger one
+            dedupedRects.push(prevHeight * prevWidth > height * width ? prev : curr);
+        } else {
+            // different rects, push both
+            dedupedRects.push(prev);
+            dedupedRects.push(curr);
+        }
+    });
+
+    return dedupedRects;
+};
+
+export const combineRectsByRow = (rects: Shape[]): Shape[] => {
+    const dedupedRects = dedupeRects(rects);
+
+    const rows = dedupedRects.reduce((groups, rect) => {
+        const { y } = rect;
+        const roundedY = Math.round(y);
+        groups[roundedY] = groups[roundedY] || [];
+        groups[roundedY].push(rect);
+        return groups;
+    }, {} as Record<number, Shape[]>);
+
+    return Object.values(rows).map(group => getBoundingRect(group));
+};
+
+export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape): Shape => {
+    const { height, width, x, y } = shape;
+    const { height: containerHeight, width: containerWidth, x: containerX, y: containerY } = containerShape;
+
+    return {
+        height: (height / containerHeight) * 100,
+        width: (width / containerWidth) * 100,
+        x: ((x - containerX) / containerWidth) * 100,
+        y: ((y - containerY) / containerHeight) * 100,
+    };
+};

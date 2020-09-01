@@ -9,8 +9,8 @@ import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorItemHighlight, CreatorStatus, Mode, SelectionArg, SelectionItem } from '../store';
-import { getBoundingRect } from './highlightUtil';
+import { CreatorItemHighlight, CreatorStatus, SelectionItem } from '../store';
+import { getBoundingRect, getShapeRelativeToContainer } from './highlightUtil';
 import './HighlightAnnotations.scss';
 
 type Props = {
@@ -18,7 +18,6 @@ type Props = {
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
-    isPromoting: boolean;
     location: number;
     message: string;
     resetCreator: () => void;
@@ -26,8 +25,6 @@ type Props = {
     setActiveAnnotationId: (annotationId: string | null) => void;
     setIsPromoting: (isPromoting: boolean) => void;
     setMessage: (message: string) => void;
-    setMode: (mode: Mode) => void;
-    setSelection: (selection: SelectionArg | null) => void;
     setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemHighlight | null;
@@ -40,14 +37,14 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         annotations = [],
         createHighlight = noop,
         isCreating = false,
-        isPromoting,
         message,
         resetCreator,
         selection,
         setActiveAnnotationId,
         setIsPromoting,
-        setSelection,
         setMessage,
+        setStaged,
+        setStatus,
         staged,
         status,
     } = props;
@@ -62,10 +59,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
     const handleCancel = (): void => {
         resetCreator();
-
-        if (isPromoting) {
-            setIsPromoting(false);
-        }
     };
 
     const handleChange = (text = ''): void => {
@@ -78,15 +71,25 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         }
 
         createHighlight({ ...staged, message });
-
-        if (isPromoting) {
-            setIsPromoting(false);
-        }
     };
 
     const handlePromote = (): void => {
+        if (!selection) {
+            return;
+        }
+
+        const { containerRect, location, rects } = selection;
+
+        setStaged({
+            location,
+            shapes: rects.map(rect => ({
+                ...getShapeRelativeToContainer(rect, containerRect),
+                type: 'rect',
+            })),
+        });
+        setStatus(CreatorStatus.staged);
+
         setIsPromoting(true);
-        setSelection(null);
     };
 
     return (

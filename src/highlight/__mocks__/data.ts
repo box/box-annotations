@@ -39,6 +39,12 @@ export const annotation: AnnotationHighlight = {
 };
 
 export const selection = {
+    containerRect: {
+        height: 1000,
+        width: 1000,
+        x: 0,
+        y: 0,
+    },
     location: 1,
     rects: [
         {
