@@ -59,8 +59,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
     const handleCancel = (): void => {
         resetCreator();
-
-        setIsPromoting(false);
     };
 
     const handleChange = (text = ''): void => {

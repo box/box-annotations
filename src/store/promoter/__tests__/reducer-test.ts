@@ -3,6 +3,7 @@ import state from '../__mocks__/promoterState';
 import { Annotation, NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
+import { resetCreatorAction } from '../../creator';
 import { setIsPromotingAction, setSelectionAction } from '../actions';
 
 describe('store/promoter/reducer', () => {
@@ -34,6 +35,14 @@ describe('store/promoter/reducer', () => {
                 { ...state, isPromoting: true },
                 createAnnotationAction.fulfilled({} as Annotation, 'test', {} as NewAnnotation),
             );
+
+            expect(newState.isPromoting).toEqual(false);
+        });
+    });
+
+    describe('resetCreatorAction', () => {
+        test('should reset isPromoting when reset creator', () => {
+            const newState = reducer({ ...state, isPromoting: true }, resetCreatorAction());
 
             expect(newState.isPromoting).toEqual(false);
         });

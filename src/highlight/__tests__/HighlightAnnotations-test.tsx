@@ -187,7 +187,6 @@ describe('HighlightAnnotations', () => {
                 wrapper.find(PopupReply).simulate('cancel');
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
-                expect(defaults.setIsPromoting).toHaveBeenCalledWith(false);
             });
         });
 

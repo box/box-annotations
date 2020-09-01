@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { createAnnotationAction } from '../annotations';
 import { PromoterState } from './types';
+import { resetCreatorAction } from '../creator';
 import { setIsPromotingAction, setSelectionAction } from './actions';
 
 export const initialState = {
@@ -20,6 +21,9 @@ export default createReducer<PromoterState>(initialState, builder =>
             state.selection = payload;
         })
         .addCase(createAnnotationAction.fulfilled, state => {
+            state.isPromoting = false;
+        })
+        .addCase(resetCreatorAction, state => {
             state.isPromoting = false;
         }),
 );
