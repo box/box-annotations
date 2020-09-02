@@ -1,3 +1,4 @@
+import './polyfill';
 import getProp from 'lodash/get';
 import BaseAnnotator from './common/BaseAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
