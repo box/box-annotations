@@ -13,11 +13,11 @@ type Payload = {
     payload: SelectionItem | null;
 };
 
-export const getShape = ({ height, width, x, y }: DOMRect): Shape => ({
+export const getShape = ({ height, left, top, width }: DOMRect): Shape => ({
     height,
     width,
-    x,
-    y,
+    x: left,
+    y: top,
 });
 
 export const setSelectionAction = createAction(
