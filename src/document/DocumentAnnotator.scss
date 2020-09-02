@@ -1,3 +1,4 @@
+@import '~box-ui-elements/es/styles/variables';
 @import '../highlight/HighlightCreator';
 
 .bp-doc {
@@ -11,8 +12,14 @@
     }
 
     &.ba-is-highlighting {
-        .textLayer > span {
-            @include ba-HighlightCreator-cursor;
+        .textLayer {
+            & > span {
+                @include ba-HighlightCreator-cursor;
+            }
+
+            ::selection {
+                background-color: rgba($bdl-yellow, .33);
+            }
         }
     }
 }

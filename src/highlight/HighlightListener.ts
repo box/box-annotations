@@ -1,5 +1,12 @@
 import debounce from 'lodash/debounce';
-import { AppStore, getIsInitialized, SelectionArg as Selection, setSelectionAction } from '../store';
+import {
+    AppStore,
+    getIsInitialized,
+    getIsSelecting,
+    SelectionArg as Selection,
+    setIsSelectingAction,
+    setSelectionAction,
+} from '../store';
 import { MOUSE_PRIMARY } from '../constants';
 
 export type Options = {
@@ -15,8 +22,6 @@ export default class HighlightListener {
     annotatedEl?: HTMLElement;
 
     getSelection: () => Selection | null;
-
-    isMouseSelecting = false;
 
     selectionChangeDelay?: number;
 
@@ -64,25 +69,25 @@ export default class HighlightListener {
             return;
         }
 
-        this.isMouseSelecting = true;
+        this.store.dispatch(setIsSelectingAction(true));
 
         clearTimeout(this.selectionChangeTimer);
         this.store.dispatch(setSelectionAction(null));
     };
 
     handleMouseUp = (): void => {
-        if (!this.isMouseSelecting) {
+        if (!getIsSelecting(this.store.getState())) {
             return;
         }
 
         this.selectionChangeTimer = window.setTimeout(() => {
             this.setSelection();
-            this.isMouseSelecting = false;
+            this.store.dispatch(setIsSelectingAction(false));
         }, this.selectionChangeDelay);
     };
 
     handleSelectionChange = (): void => {
-        if (this.isMouseSelecting) {
+        if (getIsSelecting(this.store.getState())) {
             return;
         }
 

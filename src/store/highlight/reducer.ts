@@ -2,10 +2,11 @@ import { createReducer } from '@reduxjs/toolkit';
 import { createAnnotationAction } from '../annotations';
 import { HighlightState } from './types';
 import { resetCreatorAction } from '../creator';
-import { setIsPromotingAction, setSelectionAction } from './actions';
+import { setIsPromotingAction, setIsSelectingAction, setSelectionAction } from './actions';
 
 export const initialState = {
     isPromoting: false,
+    isSelecting: false,
     selection: null,
 };
 
@@ -16,6 +17,9 @@ export default createReducer<HighlightState>(initialState, builder =>
             if (payload) {
                 state.selection = null;
             }
+        })
+        .addCase(setIsSelectingAction, (state, { payload }) => {
+            state.isSelecting = payload;
         })
         .addCase(setSelectionAction, (state, { payload }) => {
             state.selection = payload;
