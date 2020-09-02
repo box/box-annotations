@@ -4,16 +4,16 @@ import API from '../api';
 import { AnnotationsState } from './annotations';
 import { CommonState } from './common';
 import { CreatorState } from './creator';
+import { HighlightState } from './highlight';
 import { OptionsState } from './options';
-import { PromoterState } from './promoter';
 import { UsersState } from './users';
 
 export type AppState = {
     annotations: AnnotationsState;
-    creator: CreatorState;
     common: CommonState;
+    creator: CreatorState;
+    highlight: HighlightState;
     options: OptionsState;
-    promoter: PromoterState;
     users: UsersState;
 };
 

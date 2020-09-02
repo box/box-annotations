@@ -1,12 +1,12 @@
 import reducer from '../reducer';
-import state from '../__mocks__/promoterState';
+import state from '../__mocks__/highlightState';
 import { Annotation, NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
 import { resetCreatorAction } from '../../creator';
 import { setIsPromotingAction, setSelectionAction } from '../actions';
 
-describe('store/promoter/reducer', () => {
+describe('store/highlight/reducer', () => {
     describe('setIsPromoting', () => {
         test.each`
             payload  | isPromoting | selection

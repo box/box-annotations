@@ -4,7 +4,7 @@ export { default as createStore } from './createStore';
 export * from './annotations';
 export * from './common';
 export * from './creator';
+export * from './highlight';
 export * from './options';
-export * from './promoter';
 export * from './types';
 export * from './users';
