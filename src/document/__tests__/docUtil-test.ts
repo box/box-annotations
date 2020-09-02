@@ -38,13 +38,18 @@ describe('docUtil', () => {
     });
 
     describe('getRange()', () => {
+        const mockSelection = {
+            getRangeAt: () => 'range',
+            isCollapsed: false,
+            rangeCount: 1,
+        };
+
         test.each`
-            selection                                                      | result
-            ${null}                                                        | ${null}
-            ${{ type: 'Caret' }}                                           | ${null}
-            ${{ isCollapsed: true, type: 'Range' }}                        | ${null}
-            ${{ isCollapsed: true, rangeCount: 0, type: 'Range' }}         | ${null}
-            ${{ getRangeAt: () => 'range', rangeCount: 1, type: 'Range' }} | ${'range'}
+            selection                                  | result
+            ${null}                                    | ${null}
+            ${{ ...mockSelection, isCollapsed: true }} | ${null}
+            ${{ ...mockSelection, rangeCount: 0 }}     | ${null}
+            ${mockSelection}                           | ${'range'}
         `('should return range as $result', ({ selection, result }) => {
             jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection);
 

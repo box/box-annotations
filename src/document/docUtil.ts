@@ -29,7 +29,8 @@ export function getPageNumber(element: Element | null): number | undefined {
 
 export function getRange(): Range | null {
     const selection = window.getSelection();
-    if (!selection || selection.type !== 'Range' || selection.isCollapsed || !selection.rangeCount) {
+
+    if (!selection || selection.isCollapsed || !selection.rangeCount) {
         return null;
     }
 
