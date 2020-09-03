@@ -7,7 +7,6 @@ import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupReply from '../components/Popups/PopupReply';
-import usePreventEventPropagationRef from '../common/usePreventEventPropagationRef';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
 import { CreatorItemHighlight, CreatorStatus, SelectionItem } from '../store';
@@ -119,9 +118,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         stageSelection();
     }, [isCreating, selection]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Prevent mousedown and mouseup events that occur within the PopupReply from propagating the HighlightListener.
-    const popupReplyRef = usePreventEventPropagationRef<HTMLDivElement>('mousedown', 'mouseup');
-
     return (
         <>
             {/* Layer 1: Saved annotations */}
@@ -142,7 +138,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
             {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
             {canCreate && staged && canReply && highlightRef && (
-                <div ref={popupReplyRef} className="ba-HighlightAnnotations-popup">
+                <div className="ba-HighlightAnnotations-popup">
                     <PopupReply
                         isPending={isPending}
                         onCancel={handleCancel}

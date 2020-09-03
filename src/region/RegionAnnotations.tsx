@@ -26,15 +26,8 @@ type Props = {
 };
 
 type State = {
-    popupRef?: HTMLDivElement;
     rectRef?: RegionRectRef;
 };
-
-const handleEvent = (event: Event): void => {
-    event.preventDefault();
-    event.stopPropagation();
-};
-
 export default class RegionAnnotations extends React.PureComponent<Props, State> {
     static defaultProps = {
         annotations: [],
@@ -43,32 +36,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     state: State = {};
-
-    componentDidUpdate(_prevProps: Props, prevState: State): void {
-        const { popupRef: prevPopupRef } = prevState;
-        const { popupRef } = this.state;
-
-        if (prevPopupRef && prevPopupRef !== popupRef) {
-            prevPopupRef.removeEventListener('mousedown', handleEvent);
-            prevPopupRef.removeEventListener('mouseup', handleEvent);
-        }
-
-        if (popupRef && popupRef !== prevPopupRef) {
-            popupRef.addEventListener('mousedown', handleEvent);
-            popupRef.addEventListener('mouseup', handleEvent);
-        }
-    }
-
-    componentWillUnmount(): void {
-        const { popupRef } = this.state;
-
-        if (!popupRef) {
-            return;
-        }
-
-        popupRef.removeEventListener('mousedown', handleEvent);
-        popupRef.removeEventListener('mouseup', handleEvent);
-    }
 
     handleAnnotationActive = (annotationId: string | null): void => {
         const { setActiveAnnotationId } = this.props;
@@ -106,10 +73,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         }
 
         createRegion({ ...staged, message });
-    };
-
-    setPopupRef = (popupRef: HTMLDivElement): void => {
-        this.setState({ popupRef });
     };
 
     setRectRef = (rectRef: RegionRectRef): void => {
@@ -151,7 +114,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
                 {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
                 {canCreate && staged && canReply && rectRef && (
-                    <div ref={this.setPopupRef} className="ba-RegionAnnotations-popup">
+                    <div className="ba-RegionAnnotations-popup">
                         <PopupReply
                             isPending={isPending}
                             onCancel={this.handleCancel}

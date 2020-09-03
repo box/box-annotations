@@ -3,6 +3,7 @@ import * as Popper from '@popperjs/core';
 import * as ReactRedux from 'react-redux';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
+import usePreventEventPropagationRef from '../../common/usePreventEventPropagationRef';
 import usePrevious from '../../common/usePrevious';
 import { getScale, getRotation } from '../../store/options';
 import './PopupReply.scss';
@@ -62,6 +63,9 @@ export default function PopupReply({
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
 
+    // Prevent mousedown and mouseup events that occur within the ReplyForm from propagating the HighlightListener.
+    const divRef = usePreventEventPropagationRef<HTMLDivElement>('mousedown', 'mouseup');
+
     React.useEffect(() => {
         const { current: popup } = popupRef;
 
@@ -71,14 +75,16 @@ export default function PopupReply({
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
-            <ReplyForm
-                isPending={isPending}
-                onCancel={onCancel}
-                onChange={onChange}
-                onSubmit={onSubmit}
-                value={value}
-            />
-        </PopupBase>
+        <div ref={divRef} className="ba-PopupReply">
+            <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
+                <ReplyForm
+                    isPending={isPending}
+                    onCancel={onCancel}
+                    onChange={onChange}
+                    onSubmit={onSubmit}
+                    value={value}
+                />
+            </PopupBase>
+        </div>
     );
 }
