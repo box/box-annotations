@@ -10,9 +10,23 @@
         pointer-events: none;
     }
 
+    .textLayer {
+        pointer-events: none;
+
+        span {
+            pointer-events: auto;
+        }
+    }
+
     &.ba-is-highlighting {
         .textLayer > span {
             @include ba-HighlightCreator-cursor;
+        }
+    }
+
+    &.ba-is-create-region {
+        .textLayer > span {
+            pointer-events: none;
         }
     }
 }

@@ -102,6 +102,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
         } else {
             this.annotatedEl.classList.remove('ba-is-highlighting');
         }
+
+        if (mode === Mode.REGION) {
+            this.annotatedEl.classList.add('ba-is-create-region');
+        } else {
+            this.annotatedEl.classList.remove('ba-is-create-region');
+        }
     };
 
     render(): void {
