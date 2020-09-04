@@ -36,7 +36,7 @@ export default class RegionManager implements BaseManager {
         rootLayerEl.setAttribute('data-resin-feature', 'annotations');
 
         // Insert the new layer element immediately after the reference element
-        return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);
+        return parentEl.insertBefore(rootLayerEl, referenceEl);
     }
 
     render(props: Props): void {

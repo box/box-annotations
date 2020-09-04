@@ -11,6 +11,14 @@
         pointer-events: none;
     }
 
+    .textLayer {
+        pointer-events: none; // Ensures that click events are received on the create region layer
+
+        span {
+            pointer-events: auto; // Text layer still receives text highlight events
+        }
+    }
+
     &.ba-is-highlighting {
         .textLayer {
             > span {
@@ -20,6 +28,12 @@
             ::selection {
                 background-color: rgba($bdl-yellow, .33);
             }
+        }
+    }
+
+    &.ba-is-create-region {
+        .textLayer > span {
+            pointer-events: none;
         }
     }
 }

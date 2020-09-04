@@ -106,10 +106,24 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
-        if (mode === Mode.HIGHLIGHT) {
-            this.annotatedEl.classList.add('ba-is-highlighting');
-        } else {
-            this.annotatedEl.classList.remove('ba-is-highlighting');
+        // Clear all existing classes from the element
+        const { classList } = this.annotatedEl;
+        while (classList.length > 0) {
+            const className = classList.item(0);
+            if (className) {
+                classList.remove(className);
+            }
+        }
+
+        switch (mode) {
+            case Mode.HIGHLIGHT:
+                this.annotatedEl.classList.add('ba-is-highlighting');
+                break;
+            case Mode.REGION:
+                this.annotatedEl.classList.add('ba-is-create-region');
+                break;
+            default:
+                break;
         }
     };
 
