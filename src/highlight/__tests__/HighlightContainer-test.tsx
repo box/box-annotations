@@ -6,8 +6,8 @@ import {
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
     getIsPromoting,
-    Mode,
     getIsSelecting,
+    Mode,
 } from '../../store';
 import { annotation as highlightAnnotation, rect as highlightRect } from '../__mocks__/data';
 import { annotation as regionAnnotation, rect as regionRect } from '../../region/__mocks__/data';
@@ -15,7 +15,14 @@ import { mapStateToProps } from '../HighlightContainer';
 
 jest.mock('../../common/withProviders');
 jest.mock('../HighlightAnnotations');
-jest.mock('../../store');
+jest.mock('../../store', () => ({
+    ...jest.requireActual('../../store'),
+    getAnnotationMode: jest.fn(),
+    getAnnotationsForLocation: jest.fn().mockReturnValue([]),
+    getCreatorStagedForLocation: jest.fn(),
+    getIsPromoting: jest.fn().mockReturnValue(false),
+    getIsSelecting: jest.fn().mockReturnValue(false),
+}));
 
 const stagedHighlight: CreatorItemHighlight = {
     location: 1,
@@ -27,11 +34,20 @@ const stagedRegion: CreatorItemRegion = {
     shape: regionRect,
 };
 
+const mockAppState = {
+    annotations: {},
+    common: {},
+    creator: {},
+    highlight: {},
+    options: {},
+    users: {},
+};
+
 describe('HighlightContainer', () => {
     describe('mapStateToProps()', () => {
         test('should only pass down highlight annotations', () => {
             (getAnnotationsForLocation as jest.Mock).mockReturnValue([highlightAnnotation, regionAnnotation]);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+            const props = mapStateToProps(mockAppState as AppState, { location: 1 });
 
             expect(props.annotations).toEqual([highlightAnnotation]);
         });
@@ -46,7 +62,7 @@ describe('HighlightContainer', () => {
             ({ mode, isCreating, isPromoting }) => {
                 (getAnnotationMode as jest.Mock).mockReturnValue(mode);
                 (getIsPromoting as jest.Mock).mockReturnValue(isPromoting);
-                const props = mapStateToProps({} as AppState, { location: 1 });
+                const props = mapStateToProps(mockAppState as AppState, { location: 1 });
 
                 expect(props.isCreating).toBe(isCreating);
             },
@@ -54,14 +70,14 @@ describe('HighlightContainer', () => {
 
         test.each([false, true])('should map isPromoting based on the selector %s', isPromoting => {
             (getIsPromoting as jest.Mock).mockReturnValue(isPromoting);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+            const props = mapStateToProps(mockAppState as AppState, { location: 1 });
 
             expect(props.isPromoting).toBe(isPromoting);
         });
 
         test.each([false, true])('should map isSelecting based on the selector %s', isSelecting => {
             (getIsSelecting as jest.Mock).mockReturnValue(isSelecting);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+            const props = mapStateToProps(mockAppState as AppState, { location: 1 });
 
             expect(props.isSelecting).toBe(isSelecting);
         });
@@ -73,7 +89,7 @@ describe('HighlightContainer', () => {
             ${null}            | ${null}
         `('should only pass down staged if it is a staged highlight', ({ staged, expectedStaged }) => {
             (getCreatorStagedForLocation as jest.Mock).mockReturnValue(staged);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+            const props = mapStateToProps(mockAppState as AppState, { location: 1 });
 
             expect(props.staged).toEqual(expectedStaged);
         });

@@ -4,7 +4,12 @@ import { AppStore, getIsInitialized, setIsSelectingAction, setSelectionAction, g
 import { mockContainerRect, mockRange } from '../../store/highlight/__mocks__/data';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
-jest.mock('../../store');
+jest.mock('../../store', () => ({
+    getIsInitialized: jest.fn().mockReturnValue(false),
+    getIsSelecting: jest.fn().mockReturnValue(false),
+    setIsSelectingAction: jest.fn(arg => arg),
+    setSelectionAction: jest.fn(arg => arg),
+}));
 
 jest.useFakeTimers();
 
