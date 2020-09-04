@@ -22,7 +22,11 @@ export const mockDOMRect: DOMRect = {
     y: 200,
 };
 
+const mockTextNode = document.createTextNode('test');
+
 export const mockRange: Range = ({
+    endContainer: mockTextNode,
     getBoundingClientRect: () => mockDOMRect,
     getClientRects: () => [mockDOMRect],
+    startContainer: mockTextNode,
 } as unknown) as Range;
