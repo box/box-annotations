@@ -54,9 +54,9 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     } = props;
     const [highlightRef, setHighlightRef] = React.useState<HTMLAnchorElement | null>(null);
 
+    const canCreate = isCreating || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
-    const canCreate = isCreating || isPromoting;
 
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
@@ -151,7 +151,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             )}
 
             {/* Layer 4: Annotations promoter to promote selection to staged */}
-            {!canCreate && selection && (
+            {!isCreating && selection && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
                 </div>

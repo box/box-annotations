@@ -3,11 +3,11 @@ import { ReactWrapper, mount } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCanvas from '../HighlightCanvas';
 import HighlightCreator from '../HighlightCreator';
+import HighlightList from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
 import PopupReply from '../../components/Popups/PopupReply';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
-import HighlightList from '../HighlightList';
 import { Rect } from '../../@types';
 import { selection as selectionMock } from '../__mocks__/data';
 
@@ -127,17 +127,20 @@ describe('HighlightAnnotations', () => {
         test.each`
             isPromoting | selection        | showPopup
             ${true}     | ${null}          | ${false}
-            ${true}     | ${selectionMock} | ${false}
+            ${true}     | ${selectionMock} | ${true}
             ${false}    | ${null}          | ${false}
             ${false}    | ${selectionMock} | ${true}
-        `('should render popup promoter with isPromoting $isPromoting', ({ isPromoting, selection, showPopup }) => {
-            const wrapper = getWrapper({
-                isPromoting,
-                selection,
-            });
+        `(
+            'should render popup promoter($showPopup) with isPromoting $isPromoting',
+            ({ isPromoting, selection, showPopup }) => {
+                const wrapper = getWrapper({
+                    isPromoting,
+                    selection,
+                });
 
-            expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
-        });
+                expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
+            },
+        );
 
         test('should pass activeId to the region list', () => {
             const wrapper = getWrapper({ activeAnnotationId: '123' });
@@ -215,7 +218,7 @@ describe('HighlightAnnotations', () => {
 
         describe('handleSubmit', () => {
             test('should save the staged annotation and reset isPromoting', () => {
-                (wrapper.find(PopupReply).prop('onSubmit') as Function)();
+                wrapper.find(PopupReply).prop('onSubmit')('');
 
                 expect(defaults.createHighlight).toHaveBeenCalledWith({
                     ...getStaged(),

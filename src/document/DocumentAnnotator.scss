@@ -13,7 +13,7 @@
 
     &.ba-is-highlighting {
         .textLayer {
-            & > span {
+            > span {
                 @include ba-HighlightCreator-cursor;
             }
 

@@ -4,12 +4,7 @@ import { AppStore, getIsInitialized, setIsSelectingAction, setSelectionAction, g
 import { mockContainerRect, mockRange } from '../../store/highlight/__mocks__/data';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
-jest.mock('../../store', () => ({
-    getIsInitialized: jest.fn().mockReturnValue(false),
-    getIsSelecting: jest.fn().mockReturnValue(false),
-    setIsSelectingAction: jest.fn(arg => arg),
-    setSelectionAction: jest.fn(arg => arg),
-}));
+jest.mock('../../store');
 
 jest.useFakeTimers();
 
@@ -80,7 +75,7 @@ describe('HighlightListener', () => {
 
             highlightListener.init(mockAnnotatedEl);
 
-            expect(defaults.store.dispatch).toHaveBeenCalledWith(null);
+            expect(defaults.store.dispatch).toHaveBeenCalled();
             expect(mockAnnotatedEl.addEventListener).toHaveBeenCalledWith(
                 'mousedown',
                 highlightListener.handleMouseDown,
@@ -103,11 +98,9 @@ describe('HighlightListener', () => {
         test('should dispatch selection', () => {
             highlightListener.setSelection();
 
-            expect(defaults.store.dispatch).toHaveBeenCalledWith({
-                containerRect: mockContainerRect,
-                location: 1,
-                range: mockRange,
-            });
+            expect(defaults.getSelection).toHaveBeenCalled();
+            expect(setSelectionAction).toHaveBeenCalled();
+            expect(defaults.store.dispatch).toHaveBeenCalled();
         });
     });
 
@@ -118,10 +111,10 @@ describe('HighlightListener', () => {
             highlightListener.handleMouseDown(new MouseEvent('mousedown', { buttons: 1 }));
 
             expect(setIsSelectingAction).toHaveBeenCalled();
-            expect(defaults.store.dispatch).toHaveBeenCalledWith(true);
+            expect(defaults.store.dispatch).toHaveBeenCalled();
             expect(clearTimeout).toHaveBeenCalledWith(1);
             expect(setSelectionAction).toHaveBeenCalledWith(null);
-            expect(defaults.store.dispatch).toHaveBeenCalledWith(null);
+            expect(defaults.store.dispatch).toHaveBeenCalled();
         });
 
         test('should do nothing if is not primary button', () => {
@@ -144,7 +137,7 @@ describe('HighlightListener', () => {
 
             expect(highlightListener.setSelection).toHaveBeenCalled();
             expect(setIsSelectingAction).toHaveBeenCalledWith(false);
-            expect(defaults.store.dispatch).toHaveBeenCalledWith(false);
+            expect(defaults.store.dispatch).toHaveBeenCalled();
         });
 
         test('should do nothing if select not using mouse', () => {
