@@ -75,6 +75,8 @@ export default function PopupReply({
         }
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    // This code suppresses the native mousedown and mouseup events that occur within the ReplyForm
+    // so that they don't bubble up to the HighlightListener
     React.useEffect(() => {
         const { current: popup } = popupRef;
         const refElement = popup?.popupRef;
