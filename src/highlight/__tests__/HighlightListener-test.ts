@@ -1,13 +1,10 @@
 import createStore from '../../store/__mocks__/createStore';
 import HighlightListener from '../HighlightListener';
-import { AppStore, getIsInitialized } from '../../store';
+import { AppStore, getIsInitialized, setIsSelectingAction, setSelectionAction, getIsSelecting } from '../../store';
 import { mockContainerRect, mockRange } from '../../store/highlight/__mocks__/data';
 
 jest.mock('lodash/debounce', () => (func: Function) => func);
-jest.mock('../../store', () => ({
-    getIsInitialized: jest.fn().mockReturnValue(false),
-    setSelectionAction: jest.fn(arg => arg),
-}));
+jest.mock('../../store');
 
 jest.useFakeTimers();
 
@@ -115,34 +112,38 @@ describe('HighlightListener', () => {
 
             highlightListener.handleMouseDown(new MouseEvent('mousedown', { buttons: 1 }));
 
-            expect(highlightListener.isMouseSelecting).toBe(true);
+            expect(setIsSelectingAction).toHaveBeenCalled();
+            expect(defaults.store.dispatch).toHaveBeenCalledWith(true);
             expect(clearTimeout).toHaveBeenCalledWith(1);
+            expect(setSelectionAction).toHaveBeenCalledWith(null);
             expect(defaults.store.dispatch).toHaveBeenCalledWith(null);
         });
 
         test('should do nothing if is not primary button', () => {
             highlightListener.handleMouseDown(new MouseEvent('mousedown', { buttons: 2 }));
 
-            expect(highlightListener.isMouseSelecting).toBe(false);
+            expect(defaults.store.dispatch).not.toHaveBeenCalled();
         });
     });
 
     describe('handleMouseUp()', () => {
         test('should set selection', () => {
-            highlightListener.isMouseSelecting = true;
+            (getIsSelecting as jest.Mock).mockReturnValue(true);
             highlightListener.setSelection = jest.fn();
 
             highlightListener.handleMouseUp();
 
-            expect(highlightListener.isMouseSelecting).toBe(true);
+            expect(highlightListener.setSelection).not.toHaveBeenCalled();
 
             jest.runAllTimers();
 
             expect(highlightListener.setSelection).toHaveBeenCalled();
-            expect(highlightListener.isMouseSelecting).toBe(false);
+            expect(setIsSelectingAction).toHaveBeenCalledWith(false);
+            expect(defaults.store.dispatch).toHaveBeenCalledWith(false);
         });
 
         test('should do nothing if select not using mouse', () => {
+            (getIsSelecting as jest.Mock).mockReturnValue(false);
             highlightListener.handleMouseUp();
 
             expect(window.setTimeout).not.toHaveBeenCalled();
@@ -159,7 +160,7 @@ describe('HighlightListener', () => {
         });
 
         test('should do nothing if select using mouse', () => {
-            highlightListener.isMouseSelecting = true;
+            (getIsSelecting as jest.Mock).mockReturnValue(true);
             highlightListener.setSelection = jest.fn();
 
             highlightListener.handleSelectionChange();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { ReactWrapper, mount } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCanvas from '../HighlightCanvas';
 import HighlightCreator from '../HighlightCreator';
@@ -7,17 +7,15 @@ import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
 import PopupReply from '../../components/Popups/PopupReply';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
-import { HighlightList } from '../HighlightList';
+import HighlightList from '../HighlightList';
 import { Rect } from '../../@types';
 import { selection as selectionMock } from '../__mocks__/data';
 
 jest.mock('../../components/Popups/PopupHighlight');
-jest.mock('../HighlightCreator');
-
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
+jest.mock('../HighlightList');
+jest.mock('../HighlightTarget');
+jest.mock('../../components/Popups/PopupHighlight');
+jest.mock('../../components/Popups/PopupReply');
 
 describe('HighlightAnnotations', () => {
     const defaults = {
@@ -25,6 +23,8 @@ describe('HighlightAnnotations', () => {
         annotations: [],
         createHighlight: jest.fn(),
         isCreating: false,
+        isPromoting: false,
+        isSelecting: false,
         location: 1,
         message: 'test',
         resetCreator: jest.fn(),
@@ -49,16 +49,10 @@ describe('HighlightAnnotations', () => {
         location: 1,
         shapes: [getRect()],
     });
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightAnnotations {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper => mount(<HighlightAnnotations {...defaults} {...props} />);
 
     describe('render()', () => {
-        const mockSetHighlightRef = jest.fn();
-
-        beforeEach(() => {
-            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
-        });
-
-        test('should render a RegionCreator if in creation mode', () => {
+        test('should render a HighlightCreator if in creation mode', () => {
             const wrapper = getWrapper({ isCreating: true });
             const creator = wrapper.find(HighlightCreator);
 
@@ -130,6 +124,21 @@ describe('HighlightAnnotations', () => {
             expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
         });
 
+        test.each`
+            isPromoting | selection        | showPopup
+            ${true}     | ${null}          | ${false}
+            ${true}     | ${selectionMock} | ${false}
+            ${false}    | ${null}          | ${false}
+            ${false}    | ${selectionMock} | ${true}
+        `('should render popup promoter with isPromoting $isPromoting', ({ isPromoting, selection, showPopup }) => {
+            const wrapper = getWrapper({
+                isPromoting,
+                selection,
+            });
+
+            expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
+        });
+
         test('should pass activeId to the region list', () => {
             const wrapper = getWrapper({ activeAnnotationId: '123' });
 
@@ -140,7 +149,7 @@ describe('HighlightAnnotations', () => {
     describe('handleAnnotationActive()', () => {
         test('should call setActiveAnnotationId', () => {
             const wrapper = getWrapper();
-            wrapper.find(HighlightList).simulate('select', '123');
+            (wrapper.find(HighlightList).prop('onSelect') as Function)('123');
 
             expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
         });
@@ -149,7 +158,7 @@ describe('HighlightAnnotations', () => {
     describe('handlePromote()', () => {
         test('should clear selection and set isPromoting', () => {
             const wrapper = getWrapper({ selection: selectionMock });
-            wrapper.find(PopupHighlight).simulate('click');
+            (wrapper.find(PopupHighlight).prop('onClick') as Function)();
 
             expect(defaults.setStaged).toHaveBeenCalledWith({
                 location: 1,
@@ -170,7 +179,7 @@ describe('HighlightAnnotations', () => {
 
     describe('event handlers', () => {
         const mockSetHighlightRef = jest.fn();
-        let wrapper: ShallowWrapper;
+        let wrapper: ReactWrapper;
 
         beforeEach(() => {
             jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
@@ -184,7 +193,7 @@ describe('HighlightAnnotations', () => {
 
         describe('handleCancel()', () => {
             test('should reset creator and reset isPromoting', () => {
-                wrapper.find(PopupReply).simulate('cancel');
+                wrapper.find(PopupReply).prop('onCancel')();
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
             });
@@ -192,13 +201,13 @@ describe('HighlightAnnotations', () => {
 
         describe('handleChange', () => {
             test('should set the staged state with the new message', () => {
-                wrapper.find(PopupReply).simulate('change', 'foo');
+                wrapper.find(PopupReply).prop('onChange')('foo');
 
                 expect(defaults.setMessage).toHaveBeenCalledWith('foo');
             });
 
             test('should set the staged state with empty string', () => {
-                wrapper.find(PopupReply).simulate('change');
+                wrapper.find(PopupReply).prop('onChange')();
 
                 expect(defaults.setMessage).toHaveBeenCalledWith('');
             });
@@ -206,12 +215,61 @@ describe('HighlightAnnotations', () => {
 
         describe('handleSubmit', () => {
             test('should save the staged annotation and reset isPromoting', () => {
-                wrapper.find(PopupReply).simulate('submit');
+                (wrapper.find(PopupReply).prop('onSubmit') as Function)();
 
                 expect(defaults.createHighlight).toHaveBeenCalledWith({
                     ...getStaged(),
                     message: defaults.message,
                 });
+            });
+        });
+    });
+
+    describe('effects', () => {
+        describe('Beginning a selection', () => {
+            test('should reset staged and status if isSelecting is true', () => {
+                getWrapper({ isSelecting: true });
+                expect(defaults.setStaged).toHaveBeenCalledWith(null);
+                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.init);
+            });
+
+            test('should not reset staged and status if isSelecting is false', () => {
+                getWrapper({ isSelecting: false });
+                expect(defaults.setStaged).not.toHaveBeenCalled();
+                expect(defaults.setStatus).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('Creating a highlight', () => {
+            test.each`
+                isCreating | selection
+                ${false}   | ${null}
+                ${true}    | ${null}
+                ${false}   | ${selectionMock}
+            `(
+                'should not call setStaged and setStatus if isCreating=$isCreating and selection=$selection',
+                ({ isCreating, selection }) => {
+                    getWrapper({ isCreating, selection });
+                    expect(defaults.setStaged).not.toHaveBeenCalled();
+                    expect(defaults.setStatus).not.toHaveBeenCalled();
+                },
+            );
+
+            test('should call setStaged and setStatus if isCreating=true and selection is not null', () => {
+                getWrapper({ isCreating: true, selection: selectionMock });
+                expect(defaults.setStaged).toHaveBeenCalledWith({
+                    location: 1,
+                    shapes: [
+                        {
+                            height: 10,
+                            type: 'rect',
+                            width: 10,
+                            x: 20,
+                            y: 20,
+                        },
+                    ],
+                });
+                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
     });

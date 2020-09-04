@@ -63,7 +63,7 @@ export default function PopupReply({
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
 
-    // Prevent mousedown and mouseup events that occur within the ReplyForm from propagating the HighlightListener.
+    // Prevent mousedown and mouseup events that occur within the ReplyForm from propagating to the HighlightListener.
     const divRef = usePreventEventPropagationRef<HTMLDivElement>('mousedown', 'mouseup');
 
     React.useEffect(() => {

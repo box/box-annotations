@@ -13,9 +13,13 @@ module.exports = {
     getCreatorStatus: jest.fn(),
     getFileId: jest.fn().mockReturnValue('0'),
     getIsCurrentFileVersion: jest.fn().mockReturnValue(true),
+    getIsInitialized: jest.fn().mockReturnValue(false),
     getIsPromoting: jest.fn().mockReturnValue(false),
+    getIsSelecting: jest.fn().mockReturnValue(false),
     getSelectionForLocation: jest.fn(),
     isCreatorStagedHighlight,
     isCreatorStagedRegion,
     Mode,
+    setIsSelectingAction: jest.fn(arg => arg),
+    setSelectionAction: jest.fn(arg => arg),
 };

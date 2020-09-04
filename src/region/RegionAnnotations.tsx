@@ -28,6 +28,7 @@ type Props = {
 type State = {
     rectRef?: RegionRectRef;
 };
+
 export default class RegionAnnotations extends React.PureComponent<Props, State> {
     static defaultProps = {
         annotations: [],

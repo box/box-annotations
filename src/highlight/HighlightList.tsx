@@ -59,7 +59,7 @@ export function getHighlightShapesFromAnnotations(
     }, []);
 }
 
-export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
+function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
     const [hoverId, setHoverId] = React.useState<string | null>(null);
     const svgElRef = React.createRef<SVGSVGElement>();
@@ -91,5 +91,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
         </div>
     );
 }
+
+export { HighlightList as HighlightListComponent };
 
 export default React.memo(HighlightList);

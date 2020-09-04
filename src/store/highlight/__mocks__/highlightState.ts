@@ -1,5 +1,6 @@
 export default {
     isPromoting: false,
+    isSelecting: false,
     selection: {
         containerRect: {
             height: 1000,

@@ -6,7 +6,7 @@ import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
 import HighlightSvg from '../HighlightSvg';
 import HighlightTarget from '../HighlightTarget';
 import { AnnotationHighlight } from '../../@types';
-import { HighlightList, Props } from '../HighlightList';
+import { HighlightListComponent as HighlightList, Props } from '../HighlightList';
 
 jest.mock('../HighlightCanvas');
 jest.mock('../HighlightTarget');

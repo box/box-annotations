@@ -7,6 +7,7 @@ import {
     getCreatorStagedForLocation,
     getIsPromoting,
     Mode,
+    getIsSelecting,
 } from '../../store';
 import { annotation as highlightAnnotation, rect as highlightRect } from '../__mocks__/data';
 import { annotation as regionAnnotation, rect as regionRect } from '../../region/__mocks__/data';
@@ -36,13 +37,10 @@ describe('HighlightContainer', () => {
         });
 
         test.each`
-            mode              | isPromoting | isCreating
-            ${Mode.NONE}      | ${false}    | ${false}
-            ${Mode.NONE}      | ${true}     | ${true}
-            ${Mode.HIGHLIGHT} | ${false}    | ${true}
-            ${Mode.HIGHLIGHT} | ${true}     | ${true}
-            ${Mode.REGION}    | ${false}    | ${false}
-            ${Mode.REGION}    | ${true}     | ${true}
+            mode              | isCreating
+            ${Mode.NONE}      | ${false}
+            ${Mode.HIGHLIGHT} | ${true}
+            ${Mode.REGION}    | ${false}
         `(
             'should pass down isCreating as $isCreating if mode is $mode and isPromoting is $isPromoting',
             ({ mode, isCreating, isPromoting }) => {
@@ -53,6 +51,20 @@ describe('HighlightContainer', () => {
                 expect(props.isCreating).toBe(isCreating);
             },
         );
+
+        test.each([false, true])('should map isPromoting based on the selector %s', isPromoting => {
+            (getIsPromoting as jest.Mock).mockReturnValue(isPromoting);
+            const props = mapStateToProps({} as AppState, { location: 1 });
+
+            expect(props.isPromoting).toBe(isPromoting);
+        });
+
+        test.each([false, true])('should map isSelecting based on the selector %s', isSelecting => {
+            (getIsSelecting as jest.Mock).mockReturnValue(isSelecting);
+            const props = mapStateToProps({} as AppState, { location: 1 });
+
+            expect(props.isSelecting).toBe(isSelecting);
+        });
 
         test.each`
             staged             | expectedStaged

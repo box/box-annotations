@@ -1,5 +1,5 @@
 import highlightState from '../__mocks__/highlightState';
-import { getIsPromoting, getSelection, getSelectionForLocation } from '../selectors';
+import { getIsPromoting, getSelection, getSelectionForLocation, getIsSelecting } from '../selectors';
 
 describe('store/highlight/selectors', () => {
     const state = { highlight: highlightState };
@@ -7,6 +7,12 @@ describe('store/highlight/selectors', () => {
     describe('getIsPromoting', () => {
         test('should return default isPromoting', () => {
             expect(getIsPromoting(state)).toBe(false);
+        });
+    });
+
+    describe('getIsSelecting', () => {
+        test('should return default isSelecting', () => {
+            expect(getIsSelecting(state)).toBe(false);
         });
     });
 
