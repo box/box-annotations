@@ -11,7 +11,6 @@ jest.mock('react-redux', () => ({
 
 jest.mock('../PopupBase');
 jest.mock('../../ReplyForm');
-jest.mock('../../../common/usePreventEventPropagationRef');
 
 describe('PopupReply', () => {
     const defaults: Props = {

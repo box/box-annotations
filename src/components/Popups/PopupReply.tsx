@@ -3,7 +3,6 @@ import * as Popper from '@popperjs/core';
 import * as ReactRedux from 'react-redux';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
-import usePreventEventPropagationRef from '../../common/usePreventEventPropagationRef';
 import usePrevious from '../../common/usePrevious';
 import { getScale, getRotation } from '../../store/options';
 import './PopupReply.scss';
@@ -49,6 +48,11 @@ export const options: Partial<Popper.Options> = {
     ],
 };
 
+const handleEvent = (event: Event): void => {
+    event.preventDefault();
+    event.stopPropagation();
+};
+
 export default function PopupReply({
     isPending,
     onCancel,
@@ -63,9 +67,6 @@ export default function PopupReply({
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
 
-    // Prevent mousedown and mouseup events that occur within the ReplyForm from propagating to the HighlightListener.
-    const divRef = usePreventEventPropagationRef<HTMLDivElement>('mousedown', 'mouseup');
-
     React.useEffect(() => {
         const { current: popup } = popupRef;
 
@@ -74,17 +75,32 @@ export default function PopupReply({
         }
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    React.useEffect(() => {
+        const { current: popup } = popupRef;
+        const refElement = popup?.popupRef;
+
+        if (refElement && refElement.current) {
+            refElement.current.addEventListener('mousedown', handleEvent);
+            refElement.current.addEventListener('mouseup', handleEvent);
+        }
+
+        return () => {
+            if (refElement && refElement.current) {
+                refElement.current.removeEventListener('mousedown', handleEvent);
+                refElement.current.removeEventListener('mouseup', handleEvent);
+            }
+        };
+    }, [popupRef]);
+
     return (
-        <div ref={divRef} className="ba-PopupReply">
-            <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
-                <ReplyForm
-                    isPending={isPending}
-                    onCancel={onCancel}
-                    onChange={onChange}
-                    onSubmit={onSubmit}
-                    value={value}
-                />
-            </PopupBase>
-        </div>
+        <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
+            <ReplyForm
+                isPending={isPending}
+                onCancel={onCancel}
+                onChange={onChange}
+                onSubmit={onSubmit}
+                value={value}
+            />
+        </PopupBase>
     );
 }
