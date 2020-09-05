@@ -72,7 +72,7 @@ reset_to_master() {
 
 build_lint_and_test() {
     # The build command includes linting
-    yarn build && yarn test && yarn test:e2e || return 1
+    yarn build && yarn test || return 1
 }
 
 
