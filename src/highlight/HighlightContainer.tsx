@@ -13,6 +13,7 @@ import {
     getCreatorStagedForLocation,
     getCreatorStatus,
     getIsPromoting,
+    getIsSelecting,
     getSelectionForLocation,
     isCreatorStagedHighlight,
     Mode,
@@ -31,6 +32,8 @@ export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
     isCreating: boolean;
+    isPromoting: boolean;
+    isSelecting: boolean;
     message: string;
     selection: SelectionItem | null;
     staged: CreatorItemHighlight | null;
@@ -43,7 +46,9 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
-        isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT || getIsPromoting(state),
+        isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
+        isPromoting: getIsPromoting(state),
+        isSelecting: getIsSelecting(state),
         message: getCreatorMessage(state),
         selection: getSelectionForLocation(state, location),
         staged: isCreatorStagedHighlight(staged) ? staged : null,

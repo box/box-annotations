@@ -1,20 +1,14 @@
-import {
-    AppState,
-    CreatorItemHighlight,
-    CreatorItemRegion,
-    getAnnotationMode,
-    getAnnotationsForLocation,
-    getCreatorStagedForLocation,
-    getIsPromoting,
-    Mode,
-} from '../../store';
-import { annotation as highlightAnnotation, rect as highlightRect } from '../__mocks__/data';
-import { annotation as regionAnnotation, rect as regionRect } from '../../region/__mocks__/data';
-import { mapStateToProps } from '../HighlightContainer';
+import React from 'react';
+import { IntlShape } from 'react-intl';
+import { ReactWrapper, mount } from 'enzyme';
+import HighlightAnnotations from '../HighlightAnnotations';
+import HighlightContainer, { Props } from '../HighlightContainer';
+import { CreatorItemHighlight, CreatorItemRegion, Mode, createStore, CreatorStatus } from '../../store';
+import { rect as highlightRect } from '../__mocks__/data';
+import { rect as regionRect } from '../../region/__mocks__/data';
 
 jest.mock('../../common/withProviders');
 jest.mock('../HighlightAnnotations');
-jest.mock('../../store');
 
 const stagedHighlight: CreatorItemHighlight = {
     location: 1,
@@ -27,32 +21,50 @@ const stagedRegion: CreatorItemRegion = {
 };
 
 describe('HighlightContainer', () => {
-    describe('mapStateToProps()', () => {
-        test('should only pass down highlight annotations', () => {
-            (getAnnotationsForLocation as jest.Mock).mockReturnValue([highlightAnnotation, regionAnnotation]);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+    const defaults = {
+        intl: {} as IntlShape,
+        location: 1,
+        store: createStore(),
+    };
+    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<HighlightContainer {...defaults} {...props} />);
 
-            expect(props.annotations).toEqual([highlightAnnotation]);
+    describe('render', () => {
+        test('should connect the underlying component and wrap it with a root provider', () => {
+            const wrapper = getWrapper();
+
+            expect(wrapper.exists('RootProvider')).toBe(true);
+            expect(wrapper.find(HighlightAnnotations).props()).toMatchObject({
+                activeAnnotationId: null,
+                annotations: [],
+                createHighlight: expect.any(Function),
+                isCreating: false,
+                isPromoting: false,
+                location: 1,
+                message: '',
+                resetCreator: expect.any(Function),
+                selection: null,
+                setActiveAnnotationId: expect.any(Function),
+                setIsPromoting: expect.any(Function),
+                setMessage: expect.any(Function),
+                setStaged: expect.any(Function),
+                setStatus: expect.any(Function),
+                staged: null,
+                status: CreatorStatus.init,
+                store: defaults.store,
+            });
         });
 
         test.each`
-            mode              | isPromoting | isCreating
-            ${Mode.NONE}      | ${false}    | ${false}
-            ${Mode.NONE}      | ${true}     | ${true}
-            ${Mode.HIGHLIGHT} | ${false}    | ${true}
-            ${Mode.HIGHLIGHT} | ${true}     | ${true}
-            ${Mode.REGION}    | ${false}    | ${false}
-            ${Mode.REGION}    | ${true}     | ${true}
-        `(
-            'should pass down isCreating as $isCreating if mode is $mode and isPromoting is $isPromoting',
-            ({ mode, isCreating, isPromoting }) => {
-                (getAnnotationMode as jest.Mock).mockReturnValue(mode);
-                (getIsPromoting as jest.Mock).mockReturnValue(isPromoting);
-                const props = mapStateToProps({} as AppState, { location: 1 });
+            mode              | isCreating
+            ${Mode.NONE}      | ${false}
+            ${Mode.HIGHLIGHT} | ${true}
+            ${Mode.REGION}    | ${false}
+        `('should pass down isCreating as $isCreating if mode is $mode', ({ mode, isCreating }) => {
+            const store = createStore({ common: { mode } });
+            const wrapper = getWrapper({ store });
 
-                expect(props.isCreating).toBe(isCreating);
-            },
-        );
+            expect(wrapper.find(HighlightAnnotations).prop('isCreating')).toEqual(isCreating);
+        });
 
         test.each`
             staged             | expectedStaged
@@ -60,10 +72,10 @@ describe('HighlightContainer', () => {
             ${stagedRegion}    | ${null}
             ${null}            | ${null}
         `('should only pass down staged if it is a staged highlight', ({ staged, expectedStaged }) => {
-            (getCreatorStagedForLocation as jest.Mock).mockReturnValue(staged);
-            const props = mapStateToProps({} as AppState, { location: 1 });
+            const store = createStore({ creator: { staged } });
+            const wrapper = getWrapper({ store });
 
-            expect(props.staged).toEqual(expectedStaged);
+            expect(wrapper.find(HighlightAnnotations).prop('staged')).toEqual(expectedStaged);
         });
     });
 });

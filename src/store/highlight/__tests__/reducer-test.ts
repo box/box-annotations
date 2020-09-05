@@ -4,7 +4,7 @@ import { Annotation, NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
 import { resetCreatorAction } from '../../creator';
-import { setIsPromotingAction, setSelectionAction } from '../actions';
+import { setIsPromotingAction, setSelectionAction, setIsSelectingAction } from '../actions';
 
 describe('store/highlight/reducer', () => {
     describe('setIsPromoting', () => {
@@ -17,6 +17,14 @@ describe('store/highlight/reducer', () => {
 
             expect(newState.isPromoting).toEqual(isPromoting);
             expect(newState.selection).toEqual(selection);
+        });
+    });
+
+    describe('setIsSelecting', () => {
+        test.each([true, false])('should set isSelecting in state as %s', payload => {
+            const newState = reducer(state, setIsSelectingAction(payload));
+
+            expect(newState.isSelecting).toEqual(payload);
         });
     });
 

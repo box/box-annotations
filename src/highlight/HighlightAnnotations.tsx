@@ -18,6 +18,8 @@ type Props = {
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
+    isPromoting: boolean;
+    isSelecting: boolean;
     location: number;
     message: string;
     resetCreator: () => void;
@@ -37,6 +39,8 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         annotations = [],
         createHighlight = noop,
         isCreating = false,
+        isPromoting = false,
+        isSelecting = false,
         message,
         resetCreator,
         selection,
@@ -50,6 +54,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     } = props;
     const [highlightRef, setHighlightRef] = React.useState<HTMLAnchorElement | null>(null);
 
+    const canCreate = isCreating || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
 
@@ -73,7 +78,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         createHighlight({ ...staged, message });
     };
 
-    const handlePromote = (): void => {
+    const stageSelection = (): void => {
         if (!selection) {
             return;
         }
@@ -88,9 +93,30 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             })),
         });
         setStatus(CreatorStatus.staged);
+    };
+
+    const handlePromote = (): void => {
+        stageSelection();
 
         setIsPromoting(true);
     };
+
+    React.useEffect(() => {
+        if (!isSelecting) {
+            return;
+        }
+
+        setStaged(null);
+        setStatus(CreatorStatus.init);
+    }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    React.useEffect(() => {
+        if (!isCreating || !selection) {
+            return;
+        }
+
+        stageSelection();
+    }, [isCreating, selection]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -98,10 +124,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             <HighlightList activeId={activeAnnotationId} annotations={annotations} onSelect={handleAnnotationActive} />
 
             {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
-            {isCreating && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
+            {canCreate && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
 
             {/* Layer 3a: Staged (unsaved) highlight target, if any */}
-            {isCreating && staged && (
+            {canCreate && staged && (
                 <div className="ba-HighlightAnnotations-target">
                     <HighlightCanvas shapes={staged.shapes} />
                     <HighlightSvg>
@@ -111,7 +137,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             )}
 
             {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
-            {isCreating && staged && canReply && highlightRef && (
+            {canCreate && staged && canReply && highlightRef && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupReply
                         isPending={isPending}
