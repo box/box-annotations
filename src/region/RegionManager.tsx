@@ -19,7 +19,7 @@ export default class RegionManager implements BaseManager {
 
         switch (insertStrategy) {
             case InsertStrategy.NEXT_SIBLING:
-                element = referenceEl.nextSibling;
+                element = referenceEl.nextSibling ?? referenceEl; // referenceEl.nextSibling may return null in which we should still return the original referenceEl
                 break;
             case InsertStrategy.SELF:
                 element = referenceEl;
@@ -28,7 +28,7 @@ export default class RegionManager implements BaseManager {
                 break;
         }
 
-        return element ?? referenceEl; // referenceEl.nextSibling may return null in which we should still return the original referenceEl
+        return element;
     }
 
     destroy(): void {
