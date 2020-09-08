@@ -3,6 +3,7 @@ import { createAnnotationAction } from '../annotations';
 import { HighlightState } from './types';
 import { resetCreatorAction } from '../creator';
 import { setIsPromotingAction, setIsSelectingAction, setSelectionAction } from './actions';
+import { toggleAnnotationModeAction } from '../common';
 
 export const initialState = {
     isPromoting: false,
@@ -28,6 +29,9 @@ export default createReducer<HighlightState>(initialState, builder =>
             state.isPromoting = false;
         })
         .addCase(resetCreatorAction, state => {
+            state.isPromoting = false;
+        })
+        .addCase(toggleAnnotationModeAction, state => {
             state.isPromoting = false;
         }),
 );
