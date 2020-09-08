@@ -14,7 +14,7 @@ export default class RegionManager implements BaseManager {
         this.reactEl = this.insert(modifiedReferenceEl);
     }
 
-    applyInsertStrategy(referenceEl: HTMLElement, insertStrategy: InsertStrategy): HTMLElement | null {
+    applyInsertStrategy(referenceEl: HTMLElement, insertStrategy: InsertStrategy): HTMLElement {
         let element = referenceEl;
 
         switch (insertStrategy) {
@@ -28,7 +28,7 @@ export default class RegionManager implements BaseManager {
                 break;
         }
 
-        return element;
+        return element ?? referenceEl; // referenceEl.nextSibling may return null in which we should still return the original referenceEl
     }
 
     destroy(): void {
@@ -41,7 +41,7 @@ export default class RegionManager implements BaseManager {
         return parentEl.contains(this.reactEl);
     }
 
-    insert(referenceEl: HTMLElement | null): HTMLElement {
+    insert(referenceEl: HTMLElement): HTMLElement {
         // Find the nearest applicable reference and document elements
         const documentEl = referenceEl.ownerDocument || document;
         const parentEl = referenceEl.parentNode || documentEl;
