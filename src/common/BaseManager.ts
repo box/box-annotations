@@ -4,7 +4,7 @@ import { Store } from 'redux';
 export type Options = {
     location?: number;
     referenceEl: HTMLElement;
-    insertStrategy: InsertStrategy;
+    insertStrategy?: InsertStrategy;
 };
 
 export type Props = {
