@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import BaseManager, { Options, Props } from '../common/BaseManager';
+import BaseManager, { Options, Props, InsertStrategy } from '../common/BaseManager';
 import RegionContainer from './RegionContainer';
 
 export default class RegionManager implements BaseManager {
@@ -8,9 +8,27 @@ export default class RegionManager implements BaseManager {
 
     reactEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl }: Options) {
+    constructor({ location = 1, referenceEl, insertStrategy = InsertStrategy.NEXT_SIBLING }: Options) {
         this.location = location;
-        this.reactEl = this.insert(referenceEl);
+        const modifiedReferenceEl = this.applyInsertStrategy(referenceEl, insertStrategy);
+        this.reactEl = this.insert(modifiedReferenceEl);
+    }
+
+    applyInsertStrategy(referenceEl: HTMLElement, insertStrategy: InsertStrategy): HTMLElement {
+        let element = referenceEl;
+
+        switch (insertStrategy) {
+            case InsertStrategy.NEXT_SIBLING:
+                element = referenceEl.nextSibling;
+                break;
+            case InsertStrategy.SELF:
+                element = referenceEl;
+                break;
+            default:
+                break;
+        }
+
+        return element;
     }
 
     destroy(): void {

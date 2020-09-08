@@ -1,5 +1,5 @@
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
-import BaseManager from '../common/BaseManager';
+import BaseManager, { InsertStrategy } from '../common/BaseManager';
 import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
@@ -75,7 +75,13 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
-            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(
+                new RegionManager({
+                    location: pageNumber,
+                    referenceEl: pageReferenceEl,
+                    insertStrategy: InsertStrategy.SELF,
+                }),
+            );
         }
 
         return managers;
