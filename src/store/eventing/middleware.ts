@@ -11,7 +11,9 @@ import { handleActiveAnnotationEvents } from './active';
 import { handleAnnotationsInitialized } from './init';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
 import { handleFetchErrorEvents } from './fetch';
+import { handleResetCreatorAction, handleSetStagedAction } from './staged';
 import { handleToggleAnnotationModeAction } from './mode';
+import { resetCreatorAction, setStagedAction } from '../creator';
 import { toggleAnnotationModeAction } from '../common/actions';
 
 // Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
@@ -20,8 +22,10 @@ const eventHandlers: EventHandlerMap = {
     [createAnnotationAction.pending.toString()]: handleCreatePendingEvents,
     [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
     [fetchAnnotationsAction.rejected.toString()]: handleFetchErrorEvents,
+    [resetCreatorAction.toString()]: handleResetCreatorAction,
     [setActiveAnnotationIdAction.toString()]: handleActiveAnnotationEvents,
     [setIsInitialized.toString()]: handleAnnotationsInitialized,
+    [setStagedAction.toString()]: handleSetStagedAction,
     [toggleAnnotationModeAction.toString()]: handleToggleAnnotationModeAction,
 };
 
