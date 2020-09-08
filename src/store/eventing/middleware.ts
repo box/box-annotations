@@ -13,8 +13,8 @@ import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccess
 import { handleFetchErrorEvents } from './fetch';
 import { handleResetCreatorAction, handleSetStagedAction } from './staged';
 import { handleToggleAnnotationModeAction } from './mode';
+import { resetCreatorAction, setStagedAction } from '../creator';
 import { toggleAnnotationModeAction } from '../common/actions';
-import { setStagedAction, resetCreatorAction } from '../creator';
 
 // Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
 const eventHandlers: EventHandlerMap = {

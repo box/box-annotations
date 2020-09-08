@@ -1,18 +1,13 @@
 import eventManager from '../../common/EventManager';
 import { AppState } from '../types';
-import { getCreatorStaged, CreatorItem, isCreatorStagedRegion, isCreatorStagedHighlight } from '../creator';
+import { CreatorItem, getCreatorStaged, isCreatorStagedHighlight, isCreatorStagedRegion } from '../creator';
 import { Event } from '../../@types';
 
 type Status = 'create' | 'update' | 'cancel';
 
 type Type = 'highlight' | 'region';
 
-type StagedChangeEvent = {
-    status: Status;
-    type: Type;
-};
-
-const getStatus = (prevStaged: CreatorItem, nextStaged: CreatorItem): Status | null => {
+export const getStatus = (prevStaged: CreatorItem, nextStaged: CreatorItem): Status | null => {
     let status: Status | null = null;
 
     if (prevStaged === null && nextStaged !== null) {
@@ -26,7 +21,7 @@ const getStatus = (prevStaged: CreatorItem, nextStaged: CreatorItem): Status | n
     return status;
 };
 
-const getType = (staged: CreatorItem): Type | null => {
+export const getType = (staged: CreatorItem): Type | null => {
     let type: Type | null = null;
 
     if (isCreatorStagedRegion(staged)) {
@@ -50,8 +45,7 @@ export const handleSetStagedAction = (prevState: AppState, nextState: AppState):
         return;
     }
 
-    const payload: StagedChangeEvent = { type, status };
-    eventManager.emit(Event.ANNOTATIONS_STAGED_CHANGE, payload);
+    eventManager.emit(Event.CREATOR_STAGED_CHANGE, { type, status });
 };
 
 export const handleResetCreatorAction = (prevState: AppState): void => {
@@ -62,7 +56,5 @@ export const handleResetCreatorAction = (prevState: AppState): void => {
         return;
     }
 
-    const payload: StagedChangeEvent = { type, status: 'cancel' };
-
-    eventManager.emit(Event.ANNOTATIONS_STAGED_CHANGE, payload);
+    eventManager.emit(Event.CREATOR_STAGED_CHANGE, { type, status: 'cancel' });
 };
