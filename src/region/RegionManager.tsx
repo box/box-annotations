@@ -19,7 +19,7 @@ export default class RegionManager implements BaseManager {
 
         switch (insertStrategy) {
             case InsertStrategy.NEXT_SIBLING:
-                element = referenceEl.nextSibling ?? referenceEl; // referenceEl.nextSibling may return null in which we should still return the original referenceEl
+                element = (referenceEl.nextSibling as HTMLElement) ?? referenceEl; // referenceEl.nextSibling may return null in which we should still return the original referenceEl
                 break;
             case InsertStrategy.SELF:
                 element = referenceEl;
