@@ -5,7 +5,7 @@ import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as regions } from '../../region/__mocks__/data';
-import { fetchAnnotationsAction } from '../../store';
+import { fetchAnnotationsAction, Mode } from '../../store';
 import { HighlightManager } from '../../highlight';
 import { scrollToLocation } from '../../utils/scroll';
 
@@ -271,6 +271,24 @@ describe('DocumentAnnotator', () => {
 
             annotator.scrollToAnnotation('223');
             expect(scrollToLocation).toHaveBeenCalledWith(parentEl, referenceEl, { offsets: { x: 15, y: 10 } });
+        });
+    });
+
+    describe('handleChangeMode()', () => {
+        beforeEach(() => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+        });
+
+        test('should add and remove is highlighting class if mode changes', () => {
+            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
+
+            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.HIGHLIGHT });
+
+            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(true);
+
+            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.NONE });
+
+            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
         });
     });
 });
