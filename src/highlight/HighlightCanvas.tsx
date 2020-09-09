@@ -53,38 +53,6 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
         context.clearRect(0, 0, canvasRef.width, canvasRef.height);
     }
 
-    roundRect(
-        ctx: CanvasRenderingContext2D,
-        x: number,
-        y: number,
-        width: number,
-        height: number,
-        radius = 5,
-        fill = false,
-        stroke = true,
-    ): void {
-        const radii = { tl: radius, tr: radius, br: radius, bl: radius };
-        ctx.beginPath();
-        ctx.moveTo(x + radii.tl, y);
-        ctx.lineTo(x + width - radii.tr, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radii.tr);
-        ctx.lineTo(x + width, y + height - radii.br);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radii.br, y + height);
-        ctx.lineTo(x + radii.bl, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radii.bl);
-        ctx.lineTo(x, y + radii.tl);
-        ctx.quadraticCurveTo(x, y, x + radii.tl, y);
-        ctx.closePath();
-
-        if (fill) {
-            ctx.fill();
-        }
-
-        if (stroke) {
-            ctx.stroke();
-        }
-    }
-
     renderRects(): void {
         const { shapes } = this.props;
         const { current: canvasRef } = this.canvasRef;
@@ -109,25 +77,25 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
             // Draw the highlight rect
             context.fillStyle = bdlYellow;
             context.globalAlpha = isActive || isHover ? 0.66 : 0.33;
-            this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, true, false);
+            context.fillRect(x1, y1, rectWidth, rectHeight);
             context.restore();
             context.save();
 
             // Draw the white border
             context.strokeStyle = white;
             context.lineWidth = 1;
-            this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
+            context.strokeRect(x1, y1, rectWidth, rectHeight);
 
             // If annotation is active, apply a shadow
             if (isActive) {
-                const imgData = context.getImageData(x1 - 1, y1 - 1, rectWidth + 2, rectHeight + 2);
+                const imgData = context.getImageData(x1, y1, rectWidth, rectHeight);
 
                 context.save();
                 context.shadowColor = black;
                 context.shadowBlur = 10;
 
-                this.roundRect(context, x1, y1, rectWidth, rectHeight, 5, false, true);
-                context.putImageData(imgData, x1 - 1, y1 - 1);
+                context.strokeRect(x1, y1, rectWidth, rectHeight);
+                context.putImageData(imgData, x1, y1);
                 context.restore();
             }
 
