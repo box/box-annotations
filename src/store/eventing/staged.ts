@@ -14,8 +14,8 @@ export const getStatus = (prevStaged: CreatorItem, nextStaged: CreatorItem): Sta
         status = 'create';
     }
 
-    if (prevStaged !== null && nextStaged !== null) {
-        status = 'update';
+    if (prevStaged !== null) {
+        status = nextStaged === null ? 'cancel' : 'update';
     }
 
     return status;

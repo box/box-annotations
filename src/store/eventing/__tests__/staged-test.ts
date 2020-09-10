@@ -52,7 +52,7 @@ describe('store/eventing/staged', () => {
             prev         | next         | expectedStatus
             ${null}      | ${null}      | ${null}
             ${null}      | ${'notnull'} | ${'create'}
-            ${'notnull'} | ${null}      | ${null}
+            ${'notnull'} | ${null}      | ${'cancel'}
             ${'notnull'} | ${'notnull'} | ${'update'}
         `(
             'should return $expectedStatus if prevStaged=$prev and nextStaged=$next',
@@ -74,12 +74,8 @@ describe('store/eventing/staged', () => {
     });
 
     describe('handleSetStagedAction()', () => {
-        test.each`
-            prev                        | next
-            ${createStore().getState()} | ${createStore().getState()}
-            ${getCreatorState()}        | ${createStore().getState()}
-        `('should not emit event if status or type is null', ({ prev, next }) => {
-            handleSetStagedAction(prev, next);
+        test('should not emit event if status or type is null', () => {
+            handleSetStagedAction(createStore().getState(), createStore().getState());
 
             expect(eventManager.emit).not.toHaveBeenCalled();
         });
