@@ -55,10 +55,6 @@ export default class HighlightCreatorManager implements BaseManager {
         this.referenceEl.removeEventListener('mouseup', this.handleMouseUp);
     }
 
-    setSelection = (): void => {
-        this.store.dispatch(setSelectionAction(this.getSelection()));
-    };
-
     handleMouseDown = ({ buttons }: MouseEvent): void => {
         if (buttons !== MOUSE_PRIMARY) {
             return;
@@ -76,7 +72,7 @@ export default class HighlightCreatorManager implements BaseManager {
         }
 
         this.selectionChangeTimer = window.setTimeout(() => {
-            this.setSelection();
+            this.store.dispatch(setSelectionAction(this.getSelection()));
             this.store.dispatch(setIsSelectingAction(false));
         }, this.selectionChangeDelay);
     };
