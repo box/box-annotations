@@ -58,32 +58,9 @@ export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.El
         }),
     };
 
-    const handleEvent = (event: Event): void => {
-        event.preventDefault();
-        event.stopPropagation();
-    };
-
     const handleClick = (event: React.MouseEvent): void => {
         onClick(event);
     };
-
-    // Prevent events from propagating to upper elements. The upper elements'
-    // mouse handlers are attached to real dom, so the belows have to attach to real dom too
-    React.useEffect(() => {
-        const { current: buttonEl } = buttonRef;
-
-        if (buttonEl) {
-            buttonEl.addEventListener('mousedown', handleEvent);
-            buttonEl.addEventListener('mouseup', handleEvent);
-        }
-
-        return () => {
-            if (buttonEl) {
-                buttonEl.removeEventListener('mousedown', handleEvent);
-                buttonEl.removeEventListener('mouseup', handleEvent);
-            }
-        };
-    }, [buttonRef]);
 
     return (
         <PopupBase className="ba-PopupHighlight" options={options} reference={reference}>
