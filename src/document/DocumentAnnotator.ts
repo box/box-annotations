@@ -5,7 +5,7 @@ import { centerRegion, isRegion, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
-import { HighlightListener, HighlightManager } from '../highlight';
+import { HighlightCreatorManager, HighlightListener, HighlightManager } from '../highlight';
 import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
@@ -24,11 +24,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         super(options);
 
         if (this.isFeatureEnabled('highlightText')) {
-            this.highlightListener = new HighlightListener({
-                getSelection,
-                selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
-                store: this.store,
-            });
+            this.highlightListener = new HighlightListener({ getSelection, store: this.store });
         }
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
@@ -64,6 +60,19 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
             if (this.isFeatureEnabled('highlightText')) {
+                const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
+
+                if (textLayer) {
+                    managers.add(
+                        new HighlightCreatorManager({
+                            getSelection,
+                            referenceEl: textLayer,
+                            selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
+                            store: this.store,
+                        }),
+                    );
+                }
+
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
@@ -105,10 +114,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
     };
 
     render(): void {
-        if (this.highlightListener && this.annotatedEl) {
-            this.highlightListener.init(this.annotatedEl);
-        }
-
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));

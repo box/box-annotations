@@ -6,7 +6,7 @@ import { Annotation, Event } from '../../@types';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, Mode } from '../../store';
-import { HighlightManager } from '../../highlight';
+import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../highlight/HighlightManager');
@@ -52,11 +52,11 @@ describe('DocumentAnnotator', () => {
         container.classList.add('bp');
         container.innerHTML = `
             <div class="bp-doc">
-                <div class="page" data-loaded="true" data-page-number="1" />
-                <div class="page" data-loaded="true" data-page-number="2" />
-                <div class="page" data-loaded="true" data-page-number="3" />
-                <div class="page" data-loaded="true" />
-                <div class="page" data-page-number="4" />
+                <div class="page" data-loaded="true" data-page-number="1"></div>
+                <div class="page" data-loaded="true" data-page-number="2"><div class="textLayer"></div></div>
+                <div class="page" data-loaded="true" data-page-number="3"></div>
+                <div class="page" data-loaded="true"></div>
+                <div class="page" data-page-number="4"></div>
             </div>
         `;
 
@@ -70,6 +70,10 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('constructor()', () => {
+        test('should not create HighlightListener if feature is not enabled', () => {
+            expect(annotator.highlightListener).toBeUndefined();
+        });
+
         test('should create HighlightListener if feature is enabled', () => {
             annotator = getAnnotator({ features: { highlightText: true } });
 
@@ -127,6 +131,18 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managers.size).toBe(2);
+            expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+        });
+
+        test('should create HighlightCreatorManager if feature is enabled and textLayer is present', () => {
+            annotator = getAnnotator({ features: { highlightText: true } });
+
+            const managers = annotator.getPageManagers(getPage(2));
+            const managerIterator = managers.values();
+
+            expect(managers.size).toBe(3);
+            expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
@@ -211,16 +227,6 @@ describe('DocumentAnnotator', () => {
             annotator.render();
 
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
-        });
-
-        test('should init HighlightListener', () => {
-            annotator = getAnnotator({ features: { highlightText: true } });
-            annotator.annotatedEl = document.createElement('div');
-            jest.spyOn(annotator.highlightListener as HighlightListener, 'init');
-
-            annotator.render();
-
-            expect(annotator.highlightListener?.init).toHaveBeenCalledWith(annotator.annotatedEl);
         });
     });
 
