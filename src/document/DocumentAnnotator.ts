@@ -123,8 +123,8 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
-        ['ba-is-highlighting', 'ba-is-create-region'].forEach(className =>
-            this.annotatedEl.classList.remove(className),
+        ['ba-is-highlighting', 'ba-is-create-region'].forEach(
+            className => this.annotatedEl && this.annotatedEl.classList.remove(className),
         );
 
         switch (mode) {
