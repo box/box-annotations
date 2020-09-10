@@ -60,9 +60,9 @@ export default class HighlightCreatorManager implements BaseManager {
             return;
         }
 
-        this.store.dispatch(setIsSelectingAction(true));
-
         clearTimeout(this.selectionChangeTimer);
+
+        this.store.dispatch(setIsSelectingAction(true));
         this.store.dispatch(setSelectionAction(null));
     };
 

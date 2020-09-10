@@ -85,14 +85,16 @@ describe('HighlightCreatorManager', () => {
             const wrapper = getWrapper();
 
             wrapper.selectionChangeTimer = 1;
+            ((setIsSelectingAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_is_selecting' });
+            ((setSelectionAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_selection' });
 
             wrapper.handleMouseDown(new MouseEvent('mousedown', { buttons: 1 }));
 
-            expect(setIsSelectingAction).toHaveBeenCalled();
-            expect(defaults.store.dispatch).toHaveBeenCalled();
             expect(clearTimeout).toHaveBeenCalledWith(1);
+            expect(setIsSelectingAction).toHaveBeenCalledWith(true);
+            expect(defaults.store.dispatch).toHaveBeenCalledWith({ type: 'set_is_selecting' });
             expect(setSelectionAction).toHaveBeenCalledWith(null);
-            expect(defaults.store.dispatch).toHaveBeenCalled();
+            expect(defaults.store.dispatch).toHaveBeenCalledWith({ type: 'set_selection' });
         });
 
         test('should do nothing if is not primary button', () => {
