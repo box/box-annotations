@@ -282,11 +282,11 @@ describe('DocumentAnnotator', () => {
         test('should add and remove is highlighting class if mode changes', () => {
             expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
 
-            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.HIGHLIGHT });
+            annotator.toggleAnnotationMode(Mode.HIGHLIGHT);
 
             expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(true);
 
-            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.NONE });
+            annotator.toggleAnnotationMode(Mode.NONE);
 
             expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
         });
