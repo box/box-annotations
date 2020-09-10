@@ -66,7 +66,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
                     managers.add(
                         new HighlightCreatorManager({
                             getSelection,
-                            location: pageNumber,
                             referenceEl: textLayer,
                             selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
                             store: this.store,
