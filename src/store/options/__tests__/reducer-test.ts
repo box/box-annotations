@@ -1,5 +1,10 @@
 import reducer from '../reducer';
-import { setFileIdAction, setFileVersionIdAction, setPermissionsAction } from '../actions';
+import {
+    setFileIdAction,
+    setFileVersionIdAction,
+    setIsDiscoverabilityEnabledAction,
+    setPermissionsAction,
+} from '../actions';
 
 describe('store/common/reducer', () => {
     describe('setFileIdAction', () => {
@@ -20,6 +25,13 @@ describe('store/common/reducer', () => {
         test('should set the permissions', () => {
             const newState = reducer(undefined, setPermissionsAction({ can_create_annotations: true }));
             expect(newState.permissions).toEqual({ can_create_annotations: true });
+        });
+    });
+
+    describe('setIsDiscoverabilityEnabledAction', () => {
+        test('should set the isDiscoverabilityFeatureEnabled feature flip', () => {
+            const newState = reducer(undefined, setIsDiscoverabilityEnabledAction(true));
+            expect(newState.isDiscoverabilityFeatureEnabled).toEqual(true);
         });
     });
 });
