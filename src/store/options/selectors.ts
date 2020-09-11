@@ -9,5 +9,3 @@ export const getIsCurrentFileVersion = (state: State): boolean => state.options.
 export const getPermissions = (state: State): Permissions => state.options.permissions;
 export const getRotation = (state: State): number => state.options.rotation;
 export const getScale = (state: State): number => state.options.scale;
-export const getIsDiscoverabilityFeatureEnabled = (state: State): boolean =>
-    state.options.isDiscoverabilityFeatureEnabled;

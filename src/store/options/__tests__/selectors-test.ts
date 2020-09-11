@@ -1,18 +1,10 @@
-import {
-    getFileId,
-    getFileVersionId,
-    getIsDiscoverabilityFeatureEnabled,
-    getPermissions,
-    getRotation,
-    getScale,
-} from '../selectors';
+import { getFileId, getFileVersionId, getPermissions, getRotation, getScale } from '../selectors';
 
 describe('store/options/selectors', () => {
     const optionsState = {
         fileId: '12345',
         fileVersionId: '67890',
         isCurrentFileVersion: true,
-        isDiscoverabilityFeatureEnabled: true,
         permissions: {
             can_create_annotations: true,
             can_view_annotations: true,
@@ -45,12 +37,6 @@ describe('store/options/selectors', () => {
     describe('getRotation', () => {
         test('should return the current rotation', () => {
             expect(getRotation({ options: optionsState })).toBe(0);
-        });
-    });
-
-    describe('getIsDiscoverabilityFeatureEnabled', () => {
-        test('should return the isDiscoverabilityFeatureEnabled feature flip', () => {
-            expect(getIsDiscoverabilityFeatureEnabled({ options: optionsState })).toBe(true);
         });
     });
 

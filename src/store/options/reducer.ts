@@ -3,7 +3,6 @@ import { OptionsState } from './types';
 import {
     setFileIdAction,
     setFileVersionIdAction,
-    setIsDiscoverabilityEnabledAction,
     setPermissionsAction,
     setRotationAction,
     setScaleAction,
@@ -13,7 +12,6 @@ export const initialState = {
     fileId: null,
     fileVersionId: null,
     isCurrentFileVersion: true,
-    isDiscoverabilityFeatureEnabled: false,
     permissions: {},
     rotation: 0,
     scale: 1,
@@ -35,8 +33,5 @@ export default createReducer<OptionsState>(initialState, builder =>
         })
         .addCase(setScaleAction, (state, { payload }) => {
             state.scale = payload;
-        })
-        .addCase(setIsDiscoverabilityEnabledAction, (state, { payload }) => {
-            state.isDiscoverabilityFeatureEnabled = payload;
         }),
 );
