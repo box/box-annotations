@@ -1,5 +1,5 @@
 import BaseManager from '../../common/BaseManager';
-import DocumentAnnotator from '../DocumentAnnotator';
+import DocumentAnnotator, { CSS_IS_CREATE_HIGHLIGHT_CLASS } from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
@@ -286,15 +286,15 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should add and remove is highlighting class if mode changes', () => {
-            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(false);
+            expect(annotator.annotatedEl?.classList.contains(CSS_IS_CREATE_HIGHLIGHT_CLASS)).toBe(false);
 
             annotator.toggleAnnotationMode(Mode.HIGHLIGHT);
 
-            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(true);
+            expect(annotator.annotatedEl?.classList.contains(CSS_IS_CREATE_HIGHLIGHT_CLASS)).toBe(true);
 
             annotator.toggleAnnotationMode(Mode.NONE);
 
-            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(false);
+            expect(annotator.annotatedEl?.classList.contains(CSS_IS_CREATE_HIGHLIGHT_CLASS)).toBe(false);
         });
     });
 });
