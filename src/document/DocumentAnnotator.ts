@@ -10,8 +10,10 @@ import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
-export const CSS_IS_CREATE_REGION_CLASS = 'ba-is-create--region';
-export const CSS_IS_CREATE_HIGHLIGHT_CLASS = 'ba-is-create--highlight';
+export const ANNOTATION_CLASSES: { [M in Mode]?: string } = {
+    [Mode.HIGHLIGHT]: 'ba-create--highlight',
+    [Mode.REGION]: 'ba-create--region',
+};
 
 // Pdf.js textLayer enhancement requires waiting for 300ms (they hardcode this magic number)
 const TEXT_LAYER_ENHANCEMENT = 300;
@@ -112,19 +114,15 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
-        [CSS_IS_CREATE_HIGHLIGHT_CLASS, CSS_IS_CREATE_REGION_CLASS].forEach(
-            className => this.annotatedEl && this.annotatedEl.classList.remove(className),
-        );
+        Object.values(ANNOTATION_CLASSES).forEach(className => {
+            if (this.annotatedEl && className) {
+                this.annotatedEl.classList.remove(className);
+            }
+        });
 
-        switch (mode) {
-            case Mode.HIGHLIGHT:
-                this.annotatedEl.classList.add(CSS_IS_CREATE_HIGHLIGHT_CLASS);
-                break;
-            case Mode.REGION:
-                this.annotatedEl.classList.add(CSS_IS_CREATE_REGION_CLASS);
-                break;
-            default:
-                break;
+        const className = ANNOTATION_CLASSES[mode];
+        if (className) {
+            this.annotatedEl.classList.add(className);
         }
     };
 
