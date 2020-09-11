@@ -75,24 +75,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
-            if (this.isFeatureEnabled('discoverability')) {
-                const canvasLayerEl = pageEl.querySelector('.canvasWrapper') as HTMLElement;
-                const referenceEl = canvasLayerEl || pageReferenceEl;
+            const canvasLayerEl = (pageEl.querySelector('.canvasWrapper') as HTMLElement) || pageReferenceEl;
+            const referenceEl = this.isFeatureEnabled('discoverability') ? canvasLayerEl : pageReferenceEl;
 
-                managers.add(
-                    new RegionManager({
-                        location: pageNumber,
-                        referenceEl,
-                    }),
-                );
-            } else {
-                managers.add(
-                    new RegionManager({
-                        location: pageNumber,
-                        referenceEl: pageReferenceEl,
-                    }),
-                );
-            }
+            managers.add(new RegionManager({ location: pageNumber, referenceEl }));
         }
 
         return managers;
@@ -130,11 +116,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
         switch (mode) {
             case Mode.HIGHLIGHT:
                 this.annotatedEl.classList.add('ba-is-highlighting');
-                this.annotatedEl.classList.remove('ba-is-create-region');
                 break;
             case Mode.REGION:
                 this.annotatedEl.classList.add('ba-is-create-region');
-                this.annotatedEl.classList.remove('ba-is-highlighting');
                 break;
             default:
                 break;
