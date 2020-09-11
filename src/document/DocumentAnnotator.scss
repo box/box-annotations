@@ -19,7 +19,7 @@
         }
     }
 
-    &.ba-is-highlighting {
+    &.ba-is-create--highlight {
         .textLayer {
             > span {
                 @include ba-HighlightCreator-cursor;
@@ -31,7 +31,7 @@
         }
     }
 
-    &.ba-is-create-region {
+    &.ba-is-create--region {
         .textLayer > span {
             pointer-events: none;
         }

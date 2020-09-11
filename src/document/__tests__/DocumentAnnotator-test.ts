@@ -108,10 +108,10 @@ describe('DocumentAnnotator', () => {
 
         test('should add/remove highlight class', () => {
             annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: 'highlight' });
-            expect(annotator.annotatedEl?.classList.add).toHaveBeenCalledWith('ba-is-highlighting');
+            expect(annotator.annotatedEl?.classList.add).toHaveBeenCalledWith('ba-is-create--highlight');
 
             annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: 'region' });
-            expect(annotator.annotatedEl?.classList.remove).toHaveBeenCalledWith('ba-is-highlighting');
+            expect(annotator.annotatedEl?.classList.remove).toHaveBeenCalledWith('ba-is-create--highlight');
         });
     });
 
@@ -286,15 +286,15 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should add and remove is highlighting class if mode changes', () => {
-            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
+            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(false);
 
             annotator.toggleAnnotationMode(Mode.HIGHLIGHT);
 
-            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(true);
+            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(true);
 
             annotator.toggleAnnotationMode(Mode.NONE);
 
-            expect(annotator.annotatedEl?.classList.contains('ba-is-highlighting')).toBe(false);
+            expect(annotator.annotatedEl?.classList.contains('ba-is-create--highlight')).toBe(false);
         });
     });
 });
