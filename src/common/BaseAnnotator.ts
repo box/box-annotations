@@ -127,6 +127,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(store.setRotationAction(rotation));
         this.store.dispatch(store.setScaleAction(scale));
         this.store.dispatch(store.setIsInitialized());
+
+        // Set discoverability feature in redux
+        const isDiscoverabilityFeatureEnabled = this.isFeatureEnabled('discoverability');
+        this.store.dispatch(store.setIsDiscoverabilityEnabledAction(isDiscoverabilityFeatureEnabled));
     }
 
     public isFeatureEnabled(feature = ''): boolean {

@@ -19,6 +19,7 @@ import {
     setStagedAction,
     setStatusAction,
 } from '../store';
+import { getIsDiscoverabilityFeatureEnabled } from '../store/options/selectors';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
 import { createRegionAction } from './actions';
@@ -36,11 +37,16 @@ export type Props = {
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     const staged = getCreatorStagedForLocation(state, location);
+    const isDiscoverabilityFeatureEnabled = getIsDiscoverabilityFeatureEnabled(state);
+
+    const isCreating = isDiscoverabilityFeatureEnabled
+        ? getAnnotationMode(state) === Mode.REGION || getAnnotationMode(state) === Mode.NONE
+        : getAnnotationMode(state) === Mode.REGION;
 
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isRegion),
-        isCreating: getAnnotationMode(state) === Mode.REGION || getAnnotationMode(state) === Mode.NONE,
+        isCreating,
         isRotated: !!getRotation(state),
         message: getCreatorMessage(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
