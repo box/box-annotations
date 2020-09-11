@@ -40,7 +40,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isRegion),
-        isCreating: getAnnotationMode(state) === Mode.REGION,
+        isCreating: getAnnotationMode(state) === Mode.REGION || getAnnotationMode(state) === Mode.NONE,
         isRotated: !!getRotation(state),
         message: getCreatorMessage(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
