@@ -183,6 +183,7 @@ describe('BaseAnnotator', () => {
             expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setRotationAction(180));
             expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setScaleAction(1));
             expect(annotator.store.dispatch).toHaveBeenCalledWith(setIsInitialized());
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setIsDiscoverabilityEnabledAction(false));
         });
 
         test('should emit error if no root element exists', () => {
