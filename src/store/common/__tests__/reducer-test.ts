@@ -9,7 +9,7 @@ describe('store/common/reducer', () => {
         test.each`
             payloadMode | currentMode | expectedMode
             ${REGION}   | ${NONE}     | ${REGION}
-            ${REGION}   | ${REGION}   | ${NONE}
+            ${REGION}   | ${REGION}   | ${REGION}
         `('should toggle the current mode appropriately', ({ payloadMode, currentMode, expectedMode }) => {
             const newState = reducer({ ...state, mode: currentMode }, toggleAnnotationModeAction(payloadMode));
             expect(newState.mode).toEqual(expectedMode);

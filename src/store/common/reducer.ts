@@ -3,9 +3,7 @@ import { CommonState, Mode } from './types';
 import { toggleAnnotationModeAction } from './actions';
 
 const modeReducer = createReducer<CommonState['mode']>(Mode.NONE, builder =>
-    builder.addCase(toggleAnnotationModeAction, (state, { payload: mode }: { payload: Mode }) =>
-        state === mode ? Mode.NONE : mode,
-    ),
+    builder.addCase(toggleAnnotationModeAction, (state, { payload: mode }: { payload: Mode }) => mode),
 );
 
 export default combineReducers({
