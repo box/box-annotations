@@ -11,7 +11,7 @@ import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
 export const ANNOTATION_CLASSES: { [M in Mode]?: string } = {
-    [Mode.HIGHLIGHT]: '.ba-is-create--highlight',
+    [Mode.HIGHLIGHT]: 'ba-is-create--highlight',
     [Mode.REGION]: 'ba-is-create--region',
 };
 
