@@ -11,29 +11,41 @@
         pointer-events: none;
     }
 
-    .textLayer {
-        pointer-events: none; // Ensures that click events are received on the create region layer
-
-        span {
-            pointer-events: auto; // Text layer still receives text highlight events
-        }
-    }
-
-    &.ba-is-create--highlight {
+    &.ba-discoverability-enabled {
         .textLayer {
-            > span {
-                @include ba-HighlightCreator-cursor;
-            }
+            pointer-events: none; // Ensures that click events are received on the create region layer
 
-            ::selection {
-                background-color: rgba($bdl-yellow, .33);
+            span {
+                pointer-events: auto; // Text layer still receives text highlight events
+            }
+        }
+
+        &.ba-is-create--highlight {
+            .textLayer {
+                > span {
+                    @include ba-HighlightCreator-cursor;
+                }
+
+                ::selection {
+                    background-color: rgba($bdl-yellow, .33);
+                }
+            }
+        }
+
+        &.ba-is-create--region {
+            .textLayer > span {
+                pointer-events: none;
             }
         }
     }
 
-    &.ba-is-create--region {
-        .textLayer > span {
-            pointer-events: none;
+    .textLayer {
+        > span {
+            @include ba-HighlightCreator-cursor;
+        }
+
+        ::selection {
+            background-color: rgba($bdl-yellow, .33);
         }
     }
 }

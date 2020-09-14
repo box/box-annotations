@@ -119,6 +119,9 @@ export default class BaseAnnotator extends EventEmitter {
         // Add classes to the parent elements to support CSS scoping
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
+        if (this.isFeatureEnabled('discoverability')) {
+            this.annotatedEl.classList.add('ba-discoverability-enabled');
+        }
 
         // Defer to the child class to render annotations
         this.render();
