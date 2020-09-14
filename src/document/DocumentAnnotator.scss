@@ -19,33 +19,17 @@
                 pointer-events: auto; // Text layer still receives text highlight events
             }
         }
-
-        &.ba-is-create--highlight {
-            .textLayer {
-                > span {
-                    @include ba-HighlightCreator-cursor;
-                }
-
-                ::selection {
-                    background-color: rgba($bdl-yellow, .33);
-                }
-            }
-        }
-
-        &.ba-is-create--region {
-            .textLayer > span {
-                pointer-events: none;
-            }
-        }
     }
 
-    .textLayer {
-        > span {
-            @include ba-HighlightCreator-cursor;
-        }
+    &.ba-is-create--highlight {
+        .textLayer {
+            > span {
+                @include ba-HighlightCreator-cursor;
+            }
 
-        ::selection {
-            background-color: rgba($bdl-yellow, .33);
+            ::selection {
+                background-color: rgba($bdl-yellow, .33);
+            }
         }
     }
 }
