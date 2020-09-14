@@ -11,8 +11,8 @@ import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
 export const ANNOTATION_CLASSES: { [M in Mode]?: string } = {
-    [Mode.HIGHLIGHT]: 'ba-create--highlight',
-    [Mode.REGION]: 'ba-create--region',
+    [Mode.HIGHLIGHT]: '.ba-is-create--highlight',
+    [Mode.REGION]: 'ba-is-create--region',
 };
 
 // Pdf.js textLayer enhancement requires waiting for 300ms (they hardcode this magic number)
@@ -80,8 +80,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
-            const canvasLayerEl = (pageEl.querySelector('.canvasWrapper') as HTMLElement) || pageReferenceEl;
-            const referenceEl = this.isFeatureEnabled('discoverability') ? canvasLayerEl : pageReferenceEl;
+
+            const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
+            const referenceEl =
+                this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
             managers.add(new RegionManager({ location: pageNumber, referenceEl }));
         }
