@@ -101,6 +101,10 @@ export default class BaseAnnotator extends EventEmitter {
             this.containerEl.classList.remove(CSS_CONTAINER_CLASS);
         }
 
+        if (this.annotatedEl) {
+            this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
+        }
+
         this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
@@ -199,8 +203,6 @@ export default class BaseAnnotator extends EventEmitter {
         }
 
         const annotatedElement = this.annotatedEl;
-        annotatedElement.classList.remove(CSS_LOADED_CLASS);
-
         Object.values(ANNOTATION_CLASSES).forEach(className => {
             if (className) {
                 annotatedElement.classList.remove(className);
