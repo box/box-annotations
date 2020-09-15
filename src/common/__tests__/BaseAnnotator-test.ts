@@ -1,6 +1,6 @@
 import * as store from '../../store';
 import APIFactory from '../../api';
-import BaseAnnotator, { CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
+import BaseAnnotator, { ANNOTATION_CLASSES, CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
@@ -154,6 +154,18 @@ describe('BaseAnnotator', () => {
             annotator.destroy();
 
             expect(annotator.containerEl.classList).not.toContain(CSS_CONTAINER_CLASS);
+        });
+
+        test('should remove all annotation classes from annotation layer', () => {
+            const annotatedEl = document.createElement('div');
+            annotatedEl.classList.add(CSS_LOADED_CLASS);
+
+            annotator.annotatedEl = annotatedEl;
+            annotator.destroy();
+
+            expect(annotator.annotatedEl.classList).not.toContain(CSS_LOADED_CLASS);
+            expect(annotator.annotatedEl.classList).not.toContain(ANNOTATION_CLASSES[Mode.HIGHLIGHT]);
+            expect(annotator.annotatedEl.classList).not.toContain(ANNOTATION_CLASSES[Mode.REGION]);
         });
 
         test('should remove proper event handlers', () => {

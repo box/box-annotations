@@ -41,6 +41,10 @@ export type Options = {
 
 export const CSS_CONTAINER_CLASS = 'ba';
 export const CSS_LOADED_CLASS = 'ba-annotations-loaded';
+export const ANNOTATION_CLASSES: { [M in store.Mode]?: string } = {
+    [store.Mode.HIGHLIGHT]: 'ba-is-create--highlight',
+    [store.Mode.REGION]: 'ba-is-create--region',
+};
 
 export default class BaseAnnotator extends EventEmitter {
     annotatedEl?: HTMLElement | null;
@@ -100,6 +104,8 @@ export default class BaseAnnotator extends EventEmitter {
         if (this.annotatedEl) {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
+
+        this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
@@ -190,6 +196,19 @@ export default class BaseAnnotator extends EventEmitter {
         // Redux dispatch method signature doesn't seem to like async actions
         this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
+
+    protected removeAnnotationClasses = (): void => {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        const annotatedElement = this.annotatedEl;
+        Object.values(ANNOTATION_CLASSES).forEach(className => {
+            if (className) {
+                annotatedElement.classList.remove(className);
+            }
+        });
+    };
 
     protected render(): void {
         // Must be implemented in child class
