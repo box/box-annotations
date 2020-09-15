@@ -72,7 +72,7 @@ export default class BaseAnnotator extends EventEmitter {
             annotations: {
                 activeId: fileOptionsValue?.annotations?.activeId ?? null,
             },
-            common: { mode: initialMode ?? store.Mode.NONE },
+            common: { mode: initialMode },
             options: {
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,

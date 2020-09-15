@@ -67,9 +67,8 @@ describe('BaseAnnotator', () => {
                 annotator = getAnnotator({ fileOptions });
 
                 expect(store.createStore).toHaveBeenLastCalledWith(
-                    {
+                    expect.objectContaining({
                         annotations: { activeId: expectedActiveId },
-                        common: { mode: 'none' },
                         options: {
                             fileId: '12345',
                             fileVersionId: '98765',
@@ -79,7 +78,7 @@ describe('BaseAnnotator', () => {
                                 can_view_annotations: true,
                             },
                         },
-                    },
+                    }),
                     { api: expect.any(APIFactory) },
                 );
             },
@@ -95,9 +94,8 @@ describe('BaseAnnotator', () => {
             annotator = getAnnotator({ fileOptions });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
-                {
+                expect.objectContaining({
                     annotations: { activeId: null },
-                    common: { mode: 'none' },
                     options: {
                         fileId: '12345',
                         fileVersionId: '456',
@@ -107,7 +105,7 @@ describe('BaseAnnotator', () => {
                             can_view_annotations: true,
                         },
                     },
-                },
+                }),
                 { api: expect.any(APIFactory) },
             );
         });
@@ -147,10 +145,10 @@ describe('BaseAnnotator', () => {
         });
 
         test('should set initial mode', () => {
-            annotator = getAnnotator({ initialMode: 'region' });
+            annotator = getAnnotator({ initialMode: Mode.REGION });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
-                expect.objectContaining({ common: { mode: 'region' } }),
+                expect.objectContaining({ common: { mode: Mode.REGION } }),
                 expect.any(Object),
             );
         });
