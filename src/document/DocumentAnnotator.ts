@@ -1,4 +1,4 @@
-import BaseAnnotator, { Options } from '../common/BaseAnnotator';
+import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionManager } from '../region';
@@ -75,7 +75,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
-            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+
+            const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
+            const referenceEl =
+                this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
+
+            managers.add(new RegionManager({ location: pageNumber, referenceEl }));
         }
 
         return managers;
@@ -106,10 +111,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
-        if (mode === Mode.HIGHLIGHT) {
-            this.annotatedEl.classList.add('ba-is-highlighting');
-        } else {
-            this.annotatedEl.classList.remove('ba-is-highlighting');
+        this.removeAnnotationClasses();
+
+        const annotatedElement = this.annotatedEl;
+        const className = ANNOTATION_CLASSES[mode];
+        if (className) {
+            annotatedElement.classList.add(className);
         }
     };
 
