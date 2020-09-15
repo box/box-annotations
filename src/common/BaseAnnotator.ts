@@ -101,17 +101,7 @@ export default class BaseAnnotator extends EventEmitter {
             this.containerEl.classList.remove(CSS_CONTAINER_CLASS);
         }
 
-        const annotatedElement = this.annotatedEl;
-
-        if (annotatedElement) {
-            annotatedElement.classList.remove(CSS_LOADED_CLASS);
-
-            Object.values(ANNOTATION_CLASSES).forEach(className => {
-                if (className) {
-                    annotatedElement.classList.remove(className);
-                }
-            });
-        }
+        this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
@@ -202,6 +192,21 @@ export default class BaseAnnotator extends EventEmitter {
         // Redux dispatch method signature doesn't seem to like async actions
         this.store.dispatch<any>(store.fetchAnnotationsAction()); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
+
+    protected removeAnnotationClasses = (): void => {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        const annotatedElement = this.annotatedEl;
+        annotatedElement.classList.remove(CSS_LOADED_CLASS);
+
+        Object.values(ANNOTATION_CLASSES).forEach(className => {
+            if (className) {
+                annotatedElement.classList.remove(className);
+            }
+        });
+    };
 
     protected render(): void {
         // Must be implemented in child class
