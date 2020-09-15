@@ -7,6 +7,7 @@ import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import { Features } from '../BoxAnnotations';
+import { ANNOTATION_CLASSES } from '../document/DocumentAnnotator';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -99,6 +100,12 @@ export default class BaseAnnotator extends EventEmitter {
 
         if (this.annotatedEl) {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
+
+            Object.values(ANNOTATION_CLASSES).forEach(className => {
+                if (className) {
+                    this.annotatedEl.classList.remove(className);
+                }
+            });
         }
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
@@ -119,9 +126,6 @@ export default class BaseAnnotator extends EventEmitter {
         // Add classes to the parent elements to support CSS scoping
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
-        if (this.isFeatureEnabled('discoverability')) {
-            this.annotatedEl.classList.add('ba-discoverability-enabled');
-        }
 
         // Defer to the child class to render annotations
         this.render();
