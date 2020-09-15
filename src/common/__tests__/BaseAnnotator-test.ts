@@ -1,6 +1,6 @@
 import * as store from '../../store';
 import APIFactory from '../../api';
-import BaseAnnotator, { CSS_CONTAINER_CLASS, CSS_LOADED_CLASS, ANNOTATION_CLASSES } from '../BaseAnnotator';
+import BaseAnnotator, { ANNOTATION_CLASSES, CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
