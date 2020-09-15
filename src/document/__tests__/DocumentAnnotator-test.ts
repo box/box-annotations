@@ -286,15 +286,27 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should add and remove is highlighting class if mode changes', () => {
-            expect(annotator.annotatedEl?.classList.contains(ANNOTATION_CLASSES[Mode.HIGHLIGHT] || '')).toBe(false);
+            expect(
+                annotator.annotatedEl?.classList.contains(
+                    ANNOTATION_CLASSES[Mode.HIGHLIGHT] || 'ba-is-create--higlight',
+                ),
+            ).toBe(false);
 
             annotator.toggleAnnotationMode(Mode.HIGHLIGHT);
 
-            expect(annotator.annotatedEl?.classList.contains(ANNOTATION_CLASSES[Mode.HIGHLIGHT] || '')).toBe(true);
+            expect(
+                annotator.annotatedEl?.classList.contains(
+                    ANNOTATION_CLASSES[Mode.HIGHLIGHT] || 'ba-is-create--highlight',
+                ),
+            ).toBe(true);
 
             annotator.toggleAnnotationMode(Mode.NONE);
 
-            expect(annotator.annotatedEl?.classList.contains(ANNOTATION_CLASSES[Mode.HIGHLIGHT] || '')).toBe(false);
+            expect(
+                annotator.annotatedEl?.classList.contains(
+                    ANNOTATION_CLASSES[Mode.HIGHLIGHT] || 'ba-is-create--highlight',
+                ),
+            ).toBe(false);
         });
     });
 });
