@@ -69,6 +69,7 @@ describe('BaseAnnotator', () => {
                 expect(store.createStore).toHaveBeenLastCalledWith(
                     {
                         annotations: { activeId: expectedActiveId },
+                        common: { mode: 'none' },
                         options: {
                             fileId: '12345',
                             fileVersionId: '98765',
@@ -96,6 +97,7 @@ describe('BaseAnnotator', () => {
             expect(store.createStore).toHaveBeenLastCalledWith(
                 {
                     annotations: { activeId: null },
+                    common: { mode: 'none' },
                     options: {
                         fileId: '12345',
                         fileVersionId: '456',
@@ -142,6 +144,15 @@ describe('BaseAnnotator', () => {
             annotator = getAnnotator({ features });
 
             expect(annotator.features).toEqual(features);
+        });
+
+        test('should set initial mode', () => {
+            annotator = getAnnotator({ initialMode: 'region' });
+
+            expect(store.createStore).toHaveBeenLastCalledWith(
+                expect.objectContaining({ common: { mode: 'region' } }),
+                expect.any(Object),
+            );
         });
     });
 
