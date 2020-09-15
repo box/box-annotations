@@ -156,6 +156,16 @@ describe('BaseAnnotator', () => {
             expect(annotator.containerEl.classList).not.toContain(CSS_CONTAINER_CLASS);
         });
 
+        test('should remove the loaded class from annotation layer', () => {
+            const annotatedEl = document.createElement('div');
+            annotatedEl.classList.add(CSS_LOADED_CLASS);
+
+            annotator.annotatedEl = annotatedEl;
+            annotator.destroy();
+
+            expect(annotator.annotatedEl.classList).not.toContain(CSS_LOADED_CLASS);
+        });
+
         test('should remove proper event handlers', () => {
             annotator.removeListener = jest.fn();
 

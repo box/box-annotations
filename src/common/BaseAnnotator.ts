@@ -7,7 +7,6 @@ import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
 import { Features } from '../BoxAnnotations';
-import { ANNOTATION_CLASSES } from '../document/DocumentAnnotator';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -42,6 +41,10 @@ export type Options = {
 
 export const CSS_CONTAINER_CLASS = 'ba';
 export const CSS_LOADED_CLASS = 'ba-annotations-loaded';
+export const ANNOTATION_CLASSES: { [M in store.Mode]?: string } = {
+    [store.Mode.HIGHLIGHT]: 'ba-is-create--highlight',
+    [store.Mode.REGION]: 'ba-is-create--region',
+};
 
 export default class BaseAnnotator extends EventEmitter {
     annotatedEl?: HTMLElement | null;
@@ -98,12 +101,14 @@ export default class BaseAnnotator extends EventEmitter {
             this.containerEl.classList.remove(CSS_CONTAINER_CLASS);
         }
 
-        if (this.annotatedEl) {
-            this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
+        const annotatedElement = this.annotatedEl;
+
+        if (annotatedElement) {
+            annotatedElement.classList.remove(CSS_LOADED_CLASS);
 
             Object.values(ANNOTATION_CLASSES).forEach(className => {
                 if (className) {
-                    this.annotatedEl.classList.remove(className);
+                    annotatedElement.classList.remove(className);
                 }
             });
         }

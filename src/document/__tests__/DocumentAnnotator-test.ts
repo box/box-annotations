@@ -1,5 +1,6 @@
 import BaseManager from '../../common/BaseManager';
-import DocumentAnnotator, { ANNOTATION_CLASSES } from '../DocumentAnnotator';
+import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
+import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
