@@ -34,6 +34,7 @@ export type Options = {
     };
     fileOptions?: FileOptions;
     hasTouch?: boolean;
+    initialMode?: store.Mode;
     intl: IntlOptions;
     locale?: string;
     token: string;
@@ -59,7 +60,7 @@ export default class BaseAnnotator extends EventEmitter {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, features, file, fileOptions, intl, token }: Options) {
+    constructor({ apiHost, container, features, file, fileOptions, initialMode, intl, token }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -71,6 +72,7 @@ export default class BaseAnnotator extends EventEmitter {
             annotations: {
                 activeId: fileOptionsValue?.annotations?.activeId ?? null,
             },
+            common: { mode: initialMode },
             options: {
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
