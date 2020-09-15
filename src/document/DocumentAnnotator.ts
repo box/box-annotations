@@ -111,14 +111,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
             return;
         }
 
+        this.removeAnnotationClasses();
+
         const annotatedElement = this.annotatedEl;
-
-        Object.values(ANNOTATION_CLASSES).forEach(className => {
-            if (className) {
-                annotatedElement.classList.remove(className);
-            }
-        });
-
         const className = ANNOTATION_CLASSES[mode];
         if (className) {
             annotatedElement.classList.add(className);
