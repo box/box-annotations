@@ -124,7 +124,7 @@ export const combineRectsByRow = (rects: Shape[]): Shape[] => {
             rows.push(lastRect);
             rows.push(rect);
         }
-    }, [] as Shape[]);
+    });
 
     return rows;
 };
