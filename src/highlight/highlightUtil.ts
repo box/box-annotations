@@ -94,37 +94,39 @@ export const dedupeRects = (rects: Shape[], threshold = 0.1): Shape[] => {
 };
 
 export const combineRectsByRow = (rects: Shape[]): Shape[] => {
-    const rows = dedupeRects(rects).reduce((groups, rect) => {
+    const rows: Shape[] = [];
+
+    dedupeRects(rects).forEach(rect => {
         const { height, width, x, y } = rect;
-        const roundedY = Math.round(y);
-        const keys = Object.keys(groups).map(key => parseInt(key, 10));
-        const lastYKey = keys.length ? keys[keys.length - 1] : null;
-        let key = roundedY;
+        const lastRect = rows.pop();
+
+        if (!lastRect) {
+            rows.push(rect);
+            return;
+        }
 
         // This algorithm employs a hueristic that assumes rects are returned in ascending y coordinate
         // followed by ascending x coordinate.
-        // If there is already a key in the groups map, check first to see if the current rect is approximately
+        // If there is already a previous rect, check first to see if the current rect is approximately
         // close enough (in both the x and y coordinate) to be considered as part of the same rect
-        // If it is not close enough then create a new entry that represents a new separate rect
-        if (lastYKey) {
-            const { height: lastHeight, width: lastWidth, x: lastX, y: lastY } = groups[lastYKey];
-            const thresholdX = getThreshold(lastWidth, width, 0.3);
-            const thresholdY = getThreshold(lastHeight, height, 0.6);
-            const lastMaxX = lastX + lastWidth;
-            const isXCloseEnough = Math.abs(x - lastMaxX) < thresholdX;
-            const isYCloseEnough = Math.abs(y - lastY) < thresholdY;
+        // If it is not close enough then add the current rect as a separate rect in the array
+        const { height: lastHeight, width: lastWidth, x: lastX, y: lastY } = lastRect;
+        const lastMaxX = lastX + lastWidth;
+        const thresholdX = getThreshold(lastWidth, width, 0.3);
+        const thresholdY = getThreshold(lastHeight, height, 0.6);
+        const isXCloseEnough = Math.abs(x - lastMaxX) < thresholdX;
+        const isYCloseEnough = Math.abs(y - lastY) < thresholdY;
 
-            // If rect is close enough, add the rect to the existing entry, otherwise update the key to be a new entry
-            key = isXCloseEnough && isYCloseEnough ? lastYKey : Math.max(lastYKey + 1, roundedY);
+        // If rect is close enough, add the rect to the existing entry, otherwise add it as a new entry
+        if (isXCloseEnough && isYCloseEnough) {
+            rows.push(getBoundingRect([lastRect, rect]));
+        } else {
+            rows.push(lastRect);
+            rows.push(rect);
         }
+    }, [] as Shape[]);
 
-        const lastShape = groups[key] || {};
-        groups[key] = getBoundingRect([lastShape, rect]);
-
-        return groups;
-    }, {} as Record<number, Shape>);
-
-    return Object.values(rows);
+    return rows;
 };
 
 export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape): Shape => {
