@@ -94,17 +94,37 @@ export const dedupeRects = (rects: Shape[], threshold = 0.1): Shape[] => {
 };
 
 export const combineRectsByRow = (rects: Shape[]): Shape[] => {
-    const dedupedRects = dedupeRects(rects);
-
-    const rows = dedupedRects.reduce((groups, rect) => {
-        const { y } = rect;
+    const rows = dedupeRects(rects).reduce((groups, rect) => {
+        const { height, width, x, y } = rect;
         const roundedY = Math.round(y);
-        groups[roundedY] = groups[roundedY] || [];
-        groups[roundedY].push(rect);
-        return groups;
-    }, {} as Record<number, Shape[]>);
+        const keys = Object.keys(groups).map(key => parseInt(key, 10));
+        const lastYKey = keys.length ? keys[keys.length - 1] : null;
+        let key = roundedY;
 
-    return Object.values(rows).map(group => getBoundingRect(group));
+        // This algorithm employs a hueristic that assumes rects are returned in ascending y coordinate
+        // followed by ascending x coordinate.
+        // If there is already a key in the groups map, check first to see if the current rect is approximately
+        // close enough (in both the x and y coordinate) to be considered as part of the same rect
+        // If it is not close enough then create a new entry that represents a new separate rect
+        if (lastYKey) {
+            const { height: lastHeight, width: lastWidth, x: lastX, y: lastY } = groups[lastYKey];
+            const thresholdX = getThreshold(lastWidth, width, 0.3);
+            const thresholdY = getThreshold(lastHeight, height, 0.6);
+            const lastMaxX = lastX + lastWidth;
+            const isXCloseEnough = Math.abs(x - lastMaxX) < thresholdX;
+            const isYCloseEnough = Math.abs(y - lastY) < thresholdY;
+
+            // If rect is close enough, add the rect to the existing entry, otherwise update the key to be a new entry
+            key = isXCloseEnough && isYCloseEnough ? lastYKey : Math.max(lastYKey + 1, roundedY);
+        }
+
+        const lastShape = groups[key] || {};
+        groups[key] = getBoundingRect([lastShape, rect]);
+
+        return groups;
+    }, {} as Record<number, Shape>);
+
+    return Object.values(rows);
 };
 
 export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape): Shape => {
