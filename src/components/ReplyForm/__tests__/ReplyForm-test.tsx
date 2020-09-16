@@ -6,7 +6,6 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import ReplyButton from '../ReplyButton';
 import ReplyForm, { Props } from '../ReplyForm';
 import ReplyField from '../../ReplyField';
-import { mockEvent } from '../../../common/__mocks__/events';
 
 jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils', () => ({
     getFormattedCommentText: jest.fn().mockReturnValue({ text: 'foo' }),
@@ -29,20 +28,23 @@ describe('ReplyForm', () => {
             editorState: mockEditorState,
         },
     };
-    const mockAddEventListener = jest.fn();
+    let mockFormElement: HTMLFormElement;
 
     const getWrapper = (props = {}): ShallowWrapper<Props, undefined> =>
         shallow(<ReplyForm {...defaults} {...props} />);
 
     beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: { addEventListener: mockAddEventListener } }));
+        mockFormElement = document.createElement('form');
+        jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: mockFormElement }));
         jest.spyOn(React, 'useEffect').mockImplementation(func => func());
     });
 
     test('should call add keydown event listener', () => {
+        jest.spyOn(mockFormElement, 'addEventListener');
+
         getWrapper();
 
-        expect(mockAddEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
+        expect(mockFormElement.addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
     });
 
     test('should render Form with ReplyField and buttons in the footer', () => {
@@ -102,16 +104,20 @@ describe('ReplyForm', () => {
         expect(defaults.setFieldValue).toHaveBeenCalledWith('editorState', mockEditorState);
     });
 
-    describe.skip('event handlers', () => {
+    describe('event handlers', () => {
         test.each`
             key            | callCount
             ${KEYS.enter}  | ${0}
             ${KEYS.escape} | ${1}
             ${KEYS.space}  | ${0}
         `('should handle the $key keydown event', ({ callCount, key }) => {
-            const wrapper = getWrapper();
+            const mockEvent = new KeyboardEvent('keydown', { key });
+            jest.spyOn(mockEvent, 'preventDefault');
+            jest.spyOn(mockEvent, 'stopPropagation');
 
-            wrapper.find(Form).simulate('keyDown', { ...mockEvent, key });
+            getWrapper();
+
+            mockFormElement.dispatchEvent(mockEvent);
 
             expect(mockEvent.preventDefault).toHaveBeenCalledTimes(callCount);
             expect(mockEvent.stopPropagation).toHaveBeenCalledTimes(callCount);
