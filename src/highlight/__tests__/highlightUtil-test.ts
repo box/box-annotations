@@ -1,6 +1,6 @@
 import {
     centerHighlight,
-    combineRectsByRow,
+    combineRects,
     dedupeRects,
     getBoundingRect,
     getShapeRelativeToContainer,
@@ -74,7 +74,7 @@ describe('highlightUtil', () => {
         });
     });
 
-    describe('combineRectsByRow()', () => {
+    describe('combineRects()', () => {
         test('should combine rects by row', () => {
             const rects = [
                 {
@@ -96,6 +96,12 @@ describe('highlightUtil', () => {
                     y: 199.5,
                 },
                 {
+                    height: 21,
+                    width: 100,
+                    x: 500,
+                    y: 200,
+                }, // this rect, while having the same y coordinate as the previous rects is not near enough in the x coordinate to combine so should be it's own rect
+                {
                     height: 23,
                     width: 100,
                     x: 400,
@@ -103,8 +109,8 @@ describe('highlightUtil', () => {
                 },
             ];
 
-            const result = combineRectsByRow(rects);
-            expect(result).toHaveLength(2);
+            const result = combineRects(rects);
+            expect(result).toHaveLength(3);
             expect(result[0]).toEqual({
                 height: 22,
                 width: 300,
@@ -112,6 +118,7 @@ describe('highlightUtil', () => {
                 y: 199.5,
             });
             expect(result[1]).toEqual(rects[3]);
+            expect(result[2]).toEqual(rects[4]);
         });
     });
 
