@@ -11,16 +11,6 @@
         pointer-events: none;
     }
 
-    &.ba-discoverability-enabled {
-        .textLayer {
-            pointer-events: none; // Ensures that click events are received on the create region layer
-
-            span {
-                pointer-events: auto; // Text layer still receives text highlight events
-            }
-        }
-    }
-
     &.ba-is-create--highlight {
         .textLayer {
             > span {
