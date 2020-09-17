@@ -93,15 +93,15 @@ export const dedupeRects = (rects: Shape[], threshold = 0.1): Shape[] => {
     return dedupedRects;
 };
 
-export const combineRectsByRow = (rects: Shape[]): Shape[] => {
-    const rows: Shape[] = [];
+export const combineRects = (rects: Shape[]): Shape[] => {
+    const result: Shape[] = [];
 
     dedupeRects(rects).forEach(rect => {
         const { height, width, x, y } = rect;
-        const lastRect = rows.pop();
+        const lastRect = result.pop();
 
         if (!lastRect) {
-            rows.push(rect);
+            result.push(rect);
             return;
         }
 
@@ -119,14 +119,14 @@ export const combineRectsByRow = (rects: Shape[]): Shape[] => {
 
         // If rect is close enough, add the rect to the existing entry, otherwise add it as a new entry
         if (isXCloseEnough && isYCloseEnough) {
-            rows.push(getBoundingRect([lastRect, rect]));
+            result.push(getBoundingRect([lastRect, rect]));
         } else {
-            rows.push(lastRect);
-            rows.push(rect);
+            result.push(lastRect);
+            result.push(rect);
         }
     });
 
-    return rows;
+    return result;
 };
 
 export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape): Shape => {

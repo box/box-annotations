@@ -1,6 +1,6 @@
 import {
     centerHighlight,
-    combineRectsByRow,
+    combineRects,
     dedupeRects,
     getBoundingRect,
     getShapeRelativeToContainer,
@@ -74,7 +74,7 @@ describe('highlightUtil', () => {
         });
     });
 
-    describe('combineRectsByRow()', () => {
+    describe('combineRects()', () => {
         test('should combine rects by row', () => {
             const rects = [
                 {
@@ -109,7 +109,7 @@ describe('highlightUtil', () => {
                 },
             ];
 
-            const result = combineRectsByRow(rects);
+            const result = combineRects(rects);
             expect(result).toHaveLength(3);
             expect(result[0]).toEqual({
                 height: 22,
