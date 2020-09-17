@@ -93,18 +93,40 @@ export const dedupeRects = (rects: Shape[], threshold = 0.1): Shape[] => {
     return dedupedRects;
 };
 
-export const combineRectsByRow = (rects: Shape[]): Shape[] => {
-    const dedupedRects = dedupeRects(rects);
+export const combineRects = (rects: Shape[]): Shape[] => {
+    const result: Shape[] = [];
 
-    const rows = dedupedRects.reduce((groups, rect) => {
-        const { y } = rect;
-        const roundedY = Math.round(y);
-        groups[roundedY] = groups[roundedY] || [];
-        groups[roundedY].push(rect);
-        return groups;
-    }, {} as Record<number, Shape[]>);
+    dedupeRects(rects).forEach(rect => {
+        const { height, width, x, y } = rect;
+        const lastRect = result.pop();
 
-    return Object.values(rows).map(group => getBoundingRect(group));
+        if (!lastRect) {
+            result.push(rect);
+            return;
+        }
+
+        // This algorithm employs a hueristic that assumes rects are returned in ascending y coordinate
+        // followed by ascending x coordinate.
+        // If there is already a previous rect, check first to see if the current rect is approximately
+        // close enough (in both the x and y coordinate) to be considered as part of the same rect
+        // If it is not close enough then add the current rect as a separate rect in the array
+        const { height: lastHeight, width: lastWidth, x: lastX, y: lastY } = lastRect;
+        const lastMaxX = lastX + lastWidth;
+        const thresholdX = getThreshold(lastWidth, width, 0.3);
+        const thresholdY = getThreshold(lastHeight, height, 0.6);
+        const isXCloseEnough = Math.abs(x - lastMaxX) < thresholdX;
+        const isYCloseEnough = Math.abs(y - lastY) < thresholdY;
+
+        // If rect is close enough, add the rect to the existing entry, otherwise add it as a new entry
+        if (isXCloseEnough && isYCloseEnough) {
+            result.push(getBoundingRect([lastRect, rect]));
+        } else {
+            result.push(lastRect);
+            result.push(rect);
+        }
+    });
+
+    return result;
 };
 
 export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape): Shape => {

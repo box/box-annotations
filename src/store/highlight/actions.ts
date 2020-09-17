@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { combineRectsByRow } from '../../highlight/highlightUtil';
+import { combineRects } from '../../highlight/highlightUtil';
 import { SelectionItem } from './types';
 import { Shape } from '../../@types';
 
@@ -94,7 +94,7 @@ export const setSelectionAction = createAction(
             payload: {
                 containerRect: getShape(containerRect),
                 location,
-                rects: combineRectsByRow(rects.map(getShape)),
+                rects: combineRects(rects.map(getShape)),
             },
         };
     },
