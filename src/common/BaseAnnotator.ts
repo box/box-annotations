@@ -60,7 +60,7 @@ export default class BaseAnnotator extends EventEmitter {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, features, file, fileOptions, initialMode, intl, token }: Options) {
+    constructor({ apiHost, container, features = {}, file, fileOptions, initialMode, intl, token }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -74,6 +74,7 @@ export default class BaseAnnotator extends EventEmitter {
             },
             common: { mode: initialMode },
             options: {
+                features,
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
                 isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === currentFileVersionId,

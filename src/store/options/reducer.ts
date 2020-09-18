@@ -9,6 +9,7 @@ import {
 } from './actions';
 
 export const initialState = {
+    features: {},
     fileId: null,
     fileVersionId: null,
     isCurrentFileVersion: true,

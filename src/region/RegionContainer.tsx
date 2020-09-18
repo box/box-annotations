@@ -12,6 +12,7 @@ import {
     getCreatorStatus,
     getRotation,
     isCreatorStagedRegion,
+    isFeatureEnabled,
     Mode,
     resetCreatorAction,
     setActiveAnnotationIdAction,
@@ -28,6 +29,7 @@ export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
     isCreating: boolean;
+    isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     message: string;
     staged: CreatorItemRegion | null;
@@ -41,6 +43,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isRegion),
         isCreating: getAnnotationMode(state) === Mode.REGION,
+        isDiscoverabilityEnabled: isFeatureEnabled(state, 'discoverability'),
         isRotated: !!getRotation(state),
         message: getCreatorMessage(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,

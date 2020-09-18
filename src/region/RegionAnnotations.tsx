@@ -13,6 +13,7 @@ type Props = {
     annotations: AnnotationRegion[];
     createRegion: (arg: CreateArg) => void;
     isCreating: boolean;
+    isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     location: number;
     message: string;
@@ -76,12 +77,42 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         createRegion({ ...staged, message });
     };
 
+    renderCreator = (): JSX.Element => {
+        const { isCreating, isRotated } = this.props;
+        const canCreate = isCreating && !isRotated;
+
+        return (
+            <>
+                {canCreate && (
+                    <RegionCreator
+                        className="ba-RegionAnnotations-creator"
+                        onStart={this.handleStart}
+                        onStop={this.handleStop}
+                    />
+                )}
+            </>
+        );
+    };
+
+    renderList = (): JSX.Element => {
+        const { activeAnnotationId, annotations } = this.props;
+
+        return (
+            <RegionList
+                activeId={activeAnnotationId}
+                annotations={annotations}
+                className="ba-RegionAnnotations-list"
+                onSelect={this.handleAnnotationActive}
+            />
+        );
+    };
+
     setRectRef = (rectRef: RegionRectRef): void => {
         this.setState({ rectRef });
     };
 
     render(): JSX.Element {
-        const { activeAnnotationId, annotations, isCreating, isRotated, message, staged, status } = this.props;
+        const { isCreating, isDiscoverabilityEnabled, isRotated, message, staged, status } = this.props;
         const { rectRef } = this.state;
         const canCreate = isCreating && !isRotated;
         const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
@@ -89,21 +120,17 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
         return (
             <>
-                {/* Layer 1: Saved annotations */}
-                <RegionList
-                    activeId={activeAnnotationId}
-                    annotations={annotations}
-                    className="ba-RegionAnnotations-list"
-                    onSelect={this.handleAnnotationActive}
-                />
-
-                {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
-                {canCreate && (
-                    <RegionCreator
-                        className="ba-RegionAnnotations-creator"
-                        onStart={this.handleStart}
-                        onStop={this.handleStop}
-                    />
+                {isDiscoverabilityEnabled ? (
+                    <>
+                        {/* With discoverability, put the RegionCreator below the RegionList so that existing regions can be clicked */}
+                        {this.renderCreator()}
+                        {this.renderList()}
+                    </>
+                ) : (
+                    <>
+                        {this.renderList()}
+                        {this.renderCreator()}
+                    </>
                 )}
 
                 {/* Layer 3a: Staged (unsaved) annotation target, if any */}
