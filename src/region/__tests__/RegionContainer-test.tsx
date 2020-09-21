@@ -26,6 +26,7 @@ describe('RegionContainer', () => {
                 annotations: [],
                 createRegion: expect.any(Function),
                 isCreating: false,
+                isDiscoverabilityEnabled: false,
                 location: 1,
                 message: '',
                 staged: null,
@@ -53,6 +54,13 @@ describe('RegionContainer', () => {
             const wrapper = getWrapper({ store });
 
             expect(wrapper.find(RegionAnnotations).prop('isRotated')).toEqual(isRotated);
+        });
+
+        test('should read the discoverability feature from the store', () => {
+            const store = createStore({ options: { features: { discoverability: true } } });
+            const wrapper = getWrapper({ store });
+
+            expect(wrapper.find(RegionAnnotations).prop('isDiscoverabilityEnabled')).toBe(true);
         });
     });
 });

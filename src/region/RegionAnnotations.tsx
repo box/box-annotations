@@ -34,6 +34,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     static defaultProps = {
         annotations: [],
         isCreating: false,
+        isDiscoverabilityEnabled: false,
         isRotated: false,
     };
 
