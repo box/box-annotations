@@ -231,5 +231,43 @@ describe('RegionAnnotations', () => {
             expect(wrapper.exists(RegionList)).toBe(true);
             expect(wrapper.exists(RegionRect)).toBe(false);
         });
+
+        test('should render RegionList before RegionCreator if discoverability is disabled', () => {
+            const wrapper = getWrapper({ isCreating: true, isDiscoverabilityEnabled: false });
+            expect(wrapper).toMatchInlineSnapshot(`
+                <Fragment>
+                  <Memo(RegionList)
+                    activeId={null}
+                    annotations={Array []}
+                    className="ba-RegionAnnotations-list"
+                    onSelect={[Function]}
+                  />
+                  <RegionCreator
+                    className="ba-RegionAnnotations-creator"
+                    onStart={[Function]}
+                    onStop={[Function]}
+                  />
+                </Fragment>
+            `);
+        });
+
+        test('should render RegionCreator before RegionList if discoverability is enabled', () => {
+            const wrapper = getWrapper({ isCreating: true, isDiscoverabilityEnabled: true });
+            expect(wrapper).toMatchInlineSnapshot(`
+                <Fragment>
+                  <RegionCreator
+                    className="ba-RegionAnnotations-creator"
+                    onStart={[Function]}
+                    onStop={[Function]}
+                  />
+                  <Memo(RegionList)
+                    activeId={null}
+                    annotations={Array []}
+                    className="ba-RegionAnnotations-list"
+                    onSelect={[Function]}
+                  />
+                </Fragment>
+            `);
+        });
     });
 });
