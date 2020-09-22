@@ -57,33 +57,12 @@ describe('HighlightTarget', () => {
             expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
         });
 
-        test('should attempt to focus on the event.currentTarget', () => {
+        describe('handleMouseDown()', () => {
             const mockEvent = {
                 buttons: 1,
                 currentTarget: {
                     focus: jest.fn(),
                 },
-                preventDefault: jest.fn(),
-                nativeEvent: {
-                    stopImmediatePropagation: jest.fn(),
-                },
-                stopPropagation: jest.fn(),
-            };
-
-            const wrapper = getWrapper();
-            const anchor = wrapper.find('a');
-
-            anchor.simulate('click', mockEvent);
-
-            expect(mockEvent.preventDefault).toHaveBeenCalled();
-            expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
-            expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
-        });
-
-        describe('handleMouseDown()', () => {
-            const mockEvent = {
-                buttons: 1,
                 preventDefault: jest.fn(),
                 nativeEvent: {
                     stopImmediatePropagation: jest.fn(),
@@ -114,8 +93,26 @@ describe('HighlightTarget', () => {
 
                 anchor.simulate('mousedown', event);
 
+                expect(defaults.onSelect).toHaveBeenCalledWith('123');
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+                expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
+            });
+
+            test('should call blur on the document.activeElement', () => {
+                const blurSpy = jest.spyOn(document.body, 'blur');
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 1,
+                };
+
+                expect(document.activeElement).toBe(document.body);
+
+                anchor.simulate('mousedown', event);
+
+                expect(blurSpy).toHaveBeenCalled();
             });
         });
 

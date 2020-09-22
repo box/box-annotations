@@ -22,10 +22,10 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
+        // These are needed to prevent the anchor link from being followed and updating the url location
         event.preventDefault();
         event.stopPropagation();
         event.nativeEvent.stopImmediatePropagation();
-        event.currentTarget.focus();
     };
 
     const handleFocus = (): void => {
@@ -40,13 +40,29 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         onHover(null);
     };
 
+    const isHTMLElement = (element: Element): element is HTMLElement => 'blur' in element;
+
     const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
         if (event.buttons !== MOUSE_PRIMARY) {
             return;
         }
 
+        onSelect(annotationId);
+
         event.preventDefault(); // Prevents focus from leaving the anchor immediately in some browsers
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
+
+        // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing
+        // active element.
+        if (
+            document.activeElement &&
+            document.activeElement !== event.currentTarget &&
+            isHTMLElement(document.activeElement)
+        ) {
+            document.activeElement.blur();
+        }
+
+        event.currentTarget.focus();
     };
 
     return (
