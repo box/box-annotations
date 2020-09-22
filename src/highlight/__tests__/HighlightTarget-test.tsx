@@ -57,6 +57,68 @@ describe('HighlightTarget', () => {
             expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
         });
 
+        test('should attempt to focus on the event.currentTarget', () => {
+            const mockEvent = {
+                buttons: 1,
+                currentTarget: {
+                    focus: jest.fn(),
+                },
+                preventDefault: jest.fn(),
+                nativeEvent: {
+                    stopImmediatePropagation: jest.fn(),
+                },
+                stopPropagation: jest.fn(),
+            };
+
+            const wrapper = getWrapper();
+            const anchor = wrapper.find('a');
+
+            anchor.simulate('click', mockEvent);
+
+            expect(mockEvent.preventDefault).toHaveBeenCalled();
+            expect(mockEvent.stopPropagation).toHaveBeenCalled();
+            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
+        });
+
+        describe('handleMouseDown()', () => {
+            const mockEvent = {
+                buttons: 1,
+                preventDefault: jest.fn(),
+                nativeEvent: {
+                    stopImmediatePropagation: jest.fn(),
+                },
+            };
+
+            test('should do nothing if button is not MOUSE_PRIMARY', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 2,
+                };
+
+                anchor.simulate('mousedown', event);
+
+                expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+                expect(mockEvent.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
+            });
+
+            test('should call onSelect', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 1,
+                };
+
+                anchor.simulate('mousedown', event);
+
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+            });
+        });
+
         describe('handleMouseEnter()', () => {
             test('should call onHover with annotationId', () => {
                 const wrapper = getWrapper();

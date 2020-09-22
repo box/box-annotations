@@ -3,6 +3,7 @@ import * as ReactRedux from 'react-redux';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
+import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
 import './HighlightTarget.scss';
 
@@ -20,6 +21,13 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
     const { annotationId, className, onHover = noop, onSelect = noop, shapes } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
+    const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.nativeEvent.stopImmediatePropagation();
+        event.currentTarget.focus();
+    };
+
     const handleFocus = (): void => {
         onSelect(annotationId);
     };
@@ -32,6 +40,15 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         onHover(null);
     };
 
+    const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
+        if (event.buttons !== MOUSE_PRIMARY) {
+            return;
+        }
+
+        event.preventDefault(); // Prevents focus from leaving the anchor immediately in some browsers
+        event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
+    };
+
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
@@ -42,7 +59,9 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             data-resin-target="highlightText"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
+            onClick={handleClick}
             onFocus={handleFocus}
+            onMouseDown={handleMouseDown}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             role="button"
