@@ -111,7 +111,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
-        if (!isCreating || !selection) {
+        if (!isCreating || !selection || !selection.canCreate) {
             return;
         }
 
@@ -151,9 +151,13 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             )}
 
             {/* Layer 4: Annotations promoter to promote selection to staged */}
-            {!isCreating && selection && (
+            {selection && (!isCreating || !selection.canCreate) && (
                 <div className="ba-HighlightAnnotations-popup">
-                    <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
+                    <PopupHighlight
+                        disabled={!selection.canCreate}
+                        onClick={handlePromote}
+                        shape={getBoundingRect(selection.rects)}
+                    />
                 </div>
             )}
         </>

@@ -13,6 +13,18 @@
             border-radius: $bdl-border-radius-size;
             box-shadow: none;
         }
+
+        &.is-disabled {
+            $popup-content-bg: $bdl-gray-50;
+
+            @include ba-PopupArrow(4px, $popup-content-bg, $popup-content-bg, $popup-content-bg, $popup-content-bg, $popup-content-bg);
+
+            pointer-events: none;
+
+            .ba-Popup-content {
+                background-color: $popup-content-bg;
+            }
+        }
     }
 
     .ba-PopupHighlight-button {

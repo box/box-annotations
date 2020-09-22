@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import IconHighlightTextAnnotation from 'box-ui-elements/es/icon/fill/AnnotationsHighlight16';
 import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
@@ -9,6 +10,7 @@ import { Shape } from '../../@types/model';
 import './PopupHighlight.scss';
 
 export type Props = {
+    disabled: boolean;
     onClick?: (event: React.MouseEvent) => void;
     shape: Shape;
 };
@@ -43,7 +45,7 @@ const options: Partial<Options> = {
     placement: 'bottom',
 };
 
-export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.Element {
+export default function PopupHighlight({ disabled, onClick = noop, shape }: Props): JSX.Element {
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const { height, width, x, y } = shape;
 
@@ -63,16 +65,27 @@ export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.El
     };
 
     return (
-        <PopupBase className="ba-PopupHighlight" options={options} reference={reference}>
+        <PopupBase
+            className={classNames('ba-PopupHighlight', { 'is-disabled': disabled })}
+            options={options}
+            reference={reference}
+        >
             <button
                 ref={buttonRef}
                 className="ba-PopupHighlight-button"
                 data-testid="ba-PopupHighlight-button"
+                disabled={disabled}
                 onClick={handleClick}
                 type="button"
             >
-                <IconHighlightTextAnnotation className="ba-PopupHighlight-icon" />
-                <FormattedMessage {...messages.popupHighlightPromoter} />
+                {disabled ? (
+                    <FormattedMessage {...messages.popupHighlightRestrictedPrompt} />
+                ) : (
+                    <>
+                        <IconHighlightTextAnnotation className="ba-PopupHighlight-icon" />
+                        <FormattedMessage {...messages.popupHighlightPromoter} />
+                    </>
+                )}
             </button>
         </PopupBase>
     );

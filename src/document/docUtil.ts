@@ -1,4 +1,5 @@
 type Selection = {
+    canCreate: boolean;
     containerRect: DOMRect;
     location: number;
     range: Range;
@@ -27,32 +28,34 @@ export function getPageNumber(element: Element | null): number | undefined {
     return pageNumber ? parseInt(pageNumber, 10) : undefined;
 }
 
-export function getRange(): Range | null {
+export function getSelection(): Selection | null {
     const selection = window.getSelection();
 
-    if (!selection || selection.isCollapsed || !selection.rangeCount) {
+    if (!selection || selection.isCollapsed || !selection.rangeCount || !selection.focusNode) {
         return null;
     }
 
     // Firefox allows to select multiple ranges in the document by using Ctrl/Cmd+click
     // We only care about the last range
-    return selection.getRangeAt(selection.rangeCount - 1);
-}
-
-export function getSelection(): Selection | null {
-    const range = getRange();
-
-    if (!range) {
-        return null;
-    }
+    let range = selection.getRangeAt(selection.rangeCount - 1);
 
     const containerEl = findClosestElWithClass(range.endContainer as Element, 'textLayer');
     const startPage = getPageNumber(range.startContainer as Element);
     const endPage = getPageNumber(range.endContainer as Element);
 
-    if (!containerEl || !startPage || !endPage || startPage !== endPage) {
+    if (!containerEl || !startPage || !endPage) {
         return null;
     }
 
-    return { containerRect: containerEl.getBoundingClientRect(), location: endPage, range };
+    const canCreate = startPage === endPage;
+    let location = endPage;
+
+    if (!canCreate) {
+        range = document.createRange();
+        range.setEnd(selection.focusNode, selection.focusOffset);
+        range.collapse();
+        location = getPageNumber(selection.focusNode as Element) ?? endPage;
+    }
+
+    return { canCreate, containerRect: containerEl.getBoundingClientRect(), location, range };
 }
