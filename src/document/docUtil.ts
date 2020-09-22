@@ -53,7 +53,7 @@ export function getSelection(): Selection | null {
     if (!canCreate) {
         range = document.createRange();
         range.setEnd(selection.focusNode, selection.focusOffset);
-        range.collapse();
+        range.collapse(false); // Paramater toStart is not optional in IE
         location = getPageNumber(selection.focusNode as Element) ?? endPage;
     }
 
