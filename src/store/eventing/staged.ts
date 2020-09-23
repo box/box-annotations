@@ -52,9 +52,5 @@ export const handleResetCreatorAction = (prevState: AppState): void => {
     const prevStaged = getCreatorStaged(prevState);
     const type = getType(prevStaged);
 
-    if (!type) {
-        return;
-    }
-
     eventManager.emit(Event.CREATOR_STAGED_CHANGE, { type, status: 'cancel' });
 };

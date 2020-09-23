@@ -13,6 +13,12 @@ jest.mock('../RegionRect');
 jest.mock('../regionUtil');
 
 describe('RegionCreator', () => {
+    const defaults = {
+        onAbort: jest.fn(),
+        onStart: jest.fn(),
+        onStop: jest.fn(),
+    };
+
     const getDOMRect = (x = 0, y = 0, height = 1000, width = 1000): DOMRect => ({
         bottom: y + height,
         top: y,
@@ -26,8 +32,7 @@ describe('RegionCreator', () => {
     });
 
     // Render helpers
-    const getWrapper = (props = {}): ReactWrapper =>
-        mount(<RegionCreator onStart={jest.fn()} onStop={jest.fn()} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper => mount(<RegionCreator {...defaults} {...props} />);
     const getWrapperRoot = (wrapper: ReactWrapper): ReactWrapper => wrapper.find('[data-testid="ba-RegionCreator"]');
 
     beforeEach(() => {
@@ -90,9 +95,7 @@ describe('RegionCreator', () => {
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
-            const onStart = jest.fn();
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStart, onStop });
+            const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(100, 100);
@@ -100,8 +103,8 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(onStart).toHaveBeenCalled();
-            expect(onStop).toHaveBeenCalledWith({
+            expect(defaults.onStart).toHaveBeenCalled();
+            expect(defaults.onStop).toHaveBeenCalledWith({
                 height: 5,
                 type: 'rect',
                 width: 5,
@@ -110,10 +113,20 @@ describe('RegionCreator', () => {
             });
         });
 
+        test('should call onStart and onAbort callback when user clicks without dragging', () => {
+            const wrapper = getWrapper();
+
+            simulateDrawStart(wrapper, 50, 50);
+            simulateDrawStop();
+            jest.advanceTimersByTime(1000);
+            wrapper.update();
+
+            expect(defaults.onStart).toHaveBeenCalled();
+            expect(defaults.onAbort).toHaveBeenCalled();
+        });
+
         test('should do nothing if primary button is not pressed', () => {
-            const onStart = jest.fn();
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStart, onStop });
+            const wrapper = getWrapper();
 
             act(() => {
                 wrapper.simulate('mousedown', { buttons: 2, clientX: 50, clientY: 50 });
@@ -123,21 +136,19 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(onStart).not.toHaveBeenCalled();
-            expect(onStop).not.toHaveBeenCalled();
+            expect(defaults.onStart).not.toHaveBeenCalled();
+            expect(defaults.onStop).not.toHaveBeenCalled();
         });
 
         test('should do nothing if the mouse is moved without being pressed over the wrapper first', () => {
-            const onStart = jest.fn();
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStart, onStop });
+            const wrapper = getWrapper();
 
             simulateDrawMove(50, 50);
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(onStart).not.toHaveBeenCalled();
-            expect(onStop).not.toHaveBeenCalled();
+            expect(defaults.onStart).not.toHaveBeenCalled();
+            expect(defaults.onStop).not.toHaveBeenCalled();
         });
 
         test('should prevent click events from surfacing to the parent document', () => {
@@ -218,9 +229,7 @@ describe('RegionCreator', () => {
         });
 
         test('should call the onStart and onStop callback when drawing starts and stops', () => {
-            const onStart = jest.fn();
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStart, onStop });
+            const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(wrapper, 100, 100);
@@ -228,14 +237,12 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(onStart).toHaveBeenCalled();
-            expect(onStop).toHaveBeenCalledWith(shape);
+            expect(defaults.onStart).toHaveBeenCalled();
+            expect(defaults.onStop).toHaveBeenCalledWith(shape);
         });
 
         test('should call the onStart and onStop callback even if drawing is cancelled', () => {
-            const onStart = jest.fn();
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStart, onStop });
+            const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, 50, 50);
             simulateDrawMove(wrapper, 100, 100);
@@ -243,8 +250,8 @@ describe('RegionCreator', () => {
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(onStart).toHaveBeenCalled();
-            expect(onStop).toHaveBeenCalledWith(shape);
+            expect(defaults.onStart).toHaveBeenCalled();
+            expect(defaults.onStop).toHaveBeenCalledWith(shape);
         });
     });
 

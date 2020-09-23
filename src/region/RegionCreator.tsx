@@ -10,6 +10,7 @@ import './RegionCreator.scss';
 
 type Props = {
     className?: string;
+    onAbort: () => void;
     onStart: () => void;
     onStop: (shape: Rect) => void;
 };
@@ -18,7 +19,7 @@ const MIN_X = 0; // Minimum region x position must be positive
 const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 
-export default function RegionCreator({ className, onStart, onStop }: Props): JSX.Element {
+export default function RegionCreator({ className, onAbort, onStart, onStop }: Props): JSX.Element {
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
@@ -109,6 +110,8 @@ export default function RegionCreator({ className, onStart, onStop }: Props): JS
 
         if (shape) {
             onStop(shape);
+        } else {
+            onAbort();
         }
     };
     const updateDraw = (x: number, y: number): void => {

@@ -18,6 +18,7 @@ describe('RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         location: 1,
+        resetCreator: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
         setReferenceShape: jest.fn(),
@@ -47,6 +48,14 @@ describe('RegionAnnotations', () => {
                 staged: getStaged(),
             });
             instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
+        });
+
+        describe('handleAbort', () => {
+            test('should call resetCreator', () => {
+                instance.handleAbort();
+
+                expect(defaults.resetCreator).toHaveBeenCalled();
+            });
         });
 
         describe('handleStart', () => {
@@ -160,6 +169,7 @@ describe('RegionAnnotations', () => {
                   />
                   <RegionCreator
                     className="ba-RegionAnnotations-creator"
+                    onAbort={[Function]}
                     onStart={[Function]}
                     onStop={[Function]}
                   />
@@ -173,6 +183,7 @@ describe('RegionAnnotations', () => {
                 <Fragment>
                   <RegionCreator
                     className="ba-RegionAnnotations-creator is-discoverability-enabled"
+                    onAbort={[Function]}
                     onStart={[Function]}
                     onStop={[Function]}
                   />

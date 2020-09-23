@@ -93,17 +93,11 @@ describe('store/eventing/staged', () => {
     });
 
     describe('handleResetCreatorAction()', () => {
-        test('should not emit event if type is null', () => {
-            const prevState = createStore().getState();
-            handleResetCreatorAction(prevState);
-
-            expect(eventManager.emit).not.toHaveBeenCalled();
-        });
-
         test.each`
-            prev                      | type
-            ${getCreatorState()}      | ${'highlight'}
-            ${getCreatorState(false)} | ${'region'}
+            prev                        | type
+            ${createStore().getState()} | ${null}
+            ${getCreatorState()}        | ${'highlight'}
+            ${getCreatorState(false)}   | ${'region'}
         `('should emit cancel event if with type=$type', ({ prev, type }) => {
             handleResetCreatorAction(prev);
 
