@@ -256,7 +256,7 @@ describe('RegionAnnotations', () => {
             expect(wrapper).toMatchInlineSnapshot(`
                 <Fragment>
                   <RegionCreator
-                    className="ba-RegionAnnotations-creator"
+                    className="ba-RegionAnnotations-creator is-discoverability-enabled"
                     onStart={[Function]}
                     onStop={[Function]}
                   />

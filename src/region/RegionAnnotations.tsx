@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import PopupReply from '../components/Popups/PopupReply';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
@@ -79,14 +80,16 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     renderCreator = (): JSX.Element => {
-        const { isCreating, isRotated } = this.props;
+        const { isCreating, isDiscoverabilityEnabled, isRotated } = this.props;
         const canCreate = isCreating && !isRotated;
 
         return (
             <>
                 {canCreate && (
                     <RegionCreator
-                        className="ba-RegionAnnotations-creator"
+                        className={classNames('ba-RegionAnnotations-creator', {
+                            'is-discoverability-enabled': isDiscoverabilityEnabled,
+                        })}
                         onStart={this.handleStart}
                         onStop={this.handleStop}
                     />
