@@ -20,6 +20,7 @@ describe('store/highlight/selectors', () => {
         test('should return the current selection item', () => {
             expect(getSelection(state)).toMatchInlineSnapshot(`
                 Object {
+                  "canCreate": true,
                   "containerRect": Object {
                     "height": 1000,
                     "width": 1000,

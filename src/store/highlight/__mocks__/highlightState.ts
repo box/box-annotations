@@ -2,6 +2,7 @@ export default {
     isPromoting: false,
     isSelecting: false,
     selection: {
+        canCreate: true,
         containerRect: {
             height: 1000,
             width: 1000,

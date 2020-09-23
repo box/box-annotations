@@ -5,6 +5,7 @@ import { setSelectionAction } from '../actions';
 describe('store/highlight/actions', () => {
     describe('setSelectionAction', () => {
         const arg = {
+            canCreate: true,
             containerRect: mockContainerRect,
             location: 1,
             range: mockRange,

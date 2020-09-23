@@ -39,6 +39,7 @@ export const annotation: AnnotationHighlight = {
 };
 
 export const selection = {
+    canCreate: true,
     containerRect: {
         height: 1000,
         width: 1000,

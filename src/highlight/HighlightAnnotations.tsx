@@ -6,6 +6,7 @@ import HighlightList from './HighlightList';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
+import PopupHighlightError from '../components/Popups/PopupHighlightError';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
@@ -150,14 +151,17 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 </div>
             )}
 
-            {/* Layer 4: Annotations promoter to promote selection to staged */}
-            {selection && (!isCreating || !selection.canCreate) && (
+            {/* Layer 4a: Annotations promoter to promote selection to staged */}
+            {!isCreating && selection && selection.canCreate && (
                 <div className="ba-HighlightAnnotations-popup">
-                    <PopupHighlight
-                        disabled={!selection.canCreate}
-                        onClick={handlePromote}
-                        shape={getBoundingRect(selection.rects)}
-                    />
+                    <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
+                </div>
+            )}
+
+            {/* Layer 4b: Promoter error popup shows when selection across pages */}
+            {selection && !selection.canCreate && (
+                <div className="ba-HighlightAnnotations-popup">
+                    <PopupHighlightError shape={getBoundingRect(selection.rects)} />
                 </div>
             )}
         </>

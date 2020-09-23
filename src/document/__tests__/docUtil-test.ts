@@ -1,4 +1,4 @@
-import { findClosestElWithClass, getPageNumber, getRange, getSelection } from '../docUtil';
+import { findClosestElWithClass, getPageNumber, getSelection } from '../docUtil';
 
 describe('docUtil', () => {
     describe('findClosestElWithClass()', () => {
@@ -37,26 +37,6 @@ describe('docUtil', () => {
         });
     });
 
-    describe('getRange()', () => {
-        const mockSelection = {
-            getRangeAt: () => 'range',
-            isCollapsed: false,
-            rangeCount: 1,
-        };
-
-        test.each`
-            selection                                  | result
-            ${null}                                    | ${null}
-            ${{ ...mockSelection, isCollapsed: true }} | ${null}
-            ${{ ...mockSelection, rangeCount: 0 }}     | ${null}
-            ${mockSelection}                           | ${'range'}
-        `('should return range as $result', ({ selection, result }) => {
-            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection);
-
-            expect(getRange()).toBe(result);
-        });
-    });
-
     describe('getSelection()', () => {
         const rootElement = document.createElement('div');
         rootElement.classList.add('textLayer');
@@ -72,6 +52,7 @@ describe('docUtil', () => {
 
         const generateSelection = (startClass: string, endClass: string): Selection => {
             return ({
+                focusNode: rootElement.querySelector(endClass),
                 getRangeAt: () => {
                     const range = document.createRange();
                     range.setStart(rootElement.querySelector(startClass) as Node, 0);
@@ -85,8 +66,20 @@ describe('docUtil', () => {
             } as unknown) as Selection;
         };
 
-        test('should return null if range is null', () => {
-            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => null);
+        const mockSelection = {
+            focusNode: 'node',
+            isCollapsed: false,
+            rangeCount: 1,
+        };
+
+        test.each([
+            null,
+            { ...mockSelection, isCollapsed: true },
+            { ...mockSelection, rangeCount: 0 },
+            { ...mockSelection, focusNode: null },
+        ])('should return null if range is null', selection => {
+            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => (selection as unknown) as Selection);
+
             expect(getSelection()).toBe(null);
         });
 
@@ -103,8 +96,8 @@ describe('docUtil', () => {
             startClass   | endClass     | result
             ${'.range0'} | ${'.range0'} | ${null}
             ${'.range1'} | ${'.range0'} | ${null}
-            ${'.range1'} | ${'.range2'} | ${null}
-            ${'.range1'} | ${'.range1'} | ${expect.objectContaining({ location: 1 })}
+            ${'.range1'} | ${'.range2'} | ${expect.objectContaining({ canCreate: false, location: 2 })}
+            ${'.range1'} | ${'.range1'} | ${expect.objectContaining({ canCreate: true, location: 1 })}
         `('should return $result', ({ startClass, endClass, result }) => {
             jest.spyOn(window, 'getSelection').mockReturnValueOnce(generateSelection(startClass, endClass));
 

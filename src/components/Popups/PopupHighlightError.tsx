@@ -1,15 +1,12 @@
 import React from 'react';
-import IconHighlightTextAnnotation from 'box-ui-elements/es/icon/fill/AnnotationsHighlight16';
-import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options } from './Popper';
 import { Shape } from '../../@types/model';
-import './PopupHighlight.scss';
+import './PopupHighlightError.scss';
 
 export type Props = {
-    onClick?: (event: React.MouseEvent) => void;
     shape: Shape;
 };
 
@@ -43,8 +40,7 @@ const options: Partial<Options> = {
     placement: 'bottom',
 };
 
-export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.Element {
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
+export default function PopupHighlightError({ shape }: Props): JSX.Element {
     const { height, width, x, y } = shape;
 
     const reference = {
@@ -58,22 +54,9 @@ export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.El
         }),
     };
 
-    const handleClick = (event: React.MouseEvent): void => {
-        onClick(event);
-    };
-
     return (
-        <PopupBase className="ba-PopupHighlight" options={options} reference={reference}>
-            <button
-                ref={buttonRef}
-                className="ba-PopupHighlight-button"
-                data-testid="ba-PopupHighlight-button"
-                onClick={handleClick}
-                type="button"
-            >
-                <IconHighlightTextAnnotation className="ba-PopupHighlight-icon" />
-                <FormattedMessage {...messages.popupHighlightPromoter} />
-            </button>
+        <PopupBase className="ba-PopupHighlightError" options={options} reference={reference}>
+            <FormattedMessage {...messages.popupHighlightRestrictedPrompt} />
         </PopupBase>
     );
 }
