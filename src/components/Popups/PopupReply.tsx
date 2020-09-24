@@ -5,6 +5,7 @@ import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
 import usePrevious from '../../common/usePrevious';
 import { getScale, getRotation } from '../../store/options';
+import { PopupReference } from './Popper';
 import './PopupReply.scss';
 
 export type Props = {
@@ -13,7 +14,7 @@ export type Props = {
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
-    reference: Element;
+    reference: PopupReference;
     value?: string;
 };
 
@@ -24,6 +25,12 @@ export const options: Partial<Popper.Options> = {
             options: {
                 element: '.ba-Popup-arrow',
                 padding: 10,
+            },
+        },
+        {
+            name: 'eventListeners',
+            options: {
+                scroll: false,
             },
         },
         {

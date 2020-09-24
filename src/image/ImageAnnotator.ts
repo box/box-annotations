@@ -1,6 +1,7 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
+import PopupReplyManager from '../popup/PopupReplyManager';
 import { getAnnotation, getRotation } from '../store';
 import { centerRegion, getTransformedShape, isRegion, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
@@ -43,6 +44,7 @@ export default class ImageAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
+            this.managers.add(new PopupReplyManager({ referenceEl }));
             this.managers.add(new RegionManager({ referenceEl }));
         }
 

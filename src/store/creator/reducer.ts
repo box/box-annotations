@@ -1,7 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { CreatorState, CreatorStatus } from './types';
 import { createAnnotationAction } from '../annotations';
-import { setMessageAction, setCursorAction, setStagedAction, setStatusAction, resetCreatorAction } from './actions';
+import {
+    resetCreatorAction,
+    setCursorAction,
+    setMessageAction,
+    setReferenceShapeAction,
+    setStagedAction,
+    setStatusAction,
+} from './actions';
 
 export const initialState = {
     cursor: 0,
@@ -29,6 +36,9 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setMessageAction, (state, { payload }) => {
             state.message = payload;
+        })
+        .addCase(setReferenceShapeAction, (state, { payload }) => {
+            state.referenceShape = payload;
         })
         .addCase(setStagedAction, (state, { payload }) => {
             state.staged = payload;
