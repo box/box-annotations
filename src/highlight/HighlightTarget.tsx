@@ -40,12 +40,11 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         onHover(null);
     };
 
-    const isHTMLElement = (element: Element): element is HTMLElement => 'blur' in element;
-
     const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
         if (event.buttons !== MOUSE_PRIMARY) {
             return;
         }
+        const activeElement = document.activeElement as HTMLElement;
 
         onSelect(annotationId);
 
@@ -54,12 +53,8 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
 
         // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing
         // active element.
-        if (
-            document.activeElement &&
-            document.activeElement !== event.currentTarget &&
-            isHTMLElement(document.activeElement)
-        ) {
-            document.activeElement.blur();
+        if (activeElement && activeElement !== event.currentTarget && activeElement.blur) {
+            activeElement.blur();
         }
 
         event.currentTarget.focus();
