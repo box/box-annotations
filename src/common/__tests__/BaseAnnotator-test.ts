@@ -70,6 +70,7 @@ describe('BaseAnnotator', () => {
                     expect.objectContaining({
                         annotations: { activeId: expectedActiveId },
                         options: {
+                            features: { enabledFeature: true },
                             fileId: '12345',
                             fileVersionId: '98765',
                             isCurrentFileVersion: true,
@@ -97,6 +98,7 @@ describe('BaseAnnotator', () => {
                 expect.objectContaining({
                     annotations: { activeId: null },
                     options: {
+                        features: { enabledFeature: true },
                         fileId: '12345',
                         fileVersionId: '456',
                         isCurrentFileVersion: false,
