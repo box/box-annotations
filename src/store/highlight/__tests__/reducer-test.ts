@@ -31,7 +31,7 @@ describe('store/highlight/reducer', () => {
 
     describe('setSelection', () => {
         test('should set selection in state', () => {
-            const payload = { canCreate: true, containerRect: mockContainerRect, location: 2, range: mockRange };
+            const payload = { containerRect: mockContainerRect, location: 2, range: mockRange };
             const newState = reducer(state, setSelectionAction(payload));
 
             expect(newState.selection).toEqual({ ...state.selection, location: 2 });

@@ -18,7 +18,7 @@ describe('PopupHighlightError', () => {
 
     describe('render()', () => {
         test('should render correct rect and message', () => {
-            const wrapper = getWrapper({ disabled: true });
+            const wrapper = getWrapper();
 
             const newVirtualElement = wrapper.find(PopupBase).prop('reference');
             const rect = newVirtualElement.getBoundingClientRect();

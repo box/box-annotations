@@ -4,8 +4,8 @@ import { SelectionItem } from './types';
 import { Shape } from '../../@types';
 
 export type SelectionArg = {
-    canCreate: boolean;
     containerRect: DOMRect;
+    error?: boolean;
     location: number;
     range: Range;
 };
@@ -83,7 +83,7 @@ export const setSelectionAction = createAction(
             };
         }
 
-        const { containerRect, range, ...rest } = arg;
+        const { containerRect, error, location, range } = arg;
 
         let rects = Array.from(range.getClientRects());
         // getClientRects on IE/Edge might return 0 rects
@@ -93,8 +93,9 @@ export const setSelectionAction = createAction(
 
         return {
             payload: {
-                ...rest,
                 containerRect: getShape(containerRect),
+                error: !!error,
+                location,
                 rects: combineRects(rects.map(getShape)),
             },
         };

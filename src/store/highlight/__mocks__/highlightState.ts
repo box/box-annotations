@@ -2,13 +2,13 @@ export default {
     isPromoting: false,
     isSelecting: false,
     selection: {
-        canCreate: true,
         containerRect: {
             height: 1000,
             width: 1000,
             x: 0,
             y: 0,
         },
+        error: false,
         location: 1,
         rects: [
             {

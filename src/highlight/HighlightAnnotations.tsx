@@ -112,7 +112,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
-        if (!isCreating || !selection || !selection.canCreate) {
+        if (!isCreating || !selection || selection.error) {
             return;
         }
 
@@ -152,14 +152,14 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             )}
 
             {/* Layer 4a: Annotations promoter to promote selection to staged */}
-            {!isCreating && selection && selection.canCreate && (
+            {!isCreating && selection && !selection.error && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
                 </div>
             )}
 
-            {/* Layer 4b: Promoter error popup shows when selection across pages */}
-            {selection && !selection.canCreate && (
+            {/* Layer 4b: Highlight error popup */}
+            {selection && selection.error && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlightError shape={getBoundingRect(selection.rects)} />
                 </div>
