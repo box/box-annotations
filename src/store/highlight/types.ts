@@ -8,7 +8,7 @@ export type HighlightState = {
 
 export type SelectionItem = {
     containerRect: Shape;
-    error: boolean;
+    hasError?: boolean;
     location: number;
     rects: Array<Shape>;
 };

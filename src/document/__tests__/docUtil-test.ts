@@ -96,8 +96,8 @@ describe('docUtil', () => {
             startClass   | endClass     | result
             ${'.range0'} | ${'.range0'} | ${null}
             ${'.range1'} | ${'.range0'} | ${null}
-            ${'.range1'} | ${'.range2'} | ${expect.objectContaining({ location: 2, error: true })}
-            ${'.range1'} | ${'.range1'} | ${expect.objectContaining({ location: 1, error: false })}
+            ${'.range1'} | ${'.range2'} | ${expect.objectContaining({ location: 2, hasError: true })}
+            ${'.range1'} | ${'.range1'} | ${expect.objectContaining({ location: 1, hasError: false })}
         `('should return $result', ({ startClass, endClass, result }) => {
             jest.spyOn(window, 'getSelection').mockReturnValueOnce(generateSelection(startClass, endClass));
 

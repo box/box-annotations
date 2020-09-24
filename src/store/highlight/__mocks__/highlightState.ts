@@ -8,7 +8,6 @@ export default {
             x: 0,
             y: 0,
         },
-        error: false,
         location: 1,
         rects: [
             {

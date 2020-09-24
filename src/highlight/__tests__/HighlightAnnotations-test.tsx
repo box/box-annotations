@@ -127,10 +127,10 @@ describe('HighlightAnnotations', () => {
         });
 
         test.each`
-            selection                            | showPopup
-            ${null}                              | ${false}
-            ${selectionMock}                     | ${false}
-            ${{ ...selectionMock, error: true }} | ${true}
+            selection                               | showPopup
+            ${null}                                 | ${false}
+            ${selectionMock}                        | ${false}
+            ${{ ...selectionMock, hasError: true }} | ${true}
         `('should render popup error', ({ selection, showPopup }) => {
             const wrapper = getWrapper({ selection });
 

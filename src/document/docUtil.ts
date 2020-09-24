@@ -1,6 +1,6 @@
 type Selection = {
     containerRect: DOMRect;
-    error: boolean;
+    hasError?: boolean;
     location: number;
     range: Range;
 };
@@ -47,15 +47,15 @@ export function getSelection(): Selection | null {
         return null;
     }
 
-    const error = startPage !== endPage;
+    const hasError = startPage !== endPage;
     let location = endPage;
 
-    if (error) {
+    if (hasError) {
         range = document.createRange();
         range.setEnd(selection.focusNode, selection.focusOffset);
         range.collapse(false); // Parameter toStart is not optional in IE
         location = getPageNumber(selection.focusNode as Element) ?? endPage;
     }
 
-    return { containerRect: containerEl.getBoundingClientRect(), error, location, range };
+    return { containerRect: containerEl.getBoundingClientRect(), hasError, location, range };
 }
