@@ -1,0 +1,23 @@
+@import '~box-ui-elements/es/styles/variables';
+@import './PopupArrow';
+
+.ba {
+    $popup-content-bg: $bdl-gray-50;
+
+    .ba-PopupHighlightError {
+        @include ba-PopupArrow(4px, $popup-content-bg, $popup-content-bg, $popup-content-bg, $popup-content-bg, $popup-content-bg);
+        @include common-typography;
+
+        .ba-Popup-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 5px 10px;
+            color: $white;
+            background-color: $popup-content-bg;
+            border: none;
+            border-radius: $bdl-border-radius-size;
+            box-shadow: none;
+        }
+    }
+}

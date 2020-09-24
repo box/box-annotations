@@ -21,6 +21,11 @@ export default defineMessages({
         description: 'Popup message for highlight promoter',
         defaultMessage: 'Highlight and Comment',
     },
+    popupHighlightRestrictedPrompt: {
+        id: 'ba.popups.popupHighlight.restrictedPrompt',
+        description: 'Prompt message when selection crosses multiple pages',
+        defaultMessage: 'Comments restricted to single page',
+    },
     popupListPrompt: {
         id: 'ba.popups.popupList.prompt',
         description: 'Prompt message for empty popup list',
