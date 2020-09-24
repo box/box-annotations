@@ -6,6 +6,7 @@ import HighlightList from './HighlightList';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
+import PopupHighlightError from '../components/Popups/PopupHighlightError';
 import PopupReply from '../components/Popups/PopupReply';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
@@ -111,7 +112,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
-        if (!isCreating || !selection) {
+        if (!isCreating || !selection || selection.hasError) {
             return;
         }
 
@@ -150,10 +151,17 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 </div>
             )}
 
-            {/* Layer 4: Annotations promoter to promote selection to staged */}
-            {!isCreating && selection && (
+            {/* Layer 4a: Annotations promoter to promote selection to staged */}
+            {!isCreating && selection && !selection.hasError && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
+                </div>
+            )}
+
+            {/* Layer 4b: Highlight error popup */}
+            {selection && selection.hasError && (
+                <div className="ba-HighlightAnnotations-popup">
+                    <PopupHighlightError shape={getBoundingRect(selection.rects)} />
                 </div>
             )}
         </>

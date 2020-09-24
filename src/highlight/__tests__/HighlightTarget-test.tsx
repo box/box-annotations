@@ -57,6 +57,65 @@ describe('HighlightTarget', () => {
             expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
         });
 
+        describe('handleMouseDown()', () => {
+            const mockEvent = {
+                buttons: 1,
+                currentTarget: {
+                    focus: jest.fn(),
+                },
+                preventDefault: jest.fn(),
+                nativeEvent: {
+                    stopImmediatePropagation: jest.fn(),
+                },
+            };
+
+            test('should do nothing if button is not MOUSE_PRIMARY', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 2,
+                };
+
+                anchor.simulate('mousedown', event);
+
+                expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+                expect(mockEvent.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
+            });
+
+            test('should call onSelect', () => {
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 1,
+                };
+
+                anchor.simulate('mousedown', event);
+
+                expect(defaults.onSelect).toHaveBeenCalledWith('123');
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+                expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
+            });
+
+            test('should call blur on the document.activeElement', () => {
+                const blurSpy = jest.spyOn(document.body, 'blur');
+                const wrapper = getWrapper();
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...mockEvent,
+                    buttons: 1,
+                };
+
+                expect(document.activeElement).toBe(document.body);
+
+                anchor.simulate('mousedown', event);
+
+                expect(blurSpy).toHaveBeenCalled();
+            });
+        });
+
         describe('handleMouseEnter()', () => {
             test('should call onHover with annotationId', () => {
                 const wrapper = getWrapper();

@@ -6,6 +6,7 @@ import HighlightCreator from '../HighlightCreator';
 import HighlightList from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
+import PopupHighlightError from '../../components/Popups/PopupHighlightError';
 import PopupReply from '../../components/Popups/PopupReply';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
 import { Rect } from '../../@types';
@@ -15,6 +16,7 @@ jest.mock('../../components/Popups/PopupHighlight');
 jest.mock('../HighlightList');
 jest.mock('../HighlightTarget');
 jest.mock('../../components/Popups/PopupHighlight');
+jest.mock('../../components/Popups/PopupHighlightError');
 jest.mock('../../components/Popups/PopupReply');
 
 describe('HighlightAnnotations', () => {
@@ -122,6 +124,17 @@ describe('HighlightAnnotations', () => {
             });
 
             expect(wrapper.exists(PopupHighlight)).toBe(showPopup);
+        });
+
+        test.each`
+            selection                               | showPopup
+            ${null}                                 | ${false}
+            ${selectionMock}                        | ${false}
+            ${{ ...selectionMock, hasError: true }} | ${true}
+        `('should render popup error', ({ selection, showPopup }) => {
+            const wrapper = getWrapper({ selection });
+
+            expect(wrapper.exists(PopupHighlightError)).toBe(showPopup);
         });
 
         test.each`
