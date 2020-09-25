@@ -95,12 +95,12 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     }, [isCreating, selection]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
-        if (highlightRef === null || !staged) {
+        if (highlightRef === null) {
             return;
         }
 
         setReferenceShape(highlightRef.getBoundingClientRect());
-    }, [highlightRef, staged, windowSize]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [highlightRef, windowSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>

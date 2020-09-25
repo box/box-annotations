@@ -213,23 +213,16 @@ describe('RegionAnnotations', () => {
             expect(defaults.setReferenceShape).not.toHaveBeenCalled();
         });
 
-        test('should not call setReferenceShape if staged does not exist', () => {
-            const wrapper = getWrapper();
-
-            wrapper.setState({ rectRef: mockRectRef });
-            wrapper.setProps({ annotations: [] });
-
-            expect(defaults.setReferenceShape).not.toHaveBeenCalled();
-        });
-
         test('should not call setReferenceShape if rectRef does not exist', () => {
             const wrapper = getWrapper();
 
             wrapper.setState({ rectRef: mockRectRef });
-            wrapper.setState({ rectRef: undefined });
-            wrapper.setProps({ staged: {} });
 
-            expect(defaults.setReferenceShape).not.toHaveBeenCalled();
+            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
+
+            wrapper.setState({ rectRef: undefined });
+
+            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
         });
     });
 });

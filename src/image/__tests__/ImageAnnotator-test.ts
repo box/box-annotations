@@ -82,7 +82,6 @@ describe('ImageAnnotator', () => {
             const managers = annotator.getManagers(getParent(), getImage());
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(2);
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });

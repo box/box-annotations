@@ -36,11 +36,11 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     state: State = {};
 
     componentDidUpdate(_prevProps: Props, prevState: State): void {
-        const { setReferenceShape, staged } = this.props;
+        const { setReferenceShape } = this.props;
         const { rectRef } = this.state;
         const { rectRef: prevRectRef } = prevState;
 
-        if (prevRectRef !== rectRef && rectRef && staged) {
+        if (prevRectRef !== rectRef && rectRef) {
             setReferenceShape(rectRef.getBoundingClientRect());
         }
     }

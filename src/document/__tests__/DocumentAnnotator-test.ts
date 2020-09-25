@@ -123,7 +123,6 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage());
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(2);
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
@@ -134,7 +133,6 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage());
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(3);
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
@@ -146,7 +144,6 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage(2));
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(4);
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
