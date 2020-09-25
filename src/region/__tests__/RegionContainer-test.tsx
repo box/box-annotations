@@ -3,7 +3,7 @@ import { IntlShape } from 'react-intl';
 import { mount, ReactWrapper } from 'enzyme';
 import RegionAnnotations from '../RegionAnnotations';
 import RegionContainer, { Props } from '../RegionContainer';
-import { createStore, CreatorStatus } from '../../store';
+import { createStore } from '../../store';
 
 jest.mock('../../common/withProviders');
 jest.mock('../RegionAnnotations');
@@ -24,15 +24,12 @@ describe('RegionContainer', () => {
             expect(wrapper.find(RegionAnnotations).props()).toMatchObject({
                 activeAnnotationId: null,
                 annotations: [],
-                createRegion: expect.any(Function),
                 isCreating: false,
                 isDiscoverabilityEnabled: false,
                 location: 1,
-                message: '',
                 staged: null,
-                status: CreatorStatus.init,
                 setActiveAnnotationId: expect.any(Function),
-                setMessage: expect.any(Function),
+                setReferenceShape: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 store: defaults.store,

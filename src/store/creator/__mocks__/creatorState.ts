@@ -4,6 +4,12 @@ export default {
     cursor: 0,
     error: null,
     message: 'test',
+    referenceShape: {
+        height: 10,
+        width: 10,
+        x: 10,
+        y: 10,
+    },
     staged: {
         location: 1,
         shape: {

@@ -23,10 +23,6 @@
     }
 }
 
-.ba-RegionAnnotations-popup {
-    pointer-events: auto; // Swallow all pointer events that occur within the popup
-}
-
 .ba-RegionAnnotations-target {
     pointer-events: none;
 }

@@ -17,16 +17,13 @@ jest.mock('../RegionRect');
 describe('RegionAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
-        createRegion: jest.fn(),
         location: 1,
-        message: 'test',
-        resetCreator: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setMessage: jest.fn(),
+        setReferenceShape: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
-        status: CreatorStatus.init,
     };
     const getRect = (): Rect => ({
         type: 'rect',
@@ -35,7 +32,6 @@ describe('RegionAnnotations', () => {
         x: 10,
         y: 10,
     });
-    const getRectRef = (): HTMLDivElement => document.createElement('div');
     const getStaged = (): CreatorItem => ({
         location: 1,
         shape: getRect(),
@@ -51,22 +47,6 @@ describe('RegionAnnotations', () => {
                 staged: getStaged(),
             });
             instance = wrapper.instance() as InstanceType<typeof RegionAnnotations>;
-        });
-
-        describe('handleCancel', () => {
-            test('should reset the staged state and status', () => {
-                instance.handleCancel();
-
-                expect(defaults.resetCreator).toHaveBeenCalled();
-            });
-        });
-
-        describe('handleChange', () => {
-            test('should set the staged state with the new message', () => {
-                instance.handleChange('test');
-
-                expect(defaults.setMessage).toHaveBeenCalledWith('test');
-            });
         });
 
         describe('handleStart', () => {
@@ -95,17 +75,6 @@ describe('RegionAnnotations', () => {
                     shape,
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
-            });
-        });
-
-        describe('handleSubmit', () => {
-            test('should save the staged annotation', () => {
-                instance.handleSubmit();
-
-                expect(defaults.createRegion).toHaveBeenCalledWith({
-                    ...getStaged(),
-                    message: defaults.message,
-                });
             });
         });
 
@@ -147,59 +116,6 @@ describe('RegionAnnotations', () => {
 
             expect(wrapper.exists(RegionCreator)).toBe(true);
             expect(wrapper.find(RegionRect).prop('shape')).toEqual(shape);
-        });
-
-        test('should pass the creator item message value to the reply popup', () => {
-            const wrapper = getWrapper({
-                isCreating: true,
-                staged: getStaged(),
-                status: CreatorStatus.staged,
-            });
-            wrapper.setState({
-                rectRef: getRectRef(),
-            });
-
-            expect(wrapper.find(PopupReply).props()).toMatchObject({
-                value: 'test',
-            });
-        });
-
-        test.each`
-            status                    | showReply
-            ${CreatorStatus.init}     | ${false}
-            ${CreatorStatus.pending}  | ${true}
-            ${CreatorStatus.rejected} | ${true}
-            ${CreatorStatus.staged}   | ${true}
-        `('should render a reply popup if the creator status is $status', ({ status, showReply }) => {
-            const wrapper = getWrapper({
-                isCreating: true,
-                staged: getStaged(),
-                status,
-            });
-
-            wrapper.setState({
-                rectRef: getRectRef(),
-            });
-
-            expect(wrapper.exists(PopupReply)).toBe(showReply);
-        });
-
-        test.each`
-            status                    | isPending
-            ${CreatorStatus.rejected} | ${false}
-            ${CreatorStatus.pending}  | ${true}
-            ${CreatorStatus.staged}   | ${false}
-        `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
-            const wrapper = getWrapper({
-                isCreating: true,
-                staged: getStaged(),
-                status,
-            });
-            wrapper.setState({
-                rectRef: getRectRef(),
-            });
-
-            expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
 
         test('should pass activeId to the region list', () => {
@@ -268,6 +184,45 @@ describe('RegionAnnotations', () => {
                   />
                 </Fragment>
             `);
+        });
+    });
+
+    describe('componentDidUpdate', () => {
+        const mockRectRef = {
+            getBoundingClientRect: () => ({
+                height: 10,
+                width: 10,
+                top: 10,
+                left: 10,
+            }),
+        };
+
+        test('should call setReferenceShape if current rectRef and staged exist', () => {
+            const wrapper = getWrapper({ staged: {} });
+
+            wrapper.setState({ rectRef: mockRectRef });
+
+            expect(defaults.setReferenceShape).toHaveBeenCalled();
+        });
+
+        test('should not call setReferenceShape if prev and current rectRef are the same', () => {
+            const wrapper = getWrapper();
+
+            wrapper.setProps({ staged: {} });
+
+            expect(defaults.setReferenceShape).not.toHaveBeenCalled();
+        });
+
+        test('should not call setReferenceShape if rectRef does not exist', () => {
+            const wrapper = getWrapper();
+
+            wrapper.setState({ rectRef: mockRectRef });
+
+            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
+
+            wrapper.setState({ rectRef: undefined });
+
+            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
         });
     });
 });

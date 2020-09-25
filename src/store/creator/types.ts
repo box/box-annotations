@@ -1,4 +1,4 @@
-import { Rect, SerializedError } from '../../@types';
+import { Rect, SerializedError, Shape } from '../../@types';
 
 export enum CreatorStatus {
     init = 'init',
@@ -26,6 +26,7 @@ export type CreatorState = {
     cursor: number;
     error: SerializedError | null;
     message: string;
+    referenceShape?: Shape;
     staged: CreatorItem;
     status: CreatorStatus;
 };

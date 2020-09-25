@@ -3,7 +3,7 @@ import { IntlShape } from 'react-intl';
 import { ReactWrapper, mount } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightContainer, { Props } from '../HighlightContainer';
-import { CreatorItemHighlight, CreatorItemRegion, Mode, createStore, CreatorStatus } from '../../store';
+import { createStore, CreatorItemHighlight, CreatorItemRegion, Mode } from '../../store';
 import { rect as highlightRect } from '../__mocks__/data';
 import { rect as regionRect } from '../../region/__mocks__/data';
 
@@ -36,20 +36,16 @@ describe('HighlightContainer', () => {
             expect(wrapper.find(HighlightAnnotations).props()).toMatchObject({
                 activeAnnotationId: null,
                 annotations: [],
-                createHighlight: expect.any(Function),
                 isCreating: false,
                 isPromoting: false,
                 location: 1,
-                message: '',
-                resetCreator: expect.any(Function),
                 selection: null,
                 setActiveAnnotationId: expect.any(Function),
                 setIsPromoting: expect.any(Function),
-                setMessage: expect.any(Function),
+                setReferenceShape: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 staged: null,
-                status: CreatorStatus.init,
                 store: defaults.store,
             });
         });

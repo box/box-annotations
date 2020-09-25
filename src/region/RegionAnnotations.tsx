@@ -1,30 +1,24 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import PopupReply from '../components/Popups/PopupReply';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { AnnotationRegion, Rect } from '../@types';
-import { CreateArg } from './actions';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
 type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
-    createRegion: (arg: CreateArg) => void;
     isCreating: boolean;
     isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     location: number;
-    message: string;
-    resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
-    setMessage: (message: string) => void;
+    setReferenceShape: (rect: DOMRect) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
-    status: CreatorStatus;
 };
 
 type State = {
@@ -41,20 +35,20 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
 
     state: State = {};
 
+    componentDidUpdate(_prevProps: Props, prevState: State): void {
+        const { setReferenceShape } = this.props;
+        const { rectRef } = this.state;
+        const { rectRef: prevRectRef } = prevState;
+
+        if (prevRectRef !== rectRef && rectRef) {
+            setReferenceShape(rectRef.getBoundingClientRect());
+        }
+    }
+
     handleAnnotationActive = (annotationId: string | null): void => {
         const { setActiveAnnotationId } = this.props;
 
         setActiveAnnotationId(annotationId);
-    };
-
-    handleCancel = (): void => {
-        const { resetCreator } = this.props;
-        resetCreator();
-    };
-
-    handleChange = (text = ''): void => {
-        const { setMessage } = this.props;
-        setMessage(text);
     };
 
     handleStart = (): void => {
@@ -67,16 +61,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         const { location, setStaged, setStatus } = this.props;
         setStaged({ location, shape });
         setStatus(CreatorStatus.staged);
-    };
-
-    handleSubmit = (): void => {
-        const { createRegion, message, staged } = this.props;
-
-        if (!staged) {
-            return;
-        }
-
-        createRegion({ ...staged, message });
     };
 
     renderCreator = (): JSX.Element => {
@@ -116,11 +100,8 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
     };
 
     render(): JSX.Element {
-        const { isCreating, isDiscoverabilityEnabled, isRotated, message, staged, status } = this.props;
-        const { rectRef } = this.state;
+        const { isCreating, isDiscoverabilityEnabled, isRotated, staged } = this.props;
         const canCreate = isCreating && !isRotated;
-        const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
-        const isPending = status === CreatorStatus.pending;
 
         return (
             <>
@@ -141,20 +122,6 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                 {canCreate && staged && (
                     <div className="ba-RegionAnnotations-target">
                         <RegionRect ref={this.setRectRef} isActive shape={staged.shape} />
-                    </div>
-                )}
-
-                {/* Layer 3b: Staged (unsaved) annotation description popup, if 3a is ready */}
-                {canCreate && staged && canReply && rectRef && (
-                    <div className="ba-RegionAnnotations-popup">
-                        <PopupReply
-                            isPending={isPending}
-                            onCancel={this.handleCancel}
-                            onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}
-                            reference={rectRef}
-                            value={message}
-                        />
                     </div>
                 )}
             </>

@@ -1,6 +1,7 @@
 import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
+import PopupManager from '../../popup/PopupManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
@@ -11,6 +12,7 @@ import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../highlight/HighlightManager');
+jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
 
@@ -121,7 +123,7 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage());
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(1);
+            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
@@ -131,7 +133,7 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage());
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(2);
+            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
@@ -142,7 +144,7 @@ describe('DocumentAnnotator', () => {
             const managers = annotator.getPageManagers(getPage(2));
             const managerIterator = managers.values();
 
-            expect(managers.size).toBe(3);
+            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
