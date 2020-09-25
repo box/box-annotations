@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import BaseManager, { Options, Props } from '../common/BaseManager';
 import PopupContainer from './PopupContainer';
 
-export default class PopupReplyManager implements BaseManager {
+export default class PopupManager implements BaseManager {
     location: number;
 
     reactEl: HTMLElement;

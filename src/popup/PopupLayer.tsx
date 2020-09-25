@@ -4,9 +4,9 @@ import PopupReply from '../components/Popups/PopupReply';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
 import { CreatorItem, CreatorStatus, isCreatorStagedHighlight, isCreatorStagedRegion } from '../store';
+import { PopupReference } from '../components/Popups/Popper';
 import { Shape } from '../@types';
 import './PopupLayer.scss';
-import { PopupReference } from '../components/Popups/Popper';
 
 type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
@@ -22,7 +22,7 @@ type Props = {
     status: CreatorStatus;
 };
 
-const Popup = (props: Props): JSX.Element | null => {
+const PopupLayer = (props: Props): JSX.Element | null => {
     const {
         createHighlight = noop,
         createRegion = noop,
@@ -100,4 +100,4 @@ const Popup = (props: Props): JSX.Element | null => {
     );
 };
 
-export default Popup;
+export default PopupLayer;

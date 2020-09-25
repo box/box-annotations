@@ -1,10 +1,12 @@
 import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
+import PopupManager from '../../popup/PopupManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
 import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
 
@@ -78,9 +80,11 @@ describe('ImageAnnotator', () => {
     describe('getManagers()', () => {
         test('should create new managers if they are not present in the annotated element', () => {
             const managers = annotator.getManagers(getParent(), getImage());
+            const managerIterator = managers.values();
 
-            expect(managers.size).toBe(1);
-            expect(managers.values().next().value).toBeInstanceOf(RegionManager);
+            expect(managers.size).toBe(2);
+            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
         });
 
         test('should destroy any existing managers if they are not present in the annotated element', () => {

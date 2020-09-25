@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import RegionCreator from './RegionCreator';
 import RegionList from './RegionList';
 import RegionRect, { RegionRectRef } from './RegionRect';
-import { AnnotationRegion, Rect, Shape } from '../@types';
+import { AnnotationRegion, Rect } from '../@types';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionAnnotations.scss';
 
@@ -15,7 +15,7 @@ type Props = {
     isRotated: boolean;
     location: number;
     setActiveAnnotationId: (annotationId: string | null) => void;
-    setReferenceShape: (element: Shape) => void;
+    setReferenceShape: (rect: DOMRect) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
@@ -41,13 +41,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         const { rectRef: prevRectRef } = prevState;
 
         if (prevRectRef !== rectRef && rectRef && staged) {
-            const { height, width, top, left } = rectRef.getBoundingClientRect();
-            setReferenceShape({
-                height,
-                width,
-                x: left,
-                y: top,
-            });
+            setReferenceShape(rectRef.getBoundingClientRect());
         }
     }
 

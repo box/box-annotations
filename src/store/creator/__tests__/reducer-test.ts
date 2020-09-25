@@ -3,7 +3,13 @@ import state from '../__mocks__/creatorState';
 import { createAnnotationAction } from '../../annotations';
 import { CreatorStatus } from '../types';
 import { NewAnnotation } from '../../../@types';
-import { setCursorAction, setMessageAction, setStagedAction, setStatusAction } from '../actions';
+import {
+    setCursorAction,
+    setMessageAction,
+    setReferenceShapeAction,
+    setStagedAction,
+    setStatusAction,
+} from '../actions';
 
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -48,6 +54,15 @@ describe('store/creator/reducer', () => {
             const newState = reducer(state, setMessageAction(payload));
 
             expect(newState.message).toEqual(payload);
+        });
+    });
+
+    describe('setReferenceShapeAction', () => {
+        test('should set the reference shape in state', () => {
+            const payload = { height: 10, left: 10, top: 10, width: 10 } as DOMRect;
+            const newState = reducer(state, setReferenceShapeAction(payload));
+
+            expect(newState.referenceShape).toEqual({ height: 10, width: 10, x: 10, y: 10 });
         });
     });
 

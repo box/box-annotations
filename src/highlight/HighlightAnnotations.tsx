@@ -7,7 +7,7 @@ import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupHighlightError from '../components/Popups/PopupHighlightError';
 import useWindowSize from '../common/useWindowSize';
-import { AnnotationHighlight, Shape } from '../@types';
+import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
 import { CreatorItemHighlight, CreatorStatus, SelectionItem } from '../store';
 import { getBoundingRect, getShapeRelativeToContainer } from './highlightUtil';
@@ -24,7 +24,7 @@ type Props = {
     selection: SelectionItem | null;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setIsPromoting: (isPromoting: boolean) => void;
-    setReferenceShape: (element: Shape) => void;
+    setReferenceShape: (rect: DOMRect) => void;
     setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemHighlight | null;
@@ -99,14 +99,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             return;
         }
 
-        const { height, width, top, left } = highlightRef.getBoundingClientRect();
-
-        setReferenceShape({
-            height,
-            width,
-            x: left,
-            y: top,
-        });
+        setReferenceShape(highlightRef.getBoundingClientRect());
     }, [highlightRef, staged, windowSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

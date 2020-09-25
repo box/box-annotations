@@ -12,7 +12,6 @@ import { CreatorStatus, CreatorItemHighlight } from '../../store';
 import { Rect } from '../../@types';
 import { selection as selectionMock } from '../__mocks__/data';
 
-jest.mock('../../components/Popups/PopupHighlight');
 jest.mock('../HighlightList');
 jest.mock('../HighlightTarget');
 jest.mock('../../components/Popups/PopupHighlight');
@@ -23,21 +22,17 @@ describe('HighlightAnnotations', () => {
     const defaults = {
         activeAnnotationId: null,
         annotations: [],
-        createHighlight: jest.fn(),
         isCreating: false,
         isPromoting: false,
         isSelecting: false,
         location: 1,
-        message: 'test',
-        resetCreator: jest.fn(),
         selection: null,
         setActiveAnnotationId: jest.fn(),
         setIsPromoting: jest.fn(),
-        setMessage: jest.fn(),
+        setReferenceShape: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
-        status: CreatorStatus.init,
     };
 
     const getRect = (): Rect => ({
@@ -78,37 +73,6 @@ describe('HighlightAnnotations', () => {
                 staged: getStaged(),
             });
             expect(wrapper.exists('.ba-HighlightAnnotations-target')).toBe(true);
-        });
-
-        test.each`
-            status                    | showReply
-            ${CreatorStatus.init}     | ${false}
-            ${CreatorStatus.pending}  | ${true}
-            ${CreatorStatus.rejected} | ${true}
-            ${CreatorStatus.staged}   | ${true}
-        `('should render a reply popup if the creator status is $status', ({ status, showReply }) => {
-            const wrapper = getWrapper({
-                isCreating: true,
-                staged: getStaged(),
-                status,
-            });
-
-            expect(wrapper.exists(PopupReply)).toBe(showReply);
-        });
-
-        test.each`
-            status                    | isPending
-            ${CreatorStatus.rejected} | ${false}
-            ${CreatorStatus.pending}  | ${true}
-            ${CreatorStatus.staged}   | ${false}
-        `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
-            const wrapper = getWrapper({
-                isCreating: true,
-                staged: getStaged(),
-                status,
-            });
-
-            expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
 
         test.each`
@@ -190,54 +154,6 @@ describe('HighlightAnnotations', () => {
             });
             expect(defaults.setStatus).toHaveBeenCalledWith('staged');
             expect(defaults.setIsPromoting).toHaveBeenCalledWith(true);
-        });
-    });
-
-    describe('event handlers', () => {
-        const mockSetHighlightRef = jest.fn();
-        let wrapper: ReactWrapper;
-
-        beforeEach(() => {
-            jest.spyOn(React, 'useState').mockImplementation(() => [true, mockSetHighlightRef]);
-            wrapper = getWrapper({
-                isCreating: true,
-                isPromoting: true,
-                staged: getStaged(),
-                status: CreatorStatus.staged,
-            });
-        });
-
-        describe('handleCancel()', () => {
-            test('should reset creator and reset isPromoting', () => {
-                wrapper.find(PopupReply).prop('onCancel')();
-
-                expect(defaults.resetCreator).toHaveBeenCalled();
-            });
-        });
-
-        describe('handleChange', () => {
-            test('should set the staged state with the new message', () => {
-                wrapper.find(PopupReply).prop('onChange')('foo');
-
-                expect(defaults.setMessage).toHaveBeenCalledWith('foo');
-            });
-
-            test('should set the staged state with empty string', () => {
-                wrapper.find(PopupReply).prop('onChange')();
-
-                expect(defaults.setMessage).toHaveBeenCalledWith('');
-            });
-        });
-
-        describe('handleSubmit', () => {
-            test('should save the staged annotation and reset isPromoting', () => {
-                wrapper.find(PopupReply).prop('onSubmit')('');
-
-                expect(defaults.createHighlight).toHaveBeenCalledWith({
-                    ...getStaged(),
-                    message: defaults.message,
-                });
-            });
         });
     });
 

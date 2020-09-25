@@ -1,6 +1,12 @@
 import creatorState from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
-import { getCreatorMessage, getCreatorStaged, getCreatorStagedForLocation, getCreatorStatus } from '../selectors';
+import {
+    getCreatorMessage,
+    getCreatorReferenceShape,
+    getCreatorStaged,
+    getCreatorStagedForLocation,
+    getCreatorStatus,
+} from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { creator: creatorState };
@@ -8,6 +14,17 @@ describe('store/annotations/selectors', () => {
     describe('getCreatorStatus', () => {
         test('should return the current creator status', () => {
             expect(getCreatorStatus(state)).toBe(CreatorStatus.init);
+        });
+    });
+
+    describe('getCreatorReferenceShape', () => {
+        test('should return the current creator reference shape', () => {
+            expect(getCreatorReferenceShape(state)).toEqual({
+                height: 10,
+                width: 10,
+                x: 10,
+                y: 10,
+            });
         });
     });
 

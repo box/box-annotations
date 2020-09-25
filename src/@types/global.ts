@@ -5,6 +5,7 @@ declare namespace Intl {
 
 declare namespace NodeJS {
     interface Global {
+        window: any;
         BoxAnnotations: any;
     }
 }
