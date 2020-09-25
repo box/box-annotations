@@ -12,7 +12,7 @@ export const setMessageAction = createAction<string>('SET_CREATOR_MESSAGE');
 export const setReferenceShapeAction = createAction(
     'SET_REFERENCE_SHAPE',
     (arg: DOMRect): Payload => {
-        const { height, width, top, left } = arg;
+        const { height, left, top, width } = arg;
         return {
             payload: {
                 height,

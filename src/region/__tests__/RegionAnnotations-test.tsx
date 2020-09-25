@@ -197,7 +197,7 @@ describe('RegionAnnotations', () => {
             }),
         };
 
-        test('should call setReferenceShape current rectRef and staged exist', () => {
+        test('should call setReferenceShape if current rectRef and staged exist', () => {
             const wrapper = getWrapper({ staged: {} });
 
             wrapper.setState({ rectRef: mockRectRef });

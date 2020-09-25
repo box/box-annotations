@@ -116,7 +116,7 @@ describe('PopupLayer', () => {
                 expect(defaults.createRegion).not.toHaveBeenCalled();
             });
 
-            test('should create region if staged item is type highlight', () => {
+            test('should create region if staged item is type region', () => {
                 const wrapper = getWrapper({ staged: getStagedRegion() });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
