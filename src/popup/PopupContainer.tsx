@@ -20,9 +20,9 @@ import { Shape } from '../@types';
 import { createRegionAction } from '../region';
 
 export type Props = {
-    isCreating: boolean;
     isPromoting: boolean;
     message: string;
+    mode: Mode;
     popupReference?: Shape;
     staged: CreatorItem | null;
     status: CreatorStatus;
@@ -30,9 +30,9 @@ export type Props = {
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     return {
-        isCreating: getAnnotationMode(state) !== Mode.NONE,
         isPromoting: getIsPromoting(state),
         message: getCreatorMessage(state),
+        mode: getAnnotationMode(state),
         popupReference: getCreatorReferenceShape(state),
         staged: getCreatorStagedForLocation(state, location),
         status: getCreatorStatus(state),
