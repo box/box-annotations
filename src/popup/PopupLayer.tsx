@@ -3,7 +3,7 @@ import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
-import { CreatorItem, CreatorStatus, isCreatorStagedHighlight, isCreatorStagedRegion } from '../store';
+import { CreatorItem, CreatorStatus, isCreatorStagedHighlight, isCreatorStagedRegion, Mode } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
 import { Shape } from '../@types';
 import './PopupLayer.scss';
@@ -11,10 +11,10 @@ import './PopupLayer.scss';
 type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
-    isCreating: boolean;
     isPromoting: boolean;
     location: number;
     message: string;
+    mode: Mode;
     popupReference?: Shape;
     resetCreator: () => void;
     setMessage: (message: string) => void;
@@ -22,13 +22,18 @@ type Props = {
     status: CreatorStatus;
 };
 
+const modeStagedMap: { [M in Mode]?: Function } = {
+    [Mode.HIGHLIGHT]: isCreatorStagedHighlight,
+    [Mode.REGION]: isCreatorStagedRegion,
+};
+
 const PopupLayer = (props: Props): JSX.Element | null => {
     const {
         createHighlight = noop,
         createRegion = noop,
-        isCreating = false,
         isPromoting = false,
         message,
+        mode,
         popupReference,
         resetCreator,
         setMessage,
@@ -37,7 +42,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     } = props;
 
     const [reference, setReference] = React.useState<PopupReference | null>(null);
-    const canCreate = isCreating || isPromoting;
+    const canCreate = (modeStagedMap[mode] || noop)(staged) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
 
@@ -84,7 +89,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
 
     return (
         <>
-            {canCreate && staged && canReply && reference && (
+            {canCreate && canReply && reference && (
                 <div className="ba-PopupLayer-popup">
                     <PopupReply
                         isPending={isPending}

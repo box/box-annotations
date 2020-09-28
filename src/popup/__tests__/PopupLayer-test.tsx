@@ -2,7 +2,7 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import PopupLayer from '../PopupLayer';
 import PopupReply from '../../components/Popups/PopupReply';
-import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion } from '../../store';
+import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode } from '../../store';
 import { Rect } from '../../@types';
 
 jest.mock('../../components/Popups/PopupReply');
@@ -27,10 +27,10 @@ describe('PopupLayer', () => {
     const defaults = {
         createHighlight: jest.fn(),
         createRegion: jest.fn(),
-        isCreating: true,
         isPromoting: false,
         location: 1,
         message: '',
+        mode: Mode.HIGHLIGHT,
         popupReference,
         resetCreator: jest.fn(),
         setMessage: jest.fn(),
@@ -76,6 +76,18 @@ describe('PopupLayer', () => {
 
             expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
         });
+
+        test('should not render PopupReply if there is a staged type and mode mismatch', () => {
+            // defaults has staged as highlight
+            const wrapper = getWrapper({ mode: Mode.REGION });
+
+            expect(wrapper.exists(PopupReply)).toBe(false);
+        });
+
+        test('should render PopupReply if promoting a highlight', () => {
+            const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true });
+            expect(wrapper.exists(PopupReply)).toBe(true);
+        });
     });
 
     describe('event handlers', () => {
@@ -117,7 +129,7 @@ describe('PopupLayer', () => {
             });
 
             test('should create region if staged item is type region', () => {
-                const wrapper = getWrapper({ staged: getStagedRegion() });
+                const wrapper = getWrapper({ mode: Mode.REGION, staged: getStagedRegion() });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
                 expect(defaults.createHighlight).not.toHaveBeenCalled();
