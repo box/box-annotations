@@ -14,6 +14,7 @@ type Props = {
     isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     location: number;
+    resetCreator: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setReferenceShape: (rect: DOMRect) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
@@ -45,6 +46,11 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
         }
     }
 
+    handleAbort = (): void => {
+        const { resetCreator } = this.props;
+        resetCreator();
+    };
+
     handleAnnotationActive = (annotationId: string | null): void => {
         const { setActiveAnnotationId } = this.props;
 
@@ -74,6 +80,7 @@ export default class RegionAnnotations extends React.PureComponent<Props, State>
                         className={classNames('ba-RegionAnnotations-creator', {
                             'is-discoverability-enabled': isDiscoverabilityEnabled,
                         })}
+                        onAbort={this.handleAbort}
                         onStart={this.handleStart}
                         onStop={this.handleStop}
                     />
