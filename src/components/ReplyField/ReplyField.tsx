@@ -186,6 +186,8 @@ export default class ReplyField extends React.Component<Props, State> {
         this.setPopupListActiveItem(activeItemIndex === length - 1 ? 0 : activeItemIndex + 1, true);
     };
 
+    handleMouseDown = (event: React.SyntheticEvent): void => event.preventDefault(); // prevent the blur event so that Editor can remain focus
+
     render(): JSX.Element {
         const { className, collaborators, editorState, isDisabled, placeholder, ...rest } = this.props;
         const { activeItemIndex, popupAutoScroll, popupReference } = this.state;
@@ -211,6 +213,7 @@ export default class ReplyField extends React.Component<Props, State> {
                         autoScroll={popupAutoScroll}
                         items={collaborators}
                         onActivate={this.setPopupListActiveItem}
+                        onMouseDown={this.handleMouseDown}
                         onSelect={this.handleSelect}
                         reference={popupReference}
                     />
