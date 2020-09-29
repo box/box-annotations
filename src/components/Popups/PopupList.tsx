@@ -12,6 +12,7 @@ export type Props<T extends { id: string }> = {
     autoScroll?: boolean;
     items: T[];
     onActivate?: (index: number) => void;
+    onMouseDown?: (event: React.SyntheticEvent) => void;
     onSelect: (index: number, event: React.SyntheticEvent) => void;
     reference: PopupReference;
 };

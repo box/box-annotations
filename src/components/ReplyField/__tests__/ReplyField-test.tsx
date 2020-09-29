@@ -78,6 +78,17 @@ describe('ReplyField', () => {
             expect(defaults.onChange).toBeCalledWith(mockEditorState);
             expect(fetchCollaboratorsSpy).toHaveBeenCalled();
         });
+
+        test('should handle mouse down', () => {
+            const mockEvent = {
+                preventDefault: jest.fn(),
+            };
+            const wrapper = getWrapper();
+            wrapper.setState({ popupReference: document.createElement('div') });
+
+            wrapper.find(PopupList).simulate('mousedown', mockEvent);
+            expect(mockEvent.preventDefault).toBeCalled();
+        });
     });
 
     describe('fetchCollaborators()', () => {
