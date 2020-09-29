@@ -89,7 +89,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
 
     return (
         <>
-            {canCreate && canReply && reference && (
+            {canCreate && canReply && reference && staged && (
                 <div className="ba-PopupLayer-popup">
                     <PopupReply
                         isPending={isPending}
