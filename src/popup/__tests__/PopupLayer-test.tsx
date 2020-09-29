@@ -84,9 +84,14 @@ describe('PopupLayer', () => {
             expect(wrapper.exists(PopupReply)).toBe(false);
         });
 
-        test('should render PopupReply if promoting a highlight', () => {
+        test('should render PopupReply if promoting a highlight and staged exists', () => {
             const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true });
             expect(wrapper.exists(PopupReply)).toBe(true);
+        });
+
+        test('should not render PopupReply if promoting a highlight but staged does not exist', () => {
+            const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true, staged: null });
+            expect(wrapper.exists(PopupReply)).toBe(false);
         });
     });
 
