@@ -14,4 +14,12 @@
     .ba-PopupList-prompt {
         padding: 10px;
     }
+
+    // Changing the collab list max-height to avoid possible overlap with next page in IE11
+    // The following media query is specific to IE10+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        .ba-ItemList {
+            max-height: 140px;
+        }
+    }
 }

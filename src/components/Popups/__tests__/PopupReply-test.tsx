@@ -52,5 +52,19 @@ describe('PopupReply', () => {
             expect(wrapper.exists(PopupBase)).toBe(true);
             expect(wrapper.exists(ReplyForm)).toBe(true);
         });
+
+        test('should maintain referential integrity of the PopupBase options object across renders', () => {
+            const wrapper = getWrapper();
+
+            const popupOptions = wrapper.find(PopupBase).prop('options');
+
+            expect(wrapper.exists(PopupBase)).toBe(true);
+            expect(wrapper.find(ReplyForm).prop('value')).toBe('');
+
+            wrapper.setProps({ value: '1' });
+
+            expect(wrapper.find(PopupBase).prop('options')).toBe(popupOptions);
+            expect(wrapper.find(ReplyForm).prop('value')).toBe('1');
+        });
     });
 });

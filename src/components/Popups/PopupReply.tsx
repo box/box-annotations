@@ -18,6 +18,11 @@ export type Props = {
     value?: string;
 };
 
+const isIE = (): boolean => {
+    const { userAgent } = navigator;
+    return userAgent.indexOf('Trident/') > 0;
+};
+
 export const options: Partial<Popper.Options> = {
     modifiers: [
         {
@@ -64,10 +69,19 @@ export default function PopupReply({
     ...rest
 }: Props): JSX.Element {
     const popupRef = React.useRef<PopupBase>(null);
+    const popupOptions = React.useRef<Partial<Popper.Options> | null>(null);
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
+
+    // Keep the options reference the same between renders
+    if (!popupOptions.current) {
+        popupOptions.current = {
+            ...options,
+            placement: isIE() ? 'top' : 'bottom',
+        };
+    }
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
@@ -78,7 +92,7 @@ export default function PopupReply({
     }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <PopupBase ref={popupRef} data-resin-component="popupReply" options={options} {...rest}>
+        <PopupBase ref={popupRef} data-resin-component="popupReply" options={popupOptions.current} {...rest}>
             <ReplyForm
                 isPending={isPending}
                 onCancel={onCancel}
