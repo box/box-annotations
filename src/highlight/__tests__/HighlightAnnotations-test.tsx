@@ -2,7 +2,6 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightCanvas from '../HighlightCanvas';
-import HighlightCreator from '../HighlightCreator';
 import HighlightList from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
@@ -49,19 +48,16 @@ describe('HighlightAnnotations', () => {
     const getWrapper = (props = {}): ReactWrapper => mount(<HighlightAnnotations {...defaults} {...props} />);
 
     describe('render()', () => {
-        test('should render a HighlightCreator if in creation mode', () => {
+        test('should render a HighlightList if in creation mode', () => {
             const wrapper = getWrapper({ isCreating: true });
-            const creator = wrapper.find(HighlightCreator);
 
             expect(wrapper.find(HighlightList).exists()).toBe(true);
-            expect(creator.hasClass('ba-HighlightAnnotations-creator')).toBe(true);
         });
 
         test('should not render creation components if not in creation mode', () => {
             const wrapper = getWrapper({ isCreating: false });
 
             expect(wrapper.find(HighlightList).exists()).toBe(true);
-            expect(wrapper.exists(HighlightCreator)).toBe(false);
             expect(wrapper.exists(HighlightCanvas)).toBe(false);
             expect(wrapper.exists(HighlightSvg)).toBe(false);
             expect(wrapper.exists(PopupReply)).toBe(false);
