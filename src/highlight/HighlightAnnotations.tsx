@@ -1,6 +1,5 @@
 import * as React from 'react';
 import HighlightCanvas from './HighlightCanvas';
-import HighlightCreator from './HighlightCreator';
 import HighlightList from './HighlightList';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
@@ -107,10 +106,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             {/* Layer 1: Saved annotations */}
             <HighlightList activeId={activeAnnotationId} annotations={annotations} onSelect={handleAnnotationActive} />
 
-            {/* Layer 2: Drawn (unsaved) incomplete annotation target, if any */}
-            {canCreate && <HighlightCreator className="ba-HighlightAnnotations-creator" />}
-
-            {/* Layer 3: Staged (unsaved) highlight target, if any */}
+            {/* Layer 2: Staged (unsaved) highlight target, if any */}
             {canCreate && staged && (
                 <div className="ba-HighlightAnnotations-target">
                     <HighlightCanvas shapes={staged.shapes} />
@@ -120,14 +116,14 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 </div>
             )}
 
-            {/* Layer 4a: Annotations promoter to promote selection to staged */}
+            {/* Layer 3a: Annotations promoter to promote selection to staged */}
             {!isCreating && selection && !selection.hasError && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
                 </div>
             )}
 
-            {/* Layer 4b: Highlight error popup */}
+            {/* Layer 3b: Highlight error popup */}
             {selection && selection.hasError && (
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlightError shape={getBoundingRect(selection.rects)} />
