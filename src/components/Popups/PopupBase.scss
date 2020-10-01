@@ -11,11 +11,17 @@
         @include ba-PopupArrow(12px, $popup-content-bg, $popup-content-bg, $popup-footer-bg, $popup-content-bg, $popup-border-color);
 
         z-index: 1; // Make sure popup is showing above Preview controls and left/right arrows
+    }
 
-        // Changing z-index causes page to flicker in IE11
-        // The following media query is specific to IE10+
-        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-            z-index: 0;
+    // The following media query is specific to IE10+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        .ba-Popup {
+            z-index: 0; // Changing z-index causes page to flicker in IE11
+        }
+
+        .ba-ItemList {
+            // stylelint-disable-next-line declaration-no-important
+            max-height: 140px !important; // Prevent list overflow onto subsequent pages in IE11
         }
     }
 
