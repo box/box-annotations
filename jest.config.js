@@ -21,7 +21,7 @@ module.exports = {
     },
     restoreMocks: true,
     roots: ['src'],
-    setupFiles: ['jest-canvas-mock', 'jest-useragent-mock'],
+    setupFiles: ['jest-canvas-mock', '<rootDir>/test/jest/envWindow.js'],
     setupFilesAfterEnv: ['<rootDir>/scripts/jest/enzyme-adapter.js'],
     snapshotSerializers: ['enzyme-to-json/serializer'],
     testEnvironment: 'jest-environment-jsdom-sixteen',

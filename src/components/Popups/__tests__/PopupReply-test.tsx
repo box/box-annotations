@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactRedux from 'react-redux';
-import { clear, mockUserAgent } from 'jest-useragent-mock';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
@@ -70,10 +69,6 @@ describe('PopupReply', () => {
     });
 
     describe('Popup options', () => {
-        beforeEach(() => {
-            clear();
-        });
-
         test.each`
             userAgent                                                                  | expectedPlacement
             ${'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'} | ${'top'}
@@ -81,7 +76,7 @@ describe('PopupReply', () => {
         `(
             'should set placement option as $expectedPlacement based on userAgent=$userAgent',
             ({ userAgent, expectedPlacement }) => {
-                mockUserAgent(userAgent);
+                global.window.navigator.userAgent = userAgent;
 
                 const wrapper = getWrapper();
 
