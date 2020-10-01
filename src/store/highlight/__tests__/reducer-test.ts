@@ -4,7 +4,7 @@ import { Annotation, NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
 import { Mode, toggleAnnotationModeAction } from '../../common';
-import { resetCreatorAction } from '../../creator';
+import { CreatorStatus, resetCreatorAction, setStatusAction } from '../../creator';
 import { setIsPromotingAction, setSelectionAction, setIsSelectingAction } from '../actions';
 
 describe('store/highlight/reducer', () => {
@@ -62,6 +62,14 @@ describe('store/highlight/reducer', () => {
             const newState = reducer({ ...state, isPromoting: true }, toggleAnnotationModeAction(Mode.HIGHLIGHT));
 
             expect(newState.isPromoting).toEqual(false);
+        });
+    });
+
+    describe('setStatusAction', () => {
+        test('should reset selection when creator status changes', () => {
+            const newState = reducer(state, setStatusAction(CreatorStatus.started));
+
+            expect(newState.selection).toEqual(null);
         });
     });
 });

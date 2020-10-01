@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { createAnnotationAction } from '../annotations';
 import { HighlightState } from './types';
-import { resetCreatorAction } from '../creator';
+import { resetCreatorAction, setStatusAction } from '../creator';
 import { setIsPromotingAction, setIsSelectingAction, setSelectionAction } from './actions';
 import { toggleAnnotationModeAction } from '../common';
 
@@ -33,5 +33,8 @@ export default createReducer<HighlightState>(initialState, builder =>
         })
         .addCase(toggleAnnotationModeAction, state => {
             state.isPromoting = false;
+        })
+        .addCase(setStatusAction, state => {
+            state.selection = null;
         }),
 );
