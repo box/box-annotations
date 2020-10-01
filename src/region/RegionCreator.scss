@@ -12,7 +12,7 @@ $region_cursor_new_3x: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCA
 
     &.is-discoverability-enabled {
         $offset_x: 8;
-        $offset_y: 1;
+        $offset_y: 2;
 
         cursor: url($region_cursor_new) $offset_x $offset_y, auto; /* Legacy */
         cursor: image-set(url($region_cursor_new) 1x, url($region_cursor_new_2x) 2x, url($region_cursor_new_3x) 3x) $offset_x $offset_y, auto; /* Webkit */ /* stylelint-disable-line */
