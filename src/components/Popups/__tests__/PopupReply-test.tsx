@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactRedux from 'react-redux';
+import { clear, mockUserAgent } from 'jest-useragent-mock';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupReply, { Props } from '../PopupReply';
@@ -63,8 +64,30 @@ describe('PopupReply', () => {
 
             wrapper.setProps({ value: '1' });
 
-            expect(wrapper.find(PopupBase).prop('options')).toBe(popupOptions);
+            expect(wrapper.find(PopupBase).prop('options')).toStrictEqual(popupOptions);
             expect(wrapper.find(ReplyForm).prop('value')).toBe('1');
         });
+    });
+
+    describe('Popup options', () => {
+        beforeEach(() => {
+            clear();
+        });
+
+        test.each`
+            userAgent                                                                  | expectedPlacement
+            ${'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'} | ${'top'}
+            ${'Other'}                                                                 | ${'bottom'}
+        `(
+            'should set placement option as $expectedPlacement based on userAgent=$userAgent',
+            ({ userAgent, expectedPlacement }) => {
+                mockUserAgent(userAgent);
+
+                const wrapper = getWrapper();
+
+                expect(window.navigator.userAgent).toEqual(userAgent);
+                expect(wrapper.find(PopupBase).prop('options').placement).toBe(expectedPlacement);
+            },
+        );
     });
 });
