@@ -15,9 +15,6 @@ export default createReducer<HighlightState>(initialState, builder =>
     builder
         .addCase(setIsPromotingAction, (state, { payload }) => {
             state.isPromoting = payload;
-            if (payload) {
-                state.selection = null;
-            }
         })
         .addCase(setIsSelectingAction, (state, { payload }) => {
             state.isSelecting = payload;

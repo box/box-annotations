@@ -9,15 +9,10 @@ import { setIsPromotingAction, setSelectionAction, setIsSelectingAction } from '
 
 describe('store/highlight/reducer', () => {
     describe('setIsPromoting', () => {
-        test.each`
-            payload  | isPromoting | selection
-            ${true}  | ${true}     | ${null}
-            ${false} | ${false}    | ${state.selection}
-        `('should set isPromoting and selection in state', ({ isPromoting, payload, selection }) => {
+        test.each([true, false])('should set isPromoting in state as %s', payload => {
             const newState = reducer(state, setIsPromotingAction(payload));
 
-            expect(newState.isPromoting).toEqual(isPromoting);
-            expect(newState.selection).toEqual(selection);
+            expect(newState.isPromoting).toEqual(payload);
         });
     });
 
