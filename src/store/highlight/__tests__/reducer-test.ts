@@ -4,20 +4,15 @@ import { Annotation, NewAnnotation } from '../../../@types';
 import { createAnnotationAction } from '../../annotations';
 import { mockContainerRect, mockRange } from '../__mocks__/data';
 import { Mode, toggleAnnotationModeAction } from '../../common';
-import { resetCreatorAction } from '../../creator';
+import { CreatorStatus, resetCreatorAction, setStatusAction } from '../../creator';
 import { setIsPromotingAction, setSelectionAction, setIsSelectingAction } from '../actions';
 
 describe('store/highlight/reducer', () => {
     describe('setIsPromoting', () => {
-        test.each`
-            payload  | isPromoting | selection
-            ${true}  | ${true}     | ${null}
-            ${false} | ${false}    | ${state.selection}
-        `('should set isPromoting and selection in state', ({ isPromoting, payload, selection }) => {
+        test.each([true, false])('should set isPromoting in state as %s', payload => {
             const newState = reducer(state, setIsPromotingAction(payload));
 
-            expect(newState.isPromoting).toEqual(isPromoting);
-            expect(newState.selection).toEqual(selection);
+            expect(newState.isPromoting).toEqual(payload);
         });
     });
 
@@ -62,6 +57,14 @@ describe('store/highlight/reducer', () => {
             const newState = reducer({ ...state, isPromoting: true }, toggleAnnotationModeAction(Mode.HIGHLIGHT));
 
             expect(newState.isPromoting).toEqual(false);
+        });
+    });
+
+    describe('setStatusAction', () => {
+        test('should reset selection when creator status changes', () => {
+            const newState = reducer(state, setStatusAction(CreatorStatus.started));
+
+            expect(newState.selection).toEqual(null);
         });
     });
 });
