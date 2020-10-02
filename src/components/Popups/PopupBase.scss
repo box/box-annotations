@@ -23,6 +23,10 @@
             // stylelint-disable-next-line declaration-no-important
             max-height: 140px !important; // Prevent list overflow onto subsequent pages in IE11
         }
+
+        .ba-ReplyForm {
+            opacity: .99; // Creates a new stacking context so that the collaborators list shows on top of the ba-Popup-footer
+        }
     }
 
     .ba-Popup-content {
