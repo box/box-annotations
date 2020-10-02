@@ -25,7 +25,7 @@
         }
 
         .ba-ReplyForm {
-            opacity: .99;
+            opacity: .99; // Creates a new stacking context so that the collaborators list shows on top of the ba-Popup-footer
         }
     }
 
