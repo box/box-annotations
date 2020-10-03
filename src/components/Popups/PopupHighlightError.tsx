@@ -1,4 +1,5 @@
 import React from 'react';
+import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
@@ -7,6 +8,7 @@ import { Shape } from '../../@types/model';
 import './PopupHighlightError.scss';
 
 export type Props = {
+    onCancel?: () => void;
     shape: Shape;
 };
 
@@ -40,7 +42,7 @@ const options: Partial<Options> = {
     placement: 'bottom',
 };
 
-export default function PopupHighlightError({ shape }: Props): JSX.Element {
+export default function PopupHighlightError({ onCancel = noop, shape }: Props): JSX.Element {
     const { height, width, x, y } = shape;
 
     const reference = {
@@ -53,6 +55,14 @@ export default function PopupHighlightError({ shape }: Props): JSX.Element {
             width,
         }),
     };
+
+    React.useEffect(() => {
+        document.addEventListener('mousedown', onCancel);
+
+        return () => {
+            document.removeEventListener('mousedown', onCancel);
+        };
+    }, [onCancel]);
 
     return (
         <PopupBase className="ba-PopupHighlightError" options={options} reference={reference}>

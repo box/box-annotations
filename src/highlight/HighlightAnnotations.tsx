@@ -8,7 +8,7 @@ import PopupHighlightError from '../components/Popups/PopupHighlightError';
 import useWindowSize from '../common/useWindowSize';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
-import { CreatorItemHighlight, CreatorStatus, SelectionItem } from '../store';
+import { CreatorItemHighlight, CreatorStatus, SelectionArg, SelectionItem } from '../store';
 import { getBoundingRect, getShapeRelativeToContainer } from './highlightUtil';
 import './HighlightAnnotations.scss';
 
@@ -24,6 +24,7 @@ type Props = {
     setActiveAnnotationId: (annotationId: string | null) => void;
     setIsPromoting: (isPromoting: boolean) => void;
     setReferenceShape: (rect: DOMRect) => void;
+    setSelection: (selection: SelectionArg | null) => void;
     setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemHighlight | null;
@@ -40,6 +41,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId,
         setIsPromoting,
         setReferenceShape,
+        setSelection,
         setStaged,
         setStatus,
         staged,
@@ -74,6 +76,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         stageSelection();
 
         setIsPromoting(true);
+    };
+
+    const handleCancel = (): void => {
+        setSelection(null);
     };
 
     React.useEffect(() => {
@@ -119,14 +125,18 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             {/* Layer 3a: Annotations promoter to promote selection to staged */}
             {!isCreating && selection && !selection.hasError && (
                 <div className="ba-HighlightAnnotations-popup">
-                    <PopupHighlight onClick={handlePromote} shape={getBoundingRect(selection.rects)} />
+                    <PopupHighlight
+                        onCancel={handleCancel}
+                        onClick={handlePromote}
+                        shape={getBoundingRect(selection.rects)}
+                    />
                 </div>
             )}
 
             {/* Layer 3b: Highlight error popup */}
             {selection && selection.hasError && (
                 <div className="ba-HighlightAnnotations-popup">
-                    <PopupHighlightError shape={getBoundingRect(selection.rects)} />
+                    <PopupHighlightError onCancel={handleCancel} shape={getBoundingRect(selection.rects)} />
                 </div>
             )}
         </>
