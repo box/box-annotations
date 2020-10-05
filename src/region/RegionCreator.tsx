@@ -30,6 +30,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     const regionDirtyRef = React.useRef<boolean>(false);
     const regionRectRef = React.useRef<RegionRectRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
+    const hasStartedRef = React.useRef<boolean>(false);
 
     // Drawing Helpers
     const getPosition = (x: number, y: number): [number, number] => {
@@ -94,8 +95,6 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         positionX2Ref.current = null;
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
-
-        onStart();
     };
     const stopDraw = (): void => {
         const shape = getShape();
@@ -107,6 +106,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         positionX2Ref.current = null;
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
+        hasStartedRef.current = false;
 
         if (shape) {
             onStop(shape);
@@ -116,6 +116,18 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     };
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
+        const { current: x1 } = positionX1Ref;
+        const { current: y1 } = positionY1Ref;
+        const isSmall = !x1 || !y1 || (Math.abs(x2 - x1) < MIN_SIZE && Math.abs(y2 - y1) < MIN_SIZE);
+
+        if (positionX2Ref.current === null && isSmall) {
+            return;
+        }
+
+        if (!hasStartedRef.current && !isSmall) {
+            onStart();
+            hasStartedRef.current = true;
+        }
 
         positionX2Ref.current = x2;
         positionY2Ref.current = y2;
