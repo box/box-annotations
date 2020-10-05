@@ -87,8 +87,9 @@ describe('RegionCreator', () => {
             const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, x1, y1);
+            simulateDrawMove(2000, 2000); // First move > 10 pixels to ensure the move is not a click
             simulateDrawMove(x2, y2);
-            jest.advanceTimersByTime(1000); // Advance by 100 frames (10 fps * 10 seconds)
+            jest.advanceTimersByTime(1000); // Advance by 10 frames (10 fps * 1 seconds)
             wrapper.update();
 
             expect(styleShape).toHaveBeenCalledWith({ ...result, type: 'rect' });
@@ -113,16 +114,18 @@ describe('RegionCreator', () => {
             });
         });
 
-        test('should call onStart and onAbort callback when user clicks without dragging', () => {
+        test('should call no callback when user clicks or drags a small distance', () => {
             const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, 50, 50);
+            simulateDrawMove(55, 55);
             simulateDrawStop();
             jest.advanceTimersByTime(1000);
             wrapper.update();
 
-            expect(defaults.onStart).toHaveBeenCalled();
-            expect(defaults.onAbort).toHaveBeenCalled();
+            expect(defaults.onStart).not.toHaveBeenCalled();
+            expect(defaults.onStop).not.toHaveBeenCalled();
+            expect(defaults.onAbort).not.toHaveBeenCalled();
         });
 
         test('should do nothing if primary button is not pressed', () => {

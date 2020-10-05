@@ -122,7 +122,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         const [x2, y2] = getPosition(x, y);
         const { current: x1 } = positionX1Ref;
         const { current: y1 } = positionY1Ref;
-        const isSmall = !x1 || !y1 || (Math.abs(x2 - x1) < MIN_SIZE && Math.abs(y2 - y1) < MIN_SIZE);
+        const isSmall = x1 === null || y1 === null || (Math.abs(x2 - x1) < MIN_SIZE && Math.abs(y2 - y1) < MIN_SIZE);
 
         // Suppress the creation of a small region if the intention of the user is to click on the document
         if (positionX2Ref.current === null && isSmall) {
