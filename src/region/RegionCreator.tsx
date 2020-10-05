@@ -23,6 +23,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
+    const hasStartedRef = React.useRef<boolean>(false);
     const positionX1Ref = React.useRef<number | null>(null);
     const positionX2Ref = React.useRef<number | null>(null);
     const positionY1Ref = React.useRef<number | null>(null);
@@ -30,7 +31,6 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     const regionDirtyRef = React.useRef<boolean>(false);
     const regionRectRef = React.useRef<RegionRectRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
-    const hasStartedRef = React.useRef<boolean>(false);
 
     // Drawing Helpers
     const getPosition = (x: number, y: number): [number, number] => {
@@ -106,6 +106,10 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         positionX2Ref.current = null;
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
+
+        if (!hasStartedRef.current) {
+            return;
+        }
         hasStartedRef.current = false;
 
         if (shape) {
@@ -120,13 +124,14 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         const { current: y1 } = positionY1Ref;
         const isSmall = !x1 || !y1 || (Math.abs(x2 - x1) < MIN_SIZE && Math.abs(y2 - y1) < MIN_SIZE);
 
+        // Suppress the creation of a small region if the intention of the user is to click on the document
         if (positionX2Ref.current === null && isSmall) {
             return;
         }
 
-        if (!hasStartedRef.current && !isSmall) {
-            onStart();
+        if (!hasStartedRef.current) {
             hasStartedRef.current = true;
+            onStart();
         }
 
         positionX2Ref.current = x2;
