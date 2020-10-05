@@ -114,7 +114,7 @@ describe('RegionCreator', () => {
             });
         });
 
-        test('should call no callback when user clicks or drags a small distance', () => {
+        test('should call onAbort and not call onStart when user clicks or drags a small distance', () => {
             const wrapper = getWrapper();
 
             simulateDrawStart(wrapper, 50, 50);
@@ -125,7 +125,7 @@ describe('RegionCreator', () => {
 
             expect(defaults.onStart).not.toHaveBeenCalled();
             expect(defaults.onStop).not.toHaveBeenCalled();
-            expect(defaults.onAbort).not.toHaveBeenCalled();
+            expect(defaults.onAbort).toHaveBeenCalled();
         });
 
         test('should do nothing if primary button is not pressed', () => {
