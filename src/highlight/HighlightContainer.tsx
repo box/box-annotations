@@ -18,6 +18,7 @@ import {
     setActiveAnnotationIdAction,
     setIsPromotingAction,
     setReferenceShapeAction,
+    setSelectionAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
@@ -51,6 +52,7 @@ export const mapDispatchToProps = {
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setIsPromoting: setIsPromotingAction,
     setReferenceShape: setReferenceShapeAction,
+    setSelection: setSelectionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

@@ -4,11 +4,13 @@ import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
+import useOutsideEvent from '../../common/useOutsideEvent';
 import { Options } from './Popper';
 import { Shape } from '../../@types/model';
 import './PopupHighlight.scss';
 
 export type Props = {
+    onCancel?: () => void;
     onClick?: (event: React.MouseEvent) => void;
     shape: Shape;
 };
@@ -43,7 +45,7 @@ const options: Partial<Options> = {
     placement: 'bottom',
 };
 
-export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.Element {
+export default function PopupHighlight({ onCancel = noop, onClick = noop, shape }: Props): JSX.Element {
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const { height, width, x, y } = shape;
 
@@ -61,6 +63,8 @@ export default function PopupHighlight({ onClick = noop, shape }: Props): JSX.El
     const handleClick = (event: React.MouseEvent): void => {
         onClick(event);
     };
+
+    useOutsideEvent('mousedown', buttonRef, onCancel);
 
     return (
         <PopupBase className="ba-PopupHighlight" options={options} reference={reference}>
