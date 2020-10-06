@@ -38,6 +38,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
             this.highlightListener.destroy();
         }
 
+        if (this.managers) {
+            this.managers.forEach(managers => managers.forEach(manager => manager.destroy()));
+        }
+
         super.destroy();
     }
 

@@ -28,6 +28,10 @@ export default class ImageAnnotator extends BaseAnnotator {
             this.storeHandler();
         }
 
+        if (this.managers) {
+            this.managers.forEach(manager => manager.destroy());
+        }
+
         super.destroy();
     }
 
