@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import BaseManager, { Options, Props } from '../common/BaseManager';
-import RegionContainer from './RegionContainer';
+import RegionAnnotationsContainer from './RegionAnnotationsContainer';
 
-export default class RegionManager implements BaseManager {
+export default class RegionListManager implements BaseManager {
     location: number;
 
     reactEl: HTMLElement;
@@ -31,8 +31,8 @@ export default class RegionManager implements BaseManager {
         // Construct a layer element where we can inject a root React component
         const rootLayerEl = documentEl.createElement('div');
         rootLayerEl.classList.add('ba-Layer');
-        rootLayerEl.classList.add('ba-Layer--region');
-        rootLayerEl.dataset.testid = 'ba-Layer--region';
+        rootLayerEl.classList.add('ba-Layer--regionList');
+        rootLayerEl.dataset.testid = 'ba-Layer--regionList';
         rootLayerEl.setAttribute('data-resin-feature', 'annotations');
 
         // Insert the new layer element immediately after the reference element
@@ -40,7 +40,7 @@ export default class RegionManager implements BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<RegionContainer location={this.location} {...props} />, this.reactEl);
+        ReactDOM.render(<RegionAnnotationsContainer location={this.location} {...props} />, this.reactEl);
     }
 
     style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration {

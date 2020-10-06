@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import { createIntl } from 'react-intl';
-import RegionManager from '../RegionManager';
+import RegionCreationManager from '../RegionCreationManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
 
@@ -9,15 +9,16 @@ jest.mock('react-dom', () => ({
     unmountComponentAtNode: jest.fn(),
 }));
 
-describe('RegionManager', () => {
+describe('RegionCreationManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });
-    const getLayer = (): HTMLElement => rootEl.querySelector('[data-testid="ba-Layer--region"]') as HTMLElement;
-    const getWrapper = (options?: Partial<Options>): RegionManager => new RegionManager(getOptions(options));
+    const getLayer = (): HTMLElement => rootEl.querySelector('[data-testid="ba-Layer--regionCreation"]') as HTMLElement;
+    const getWrapper = (options?: Partial<Options>): RegionCreationManager =>
+        new RegionCreationManager(getOptions(options));
 
     beforeEach(() => {
         rootEl.classList.add('root');

@@ -17,7 +17,7 @@ import {
     setStagedAction,
     setStatusAction,
 } from '../store';
-import RegionAnnotations from './RegionAnnotations';
+import RegionCreation from './RegionCreation';
 import withProviders from '../common/withProviders';
 import { isRegion } from './regionUtil';
 
@@ -51,4 +51,4 @@ export const mapDispatchToProps = {
     setStatus: setStatusAction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withProviders(RegionAnnotations));
+export default connect(mapStateToProps, mapDispatchToProps)(withProviders(RegionCreation));
