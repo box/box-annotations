@@ -2,9 +2,13 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupHighlight from '../PopupHighlight';
+import useOutsideEvent from '../../../common/useOutsideEvent';
+
+jest.mock('../../../common/useOutsideEvent');
 
 describe('PopupHighlight', () => {
     const defaults = {
+        onCancel: jest.fn(),
         onClick: jest.fn(),
         shape: {
             height: 10,
@@ -16,15 +20,19 @@ describe('PopupHighlight', () => {
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupHighlight {...defaults} {...props} />);
 
-    const buttonEl = {
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-    };
+    const buttonRef = React.createRef();
 
     beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockImplementationOnce(() => ({
-            current: buttonEl,
-        }));
+        jest.spyOn(React, 'useRef').mockImplementationOnce(() => buttonRef);
+    });
+
+    describe('event handlers', () => {
+        test('should call onCancel', () => {
+            getWrapper();
+
+            expect(defaults.onCancel).toHaveBeenCalled();
+            expect(useOutsideEvent).toHaveBeenCalledWith('mousedown', buttonRef, defaults.onCancel);
+        });
     });
 
     describe('mouse events', () => {

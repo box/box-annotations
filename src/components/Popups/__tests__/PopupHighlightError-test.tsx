@@ -3,9 +3,13 @@ import { FormattedMessage } from 'react-intl';
 import { shallow, ShallowWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupHighlightError from '../PopupHighlightError';
+import useOutsideEvent from '../../../common/useOutsideEvent';
+
+jest.mock('../../../common/useOutsideEvent');
 
 describe('PopupHighlightError', () => {
     const defaults = {
+        onCancel: jest.fn(),
         shape: {
             height: 10,
             width: 0,
@@ -15,6 +19,25 @@ describe('PopupHighlightError', () => {
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupHighlightError {...defaults} {...props} />);
+
+    const divRef = React.createRef();
+
+    beforeEach(() => {
+        jest.spyOn(React, 'useRef').mockImplementationOnce(() => ({
+            current: {
+                popupRef: divRef,
+            },
+        }));
+    });
+
+    describe('event handlers', () => {
+        test('should call onCancel', () => {
+            getWrapper();
+
+            expect(defaults.onCancel).toHaveBeenCalled();
+            expect(useOutsideEvent).toHaveBeenCalledWith('mousedown', divRef, defaults.onCancel);
+        });
+    });
 
     describe('render()', () => {
         test('should render correct rect and message', () => {
