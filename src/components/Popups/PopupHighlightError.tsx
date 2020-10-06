@@ -3,6 +3,7 @@ import noop from 'lodash/noop';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
+import useOutsideEvent from '../../common/useOutsideEvent';
 import { Options } from './Popper';
 import { Shape } from '../../@types/model';
 import './PopupHighlightError.scss';
@@ -43,6 +44,7 @@ const options: Partial<Options> = {
 };
 
 export default function PopupHighlightError({ onCancel = noop, shape }: Props): JSX.Element {
+    const popupRef = React.useRef<PopupBase>(null);
     const { height, width, x, y } = shape;
 
     const reference = {
@@ -56,16 +58,10 @@ export default function PopupHighlightError({ onCancel = noop, shape }: Props): 
         }),
     };
 
-    React.useEffect(() => {
-        document.addEventListener('mousedown', onCancel);
-
-        return () => {
-            document.removeEventListener('mousedown', onCancel);
-        };
-    }, [onCancel]);
+    useOutsideEvent('mousedown', popupRef.current?.popupRef, onCancel);
 
     return (
-        <PopupBase className="ba-PopupHighlightError" options={options} reference={reference}>
+        <PopupBase ref={popupRef} className="ba-PopupHighlightError" options={options} reference={reference}>
             <FormattedMessage {...messages.popupHighlightRestrictedPrompt} />
         </PopupBase>
     );
