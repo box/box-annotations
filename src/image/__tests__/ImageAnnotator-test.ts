@@ -75,6 +75,15 @@ describe('ImageAnnotator', () => {
 
             expect(annotator.storeHandler).toHaveBeenCalled();
         });
+
+        test('should destroy all managers', () => {
+            const mockManagersSet = new Set([mockManager]);
+            annotator.managers = mockManagersSet;
+
+            annotator.destroy();
+
+            expect(mockManager.destroy).toHaveBeenCalled();
+        });
     });
 
     describe('getManagers()', () => {

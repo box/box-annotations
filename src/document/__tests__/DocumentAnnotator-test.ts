@@ -99,6 +99,18 @@ describe('DocumentAnnotator', () => {
             );
             expect(annotator.highlightListener?.destroy).toHaveBeenCalled();
         });
+
+        test('should destroy existing managers', () => {
+            annotator = getAnnotator();
+
+            const mockManager = ({ destroy: jest.fn() } as unknown) as BaseManager;
+            const mockManagersSet = new Set([mockManager]);
+            annotator.managers.set(1, mockManagersSet);
+
+            annotator.destroy();
+
+            expect(mockManager.destroy).toHaveBeenCalled();
+        });
     });
 
     describe('event handlers', () => {
@@ -235,7 +247,7 @@ describe('DocumentAnnotator', () => {
 
     describe('renderPage()', () => {
         test('should initialize a manager for a new page', () => {
-            const mockManager = ({ render: jest.fn() } as unknown) as BaseManager;
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn() } as unknown) as BaseManager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
