@@ -8,10 +8,10 @@ import { Rect } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
 
-export enum DrawingStatus {
-    init = 'init',
+enum DrawingStatus {
     dragging = 'dragging',
     drawing = 'drawing',
+    init = 'init',
 }
 
 type Props = {
@@ -118,14 +118,18 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             onAbort();
         }
     };
+
+    const isValid = (x1: number, y1: number, x2: number, y2: number): boolean =>
+        Math.abs(x2 - x1) >= MIN_SIZE || Math.abs(y2 - y1) >= MIN_SIZE;
+
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
         const { current: x1 } = positionX1Ref;
         const { current: y1 } = positionY1Ref;
+        const { current: prevX2 } = positionX2Ref;
 
         // Suppress the creation of a small region if the intention of the user is to click on the document
-        const isValid = Math.abs(x2 - (x1 ?? 0)) >= MIN_SIZE || Math.abs(y2 - (y1 ?? 0)) >= MIN_SIZE;
-        if (positionX2Ref.current === null && !isValid) {
+        if (prevX2 === null && !isValid(x1 ?? 0, y1 ?? 0, x2, y2)) {
             return;
         }
 
