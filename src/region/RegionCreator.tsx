@@ -8,6 +8,12 @@ import { Rect } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
 
+enum DrawingStatus {
+    dragging = 'dragging',
+    drawing = 'drawing',
+    init = 'init',
+}
+
 type Props = {
     className?: string;
     onAbort: () => void;
@@ -20,7 +26,7 @@ const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 
 export default function RegionCreator({ className, onAbort, onStart, onStop }: Props): JSX.Element {
-    const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
+    const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
     const positionX1Ref = React.useRef<number | null>(null);
@@ -87,20 +93,18 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     const startDraw = (x: number, y: number): void => {
         const [x1, y1] = getPosition(x, y);
 
-        setIsDrawing(true);
+        setDrawingStatus(DrawingStatus.dragging);
 
         positionX1Ref.current = x1;
         positionY1Ref.current = y1;
         positionX2Ref.current = null;
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
-
-        onStart();
     };
     const stopDraw = (): void => {
         const shape = getShape();
 
-        setIsDrawing(false);
+        setDrawingStatus(DrawingStatus.init);
 
         positionX1Ref.current = null;
         positionY1Ref.current = null;
@@ -114,12 +118,29 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             onAbort();
         }
     };
+
+    const isValid = (x1: number, y1: number, x2: number, y2: number): boolean =>
+        Math.abs(x2 - x1) >= MIN_SIZE || Math.abs(y2 - y1) >= MIN_SIZE;
+
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
+        const { current: x1 } = positionX1Ref;
+        const { current: y1 } = positionY1Ref;
+        const { current: prevX2 } = positionX2Ref;
+
+        // Suppress the creation of a small region if the intention of the user is to click on the document
+        if (prevX2 === null && !isValid(x1 ?? 0, y1 ?? 0, x2, y2)) {
+            return;
+        }
 
         positionX2Ref.current = x2;
         positionY2Ref.current = y2;
         regionDirtyRef.current = true;
+
+        if (drawingStatus !== DrawingStatus.drawing) {
+            setDrawingStatus(DrawingStatus.drawing);
+            onStart();
+        }
     };
 
     // Event Handlers
@@ -136,7 +157,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         startDraw(clientX, clientY);
     };
     const handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY || !isDrawing) {
+        if (buttons !== MOUSE_PRIMARY || drawingStatus === DrawingStatus.init) {
             return;
         }
 
@@ -189,7 +210,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     React.useEffect(() => {
         // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
         // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
-        if (isDrawing) {
+        if (drawingStatus !== DrawingStatus.init) {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
 
@@ -207,10 +228,10 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isDrawing]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [drawingStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useAutoScroll({
-        enabled: isDrawing,
+        enabled: drawingStatus !== DrawingStatus.init,
         onScroll: handleScroll,
         reference: creatorElRef.current,
     });
@@ -231,8 +252,10 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             onTouchStart={handleTouchStart}
             role="presentation"
         >
-            {isDrawing && <RegionRect ref={regionRectRef} className="ba-RegionCreator-rect" isActive />}
-            {!isDrawing && isHovering && <PopupCursor />}
+            {drawingStatus === DrawingStatus.drawing && (
+                <RegionRect ref={regionRectRef} className="ba-RegionCreator-rect" isActive />
+            )}
+            {drawingStatus === DrawingStatus.init && isHovering && <PopupCursor />}
         </div>
     );
 }
