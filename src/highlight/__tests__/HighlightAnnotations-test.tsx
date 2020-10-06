@@ -29,6 +29,7 @@ describe('HighlightAnnotations', () => {
         setActiveAnnotationId: jest.fn(),
         setIsPromoting: jest.fn(),
         setReferenceShape: jest.fn(),
+        setSelection: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -150,6 +151,15 @@ describe('HighlightAnnotations', () => {
             });
             expect(defaults.setStatus).toHaveBeenCalledWith('staged');
             expect(defaults.setIsPromoting).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('handleCancel()', () => {
+        test('should clear selection in store', () => {
+            const wrapper = getWrapper({ selection: selectionMock });
+            (wrapper.find(PopupHighlight).prop('onCancel') as Function)();
+
+            expect(defaults.setSelection).toHaveBeenCalledWith(null);
         });
     });
 
