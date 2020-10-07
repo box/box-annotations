@@ -2,19 +2,16 @@ import * as React from 'react';
 import classNames from 'classnames';
 import RegionCreator from './RegionCreator';
 import RegionRect, { RegionRectRef } from './RegionRect';
-import { AnnotationRegion, Rect } from '../@types';
+import { Rect } from '../@types';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionCreation.scss';
 
 type Props = {
-    activeAnnotationId: string | null;
-    annotations: AnnotationRegion[];
     isCreating: boolean;
     isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     location: number;
     resetCreator: () => void;
-    setActiveAnnotationId: (annotationId: string | null) => void;
     setReferenceShape: (rect: DOMRect) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
@@ -27,7 +24,6 @@ type State = {
 
 export default class RegionCreation extends React.PureComponent<Props, State> {
     static defaultProps = {
-        annotations: [],
         isCreating: false,
         isDiscoverabilityEnabled: false,
         isRotated: false,
@@ -48,12 +44,6 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     handleAbort = (): void => {
         const { resetCreator } = this.props;
         resetCreator();
-    };
-
-    handleAnnotationActive = (annotationId: string | null): void => {
-        const { setActiveAnnotationId } = this.props;
-
-        setActiveAnnotationId(annotationId);
     };
 
     handleStart = (): void => {

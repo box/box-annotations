@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
-import { AnnotationRegion } from '../@types';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
+import { AnnotationRegion } from '../@types';
 import { AppState, getActiveAnnotationId, getAnnotationsForLocation, setActiveAnnotationIdAction } from '../store';
 import { isRegion } from './regionUtil';
 

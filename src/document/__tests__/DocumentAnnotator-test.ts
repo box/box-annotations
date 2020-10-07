@@ -3,6 +3,7 @@ import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
+import RegionListManager from '../../region/RegionListManager';
 import { Annotation, Event } from '../../@types';
 import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
@@ -14,6 +15,7 @@ import { scrollToLocation } from '../../utils/scroll';
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
+jest.mock('../../region/RegionListManager');
 jest.mock('../../utils/scroll');
 
 describe('DocumentAnnotator', () => {
@@ -136,6 +138,7 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionListManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
@@ -147,6 +150,7 @@ describe('DocumentAnnotator', () => {
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionListManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
@@ -159,6 +163,7 @@ describe('DocumentAnnotator', () => {
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionListManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 

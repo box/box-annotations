@@ -1,34 +1,31 @@
 import * as React from 'react';
 import { IntlShape } from 'react-intl';
 import { mount, ReactWrapper } from 'enzyme';
-import RegionAnnotations from '../RegionAnnotations';
-import RegionContainer, { Props } from '../RegionContainer';
+import RegionCreation from '../RegionCreation';
+import RegionCreationContainer, { Props } from '../RegionCreationContainer';
 import { createStore } from '../../store';
 
 jest.mock('../../common/withProviders');
-jest.mock('../RegionAnnotations');
+jest.mock('../RegionCreation');
 
-describe('RegionContainer', () => {
+describe('RegionCreationContainer', () => {
     const defaults = {
         intl: {} as IntlShape,
         location: 1,
         store: createStore(),
     };
-    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionContainer {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionCreationContainer {...defaults} {...props} />);
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.exists('RootProvider')).toBe(true);
-            expect(wrapper.find(RegionAnnotations).props()).toMatchObject({
-                activeAnnotationId: null,
-                annotations: [],
+            expect(wrapper.find(RegionCreation).props()).toMatchObject({
                 isCreating: false,
                 isDiscoverabilityEnabled: false,
                 location: 1,
                 staged: null,
-                setActiveAnnotationId: expect.any(Function),
                 setReferenceShape: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
@@ -50,14 +47,14 @@ describe('RegionContainer', () => {
             const store = createStore({ options: { rotation } });
             const wrapper = getWrapper({ store });
 
-            expect(wrapper.find(RegionAnnotations).prop('isRotated')).toEqual(isRotated);
+            expect(wrapper.find(RegionCreation).prop('isRotated')).toEqual(isRotated);
         });
 
         test('should read the discoverability feature from the store', () => {
             const store = createStore({ options: { features: { discoverability: true } } });
             const wrapper = getWrapper({ store });
 
-            expect(wrapper.find(RegionAnnotations).prop('isDiscoverabilityEnabled')).toBe(true);
+            expect(wrapper.find(RegionCreation).prop('isDiscoverabilityEnabled')).toBe(true);
         });
     });
 });
