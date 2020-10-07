@@ -31,8 +31,8 @@ export default class RegionListManager implements BaseManager {
         // Construct a layer element where we can inject a root React component
         const rootLayerEl = documentEl.createElement('div');
         rootLayerEl.classList.add('ba-Layer');
-        rootLayerEl.classList.add('ba-Layer--regionList');
-        rootLayerEl.dataset.testid = 'ba-Layer--regionList';
+        rootLayerEl.classList.add('ba-Layer--region');
+        rootLayerEl.dataset.testid = 'ba-Layer--region';
         rootLayerEl.setAttribute('data-resin-feature', 'annotations');
 
         // Insert the new layer element immediately after the reference element

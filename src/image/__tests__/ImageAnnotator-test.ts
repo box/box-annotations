@@ -1,7 +1,7 @@
 import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
-import RegionListManager from '../../region/RegionListManager';
+import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
 import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
 import { annotations as regions } from '../../region/__mocks__/data';
@@ -9,7 +9,7 @@ import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
-jest.mock('../../region/RegionListManager');
+jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
 
 describe('ImageAnnotator', () => {
@@ -94,7 +94,7 @@ describe('ImageAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
-            expect(managerIterator.next().value).toBeInstanceOf(RegionListManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
