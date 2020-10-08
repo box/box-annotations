@@ -1,5 +1,5 @@
-// <reference types="Cypress" />
-describe('Highlight', () => {
+/// <reference types="Cypress" />
+describe('Highlights', () => {
     beforeEach(() => {
         cy.visit('/');
     });
