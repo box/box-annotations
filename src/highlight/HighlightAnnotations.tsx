@@ -117,7 +117,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 <div className="ba-HighlightAnnotations-target">
                     <HighlightCanvas shapes={staged.shapes} />
                     <HighlightSvg>
-                        <HighlightTarget ref={setHighlightRef} annotationId="staged" shapes={staged.shapes} />
+                        <HighlightTarget ref={setHighlightRef} annotationId="staged" isActive shapes={staged.shapes} />
                     </HighlightSvg>
                 </div>
             )}
