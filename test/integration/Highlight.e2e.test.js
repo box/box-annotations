@@ -1,5 +1,3 @@
-const highlightAnnotationSelector = '[data-testid^="ba-AnnotationTarget"].ba-HighlightTarget';
-
 // <reference types="Cypress" />
 describe('Highlight', () => {
     beforeEach(() => {
@@ -14,7 +12,7 @@ describe('Highlight', () => {
         cy.getByTestId('ba-Layer--highlight');
 
         // Assert that no highlight annotations are present
-        cy.get(highlightAnnotationSelector).should('not.exist');
+        cy.get('.ba-HighlightTarget').should('not.exist');
 
         // Enter highlight creation mode
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').click();
@@ -24,7 +22,7 @@ describe('Highlight', () => {
         cy.submitReply();
 
         // Assert that at least one highlight annotation is present on the document
-        cy.get(highlightAnnotationSelector);
+        cy.get('.ba-HighlightTarget');
 
         // Exit highlight creation mode
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').click();
