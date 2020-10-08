@@ -2,7 +2,7 @@ import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnota
 import BaseManager from '../common/BaseManager';
 import PopupManager from '../popup/PopupManager';
 import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
-import { centerRegion, isRegion, RegionManager } from '../region';
+import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
@@ -83,11 +83,13 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
 
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
             const referenceEl =
                 this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
-            managers.add(new RegionManager({ location: pageNumber, referenceEl }));
+            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl }));
         }
 
         return managers;

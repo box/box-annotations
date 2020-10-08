@@ -2,6 +2,7 @@ import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
+import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
@@ -13,6 +14,7 @@ import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
+jest.mock('../../region/RegionCreationManager');
 jest.mock('../../region/RegionManager');
 jest.mock('../../utils/scroll');
 
@@ -137,6 +139,7 @@ describe('DocumentAnnotator', () => {
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
         test('should create HighlightManager if feature is enabled', () => {
@@ -148,6 +151,7 @@ describe('DocumentAnnotator', () => {
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
         test('should create HighlightCreatorManager if feature is enabled and textLayer is present', () => {
@@ -160,10 +164,14 @@ describe('DocumentAnnotator', () => {
             expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
         test('should destroy any existing managers if they are not present in a given page element', () => {
-            const mockManager = ({ destroy: jest.fn(), exists: jest.fn(() => false) } as unknown) as RegionManager;
+            const mockManager = ({
+                destroy: jest.fn(),
+                exists: jest.fn(() => false),
+            } as unknown) as RegionCreationManager;
 
             annotator.managers.set(1, new Set([mockManager]));
             annotator.getPageManagers(getPage());

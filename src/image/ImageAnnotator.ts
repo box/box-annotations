@@ -3,7 +3,7 @@ import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import BaseManager from '../common/BaseManager';
 import PopupManager from '../popup/PopupManager';
 import { getAnnotation, getRotation } from '../store';
-import { centerRegion, getTransformedShape, isRegion, RegionManager } from '../region';
+import { centerRegion, getTransformedShape, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
 import { scrollToLocation } from '../utils/scroll';
 import './ImageAnnotator.scss';
@@ -50,6 +50,7 @@ export default class ImageAnnotator extends BaseAnnotator {
         if (this.managers.size === 0) {
             this.managers.add(new PopupManager({ referenceEl }));
             this.managers.add(new RegionManager({ referenceEl }));
+            this.managers.add(new RegionCreationManager({ referenceEl }));
         }
 
         return this.managers;
