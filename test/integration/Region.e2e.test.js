@@ -13,7 +13,7 @@ describe('Regions', () => {
 
         // Assert that the region creator does not exist and no annotations are present
         cy.getByTestId('ba-RegionCreator').should('not.exist');
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('not.exist');
+        cy.get('.ba-RegionAnnotation').should('not.exist');
 
         // Enter region creation mode
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
@@ -23,19 +23,19 @@ describe('Regions', () => {
         cy.submitReply();
 
         // Assert that at least one annotation is present on the document and is active
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
+        cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
 
         // Exit region creation mode
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
 
         // Assert that annotation target is not active
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('not.have.class', 'is-active');
+        cy.get('.ba-RegionAnnotation').should('not.have.class', 'is-active');
 
         // Select annotation target
-        cy.get('[data-testid^="ba-AnnotationTarget"]').click();
+        cy.get('.ba-RegionAnnotation').click();
 
         // Assert that annotation target is active
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
+        cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 
     it('should create a new region on an image', () => {
@@ -47,7 +47,7 @@ describe('Regions', () => {
 
         // Assert that the region creator does not exist and no annotations are present
         cy.getByTestId('ba-RegionCreator').should('not.exist');
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('not.exist');
+        cy.get('.ba-RegionAnnotation').should('not.exist');
 
         // Enter region creation mode
         cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
@@ -57,7 +57,7 @@ describe('Regions', () => {
         cy.submitReply();
 
         // Assert that at least one annotation is present on the image and is active
-        cy.get('[data-testid^="ba-AnnotationTarget"]').should('have.class', 'is-active');
+        cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 
     it('should hide region button for rotated image', () => {
