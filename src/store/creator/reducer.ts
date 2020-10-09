@@ -9,6 +9,7 @@ import {
     setStagedAction,
     setStatusAction,
 } from './actions';
+import { toggleAnnotationModeAction } from '../common';
 
 export const initialState = {
     cursor: 0,
@@ -48,5 +49,6 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setCursorAction, (state, { payload }) => {
             state.cursor = payload;
-        }),
+        })
+        .addCase(toggleAnnotationModeAction, () => initialState),
 );
