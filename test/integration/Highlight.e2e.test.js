@@ -31,7 +31,7 @@ describe('Highlights', () => {
         cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
 
         // Select annotation target
-        cy.get('.ba-HighlightTarget').click();
+        cy.get('.ba-HighlightTarget-rect').click();
 
         // Assert that annotation target is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
