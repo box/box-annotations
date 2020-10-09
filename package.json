@@ -1,6 +1,6 @@
 {
     "name": "box-annotations",
-    "version": "4.0.0-beta.23",
+    "version": "4.0.0-beta.24",
     "description": "Box Annotations",
     "author": "Box (https://www.box.com/)",
     "license": "SEE LICENSE IN LICENSE",
@@ -112,7 +112,6 @@
         "uglifyjs-webpack-plugin": "^2.2.0",
         "wait-on": "^4.0.2",
         "webpack": "^4.43.0",
-        "webpack-bundle-analyzer": "^3.7.0",
         "webpack-cli": "^3.3.11",
         "webpack-dev-server": "^3.10.3",
         "worker-farm": "^1.7.0"

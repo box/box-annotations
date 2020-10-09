@@ -6,7 +6,6 @@ const RsyncPlugin = require('@box/frontend/webpack/RsyncPlugin');
 const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BannerPlugin } = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const license = require('./license');
 const commonConfig = require('./webpack.common.config');
@@ -73,16 +72,6 @@ if (isDev) {
 }
 
 if (isRelease && language === 'en-US') {
-    config.plugins.push(
-        new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            openAnalyzer: false,
-            reportFilename: path.resolve('../reports/webpack-stats.html'),
-            generateStatsFile: true,
-            statsFilename: path.resolve('../reports/webpack-stats.json`'),
-        }),
-    );
-
     // https://webpack.js.org/configuration/optimization/#optimization-minimize
     config.optimization = {
         minimizer: [
