@@ -21,10 +21,19 @@ describe('Highlights', () => {
         cy.selectText();
         cy.submitReply();
 
-        // Assert that at least one highlight annotation is present on the document
-        cy.get('.ba-HighlightTarget');
+        // Assert that at least one highlight annotation is present on the document and is active
+        cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
         // Exit highlight creation mode
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').click();
+
+        // Assert that annotation target is not active
+        cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
+
+        // Select annotation target
+        cy.get('.ba-HighlightTarget-rect').click();
+
+        // Assert that annotation target is active
+        cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
     });
 });

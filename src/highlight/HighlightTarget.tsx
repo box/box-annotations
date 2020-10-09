@@ -10,6 +10,7 @@ import './HighlightTarget.scss';
 type Props = {
     annotationId: string;
     className?: string;
+    isActive?: boolean;
     onHover?: (annotationId: string | null) => void;
     onSelect?: (annotationId: string) => void;
     shapes: Array<Rect>;
@@ -18,7 +19,7 @@ type Props = {
 export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
-    const { annotationId, className, onHover = noop, onSelect = noop, shapes } = props;
+    const { annotationId, className, isActive, onHover = noop, onSelect = noop, shapes } = props;
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -64,7 +65,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
-            className={classNames('ba-HighlightTarget', className)}
+            className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"

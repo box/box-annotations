@@ -33,17 +33,19 @@ describe('HighlightTarget', () => {
 
     describe('render()', () => {
         test('should render anchor with provided rects', () => {
-            const wrapper = getWrapper();
-            const anchor = wrapper.find('a');
-            const rect = wrapper.find('rect');
-
-            expect(anchor.hasClass('is-active')).toBe(false);
-            expect(anchor.hasClass('is-hover')).toBe(false);
+            const rect = getWrapper().find('rect');
 
             expect(rect.prop('height')).toBe('10%');
             expect(rect.prop('width')).toBe('20%');
             expect(rect.prop('x')).toBe('5%');
             expect(rect.prop('y')).toBe('5%');
+        });
+
+        test.each([true, false])('should render classNames correctly when isActive is %s', isActive => {
+            const wrapper = getWrapper({ isActive });
+
+            expect(wrapper.hasClass('ba-HighlightTarget')).toBe(true);
+            expect(wrapper.hasClass('is-active')).toBe(isActive);
         });
     });
 

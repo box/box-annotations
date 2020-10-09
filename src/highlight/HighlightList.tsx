@@ -82,6 +82,7 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
                     <HighlightTarget
                         key={id}
                         annotationId={id}
+                        isActive={activeId === id}
                         onHover={handleTargetHover}
                         onSelect={onSelect}
                         shapes={target.shapes}
