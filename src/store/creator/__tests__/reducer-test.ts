@@ -10,6 +10,7 @@ import {
     setStagedAction,
     setStatusAction,
 } from '../actions';
+import { toggleAnnotationModeAction } from '../../common';
 
 describe('store/creator/reducer', () => {
     describe('createAnnotationAction', () => {
@@ -88,6 +89,26 @@ describe('store/creator/reducer', () => {
             const newState = reducer(state, setCursorAction(2));
 
             expect(newState.cursor).toEqual(2);
+        });
+    });
+
+    describe('toggleAnnotationModeAction', () => {
+        test('should reset the creator state', () => {
+            const newState = reducer(
+                {
+                    ...state,
+                    cursor: 1,
+                    error: new Error('error'),
+                    status: CreatorStatus.rejected,
+                },
+                toggleAnnotationModeAction,
+            );
+
+            expect(newState.cursor).toEqual(0);
+            expect(newState.error).toEqual(null);
+            expect(newState.message).toEqual('');
+            expect(newState.staged).toEqual(null);
+            expect(newState.status).toEqual(CreatorStatus.init);
         });
     });
 });
