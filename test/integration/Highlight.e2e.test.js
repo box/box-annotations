@@ -52,4 +52,44 @@ describe('Highlights', () => {
         // Assert highlight creation mode is not active
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('not.have.class', 'is-active');
     });
+
+    it('should restrict highlight annotation to single page', () => {
+        // Show the preview
+        cy.showPreview(Cypress.env('FILE_ID_DOC'));
+
+        // Wait for the empty highlight layer to be present
+        cy.getByTestId('ba-Layer--highlight');
+
+        // Alias the last text block of the first textLayer
+        cy.get('[data-page-number="1"')
+            .find('.textLayer')
+            .children()
+            .last()
+            .as('firstTextLayerLastEl');
+
+        // Select texts across pages
+        cy.get('[data-page-number="2"')
+            .find('.textLayer')
+            .children()
+            .first()
+            .then($secondTextLayerFirstEl => {
+                cy.get('@firstTextLayerLastEl')
+                    .trigger('mousedown')
+                    .then($firstTextLayerLastEl => {
+                        const firstTextLayerLastEl = $firstTextLayerLastEl[0];
+                        const secondTextLayerFirstEl = $secondTextLayerFirstEl[0];
+                        const document = firstTextLayerLastEl.ownerDocument;
+                        const range = document.createRange();
+                        const selection = document.getSelection();
+                        range.setStartBefore(firstTextLayerLastEl);
+                        range.setEndAfter(secondTextLayerFirstEl);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    })
+                    .trigger('mouseup');
+            });
+
+        // Assert error popup shows
+        cy.getByTestId('ba-PopupHighlightError').contains('Comments restricted to single page');
+    });
 });
