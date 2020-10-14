@@ -65,24 +65,24 @@ describe('Highlights', () => {
             .find('.textLayer')
             .children()
             .last()
-            .as('firstTextLayerLastEl');
+            .as('pageOneEndTextEl');
 
         // Select texts across pages
         cy.get('[data-page-number="2"')
             .find('.textLayer')
             .children()
             .first()
-            .then($secondTextLayerFirstEl => {
-                cy.get('@firstTextLayerLastEl')
+            .then($pageTwoStartTextEl => {
+                cy.get('@pageOneEndTextEl')
                     .trigger('mousedown')
-                    .then($firstTextLayerLastEl => {
-                        const firstTextLayerLastEl = $firstTextLayerLastEl[0];
-                        const secondTextLayerFirstEl = $secondTextLayerFirstEl[0];
-                        const document = firstTextLayerLastEl.ownerDocument;
+                    .then($pageOneEndTextEl => {
+                        const pageOneEndTextEl = $pageOneEndTextEl[0];
+                        const pageTwoStartTextEl = $pageTwoStartTextEl[0];
+                        const document = pageOneEndTextEl.ownerDocument;
                         const range = document.createRange();
                         const selection = document.getSelection();
-                        range.setStartBefore(firstTextLayerLastEl);
-                        range.setEndAfter(secondTextLayerFirstEl);
+                        range.setStartBefore(pageOneEndTextEl);
+                        range.setEndAfter(pageTwoStartTextEl);
                         selection.removeAllRanges();
                         selection.addRange(range);
                     })
