@@ -61,7 +61,13 @@ export default function PopupHighlightError({ onCancel = noop, shape }: Props): 
     useOutsideEvent('mousedown', popupRef.current?.popupRef, onCancel);
 
     return (
-        <PopupBase ref={popupRef} className="ba-PopupHighlightError" options={options} reference={reference}>
+        <PopupBase
+            ref={popupRef}
+            className="ba-PopupHighlightError"
+            data-testid="ba-PopupHighlightError"
+            options={options}
+            reference={reference}
+        >
             <FormattedMessage {...messages.popupHighlightRestrictedPrompt} />
         </PopupBase>
     );
