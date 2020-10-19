@@ -1,5 +1,4 @@
 import React from 'react';
-import noop from 'lodash/noop';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
@@ -88,9 +87,10 @@ describe('HighlightList', () => {
             expect(shapes[3].isHover).toBe(false);
 
             act(() => {
-                const target = wrapper.find(HighlightTarget).at(2);
-                const handleTargetHover = target.prop('onHover') || noop;
-                handleTargetHover('anno_1');
+                wrapper
+                    .find(HighlightTarget)
+                    .at(2)
+                    .prop('onHover')!('anno_1');
             });
 
             wrapper.update();

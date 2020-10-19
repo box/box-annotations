@@ -23,6 +23,7 @@ module.exports = {
             files: ['**/__mocks__/*', '**/__tests__/*'],
             rules: {
                 '@typescript-eslint/camelcase': 'off',
+                '@typescript-eslint/no-non-null-assertion': 'off',
             },
         },
         {
