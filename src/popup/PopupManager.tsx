@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import BaseManager, { Manager, Props } from '../common/BaseManager';
+import BaseManager, { Props } from '../common/BaseManager';
 import PopupContainer from './PopupContainer';
 
-export default class PopupManager extends BaseManager implements Manager {
+export default class PopupManager extends BaseManager {
     decorate(): void {
         this.reactEl.classList.add('ba-Layer--popup');
         this.reactEl.dataset.testid = 'ba-Layer--popup';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import BaseManager, { Props } from '../common/BaseManager';
 import HighlightContainer from './HighlightContainer';
-import BaseManager, { Manager, Props } from '../common/BaseManager';
 
-export default class HighlightManager extends BaseManager implements Manager {
+export default class HighlightManager extends BaseManager {
     decorate(): void {
         this.reactEl.classList.add('ba-Layer--highlight');
         this.reactEl.dataset.testid = 'ba-Layer--highlight';
