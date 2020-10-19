@@ -17,9 +17,9 @@ describe('RegionAnnotations', () => {
     describe('event handlers', () => {
         describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId with annotation id', () => {
-                (getWrapper()
+                getWrapper()
                     .find(RegionList)
-                    .prop('onSelect') as Function)('123');
+                    .prop('onSelect')!('123');
 
                 expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
             });

@@ -126,7 +126,7 @@ describe('HighlightAnnotations', () => {
     describe('handleAnnotationActive()', () => {
         test('should call setActiveAnnotationId', () => {
             const wrapper = getWrapper();
-            (wrapper.find(HighlightList).prop('onSelect') as Function)('123');
+            wrapper.find(HighlightList).prop('onSelect')!('123');
 
             expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
         });
@@ -135,7 +135,7 @@ describe('HighlightAnnotations', () => {
     describe('handlePromote()', () => {
         test('should clear selection and set isPromoting', () => {
             const wrapper = getWrapper({ selection: selectionMock });
-            (wrapper.find(PopupHighlight).prop('onClick') as Function)();
+            wrapper.find(PopupHighlight).prop('onClick')!({} as React.MouseEvent<HTMLButtonElement>);
 
             expect(defaults.setStaged).toHaveBeenCalledWith({
                 location: 1,
@@ -157,7 +157,7 @@ describe('HighlightAnnotations', () => {
     describe('handleCancel()', () => {
         test('should clear selection in store', () => {
             const wrapper = getWrapper({ selection: selectionMock });
-            (wrapper.find(PopupHighlight).prop('onCancel') as Function)();
+            wrapper.find(PopupHighlight).prop('onCancel')!();
 
             expect(defaults.setSelection).toHaveBeenCalledWith(null);
         });
