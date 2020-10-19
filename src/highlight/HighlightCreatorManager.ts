@@ -5,7 +5,7 @@ import {
     setIsSelectingAction,
     setSelectionAction,
 } from '../store';
-import BaseManager, { Options as BaseOptions } from '../common/BaseManager';
+import { Manager, Options as BaseOptions } from '../common/BaseManager';
 import { MOUSE_PRIMARY } from '../constants';
 
 export type Options = {
@@ -14,7 +14,7 @@ export type Options = {
     store: AppStore;
 } & BaseOptions;
 
-export default class HighlightCreatorManager implements BaseManager {
+export default class HighlightCreatorManager implements Manager {
     referenceEl: HTMLElement;
 
     getSelection: () => Selection | null;

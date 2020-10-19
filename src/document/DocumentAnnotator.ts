@@ -1,5 +1,4 @@
 import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
-import BaseManager from '../common/BaseManager';
 import PopupManager from '../popup/PopupManager';
 import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
@@ -7,6 +6,7 @@ import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
 import { HighlightCreatorManager, HighlightListener, HighlightManager } from '../highlight';
+import { Manager } from '../common/BaseManager';
 import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
@@ -19,7 +19,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     highlightListener?: HighlightListener;
 
-    managers: Map<number, Set<BaseManager>> = new Map();
+    managers: Map<number, Set<Manager>> = new Map();
 
     constructor(options: Options) {
         super(options);
@@ -49,7 +49,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         return this.containerEl?.querySelector('.bp-doc');
     }
 
-    getPageManagers(pageEl: HTMLElement): Set<BaseManager> {
+    getPageManagers(pageEl: HTMLElement): Set<Manager> {
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);
         const managers = this.managers.get(pageNumber) || new Set();

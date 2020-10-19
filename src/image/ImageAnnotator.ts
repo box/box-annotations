@@ -1,10 +1,10 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
-import BaseManager from '../common/BaseManager';
 import PopupManager from '../popup/PopupManager';
 import { getAnnotation, getRotation } from '../store';
 import { centerRegion, getTransformedShape, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
+import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
 import './ImageAnnotator.scss';
 
@@ -13,7 +13,7 @@ export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
 export default class ImageAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
-    managers: Set<BaseManager> = new Set();
+    managers: Set<Manager> = new Set();
 
     storeHandler?: Unsubscribe;
 
@@ -39,7 +39,7 @@ export default class ImageAnnotator extends BaseAnnotator {
         return this.containerEl?.querySelector('.bp-image');
     }
 
-    getManagers(parentEl: HTMLElement, referenceEl: HTMLElement): Set<BaseManager> {
+    getManagers(parentEl: HTMLElement, referenceEl: HTMLElement): Set<Manager> {
         this.managers.forEach(manager => {
             if (!manager.exists(parentEl)) {
                 manager.destroy();
