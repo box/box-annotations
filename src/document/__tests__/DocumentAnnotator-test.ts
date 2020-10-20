@@ -1,4 +1,3 @@
-import BaseManager from '../../common/BaseManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
@@ -10,6 +9,7 @@ import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, Mode } from '../../store';
 import { HighlightCreatorManager, HighlightManager } from '../../highlight';
+import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../highlight/HighlightManager');
@@ -105,7 +105,7 @@ describe('DocumentAnnotator', () => {
         test('should destroy existing managers', () => {
             annotator = getAnnotator();
 
-            const mockManager = ({ destroy: jest.fn() } as unknown) as BaseManager;
+            const mockManager = ({ destroy: jest.fn() } as unknown) as Manager;
             const mockManagersSet = new Set([mockManager]);
             annotator.managers.set(1, mockManagersSet);
 
@@ -255,7 +255,7 @@ describe('DocumentAnnotator', () => {
 
     describe('renderPage()', () => {
         test('should initialize a manager for a new page', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn() } as unknown) as BaseManager;
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn() } as unknown) as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
