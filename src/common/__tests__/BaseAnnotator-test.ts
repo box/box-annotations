@@ -38,11 +38,19 @@ describe('BaseAnnotator', () => {
         locale: 'en-US',
         token: '1234567890',
     };
-    const getAnnotator = (options = {}): MockAnnotator => new MockAnnotator({ ...defaults, ...options });
-    let annotator = getAnnotator();
+    const annotatorFactory = {
+        annotator: new MockAnnotator({ ...defaults }),
+        getAnnotator(options = {}) {
+            this.annotator.destroy();
+            this.annotator = new MockAnnotator({ ...defaults, ...options });
+            return this.annotator;
+        },
+    };
+
+    let annotator = annotatorFactory.getAnnotator();
 
     beforeEach(() => {
-        annotator = getAnnotator();
+        annotator = annotatorFactory.getAnnotator();
     });
 
     afterEach(() => {
@@ -64,7 +72,7 @@ describe('BaseAnnotator', () => {
                         annotations: { activeId: '123' },
                     },
                 };
-                annotator = getAnnotator({ fileOptions });
+                annotator = annotatorFactory.getAnnotator({ fileOptions });
 
                 expect(store.createStore).toHaveBeenLastCalledWith(
                     expect.objectContaining({
@@ -92,7 +100,7 @@ describe('BaseAnnotator', () => {
                 },
             };
 
-            annotator = getAnnotator({ fileOptions });
+            annotator = annotatorFactory.getAnnotator({ fileOptions });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
                 expect.objectContaining({
@@ -131,7 +139,7 @@ describe('BaseAnnotator', () => {
                     },
                 };
 
-                annotator = getAnnotator({ file, fileOptions });
+                annotator = annotatorFactory.getAnnotator({ file, fileOptions });
 
                 expect(store.createStore).toHaveBeenLastCalledWith(
                     expect.objectContaining({ options: expect.objectContaining({ isCurrentFileVersion }) }),
@@ -141,13 +149,13 @@ describe('BaseAnnotator', () => {
         );
 
         test('should set features option', () => {
-            annotator = getAnnotator({ features });
+            annotator = annotatorFactory.getAnnotator({ features });
 
             expect(annotator.features).toEqual(features);
         });
 
         test('should set initial mode', () => {
-            annotator = getAnnotator({ initialMode: Mode.REGION });
+            annotator = annotatorFactory.getAnnotator({ initialMode: Mode.REGION });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
                 expect.objectContaining({ common: { mode: Mode.REGION } }),
@@ -209,7 +217,7 @@ describe('BaseAnnotator', () => {
         });
 
         test('should emit error if no root element exists', () => {
-            annotator = getAnnotator({ container: 'non-existent' });
+            annotator = annotatorFactory.getAnnotator({ container: 'non-existent' });
             annotator.emit = jest.fn();
             annotator.init(5);
 
