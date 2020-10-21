@@ -19,6 +19,7 @@ module.exports = {
         mousetrap: '<rootDir>/scripts/jest/moduleMock.js',
         rangy: '<rootDir>/scripts/jest/moduleMock.js',
     },
+    modulePathIgnorePatterns: ['__mocks__'],
     restoreMocks: true,
     roots: ['src'],
     setupFiles: ['jest-canvas-mock', '<rootDir>/test/jest/envWindow.js'],
