@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import HighlightCanvas from './HighlightCanvas';
 import HighlightList from './HighlightList';
 import HighlightSvg from './HighlightSvg';
@@ -46,8 +45,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setStatus,
         staged,
     } = props;
-    const [highlightRef, setHighlightRef] = React.useState<HTMLAnchorElement | null>(null);
-
     const canCreate = isCreating || isPromoting;
 
     const handleAnnotationActive = (annotationId: string | null): void => {
@@ -81,6 +78,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setSelection(null);
     };
 
+    const handleStagedMount = (uuid: string): void => {
+        setReferenceId(uuid);
+    };
+
     React.useEffect(() => {
         if (!isSelecting) {
             return;
@@ -98,16 +99,6 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         stageSelection();
     }, [isCreating, selection]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    React.useEffect(() => {
-        if (highlightRef === null) {
-            return;
-        }
-
-        const stagedUuid = uuidv4();
-        highlightRef.setAttribute('data-staged-id', stagedUuid);
-        setReferenceId(stagedUuid);
-    }, [highlightRef]); // eslint-disable-line react-hooks/exhaustive-deps
-
     return (
         <>
             {/* Layer 1: Saved annotations */}
@@ -118,7 +109,12 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 <div className="ba-HighlightAnnotations-target">
                     <HighlightCanvas shapes={staged.shapes} />
                     <HighlightSvg>
-                        <HighlightTarget ref={setHighlightRef} annotationId="staged" isActive shapes={staged.shapes} />
+                        <HighlightTarget
+                            annotationId="staged"
+                            isActive
+                            onMount={handleStagedMount}
+                            shapes={staged.shapes}
+                        />
                     </HighlightSvg>
                 </div>
             )}

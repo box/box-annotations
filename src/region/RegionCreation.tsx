@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { v4 as uuidv4 } from 'uuid';
 import RegionCreator from './RegionCreator';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { Rect } from '../@types';
@@ -43,23 +42,15 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
         setStatus(CreatorStatus.started);
     };
 
+    handleStagedMount = (uuid: string): void => {
+        const { setReferenceId } = this.props;
+        setReferenceId(uuid);
+    };
+
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus } = this.props;
         setStaged({ location, shape });
         setStatus(CreatorStatus.staged);
-    };
-
-    setRectRef = (rectRef: RegionRectRef): void => {
-        if (!rectRef) {
-            return;
-        }
-
-        const { setReferenceId } = this.props;
-        const stagedUuid = uuidv4();
-
-        rectRef.setAttribute('data-staged-id', stagedUuid);
-
-        setReferenceId(stagedUuid);
     };
 
     render(): JSX.Element | null {
@@ -83,7 +74,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
                 {staged && (
                     <div className="ba-RegionCreation-target">
-                        <RegionRect ref={this.setRectRef} isActive shape={staged.shape} />
+                        <RegionRect isActive onMount={this.handleStagedMount} shape={staged.shape} />
                     </div>
                 )}
             </>
