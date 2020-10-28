@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { v4 as uuidv4 } from 'uuid';
 import RegionCreator from './RegionCreator';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { Rect } from '../@types';
@@ -12,7 +13,7 @@ type Props = {
     isRotated: boolean;
     location: number;
     resetCreator: () => void;
-    setReferenceShape: (rect: DOMRect) => void;
+    setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
@@ -30,16 +31,6 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     };
 
     state: State = {};
-
-    componentDidUpdate(_prevProps: Props, prevState: State): void {
-        const { setReferenceShape } = this.props;
-        const { rectRef } = this.state;
-        const { rectRef: prevRectRef } = prevState;
-
-        if (prevRectRef !== rectRef && rectRef) {
-            setReferenceShape(rectRef.getBoundingClientRect());
-        }
-    }
 
     handleAbort = (): void => {
         const { resetCreator } = this.props;
@@ -59,7 +50,16 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     };
 
     setRectRef = (rectRef: RegionRectRef): void => {
-        this.setState({ rectRef });
+        if (!rectRef) {
+            return;
+        }
+
+        const { setReferenceId } = this.props;
+        const stagedUuid = uuidv4();
+
+        rectRef.setAttribute('data-staged-id', stagedUuid);
+
+        setReferenceId(stagedUuid);
     };
 
     render(): JSX.Element | null {

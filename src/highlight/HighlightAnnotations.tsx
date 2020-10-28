@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import HighlightCanvas from './HighlightCanvas';
 import HighlightList from './HighlightList';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupHighlightError from '../components/Popups/PopupHighlightError';
-import useWindowSize from '../common/useWindowSize';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
 import { CreatorItemHighlight, CreatorStatus, SelectionArg, SelectionItem } from '../store';
@@ -23,7 +23,7 @@ type Props = {
     selection: SelectionItem | null;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setIsPromoting: (isPromoting: boolean) => void;
-    setReferenceShape: (rect: DOMRect) => void;
+    setReferenceId: (uuid: string) => void;
     setSelection: (selection: SelectionArg | null) => void;
     setStaged: (staged: CreatorItemHighlight | null) => void;
     setStatus: (status: CreatorStatus) => void;
@@ -40,14 +40,13 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         selection,
         setActiveAnnotationId,
         setIsPromoting,
-        setReferenceShape,
+        setReferenceId,
         setSelection,
         setStaged,
         setStatus,
         staged,
     } = props;
     const [highlightRef, setHighlightRef] = React.useState<HTMLAnchorElement | null>(null);
-    const windowSize = useWindowSize();
 
     const canCreate = isCreating || isPromoting;
 
@@ -104,8 +103,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             return;
         }
 
-        setReferenceShape(highlightRef.getBoundingClientRect());
-    }, [highlightRef, windowSize]); // eslint-disable-line react-hooks/exhaustive-deps
+        const stagedUuid = uuidv4();
+        highlightRef.setAttribute('data-staged-id', stagedUuid);
+        setReferenceId(stagedUuid);
+    }, [highlightRef]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>

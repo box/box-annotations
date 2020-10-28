@@ -5,7 +5,6 @@ import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
 import { CreatorItem, CreatorStatus, isCreatorStagedHighlight, isCreatorStagedRegion, Mode } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
-import { Shape } from '../@types';
 import './PopupLayer.scss';
 
 type Props = {
@@ -15,7 +14,7 @@ type Props = {
     location: number;
     message: string;
     mode: Mode;
-    popupReference?: Shape;
+    referenceId: string | null;
     resetCreator: () => void;
     setMessage: (message: string) => void;
     staged?: CreatorItem | null;
@@ -34,7 +33,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         isPromoting = false,
         message,
         mode,
-        popupReference,
+        referenceId,
         resetCreator,
         setMessage,
         staged,
@@ -67,25 +66,13 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     };
 
     React.useEffect(() => {
-        if (!popupReference) {
+        if (!referenceId) {
             return;
         }
 
-        const { height, width, x, y } = popupReference;
-
-        const virtualElement = {
-            getBoundingClientRect: () => ({
-                bottom: y + height,
-                height,
-                left: x,
-                right: x + width,
-                top: y,
-                width,
-            }),
-        };
-
-        setReference(virtualElement);
-    }, [popupReference]);
+        const popupReferenceEl = document.querySelector(`[data-staged-id="${referenceId}"]`);
+        setReference(popupReferenceEl);
+    }, [referenceId]);
 
     return (
         <>
