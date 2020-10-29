@@ -105,11 +105,14 @@ describe('store/creator/reducer', () => {
                 toggleAnnotationModeAction,
             );
 
-            expect(newState.cursor).toEqual(0);
-            expect(newState.error).toEqual(null);
-            expect(newState.message).toEqual('');
-            expect(newState.staged).toEqual(null);
-            expect(newState.status).toEqual(CreatorStatus.init);
+            expect(newState).toEqual({
+                cursor: 0,
+                error: null,
+                message: '',
+                referenceId: null,
+                staged: null,
+                status: CreatorStatus.init,
+            });
         });
     });
 
@@ -127,12 +130,14 @@ describe('store/creator/reducer', () => {
                 resetCreatorAction,
             );
 
-            expect(newState.cursor).toEqual(1);
-            expect(newState.error).toEqual(error);
-            expect(newState.message).toEqual('');
-            expect(newState.referenceId).toEqual(null);
-            expect(newState.staged).toEqual(null);
-            expect(newState.status).toEqual(CreatorStatus.init);
+            expect(newState).toEqual({
+                cursor: 1,
+                error,
+                message: '',
+                referenceId: null,
+                staged: null,
+                status: CreatorStatus.init,
+            });
         });
     });
 });

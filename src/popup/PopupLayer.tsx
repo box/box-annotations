@@ -66,11 +66,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     };
 
     React.useEffect(() => {
-        if (!referenceId) {
-            return;
-        }
-
-        setReference(document.querySelector(`[data-ba-reference-id="${referenceId}"]`));
+        setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
     return (
