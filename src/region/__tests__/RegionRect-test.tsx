@@ -1,5 +1,5 @@
-import React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
+import React, { MutableRefObject } from 'react';
+import { shallow, ShallowWrapper } from 'enzyme';
 import RegionRect from '../RegionRect';
 import { styleShape } from '../regionUtil';
 
@@ -8,7 +8,13 @@ jest.mock('../regionUtil', () => ({
 }));
 
 describe('RegionRect', () => {
-    const getWrapper = (props = {}): ReactWrapper => mount(<RegionRect {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionRect {...props} />);
+    const mockInitalRef = { current: '123' } as MutableRefObject<string>;
+
+    beforeEach(() => {
+        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+        jest.spyOn(React, 'useRef').mockImplementation(() => mockInitalRef);
+    });
 
     describe('render', () => {
         test('should call styleShape with the provided shape prop value', () => {

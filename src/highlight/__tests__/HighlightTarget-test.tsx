@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import * as ReactRedux from 'react-redux';
-import { mount, ReactWrapper } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightTarget from '../HighlightTarget';
 
 jest.mock('react', () => ({
@@ -24,17 +24,12 @@ describe('HighlightTarget', () => {
         ],
     };
 
-    const getWrapper = (props = {}): ReactWrapper =>
-        mount(
-            <svg>
-                <HighlightTarget {...defaults} {...props} />
-            </svg>,
-            { attachTo: document.getElementById('test') },
-        );
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...defaults} {...props} />);
+    const mockInitalRef = { current: '123' } as MutableRefObject<string>;
 
     beforeEach(() => {
-        document.body.innerHTML = '<div id="test"></div>';
         jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+        jest.spyOn(React, 'useRef').mockImplementation(() => mockInitalRef);
         jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
     });
 

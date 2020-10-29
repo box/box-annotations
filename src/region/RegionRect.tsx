@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as uuid from 'uuid';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
@@ -16,18 +16,18 @@ type Props = {
 export type RegionRectRef = HTMLDivElement;
 
 export function RegionRect(props: Props, ref: React.Ref<RegionRectRef>): JSX.Element {
+    const uuidRef = React.useRef<string>(uuid.v4());
     const { className, isActive, onMount = noop, shape } = props;
-    const id = uuid.v4();
 
     React.useEffect(() => {
-        onMount(id);
+        onMount(uuidRef.current);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div
             ref={ref}
             className={classNames('ba-RegionRect', className, { 'is-active': isActive })}
-            data-ba-reference-id={id}
+            data-ba-reference-id={uuidRef.current}
             style={styleShape(shape)}
         />
     );
