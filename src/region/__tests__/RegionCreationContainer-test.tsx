@@ -26,7 +26,7 @@ describe('RegionCreationContainer', () => {
                 isDiscoverabilityEnabled: false,
                 location: 1,
                 staged: null,
-                setReferenceShape: expect.any(Function),
+                setReferenceId: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 store: defaults.store,

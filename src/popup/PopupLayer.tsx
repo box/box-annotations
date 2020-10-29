@@ -70,8 +70,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
             return;
         }
 
-        const popupReferenceEl = document.querySelector(`[data-ba-reference-id="${referenceId}"]`);
-        setReference(popupReferenceEl);
+        setReference(document.querySelector(`[data-ba-reference-id="${referenceId}"]`));
     }, [referenceId]);
 
     return (

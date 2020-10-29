@@ -31,7 +31,12 @@ export default createReducer<CreatorState>(initialState, builder =>
             state.error = error;
             state.status = CreatorStatus.rejected;
         })
-        .addCase(resetCreatorAction, () => initialState)
+        .addCase(resetCreatorAction, state => {
+            state.message = '';
+            state.referenceId = null;
+            state.staged = null;
+            state.status = CreatorStatus.init;
+        })
         .addCase(setMessageAction, (state, { payload }) => {
             state.message = payload;
         })

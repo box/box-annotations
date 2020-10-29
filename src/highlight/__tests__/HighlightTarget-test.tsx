@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ReactRedux from 'react-redux';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 import HighlightTarget from '../HighlightTarget';
 
 jest.mock('react', () => ({
@@ -23,12 +23,19 @@ describe('HighlightTarget', () => {
             },
         ],
     };
-    const mockSetIsHover = jest.fn();
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...defaults} {...props} />);
+
+    const getWrapper = (props = {}): ReactWrapper =>
+        mount(
+            <svg>
+                <HighlightTarget {...defaults} {...props} />
+            </svg>,
+            { attachTo: document.getElementById('test') },
+        );
 
     beforeEach(() => {
+        document.body.innerHTML = '<div id="test"></div>';
+        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
         jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
-        jest.spyOn(React, 'useState').mockImplementation(() => [false, mockSetIsHover]);
     });
 
     describe('render()', () => {
@@ -43,9 +50,10 @@ describe('HighlightTarget', () => {
 
         test.each([true, false])('should render classNames correctly when isActive is %s', isActive => {
             const wrapper = getWrapper({ isActive });
+            const anchor = wrapper.find('a');
 
-            expect(wrapper.hasClass('ba-HighlightTarget')).toBe(true);
-            expect(wrapper.hasClass('is-active')).toBe(isActive);
+            expect(anchor.hasClass('ba-HighlightTarget')).toBe(true);
+            expect(anchor.hasClass('is-active')).toBe(isActive);
         });
     });
 
@@ -88,12 +96,8 @@ describe('HighlightTarget', () => {
             test('should call onSelect', () => {
                 const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
-                const event = {
-                    ...mockEvent,
-                    buttons: 1,
-                };
 
-                anchor.simulate('mousedown', event);
+                anchor.prop('onMouseDown')!((mockEvent as unknown) as React.MouseEvent);
 
                 expect(defaults.onSelect).toHaveBeenCalledWith('123');
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
@@ -138,6 +142,15 @@ describe('HighlightTarget', () => {
 
                 expect(defaults.onHover).toHaveBeenCalledWith(null);
             });
+        });
+    });
+
+    describe('onMount()', () => {
+        test('should call onMount with a generated uuid', () => {
+            const handleMount = jest.fn();
+            getWrapper({ onMount: handleMount });
+
+            expect(handleMount).toHaveBeenCalledWith(expect.any(String));
         });
     });
 });

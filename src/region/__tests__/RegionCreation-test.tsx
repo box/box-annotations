@@ -15,7 +15,7 @@ describe('RegionCreation', () => {
         location: 1,
         resetCreator: jest.fn(),
         setMessage: jest.fn(),
-        setReferenceShape: jest.fn(),
+        setReferenceId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
@@ -78,6 +78,14 @@ describe('RegionCreation', () => {
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
+
+        describe('handleStagedMount()', () => {
+            test('should dispatch setReferenceId with received uuid', () => {
+                instance.handleStagedMount('123');
+
+                expect(defaults.setReferenceId).toHaveBeenCalledWith('123');
+            });
+        });
     });
 
     describe('render()', () => {
@@ -131,44 +139,5 @@ describe('RegionCreation', () => {
                 );
             },
         );
-    });
-
-    describe('componentDidUpdate', () => {
-        const mockRectRef = {
-            getBoundingClientRect: () => ({
-                height: 10,
-                width: 10,
-                top: 10,
-                left: 10,
-            }),
-        };
-
-        test('should call setReferenceShape if current rectRef and staged exist', () => {
-            const wrapper = getWrapper({ staged: {} });
-
-            wrapper.setState({ rectRef: mockRectRef });
-
-            expect(defaults.setReferenceShape).toHaveBeenCalled();
-        });
-
-        test('should not call setReferenceShape if prev and current rectRef are the same', () => {
-            const wrapper = getWrapper();
-
-            wrapper.setProps({ staged: {} });
-
-            expect(defaults.setReferenceShape).not.toHaveBeenCalled();
-        });
-
-        test('should not call setReferenceShape if rectRef does not exist', () => {
-            const wrapper = getWrapper();
-
-            wrapper.setState({ rectRef: mockRectRef });
-
-            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
-
-            wrapper.setState({ rectRef: undefined });
-
-            expect(defaults.setReferenceShape).toHaveBeenCalledTimes(1);
-        });
     });
 });

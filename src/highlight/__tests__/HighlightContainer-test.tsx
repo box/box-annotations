@@ -42,7 +42,7 @@ describe('HighlightContainer', () => {
                 selection: null,
                 setActiveAnnotationId: expect.any(Function),
                 setIsPromoting: expect.any(Function),
-                setReferenceShape: expect.any(Function),
+                setReferenceId: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 staged: null,
