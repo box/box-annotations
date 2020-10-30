@@ -21,7 +21,7 @@ export function RegionRect(props: Props, ref: React.Ref<RegionRectRef>): JSX.Ele
 
     React.useEffect(() => {
         onMount(uuidRef.current);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [onMount]);
 
     return (
         <div

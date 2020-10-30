@@ -66,7 +66,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
 
     React.useEffect(() => {
         onMount(uuidRef.current);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [onMount]);
 
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
