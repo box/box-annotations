@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactRedux from 'react-redux';
+import * as uuid from 'uuid';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { getIsCurrentFileVersion } from '../store';
@@ -12,6 +13,7 @@ type Props = {
     className?: string;
     isActive?: boolean;
     onHover?: (annotationId: string | null) => void;
+    onMount?: (uuid: string) => void;
     onSelect?: (annotationId: string) => void;
     shapes: Array<Rect>;
 };
@@ -19,7 +21,8 @@ type Props = {
 export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
-    const { annotationId, className, isActive, onHover = noop, onSelect = noop, shapes } = props;
+    const { annotationId, className, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } = props;
+    const uuidRef = React.useRef<string>(uuid.v4());
     const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -61,11 +64,16 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         event.currentTarget.focus();
     };
 
+    React.useEffect(() => {
+        onMount(uuidRef.current);
+    }, [onMount]);
+
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
+            data-ba-reference-id={uuidRef.current}
             data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"

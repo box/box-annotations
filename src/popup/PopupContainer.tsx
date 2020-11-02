@@ -13,17 +13,16 @@ import {
     Mode,
     resetCreatorAction,
     setMessageAction,
-    getCreatorReferenceShape,
+    getCreatorReferenceId,
 } from '../store';
 import { createHighlightAction } from '../highlight/actions';
-import { Shape } from '../@types';
 import { createRegionAction } from '../region';
 
 export type Props = {
     isPromoting: boolean;
     message: string;
     mode: Mode;
-    popupReference?: Shape;
+    referenceId: string | null;
     staged: CreatorItem | null;
     status: CreatorStatus;
 };
@@ -33,7 +32,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         isPromoting: getIsPromoting(state),
         message: getCreatorMessage(state),
         mode: getAnnotationMode(state),
-        popupReference: getCreatorReferenceShape(state),
+        referenceId: getCreatorReferenceId(state),
         staged: getCreatorStagedForLocation(state, location),
         status: getCreatorStatus(state),
     };

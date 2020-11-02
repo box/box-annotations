@@ -24,6 +24,7 @@ describe('PopupContainer', () => {
             expect(wrapper.find(PopupLayer).props()).toMatchObject({
                 isPromoting: false,
                 mode: Mode.NONE,
+                referenceId: null,
                 staged: null,
                 status: CreatorStatus.init,
                 store: defaults.store,

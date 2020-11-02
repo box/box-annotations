@@ -5,7 +5,7 @@ import {
     resetCreatorAction,
     setCursorAction,
     setMessageAction,
-    setReferenceShapeAction,
+    setReferenceIdAction,
     setStagedAction,
     setStatusAction,
 } from './actions';
@@ -15,6 +15,7 @@ export const initialState = {
     cursor: 0,
     error: null,
     message: '',
+    referenceId: null,
     staged: null,
     status: CreatorStatus.init,
 };
@@ -32,14 +33,15 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(resetCreatorAction, state => {
             state.message = '';
+            state.referenceId = null;
             state.staged = null;
             state.status = CreatorStatus.init;
         })
         .addCase(setMessageAction, (state, { payload }) => {
             state.message = payload;
         })
-        .addCase(setReferenceShapeAction, (state, { payload }) => {
-            state.referenceShape = payload;
+        .addCase(setReferenceIdAction, (state, { payload }) => {
+            state.referenceId = payload;
         })
         .addCase(setStagedAction, (state, { payload }) => {
             state.staged = payload;

@@ -2,7 +2,7 @@ import creatorState from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
 import {
     getCreatorMessage,
-    getCreatorReferenceShape,
+    getCreatorReferenceId,
     getCreatorStaged,
     getCreatorStagedForLocation,
     getCreatorStatus,
@@ -17,14 +17,9 @@ describe('store/annotations/selectors', () => {
         });
     });
 
-    describe('getCreatorReferenceShape', () => {
-        test('should return the current creator reference shape', () => {
-            expect(getCreatorReferenceShape(state)).toEqual({
-                height: 10,
-                width: 10,
-                x: 10,
-                y: 10,
-            });
+    describe('getCreatorReferenceId', () => {
+        test('should return the current creator reference id', () => {
+            expect(getCreatorReferenceId(state)).toEqual('100001');
         });
     });
 

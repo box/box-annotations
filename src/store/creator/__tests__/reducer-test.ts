@@ -4,9 +4,10 @@ import { createAnnotationAction } from '../../annotations';
 import { CreatorStatus } from '../types';
 import { NewAnnotation } from '../../../@types';
 import {
+    resetCreatorAction,
     setCursorAction,
     setMessageAction,
-    setReferenceShapeAction,
+    setReferenceIdAction,
     setStagedAction,
     setStatusAction,
 } from '../actions';
@@ -58,12 +59,12 @@ describe('store/creator/reducer', () => {
         });
     });
 
-    describe('setReferenceShapeAction', () => {
+    describe('setReferenceIdAction', () => {
         test('should set the reference shape in state', () => {
-            const payload = { height: 10, left: 10, top: 10, width: 10 } as DOMRect;
-            const newState = reducer(state, setReferenceShapeAction(payload));
+            const payload = '123123';
+            const newState = reducer(state, setReferenceIdAction(payload));
 
-            expect(newState.referenceShape).toEqual({ height: 10, width: 10, x: 10, y: 10 });
+            expect(newState.referenceId).toEqual('123123');
         });
     });
 
@@ -104,11 +105,39 @@ describe('store/creator/reducer', () => {
                 toggleAnnotationModeAction,
             );
 
-            expect(newState.cursor).toEqual(0);
-            expect(newState.error).toEqual(null);
-            expect(newState.message).toEqual('');
-            expect(newState.staged).toEqual(null);
-            expect(newState.status).toEqual(CreatorStatus.init);
+            expect(newState).toEqual({
+                cursor: 0,
+                error: null,
+                message: '',
+                referenceId: null,
+                staged: null,
+                status: CreatorStatus.init,
+            });
+        });
+    });
+
+    describe('resetCreatorAction', () => {
+        test('should reset some of the creator state', () => {
+            const error = new Error('error');
+            const newState = reducer(
+                {
+                    ...state,
+                    cursor: 1,
+                    error,
+                    referenceId: '123',
+                    status: CreatorStatus.rejected,
+                },
+                resetCreatorAction,
+            );
+
+            expect(newState).toEqual({
+                cursor: 1,
+                error,
+                message: '',
+                referenceId: null,
+                staged: null,
+                status: CreatorStatus.init,
+            });
         });
     });
 });

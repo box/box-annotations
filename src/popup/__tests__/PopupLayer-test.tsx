@@ -8,7 +8,6 @@ import { Rect } from '../../@types';
 jest.mock('../../components/Popups/PopupReply');
 
 describe('PopupLayer', () => {
-    const popupReference = { height: 10, width: 10, x: 10, y: 10 };
     const getRect = (): Rect => ({
         type: 'rect',
         height: 50,
@@ -31,7 +30,7 @@ describe('PopupLayer', () => {
         location: 1,
         message: '',
         mode: Mode.HIGHLIGHT,
-        popupReference,
+        referenceId: '123',
         resetCreator: jest.fn(),
         setMessage: jest.fn(),
         staged: getStagedHighlight(),
@@ -39,18 +38,8 @@ describe('PopupLayer', () => {
     };
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...defaults} {...props} />);
 
-    const mockSetReference = jest.fn();
-    const mockReference = {
-        getBoundingClientRect: () => ({
-            height: 10,
-            width: 10,
-            top: 10,
-            left: 10,
-        }),
-    };
-
     beforeEach(() => {
-        jest.spyOn(React, 'useState').mockImplementation(() => [mockReference, mockSetReference]);
+        document.body.innerHTML = `<div data-ba-reference-id="${defaults.referenceId}"></div>`;
     });
 
     describe('render()', () => {

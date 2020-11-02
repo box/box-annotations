@@ -12,7 +12,7 @@ type Props = {
     isRotated: boolean;
     location: number;
     resetCreator: () => void;
-    setReferenceShape: (rect: DOMRect) => void;
+    setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
@@ -31,16 +31,6 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
     state: State = {};
 
-    componentDidUpdate(_prevProps: Props, prevState: State): void {
-        const { setReferenceShape } = this.props;
-        const { rectRef } = this.state;
-        const { rectRef: prevRectRef } = prevState;
-
-        if (prevRectRef !== rectRef && rectRef) {
-            setReferenceShape(rectRef.getBoundingClientRect());
-        }
-    }
-
     handleAbort = (): void => {
         const { resetCreator } = this.props;
         resetCreator();
@@ -52,14 +42,15 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
         setStatus(CreatorStatus.started);
     };
 
+    handleStagedMount = (uuid: string): void => {
+        const { setReferenceId } = this.props;
+        setReferenceId(uuid);
+    };
+
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus } = this.props;
         setStaged({ location, shape });
         setStatus(CreatorStatus.staged);
-    };
-
-    setRectRef = (rectRef: RegionRectRef): void => {
-        this.setState({ rectRef });
     };
 
     render(): JSX.Element | null {
@@ -83,7 +74,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
                 {staged && (
                     <div className="ba-RegionCreation-target">
-                        <RegionRect ref={this.setRectRef} isActive shape={staged.shape} />
+                        <RegionRect isActive onMount={this.handleStagedMount} shape={staged.shape} />
                     </div>
                 )}
             </>

@@ -28,7 +28,7 @@ describe('HighlightAnnotations', () => {
         selection: null,
         setActiveAnnotationId: jest.fn(),
         setIsPromoting: jest.fn(),
-        setReferenceShape: jest.fn(),
+        setReferenceId: jest.fn(),
         setSelection: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),

@@ -9,7 +9,7 @@ import {
     isFeatureEnabled,
     Mode,
     resetCreatorAction,
-    setReferenceShapeAction,
+    setReferenceIdAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
@@ -36,7 +36,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 
 export const mapDispatchToProps = {
     resetCreator: resetCreatorAction,
-    setReferenceShape: setReferenceShapeAction,
+    setReferenceId: setReferenceIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

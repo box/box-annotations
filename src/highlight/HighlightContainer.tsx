@@ -17,7 +17,7 @@ import {
     SelectionItem,
     setActiveAnnotationIdAction,
     setIsPromotingAction,
-    setReferenceShapeAction,
+    setReferenceIdAction,
     setSelectionAction,
     setStagedAction,
     setStatusAction,
@@ -51,7 +51,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 export const mapDispatchToProps = {
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setIsPromoting: setIsPromotingAction,
-    setReferenceShape: setReferenceShapeAction,
+    setReferenceId: setReferenceIdAction,
     setSelection: setSelectionAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
