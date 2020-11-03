@@ -6,6 +6,8 @@ import {
     getRotation,
     getScale,
     isFeatureEnabled,
+    isDocumentFtuxCursorDisabled,
+    isImageFtuxCursorDisabled,
 } from '../selectors';
 
 describe('store/options/selectors', () => {
@@ -14,6 +16,8 @@ describe('store/options/selectors', () => {
         fileId: '12345',
         fileVersionId: '67890',
         isCurrentFileVersion: true,
+        isImageFtuxCursorDisabled: true,
+        isDocumentFtuxCursorDisabled: true,
         permissions: {
             can_create_annotations: true,
             can_view_annotations: true,
@@ -68,6 +72,18 @@ describe('store/options/selectors', () => {
 
         test('should return false for feature not in the features object', () => {
             expect(isFeatureEnabled({ options: optionsState }, 'nonExistentFeature')).toBe(false);
+        });
+    });
+
+    describe('isDocumentFtuxCursorDisabled', () => {
+        test('should return the current document ftux cursor disabled state', () => {
+            expect(isDocumentFtuxCursorDisabled({ options: optionsState })).toBe(false);
+        });
+    });
+
+    describe('isImageFtuxCursorDisabled', () => {
+        test('should return the current image ftux cursor disabled state', () => {
+            expect(isImageFtuxCursorDisabled({ options: optionsState })).toBe(false);
         });
     });
 });

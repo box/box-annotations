@@ -14,6 +14,7 @@ jest.mock('../regionUtil');
 
 describe('RegionCreator', () => {
     const defaults = {
+        isFtuxCursorDisabled: false,
         onAbort: jest.fn(),
         onStart: jest.fn(),
         onStop: jest.fn(),

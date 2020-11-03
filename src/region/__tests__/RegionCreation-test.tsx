@@ -12,6 +12,7 @@ jest.mock('../RegionRect');
 
 describe('RegionCreation', () => {
     const defaults = {
+        isFtuxCursorDisabled: false,
         location: 1,
         resetCreator: jest.fn(),
         setMessage: jest.fn(),

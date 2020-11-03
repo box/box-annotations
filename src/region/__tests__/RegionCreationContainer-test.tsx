@@ -10,6 +10,7 @@ jest.mock('../RegionCreation');
 
 describe('RegionCreationContainer', () => {
     const defaults = {
+        fileType: 'document',
         intl: {} as IntlShape,
         location: 1,
         store: createStore(),
@@ -22,6 +23,7 @@ describe('RegionCreationContainer', () => {
 
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(RegionCreation).props()).toMatchObject({
+                fileType: defaults.fileType,
                 isCreating: false,
                 isDiscoverabilityEnabled: false,
                 location: 1,
