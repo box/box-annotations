@@ -7,6 +7,8 @@ import {
     getRotation,
     isCreatorStagedRegion,
     isFeatureEnabled,
+    isImageFtuxCursorDisabled,
+    isDocumentFtuxCursorDisabled,
     Mode,
     resetCreatorAction,
     setReferenceIdAction,
@@ -19,16 +21,24 @@ import withProviders from '../common/withProviders';
 export type Props = {
     isCreating: boolean;
     isDiscoverabilityEnabled: boolean;
+    isFtuxCursorDisabled: boolean;
     isRotated: boolean;
     staged: CreatorItemRegion | null;
 };
 
-export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
+export const mapStateToProps = (
+    state: AppState,
+    { fileType, location }: { fileType: string; location: number },
+): Props => {
     const staged = getCreatorStagedForLocation(state, location);
+
+    const isFtuxCursorDisabled =
+        fileType === 'document' ? isDocumentFtuxCursorDisabled(state) : isImageFtuxCursorDisabled(state);
 
     return {
         isCreating: getAnnotationMode(state) === Mode.REGION,
         isDiscoverabilityEnabled: isFeatureEnabled(state, 'discoverability'),
+        isFtuxCursorDisabled,
         isRotated: !!getRotation(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
     };

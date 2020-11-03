@@ -10,6 +10,9 @@ export default class RegionManager extends BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<RegionCreationContainer location={this.location} {...props} />, this.reactEl);
+        ReactDOM.render(
+            <RegionCreationContainer fileType={this.fileType} location={this.location} {...props} />,
+            this.reactEl,
+        );
     }
 }

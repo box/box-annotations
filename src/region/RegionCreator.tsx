@@ -16,6 +16,7 @@ enum DrawingStatus {
 
 type Props = {
     className?: string;
+    isFtuxCursorDisabled: boolean;
     onAbort: () => void;
     onStart: () => void;
     onStop: (shape: Rect) => void;
@@ -25,7 +26,13 @@ const MIN_X = 0; // Minimum region x position must be positive
 const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 
-export default function RegionCreator({ className, onAbort, onStart, onStop }: Props): JSX.Element {
+export default function RegionCreator({
+    className,
+    isFtuxCursorDisabled,
+    onAbort,
+    onStart,
+    onStop,
+}: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
@@ -255,7 +262,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             {drawingStatus === DrawingStatus.drawing && (
                 <RegionRect ref={regionRectRef} className="ba-RegionCreator-rect" isActive />
             )}
-            {drawingStatus === DrawingStatus.init && isHovering && <PopupCursor />}
+            {drawingStatus === DrawingStatus.init && isHovering && !isFtuxCursorDisabled && <PopupCursor />}
         </div>
     );
 }
