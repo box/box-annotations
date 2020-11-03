@@ -6,6 +6,8 @@ export type OptionsState = {
     fileId: string | null;
     fileVersionId: string | null;
     isCurrentFileVersion: boolean;
+    isDocumentFtuxCursorDisabled: boolean;
+    isImageFtuxCursorDisabled: boolean;
     permissions: Permissions;
     rotation: number;
     scale: number;

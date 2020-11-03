@@ -28,12 +28,12 @@ export type Props = {
 
 export const mapStateToProps = (
     state: AppState,
-    { fileType, location }: { fileType: string; location: number },
+    { fileType, location }: { fileType?: string; location: number },
 ): Props => {
     const staged = getCreatorStagedForLocation(state, location);
 
     const isFtuxCursorDisabled =
-        fileType === 'document' ? isDocumentFtuxCursorDisabled(state) : isImageFtuxCursorDisabled(state);
+        fileType && fileType === 'document' ? isDocumentFtuxCursorDisabled(state) : isImageFtuxCursorDisabled(state);
 
     return {
         isCreating: getAnnotationMode(state) === Mode.REGION,

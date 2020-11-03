@@ -9,6 +9,7 @@ import './RegionCreation.scss';
 type Props = {
     isCreating: boolean;
     isDiscoverabilityEnabled: boolean;
+    isFtuxCursorDisabled: boolean;
     isRotated: boolean;
     location: number;
     resetCreator: () => void;
