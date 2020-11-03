@@ -36,8 +36,6 @@ export type Options = {
     hasTouch?: boolean;
     initialMode?: store.Mode;
     intl: IntlOptions;
-    isDocumentFtuxCursorDisabled: boolean;
-    isImageFtuxCursorDisabled: boolean;
     locale?: string;
     token: string;
 };
