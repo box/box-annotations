@@ -35,6 +35,8 @@ describe('BaseAnnotator', () => {
         intl: {
             messages: {},
         },
+        isDocumentFtuxCursorDisabled: false,
+        isImageFtuxCursorDisabled: false,
         locale: 'en-US',
         token: '1234567890',
     };
@@ -80,6 +82,8 @@ describe('BaseAnnotator', () => {
                             fileId: '12345',
                             fileVersionId: '98765',
                             isCurrentFileVersion: true,
+                            isDocumentFtuxCursorDisabled: false,
+                            isImageFtuxCursorDisabled: false,
                             permissions: {
                                 can_create_annotations: true,
                                 can_view_annotations: true,
@@ -108,6 +112,8 @@ describe('BaseAnnotator', () => {
                         fileId: '12345',
                         fileVersionId: '456',
                         isCurrentFileVersion: false,
+                        isDocumentFtuxCursorDisabled: false,
+                        isImageFtuxCursorDisabled: false,
                         permissions: {
                             can_create_annotations: true,
                             can_view_annotations: true,

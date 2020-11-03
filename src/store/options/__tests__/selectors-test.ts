@@ -77,13 +77,13 @@ describe('store/options/selectors', () => {
 
     describe('isDocumentFtuxCursorDisabled', () => {
         test('should return the current document ftux cursor disabled state', () => {
-            expect(isDocumentFtuxCursorDisabled({ options: optionsState })).toBe(false);
+            expect(isDocumentFtuxCursorDisabled({ options: optionsState })).toBe(true);
         });
     });
 
     describe('isImageFtuxCursorDisabled', () => {
         test('should return the current image ftux cursor disabled state', () => {
-            expect(isImageFtuxCursorDisabled({ options: optionsState })).toBe(false);
+            expect(isImageFtuxCursorDisabled({ options: optionsState })).toBe(true);
         });
     });
 });
