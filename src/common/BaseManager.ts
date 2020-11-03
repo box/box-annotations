@@ -3,11 +3,13 @@ import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 
 export type Options = {
+    fileType?: string;
     location?: number;
     referenceEl: HTMLElement;
 };
 
 export type Props = {
+    fileType?: string;
     intl: IntlShape;
     store: Store;
 };
@@ -22,9 +24,12 @@ export interface Manager {
 export default class BaseManager implements Manager {
     location: number;
 
+    fileType?: string;
+
     reactEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl }: Options) {
+    constructor({ fileType, location = 1, referenceEl }: Options) {
+        this.fileType = fileType;
         this.location = location;
         this.reactEl = this.insert(referenceEl);
 

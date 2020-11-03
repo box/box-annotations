@@ -50,7 +50,7 @@ export default class ImageAnnotator extends BaseAnnotator {
         if (this.managers.size === 0) {
             this.managers.add(new PopupManager({ referenceEl }));
             this.managers.add(new RegionManager({ referenceEl }));
-            this.managers.add(new RegionCreationManager({ referenceEl }));
+            this.managers.add(new RegionCreationManager({ fileType: 'image', referenceEl }));
         }
 
         return this.managers;

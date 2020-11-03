@@ -36,6 +36,8 @@ export type Options = {
     hasTouch?: boolean;
     initialMode?: store.Mode;
     intl: IntlOptions;
+    isDocumentFtuxCursorDisabled: boolean;
+    isImageFtuxCursorDisabled: boolean;
     locale?: string;
     token: string;
 };
@@ -78,6 +80,8 @@ export default class BaseAnnotator extends EventEmitter {
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
                 isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === currentFileVersionId,
+                isDocumentFtuxCursorDisabled: false,
+                isImageFtuxCursorDisabled: false,
                 permissions: file.permissions,
             },
         };
@@ -94,6 +98,8 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(Event.ACTIVE_SET, this.handleSetActive);
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
+        this.addListener(Event.ANNOTATIONS_DOCUMENT_EXPLICIT_CREATE_TOGGLED, this.handleSetDocumentRegionCursor);
+        this.addListener(Event.ANNOTATIONS_IMAGE_EXPLICIT_CREATE_TOGGLED, this.handleSetImageRegionCursor);
 
         // Load any required data at startup
         this.hydrate();
@@ -189,6 +195,14 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected handleSetActive = (annotationId: string | null): void => {
         this.setActiveId(annotationId);
+    };
+
+    protected handleSetDocumentRegionCursor = (): void => {
+        this.store.dispatch(store.setDocumentFtuxCursorDisabledAction());
+    };
+
+    protected handleSetImageRegionCursor = (): void => {
+        this.store.dispatch(store.setImageFtuxCursorDisabledAction());
     };
 
     protected handleSetVisible = (visibility: boolean): void => {

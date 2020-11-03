@@ -89,7 +89,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
             const referenceEl =
                 this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
-            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl }));
+            managers.add(new RegionCreationManager({ fileType: 'document', location: pageNumber, referenceEl }));
         }
 
         return managers;
