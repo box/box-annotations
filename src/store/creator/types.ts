@@ -1,4 +1,4 @@
-import { Rect, SerializedError } from '../../@types';
+import { PathGroup, Rect, SerializedError } from '../../@types';
 
 export enum CreatorStatus {
     init = 'init',
@@ -20,7 +20,11 @@ export type CreatorItemHighlight = CreatorItemBase & {
     shapes: Rect[];
 };
 
-export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | null;
+export type CreatorItemDrawing = CreatorItemBase & {
+    path_groups: Array<PathGroup>;
+};
+
+export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | CreatorItemDrawing | null;
 
 export type CreatorState = {
     cursor: number;
