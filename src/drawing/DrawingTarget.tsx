@@ -6,7 +6,7 @@ import { TargetDrawing } from '../@types';
 import { getCenter, getShape } from './drawingUtil';
 import './DrawingTarget.scss';
 
-type Props = {
+export type Props = {
     annotationId: string;
     className?: string;
     isActive?: boolean;

@@ -4,7 +4,7 @@ import DrawingTarget from '../DrawingTarget';
 import DrawingList from '../DrawingList';
 import useOutsideEvent from '../../common/useOutsideEvent';
 import { AnnotationDrawing } from '../../@types';
-import { annotations } from '../__mocks__/data';
+import { annotations } from '../__mocks__/drawingData';
 import { getShape } from '../drawingUtil';
 
 jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));

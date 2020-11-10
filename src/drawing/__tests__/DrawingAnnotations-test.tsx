@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DrawingAnnotations from '../DrawingAnnotations';
 import DrawingList from '../DrawingList';
-import { annotations } from '../__mocks__/data';
+import { annotations } from '../__mocks__/drawingData';
 
 jest.mock('../DrawingList');
 

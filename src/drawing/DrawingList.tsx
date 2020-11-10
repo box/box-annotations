@@ -14,10 +14,11 @@ export type Props = {
     onSelect?: (annotationId: string | null) => void;
 };
 
-export const filterDrawing = ({ target: { path_groups: pathGroups } }: AnnotationDrawing): boolean =>
-    pathGroups.every(({ paths }) =>
+export function filterDrawing({ target: { path_groups: pathGroups } }: AnnotationDrawing): boolean {
+    return pathGroups.every(({ paths }) =>
         paths.every(({ points }) => points.every(({ x, y }) => checkValue(x) && checkValue(y))),
     );
+}
 
 export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: targetB }: AnnotationDrawing): number {
     const { height: heightA, width: widthA } = getShape(targetA.path_groups);

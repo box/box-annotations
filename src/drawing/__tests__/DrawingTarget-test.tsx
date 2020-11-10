@@ -1,29 +1,18 @@
-import React, { MutableRefObject } from 'react';
+import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import DrawingTarget from '../DrawingTarget';
-import { annotations } from '../__mocks__/data';
+import DrawingTarget, { Props } from '../DrawingTarget';
+import { annotations } from '../__mocks__/drawingData';
 import { getShape } from '../drawingUtil';
 
 const { target: mockTarget } = annotations[0];
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
-
 describe('DrawingTarget', () => {
-    const defaults = {
+    const getDefaults = (): Props => ({
         annotationId: '123',
-        onSelect: jest.fn(),
         target: mockTarget,
-    };
-
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingTarget {...defaults} {...props} />);
-    const mockInitalRef = { current: '123' } as MutableRefObject<string>;
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockImplementation(() => mockInitalRef);
     });
+
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingTarget {...getDefaults()} {...props} />);
 
     describe('render()', () => {
         test('should render anchor with provided shape', () => {
@@ -48,12 +37,13 @@ describe('DrawingTarget', () => {
 
     describe('interactivity', () => {
         test('should call onSelect when anchor is focused', () => {
-            const wrapper = getWrapper();
+            const mockOnSelect = jest.fn();
+            const wrapper = getWrapper({ onSelect: mockOnSelect });
             const anchor = wrapper.find('a');
 
             anchor.simulate('focus');
 
-            expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
+            expect(mockOnSelect).toHaveBeenCalledWith(getDefaults().annotationId);
         });
 
         describe('handleMouseDown()', () => {
@@ -83,12 +73,13 @@ describe('DrawingTarget', () => {
             });
 
             test('should call onSelect', () => {
-                const wrapper = getWrapper();
+                const mockOnSelect = jest.fn();
+                const wrapper = getWrapper({ onSelect: mockOnSelect });
                 const anchor = wrapper.find('a');
 
                 anchor.prop('onMouseDown')!((mockEvent as unknown) as React.MouseEvent);
 
-                expect(defaults.onSelect).toHaveBeenCalledWith('123');
+                expect(mockOnSelect).toHaveBeenCalledWith('123');
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
                 expect(mockEvent.currentTarget.focus).toHaveBeenCalled();

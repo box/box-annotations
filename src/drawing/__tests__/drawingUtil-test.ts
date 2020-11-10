@@ -1,11 +1,16 @@
 import { Annotation } from '../../@types';
-import { annotations } from '../__mocks__/data';
+import { annotations } from '../__mocks__/drawingData';
 import { getCenter, getShape, isDrawing } from '../drawingUtil';
 
 describe('drawingUtil', () => {
     describe('getCenter()', () => {
-        test('should return the position of the center of the shape', () => {
-            expect(getCenter({ height: 50, width: 50, x: 0, y: 0 })).toMatchObject({ x: 25, y: 25 });
+        test.each`
+            shape                                          | result
+            ${{ height: 50, width: 50, x: 0, y: 0 }}       | ${{ x: 25, y: 25 }}
+            ${{ height: 0, width: 0, x: 0, y: 0 }}         | ${{ x: 0, y: 0 }}
+            ${{ height: 100, width: 100, x: 100, y: 100 }} | ${{ x: 150, y: 150 }}
+        `('should return the position of the center of the shape', ({ shape, result }) => {
+            expect(getCenter(shape)).toMatchObject(result);
         });
     });
 
@@ -16,6 +21,15 @@ describe('drawingUtil', () => {
                 width: 12,
                 x: 10,
                 y: 10,
+            });
+        });
+
+        test('should return zeros if no paths', () => {
+            expect(getShape([])).toMatchObject({
+                height: 0,
+                width: 0,
+                x: 0,
+                y: 0,
             });
         });
     });

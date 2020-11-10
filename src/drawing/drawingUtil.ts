@@ -7,6 +7,8 @@ export function getCenter({ height, width, x, y }: Shape): Position {
 export function getShape(pathGroups: PathGroup[]): Shape {
     let maxX = 0;
     let maxY = 0;
+    // Initialize mins with MAX_VALUE so that any possible
+    // input value of the first point can be captured by Math.min
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
 
@@ -22,10 +24,10 @@ export function getShape(pathGroups: PathGroup[]): Shape {
     });
 
     return {
-        height: maxY - minY,
-        width: maxX - minX,
-        x: minX,
-        y: minY,
+        height: Math.max(0, maxY - minY),
+        width: Math.max(0, maxX - minX),
+        x: minX === Number.MAX_VALUE ? 0 : minX,
+        y: minY === Number.MAX_VALUE ? 0 : minY,
     };
 }
 
