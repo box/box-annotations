@@ -3,7 +3,7 @@ import DrawingList from './DrawingList';
 import { AnnotationDrawing } from '../@types';
 import './DrawingAnnotations.scss';
 
-type Props = {
+export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationDrawing[];
     isCurrentFileVersion: boolean;

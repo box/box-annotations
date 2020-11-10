@@ -16,7 +16,6 @@ describe('DrawingManager', () => {
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });
-    const getLayer = (): HTMLElement => rootEl.querySelector('[data-testid="ba-Layer--drawing"]') as HTMLElement;
     const getWrapper = (options?: Partial<Options>): DrawingManager => new DrawingManager(getOptions(options));
 
     beforeEach(() => {
@@ -24,31 +23,13 @@ describe('DrawingManager', () => {
         rootEl.innerHTML = '<div class="reference" />'; // referenceEl
     });
 
-    describe('constructor', () => {
-        test('should set all necessary properties', () => {
+    describe('decorate()', () => {
+        test('should add class and testid', () => {
             const wrapper = getWrapper();
+            wrapper.decorate();
 
-            expect(wrapper.location).toEqual(1);
-            expect(wrapper.reactEl).toEqual(getLayer());
-        });
-    });
-
-    describe('destroy()', () => {
-        test('should unmount the React node and remove the root element', () => {
-            const wrapper = getWrapper();
-
-            wrapper.destroy();
-
-            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
-        });
-    });
-
-    describe('exists()', () => {
-        test('should return a boolean based on its presence in the page element', () => {
-            const wrapper = getWrapper();
-
-            expect(wrapper.exists(rootEl)).toBe(true);
-            expect(wrapper.exists(document.createElement('div'))).toBe(false);
+            expect(wrapper.reactEl.classList.contains('ba-Layer--drawing')).toBe(true);
+            expect(wrapper.reactEl.dataset.testid).toEqual('ba-Layer--drawing');
         });
     });
 
@@ -59,17 +40,6 @@ describe('DrawingManager', () => {
             wrapper.render({ intl, store: createStore() });
 
             expect(ReactDOM.render).toHaveBeenCalled();
-        });
-    });
-
-    describe('style', () => {
-        test('should assign the style object to the root element', () => {
-            const wrapper = getWrapper();
-
-            wrapper.style({ left: '5px', top: '10px' });
-
-            expect(getLayer().style.left).toEqual('5px');
-            expect(getLayer().style.top).toEqual('10px');
         });
     });
 });

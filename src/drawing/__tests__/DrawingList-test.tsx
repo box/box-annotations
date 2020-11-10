@@ -1,20 +1,18 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DrawingTarget from '../DrawingTarget';
-import DrawingList from '../DrawingList';
+import DrawingList, { Props } from '../DrawingList';
 import useOutsideEvent from '../../common/useOutsideEvent';
 import { AnnotationDrawing } from '../../@types';
 import { annotations } from '../__mocks__/drawingData';
-import { getShape } from '../drawingUtil';
 
 jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));
 
 describe('DrawingList', () => {
-    const defaults = {
+    const getDefaults = (): Props => ({
         annotations: annotations as AnnotationDrawing[],
-        onSelect: jest.fn(),
-    };
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingList {...defaults} {...props} />);
+    });
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingList {...getDefaults()} {...props} />);
     const setIsListeningValue: { current: unknown } = { current: null };
     const setIsListening = jest.fn((value: unknown): void => {
         setIsListeningValue.current = value;
@@ -55,10 +53,11 @@ describe('DrawingList', () => {
                 { id: 'anno_5', target: { path_groups: [{ paths: [{ points: [{ x: -5, y: 0 }] }] }] } },
                 { id: 'anno_6', target: { path_groups: [{ paths: [{ points: [{ x: 0, y: -5 }] }] }] } },
             ] as AnnotationDrawing[];
-            const wrapper = getWrapper({ annotations: defaults.annotations.concat(invalid) });
+            const { annotations: mockAnnotations } = getDefaults();
+            const wrapper = getWrapper({ annotations: mockAnnotations.concat(invalid) });
             const children = wrapper.find(DrawingTarget);
 
-            expect(children.length).toEqual(defaults.annotations.length);
+            expect(children.length).toEqual(mockAnnotations.length);
         });
 
         test('should render the specified annotation based on activeId', () => {
@@ -73,14 +72,9 @@ describe('DrawingList', () => {
             const wrapper = getWrapper();
             const children = wrapper.find(DrawingTarget);
 
-            const { height: height0, width: width0 } = getShape(annotations[0].target.path_groups);
-            const { height: height1, width: width1 } = getShape(annotations[1].target.path_groups);
-
-            const [larger, smaller] =
-                height0 * width0 > height1 * width1 ? annotations : [annotations[1], annotations[0]];
-
-            expect(children.get(0).props.target).toBe(larger.target);
-            expect(children.get(1).props.target).toBe(smaller.target);
+            // annotations[1] has a larger area, so renders first
+            expect(children.get(0).props.target).toBe(annotations[1].target);
+            expect(children.get(1).props.target).toBe(annotations[0].target);
         });
     });
 });
