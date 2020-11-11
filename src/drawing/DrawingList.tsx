@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingTarget from './DrawingTarget';
 import useOutsideEvent from '../common/useOutsideEvent';
 import { AnnotationDrawing } from '../@types';
@@ -31,22 +32,20 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [isListening, setIsListening] = React.useState(true);
-    const rootElRef = React.createRef<SVGSVGElement>();
+    const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
 
     // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', rootElRef, (): void => {
+    useOutsideEvent('mousedown', rootEl, (): void => {
         onSelect(null);
         setIsListening(false);
     });
-    useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
+    useOutsideEvent('mouseup', rootEl, (): void => setIsListening(true));
 
     return (
-        <svg
-            ref={rootElRef}
+        <DrawingSVG
+            ref={setRootEl}
             className={classNames(className, { 'is-listening': isListening })}
             data-resin-component="drawingList"
-            preserveAspectRatio="none"
-            viewBox="0 0 100 100"
         >
             {annotations
                 .filter(filterDrawing)
@@ -57,10 +56,11 @@ export function DrawingList({ activeId = null, annotations, className, onSelect 
                         annotationId={id}
                         isActive={activeId === id}
                         onSelect={onSelect}
+                        rootEl={rootEl}
                         target={target}
                     />
                 ))}
-        </svg>
+        </DrawingSVG>
     );
 }
 

@@ -32,7 +32,7 @@ describe('store/annotations/reducer', () => {
 
     describe('createAnnotationAction', () => {
         test('should set state when fulfilled', () => {
-            const annotation = { id: 'anno_1', type: 'annotation' };
+            const annotation = { id: 'anno_1', target: { type: 'region' }, type: 'annotation' };
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
             const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 

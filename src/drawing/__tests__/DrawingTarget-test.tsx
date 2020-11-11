@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingTarget, { Props } from '../DrawingTarget';
 import { annotations } from '../__mocks__/drawingData';
 import { getShape } from '../drawingUtil';
@@ -10,6 +11,7 @@ describe('DrawingTarget', () => {
     const getDefaults = (): Props => ({
         annotationId: '123',
         target: mockTarget,
+        rootEl: null,
     });
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingTarget {...getDefaults()} {...props} />);
@@ -32,6 +34,10 @@ describe('DrawingTarget', () => {
 
             expect(anchor.hasClass('ba-DrawingTarget')).toBe(true);
             expect(anchor.hasClass('is-active')).toBe(isActive);
+        });
+
+        test('should render correct number of DrawingPathGroup', () => {
+            expect(getWrapper().find(DrawingPathGroup).length).toEqual(2);
         });
     });
 

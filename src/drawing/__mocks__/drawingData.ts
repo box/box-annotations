@@ -5,8 +5,10 @@ export const annotations = [
             location: { type: 'page' as const, value: 1 },
             path_groups: [
                 {
+                    clientId: '1_1',
                     paths: [
                         {
+                            clientId: '1_1_1',
                             points: [
                                 { x: 10, y: 10 },
                                 { x: 11, y: 11 },
@@ -15,13 +17,15 @@ export const annotations = [
                         },
                     ],
                     stroke: {
-                        color: 'red',
+                        color: '#f00',
                         size: 1,
                     },
                 },
                 {
+                    clientId: '1_2',
                     paths: [
                         {
+                            clientId: '1_2_1',
                             points: [
                                 { x: 20, y: 20 },
                                 { x: 21, y: 21 },
@@ -30,7 +34,7 @@ export const annotations = [
                         },
                     ],
                     stroke: {
-                        color: 'black',
+                        color: '#000',
                         size: 4,
                     },
                 },
@@ -44,8 +48,10 @@ export const annotations = [
             location: { type: 'page' as const, value: 2 },
             path_groups: [
                 {
+                    clientId: '2_1',
                     paths: [
                         {
+                            clientId: '2_1_1',
                             points: [
                                 { x: 20, y: 20 },
                                 { x: 21, y: 21 },
@@ -54,13 +60,15 @@ export const annotations = [
                         },
                     ],
                     stroke: {
-                        color: 'blue',
+                        color: '#00f',
                         size: 1,
                     },
                 },
                 {
+                    clientId: '2_2',
                     paths: [
                         {
+                            clientId: '2_2_1',
                             points: [
                                 { x: 40, y: 40 },
                                 { x: 41, y: 41 },
@@ -69,7 +77,7 @@ export const annotations = [
                         },
                     ],
                     stroke: {
-                        color: 'green',
+                        color: '#0f0',
                         size: 4,
                     },
                 },

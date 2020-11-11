@@ -1,4 +1,5 @@
 import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import { addClientIds } from '../../drawing/drawingUtil';
 import { AnnotationsState } from './types';
 import {
     createAnnotationAction,
@@ -37,7 +38,25 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(annotation => {
-                state[annotation.id] = annotation;
+                let newAnnotation = annotation;
+
+                if (annotation.target.type === 'drawing') {
+                    const {
+                        target: { path_groups: pathGroups, ...targetRest },
+                        ...rest
+                    } = annotation;
+
+                    newAnnotation = {
+                        target: {
+                            // eslint-disable-next-line @typescript-eslint/camelcase
+                            path_groups: addClientIds(pathGroups),
+                            ...targetRest,
+                        },
+                        ...rest,
+                    };
+                }
+
+                state[annotation.id] = newAnnotation;
             });
         }),
 );

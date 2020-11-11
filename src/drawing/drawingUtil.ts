@@ -1,4 +1,16 @@
+import * as uuid from 'uuid';
 import { Annotation, AnnotationDrawing, PathGroup, Position, Shape } from '../@types';
+
+export function addClientIds(pathGroups: PathGroup[]): PathGroup[] {
+    return pathGroups.map(({ paths, ...groupRest }) => ({
+        clientId: uuid.v4(),
+        paths: paths.map(path => ({
+            clientId: uuid.v4(),
+            ...path,
+        })),
+        ...groupRest,
+    }));
+}
 
 export function getCenter({ height, width, x, y }: Shape): Position {
     return { x: x + width / 2, y: y + height / 2 };
@@ -37,4 +49,8 @@ export function isDrawing(annotation: Annotation): annotation is AnnotationDrawi
 
 export function centerDrawing(pathGroups: PathGroup[]): Position {
     return getCenter(getShape(pathGroups));
+}
+
+export function isVectorEffectSupported(): boolean {
+    return 'vector-effect' in document.body.style;
 }

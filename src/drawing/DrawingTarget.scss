@@ -3,5 +3,9 @@
 
     &:hover {
         cursor: pointer;
+
+        .ba-DrawingPath-decoration {
+            opacity: 1;
+        }
     }
 }

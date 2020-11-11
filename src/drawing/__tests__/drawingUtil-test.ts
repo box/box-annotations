@@ -1,8 +1,24 @@
 import { Annotation } from '../../@types';
 import { annotations } from '../__mocks__/drawingData';
-import { getCenter, getShape, isDrawing } from '../drawingUtil';
+import { addClientIds, getCenter, getShape, isDrawing } from '../drawingUtil';
 
 describe('drawingUtil', () => {
+    describe('addClientIds()', () => {
+        test('should add ids to path groups and paths', () => {
+            const pathGroups = [
+                {
+                    paths: [{ points: [] }],
+                    stroke: { color: '#000', size: 1 },
+                },
+            ];
+
+            const pathGroupsWithIds = addClientIds(pathGroups);
+
+            expect(pathGroupsWithIds[0].clientId).not.toBeUndefined();
+            expect(pathGroupsWithIds[0].paths[0].clientId).not.toBeUndefined();
+        });
+    });
+
     describe('getCenter()', () => {
         test.each`
             shape                                          | result
