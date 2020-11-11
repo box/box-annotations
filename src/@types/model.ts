@@ -31,9 +31,22 @@ export interface AnnotationRegion extends Annotation {
     target: TargetRegion;
 }
 
+export type Dimensions = {
+    height: number;
+    width: number;
+};
+
 export interface Page {
     type: 'page';
     value: number;
+}
+
+export interface Path {
+    points: Array<Position>;
+}
+export interface PathGroup {
+    paths: Array<Path>;
+    stroke: Stroke;
 }
 
 export interface Position {
@@ -79,12 +92,7 @@ export type Target = TargetDrawing | TargetHighlight | TargetPoint | TargetRegio
 
 export interface TargetDrawing {
     location: Page;
-    paths: [
-        {
-            points: [Position];
-        },
-    ];
-    stroke: Stroke;
+    path_groups: Array<PathGroup>;
     type: 'drawing';
 }
 

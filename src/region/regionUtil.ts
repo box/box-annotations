@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Annotation, AnnotationRegion, Position, Shape } from '../@types';
+import { Annotation, AnnotationRegion, Dimensions, Position, Shape } from '../@types';
 import { invertYCoordinate, Point, rotatePoint, translatePoint } from './transformUtil';
 
 // Possible rotation values as supplied by box-content-preview
@@ -9,11 +9,6 @@ const ROTATION_THRICE_DEG = -270;
 
 // Region annotation shapes are, by default, percentages, so a 100x100 space
 const DEFAULT_DIMENSIONS = { height: 100, width: 100 };
-
-export type Dimensions = {
-    height: number;
-    width: number;
-};
 
 export type Translation = {
     dx?: number;

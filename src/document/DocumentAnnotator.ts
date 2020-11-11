@@ -2,6 +2,7 @@ import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnota
 import PopupManager from '../popup/PopupManager';
 import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
+import { DrawingManager } from '../drawing';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
@@ -65,6 +66,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
             managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+
+            if (this.isFeatureEnabled('drawing')) {
+                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            }
 
             if (this.isFeatureEnabled('highlightText')) {
                 const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
