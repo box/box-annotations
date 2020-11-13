@@ -39,15 +39,19 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         event.preventDefault(); // Prevents focus from leaving the button immediately in some browsers
         event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
 
-        // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing
-        // active element.
+        // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing active element.
+        // If we don't blur it, we cannot re-focus it next time, since it was already focused and never got blurred.
         if (activeElement && activeElement !== event.currentTarget && activeElement.blur) {
             activeElement.blur();
         }
 
-        event.currentTarget.focus(); // Buttons do not receive focus in Firefox and Safari on MacOS; triggers handleFocus
-
-        onSelect(annotationId);
+        if (event.currentTarget.focus) {
+            // Buttons do not receive focus in Firefox and Safari on MacOS; triggers handleFocus
+            event.currentTarget.focus();
+        } else {
+            // IE11 does not support focus function; call handleFocus directly
+            handleFocus();
+        }
     };
 
     return (
