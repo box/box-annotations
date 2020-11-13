@@ -47,7 +47,8 @@ describe('DrawingTarget', () => {
         });
 
         describe('handleMouseDown()', () => {
-            const mockEvent = {
+            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+            const getEvent = () => ({
                 buttons: 1,
                 currentTarget: {
                     focus: jest.fn(),
@@ -56,33 +57,48 @@ describe('DrawingTarget', () => {
                 nativeEvent: {
                     stopImmediatePropagation: jest.fn(),
                 },
-            };
+            });
 
             test('should do nothing if button is not MOUSE_PRIMARY', () => {
                 const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
                 const event = {
-                    ...mockEvent,
+                    ...getEvent(),
                     buttons: 2,
                 };
 
                 anchor.simulate('mousedown', event);
 
-                expect(mockEvent.preventDefault).not.toHaveBeenCalled();
-                expect(mockEvent.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
+                expect(event.preventDefault).not.toHaveBeenCalled();
+                expect(event.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
             });
 
-            test('should call onSelect', () => {
-                const mockOnSelect = jest.fn();
-                const wrapper = getWrapper({ onSelect: mockOnSelect });
+            test('should call focus if focus is supported', () => {
+                const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
+                const mockEvent = getEvent();
 
-                anchor.prop('onMouseDown')!((mockEvent as unknown) as React.MouseEvent);
+                anchor.simulate('mousedown', mockEvent);
 
-                expect(mockOnSelect).toHaveBeenCalledWith('123');
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
                 expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
+            });
+
+            test('should call onSelect if focus is not supported', () => {
+                const onSelect = jest.fn();
+                const wrapper = getWrapper({ onSelect });
+                const anchor = wrapper.find('a');
+                const event = {
+                    ...getEvent(),
+                    currentTarget: {},
+                };
+
+                anchor.simulate('mousedown', event);
+
+                expect(onSelect).toHaveBeenCalledWith('123');
+                expect(event.preventDefault).toHaveBeenCalled();
+                expect(event.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             });
 
             test('should call blur on the document.activeElement', () => {
@@ -90,7 +106,7 @@ describe('DrawingTarget', () => {
                 const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
                 const event = {
-                    ...mockEvent,
+                    ...getEvent(),
                     buttons: 1,
                 };
 
