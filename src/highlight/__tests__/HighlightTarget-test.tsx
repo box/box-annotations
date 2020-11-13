@@ -1,15 +1,10 @@
 import React, { MutableRefObject } from 'react';
 import * as ReactRedux from 'react-redux';
 import { shallow, ShallowWrapper } from 'enzyme';
-import HighlightTarget from '../HighlightTarget';
-
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
+import HighlightTarget, { Props } from '../HighlightTarget';
 
 describe('HighlightTarget', () => {
-    const defaults = {
+    const getDefaults = (): Props => ({
         annotationId: '123',
         onHover: jest.fn(),
         onSelect: jest.fn(),
@@ -22,9 +17,9 @@ describe('HighlightTarget', () => {
                 y: 5,
             },
         ],
-    };
+    });
 
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...defaults} {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...getDefaults()} {...props} />);
     const mockInitalRef = { current: '123' } as MutableRefObject<string>;
 
     beforeEach(() => {
@@ -54,16 +49,18 @@ describe('HighlightTarget', () => {
 
     describe('interactivity', () => {
         test('should call onSelect when anchor is focused', () => {
-            const wrapper = getWrapper();
+            const onSelect = jest.fn();
+            const wrapper = getWrapper({ onSelect });
             const anchor = wrapper.find('a');
 
             anchor.simulate('focus');
 
-            expect(defaults.onSelect).toHaveBeenCalledWith(defaults.annotationId);
+            expect(onSelect).toHaveBeenCalledWith('123');
         });
 
         describe('handleMouseDown()', () => {
-            const mockEvent = {
+            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+            const getEvent = () => ({
                 buttons: 1,
                 currentTarget: {
                     focus: jest.fn(),
@@ -72,70 +69,72 @@ describe('HighlightTarget', () => {
                 nativeEvent: {
                     stopImmediatePropagation: jest.fn(),
                 },
-            };
+            });
 
             test('should do nothing if button is not MOUSE_PRIMARY', () => {
                 const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
                 const event = {
-                    ...mockEvent,
+                    ...getEvent(),
                     buttons: 2,
                 };
 
                 anchor.simulate('mousedown', event);
 
-                expect(mockEvent.preventDefault).not.toHaveBeenCalled();
-                expect(mockEvent.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
+                expect(event.preventDefault).not.toHaveBeenCalled();
+                expect(event.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
             });
 
-            test('should call onSelect', () => {
+            test('should call focus if focus is supported', () => {
                 const wrapper = getWrapper();
                 const anchor = wrapper.find('a');
+                const mockEvent = getEvent();
 
-                anchor.prop('onMouseDown')!((mockEvent as unknown) as React.MouseEvent);
+                anchor.simulate('mousedown', mockEvent);
 
-                expect(defaults.onSelect).toHaveBeenCalledWith('123');
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
                 expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
             });
 
-            test('should call blur on the document.activeElement', () => {
-                const blurSpy = jest.spyOn(document.body, 'blur');
-                const wrapper = getWrapper();
+            test('should call onSelect if focus is not supported', () => {
+                const onSelect = jest.fn();
+                const wrapper = getWrapper({ onSelect });
                 const anchor = wrapper.find('a');
                 const event = {
-                    ...mockEvent,
-                    buttons: 1,
+                    ...getEvent(),
+                    currentTarget: {},
                 };
-
-                expect(document.activeElement).toBe(document.body);
 
                 anchor.simulate('mousedown', event);
 
-                expect(blurSpy).toHaveBeenCalled();
+                expect(onSelect).toHaveBeenCalledWith('123');
+                expect(event.preventDefault).toHaveBeenCalled();
+                expect(event.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             });
         });
 
         describe('handleMouseEnter()', () => {
             test('should call onHover with annotationId', () => {
-                const wrapper = getWrapper();
+                const onHover = jest.fn();
+                const wrapper = getWrapper({ onHover });
                 const anchor = wrapper.find('a');
 
                 anchor.simulate('mouseenter');
 
-                expect(defaults.onHover).toHaveBeenCalledWith(defaults.annotationId);
+                expect(onHover).toHaveBeenCalledWith('123');
             });
         });
 
         describe('handleMouseLeave()', () => {
             test('should call onHover with null', () => {
-                const wrapper = getWrapper();
+                const onHover = jest.fn();
+                const wrapper = getWrapper({ onHover });
                 const anchor = wrapper.find('a');
 
                 anchor.simulate('mouseleave');
 
-                expect(defaults.onHover).toHaveBeenCalledWith(null);
+                expect(onHover).toHaveBeenCalledWith(null);
             });
         });
     });
