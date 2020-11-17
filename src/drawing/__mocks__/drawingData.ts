@@ -1,6 +1,6 @@
 export const annotations = [
     {
-        id: 'anno_1',
+        id: 'drawing_anno_1',
         target: {
             location: { type: 'page' as const, value: 1 },
             path_groups: [
@@ -39,7 +39,7 @@ export const annotations = [
         },
     },
     {
-        id: 'anno_2',
+        id: 'drawing_anno_2',
         target: {
             location: { type: 'page' as const, value: 2 },
             path_groups: [

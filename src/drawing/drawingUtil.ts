@@ -34,3 +34,7 @@ export function getShape(pathGroups: PathGroup[]): Shape {
 export function isDrawing(annotation: Annotation): annotation is AnnotationDrawing {
     return annotation?.target?.type === 'drawing';
 }
+
+export function centerDrawing(pathGroups: PathGroup[]): Position {
+    return getCenter(getShape(pathGroups));
+}

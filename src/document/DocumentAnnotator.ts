@@ -1,12 +1,17 @@
 import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
 import PopupManager from '../popup/PopupManager';
-import { centerHighlight, isHighlight } from '../highlight/highlightUtil';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
-import { DrawingManager } from '../drawing';
+import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
+import {
+    centerHighlight,
+    HighlightCreatorManager,
+    HighlightListener,
+    HighlightManager,
+    isHighlight,
+} from '../highlight';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
-import { HighlightCreatorManager, HighlightListener, HighlightManager } from '../highlight';
 import { Manager } from '../common/BaseManager';
 import { Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
@@ -175,6 +180,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
         } else if (isHighlight(annotation)) {
             scrollToLocation(this.annotatedEl, annotationPageEl, {
                 offsets: centerHighlight(annotation.target.shapes),
+            });
+        } else if (isDrawing(annotation)) {
+            scrollToLocation(this.annotatedEl, annotationPageEl, {
+                offsets: centerDrawing(annotation.target.path_groups),
             });
         }
     }

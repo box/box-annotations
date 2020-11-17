@@ -61,7 +61,7 @@ describe('DrawingList', () => {
         });
 
         test('should render the specified annotation based on activeId', () => {
-            const wrapper = getWrapper({ activeId: 'anno_1' });
+            const wrapper = getWrapper({ activeId: 'drawing_anno_1' });
             const children = wrapper.find(DrawingTarget);
 
             expect(children.get(0).props.isActive).toBe(false);
