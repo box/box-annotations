@@ -6,6 +6,7 @@ import RegionManager from '../../region/RegionManager';
 import { Annotation, Event } from '../../@types';
 import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
+import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, Mode } from '../../store';
 import { HighlightCreatorManager, HighlightManager } from '../../highlight';
@@ -45,7 +46,7 @@ describe('DocumentAnnotator', () => {
     };
 
     const payload = {
-        entries: [...regions, highlight] as Annotation[],
+        entries: [...regions, highlight, ...drawings] as Annotation[],
         limit: 1000,
         next_marker: null,
         previous_marker: null,
@@ -300,6 +301,14 @@ describe('DocumentAnnotator', () => {
 
             annotator.scrollToAnnotation('223');
             expect(scrollToLocation).toHaveBeenCalledWith(parentEl, referenceEl, { offsets: { x: 15, y: 10 } });
+        });
+
+        test('should call scrollToLocation for drawing annotations', () => {
+            const parentEl = annotator.annotatedEl as HTMLElement;
+            const referenceEl = parentEl.querySelector('[data-page-number="1"]');
+
+            annotator.scrollToAnnotation('drawing_anno_1');
+            expect(scrollToLocation).toHaveBeenCalledWith(parentEl, referenceEl, { offsets: { x: 16, y: 16 } });
         });
     });
 
