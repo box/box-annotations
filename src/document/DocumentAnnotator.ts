@@ -30,9 +30,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
-        if (this.isFeatureEnabled('highlightText')) {
-            this.highlightListener = new HighlightListener({ getSelection, store: this.store });
-        }
+        this.highlightListener = new HighlightListener({ getSelection, store: this.store });
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
     }
@@ -76,22 +74,20 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl }));
             }
 
-            if (this.isFeatureEnabled('highlightText')) {
-                const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
+            const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
-                if (textLayer) {
-                    managers.add(
-                        new HighlightCreatorManager({
-                            getSelection,
-                            referenceEl: textLayer,
-                            selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
-                            store: this.store,
-                        }),
-                    );
-                }
-
-                managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            if (textLayer) {
+                managers.add(
+                    new HighlightCreatorManager({
+                        getSelection,
+                        referenceEl: textLayer,
+                        selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
+                        store: this.store,
+                    }),
+                );
             }
+
+            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
 
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
 
