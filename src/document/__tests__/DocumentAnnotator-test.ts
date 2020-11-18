@@ -76,12 +76,8 @@ describe('DocumentAnnotator', () => {
     });
 
     describe('constructor()', () => {
-        test('should not create HighlightListener if feature is not enabled', () => {
-            expect(annotator.highlightListener).toBeUndefined();
-        });
-
-        test('should create HighlightListener if feature is enabled', () => {
-            annotator = getAnnotator({ features: { highlightText: true } });
+        test('should create HighlightListener', () => {
+            annotator = getAnnotator();
 
             expect(annotator.highlightListener).toBeInstanceOf(HighlightListener);
         });
@@ -89,7 +85,7 @@ describe('DocumentAnnotator', () => {
 
     describe('destroy()', () => {
         test('should remove event handler ', () => {
-            annotator = getAnnotator({ features: { highlightText: true } });
+            annotator = getAnnotator();
 
             jest.spyOn(annotator, 'removeListener');
             jest.spyOn(annotator.highlightListener as HighlightListener, 'destroy');
@@ -139,24 +135,13 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
-            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
-            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
-        });
-
-        test('should create HighlightManager if feature is enabled', () => {
-            annotator = getAnnotator({ features: { highlightText: true } });
-
-            const managers = annotator.getPageManagers(getPage());
-            const managerIterator = managers.values();
-
-            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
 
-        test('should create HighlightCreatorManager if feature is enabled and textLayer is present', () => {
-            annotator = getAnnotator({ features: { highlightText: true } });
+        test('should create HighlightCreatorManager if textLayer is present', () => {
+            annotator = getAnnotator();
 
             const managers = annotator.getPageManagers(getPage(2));
             const managerIterator = managers.values();
