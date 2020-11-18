@@ -22,6 +22,20 @@ const shape2: Shape = {
     y: 10,
 };
 
+const shape3: Shape = {
+    height: 1,
+    width: 1,
+    x: 1,
+    y: -2,
+};
+
+const shape4: Shape = {
+    height: 1,
+    width: 3,
+    x: -2,
+    y: -4,
+};
+
 describe('highlightUtil', () => {
     describe('getBoundingRect()', () => {
         test('should be the same rect for a single shape', () => {
@@ -34,6 +48,15 @@ describe('highlightUtil', () => {
                 width: 30,
                 x: 0,
                 y: 0,
+            });
+        });
+
+        test('should get the bounding rect for multiple shapes, even with negative y values', () => {
+            expect(getBoundingRect([shape3, shape4])).toEqual({
+                height: 3,
+                width: 4,
+                x: -2,
+                y: -4,
             });
         });
     });
@@ -131,6 +154,17 @@ describe('highlightUtil', () => {
                 width: 10,
                 x: 20,
                 y: 20,
+            });
+        });
+
+        test('should default to 0,0 if coordinates end up negative', () => {
+            const { containerRect } = selection;
+
+            expect(getShapeRelativeToContainer(shape4, containerRect)).toEqual({
+                height: 0.1,
+                width: 0.3,
+                x: 0,
+                y: 0,
             });
         });
     });
