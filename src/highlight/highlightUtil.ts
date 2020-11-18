@@ -3,8 +3,8 @@ import { Annotation, AnnotationHighlight, Position, Shape, Type } from '../@type
 export const getBoundingRect = (shapes: Shape[]): Shape => {
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
-    let maxX = Number.MIN_VALUE;
-    let maxY = Number.MIN_VALUE;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
 
     shapes.forEach(({ height, width, x, y }) => {
         const x2 = x + width;
@@ -133,10 +133,11 @@ export const getShapeRelativeToContainer = (shape: Shape, containerShape: Shape)
     const { height, width, x, y } = shape;
     const { height: containerHeight, width: containerWidth, x: containerX, y: containerY } = containerShape;
 
+    // If for some reason the x or y turns out to be negative in relation to the container, assume 0 instead
     return {
         height: (height / containerHeight) * 100,
         width: (width / containerWidth) * 100,
-        x: ((x - containerX) / containerWidth) * 100,
-        y: ((y - containerY) / containerHeight) * 100,
+        x: (Math.max(0, x - containerX) / containerWidth) * 100,
+        y: (Math.max(0, y - containerY) / containerHeight) * 100,
     };
 };
