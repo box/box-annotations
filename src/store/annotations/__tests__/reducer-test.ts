@@ -9,6 +9,16 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from '../actions';
+import { formatDrawing } from '../../../drawing/drawingUtil';
+
+jest.mock('../../../drawing/drawingUtil', () => {
+    const { isDrawing } = jest.requireActual('../../../drawing/drawingUtil');
+
+    return {
+        isDrawing,
+        formatDrawing: jest.fn().mockImplementation(() => 'formattedAnnotationDrawing'),
+    };
+});
 
 describe('store/annotations/reducer', () => {
     describe('setIsInitialized', () => {
@@ -39,6 +49,15 @@ describe('store/annotations/reducer', () => {
             expect(newState.activeId).toEqual(null);
             expect(newState.allIds).toContain(payload.entries[0].id);
             expect(newState.byId.anno_1).toEqual(payload.entries[0]);
+        });
+
+        test('should format drawing when target is drawing type', () => {
+            const annotation = { id: 'anno_1', target: { type: 'drawing' }, type: 'annotation' };
+            const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
+            const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+
+            expect(formatDrawing).toHaveBeenCalledWith(annotation);
+            expect(newState.byId.anno_1).toEqual('formattedAnnotationDrawing');
         });
     });
 

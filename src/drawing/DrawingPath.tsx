@@ -4,7 +4,7 @@ import './DrawingPath.scss';
 
 export type Props = {
     borderStrokeWidth?: number;
-    decorated?: boolean;
+    isDecorated?: boolean;
     points: Position[];
 };
 
@@ -38,11 +38,11 @@ export const getPathCommands = (points: Position[]): string => {
     return `M ${startX} ${startY} ${d}`;
 };
 
-export const DrawingPath = ({ borderStrokeWidth = 0, decorated = false, points }: Props): JSX.Element => {
+export const DrawingPath = ({ borderStrokeWidth = 0, isDecorated = false, points }: Props): JSX.Element => {
     const pathCommands = getPathCommands(points);
     return (
         <g className="ba-DrawingPath">
-            {decorated && (
+            {isDecorated && (
                 <g className="ba-DrawingPath-decoration">
                     <path
                         className="ba-DrawingPath-shadow"

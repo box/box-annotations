@@ -12,6 +12,22 @@ export function addClientIds(pathGroups: PathGroup[]): PathGroup[] {
     }));
 }
 
+export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing {
+    const {
+        target: { path_groups: pathGroups, ...targetRest },
+        ...rest
+    } = annotation;
+
+    return {
+        target: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            path_groups: addClientIds(pathGroups),
+            ...targetRest,
+        },
+        ...rest,
+    };
+}
+
 export function getCenter({ height, width, x, y }: Shape): Position {
     return { x: x + width / 2, y: y + height / 2 };
 }

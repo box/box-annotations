@@ -5,7 +5,7 @@ import DrawingPath, { getPathCommands, Props } from '../DrawingPath';
 describe('DrawingPath', () => {
     const getDefaults = (): Props => ({
         borderStrokeWidth: 3,
-        decorated: true,
+        isDecorated: true,
         points: [
             { x: 10, y: 10 },
             { x: 12, y: 12 },
@@ -29,7 +29,7 @@ describe('DrawingPath', () => {
         });
 
         test('should not render decoration if decorated is false', () => {
-            const wrapper = getWrapper({ decorated: false });
+            const wrapper = getWrapper({ isDecorated: false });
 
             expect(wrapper.find('path')).toHaveLength(1);
             expect(wrapper.exists('.ba-DrawingPath-decoration')).toBe(false);

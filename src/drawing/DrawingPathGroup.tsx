@@ -45,7 +45,7 @@ export const DrawingPathGroup = ({
             strokeWidth={strokeWidth}
         >
             {paths.map(({ clientId, points }) => (
-                <DrawingPath key={clientId} borderStrokeWidth={strokeWidthWithBorder} decorated points={points} />
+                <DrawingPath key={clientId} borderStrokeWidth={strokeWidthWithBorder} isDecorated points={points} />
             ))}
         </g>
     );
