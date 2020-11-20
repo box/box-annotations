@@ -1,6 +1,6 @@
 import reducer from '../reducer';
 import state from '../__mocks__/annotationsState';
-import { Annotation, NewAnnotation } from '../../../@types';
+import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup } from '../../../@types';
 import { APICollection } from '../../../api';
 import {
     createAnnotationAction,
@@ -9,16 +9,6 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from '../actions';
-import { formatDrawing } from '../../../drawing/drawingUtil';
-
-jest.mock('../../../drawing/drawingUtil', () => {
-    const { isDrawing } = jest.requireActual('../../../drawing/drawingUtil');
-
-    return {
-        isDrawing,
-        formatDrawing: jest.fn().mockImplementation(() => 'formattedAnnotationDrawing'),
-    };
-});
 
 describe('store/annotations/reducer', () => {
     describe('setIsInitialized', () => {
@@ -52,12 +42,27 @@ describe('store/annotations/reducer', () => {
         });
 
         test('should format drawing when target is drawing type', () => {
-            const annotation = { id: 'anno_1', target: { type: 'drawing' }, type: 'annotation' };
+            const annotation = {
+                id: 'anno_1',
+                target: {
+                    path_groups: [{ paths: [{ points: [] }], stroke: { color: '#000', size: 1 } }] as Array<PathGroup>,
+                    type: 'drawing',
+                },
+                type: 'annotation',
+            } as AnnotationDrawing;
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
             const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 
-            expect(formatDrawing).toHaveBeenCalledWith(annotation);
-            expect(newState.byId.anno_1).toEqual('formattedAnnotationDrawing');
+            expect(newState.byId.anno_1).toMatchObject({
+                target: {
+                    path_groups: [
+                        {
+                            clientId: expect.any(String),
+                            paths: [{ clientId: expect.any(String) }],
+                        },
+                    ],
+                },
+            });
         });
     });
 
