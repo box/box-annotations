@@ -1,6 +1,6 @@
 import reducer from '../reducer';
 import state from '../__mocks__/annotationsState';
-import { Annotation, NewAnnotation } from '../../../@types';
+import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup } from '../../../@types';
 import { APICollection } from '../../../api';
 import {
     createAnnotationAction,
@@ -32,13 +32,37 @@ describe('store/annotations/reducer', () => {
 
     describe('createAnnotationAction', () => {
         test('should set state when fulfilled', () => {
-            const annotation = { id: 'anno_1', type: 'annotation' };
+            const annotation = { id: 'anno_1', target: { type: 'region' }, type: 'annotation' };
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
             const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 
             expect(newState.activeId).toEqual(null);
             expect(newState.allIds).toContain(payload.entries[0].id);
             expect(newState.byId.anno_1).toEqual(payload.entries[0]);
+        });
+
+        test('should format drawing when target is drawing type', () => {
+            const annotation = {
+                id: 'anno_1',
+                target: {
+                    path_groups: [{ paths: [{ points: [] }], stroke: { color: '#000', size: 1 } }] as Array<PathGroup>,
+                    type: 'drawing',
+                },
+                type: 'annotation',
+            } as AnnotationDrawing;
+            const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
+            const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+
+            expect(newState.byId.anno_1).toMatchObject({
+                target: {
+                    path_groups: [
+                        {
+                            clientId: expect.any(String),
+                            paths: [{ clientId: expect.any(String) }],
+                        },
+                    ],
+                },
+            });
         });
     });
 

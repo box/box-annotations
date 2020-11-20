@@ -1,9 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import DrawingPathGroup from './DrawingPathGroup';
+import { DrawingSVGRef } from './DrawingSVG';
+import { getCenter, getShape } from './drawingUtil';
 import { MOUSE_PRIMARY } from '../constants';
 import { TargetDrawing } from '../@types';
-import { getCenter, getShape } from './drawingUtil';
 import './DrawingTarget.scss';
 
 export type Props = {
@@ -11,6 +13,7 @@ export type Props = {
     className?: string;
     isActive?: boolean;
     onSelect?: (annotationId: string) => void;
+    rootEl: DrawingSVGRef | null;
     target: TargetDrawing;
 };
 
@@ -22,6 +25,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         className,
         isActive = false,
         onSelect = noop,
+        rootEl,
         target: { path_groups: pathGroups },
     } = props;
     const shape = getShape(pathGroups);
@@ -73,6 +77,9 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
                 transform={`translate(-${centerX * 0.1}, -${centerY * 0.1}) scale(1.1)`}
                 {...shape}
             />
+            {pathGroups.map(pathGroup => (
+                <DrawingPathGroup key={pathGroup.clientId} isActive={isActive} pathGroup={pathGroup} rootEl={rootEl} />
+            ))}
         </a>
     );
 };

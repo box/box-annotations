@@ -1,4 +1,5 @@
 import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import { formatDrawing, isDrawing } from '../../drawing/drawingUtil';
 import { AnnotationsState } from './types';
 import {
     createAnnotationAction,
@@ -37,7 +38,7 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(annotation => {
-                state[annotation.id] = annotation;
+                state[annotation.id] = isDrawing(annotation) ? formatDrawing(annotation) : annotation;
             });
         }),
 );

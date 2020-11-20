@@ -42,9 +42,11 @@ export interface Page {
 }
 
 export interface Path {
+    clientId?: string;
     points: Array<Position>;
 }
 export interface PathGroup {
+    clientId?: string;
     paths: Array<Path>;
     stroke: Stroke;
 }
