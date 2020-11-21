@@ -13,6 +13,32 @@ export type Props = {
 
 export const DRAWING_BORDER_WIDTH = 1;
 
+export const getStrokeWidths = (
+    initialWidth: number,
+    referenceEl: DrawingSVGRef | null,
+): { strokeWidth: number; strokeWidthWithBorder: number } | null => {
+    let strokeWidth = initialWidth;
+    // A line has two sides and each side needs a border, so add DRAWING_BORDER_WIDTH * 2
+    let strokeWidthWithBorder = strokeWidth + DRAWING_BORDER_WIDTH * 2;
+
+    // "vector-effect: non-scaling-stroke" prevents stroke width to be scaled
+    // However, IE/Edge doesn't support it, so we have to manually inverse scale the stroke width
+    if (!isVectorEffectSupported()) {
+        if (!referenceEl) {
+            return null;
+        }
+        const { clientWidth } = referenceEl;
+        const scale = clientWidth / 100; // SVG viewbox is 100 * 100
+        strokeWidth /= scale;
+        strokeWidthWithBorder /= scale;
+    }
+
+    return {
+        strokeWidth,
+        strokeWidthWithBorder,
+    };
+};
+
 export const DrawingPathGroup = ({
     isActive = false,
     pathGroup: {
@@ -21,23 +47,11 @@ export const DrawingPathGroup = ({
     },
     rootEl,
 }: Props): JSX.Element => {
-    let strokeWidth = size;
-    // A line has two sides and each side needs a border, so add DRAWING_BORDER_WIDTH * 2
-    let strokeWidthWithBorder = strokeWidth + DRAWING_BORDER_WIDTH * 2;
+    const { strokeWidth, strokeWidthWithBorder } = getStrokeWidths(size, rootEl) ?? {};
 
-    // "vector-effect: non-scaling-stroke" prevents stroke width to be scaled
-    // However, IE/Edge doesn't support it, so we have to manually inverse scale the stroke width
-    if (!isVectorEffectSupported()) {
-        if (!rootEl) {
-            return <g className="ba-DrawingPathGroup" />;
-        }
-        const { clientWidth } = rootEl;
-        const scale = clientWidth / 100; // SVG viewbox is 100 * 100
-        strokeWidth /= scale;
-        strokeWidthWithBorder /= scale;
-    }
-
-    return (
+    return !strokeWidth || !strokeWidthWithBorder ? (
+        <g className="ba-DrawingPathGroup" />
+    ) : (
         <g
             className={classNames('ba-DrawingPathGroup', { 'is-active': isActive })}
             fill="transparent"

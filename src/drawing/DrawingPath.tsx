@@ -5,14 +5,16 @@ import './DrawingPath.scss';
 export type Props = {
     borderStrokeWidth?: number;
     isDecorated?: boolean;
-    points: Position[];
+    points?: Position[];
 };
+
+export type DrawingPathRef = SVGPathElement;
 
 // We use cubic Bezier curves to generate path commands for better smoothing.
 // For every data point, we generate extra two points using adjacent data points.
 // Then we use the first generated point and the data point as two control points
 // and the second generated point as the destination point to form a (C)urve command.
-export const getPathCommands = (points: Position[]): string => {
+export const getPathCommands = (points?: Position[]): string => {
     if (!points || !points.length) {
         return '';
     }
@@ -38,7 +40,8 @@ export const getPathCommands = (points: Position[]): string => {
     return `M ${startX} ${startY} ${d}`;
 };
 
-export const DrawingPath = ({ borderStrokeWidth = 0, isDecorated = false, points }: Props): JSX.Element => {
+export const DrawingPath = (props: Props, ref: React.Ref<DrawingPathRef>): JSX.Element => {
+    const { borderStrokeWidth = 0, isDecorated = false, points = [] } = props;
     const pathCommands = getPathCommands(points);
     return (
         <g className="ba-DrawingPath">
@@ -53,15 +56,17 @@ export const DrawingPath = ({ borderStrokeWidth = 0, isDecorated = false, points
                     <path
                         className="ba-DrawingPath-border"
                         d={pathCommands}
+                        fill="none"
                         stroke="#fff"
+                        strokeLinecap="round"
                         strokeWidth={borderStrokeWidth}
                         vectorEffect="non-scaling-stroke"
                     />
                 </g>
             )}
-            <path d={pathCommands} vectorEffect="non-scaling-stroke" />
+            <path ref={ref} d={pathCommands} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
         </g>
     );
 };
 
-export default DrawingPath;
+export default React.forwardRef(DrawingPath);

@@ -1,4 +1,5 @@
 export enum Mode {
+    DRAWING = 'drawing',
     HIGHLIGHT = 'highlight',
     NONE = 'none',
     REGION = 'region',

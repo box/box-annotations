@@ -1,5 +1,5 @@
 import { AppState } from '../types';
-import { CreatorItem, CreatorItemHighlight, CreatorItemRegion, CreatorStatus } from './types';
+import { CreatorItem, CreatorItemDrawing, CreatorItemHighlight, CreatorItemRegion, CreatorStatus } from './types';
 
 type State = Pick<AppState, 'creator'>;
 
@@ -13,10 +13,9 @@ export const getCreatorStagedForLocation = (state: State, location: number): Cre
 };
 export const getCreatorStatus = (state: State): CreatorStatus => state.creator.status;
 
-export const isCreatorStagedHighlight = (staged: CreatorItem | null): staged is CreatorItemHighlight => {
-    return (staged as CreatorItemHighlight)?.shapes !== undefined;
-};
-
-export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorItemRegion => {
-    return (staged as CreatorItemRegion)?.shape !== undefined;
-};
+export const isCreatorStagedDrawing = (staged: CreatorItem | null): staged is CreatorItemDrawing =>
+    (staged as CreatorItemDrawing)?.drawnPathGroups !== undefined;
+export const isCreatorStagedHighlight = (staged: CreatorItem | null): staged is CreatorItemHighlight =>
+    (staged as CreatorItemHighlight)?.shapes !== undefined;
+export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorItemRegion =>
+    (staged as CreatorItemRegion)?.shape !== undefined;
