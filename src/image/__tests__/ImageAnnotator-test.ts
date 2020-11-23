@@ -1,9 +1,11 @@
+import DrawingManager from '../../drawing/DrawingManager';
 import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
 import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
+import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
 
@@ -94,6 +96,18 @@ describe('ImageAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
+            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
+        });
+
+        test('should create DrawingManager is feature is enabled', () => {
+            annotator.destroy();
+            annotator = getAnnotator({ features: { drawing: true } });
+            const managers = annotator.getManagers(getParent(), getImage());
+            const managerIterator = managers.values();
+
+            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
+            expect(managerIterator.next().value).toBeInstanceOf(DrawingManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
         });
@@ -220,11 +234,19 @@ describe('ImageAnnotator', () => {
 
             annotator.annotatedEl = getParent();
             annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+            annotator.store.dispatch(
+                fetchAnnotationsAction.fulfilled({ ...payload, entries: drawings as Annotation[] }, 'test', undefined),
+            );
         });
 
         test('should call scrollToLocation for region annotations', () => {
             annotator.scrollToAnnotation('anno_1');
             expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getImage(), { offsets: { x: 15, y: 15 } });
+        });
+
+        test('should call scrollToLocation for drawing anntotations', () => {
+            annotator.scrollToAnnotation('drawing_anno_1');
+            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getImage(), { offsets: { x: 16, y: 16 } });
         });
 
         test('should do nothing if the annotation id is undefined or not available in the store', () => {

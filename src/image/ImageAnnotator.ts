@@ -4,6 +4,7 @@ import PopupManager from '../popup/PopupManager';
 import { getAnnotation, getRotation } from '../store';
 import { centerRegion, getTransformedShape, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
+import { DrawingManager, getShape, isDrawing } from '../drawing';
 import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
 import './ImageAnnotator.scss';
@@ -49,6 +50,9 @@ export default class ImageAnnotator extends BaseAnnotator {
 
         if (this.managers.size === 0) {
             this.managers.add(new PopupManager({ referenceEl }));
+            if (this.isFeatureEnabled('drawing')) {
+                this.managers.add(new DrawingManager({ referenceEl }));
+            }
             this.managers.add(new RegionManager({ referenceEl }));
             this.managers.add(new RegionCreationManager({ referenceEl }));
         }
@@ -112,8 +116,16 @@ export default class ImageAnnotator extends BaseAnnotator {
             return;
         }
 
+        let shape = null;
         if (isRegion(annotation)) {
-            const transformedShape = getTransformedShape(annotation.target.shape, rotation);
+            // eslint-disable-next-line prefer-destructuring
+            shape = annotation.target.shape;
+        } else if (isDrawing(annotation)) {
+            shape = getShape(annotation.target.path_groups);
+        }
+
+        if (shape) {
+            const transformedShape = getTransformedShape(shape, rotation);
 
             scrollToLocation(this.annotatedEl, referenceEl, {
                 offsets: centerRegion(transformedShape),
