@@ -1,14 +1,7 @@
 import { Rect } from '../../@types';
 import { annotation } from '../__mocks__/data';
-import {
-    centerRegion,
-    centerShape,
-    getPoints,
-    getTransformedShape,
-    isRegion,
-    styleShape,
-    selectTransformationPoint,
-} from '../regionUtil';
+import { centerRegion, centerShape, isRegion, styleShape } from '../regionUtil';
+import { getPoints, getRotatedShape, selectTransformationPoint } from '../../utils/rotate';
 
 describe('regionUtil', () => {
     const getRect = (): Rect => ({
@@ -79,7 +72,7 @@ describe('regionUtil', () => {
             'should return the transformed shape based on rotation=$rotation and reference element',
             ({ rotation, expectedShape }) => {
                 const { height: expHeight, width: expWidth, x: expX, y: expY } = expectedShape;
-                const { height, width, x = NaN, y = NaN } = getTransformedShape(regionShape, rotation) || {};
+                const { height, width, x = NaN, y = NaN } = getRotatedShape(regionShape, rotation) || {};
 
                 expect({ height, width }).toEqual({ height: expHeight, width: expWidth });
                 expect(parseValue(x)).toEqual(parseValue(expX));
@@ -88,7 +81,7 @@ describe('regionUtil', () => {
         );
 
         test('should transform -90deg shape back to an unrotated state', () => {
-            const { height, width, x, y } = getTransformedShape(regionShapeRotated90, -270);
+            const { height, width, x, y } = getRotatedShape(regionShapeRotated90, -270);
             const { height: expHeight, width: expWidth, x: expX, y: expY } = regionShape;
             expect({ height, width }).toEqual({ height: expHeight, width: expWidth });
             expect(parseValue(x)).toEqual(parseValue(expX));
