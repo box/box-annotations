@@ -226,7 +226,7 @@ describe('ImageAnnotator', () => {
     describe('scrollToAnnotation()', () => {
         beforeEach(() => {
             const payload = {
-                entries: regions as Annotation[],
+                entries: [...regions, ...drawings] as Annotation[],
                 limit: 1000,
                 next_marker: null,
                 previous_marker: null,
@@ -234,9 +234,6 @@ describe('ImageAnnotator', () => {
 
             annotator.annotatedEl = getParent();
             annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
-            annotator.store.dispatch(
-                fetchAnnotationsAction.fulfilled({ ...payload, entries: drawings as Annotation[] }, 'test', undefined),
-            );
         });
 
         test('should call scrollToLocation for region annotations', () => {
