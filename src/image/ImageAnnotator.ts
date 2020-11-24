@@ -1,9 +1,11 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import PopupManager from '../popup/PopupManager';
-import { getAnnotation, getRotation } from '../store';
-import { centerRegion, getTransformedShape, isRegion, RegionCreationManager, RegionManager } from '../region';
+import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
+import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
+import { getAnnotation, getRotation } from '../store';
+import { getRotatedPosition } from '../utils/rotate';
 import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
 import './ImageAnnotator.scss';
@@ -49,6 +51,9 @@ export default class ImageAnnotator extends BaseAnnotator {
 
         if (this.managers.size === 0) {
             this.managers.add(new PopupManager({ referenceEl }));
+            if (this.isFeatureEnabled('drawing')) {
+                this.managers.add(new DrawingManager({ referenceEl }));
+            }
             this.managers.add(new RegionManager({ referenceEl }));
             this.managers.add(new RegionCreationManager({ referenceEl }));
         }
@@ -112,11 +117,16 @@ export default class ImageAnnotator extends BaseAnnotator {
             return;
         }
 
+        let offsets = null;
         if (isRegion(annotation)) {
-            const transformedShape = getTransformedShape(annotation.target.shape, rotation);
+            offsets = centerRegion(annotation.target.shape);
+        } else if (isDrawing(annotation)) {
+            offsets = centerDrawing(annotation.target.path_groups);
+        }
 
+        if (offsets) {
             scrollToLocation(this.annotatedEl, referenceEl, {
-                offsets: centerRegion(transformedShape),
+                offsets: getRotatedPosition(offsets, rotation),
             });
         }
     }
