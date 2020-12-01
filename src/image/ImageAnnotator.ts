@@ -50,12 +50,12 @@ export default class ImageAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
-            this.managers.add(new PopupManager({ referenceEl }));
+            this.managers.add(new PopupManager({ referenceEl, store: this.store }));
             if (this.isFeatureEnabled('drawing')) {
-                this.managers.add(new DrawingManager({ referenceEl }));
+                this.managers.add(new DrawingManager({ referenceEl, store: this.store }));
             }
-            this.managers.add(new RegionManager({ referenceEl }));
-            this.managers.add(new RegionCreationManager({ referenceEl }));
+            this.managers.add(new RegionManager({ referenceEl, store: this.store }));
+            this.managers.add(new RegionCreationManager({ referenceEl, store: this.store }));
         }
 
         return this.managers;

@@ -10,7 +10,6 @@ describe('DrawingAnnotations', () => {
     const getDefaults = (): Props => ({
         activeAnnotationId: null,
         annotations: [],
-        isCurrentFileVersion: true,
         setActiveAnnotationId: jest.fn(),
     });
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingAnnotations {...getDefaults()} {...props} />);

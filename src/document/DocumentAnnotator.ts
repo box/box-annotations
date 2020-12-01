@@ -68,10 +68,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
-            managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, store: this.store }));
 
             if (this.isFeatureEnabled('drawing')) {
-                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+                managers.add(
+                    new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, store: this.store }),
+                );
             }
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
@@ -87,15 +89,17 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 );
             }
 
-            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(
+                new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, store: this.store }),
+            );
 
-            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, store: this.store }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
             const referenceEl =
                 this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
-            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl }));
+            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl, store: this.store }));
         }
 
         return managers;

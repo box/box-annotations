@@ -45,14 +45,11 @@ describe('ItemRow', () => {
         test('should add resin tags', () => {
             // mock fileId
             reduxSpy.mockReturnValueOnce('0');
-            // mock isCurrentFileVersion
-            reduxSpy.mockReturnValueOnce(true);
 
             const wrapper = getWrapper();
 
             expect(wrapper.props()).toMatchObject({
                 'data-resin-fileid': '0',
-                'data-resin-iscurrent': true,
                 'data-resin-target': 'atMention',
             });
         });

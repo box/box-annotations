@@ -1,9 +1,7 @@
 import React from 'react';
-import * as ReactRedux from 'react-redux';
 import * as uuid from 'uuid';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import { getIsCurrentFileVersion } from '../store';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
 import './HighlightTarget.scss';
@@ -23,7 +21,6 @@ export type HighlightTargetRef = HTMLAnchorElement;
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
     const { annotationId, className, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } = props;
     const uuidRef = React.useRef<string>(uuid.v4());
-    const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
         // These are needed to prevent the anchor link from being followed and updating the url location
@@ -78,7 +75,6 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             ref={ref}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
             data-ba-reference-id={uuidRef.current}
-            data-resin-iscurrent={isCurrentFileVersion}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
             data-testid={`ba-AnnotationTarget-${annotationId}`}

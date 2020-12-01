@@ -12,8 +12,10 @@ jest.mock('react-dom', () => ({
 describe('RegionCreationManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
+    const store = createStore();
     const getOptions = (options: Partial<Options> = {}): Options => ({
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
+        store,
         ...options,
     });
     const getLayer = (): HTMLElement => rootEl.querySelector('[data-testid="ba-Layer--regionCreation"]') as HTMLElement;

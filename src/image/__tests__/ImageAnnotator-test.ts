@@ -4,7 +4,7 @@ import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
 import { Annotation } from '../../@types';
-import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
+import { createStore, CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
 import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
@@ -49,6 +49,7 @@ describe('ImageAnnotator', () => {
         destroy: jest.fn(),
         exists: jest.fn(),
         render: jest.fn(),
+        store: createStore(),
         style: jest.fn(),
     };
 

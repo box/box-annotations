@@ -1,10 +1,12 @@
 import * as ReactDOM from 'react-dom';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
+import { getIsCurrentFileVersion } from '../store';
 
 export type Options = {
     location?: number;
     referenceEl: HTMLElement;
+    store: Store;
 };
 
 export type Props = {
@@ -16,6 +18,7 @@ export interface Manager {
     destroy(): void;
     exists(parentEl: HTMLElement): boolean;
     render(props: Props): void;
+    store: Store;
     style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration;
 }
 
@@ -24,8 +27,11 @@ export default class BaseManager implements Manager {
 
     reactEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl }: Options) {
+    store: Store;
+
+    constructor({ location = 1, referenceEl, store }: Options) {
         this.location = location;
+        this.store = store;
         this.reactEl = this.insert(referenceEl);
 
         this.decorate();
@@ -51,9 +57,11 @@ export default class BaseManager implements Manager {
         const parentEl = referenceEl.parentNode || documentEl;
 
         // Construct a layer element where we can inject a root React component
+        const isCurrent = getIsCurrentFileVersion(this.store.getState());
         const rootLayerEl = documentEl.createElement('div');
         rootLayerEl.classList.add('ba-Layer');
         rootLayerEl.setAttribute('data-resin-feature', 'annotations');
+        rootLayerEl.setAttribute('data-resin-iscurrent', String(isCurrent));
 
         // Insert the new layer element immediately after the reference element
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);

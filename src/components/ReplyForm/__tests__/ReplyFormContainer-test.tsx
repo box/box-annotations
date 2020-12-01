@@ -8,7 +8,6 @@ describe('ReplyFormContainer', () => {
     const defaults = {
         cursorPosition: 0,
         fileId: '0',
-        isCurrentFileVersion: true,
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -20,7 +19,6 @@ describe('ReplyFormContainer', () => {
             expect(mapStateToProps({} as AppState)).toEqual({
                 cursorPosition: 1,
                 fileId: '0',
-                isCurrentFileVersion: true,
             });
         });
     });

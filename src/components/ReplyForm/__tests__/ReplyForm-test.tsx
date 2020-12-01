@@ -17,7 +17,6 @@ describe('ReplyForm', () => {
         cursorPosition: 0,
         errors: {},
         fileId: '0',
-        isCurrentFileVersion: true,
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -63,7 +62,6 @@ describe('ReplyForm', () => {
 
         const resinTags = {
             'data-resin-fileid': defaults.fileId,
-            'data-resin-iscurrent': defaults.isCurrentFileVersion,
         };
 
         expect(cancelButton.props()).toMatchObject({
