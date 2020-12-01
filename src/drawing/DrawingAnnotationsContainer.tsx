@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import DrawingAnnotations from './DrawingAnnotations';
 import withProviders from '../common/withProviders';
+import { addStagedPathGroupAction } from '../store/drawing';
 import { AnnotationDrawing } from '../@types';
 import {
     AppState,
@@ -40,6 +41,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 };
 
 export const mapDispatchToProps = {
+    addStagedPathGroup: addStagedPathGroupAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,

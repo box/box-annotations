@@ -1,15 +1,16 @@
 import * as uuid from 'uuid';
 import { Annotation, AnnotationDrawing, PathGroup, Position, Shape } from '../@types';
 
-export function addClientIds(pathGroups: PathGroup[]): PathGroup[] {
-    return pathGroups.map(({ paths, ...groupRest }) => ({
+export function addClientIds(pathGroup: PathGroup): PathGroup {
+    const { paths, ...groupRest } = pathGroup;
+    return {
         clientId: uuid.v4(),
         paths: paths.map(path => ({
             clientId: uuid.v4(),
             ...path,
         })),
         ...groupRest,
-    }));
+    };
 }
 
 export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing {
@@ -21,7 +22,7 @@ export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing 
     return {
         target: {
             // eslint-disable-next-line @typescript-eslint/camelcase
-            path_groups: addClientIds(pathGroups),
+            path_groups: pathGroups.map(pathGroup => addClientIds(pathGroup)),
             ...targetRest,
         },
         ...rest,

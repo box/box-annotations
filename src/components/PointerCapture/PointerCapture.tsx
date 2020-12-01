@@ -20,7 +20,7 @@ type Props = {
     status: Status;
 };
 
-type PointerCaptureRef = HTMLDivElement;
+export type PointerCaptureRef = HTMLDivElement;
 
 function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.Element {
     const {
@@ -48,22 +48,25 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
 
         onDrawStart(clientX, clientY);
     };
-    const handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY || status === Status.init) {
-            return;
-        }
+    const handleMouseMove = React.useCallback(
+        ({ buttons, clientX, clientY }: MouseEvent): void => {
+            if (buttons !== MOUSE_PRIMARY || status === Status.init) {
+                return;
+            }
 
-        onDrawUpdate(clientX, clientY);
-    };
+            onDrawUpdate(clientX, clientY);
+        },
+        [onDrawUpdate, status],
+    );
     const handleMouseOut = (): void => {
         onMouseOut();
     };
     const handleMouseOver = (): void => {
         onMouseOver();
     };
-    const handleMouseUp = (): void => {
+    const handleMouseUp = React.useCallback((): void => {
         onDrawStop();
-    };
+    }, [onDrawStop]);
     const handleTouchCancel = (): void => {
         onDrawStop();
     };
@@ -89,13 +92,13 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [handleMouseMove, handleMouseUp, status]);
 
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <div
             ref={ref}
-            className={classNames(className, 'ba-PointerCapture')}
+            className={classNames(className)}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
             onMouseOut={handleMouseOut}

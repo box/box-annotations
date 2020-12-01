@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import PointerCapture, { Status as DrawingStatus } from '../components/PointerCapture/PointerCapture';
+import PointerCapture, { Status as DrawingStatus } from '../components/PointerCapture';
 import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';

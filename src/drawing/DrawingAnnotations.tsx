@@ -10,6 +10,7 @@ import './DrawingAnnotations.scss';
 
 export type Props = {
     activeAnnotationId: string | null;
+    addStagedPathGroup: (pathGroup: PathGroup) => void;
     annotations: AnnotationDrawing[];
     isCreating: boolean;
     isCurrentFileVersion: boolean;
@@ -23,6 +24,7 @@ export type Props = {
 const DrawingAnnotations = (props: Props): JSX.Element => {
     const {
         activeAnnotationId,
+        addStagedPathGroup,
         annotations,
         isCreating,
         isCurrentFileVersion,
@@ -33,7 +35,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         staged,
     } = props;
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
-    const stagedGroupRef = React.useRef<SVGGElement>(null);
     const uuidRef = React.useRef<string>(uuid.v4());
 
     const handleAnnotationActive = (annotationId: string | null): void => {
@@ -46,14 +47,18 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setStatus(CreatorStatus.started);
     };
     const handleStop = (pathGroup: PathGroup): void => {
-        const { drawnPathGroups = [] } = staged || {};
-        const payload = {
-            drawnPathGroups: drawnPathGroups.concat(pathGroup),
-            location,
-            stashedPathGroups: [],
-        };
+        // If staged is null, then we need to create the initial CreatorItemDrawing shape,
+        // otherwise, add the the path group to the existing staged shape
+        if (!staged) {
+            setStaged({
+                drawnPathGroups: [pathGroup],
+                location,
+                stashedPathGroups: [],
+            });
+        } else {
+            addStagedPathGroup(pathGroup);
+        }
 
-        setStaged(payload);
         setStatus(CreatorStatus.staged);
     };
 
@@ -69,7 +74,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
             {staged && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
-                    <g ref={stagedGroupRef} data-ba-reference-id={uuidRef.current}>
+                    <g data-ba-reference-id={uuidRef.current}>
                         {staged.drawnPathGroups.map(pathGroup => (
                             <DrawingPathGroup key={pathGroup.clientId} pathGroup={pathGroup} rootEl={stagedRootEl} />
                         ))}

@@ -1,6 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { CreatorState, CreatorStatus } from './types';
+import { addClientIds } from '../../drawing/drawingUtil';
+import { addStagedPathGroupAction } from '../drawing';
 import { createAnnotationAction } from '../annotations';
+import { CreatorState, CreatorStatus } from './types';
+import { isCreatorStagedDrawing } from './selectors';
 import {
     resetCreatorAction,
     setCursorAction,
@@ -22,6 +25,12 @@ export const initialState = {
 
 export default createReducer<CreatorState>(initialState, builder =>
     builder
+        .addCase(addStagedPathGroupAction, (state, { payload }) => {
+            if (isCreatorStagedDrawing(state.staged)) {
+                state.staged.drawnPathGroups.push(addClientIds(payload));
+                state.staged.stashedPathGroups = [];
+            }
+        })
         .addCase(createAnnotationAction.fulfilled, () => initialState)
         .addCase(createAnnotationAction.pending, state => {
             state.error = null;

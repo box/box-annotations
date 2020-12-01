@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
-import * as uuid from 'uuid';
+import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
 import DrawingPath, { DrawingPathRef, getPathCommands } from './DrawingPath';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { Status as DrawingStatus } from '../components/PointerCapture';
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const defaultStroke = {
-    color: '#4826c2',
+    color: bdlBoxBlue,
     size: 4,
 };
 
@@ -37,17 +37,34 @@ export default function DrawingCreator({
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
 
-    const getPathGroup = (): PathGroup | null => {
+    const getPoints = (): Array<Position> | null => {
         const { current: creatorEl } = creatorElRef;
         const { current: points } = capturedPathRef;
 
-        if (!creatorEl || points.length <= 1) {
+        if (!creatorEl || !points.length) {
+            return null;
+        }
+
+        const { height, width } = creatorEl.getBoundingClientRect();
+        return points.map(({ x, y }) => ({
+            x: (x / width) * 100,
+            y: (y / height) * 100,
+        }));
+    };
+
+    const getPathGroup = (): PathGroup | null => {
+        const { current: creatorEl } = creatorElRef;
+        const { current: points } = capturedPathRef;
+        const adjustedPoints = getPoints();
+
+        // If there is only one point in the points array, it is likely the user clicked
+        // instead of dragging a path so this is not considered a path group.
+        if (!creatorEl || points.length <= 1 || !adjustedPoints) {
             return null;
         }
 
         return {
-            clientId: uuid.v4(),
-            paths: [{ clientId: uuid.v4(), points }],
+            paths: [{ points: adjustedPoints }],
             stroke,
         };
     };
@@ -59,9 +76,8 @@ export default function DrawingCreator({
         }
 
         // Calculate the new position based on the mouse position less the page offset
-        // and convert to a percentage of the page
-        const { height, left, top, width } = creatorEl.getBoundingClientRect();
-        return [((x - left) / width) * 100, ((y - top) / height) * 100];
+        const { left, top } = creatorEl.getBoundingClientRect();
+        return [x - left, y - top];
     };
 
     // Drawing Lifecycle Callbacks
@@ -105,19 +121,13 @@ export default function DrawingCreator({
         renderHandleRef.current = window.requestAnimationFrame(callback);
     };
     const renderPath = (): void => {
-        const { current: creatorEl } = creatorElRef;
-        const { current: points } = capturedPathRef;
         const { current: isDirty } = drawingDirtyRef;
+        const { current: points } = capturedPathRef;
         const { current: svgPath } = drawingPathRef;
+        const adjustedPoints = getPoints();
 
-        if (!creatorEl) {
-            return;
-        }
-
-        const d = getPathCommands(points);
-
-        if (isDirty && svgPath && d.length) {
-            svgPath.setAttribute('d', d);
+        if (isDirty && svgPath && points.length && adjustedPoints) {
+            svgPath.setAttribute('d', getPathCommands(adjustedPoints));
 
             drawingDirtyRef.current = false;
         }
