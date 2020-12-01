@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import DrawingPath from '../DrawingPath';
+import DecoratedDrawingPath from '../DecoratedDrawingPath';
 import DrawingPathGroup, { Props } from '../DrawingPathGroup';
 import { annotations } from '../__mocks__/drawingData';
 import { isVectorEffectSupported } from '../drawingUtil';
@@ -14,10 +14,14 @@ const {
 } = annotations[0];
 
 describe('DrawingPathGroup', () => {
-    const getDefaults = (): Props => ({
-        pathGroup: pathGroups[0],
-        rootEl: { clientWidth: 200 } as SVGSVGElement,
-    });
+    const getDefaults = (): Props => {
+        const { paths, stroke } = pathGroups[0];
+        return {
+            paths,
+            rootEl: { clientWidth: 200 } as SVGSVGElement,
+            stroke,
+        };
+    };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingPathGroup {...getDefaults()} {...props} />);
 
@@ -27,7 +31,7 @@ describe('DrawingPathGroup', () => {
 
             expect(wrapper.prop('stroke')).toBe('#f00');
             expect(wrapper.prop('strokeWidth')).toBe(1);
-            expect(wrapper.exists(DrawingPath));
+            expect(wrapper.exists(DecoratedDrawingPath));
         });
 
         test.each([true, false])('should render classNames correctly when isActive is %s', isActive => {

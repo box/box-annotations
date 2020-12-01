@@ -75,8 +75,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
             {staged && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
                     <g data-ba-reference-id={uuidRef.current}>
-                        {staged.drawnPathGroups.map(pathGroup => (
-                            <DrawingPathGroup key={pathGroup.clientId} pathGroup={pathGroup} rootEl={stagedRootEl} />
+                        {staged.drawnPathGroups.map(({ clientId, paths, stroke }) => (
+                            <DrawingPathGroup key={clientId} paths={paths} rootEl={stagedRootEl} stroke={stroke} />
                         ))}
                     </g>
                 </DrawingSVG>

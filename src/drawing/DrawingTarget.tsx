@@ -77,8 +77,8 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
                 transform={`translate(-${centerX * 0.1}, -${centerY * 0.1}) scale(1.1)`}
                 {...shape}
             />
-            {pathGroups.map(pathGroup => (
-                <DrawingPathGroup key={pathGroup.clientId} isActive={isActive} pathGroup={pathGroup} rootEl={rootEl} />
+            {pathGroups.map(({ clientId, paths, stroke }) => (
+                <DrawingPathGroup key={clientId} isActive={isActive} paths={paths} rootEl={rootEl} stroke={stroke} />
             ))}
         </a>
     );

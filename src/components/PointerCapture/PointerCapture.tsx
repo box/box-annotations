@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { MOUSE_PRIMARY } from '../../constants';
 
@@ -98,7 +97,7 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <div
             ref={ref}
-            className={classNames(className)}
+            className={className}
             onClick={handleClick}
             onMouseDown={handleMouseDown}
             onMouseOut={handleMouseOut}

@@ -2,10 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
-import DrawingPath, { DrawingPathRef, getPathCommands } from './DrawingPath';
+import DrawingPath, { DrawingPathRef } from './DrawingPath';
+import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { Status as DrawingStatus } from '../components/PointerCapture';
-import { getStrokeWidths } from './DrawingPathGroup';
+import { getPathCommands } from './DecoratedDrawingPath';
 import { PathGroup, Position, Stroke } from '../@types';
 import './DrawingCreator.scss';
 
@@ -150,8 +151,6 @@ export default function DrawingCreator({
         };
     }, [drawingStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const { strokeWidth } = getStrokeWidths(stroke.size, drawingSVGRef.current) ?? {};
-
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <PointerCapture
@@ -164,9 +163,9 @@ export default function DrawingCreator({
             status={drawingStatus}
         >
             <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current">
-                <g fill="transparent" stroke={stroke.color} strokeWidth={strokeWidth}>
-                    {drawingStatus === DrawingStatus.drawing && <DrawingPath ref={drawingPathRef} />}
-                </g>
+                <DrawingPathGroup rootEl={drawingSVGRef.current} stroke={stroke}>
+                    <DrawingPath ref={drawingPathRef} />
+                </DrawingPathGroup>
             </DrawingSVG>
         </PointerCapture>
     );
