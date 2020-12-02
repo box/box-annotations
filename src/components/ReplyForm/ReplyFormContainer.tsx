@@ -5,11 +5,10 @@ import { FormikBag, withFormik } from 'formik';
 import { connect } from 'react-redux';
 import ReplyForm, { ReplyFormProps } from './ReplyForm';
 import withMentionDecorator from '../ReplyField/withMentionDecorator';
-import { AppState, getCreatorCursor, getFileId } from '../../store';
+import { AppState, getCreatorCursor } from '../../store';
 
 export type PropsFromState = {
     cursorPosition: number;
-    fileId: string | null;
 };
 
 type Props = ReplyFormProps & PropsFromState;
@@ -26,7 +25,6 @@ const MAX_LENGTH = 10000;
 
 export const mapStateToProps = (state: AppState): PropsFromState => ({
     cursorPosition: getCreatorCursor(state),
-    fileId: getFileId(state),
 });
 
 export const mapPropsToErrors = (): FormErrors => ({ editorState: 'initial' });

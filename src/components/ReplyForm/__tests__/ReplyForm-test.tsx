@@ -16,7 +16,6 @@ describe('ReplyForm', () => {
     const defaults: Props = {
         cursorPosition: 0,
         errors: {},
-        fileId: '0',
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -60,16 +59,10 @@ describe('ReplyForm', () => {
         const cancelButton = wrapper.find('[data-testid="ba-Popup-cancel"]');
         const postButton = wrapper.find('[data-testid="ba-Popup-submit"]');
 
-        const resinTags = {
-            'data-resin-fileid': defaults.fileId,
-        };
-
         expect(cancelButton.props()).toMatchObject({
-            ...resinTags,
             'data-resin-target': 'cancel',
         });
         expect(postButton.props()).toMatchObject({
-            ...resinTags,
             'data-resin-target': 'post',
         });
     });

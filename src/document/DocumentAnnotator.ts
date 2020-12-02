@@ -13,7 +13,7 @@ import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
 import { Manager } from '../common/BaseManager';
-import { getIsCurrentFileVersion, Mode } from '../store';
+import { getFileId, getIsCurrentFileVersion, Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -54,11 +54,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
     }
 
     getPageManagers(pageEl: HTMLElement): Set<Manager> {
+        const fileId = getFileId(this.store.getState());
         const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);
         const managers = this.managers.get(pageNumber) || new Set();
-        const resinTags = { iscurrent: isCurrentFileVersion };
+        const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
 
         // Destroy any managers that were attached to page elements that no longer exist
         managers.forEach(manager => {

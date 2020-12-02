@@ -23,7 +23,7 @@ export type Props = ReplyFormProps &
     Pick<FormikProps<FormValues>, 'errors' | 'setFieldValue' | 'values'>;
 
 const ReplyForm = (props: Props): JSX.Element => {
-    const { errors, fileId, isPending, onCancel, onChange, setFieldValue, values } = props;
+    const { errors, isPending, onCancel, onChange, setFieldValue, values } = props;
 
     const formRef = React.useRef<HTMLFormElement>(null);
     const intl = useIntl();
@@ -83,7 +83,6 @@ const ReplyForm = (props: Props): JSX.Element => {
             </div>
             <div className="ba-Popup-footer">
                 <ReplyButton
-                    data-resin-fileid={fileId}
                     data-resin-target="cancel"
                     data-testid="ba-Popup-cancel"
                     isDisabled={isPending}
@@ -93,7 +92,6 @@ const ReplyForm = (props: Props): JSX.Element => {
                     <FormattedMessage {...messages.buttonCancel} />
                 </ReplyButton>
                 <ReplyButton
-                    data-resin-fileid={fileId}
                     data-resin-target="post"
                     data-testid="ba-Popup-submit"
                     isDisabled={hasErrors || isPending}

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as ReactRedux from 'react-redux';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { UserMini } from '../../../@types';
 import ItemRow, { Props } from '../ItemRow';
@@ -15,12 +14,6 @@ describe('ItemRow', () => {
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<ItemRow {...defaults} {...props} />);
-
-    let reduxSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-        reduxSpy = jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
-    });
 
     describe('render()', () => {
         test('should not render anything if no item name', () => {
@@ -43,13 +36,9 @@ describe('ItemRow', () => {
         });
 
         test('should add resin tags', () => {
-            // mock fileId
-            reduxSpy.mockReturnValueOnce('0');
-
             const wrapper = getWrapper();
 
             expect(wrapper.props()).toMatchObject({
-                'data-resin-fileid': '0',
                 'data-resin-target': 'atMention',
             });
         });
