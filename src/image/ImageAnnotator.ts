@@ -4,7 +4,7 @@ import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
-import { getAnnotation, getRotation } from '../store';
+import { getAnnotation, getIsCurrentFileVersion, getRotation } from '../store';
 import { getRotatedPosition } from '../utils/rotate';
 import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
@@ -42,6 +42,9 @@ export default class ImageAnnotator extends BaseAnnotator {
     }
 
     getManagers(parentEl: HTMLElement, referenceEl: HTMLElement): Set<Manager> {
+        const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
+        const resinTags = { iscurrent: isCurrentFileVersion };
+
         this.managers.forEach(manager => {
             if (!manager.exists(parentEl)) {
                 manager.destroy();
@@ -50,12 +53,12 @@ export default class ImageAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
-            this.managers.add(new PopupManager({ referenceEl, store: this.store }));
+            this.managers.add(new PopupManager({ referenceEl, resinTags }));
             if (this.isFeatureEnabled('drawing')) {
-                this.managers.add(new DrawingManager({ referenceEl, store: this.store }));
+                this.managers.add(new DrawingManager({ referenceEl, resinTags }));
             }
-            this.managers.add(new RegionManager({ referenceEl, store: this.store }));
-            this.managers.add(new RegionCreationManager({ referenceEl, store: this.store }));
+            this.managers.add(new RegionManager({ referenceEl, resinTags }));
+            this.managers.add(new RegionCreationManager({ referenceEl, resinTags }));
         }
 
         return this.managers;

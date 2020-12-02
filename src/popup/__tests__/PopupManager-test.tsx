@@ -12,10 +12,8 @@ jest.mock('react-dom', () => ({
 describe('PopupManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
-    const store = createStore();
     const getOptions = (options: Partial<Options> = {}): Options => ({
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
-        store,
         ...options,
     });
     const getLayer = (): HTMLElement => rootEl.querySelector('[data-testid="ba-Layer--popup"]') as HTMLElement;
