@@ -6,12 +6,11 @@ import './DrawingAnnotations.scss';
 export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationDrawing[];
-    isCurrentFileVersion: boolean;
     setActiveAnnotationId: (annotationId: string | null) => void;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
-    const { activeAnnotationId, annotations, isCurrentFileVersion, setActiveAnnotationId } = props;
+    const { activeAnnotationId, annotations, setActiveAnnotationId } = props;
 
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
@@ -22,7 +21,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
             activeId={activeAnnotationId}
             annotations={annotations}
             className="ba-DrawingAnnotations-list"
-            data-resin-iscurrent={isCurrentFileVersion}
             onSelect={handleAnnotationActive}
         />
     );

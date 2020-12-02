@@ -1,10 +1,14 @@
 import * as ReactDOM from 'react-dom';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
+import { applyResinTags } from '../utils/resin';
+
+export type ResinTags = Record<string, unknown>;
 
 export type Options = {
     location?: number;
     referenceEl: HTMLElement;
+    resinTags?: ResinTags;
 };
 
 export type Props = {
@@ -24,9 +28,12 @@ export default class BaseManager implements Manager {
 
     reactEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl }: Options) {
+    constructor({ location = 1, referenceEl, resinTags = {} }: Options) {
         this.location = location;
-        this.reactEl = this.insert(referenceEl);
+        this.reactEl = this.insert(referenceEl, {
+            ...resinTags,
+            feature: 'annotations',
+        });
 
         this.decorate();
     }
@@ -45,7 +52,7 @@ export default class BaseManager implements Manager {
         return parentEl.contains(this.reactEl);
     }
 
-    insert(referenceEl: HTMLElement): HTMLElement {
+    insert(referenceEl: HTMLElement, resinTags: ResinTags = {}): HTMLElement {
         // Find the nearest applicable reference and document elements
         const documentEl = referenceEl.ownerDocument || document;
         const parentEl = referenceEl.parentNode || documentEl;
@@ -53,7 +60,9 @@ export default class BaseManager implements Manager {
         // Construct a layer element where we can inject a root React component
         const rootLayerEl = documentEl.createElement('div');
         rootLayerEl.classList.add('ba-Layer');
-        rootLayerEl.setAttribute('data-resin-feature', 'annotations');
+
+        // Apply any resin tags
+        applyResinTags(rootLayerEl, resinTags);
 
         // Insert the new layer element immediately after the reference element
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);

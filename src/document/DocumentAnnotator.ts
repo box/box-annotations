@@ -13,7 +13,7 @@ import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
 import { getSelection } from './docUtil';
 import { Manager } from '../common/BaseManager';
-import { Mode } from '../store';
+import { getFileId, getIsCurrentFileVersion, Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -54,9 +54,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
     }
 
     getPageManagers(pageEl: HTMLElement): Set<Manager> {
+        const fileId = getFileId(this.store.getState());
+        const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);
         const managers = this.managers.get(pageNumber) || new Set();
+        const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
 
         // Destroy any managers that were attached to page elements that no longer exist
         managers.forEach(manager => {
@@ -68,10 +71,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
-            managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             if (this.isFeatureEnabled('drawing')) {
-                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
             }
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
@@ -87,15 +90,15 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 );
             }
 
-            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
-            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl }));
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
             const referenceEl =
                 this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
-            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl }));
+            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl, resinTags }));
         }
 
         return managers;

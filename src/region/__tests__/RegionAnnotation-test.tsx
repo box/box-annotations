@@ -87,7 +87,6 @@ describe('RegionAnnotation', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.props()).toMatchObject({
-                'data-resin-iscurrent': true,
                 'data-resin-itemid': defaults.annotationId,
                 'data-resin-target': 'highlightRegion',
             });

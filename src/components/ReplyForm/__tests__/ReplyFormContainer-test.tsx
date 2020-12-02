@@ -7,8 +7,6 @@ jest.mock('../../../store');
 describe('ReplyFormContainer', () => {
     const defaults = {
         cursorPosition: 0,
-        fileId: '0',
-        isCurrentFileVersion: true,
         isPending: false,
         onCancel: jest.fn(),
         onChange: jest.fn(),
@@ -19,8 +17,6 @@ describe('ReplyFormContainer', () => {
         test('should set props', () => {
             expect(mapStateToProps({} as AppState)).toEqual({
                 cursorPosition: 1,
-                fileId: '0',
-                isCurrentFileVersion: true,
             });
         });
     });

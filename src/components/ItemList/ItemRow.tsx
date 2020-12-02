@@ -1,8 +1,6 @@
 import * as React from 'react';
-import * as ReactRedux from 'react-redux';
 import classNames from 'classnames';
 import { Collaborator } from '../../@types';
-import { getFileId, getIsCurrentFileVersion } from '../../store';
 import './ItemRow.scss';
 
 export type Props = {
@@ -18,8 +16,6 @@ export type ItemRowRef = HTMLLIElement;
 
 const ItemRow = (props: Props, ref: React.Ref<ItemRowRef>): JSX.Element | null => {
     const { className, isActive, item: collaborator, onClick, onMouseDown, onMouseEnter } = props;
-    const fileId = ReactRedux.useSelector(getFileId);
-    const isCurrentFileVersion = ReactRedux.useSelector(getIsCurrentFileVersion);
 
     if (!collaborator || !collaborator.item || !collaborator.item.name) {
         return null;
@@ -33,8 +29,6 @@ const ItemRow = (props: Props, ref: React.Ref<ItemRowRef>): JSX.Element | null =
             ref={ref}
             aria-selected={isActive}
             className={classNames(className, 'ba-ItemRow', { 'is-active': isActive })}
-            data-resin-fileid={fileId}
-            data-resin-iscurrent={isCurrentFileVersion}
             data-resin-target="atMention"
             data-testid="ba-ItemRow"
             onClick={onClick}
