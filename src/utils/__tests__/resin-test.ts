@@ -13,7 +13,7 @@ describe('resin', () => {
             expect(stringify(value)).toEqual(expResult);
         });
 
-        test.each([{}, [1, 2, 3], noop, null])('should return null for value %s', value => {
+        test.each([{}, [1, 2, 3], noop, null, Symbol('abc')])('should return null for value %s', value => {
             expect(stringify(value)).toBe('');
         });
     });
@@ -43,6 +43,15 @@ describe('resin', () => {
             expect(element.getAttribute('data-resin-foo')).toEqual('bar');
             expect(element.getAttribute('data-resin-number')).toEqual('123');
             expect(element.getAttribute('data-resin-boolean')).toEqual('true');
+        });
+
+        test('should convert resin tag to lowercase', () => {
+            const attributes = {
+                camelCase: 'bar',
+            };
+            applyResinTags(element as HTMLElement, attributes);
+
+            expect(element.getAttribute('data-resin-camelcase')).toEqual('bar');
         });
     });
 });

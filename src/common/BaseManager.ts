@@ -3,10 +3,12 @@ import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 import { applyResinTags } from '../utils/resin';
 
+export type ResinTags = Record<string, unknown>;
+
 export type Options = {
     location?: number;
     referenceEl: HTMLElement;
-    resinTags?: Record<string, unknown>;
+    resinTags?: ResinTags;
 };
 
 export type Props = {
@@ -50,7 +52,7 @@ export default class BaseManager implements Manager {
         return parentEl.contains(this.reactEl);
     }
 
-    insert(referenceEl: HTMLElement, resinTags: Record<string, unknown> = {}): HTMLElement {
+    insert(referenceEl: HTMLElement, resinTags: ResinTags = {}): HTMLElement {
         // Find the nearest applicable reference and document elements
         const documentEl = referenceEl.ownerDocument || document;
         const parentEl = referenceEl.parentNode || documentEl;
