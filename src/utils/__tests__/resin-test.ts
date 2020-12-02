@@ -1,13 +1,7 @@
 import noop from 'lodash/noop';
-import { applyResinTags, getResinAttribute, stringify } from '../resin';
+import { applyResinTags, stringify } from '../resin';
 
 describe('resin', () => {
-    describe('getResinAttribute()', () => {
-        test('should prepend the attribute with the resin prefix', () => {
-            expect(getResinAttribute('foo')).toBe('data-resin-foo');
-        });
-    });
-
     describe('stringify()', () => {
         test.each`
             value    | expResult
@@ -20,7 +14,7 @@ describe('resin', () => {
         });
 
         test.each([{}, [1, 2, 3], noop, null])('should return null for value %s', value => {
-            expect(stringify(value)).toBeNull();
+            expect(stringify(value)).toBe('');
         });
     });
 

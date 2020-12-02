@@ -1,12 +1,8 @@
 const RESIN_PREFIX = 'data-resin-';
 
-export function getResinAttribute(name: string): string {
-    return `${RESIN_PREFIX}${name}`;
-}
-
-export function stringify(value: unknown): string | null {
+export function stringify(value: unknown): string {
     if (typeof value === 'object' || typeof value === 'function') {
-        return null;
+        return '';
     }
 
     return typeof value === 'string' ? value : String(value);
@@ -18,10 +14,10 @@ export function applyResinTags(element: HTMLElement, attributes: Record<string, 
     }
 
     Object.entries(attributes).forEach(([key, value]) => {
-        const attribute = getResinAttribute(key);
+        const attribute = `${RESIN_PREFIX}${key}`;
         const stringValue = stringify(value);
 
-        if (attribute && stringValue) {
+        if (stringValue) {
             element.setAttribute(attribute, stringValue);
         }
     });

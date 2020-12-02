@@ -26,15 +26,12 @@ export default class BaseManager implements Manager {
 
     reactEl: HTMLElement;
 
-    resinTags: Record<string, string>;
-
     constructor({ location = 1, referenceEl, resinTags = {} }: Options) {
         this.location = location;
-        this.resinTags = {
+        this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
-        };
-        this.reactEl = this.insert(referenceEl);
+        });
 
         this.decorate();
     }
@@ -53,7 +50,7 @@ export default class BaseManager implements Manager {
         return parentEl.contains(this.reactEl);
     }
 
-    insert(referenceEl: HTMLElement): HTMLElement {
+    insert(referenceEl: HTMLElement, resinTags: Record<string, unknown> = {}): HTMLElement {
         // Find the nearest applicable reference and document elements
         const documentEl = referenceEl.ownerDocument || document;
         const parentEl = referenceEl.parentNode || documentEl;
@@ -63,7 +60,7 @@ export default class BaseManager implements Manager {
         rootLayerEl.classList.add('ba-Layer');
 
         // Apply any resin tags
-        applyResinTags(rootLayerEl, this.resinTags);
+        applyResinTags(rootLayerEl, resinTags);
 
         // Insert the new layer element immediately after the reference element
         return parentEl.insertBefore(rootLayerEl, referenceEl.nextSibling);

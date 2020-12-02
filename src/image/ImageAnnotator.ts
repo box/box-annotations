@@ -4,7 +4,7 @@ import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
-import { getAnnotation, getIsCurrentFileVersion, getRotation } from '../store';
+import { getAnnotation, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
 import { getRotatedPosition } from '../utils/rotate';
 import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
@@ -42,8 +42,9 @@ export default class ImageAnnotator extends BaseAnnotator {
     }
 
     getManagers(parentEl: HTMLElement, referenceEl: HTMLElement): Set<Manager> {
+        const fileId = getFileId(this.store.getState());
         const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
-        const resinTags = { iscurrent: isCurrentFileVersion };
+        const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
 
         this.managers.forEach(manager => {
             if (!manager.exists(parentEl)) {
