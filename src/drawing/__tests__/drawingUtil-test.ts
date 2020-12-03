@@ -1,21 +1,19 @@
 import { Annotation } from '../../@types';
 import { annotations } from '../__mocks__/drawingData';
-import { addClientIds, getCenter, getShape, isDrawing } from '../drawingUtil';
+import { addClientIds, getCenter, getPathCommands, getShape, isDrawing } from '../drawingUtil';
 
 describe('drawingUtil', () => {
     describe('addClientIds()', () => {
         test('should add ids to path groups and paths', () => {
-            const pathGroups = [
-                {
-                    paths: [{ points: [] }],
-                    stroke: { color: '#000', size: 1 },
-                },
-            ];
+            const pathGroup = {
+                paths: [{ points: [] }],
+                stroke: { color: '#000', size: 1 },
+            };
 
-            const pathGroupsWithIds = addClientIds(pathGroups);
+            const pathGroupWithIds = addClientIds(pathGroup);
 
-            expect(pathGroupsWithIds[0].clientId).not.toBeUndefined();
-            expect(pathGroupsWithIds[0].paths[0].clientId).not.toBeUndefined();
+            expect(pathGroupWithIds.clientId).not.toBeUndefined();
+            expect(pathGroupWithIds.paths[0].clientId).not.toBeUndefined();
         });
     });
 
@@ -60,6 +58,21 @@ describe('drawingUtil', () => {
             ${null}      | ${false}
         `('should return $result for annotation of type $type', ({ result, type }) => {
             expect(isDrawing({ ...annotations[0], target: { type } } as Annotation)).toEqual(result);
+        });
+    });
+
+    describe('getPathCommands()', () => {
+        test('should return empty string if no points', () => {
+            expect(getPathCommands([])).toBe('');
+        });
+
+        test('should return path commands with bezier smoothing', () => {
+            const points = [
+                { x: 10, y: 10 },
+                { x: 12, y: 12 },
+                { x: 14, y: 14 },
+            ];
+            expect(getPathCommands(points)).toBe('M 10 10  C 11 11, 12 12, 13 13 ');
         });
     });
 });

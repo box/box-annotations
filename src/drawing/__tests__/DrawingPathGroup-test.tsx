@@ -1,7 +1,8 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DecoratedDrawingPath from '../DecoratedDrawingPath';
-import DrawingPathGroup, { Props } from '../DrawingPathGroup';
+import DrawingPath from '../DrawingPath';
+import DrawingPathGroup, { DRAWING_BORDER_WIDTH, Props } from '../DrawingPathGroup';
 import { annotations } from '../__mocks__/drawingData';
 import { isVectorEffectSupported } from '../drawingUtil';
 
@@ -15,9 +16,8 @@ const {
 
 describe('DrawingPathGroup', () => {
     const getDefaults = (): Props => {
-        const { paths, stroke } = pathGroups[0];
+        const { stroke } = pathGroups[0];
         return {
-            paths,
             rootEl: { clientWidth: 200 } as SVGSVGElement,
             stroke,
         };
@@ -54,6 +54,19 @@ describe('DrawingPathGroup', () => {
 
             expect(wrapper.children()).toHaveLength(0);
             expect(wrapper.exists('path')).toBe(false);
+        });
+
+        test('should use render function if provided', () => {
+            const {
+                stroke: { size },
+            } = pathGroups[0];
+            const expectedBorderWidth = size + DRAWING_BORDER_WIDTH * 2;
+            const wrapper = getWrapper({
+                children: (strokeWidthWithBorder: number) => <DrawingPath strokeWidth={strokeWidthWithBorder} />,
+            });
+
+            expect(wrapper.find(DrawingPath).exists()).toBe(true);
+            expect(wrapper.find(DrawingPath).prop('strokeWidth')).toBe(expectedBorderWidth);
         });
     });
 });

@@ -29,6 +29,8 @@ describe('DrawingAnnotationsContainer', () => {
             expect(wrapper.find(DrawingAnnotations).props()).toMatchObject({
                 activeAnnotationId: null,
                 annotations: [],
+                drawnPathGroups: [],
+                isCreating: false,
             });
         });
     });

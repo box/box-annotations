@@ -9,14 +9,14 @@ import { getPathCommands } from './drawingUtil';
 import { PathGroup, Position, Stroke } from '../@types';
 import './DrawingCreator.scss';
 
-type Props = {
+export type Props = {
     className?: string;
     onStart: () => void;
     onStop: (pathGroup: PathGroup) => void;
     stroke?: Stroke;
 };
 
-const defaultStroke = {
+export const defaultStroke = {
     color: bdlBoxBlue,
     size: 4,
 };
@@ -30,12 +30,12 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
 
-    const getPoints = (): Array<Position> | null => {
+    const getPoints = (): Array<Position> => {
         const { current: creatorEl } = creatorElRef;
         const { current: points } = capturedPointsRef;
 
         if (!creatorEl || !points.length) {
-            return null;
+            return [];
         }
 
         const { height, width } = creatorEl.getBoundingClientRect();
@@ -74,17 +74,15 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             return;
         }
 
-        const pathGroup = {
-            paths: [{ points: adjustedPoints }],
-            stroke,
-        };
-
         setDrawingStatus(DrawingStatus.init);
 
         capturedPointsRef.current = [];
         drawingDirtyRef.current = true;
 
-        onStop(pathGroup);
+        onStop({
+            paths: [{ points: adjustedPoints }],
+            stroke,
+        });
     };
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
@@ -106,9 +104,9 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const renderPath = (): void => {
         const { current: isDirty } = drawingDirtyRef;
         const { current: svgPath } = drawingPathRef;
-        const adjustedPoints = getPoints();
 
-        if (isDirty && svgPath && adjustedPoints) {
+        if (isDirty && svgPath) {
+            const adjustedPoints = getPoints();
             svgPath.setAttribute('d', getPathCommands(adjustedPoints));
 
             drawingDirtyRef.current = false;

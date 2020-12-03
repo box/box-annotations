@@ -33,7 +33,7 @@ describe('RegionCreator', () => {
 
     // Render helpers
     const getWrapper = (props = {}): ReactWrapper => mount(<RegionCreator {...defaults} {...props} />);
-    const getWrapperRoot = (wrapper: ReactWrapper): ReactWrapper => wrapper.find('[data-testid="ba-RegionCreator"]');
+    const getWrapperRoot = (wrapper: ReactWrapper): ReactWrapper => wrapper.find('div[data-testid="ba-RegionCreator"]');
 
     beforeEach(() => {
         jest.useFakeTimers();

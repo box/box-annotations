@@ -18,16 +18,16 @@ export default function DecoratedDrawingPath({
 }: Props): JSX.Element {
     const pathCommands = getPathCommands(points);
     return (
-        <g className="ba-DrawingPath">
+        <g className="ba-DecoratedDrawingPath">
             {isDecorated && (
-                <g className="ba-DrawingPath-decoration">
+                <g className="ba-DecoratedDrawingPath-decoration">
                     <DrawingPath
-                        className="ba-DrawingPath-shadow"
+                        className="ba-DecoratedDrawingPath-shadow"
                         filter="url(#ba-DrawingSVG-shadow)"
                         pathCommands={pathCommands}
                     />
                     <DrawingPath
-                        className="ba-DrawingPath-border"
+                        className="ba-DecoratedDrawingPath-border"
                         fill="none"
                         pathCommands={pathCommands}
                         stroke={white}

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import { DrawingSVGRef } from './DrawingSVG';
 import { getCenter, getShape } from './drawingUtil';
 import { MOUSE_PRIMARY } from '../constants';
 import { TargetDrawing } from '../@types';
 import './DrawingTarget.scss';
-import DecoratedDrawingPath from './DecoratedDrawingPath';
 
 export type Props = {
     annotationId: string;

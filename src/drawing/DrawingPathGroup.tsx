@@ -44,7 +44,7 @@ export const DrawingPathGroup = ({
             stroke={color}
             strokeWidth={strokeWidth}
         >
-            {children && typeof children === 'function' ? children(strokeWidthWithBorder) : children}
+            {typeof children === 'function' ? children(strokeWidthWithBorder) : children}
         </g>
     );
 };

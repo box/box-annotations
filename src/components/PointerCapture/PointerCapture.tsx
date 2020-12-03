@@ -11,8 +11,8 @@ export enum Status {
 export type PointerCaptureRef = HTMLDivElement;
 
 export type Props = {
-    children: React.ReactNode;
-    className: string;
+    children?: React.ReactNode;
+    className?: string;
     onDrawStart: (x: number, y: number) => void;
     onDrawStop: () => void;
     onDrawUpdate: (x: number, y: number) => void;
