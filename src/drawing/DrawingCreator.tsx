@@ -143,11 +143,13 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             onDrawUpdate={updateDraw}
             status={drawingStatus}
         >
-            <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current">
-                <DrawingPathGroup rootEl={drawingSVGRef.current} stroke={stroke}>
-                    <DrawingPath ref={drawingPathRef} />
-                </DrawingPathGroup>
-            </DrawingSVG>
+            {drawingStatus === DrawingStatus.drawing && (
+                <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current">
+                    <DrawingPathGroup rootEl={drawingSVGRef.current} stroke={stroke}>
+                        <DrawingPath ref={drawingPathRef} />
+                    </DrawingPathGroup>
+                </DrawingSVG>
+            )}
         </PointerCapture>
     );
 }

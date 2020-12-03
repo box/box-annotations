@@ -7,6 +7,7 @@ import { getCenter, getShape } from './drawingUtil';
 import { MOUSE_PRIMARY } from '../constants';
 import { TargetDrawing } from '../@types';
 import './DrawingTarget.scss';
+import DecoratedDrawingPath from './DecoratedDrawingPath';
 
 export type Props = {
     annotationId: string;
@@ -77,8 +78,20 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
                 transform={`translate(-${centerX * 0.1}, -${centerY * 0.1}) scale(1.1)`}
                 {...shape}
             />
-            {pathGroups.map(({ clientId, paths, stroke }) => (
-                <DrawingPathGroup key={clientId} isActive={isActive} paths={paths} rootEl={rootEl} stroke={stroke} />
+            {pathGroups.map(({ clientId: pathGroupClientId, paths, stroke }) => (
+                <DrawingPathGroup key={pathGroupClientId} isActive={isActive} rootEl={rootEl} stroke={stroke}>
+                    {/* Use the children render function to pass down the calculated strokeWidthWithBorder value */}
+                    {strokeWidthWithBorder =>
+                        paths.map(({ clientId: pathClientId, points }) => (
+                            <DecoratedDrawingPath
+                                key={pathClientId}
+                                borderStrokeWidth={strokeWidthWithBorder}
+                                isDecorated
+                                points={points}
+                            />
+                        ))
+                    }
+                </DrawingPathGroup>
             ))}
         </a>
     );

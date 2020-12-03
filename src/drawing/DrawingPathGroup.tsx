@@ -1,14 +1,14 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import DecoratedDrawingPath from './DecoratedDrawingPath';
 import { DrawingSVGRef } from './DrawingSVG';
 import { isVectorEffectSupported } from './drawingUtil';
-import { Path, Stroke } from '../@types';
+import { Stroke } from '../@types';
+
+export type ChildrenRenderFunction = (strokeWidthWithBorder: number) => React.ReactNode;
 
 export type Props = {
-    children?: React.ReactNode;
+    children?: React.ReactNode | ChildrenRenderFunction;
     isActive?: boolean;
-    paths?: Array<Path>;
     rootEl: DrawingSVGRef | null;
     stroke: Stroke;
 };
@@ -18,7 +18,6 @@ export const DRAWING_BORDER_WIDTH = 1;
 export const DrawingPathGroup = ({
     children,
     isActive = false,
-    paths = [],
     rootEl,
     stroke: { color, size },
 }: Props): JSX.Element => {
@@ -45,15 +44,7 @@ export const DrawingPathGroup = ({
             stroke={color}
             strokeWidth={strokeWidth}
         >
-            {children}
-            {paths.map(({ clientId, points }) => (
-                <DecoratedDrawingPath
-                    key={clientId}
-                    borderStrokeWidth={strokeWidthWithBorder}
-                    isDecorated
-                    points={points}
-                />
-            ))}
+            {children && typeof children === 'function' ? children(strokeWidthWithBorder) : children}
         </g>
     );
 };

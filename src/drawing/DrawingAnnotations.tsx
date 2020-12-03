@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as uuid from 'uuid';
+import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingList from './DrawingList';
 import DrawingCreator from './DrawingCreator';
 import DrawingPathGroup from './DrawingPathGroup';
@@ -56,11 +57,24 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 onSelect={handleAnnotationActive}
             />
 
-            {drawnPathGroups && (
+            {isCreating && drawnPathGroups && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
+                    {/* Group element to capture the bounding box around the drawn path groups */}
                     <g data-ba-reference-id={uuidRef.current}>
-                        {drawnPathGroups.map(({ clientId, paths, stroke }) => (
-                            <DrawingPathGroup key={clientId} paths={paths} rootEl={stagedRootEl} stroke={stroke} />
+                        {drawnPathGroups.map(({ clientId: pathGroupClientId, paths, stroke }) => (
+                            <DrawingPathGroup key={pathGroupClientId} rootEl={stagedRootEl} stroke={stroke}>
+                                {/* Use the children render function to pass down the calculated strokeWidthWithBorder value */}
+                                {strokeWidthWithBorder =>
+                                    paths.map(({ clientId: pathClientId, points }) => (
+                                        <DecoratedDrawingPath
+                                            key={pathClientId}
+                                            borderStrokeWidth={strokeWidthWithBorder}
+                                            isDecorated
+                                            points={points}
+                                        />
+                                    ))
+                                }
+                            </DrawingPathGroup>
                         ))}
                     </g>
                 </DrawingSVG>

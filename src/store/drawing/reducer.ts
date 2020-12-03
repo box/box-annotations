@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { toggleAnnotationModeAction } from '../common';
 import { addDrawingPathGroupAction, setDrawingLocationAction } from './actions';
 import { DrawingState } from './types';
 
@@ -17,5 +18,6 @@ export default createReducer<DrawingState>(initialState, builder =>
                 state.location = payload;
                 state.drawnPathGroups = [];
             }
-        }),
+        })
+        .addCase(toggleAnnotationModeAction, () => initialState),
 );
