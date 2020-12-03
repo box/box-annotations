@@ -1,17 +1,17 @@
 import { connect } from 'react-redux';
 import DrawingAnnotations from './DrawingAnnotations';
 import withProviders from '../common/withProviders';
-import { addStagedPathGroupAction } from '../store/drawing';
-import { AnnotationDrawing } from '../@types';
+import {
+    addDrawingPathGroupAction,
+    getDrawingDrawnPathGroupsForLocation,
+    setDrawingLocationAction,
+} from '../store/drawing';
+import { AnnotationDrawing, PathGroup } from '../@types';
 import {
     AppState,
-    CreatorItemDrawing,
     getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
-    getCreatorStagedForLocation,
-    getIsCurrentFileVersion,
-    isCreatorStagedDrawing,
     isFeatureEnabled,
     Mode,
     setActiveAnnotationIdAction,
@@ -23,26 +23,23 @@ import { isDrawing } from './drawingUtil';
 export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationDrawing[];
+    drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
-    isCurrentFileVersion: boolean;
-    staged: CreatorItemDrawing | null;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
-    const staged = getCreatorStagedForLocation(state, location);
-
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
+        drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),
         isCreating: isFeatureEnabled(state, 'drawingCreate') && getAnnotationMode(state) === Mode.DRAWING,
-        isCurrentFileVersion: getIsCurrentFileVersion(state),
-        staged: isCreatorStagedDrawing(staged) ? staged : null,
     };
 };
 
 export const mapDispatchToProps = {
-    addStagedPathGroup: addStagedPathGroupAction,
+    addDrawingPathGroup: addDrawingPathGroupAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
+    setDrawingLocation: setDrawingLocationAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

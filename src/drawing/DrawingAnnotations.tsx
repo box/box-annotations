@@ -10,29 +10,28 @@ import './DrawingAnnotations.scss';
 
 export type Props = {
     activeAnnotationId: string | null;
-    addStagedPathGroup: (pathGroup: PathGroup) => void;
+    addDrawingPathGroup: (pathGroup: PathGroup) => void;
     annotations: AnnotationDrawing[];
+    drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
-    isCurrentFileVersion: boolean;
     location: number;
     setActiveAnnotationId: (annotationId: string | null) => void;
+    setDrawingLocation: (location: number) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    staged?: CreatorItemDrawing | null;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
     const {
         activeAnnotationId,
-        addStagedPathGroup,
+        addDrawingPathGroup,
         annotations,
+        drawnPathGroups,
         isCreating,
-        isCurrentFileVersion,
         location,
         setActiveAnnotationId,
-        setStaged,
+        setDrawingLocation,
         setStatus,
-        staged,
     } = props;
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
     const uuidRef = React.useRef<string>(uuid.v4());
@@ -41,25 +40,11 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId(annotationId);
     };
     const handleStart = (): void => {
-        if (staged === null) {
-            setStaged(null);
-        }
         setStatus(CreatorStatus.started);
+        setDrawingLocation(location);
     };
     const handleStop = (pathGroup: PathGroup): void => {
-        // If staged is null, then we need to create the initial CreatorItemDrawing shape,
-        // otherwise, add the the path group to the existing staged shape
-        if (!staged) {
-            setStaged({
-                drawnPathGroups: [pathGroup],
-                location,
-                stashedPathGroups: [],
-            });
-        } else {
-            addStagedPathGroup(pathGroup);
-        }
-
-        setStatus(CreatorStatus.staged);
+        addDrawingPathGroup(pathGroup);
     };
 
     return (
@@ -68,14 +53,13 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 activeId={activeAnnotationId}
                 annotations={annotations}
                 className="ba-DrawingAnnotations-list"
-                data-resin-iscurrent={isCurrentFileVersion}
                 onSelect={handleAnnotationActive}
             />
 
-            {staged && (
+            {drawnPathGroups && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
                     <g data-ba-reference-id={uuidRef.current}>
-                        {staged.drawnPathGroups.map(({ clientId, paths, stroke }) => (
+                        {drawnPathGroups.map(({ clientId, paths, stroke }) => (
                             <DrawingPathGroup key={clientId} paths={paths} rootEl={stagedRootEl} stroke={stroke} />
                         ))}
                     </g>

@@ -8,7 +8,9 @@ export enum Status {
     init = 'init',
 }
 
-type Props = {
+export type PointerCaptureRef = HTMLDivElement;
+
+export type Props = {
     children: React.ReactNode;
     className: string;
     onDrawStart: (x: number, y: number) => void;
@@ -18,8 +20,6 @@ type Props = {
     onMouseOver?: () => void;
     status: Status;
 };
-
-export type PointerCaptureRef = HTMLDivElement;
 
 function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.Element {
     const {
@@ -47,25 +47,12 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
 
         onDrawStart(clientX, clientY);
     };
-    const handleMouseMove = React.useCallback(
-        ({ buttons, clientX, clientY }: MouseEvent): void => {
-            if (buttons !== MOUSE_PRIMARY || status === Status.init) {
-                return;
-            }
-
-            onDrawUpdate(clientX, clientY);
-        },
-        [onDrawUpdate, status],
-    );
     const handleMouseOut = (): void => {
         onMouseOut();
     };
     const handleMouseOver = (): void => {
         onMouseOver();
     };
-    const handleMouseUp = React.useCallback((): void => {
-        onDrawStop();
-    }, [onDrawStop]);
     const handleTouchCancel = (): void => {
         onDrawStop();
     };
@@ -80,6 +67,17 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
     };
 
     React.useEffect(() => {
+        const handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
+            if (buttons !== MOUSE_PRIMARY || status === Status.init) {
+                return;
+            }
+
+            onDrawUpdate(clientX, clientY);
+        };
+        const handleMouseUp = (): void => {
+            onDrawStop();
+        };
+
         // Document-level mousemove and mouseup event listeners allow the creator component to respond even if
         // the cursor leaves the drawing area before the mouse button is released, which finishes the shape
         if (status !== Status.init) {
@@ -91,7 +89,7 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [handleMouseMove, handleMouseUp, status]);
+    }, [onDrawStop, onDrawUpdate, status]);
 
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events

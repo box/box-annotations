@@ -1,18 +1,16 @@
 import React from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
-import PointerCapture, { Status as DrawingStatus } from '../components/PointerCapture';
-import { getPathCommands } from './DecoratedDrawingPath';
+import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
+import { getPathCommands } from './drawingUtil';
 import { PathGroup, Position, Stroke } from '../@types';
 import './DrawingCreator.scss';
 
 type Props = {
     className?: string;
-    onAbort?: () => void;
     onStart: () => void;
     onStop: (pathGroup: PathGroup) => void;
     stroke?: Stroke;
@@ -23,16 +21,10 @@ const defaultStroke = {
     size: 4,
 };
 
-export default function DrawingCreator({
-    className,
-    onAbort = noop,
-    onStart,
-    onStop,
-    stroke = defaultStroke,
-}: Props): JSX.Element {
+export default function DrawingCreator({ className, onStart, onStop, stroke = defaultStroke }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
-    const capturedPathRef = React.useRef<Array<Position>>([]);
-    const creatorElRef = React.useRef<HTMLDivElement>(null);
+    const capturedPointsRef = React.useRef<Array<Position>>([]);
+    const creatorElRef = React.useRef<PointerCaptureRef>(null);
     const drawingDirtyRef = React.useRef<boolean>(false);
     const drawingPathRef = React.useRef<DrawingPathRef>(null);
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
@@ -40,7 +32,7 @@ export default function DrawingCreator({
 
     const getPoints = (): Array<Position> | null => {
         const { current: creatorEl } = creatorElRef;
-        const { current: points } = capturedPathRef;
+        const { current: points } = capturedPointsRef;
 
         if (!creatorEl || !points.length) {
             return null;
@@ -51,23 +43,6 @@ export default function DrawingCreator({
             x: (x / width) * 100,
             y: (y / height) * 100,
         }));
-    };
-
-    const getPathGroup = (): PathGroup | null => {
-        const { current: creatorEl } = creatorElRef;
-        const { current: points } = capturedPathRef;
-        const adjustedPoints = getPoints();
-
-        // If there is only one point in the points array, it is likely the user clicked
-        // instead of dragging a path so this is not considered a path group.
-        if (!creatorEl || points.length <= 1 || !adjustedPoints) {
-            return null;
-        }
-
-        return {
-            paths: [{ points: adjustedPoints }],
-            stroke,
-        };
     };
     const getPosition = (x: number, y: number): [number, number] => {
         const { current: creatorEl } = creatorElRef;
@@ -87,26 +62,33 @@ export default function DrawingCreator({
 
         setDrawingStatus(DrawingStatus.dragging);
 
-        capturedPathRef.current = [{ x: x1, y: y1 }];
+        capturedPointsRef.current = [{ x: x1, y: y1 }];
         drawingDirtyRef.current = true;
     };
     const stopDraw = (): void => {
-        const pathGroup = getPathGroup();
+        const adjustedPoints = getPoints();
+
+        // If there is only one point in the points array, it is likely the user clicked
+        // instead of dragging a path so this is not considered a path group.
+        if (!adjustedPoints || adjustedPoints.length <= 1) {
+            return;
+        }
+
+        const pathGroup = {
+            paths: [{ points: adjustedPoints }],
+            stroke,
+        };
 
         setDrawingStatus(DrawingStatus.init);
 
-        capturedPathRef.current = [];
+        capturedPointsRef.current = [];
         drawingDirtyRef.current = true;
 
-        if (pathGroup) {
-            onStop(pathGroup);
-        } else {
-            onAbort();
-        }
+        onStop(pathGroup);
     };
     const updateDraw = (x: number, y: number): void => {
         const [x2, y2] = getPosition(x, y);
-        const { current: points } = capturedPathRef;
+        const { current: points } = capturedPointsRef;
 
         points.push({ x: x2, y: y2 });
         drawingDirtyRef.current = true;
@@ -123,11 +105,10 @@ export default function DrawingCreator({
     };
     const renderPath = (): void => {
         const { current: isDirty } = drawingDirtyRef;
-        const { current: points } = capturedPathRef;
         const { current: svgPath } = drawingPathRef;
         const adjustedPoints = getPoints();
 
-        if (isDirty && svgPath && points.length && adjustedPoints) {
+        if (isDirty && svgPath && adjustedPoints) {
             svgPath.setAttribute('d', getPathCommands(adjustedPoints));
 
             drawingDirtyRef.current = false;

@@ -1,25 +1,15 @@
 import React from 'react';
 
-interface Props extends React.ComponentPropsWithoutRef<'path'> {
-    className?: string;
+type Props = {
     pathCommands?: string;
-}
+} & React.SVGProps<DrawingPathRef>;
 
 export type DrawingPathRef = SVGPathElement;
 
 const DrawingPath = (props: Props, ref: React.Ref<SVGPathElement>): JSX.Element => {
-    const { className, pathCommands, ...rest } = props;
+    const { pathCommands, ...rest } = props;
 
-    return (
-        <path
-            ref={ref}
-            className={className}
-            d={pathCommands}
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-            {...rest}
-        />
-    );
+    return <path ref={ref} d={pathCommands} strokeLinecap="round" vectorEffect="non-scaling-stroke" {...rest} />;
 };
 
 export default React.forwardRef(DrawingPath);

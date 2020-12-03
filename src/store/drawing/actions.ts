@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
-import { PathGroup } from '../../@types';
+import { addClientIds } from '../../drawing/drawingUtil';
 
-export const addStagedPathGroupAction = createAction<PathGroup>('ADD_CREATOR_STAGED_PATHGROUP');
-export const redoStagedPathGroupAction = createAction('REDO_CREATOR_STAGED_PATHGROUP');
-export const undoStagedPathGroupAction = createAction('UNDO_CREATOR_STAGED_PATHGROUP');
+export const addDrawingPathGroupAction = createAction('ADD_DRAWING_PATH_GROUP', pathGroup => ({
+    payload: addClientIds(pathGroup),
+}));
+export const setDrawingLocationAction = createAction<number>('SET_DRAWING_LOCATION');

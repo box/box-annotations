@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import DrawingPath, { getPathCommands, Props } from '../DrawingPath';
+import DecoratedDrawingPath, { Props } from '../DecoratedDrawingPath';
+import { getPathCommands } from '../drawingUtil';
 
 describe('DrawingPath', () => {
     const getDefaults = (): Props => ({
@@ -13,7 +14,7 @@ describe('DrawingPath', () => {
         ],
     });
 
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingPath {...getDefaults()} {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<DecoratedDrawingPath {...getDefaults()} {...props} />);
 
     describe('render()', () => {
         test('should render path, shadow, and border', () => {

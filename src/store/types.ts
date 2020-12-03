@@ -4,6 +4,7 @@ import API from '../api';
 import { AnnotationsState } from './annotations';
 import { CommonState } from './common';
 import { CreatorState } from './creator';
+import { DrawingState } from './drawing';
 import { HighlightState } from './highlight';
 import { OptionsState } from './options';
 import { UsersState } from './users';
@@ -12,6 +13,7 @@ export type AppState = {
     annotations: AnnotationsState;
     common: CommonState;
     creator: CreatorState;
+    drawing: DrawingState;
     highlight: HighlightState;
     options: OptionsState;
     users: UsersState;
