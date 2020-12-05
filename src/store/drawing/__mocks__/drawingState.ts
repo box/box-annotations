@@ -1,4 +1,4 @@
 export default {
-    location: 0,
     drawnPathGroups: [],
+    location: 0,
 };

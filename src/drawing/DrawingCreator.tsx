@@ -106,8 +106,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         const { current: svgPath } = drawingPathRef;
 
         if (isDirty && svgPath) {
-            const adjustedPoints = getPoints();
-            svgPath.setAttribute('d', getPathCommands(adjustedPoints));
+            svgPath.setAttribute('d', getPathCommands(getPoints()));
 
             drawingDirtyRef.current = false;
         }
@@ -141,7 +140,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             onDrawUpdate={updateDraw}
             status={drawingStatus}
         >
-            {drawingStatus === DrawingStatus.drawing && (
+            {drawingStatus !== DrawingStatus.init && (
                 <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current">
                     <DrawingPathGroup rootEl={drawingSVGRef.current} stroke={stroke}>
                         <DrawingPath ref={drawingPathRef} />

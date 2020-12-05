@@ -41,9 +41,12 @@ export const getPathCommands = (points?: Position[]): string => {
         return '';
     }
 
-    const { x: startX, y: startY } = points[0];
     const d = points
         .map(({ x, y }, index, array) => {
+            if (index === 0) {
+                return `M ${x} ${y}`;
+            }
+
             const prevPoint = array[index - 1];
             const nextPoint = array[index + 1];
             if (!prevPoint || !nextPoint) {
@@ -57,9 +60,10 @@ export const getPathCommands = (points?: Position[]): string => {
 
             return `C ${xc1} ${yc1}, ${x} ${y}, ${xc2} ${yc2}`;
         })
-        .join(' ');
+        .join(' ')
+        .trim();
 
-    return `M ${startX} ${startY} ${d}`;
+    return d;
 };
 
 export function getShape(pathGroups: PathGroup[]): Shape {

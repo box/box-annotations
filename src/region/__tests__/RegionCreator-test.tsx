@@ -2,6 +2,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import { mockEvent } from '../../common/__mocks__/events';
+import PointerCapture, { Status } from '../../components/PointerCapture';
 import PopupCursor from '../../components/Popups/PopupCursor';
 import RegionCreator from '../RegionCreator';
 import useAutoScroll from '../../common/useAutoScroll';
@@ -33,7 +34,6 @@ describe('RegionCreator', () => {
 
     // Render helpers
     const getWrapper = (props = {}): ReactWrapper => mount(<RegionCreator {...defaults} {...props} />);
-    const getWrapperRoot = (wrapper: ReactWrapper): ReactWrapper => wrapper.find('div[data-testid="ba-RegionCreator"]');
 
     beforeEach(() => {
         jest.useFakeTimers();
@@ -271,19 +271,17 @@ describe('RegionCreator', () => {
 
         test('should add class and event listeners', () => {
             const wrapper = getWrapper();
-            const rootEl = getWrapperRoot(wrapper);
+            const rootEl = wrapper.find(PointerCapture);
 
-            expect(rootEl.hasClass('ba-RegionCreator')).toBe(true);
-
-            expect(rootEl.prop('onClick')).toBeDefined();
-            expect(rootEl.prop('onMouseDown')).toBeDefined();
-            expect(rootEl.prop('onMouseOut')).toBeDefined();
-            expect(rootEl.prop('onMouseOver')).toBeDefined();
-            expect(rootEl.prop('onTouchCancel')).toBeDefined();
-            expect(rootEl.prop('onTouchCancel')).toBeDefined();
-            expect(rootEl.prop('onTouchEnd')).toBeDefined();
-            expect(rootEl.prop('onTouchMove')).toBeDefined();
-            expect(rootEl.prop('onTouchStart')).toBeDefined();
+            expect(rootEl.props()).toMatchObject({
+                className: 'ba-RegionCreator',
+                onDrawStart: expect.any(Function),
+                onDrawStop: expect.any(Function),
+                onDrawUpdate: expect.any(Function),
+                onMouseOut: expect.any(Function),
+                onMouseOver: expect.any(Function),
+                status: Status.init,
+            });
         });
     });
 });

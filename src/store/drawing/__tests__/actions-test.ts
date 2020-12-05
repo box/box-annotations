@@ -1,9 +1,5 @@
-import { annotations } from '../../../drawing/__mocks__/drawingData';
 import { addDrawingPathGroupAction } from '../actions';
-
-const {
-    target: { path_groups: pathGroups },
-} = annotations[0];
+import { pathGroups } from '../../../drawing/__mocks__/drawingData';
 
 describe('store/drawing/actions', () => {
     describe('addDrawingPathGroupAction()', () => {

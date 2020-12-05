@@ -1,47 +1,51 @@
-import React, { MutableRefObject } from 'react';
-import noop from 'lodash/noop';
-import { shallow, ShallowWrapper } from 'enzyme';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { mount, ReactWrapper } from 'enzyme';
 import DrawingCreator, { defaultStroke, Props } from '../DrawingCreator';
+import DrawingPath from '../DrawingPath';
 import DrawingSVG from '../DrawingSVG';
-import PointerCapture, { Status } from '../../components/PointerCapture';
-import { Position } from '../../@types';
-import { DrawingPathRef } from '../DrawingPath';
+import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
 
 describe('DrawingCreator', () => {
-    const creatorEl = { getBoundingClientRect: () => ({ height: 100, left: 0, top: 0, width: 100 }) };
     const getDefaults = (): Props => ({
         onStart: jest.fn(),
         onStop: jest.fn(),
     });
-    const getWrapper = (props?: Partial<Props>): ShallowWrapper =>
-        shallow(<DrawingCreator {...getDefaults()} {...props} />);
-    const setDrawingStatus = jest.fn();
-    let capturedPointsRef: MutableRefObject<Array<Position>> = { current: [] };
-    let creatorRef = { current: creatorEl };
-    let drawignDirtyRef = { current: false };
-    let drawingPathRef: MutableRefObject<DrawingPathRef | null> = { current: null };
-    let drawingSVGRef = { current: null };
-    let renderHandlerRef = { current: null };
+    const getDOMRect = (x = 0, y = 0, height = 100, width = 100): DOMRect => ({
+        bottom: y + height,
+        top: y,
+        left: x,
+        right: x + width,
+        height,
+        width,
+        toJSON: jest.fn(),
+        x,
+        y,
+    });
+    const getWrapper = (props?: Partial<Props>): ReactWrapper<PointerCaptureProps, {}> =>
+        mount(<DrawingCreator {...getDefaults()} {...props} />);
 
     beforeEach(() => {
-        capturedPointsRef = { current: [] };
-        creatorRef = { current: creatorEl };
-        drawignDirtyRef = { current: false };
-        drawingPathRef = { current: null };
-        drawingSVGRef = { current: null };
-        renderHandlerRef = { current: null };
+        jest.useFakeTimers();
 
-        jest.spyOn(React, 'useState').mockImplementation(() => [Status.init, setDrawingStatus]);
-        jest.spyOn(React, 'useEffect').mockImplementation(noop);
-        jest.spyOn(React, 'useRef')
-            .mockImplementation(() => React.createRef())
-            .mockReturnValueOnce(capturedPointsRef)
-            .mockReturnValueOnce(creatorRef)
-            .mockReturnValueOnce(drawignDirtyRef)
-            .mockReturnValueOnce(drawingPathRef)
-            .mockReturnValueOnce(drawingSVGRef)
-            .mockReturnValueOnce(renderHandlerRef);
+        jest.spyOn(window, 'cancelAnimationFrame');
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps;
+        jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
+        jest.spyOn(Element.prototype, 'setAttribute');
     });
+
+    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+        act(() => {
+            wrapper.prop('onDrawStart')(clientX, clientY);
+        });
+    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+        act(() => {
+            wrapper.prop('onDrawUpdate')(clientX, clientY);
+        });
+    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void =>
+        act(() => {
+            wrapper.prop('onDrawStop')();
+        });
 
     describe('render', () => {
         test('should render PointerCapture', () => {
@@ -51,109 +55,125 @@ describe('DrawingCreator', () => {
             expect(wrapper.find(PointerCapture).prop('className')).toBe('ba-DrawingCreator');
         });
 
-        test.each`
-            status             | exists
-            ${Status.init}     | ${false}
-            ${Status.dragging} | ${false}
-            ${Status.drawing}  | ${true}
-        `('should render DrawingSVG if status=$status? $exists', ({ status, exists }) => {
-            jest.spyOn(React, 'useState').mockImplementationOnce(() => [status, setDrawingStatus]);
+        test('should render DrawingSVG if dragging', () => {
             const wrapper = getWrapper();
 
+            simulateDrawStart(wrapper.find(PointerCapture));
+
+            wrapper.update();
+
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
-            expect(wrapper.find(DrawingSVG).exists()).toBe(exists);
+            expect(wrapper.find(DrawingSVG).exists()).toBe(true);
+        });
+
+        test('should render DrawingSVG if drawing', () => {
+            const wrapper = getWrapper();
+
+            simulateDrawMove(wrapper.find(PointerCapture));
+
+            wrapper.update();
+
+            expect(wrapper.find(PointerCapture).exists()).toBe(true);
+            expect(wrapper.find(DrawingSVG).exists()).toBe(true);
         });
     });
 
-    describe('drawing', () => {
-        test('should trigger start logic on draw start', () => {
-            const wrapper = getWrapper();
-
-            wrapper.find(PointerCapture).prop('onDrawStart')(1, 2);
-
-            expect(setDrawingStatus).toHaveBeenCalledWith(Status.dragging);
-        });
-
-        test('should invoke onStart callback on draw update', () => {
+    describe('onStart()', () => {
+        test('should not be called when dragging is detected', () => {
             const onStart = jest.fn();
             const wrapper = getWrapper({ onStart });
 
-            wrapper.find(PointerCapture).prop('onDrawUpdate')(2, 3);
+            simulateDrawStart(wrapper.find(PointerCapture));
 
-            expect(setDrawingStatus).toHaveBeenCalledWith(Status.drawing);
-            expect(capturedPointsRef.current).toEqual([{ x: 2, y: 3 }]);
-            expect(onStart).toHaveBeenCalled();
+            wrapper.update();
+
+            expect(onStart).not.toHaveBeenCalled();
         });
 
-        test('should invoke onStop callback on draw stop', () => {
-            const onStop = jest.fn();
-            const wrapper = getWrapper({ onStop });
-            const points = [
-                { x: 1, y: 2 },
-                { x: 2, y: 3 },
-            ];
-            capturedPointsRef.current = points;
+        test('should be called when drawing is detected', () => {
+            const onStart = jest.fn();
+            const wrapper = getWrapper({ onStart });
 
-            wrapper.find(PointerCapture).prop('onDrawStop')();
+            simulateDrawMove(wrapper.find(PointerCapture));
 
-            expect(setDrawingStatus).toHaveBeenCalledWith(Status.init);
-            expect(capturedPointsRef.current).toEqual([]);
-            expect(onStop).toHaveBeenCalledWith({ paths: [{ points }], stroke: defaultStroke });
+            wrapper.update();
+
+            expect(onStart).toHaveBeenCalled();
         });
     });
 
-    describe('raf', () => {
-        beforeEach(() => {
-            jest.useFakeTimers();
+    describe('onStop()', () => {
+        test('should be called when drawing stops with the created path group', () => {
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStop });
 
-            jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps;
-            jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+            simulateDrawStart(wrapper.find(PointerCapture));
+            wrapper.update();
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
+            wrapper.update();
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawStop(wrapper.find(PointerCapture));
+            wrapper.update();
+            expect(onStop).toHaveBeenCalledWith({
+                paths: [
+                    {
+                        points: [
+                            { x: 10, y: 10 },
+                            { x: 15, y: 15 },
+                        ],
+                    },
+                ],
+                stroke: defaultStroke,
+            });
         });
+    });
 
-        test.each([Status.dragging, Status.drawing])('should invoke requestAnimationFrame if status is %s', status => {
-            jest.spyOn(React, 'useState').mockImplementationOnce(() => [status, setDrawingStatus]);
-
+    describe('svg path rendering', () => {
+        test('should not trigger raf if not drawing', () => {
             getWrapper();
 
-            expect(renderHandlerRef.current).toBeDefined();
-            expect(window.requestAnimationFrame).toHaveBeenCalled();
-        });
-
-        test('should not invoke requestAnimationFrame if status is init', () => {
-            getWrapper();
-
-            expect(renderHandlerRef.current).toBe(null);
             expect(window.requestAnimationFrame).not.toHaveBeenCalled();
         });
 
-        describe('renderPath()', () => {
-            test('should update the svgPath on the next animation frame if the drawing is dirty', () => {
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const points = [
-                    { x: 1, y: 2 },
-                    { x: 2, y: 3 },
-                ];
+        test('should update svg path if dragging begins', () => {
+            const wrapper = getWrapper();
 
-                jest.spyOn(React, 'useState').mockImplementationOnce(() => [Status.dragging, setDrawingStatus]);
+            simulateDrawStart(wrapper.find(PointerCapture));
+            wrapper.update();
+            jest.advanceTimersByTime(100);
 
-                getWrapper();
+            expect(window.requestAnimationFrame).toHaveBeenCalled();
+            expect(
+                wrapper
+                    .find(DrawingPath)
+                    .childAt(0)
+                    .getDOMNode()
+                    .getAttribute('d'),
+            ).toEqual('M 10 10');
+        });
 
-                jest.spyOn(path, 'setAttribute');
+        test('should update svg path if drawing', () => {
+            const wrapper = getWrapper();
 
-                drawingPathRef.current = path;
-                drawignDirtyRef.current = true;
-                capturedPointsRef.current = points;
+            simulateDrawStart(wrapper.find(PointerCapture));
+            simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
+            simulateDrawMove(wrapper.find(PointerCapture), 20, 20);
 
-                jest.advanceTimersByTime(100); // first animation frame will update the svg path
+            wrapper.update();
 
-                expect(drawignDirtyRef.current).toBe(false);
-                expect(path.setAttribute).toHaveBeenCalledTimes(1);
+            jest.advanceTimersByTime(100);
 
-                jest.advanceTimersByTime(100); // second animation frame will do nothing because the drawing is not dirty
-
-                expect(drawignDirtyRef.current).toBe(false);
-                expect(path.setAttribute).toHaveBeenCalledTimes(1);
-            });
+            expect(window.requestAnimationFrame).toHaveBeenCalled();
+            expect(
+                wrapper
+                    .find(DrawingPath)
+                    .childAt(0)
+                    .getDOMNode()
+                    .getAttribute('d'),
+            ).toEqual('M 10 10 C 12.5 12.5, 15 15, 17.5 17.5');
         });
     });
 });

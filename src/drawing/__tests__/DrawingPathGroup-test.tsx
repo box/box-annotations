@@ -2,17 +2,13 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DecoratedDrawingPath from '../DecoratedDrawingPath';
 import DrawingPath from '../DrawingPath';
-import DrawingPathGroup, { DRAWING_BORDER_WIDTH, Props } from '../DrawingPathGroup';
-import { annotations } from '../__mocks__/drawingData';
+import DrawingPathGroup, { Props } from '../DrawingPathGroup';
 import { isVectorEffectSupported } from '../drawingUtil';
+import { pathGroups } from '../__mocks__/drawingData';
 
 jest.mock('../drawingUtil', () => ({
     isVectorEffectSupported: jest.fn().mockImplementation(() => true),
 }));
-
-const {
-    target: { path_groups: pathGroups },
-} = annotations[0];
 
 describe('DrawingPathGroup', () => {
     const getDefaults = (): Props => {
@@ -57,16 +53,12 @@ describe('DrawingPathGroup', () => {
         });
 
         test('should use render function if provided', () => {
-            const {
-                stroke: { size },
-            } = pathGroups[0];
-            const expectedBorderWidth = size + DRAWING_BORDER_WIDTH * 2;
             const wrapper = getWrapper({
                 children: (strokeWidthWithBorder: number) => <DrawingPath strokeWidth={strokeWidthWithBorder} />,
             });
 
             expect(wrapper.find(DrawingPath).exists()).toBe(true);
-            expect(wrapper.find(DrawingPath).prop('strokeWidth')).toBe(expectedBorderWidth);
+            expect(wrapper.find(DrawingPath).prop('strokeWidth')).toBe(3);
         });
     });
 });

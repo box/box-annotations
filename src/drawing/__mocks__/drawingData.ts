@@ -1,44 +1,46 @@
+export const pathGroups = [
+    {
+        clientId: '1_1',
+        paths: [
+            {
+                clientId: '1_1_1',
+                points: [
+                    { x: 10, y: 10 },
+                    { x: 11, y: 11 },
+                    { x: 12, y: 12 },
+                ],
+            },
+        ],
+        stroke: {
+            color: '#f00',
+            size: 1,
+        },
+    },
+    {
+        clientId: '1_2',
+        paths: [
+            {
+                clientId: '1_2_1',
+                points: [
+                    { x: 20, y: 20 },
+                    { x: 21, y: 21 },
+                    { x: 22, y: 22 },
+                ],
+            },
+        ],
+        stroke: {
+            color: '#000',
+            size: 4,
+        },
+    },
+];
+
 export const annotations = [
     {
         id: 'drawing_anno_1',
         target: {
             location: { type: 'page' as const, value: 1 },
-            path_groups: [
-                {
-                    clientId: '1_1',
-                    paths: [
-                        {
-                            clientId: '1_1_1',
-                            points: [
-                                { x: 10, y: 10 },
-                                { x: 11, y: 11 },
-                                { x: 12, y: 12 },
-                            ],
-                        },
-                    ],
-                    stroke: {
-                        color: '#f00',
-                        size: 1,
-                    },
-                },
-                {
-                    clientId: '1_2',
-                    paths: [
-                        {
-                            clientId: '1_2_1',
-                            points: [
-                                { x: 20, y: 20 },
-                                { x: 21, y: 21 },
-                                { x: 22, y: 22 },
-                            ],
-                        },
-                    ],
-                    stroke: {
-                        color: '#000',
-                        size: 4,
-                    },
-                },
-            ],
+            path_groups: pathGroups,
             type: 'drawing' as const,
         },
     },

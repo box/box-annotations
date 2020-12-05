@@ -72,7 +72,7 @@ describe('drawingUtil', () => {
                 { x: 12, y: 12 },
                 { x: 14, y: 14 },
             ];
-            expect(getPathCommands(points)).toBe('M 10 10  C 11 11, 12 12, 13 13 ');
+            expect(getPathCommands(points)).toBe('M 10 10 C 11 11, 12 12, 13 13');
         });
     });
 });

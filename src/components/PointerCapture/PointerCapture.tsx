@@ -112,4 +112,6 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
     );
 }
 
+export { PointerCapture as PointerCaptureBase };
+
 export default React.forwardRef(PointerCapture);
