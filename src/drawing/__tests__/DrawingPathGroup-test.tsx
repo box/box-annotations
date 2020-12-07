@@ -1,23 +1,23 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import DecoratedDrawingPath from '../DecoratedDrawingPath';
 import DrawingPath from '../DrawingPath';
 import DrawingPathGroup, { Props } from '../DrawingPathGroup';
-import { annotations } from '../__mocks__/drawingData';
 import { isVectorEffectSupported } from '../drawingUtil';
+import { pathGroups } from '../__mocks__/drawingData';
 
 jest.mock('../drawingUtil', () => ({
     isVectorEffectSupported: jest.fn().mockImplementation(() => true),
 }));
 
-const {
-    target: { path_groups: pathGroups },
-} = annotations[0];
-
 describe('DrawingPathGroup', () => {
-    const getDefaults = (): Props => ({
-        pathGroup: pathGroups[0],
-        rootEl: { clientWidth: 200 } as SVGSVGElement,
-    });
+    const getDefaults = (): Props => {
+        const { stroke } = pathGroups[0];
+        return {
+            rootEl: { clientWidth: 200 } as SVGSVGElement,
+            stroke,
+        };
+    };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingPathGroup {...getDefaults()} {...props} />);
 
@@ -27,7 +27,7 @@ describe('DrawingPathGroup', () => {
 
             expect(wrapper.prop('stroke')).toBe('#f00');
             expect(wrapper.prop('strokeWidth')).toBe(1);
-            expect(wrapper.exists(DrawingPath));
+            expect(wrapper.exists(DecoratedDrawingPath));
         });
 
         test.each([true, false])('should render classNames correctly when isActive is %s', isActive => {
@@ -50,6 +50,15 @@ describe('DrawingPathGroup', () => {
 
             expect(wrapper.children()).toHaveLength(0);
             expect(wrapper.exists('path')).toBe(false);
+        });
+
+        test('should use render function if provided', () => {
+            const wrapper = getWrapper({
+                children: (strokeWidthWithBorder: number) => <DrawingPath strokeWidth={strokeWidthWithBorder} />,
+            });
+
+            expect(wrapper.find(DrawingPath).exists()).toBe(true);
+            expect(wrapper.find(DrawingPath).prop('strokeWidth')).toBe(3);
         });
     });
 });

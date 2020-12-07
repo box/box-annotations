@@ -1,15 +1,15 @@
 import * as uuid from 'uuid';
 import { Annotation, AnnotationDrawing, PathGroup, Position, Shape } from '../@types';
 
-export function addClientIds(pathGroups: PathGroup[]): PathGroup[] {
-    return pathGroups.map(({ paths, ...groupRest }) => ({
+export function addClientIds({ paths, ...groupRest }: PathGroup): PathGroup {
+    return {
         clientId: uuid.v4(),
         paths: paths.map(path => ({
             clientId: uuid.v4(),
             ...path,
         })),
         ...groupRest,
-    }));
+    };
 }
 
 export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing {
@@ -21,7 +21,7 @@ export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing 
     return {
         target: {
             // eslint-disable-next-line @typescript-eslint/camelcase
-            path_groups: addClientIds(pathGroups),
+            path_groups: pathGroups.map(pathGroup => addClientIds(pathGroup)),
             ...targetRest,
         },
         ...rest,
@@ -31,6 +31,40 @@ export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing 
 export function getCenter({ height, width, x, y }: Shape): Position {
     return { x: x + width / 2, y: y + height / 2 };
 }
+
+// We use cubic Bezier curves to generate path commands for better smoothing.
+// For every data point, we generate extra two points using adjacent data points.
+// Then we use the first generated point and the data point as two control points
+// and the second generated point as the destination point to form a (C)urve command.
+export const getPathCommands = (points?: Position[]): string => {
+    if (!points || !points.length) {
+        return '';
+    }
+
+    const d = points
+        .map(({ x, y }, index, array) => {
+            if (index === 0) {
+                return `M ${x} ${y}`;
+            }
+
+            const prevPoint = array[index - 1];
+            const nextPoint = array[index + 1];
+            if (!prevPoint || !nextPoint) {
+                return '';
+            }
+
+            const xc1 = (x + prevPoint.x) / 2;
+            const yc1 = (y + prevPoint.y) / 2;
+            const xc2 = (x + nextPoint.x) / 2;
+            const yc2 = (y + nextPoint.y) / 2;
+
+            return `C ${xc1} ${yc1}, ${x} ${y}, ${xc2} ${yc2}`;
+        })
+        .join(' ')
+        .trim();
+
+    return d;
+};
 
 export function getShape(pathGroups: PathGroup[]): Shape {
     let maxX = 0;

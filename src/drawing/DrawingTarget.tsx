@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import { DrawingSVGRef } from './DrawingSVG';
 import { getCenter, getShape } from './drawingUtil';
@@ -77,8 +78,20 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
                 transform={`translate(-${centerX * 0.1}, -${centerY * 0.1}) scale(1.1)`}
                 {...shape}
             />
-            {pathGroups.map(pathGroup => (
-                <DrawingPathGroup key={pathGroup.clientId} isActive={isActive} pathGroup={pathGroup} rootEl={rootEl} />
+            {pathGroups.map(({ clientId: pathGroupClientId, paths, stroke }) => (
+                <DrawingPathGroup key={pathGroupClientId} isActive={isActive} rootEl={rootEl} stroke={stroke}>
+                    {/* Use the children render function to pass down the calculated strokeWidthWithBorder value */}
+                    {strokeWidthWithBorder =>
+                        paths.map(({ clientId: pathClientId, points }) => (
+                            <DecoratedDrawingPath
+                                key={pathClientId}
+                                borderStrokeWidth={strokeWidthWithBorder}
+                                isDecorated
+                                points={points}
+                            />
+                        ))
+                    }
+                </DrawingPathGroup>
             ))}
         </a>
     );

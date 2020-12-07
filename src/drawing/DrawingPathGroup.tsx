@@ -1,25 +1,25 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import DrawingPath from './DrawingPath';
 import { DrawingSVGRef } from './DrawingSVG';
 import { isVectorEffectSupported } from './drawingUtil';
-import { PathGroup } from '../@types';
+import { Stroke } from '../@types';
+
+export type ChildrenRenderFunction = (strokeWidthWithBorder: number) => React.ReactNode;
 
 export type Props = {
+    children?: React.ReactNode | ChildrenRenderFunction;
     isActive?: boolean;
-    pathGroup: PathGroup;
     rootEl: DrawingSVGRef | null;
+    stroke: Stroke;
 };
 
 export const DRAWING_BORDER_WIDTH = 1;
 
 export const DrawingPathGroup = ({
+    children,
     isActive = false,
-    pathGroup: {
-        paths,
-        stroke: { color, size },
-    },
     rootEl,
+    stroke: { color, size },
 }: Props): JSX.Element => {
     let strokeWidth = size;
     // A line has two sides and each side needs a border, so add DRAWING_BORDER_WIDTH * 2
@@ -44,9 +44,7 @@ export const DrawingPathGroup = ({
             stroke={color}
             strokeWidth={strokeWidth}
         >
-            {paths.map(({ clientId, points }) => (
-                <DrawingPath key={clientId} borderStrokeWidth={strokeWidthWithBorder} isDecorated points={points} />
-            ))}
+            {typeof children === 'function' ? children(strokeWidthWithBorder) : children}
         </g>
     );
 };

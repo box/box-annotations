@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { CreatorState, CreatorStatus } from './types';
 import { createAnnotationAction } from '../annotations';
+import { CreatorState, CreatorStatus } from './types';
 import {
     resetCreatorAction,
     setCursorAction,
