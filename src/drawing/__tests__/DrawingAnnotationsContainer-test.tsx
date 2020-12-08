@@ -4,7 +4,7 @@ import { Store } from 'redux';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations from '../DrawingAnnotations';
 import DrawingAnnotationsContainer, { Props } from '../DrawingAnnotationsContainer';
-import { createStore } from '../../store';
+import { createStore, CreatorStatus, Mode } from '../../store';
 
 jest.mock('../../common/withProviders');
 
@@ -33,5 +33,25 @@ describe('DrawingAnnotationsContainer', () => {
                 isCreating: false,
             });
         });
+
+        test.each`
+            mode            | status                   | isCreating
+            ${Mode.NONE}    | ${CreatorStatus.staged}  | ${false}
+            ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${true}
+            ${Mode.DRAWING} | ${CreatorStatus.pending} | ${false}
+            ${Mode.REGION}  | ${CreatorStatus.staged}  | ${false}
+        `(
+            'should pass down isCreating as $isCreating if mode is $mode and status is $status',
+            ({ mode, isCreating, status }) => {
+                const store = createStore({
+                    common: { mode },
+                    creator: { status },
+                    options: { features: { drawingCreate: true } },
+                });
+                const wrapper = getWrapper({ store });
+
+                expect(wrapper.find(DrawingAnnotations).prop('isCreating')).toEqual(isCreating);
+            },
+        );
     });
 });

@@ -2,8 +2,10 @@ import { connect } from 'react-redux';
 import {
     AppState,
     CreatorItemRegion,
+    CreatorStatus,
     getAnnotationMode,
     getCreatorStagedForLocation,
+    getCreatorStatus,
     getRotation,
     isCreatorStagedRegion,
     isFeatureEnabled,
@@ -27,7 +29,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     const staged = getCreatorStagedForLocation(state, location);
 
     return {
-        isCreating: getAnnotationMode(state) === Mode.REGION,
+        isCreating: getAnnotationMode(state) === Mode.REGION && getCreatorStatus(state) !== CreatorStatus.pending,
         isDiscoverabilityEnabled: isFeatureEnabled(state, 'discoverability'),
         isRotated: !!getRotation(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,

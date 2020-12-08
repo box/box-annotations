@@ -9,9 +9,11 @@ import {
 import { AnnotationDrawing, PathGroup } from '../@types';
 import {
     AppState,
+    CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
+    getCreatorStatus,
     isFeatureEnabled,
     Mode,
     setActiveAnnotationIdAction,
@@ -32,7 +34,10 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
         drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),
-        isCreating: isFeatureEnabled(state, 'drawingCreate') && getAnnotationMode(state) === Mode.DRAWING,
+        isCreating:
+            isFeatureEnabled(state, 'drawingCreate') &&
+            getAnnotationMode(state) === Mode.DRAWING &&
+            getCreatorStatus(state) !== CreatorStatus.pending,
     };
 };
 

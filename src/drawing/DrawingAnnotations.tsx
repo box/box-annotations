@@ -57,7 +57,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 onSelect={handleAnnotationActive}
             />
 
-            {isCreating && hasDrawnPathGroups && (
+            {hasDrawnPathGroups && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
                     {/* Group element to capture the bounding box around the drawn path groups */}
                     <g data-ba-reference-id={uuidRef.current}>
