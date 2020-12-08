@@ -120,7 +120,9 @@ describe('RegionCreation', () => {
 
         test('should not render creation components if file is rotated', () => {
             const wrapper = getWrapper({
-                isRotated: false,
+                isCreating: true,
+                isRotated: true,
+                staged: {},
             });
 
             expect(wrapper.exists(RegionCreator)).toBe(false);

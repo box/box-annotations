@@ -56,9 +56,13 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     render(): JSX.Element | null {
         const { isCreating, isDiscoverabilityEnabled, isRotated, staged } = this.props;
 
+        if (isRotated) {
+            return null;
+        }
+
         return (
             <>
-                {isCreating && !isRotated && (
+                {isCreating && (
                     <RegionCreator
                         className={classNames('ba-RegionCreation-creator', {
                             'is-discoverability-enabled': isDiscoverabilityEnabled,
@@ -69,7 +73,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
                     />
                 )}
 
-                {staged && !isRotated && (
+                {staged && (
                     <div className="ba-RegionCreation-target">
                         <RegionRect isActive onMount={this.handleStagedMount} shape={staged.shape} />
                     </div>
