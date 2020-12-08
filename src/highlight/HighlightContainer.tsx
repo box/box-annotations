@@ -5,10 +5,12 @@ import { AnnotationHighlight } from '../@types';
 import {
     AppState,
     CreatorItemHighlight,
+    CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
+    getCreatorStatus,
     getIsPromoting,
     getIsSelecting,
     getSelectionForLocation,
@@ -28,6 +30,7 @@ export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
     isCreating: boolean;
+    isPending: boolean;
     isPromoting: boolean;
     isSelecting: boolean;
     selection: SelectionItem | null;
@@ -41,6 +44,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
         isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
+        isPending: getCreatorStatus(state) === CreatorStatus.pending,
         isPromoting: getIsPromoting(state),
         isSelecting: getIsSelecting(state),
         selection: getSelectionForLocation(state, location),

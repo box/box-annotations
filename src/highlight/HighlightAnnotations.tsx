@@ -16,6 +16,7 @@ type Props = {
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
+    isPending: boolean;
     isPromoting: boolean;
     isSelecting: boolean;
     location: number;
@@ -34,6 +35,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         activeAnnotationId,
         annotations = [],
         isCreating = false,
+        isPending = false,
         isPromoting = false,
         isSelecting = false,
         selection,
@@ -83,7 +85,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     };
 
     React.useEffect(() => {
-        if (!isSelecting) {
+        if (!isSelecting || isPending) {
             return;
         }
 
@@ -92,7 +94,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
-        if (!isCreating || !selection || selection.hasError) {
+        if (!isCreating || !selection || selection.hasError || isPending) {
             return;
         }
 

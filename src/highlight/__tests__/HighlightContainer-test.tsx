@@ -3,7 +3,7 @@ import { IntlShape } from 'react-intl';
 import { ReactWrapper, mount } from 'enzyme';
 import HighlightAnnotations from '../HighlightAnnotations';
 import HighlightContainer, { Props } from '../HighlightContainer';
-import { createStore, CreatorItemHighlight, CreatorItemRegion, Mode } from '../../store';
+import { createStore, CreatorItemHighlight, CreatorItemRegion, CreatorStatus, Mode } from '../../store';
 import { rect as highlightRect } from '../__mocks__/data';
 import { rect as regionRect } from '../../region/__mocks__/data';
 
@@ -60,6 +60,18 @@ describe('HighlightContainer', () => {
             const wrapper = getWrapper({ store });
 
             expect(wrapper.find(HighlightAnnotations).prop('isCreating')).toEqual(isCreating);
+        });
+
+        test.each`
+            status                   | isPending
+            ${CreatorStatus.init}    | ${false}
+            ${CreatorStatus.pending} | ${true}
+            ${CreatorStatus.staged}  | ${false}
+        `('should pass down isPending as $isPending if status is $status', ({ isPending, status }) => {
+            const store = createStore({ creator: { status } });
+            const wrapper = getWrapper({ store });
+
+            expect(wrapper.find(HighlightAnnotations).prop('isPending')).toEqual(isPending);
         });
 
         test.each`

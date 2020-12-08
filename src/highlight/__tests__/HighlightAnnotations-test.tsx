@@ -22,6 +22,7 @@ describe('HighlightAnnotations', () => {
         activeAnnotationId: null,
         annotations: [],
         isCreating: false,
+        isPending: false,
         isPromoting: false,
         isSelecting: false,
         location: 1,
@@ -176,6 +177,12 @@ describe('HighlightAnnotations', () => {
                 expect(defaults.setStaged).not.toHaveBeenCalled();
                 expect(defaults.setStatus).not.toHaveBeenCalled();
             });
+
+            test('should not reset staged and status if isPending is true', () => {
+                getWrapper({ isSelecting: true, isPending: true });
+                expect(defaults.setStaged).not.toHaveBeenCalled();
+                expect(defaults.setStatus).not.toHaveBeenCalled();
+            });
         });
 
         describe('Creating a highlight', () => {
@@ -192,6 +199,12 @@ describe('HighlightAnnotations', () => {
                     expect(defaults.setStatus).not.toHaveBeenCalled();
                 },
             );
+
+            test('should not call setStaged and setStatus if isPending is true', () => {
+                getWrapper({ isCreating: true, selection: {}, isPending: true });
+                expect(defaults.setStaged).not.toHaveBeenCalled();
+                expect(defaults.setStatus).not.toHaveBeenCalled();
+            });
 
             test('should call setStaged and setStatus if isCreating=true and selection is not null', () => {
                 getWrapper({ isCreating: true, selection: selectionMock });
