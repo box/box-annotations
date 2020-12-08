@@ -16,6 +16,7 @@ type Props = {
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
     isCreating: boolean;
+    isPending: boolean;
     isPromoting: boolean;
     isSelecting: boolean;
     location: number;
@@ -34,6 +35,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         activeAnnotationId,
         annotations = [],
         isCreating = false,
+        isPending = false,
         isPromoting = false,
         isSelecting = false,
         selection,
@@ -51,7 +53,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId(annotationId);
     };
 
-    const stageSelection = (): void => {
+    const stageSelection = React.useCallback((): void => {
         if (!selection) {
             return;
         }
@@ -66,7 +68,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             })),
         });
         setStatus(CreatorStatus.staged);
-    };
+    }, [selection, setStaged, setStatus]);
 
     const handlePromote = (): void => {
         stageSelection();
@@ -83,21 +85,21 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     };
 
     React.useEffect(() => {
-        if (!isSelecting) {
+        if (!isSelecting || isPending) {
             return;
         }
 
         setStaged(null);
         setStatus(CreatorStatus.init);
-    }, [isSelecting]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isSelecting, isPending, setStaged, setStatus]);
 
     React.useEffect(() => {
-        if (!isCreating || !selection || selection.hasError) {
+        if (!isCreating || !selection || selection.hasError || isPending) {
             return;
         }
 
         stageSelection();
-    }, [isCreating, selection]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isCreating, isPending, selection, stageSelection]);
 
     return (
         <>
