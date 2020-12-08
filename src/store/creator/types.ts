@@ -21,7 +21,7 @@ export type CreatorItemHighlight = CreatorItemBase & {
 };
 
 export type CreatorItemDrawing = CreatorItemBase & {
-    drawnPathGroups: Array<PathGroup>;
+    pathGroups: Array<PathGroup>;
 };
 
 export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | CreatorItemDrawing | null;

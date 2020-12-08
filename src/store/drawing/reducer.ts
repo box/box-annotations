@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { toggleAnnotationModeAction } from '../common';
-import { addDrawingPathGroupAction, setDrawingLocationAction } from './actions';
+import { resetCreatorAction } from '../creator';
+import { addDrawingPathGroupAction, resetDrawingAction, setDrawingLocationAction } from './actions';
 import { DrawingState } from './types';
 
 export const initialState = {
@@ -13,6 +14,8 @@ export default createReducer<DrawingState>(initialState, builder =>
         .addCase(addDrawingPathGroupAction, (state, { payload }) => {
             state.drawnPathGroups.push(payload);
         })
+        .addCase(resetCreatorAction, () => initialState) // Needed for when `PopupReply` is cancelled
+        .addCase(resetDrawingAction, () => initialState)
         .addCase(setDrawingLocationAction, (state, { payload }) => {
             if (state.location !== payload) {
                 state.location = payload;

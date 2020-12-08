@@ -3,7 +3,14 @@ import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
-import { CreatorItem, CreatorStatus, isCreatorStagedHighlight, isCreatorStagedRegion, Mode } from '../store';
+import {
+    CreatorItem,
+    CreatorStatus,
+    isCreatorStagedDrawing,
+    isCreatorStagedHighlight,
+    isCreatorStagedRegion,
+    Mode,
+} from '../store';
 import { PopupReference } from '../components/Popups/Popper';
 import './PopupLayer.scss';
 
@@ -22,6 +29,7 @@ type Props = {
 };
 
 const modeStagedMap: { [M in Mode]?: Function } = {
+    [Mode.DRAWING]: isCreatorStagedDrawing,
     [Mode.HIGHLIGHT]: isCreatorStagedHighlight,
     [Mode.REGION]: isCreatorStagedRegion,
 };

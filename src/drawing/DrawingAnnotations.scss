@@ -26,3 +26,14 @@
     pointer-events: auto;
     touch-action: none;
 }
+
+.ba-DrawingAnnotations-toolbar {
+    opacity: 1;
+    transition: opacity 200ms ease;
+    pointer-events: auto;
+
+    &.is-faded {
+        opacity: .3;
+        pointer-events: none;
+    }
+}

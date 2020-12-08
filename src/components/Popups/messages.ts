@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+    buttonAddComent: {
+        id: 'ba.popups.addComment',
+        description: 'Button label for adding a comment in the drawing toolbar',
+        defaultMessage: 'Add Comment',
+    },
     buttonCancel: {
         id: 'ba.popups.cancel',
         description: 'Button label for cancelling the creation of a description, comment, or reply',

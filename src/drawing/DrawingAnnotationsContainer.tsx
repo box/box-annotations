@@ -4,6 +4,7 @@ import withProviders from '../common/withProviders';
 import {
     addDrawingPathGroupAction,
     getDrawingDrawnPathGroupsForLocation,
+    resetDrawingAction,
     setDrawingLocationAction,
 } from '../store/drawing';
 import { AnnotationDrawing, PathGroup } from '../@types';
@@ -17,6 +18,7 @@ import {
     isFeatureEnabled,
     Mode,
     setActiveAnnotationIdAction,
+    setReferenceIdAction,
     setStagedAction,
     setStatusAction,
 } from '../store';
@@ -27,6 +29,7 @@ export type Props = {
     annotations: AnnotationDrawing[];
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
+    status: CreatorStatus;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
@@ -38,13 +41,16 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
             isFeatureEnabled(state, 'drawingCreate') &&
             getAnnotationMode(state) === Mode.DRAWING &&
             getCreatorStatus(state) !== CreatorStatus.pending,
+        status: getCreatorStatus(state),
     };
 };
 
 export const mapDispatchToProps = {
     addDrawingPathGroup: addDrawingPathGroupAction,
+    resetDrawing: resetDrawingAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setDrawingLocation: setDrawingLocationAction,
+    setReferenceId: setReferenceIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
 };

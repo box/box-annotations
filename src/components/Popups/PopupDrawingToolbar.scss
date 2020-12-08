@@ -1,0 +1,85 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.ba-PopupDrawingToolbar {
+    background-color: $bdl-gray;
+    border-radius: $bdl-border-radius-size;
+
+    .ba-Popup-arrow {
+        display: none;
+    }
+
+    .ba-Popup-content {
+        display: flex;
+        background-color: $bdl-gray;
+        border: none;
+        border-radius: $bdl-border-radius-size;
+        box-shadow: none;
+    }
+}
+
+.ba-PopupDrawingToolbar-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::after {
+        position: absolute;
+        right: 0;
+        width: 1px;
+        height: 100%;
+        background-color: #000;
+        content: '';
+    }
+}
+
+.ba-PopupDrawingToolbar-grabber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px;
+    cursor: move;
+}
+
+.ba-PopupDrawingToolbar-comment,
+.ba-PopupDrawingToolbar-delete,
+.ba-PopupDrawingToolbar-redo,
+.ba-PopupDrawingToolbar-undo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    color: $white;
+    background: transparent;
+    border: none;
+    border-radius: $bdl-border-radius-size;
+    outline: none;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity 200ms ease;
+
+    &:focus,
+    &:hover {
+        opacity: 1;
+    }
+
+    &[disabled] {
+        opacity: .2;
+    }
+}
+
+.ba-PopupDrawingToolbar-delete,
+.ba-PopupDrawingToolbar-redo,
+.ba-PopupDrawingToolbar-undo {
+    path {
+        fill: #fff;
+    }
+}
+
+.ba-PopupDrawingToolbar-comment {
+    @include common-typography;
+
+    padding: 6px 18px;
+    color: $white;
+    font-weight: bold;
+}
