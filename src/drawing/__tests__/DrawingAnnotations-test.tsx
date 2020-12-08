@@ -91,11 +91,10 @@ describe('DrawingAnnotations', () => {
         });
 
         test('should render staged drawing if present and allowed', () => {
-            const wrapper = getWrapper({ isCreating: true, drawnPathGroups: pathGroups });
+            const wrapper = getWrapper({ drawnPathGroups: pathGroups });
 
             expect(wrapper.find(DrawingList).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
-            expect(wrapper.find(DrawingCreator).exists()).toBe(true);
         });
     });
 });

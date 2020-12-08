@@ -3,7 +3,7 @@ import { IntlShape } from 'react-intl';
 import { mount, ReactWrapper } from 'enzyme';
 import RegionCreation from '../RegionCreation';
 import RegionCreationContainer, { Props } from '../RegionCreationContainer';
-import { createStore } from '../../store';
+import { createStore, CreatorStatus, Mode } from '../../store';
 
 jest.mock('../../common/withProviders');
 jest.mock('../RegionCreation');
@@ -32,6 +32,22 @@ describe('RegionCreationContainer', () => {
                 store: defaults.store,
             });
         });
+
+        test.each`
+            mode              | status                   | isCreating
+            ${Mode.NONE}      | ${CreatorStatus.staged}  | ${false}
+            ${Mode.HIGHLIGHT} | ${CreatorStatus.staged}  | ${false}
+            ${Mode.REGION}    | ${CreatorStatus.staged}  | ${true}
+            ${Mode.REGION}    | ${CreatorStatus.pending} | ${false}
+        `(
+            'should pass down isCreating as $isCreating if mode is $mode and status is $status',
+            ({ mode, isCreating, status }) => {
+                const store = createStore({ common: { mode }, creator: { status } });
+                const wrapper = getWrapper({ store });
+
+                expect(wrapper.find(RegionCreation).prop('isCreating')).toEqual(isCreating);
+            },
+        );
 
         test.each`
             rotation     | isRotated

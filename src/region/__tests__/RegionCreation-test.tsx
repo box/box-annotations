@@ -99,7 +99,6 @@ describe('RegionCreation', () => {
         test('should render a RegionAnnotation if one has been drawn', () => {
             const shape = getRect();
             const wrapper = getWrapper({
-                isCreating: true,
                 staged: {
                     location: 1,
                     message: null,
@@ -107,7 +106,6 @@ describe('RegionCreation', () => {
                 },
             });
 
-            expect(wrapper.exists(RegionCreator)).toBe(true);
             expect(wrapper.find(RegionRect).prop('shape')).toEqual(shape);
         });
 
@@ -122,7 +120,9 @@ describe('RegionCreation', () => {
 
         test('should not render creation components if file is rotated', () => {
             const wrapper = getWrapper({
-                isRotated: false,
+                isCreating: true,
+                isRotated: true,
+                staged: {},
             });
 
             expect(wrapper.exists(RegionCreator)).toBe(false);

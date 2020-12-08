@@ -55,22 +55,23 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
     render(): JSX.Element | null {
         const { isCreating, isDiscoverabilityEnabled, isRotated, staged } = this.props;
-        const canCreate = isCreating && !isRotated;
 
-        if (!canCreate) {
+        if (isRotated) {
             return null;
         }
 
         return (
             <>
-                <RegionCreator
-                    className={classNames('ba-RegionCreation-creator', {
-                        'is-discoverability-enabled': isDiscoverabilityEnabled,
-                    })}
-                    onAbort={this.handleAbort}
-                    onStart={this.handleStart}
-                    onStop={this.handleStop}
-                />
+                {isCreating && (
+                    <RegionCreator
+                        className={classNames('ba-RegionCreation-creator', {
+                            'is-discoverability-enabled': isDiscoverabilityEnabled,
+                        })}
+                        onAbort={this.handleAbort}
+                        onStart={this.handleStart}
+                        onStop={this.handleStop}
+                    />
+                )}
 
                 {staged && (
                     <div className="ba-RegionCreation-target">
