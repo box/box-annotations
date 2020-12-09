@@ -29,6 +29,7 @@ export type Props = {
     annotations: AnnotationDrawing[];
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
+    status: CreatorStatus;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
@@ -41,8 +42,8 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         isCreating:
             isFeatureEnabled(state, 'drawingCreate') &&
             getAnnotationMode(state) === Mode.DRAWING &&
-            creatorStatus !== CreatorStatus.pending &&
-            creatorStatus !== CreatorStatus.staged,
+            creatorStatus !== CreatorStatus.pending,
+        status: creatorStatus,
     };
 };
 

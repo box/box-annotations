@@ -47,7 +47,7 @@ describe('DrawingAnnotationsContainer', () => {
             ${Mode.NONE}    | ${CreatorStatus.staged}  | ${false}
             ${Mode.DRAWING} | ${CreatorStatus.init}    | ${true}
             ${Mode.DRAWING} | ${CreatorStatus.started} | ${true}
-            ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${false}
+            ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${true}
             ${Mode.DRAWING} | ${CreatorStatus.pending} | ${false}
             ${Mode.REGION}  | ${CreatorStatus.staged}  | ${false}
         `(

@@ -26,6 +26,7 @@ describe('DrawingAnnotations', () => {
         setReferenceId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
+        status: CreatorStatus.init,
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
     const {
@@ -46,14 +47,37 @@ describe('DrawingAnnotations', () => {
 
         describe('handleStart()', () => {
             test('should set status to started and set the location of the drawing', () => {
+                const resetDrawing = jest.fn();
                 const setDrawingLocation = jest.fn();
                 const setStatus = jest.fn();
-                const wrapper = getWrapper({ isCreating: true, setDrawingLocation, setStatus });
+                const wrapper = getWrapper({ isCreating: true, resetDrawing, setDrawingLocation, setStatus });
 
                 act(() => {
                     wrapper.find(DrawingCreator).prop('onStart')();
                 });
 
+                expect(resetDrawing).not.toHaveBeenCalled();
+                expect(setStatus).toHaveBeenCalledWith(CreatorStatus.started);
+                expect(setDrawingLocation).toHaveBeenCalledWith(0);
+            });
+
+            test('should reset drawing if status is already staged', () => {
+                const resetDrawing = jest.fn();
+                const setDrawingLocation = jest.fn();
+                const setStatus = jest.fn();
+                const wrapper = getWrapper({
+                    isCreating: true,
+                    resetDrawing,
+                    setDrawingLocation,
+                    setStatus,
+                    status: CreatorStatus.staged,
+                });
+
+                act(() => {
+                    wrapper.find(DrawingCreator).prop('onStart')();
+                });
+
+                expect(resetDrawing).toHaveBeenCalled();
                 expect(setStatus).toHaveBeenCalledWith(CreatorStatus.started);
                 expect(setDrawingLocation).toHaveBeenCalledWith(0);
             });
