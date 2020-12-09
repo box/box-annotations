@@ -7,7 +7,7 @@ import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
-type Props = {
+export type Props = {
     className?: string;
     onDelete: () => void;
     onReply: () => void;
@@ -60,14 +60,16 @@ const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props)
                     <IconTrash />
                 </button>
             </div>
-            <button
-                className="ba-PopupDrawingToolbar-comment"
-                data-testid="ba-PopupDrawingToolbar-comment"
-                onClick={() => onReply()}
-                type="button"
-            >
-                <FormattedMessage {...messages.buttonAddComent} />
-            </button>
+            <div className="ba-PopupDrawingToolbar-group">
+                <button
+                    className="ba-PopupDrawingToolbar-comment"
+                    data-testid="ba-PopupDrawingToolbar-comment"
+                    onClick={() => onReply()}
+                    type="button"
+                >
+                    <FormattedMessage {...messages.buttonAddComent} />
+                </button>
+            </div>
         </PopupBase>
     );
 };

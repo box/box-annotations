@@ -28,16 +28,26 @@ describe('DrawingAnnotationsContainer', () => {
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(DrawingAnnotations).props()).toMatchObject({
                 activeAnnotationId: null,
+                addDrawingPathGroup: expect.any(Function),
                 annotations: [],
                 drawnPathGroups: [],
                 isCreating: false,
+                location: 1,
+                resetDrawing: expect.any(Function),
+                setActiveAnnotationId: expect.any(Function),
+                setDrawingLocation: expect.any(Function),
+                setReferenceId: expect.any(Function),
+                setStaged: expect.any(Function),
+                setStatus: expect.any(Function),
             });
         });
 
         test.each`
             mode            | status                   | isCreating
             ${Mode.NONE}    | ${CreatorStatus.staged}  | ${false}
-            ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${true}
+            ${Mode.DRAWING} | ${CreatorStatus.init}    | ${true}
+            ${Mode.DRAWING} | ${CreatorStatus.started} | ${true}
+            ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${false}
             ${Mode.DRAWING} | ${CreatorStatus.pending} | ${false}
             ${Mode.REGION}  | ${CreatorStatus.staged}  | ${false}
         `(

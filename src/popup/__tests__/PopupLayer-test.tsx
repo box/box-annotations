@@ -2,7 +2,8 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import PopupLayer from '../PopupLayer';
 import PopupReply from '../../components/Popups/PopupReply';
-import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode } from '../../store';
+import { pathGroups } from '../../drawing/__mocks__/drawingData';
+import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
 import { Rect } from '../../@types';
 
 jest.mock('../../components/Popups/PopupReply');
@@ -14,6 +15,10 @@ describe('PopupLayer', () => {
         width: 50,
         x: 10,
         y: 10,
+    });
+    const getStagedDrawing = (): CreatorItemDrawing => ({
+        location: 1,
+        pathGroups,
     });
     const getStagedHighlight = (): CreatorItemHighlight => ({
         location: 1,
@@ -81,6 +86,11 @@ describe('PopupLayer', () => {
         test('should not render PopupReply if promoting a highlight but staged does not exist', () => {
             const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true, staged: null });
             expect(wrapper.exists(PopupReply)).toBe(false);
+        });
+
+        test('should render PopupReply if it is a staged drawing', () => {
+            const wrapper = getWrapper({ mode: Mode.DRAWING, staged: getStagedDrawing() });
+            expect(wrapper.exists(PopupReply)).toBe(true);
         });
     });
 

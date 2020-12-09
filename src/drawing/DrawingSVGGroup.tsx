@@ -3,7 +3,7 @@ import noop from 'lodash/noop';
 import * as uuid from 'uuid';
 
 export type Props = React.SVGAttributes<SVGGElement> & {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onMount?: (uuid: string) => void;
 };
 

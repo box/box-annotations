@@ -1,10 +1,12 @@
 @import '~box-ui-elements/es/styles/variables';
 
-@mixin PopupDrawingToolbarButton {
+@mixin ba-PopupDrawingToolbarButton($width: 32px, $height: 32px) {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
+    width: $width;
+    height: $height;
+    padding: 0;
     color: $white;
     background: transparent;
     border: none;
@@ -22,16 +24,6 @@
     &[disabled] {
         cursor: default;
         opacity: .2;
-    }
-}
-
-@mixin PopupDrawingToolbarIconButton {
-    @include PopupDrawingToolbarButton;
-
-    width: 32px;
-
-    path {
-        fill: #fff;
     }
 }
 
@@ -57,17 +49,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-right: 1px solid #000;
+
+    & + & {
+        border-left: 1px solid #000;
+    }
 }
 
-.ba-PopupDrawingToolbar-delete,
-.ba-PopupDrawingToolbar-redo,
-.ba-PopupDrawingToolbar-undo {
-    @include PopupDrawingToolbarIconButton;
+.ba-PopupDrawingToolbar-delete {
+    @include ba-PopupDrawingToolbarButton;
+
+    path {
+        fill: #fff;
+    }
 }
 
 .ba-PopupDrawingToolbar-comment {
-    @include PopupDrawingToolbarButton;
+    @include ba-PopupDrawingToolbarButton(auto, 32px);
     @include common-typography;
 
     padding: 0 18px;

@@ -24,7 +24,6 @@ export type Props = {
     setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    status: CreatorStatus;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
@@ -41,7 +40,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setReferenceId,
         setStaged,
         setStatus,
-        status,
     } = props;
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
@@ -108,7 +106,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
             )}
 
-            {isCreating && hasDrawnPathGroups && drawingSVGGroup && status !== CreatorStatus.staged && (
+            {isCreating && hasDrawnPathGroups && drawingSVGGroup && (
                 <PopupDrawingToolbar
                     className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-faded': isDrawing })}
                     onDelete={handleDelete}
