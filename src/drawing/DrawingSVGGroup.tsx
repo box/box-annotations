@@ -9,10 +9,8 @@ export type Props = React.SVGAttributes<SVGGElement> & {
 
 export type DrawingSVGGroup = SVGGElement;
 
-export function DrawingSVGGroup(
-    { children, onMount = noop, ...rest }: Props,
-    ref: React.Ref<DrawingSVGGroup>,
-): JSX.Element {
+export function DrawingSVGGroup(props: Props, ref: React.Ref<DrawingSVGGroup>): JSX.Element {
+    const { children, onMount = noop, ...rest } = props;
     const uuidRef = React.useRef<string>(uuid.v4());
 
     React.useEffect(() => {

@@ -47,6 +47,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
     const hasDrawnPathGroups = drawnPathGroups.length > 0;
     const stagedGroupRef = React.useRef<SVGGElement>(null);
+    const { current: drawingSVGGroup } = stagedGroupRef;
 
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
@@ -107,12 +108,12 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
             )}
 
-            {hasDrawnPathGroups && stagedGroupRef.current && status !== CreatorStatus.staged && (
+            {isCreating && hasDrawnPathGroups && drawingSVGGroup && status !== CreatorStatus.staged && (
                 <PopupDrawingToolbar
-                    className={classNames('ba-DrawingAnnotations-toolbar', { 'is-faded': isDrawing })}
+                    className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-faded': isDrawing })}
                     onDelete={handleDelete}
                     onReply={handleReply}
-                    reference={stagedGroupRef.current}
+                    reference={drawingSVGGroup}
                 />
             )}
         </>

@@ -11,6 +11,11 @@ export default defineMessages({
         description: 'Button label for cancelling the creation of a description, comment, or reply',
         defaultMessage: 'Cancel',
     },
+    buttonDeleteDrawing: {
+        id: 'ba.popups.deleteDrawing',
+        description: 'Button title for deleting a staged drawing',
+        defaultMessage: 'Delete Drawing',
+    },
     buttonPost: {
         id: 'ba.popups.post',
         description: 'Button label for creating a description, comment, or reply',

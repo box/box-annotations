@@ -1,5 +1,40 @@
 @import '~box-ui-elements/es/styles/variables';
 
+@mixin PopupDrawingToolbarButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    color: $white;
+    background: transparent;
+    border: none;
+    border-radius: $bdl-border-radius-size;
+    outline: none;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity 200ms ease;
+
+    &:focus,
+    &:hover {
+        opacity: 1;
+    }
+
+    &[disabled] {
+        cursor: default;
+        opacity: .2;
+    }
+}
+
+@mixin PopupDrawingToolbarIconButton {
+    @include PopupDrawingToolbarButton;
+
+    width: 32px;
+
+    path {
+        fill: #fff;
+    }
+}
+
 .ba-PopupDrawingToolbar {
     background-color: $bdl-gray;
     border-radius: $bdl-border-radius-size;
@@ -22,64 +57,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    &::after {
-        position: absolute;
-        right: 0;
-        width: 1px;
-        height: 100%;
-        background-color: #000;
-        content: '';
-    }
-}
-
-.ba-PopupDrawingToolbar-grabber {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 8px;
-    cursor: move;
-}
-
-.ba-PopupDrawingToolbar-comment,
-.ba-PopupDrawingToolbar-delete,
-.ba-PopupDrawingToolbar-redo,
-.ba-PopupDrawingToolbar-undo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 6px 8px;
-    color: $white;
-    background: transparent;
-    border: none;
-    border-radius: $bdl-border-radius-size;
-    outline: none;
-    cursor: pointer;
-    opacity: .7;
-    transition: opacity 200ms ease;
-
-    &:focus,
-    &:hover {
-        opacity: 1;
-    }
-
-    &[disabled] {
-        opacity: .2;
-    }
+    border-right: 1px solid #000;
 }
 
 .ba-PopupDrawingToolbar-delete,
 .ba-PopupDrawingToolbar-redo,
 .ba-PopupDrawingToolbar-undo {
-    path {
-        fill: #fff;
-    }
+    @include PopupDrawingToolbarIconButton;
 }
 
 .ba-PopupDrawingToolbar-comment {
+    @include PopupDrawingToolbarButton;
     @include common-typography;
 
-    padding: 6px 18px;
+    padding: 0 18px;
     color: $white;
     font-weight: bold;
 }

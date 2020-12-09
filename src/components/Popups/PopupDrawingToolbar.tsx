@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
-import IconToolbarGrabber16 from '../../icons/IconToolbarGrabber';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
@@ -39,8 +38,8 @@ const options: Partial<Options> = {
     placement: 'top',
 };
 
-const PopupDrawingToolbar = (props: Props): JSX.Element => {
-    const { className, onDelete, onReply, reference } = props;
+const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props): JSX.Element => {
+    const intl = useIntl();
 
     return (
         <PopupBase
@@ -49,19 +48,13 @@ const PopupDrawingToolbar = (props: Props): JSX.Element => {
             options={options}
             reference={reference}
         >
-            {/* anchor for dragging */}
-            <div className="ba-PopupDrawingToolbar-group">
-                <span className="ba-PopupDrawingToolbar-grabber">
-                    <IconToolbarGrabber16 />
-                </span>
-            </div>
             <div className="ba-PopupDrawingToolbar-group">
                 {/* TODO: Add undo/redo support */}
-
                 <button
                     className="ba-PopupDrawingToolbar-delete"
                     data-testid="ba-PopupDrawingToolbar-delete"
                     onClick={() => onDelete()}
+                    title={intl.formatMessage(messages.buttonDeleteDrawing)}
                     type="button"
                 >
                     <IconTrash />
