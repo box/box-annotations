@@ -1,6 +1,7 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
+import { CreateArg as DrawingCreateArg } from '../drawing/actions';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
 import {
@@ -15,6 +16,7 @@ import { PopupReference } from '../components/Popups/Popper';
 import './PopupLayer.scss';
 
 type Props = {
+    createDrawing?: (arg: DrawingCreateArg) => void;
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
@@ -36,6 +38,7 @@ const modeStagedMap: { [M in Mode]?: Function } = {
 
 const PopupLayer = (props: Props): JSX.Element | null => {
     const {
+        createDrawing = noop,
         createHighlight = noop,
         createRegion = noop,
         isPromoting = false,
@@ -70,6 +73,8 @@ const PopupLayer = (props: Props): JSX.Element | null => {
             createHighlight({ ...staged, message });
         } else if (isCreatorStagedRegion(staged)) {
             createRegion({ ...staged, message });
+        } else if (isCreatorStagedDrawing(staged)) {
+            createDrawing({ ...staged, message });
         }
     };
 

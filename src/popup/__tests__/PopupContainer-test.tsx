@@ -22,9 +22,14 @@ describe('PopupContainer', () => {
 
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(PopupLayer).props()).toMatchObject({
+                createDrawing: expect.any(Function),
+                createHighlight: expect.any(Function),
+                createRegion: expect.any(Function),
                 isPromoting: false,
                 mode: Mode.NONE,
                 referenceId: null,
+                resetCreator: expect.any(Function),
+                setMessage: expect.any(Function),
                 staged: null,
                 status: CreatorStatus.init,
                 store: defaults.store,

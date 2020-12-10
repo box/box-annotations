@@ -28,7 +28,8 @@ describe('PopupLayer', () => {
         location: 1,
         shape: getRect(),
     });
-    const defaults = {
+    const getDefaults = () => ({
+        createDrawing: jest.fn(),
         createHighlight: jest.fn(),
         createRegion: jest.fn(),
         isPromoting: false,
@@ -40,11 +41,12 @@ describe('PopupLayer', () => {
         setMessage: jest.fn(),
         staged: getStagedHighlight(),
         status: CreatorStatus.staged,
-    };
-    const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...defaults} {...props} />);
+    });
+    const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);
+    const referenceId = '123';
 
     beforeEach(() => {
-        document.body.innerHTML = `<div data-ba-reference-id="${defaults.referenceId}"></div>`;
+        document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
     });
 
     describe('render()', () => {
@@ -97,50 +99,92 @@ describe('PopupLayer', () => {
     describe('event handlers', () => {
         describe('handleCancel()', () => {
             test('should reset creator and reset isPromoting', () => {
-                const wrapper = getWrapper();
+                const resetCreator = jest.fn();
+                const wrapper = getWrapper({ resetCreator });
                 wrapper.find(PopupReply).prop('onCancel')();
 
-                expect(defaults.resetCreator).toHaveBeenCalled();
+                expect(resetCreator).toHaveBeenCalled();
             });
         });
 
         describe('handleChange', () => {
             test('should set the staged state with the new message', () => {
-                const wrapper = getWrapper();
+                const setMessage = jest.fn();
+                const wrapper = getWrapper({ setMessage });
                 wrapper.find(PopupReply).prop('onChange')('foo');
 
-                expect(defaults.setMessage).toHaveBeenCalledWith('foo');
+                expect(setMessage).toHaveBeenCalledWith('foo');
             });
 
             test('should set the staged state with empty string', () => {
-                const wrapper = getWrapper();
+                const setMessage = jest.fn();
+                const wrapper = getWrapper({ setMessage });
                 wrapper.find(PopupReply).prop('onChange')();
 
-                expect(defaults.setMessage).toHaveBeenCalledWith('');
+                expect(setMessage).toHaveBeenCalledWith('');
             });
         });
 
         describe('handleSubmit', () => {
             test('should create highlight if staged item is type highlight', () => {
-                const wrapper = getWrapper();
+                const createDrawing = jest.fn();
+                const createHighlight = jest.fn();
+                const createRegion = jest.fn();
+                const message = 'foo';
+                const wrapper = getWrapper({ createHighlight, createRegion, message });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
-                expect(defaults.createHighlight).toHaveBeenCalledWith({
+                expect(createDrawing).not.toHaveBeenCalled();
+                expect(createHighlight).toHaveBeenCalledWith({
                     ...getStagedHighlight(),
-                    message: defaults.message,
+                    message,
                 });
-                expect(defaults.createRegion).not.toHaveBeenCalled();
+                expect(createRegion).not.toHaveBeenCalled();
             });
 
             test('should create region if staged item is type region', () => {
-                const wrapper = getWrapper({ mode: Mode.REGION, staged: getStagedRegion() });
+                const createDrawing = jest.fn();
+                const createHighlight = jest.fn();
+                const createRegion = jest.fn();
+                const message = 'foo';
+                const wrapper = getWrapper({
+                    createHighlight,
+                    createRegion,
+                    message,
+                    mode: Mode.REGION,
+                    staged: getStagedRegion(),
+                });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
-                expect(defaults.createHighlight).not.toHaveBeenCalled();
-                expect(defaults.createRegion).toHaveBeenCalledWith({
+                expect(createDrawing).not.toHaveBeenCalled();
+                expect(createHighlight).not.toHaveBeenCalled();
+                expect(createRegion).toHaveBeenCalledWith({
                     ...getStagedRegion(),
-                    message: defaults.message,
+                    message,
                 });
+            });
+
+            test('should create drawing if staged item is type drawing', () => {
+                const createDrawing = jest.fn();
+                const createHighlight = jest.fn();
+                const createRegion = jest.fn();
+                const message = 'foo';
+                const wrapper = getWrapper({
+                    createDrawing,
+                    createHighlight,
+                    createRegion,
+                    message,
+                    mode: Mode.DRAWING,
+                    staged: getStagedDrawing(),
+                });
+                wrapper.find(PopupReply).prop('onSubmit')('');
+
+                expect(createDrawing).toHaveBeenCalledWith({
+                    ...getStagedDrawing(),
+                    message,
+                });
+                expect(createHighlight).not.toHaveBeenCalled();
+                expect(createRegion).not.toHaveBeenCalled();
             });
         });
     });

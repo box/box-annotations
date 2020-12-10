@@ -4,6 +4,7 @@ import state from '../__mocks__/drawingState';
 import { Mode, toggleAnnotationModeAction } from '../../common';
 import { pathGroups } from '../../../drawing/__mocks__/drawingData';
 import { resetCreatorAction } from '../../creator';
+import { createAnnotationAction } from '../../annotations';
 
 describe('store/drawing/reducer', () => {
     describe('addDrawingPathGroupAction', () => {
@@ -54,6 +55,17 @@ describe('store/drawing/reducer', () => {
     describe('resetDrawingAction', () => {
         test('should reset to initial state', () => {
             const newState = reducer({ location: 1, drawnPathGroups: [pathGroups[0]] }, resetDrawingAction());
+
+            expect(newState).toMatchObject(initialState);
+        });
+    });
+
+    describe('createAnnotationAction.fulfilled', () => {
+        test('should reset to initial state', () => {
+            const newState = reducer(
+                { location: 1, drawnPathGroups: [pathGroups[0]] },
+                createAnnotationAction.fulfilled,
+            );
 
             expect(newState).toMatchObject(initialState);
         });

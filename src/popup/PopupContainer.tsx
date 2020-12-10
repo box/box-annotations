@@ -15,6 +15,7 @@ import {
     setMessageAction,
     getCreatorReferenceId,
 } from '../store';
+import { createDrawingAction } from '../drawing/actions';
 import { createHighlightAction } from '../highlight/actions';
 import { createRegionAction } from '../region';
 
@@ -39,6 +40,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 };
 
 export const mapDispatchToProps = {
+    createDrawing: createDrawingAction,
     createHighlight: createHighlightAction,
     createRegion: createRegionAction,
     resetCreator: resetCreatorAction,
