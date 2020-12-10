@@ -28,15 +28,46 @@ describe('DrawingAnnotationsContainer', () => {
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(DrawingAnnotations).props()).toMatchObject({
                 activeAnnotationId: null,
+                addDrawingPathGroup: expect.any(Function),
                 annotations: [],
+                canShowPopupToolbar: false,
                 drawnPathGroups: [],
                 isCreating: false,
+                location: 1,
+                resetDrawing: expect.any(Function),
+                setActiveAnnotationId: expect.any(Function),
+                setReferenceId: expect.any(Function),
+                setStaged: expect.any(Function),
+                setStatus: expect.any(Function),
+                setupDrawing: expect.any(Function),
             });
         });
 
         test.each`
+            status                    | canShowPopupToolbar
+            ${CreatorStatus.init}     | ${false}
+            ${CreatorStatus.pending}  | ${false}
+            ${CreatorStatus.rejected} | ${false}
+            ${CreatorStatus.staged}   | ${false}
+            ${CreatorStatus.started}  | ${true}
+        `(
+            'should set canShowPopupToolbar as $canShowPopupToolbar if status is $status',
+            ({ canShowPopupToolbar, status }) => {
+                const store = createStore({
+                    common: { mode: Mode.DRAWING },
+                    creator: { status },
+                });
+                const wrapper = getWrapper({ store });
+
+                expect(wrapper.find(DrawingAnnotations).prop('canShowPopupToolbar')).toEqual(canShowPopupToolbar);
+            },
+        );
+
+        test.each`
             mode            | status                   | isCreating
             ${Mode.NONE}    | ${CreatorStatus.staged}  | ${false}
+            ${Mode.DRAWING} | ${CreatorStatus.init}    | ${true}
+            ${Mode.DRAWING} | ${CreatorStatus.started} | ${true}
             ${Mode.DRAWING} | ${CreatorStatus.staged}  | ${true}
             ${Mode.DRAWING} | ${CreatorStatus.pending} | ${false}
             ${Mode.REGION}  | ${CreatorStatus.staged}  | ${false}

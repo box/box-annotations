@@ -1,0 +1,74 @@
+@import '~box-ui-elements/es/styles/variables';
+
+@mixin ba-PopupDrawingToolbarButton($width: 32px, $height: 32px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $width;
+    height: $height;
+    padding: 0;
+    color: $white;
+    background: transparent;
+    border: none;
+    border-radius: $bdl-border-radius-size;
+    outline: none;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity 200ms ease;
+
+    &:focus,
+    &:hover {
+        opacity: 1;
+    }
+
+    &[disabled] {
+        cursor: default;
+        opacity: .2;
+    }
+}
+
+.ba-PopupDrawingToolbar {
+    background-color: $bdl-gray;
+    border-radius: $bdl-border-radius-size;
+
+    .ba-Popup-arrow {
+        display: none;
+    }
+
+    .ba-Popup-content {
+        display: flex;
+        background-color: $bdl-gray;
+        border: none;
+        border-radius: $bdl-border-radius-size;
+        box-shadow: none;
+    }
+}
+
+.ba-PopupDrawingToolbar-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & + & {
+        border-left: 1px solid #000;
+    }
+}
+
+.ba-PopupDrawingToolbar-delete {
+    @include ba-PopupDrawingToolbarButton;
+
+    path {
+        fill: #fff;
+    }
+}
+
+.ba-PopupDrawingToolbar-comment {
+    @include ba-PopupDrawingToolbarButton($width: auto);
+    @include common-typography;
+
+    padding-right: 18px;
+    padding-left: 18px;
+    color: $white;
+    font-weight: bold;
+}

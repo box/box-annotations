@@ -14,7 +14,7 @@ export const getCreatorStagedForLocation = (state: State, location: number): Cre
 export const getCreatorStatus = (state: State): CreatorStatus => state.creator.status;
 
 export const isCreatorStagedDrawing = (staged: CreatorItem | null): staged is CreatorItemDrawing =>
-    (staged as CreatorItemDrawing)?.drawnPathGroups !== undefined;
+    (staged as CreatorItemDrawing)?.pathGroups !== undefined;
 export const isCreatorStagedHighlight = (staged: CreatorItem | null): staged is CreatorItemHighlight =>
     (staged as CreatorItemHighlight)?.shapes !== undefined;
 export const isCreatorStagedRegion = (staged: CreatorItem | null): staged is CreatorItemRegion =>

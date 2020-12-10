@@ -1,9 +1,12 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { act } from 'react-dom/test-utils';
+import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations, { Props } from '../DrawingAnnotations';
 import DrawingCreator from '../DrawingCreator';
 import DrawingList from '../DrawingList';
 import DrawingSVG from '../DrawingSVG';
+import DrawingSVGGroup from '../DrawingSVGGroup';
+import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
 import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 
@@ -14,24 +17,21 @@ describe('DrawingAnnotations', () => {
         activeAnnotationId: null,
         addDrawingPathGroup: jest.fn(),
         annotations: [],
+        canShowPopupToolbar: false,
         drawnPathGroups: [],
         isCreating: false,
         location: 0,
+        resetDrawing: jest.fn(),
         setActiveAnnotationId: jest.fn(),
-        setDrawingLocation: jest.fn(),
+        setReferenceId: jest.fn(),
+        setStaged: jest.fn(),
         setStatus: jest.fn(),
+        setupDrawing: jest.fn(),
     });
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<DrawingAnnotations {...getDefaults()} {...props} />);
-    const setStagedRootEl = jest.fn();
+    const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
     const {
         target: { path_groups: pathGroups },
     } = annotations[0];
-    const uuidRef = React.createRef();
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useState').mockImplementation(() => [null, setStagedRootEl]);
-        jest.spyOn(React, 'useRef').mockImplementation(() => uuidRef);
-    });
 
     describe('event handlers', () => {
         describe('handleAnnotationActive()', () => {
@@ -47,14 +47,18 @@ describe('DrawingAnnotations', () => {
 
         describe('handleStart()', () => {
             test('should set status to started and set the location of the drawing', () => {
-                const setDrawingLocation = jest.fn();
+                const resetDrawing = jest.fn();
                 const setStatus = jest.fn();
-                const wrapper = getWrapper({ isCreating: true, setDrawingLocation, setStatus });
+                const setupDrawing = jest.fn();
+                const wrapper = getWrapper({ isCreating: true, resetDrawing, setStatus, setupDrawing });
 
-                wrapper.find(DrawingCreator).prop('onStart')();
+                act(() => {
+                    wrapper.find(DrawingCreator).prop('onStart')();
+                });
 
+                expect(resetDrawing).not.toHaveBeenCalled();
                 expect(setStatus).toHaveBeenCalledWith(CreatorStatus.started);
-                expect(setDrawingLocation).toHaveBeenCalledWith(0);
+                expect(setupDrawing).toHaveBeenCalledWith(0);
             });
         });
 
@@ -63,9 +67,57 @@ describe('DrawingAnnotations', () => {
                 const addDrawingPathGroup = jest.fn();
                 const wrapper = getWrapper({ isCreating: true, addDrawingPathGroup });
 
-                wrapper.find(DrawingCreator).prop('onStop')(pathGroups[0]);
+                act(() => {
+                    wrapper.find(DrawingCreator).prop('onStop')(pathGroups[0]);
+                });
 
                 expect(addDrawingPathGroup).toHaveBeenCalledWith(pathGroups[0]);
+            });
+        });
+
+        describe('handleDelete()', () => {
+            test('should dispatch resetDrawing action', () => {
+                const resetDrawing = jest.fn();
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isCreating: true,
+                    resetDrawing,
+                });
+
+                wrapper.find(PopupDrawingToolbar).prop('onDelete')();
+
+                expect(resetDrawing).toHaveBeenCalled();
+            });
+        });
+
+        describe('handleDrawingMount()', () => {
+            test('should dispatch setReference action', () => {
+                const setReferenceId = jest.fn();
+                const wrapper = getWrapper({ drawnPathGroups: pathGroups, isCreating: true, setReferenceId });
+
+                wrapper.find(DrawingSVGGroup).prop('onMount')!('123');
+
+                expect(setReferenceId).toHaveBeenCalledWith('123');
+            });
+        });
+
+        describe('handleReply()', () => {
+            test('should dispatch setStaged and setStatus actions', () => {
+                const setStaged = jest.fn();
+                const setStatus = jest.fn();
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isCreating: true,
+                    setStaged,
+                    setStatus,
+                });
+
+                wrapper.find(PopupDrawingToolbar).prop('onReply')();
+
+                expect(setStaged).toHaveBeenCalledWith({ location: 0, pathGroups });
+                expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
     });
@@ -78,23 +130,41 @@ describe('DrawingAnnotations', () => {
             expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
             expect(list.prop('activeId')).toBe('123');
             expect(list.prop('annotations').length).toBe(annotations.length);
-            expect(wrapper.find(DrawingSVG).exists()).toBe(false);
-            expect(wrapper.find(DrawingCreator).exists()).toBe(false);
+            expect(wrapper.exists(DrawingSVG)).toBe(false);
+            expect(wrapper.exists(DrawingCreator)).toBe(false);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
         test('should render DrawingCreator if allowed', () => {
             const wrapper = getWrapper({ isCreating: true });
 
-            expect(wrapper.find(DrawingList).exists()).toBe(true);
-            expect(wrapper.find(DrawingSVG).exists()).toBe(false);
-            expect(wrapper.find(DrawingCreator).exists()).toBe(true);
+            expect(wrapper.exists(DrawingList)).toBe(true);
+            expect(wrapper.exists(DrawingSVG)).toBe(false);
+            expect(wrapper.exists(DrawingCreator)).toBe(true);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
         test('should render staged drawing if present and allowed', () => {
             const wrapper = getWrapper({ drawnPathGroups: pathGroups });
 
-            expect(wrapper.find(DrawingList).exists()).toBe(true);
-            expect(wrapper.find(DrawingSVG).exists()).toBe(true);
+            expect(wrapper.exists(DrawingList)).toBe(true);
+            expect(wrapper.exists(DrawingSVG)).toBe(true);
+            expect(wrapper.exists(DrawingCreator)).toBe(false);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
+        });
+
+        test('should apply class if is currently drawing', () => {
+            const wrapper = getWrapper({ canShowPopupToolbar: true, isCreating: true, drawnPathGroups: pathGroups });
+
+            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(false);
+
+            act(() => {
+                wrapper.find(DrawingCreator).prop('onStart')();
+            });
+
+            wrapper.update();
+
+            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(true);
         });
     });
 });
