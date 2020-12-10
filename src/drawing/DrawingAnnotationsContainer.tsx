@@ -1,12 +1,7 @@
 import { connect } from 'react-redux';
 import DrawingAnnotations from './DrawingAnnotations';
 import withProviders from '../common/withProviders';
-import {
-    addDrawingPathGroupAction,
-    getDrawingDrawnPathGroupsForLocation,
-    resetDrawingAction,
-    setDrawingLocationAction,
-} from '../store/drawing';
+import { addDrawingPathGroupAction, getDrawingDrawnPathGroupsForLocation, resetDrawingAction } from '../store/drawing';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import {
     AppState,
@@ -23,13 +18,14 @@ import {
     setStatusAction,
 } from '../store';
 import { isDrawing } from './drawingUtil';
+import { setupDrawingAction } from './actions';
 
 export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationDrawing[];
+    canShowPopupToolbar: boolean;
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
-    status: CreatorStatus;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
@@ -38,12 +34,12 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
+        canShowPopupToolbar: creatorStatus === CreatorStatus.started,
         drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),
         isCreating:
             isFeatureEnabled(state, 'drawingCreate') &&
             getAnnotationMode(state) === Mode.DRAWING &&
             creatorStatus !== CreatorStatus.pending,
-        status: creatorStatus,
     };
 };
 
@@ -51,10 +47,10 @@ export const mapDispatchToProps = {
     addDrawingPathGroup: addDrawingPathGroupAction,
     resetDrawing: resetDrawingAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
-    setDrawingLocation: setDrawingLocationAction,
     setReferenceId: setReferenceIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
+    setupDrawing: setupDrawingAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withProviders(DrawingAnnotations));

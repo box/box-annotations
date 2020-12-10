@@ -17,16 +17,16 @@ describe('DrawingAnnotations', () => {
         activeAnnotationId: null,
         addDrawingPathGroup: jest.fn(),
         annotations: [],
+        canShowPopupToolbar: false,
         drawnPathGroups: [],
         isCreating: false,
         location: 0,
         resetDrawing: jest.fn(),
         setActiveAnnotationId: jest.fn(),
-        setDrawingLocation: jest.fn(),
         setReferenceId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
-        status: CreatorStatus.init,
+        setupDrawing: jest.fn(),
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
     const {
@@ -48,9 +48,9 @@ describe('DrawingAnnotations', () => {
         describe('handleStart()', () => {
             test('should set status to started and set the location of the drawing', () => {
                 const resetDrawing = jest.fn();
-                const setDrawingLocation = jest.fn();
                 const setStatus = jest.fn();
-                const wrapper = getWrapper({ isCreating: true, resetDrawing, setDrawingLocation, setStatus });
+                const setupDrawing = jest.fn();
+                const wrapper = getWrapper({ isCreating: true, resetDrawing, setStatus, setupDrawing });
 
                 act(() => {
                     wrapper.find(DrawingCreator).prop('onStart')();
@@ -58,28 +58,7 @@ describe('DrawingAnnotations', () => {
 
                 expect(resetDrawing).not.toHaveBeenCalled();
                 expect(setStatus).toHaveBeenCalledWith(CreatorStatus.started);
-                expect(setDrawingLocation).toHaveBeenCalledWith(0);
-            });
-
-            test('should reset drawing if status is already staged', () => {
-                const resetDrawing = jest.fn();
-                const setDrawingLocation = jest.fn();
-                const setStatus = jest.fn();
-                const wrapper = getWrapper({
-                    isCreating: true,
-                    resetDrawing,
-                    setDrawingLocation,
-                    setStatus,
-                    status: CreatorStatus.staged,
-                });
-
-                act(() => {
-                    wrapper.find(DrawingCreator).prop('onStart')();
-                });
-
-                expect(resetDrawing).toHaveBeenCalled();
-                expect(setStatus).toHaveBeenCalledWith(CreatorStatus.started);
-                expect(setDrawingLocation).toHaveBeenCalledWith(0);
+                expect(setupDrawing).toHaveBeenCalledWith(0);
             });
         });
 
@@ -99,7 +78,12 @@ describe('DrawingAnnotations', () => {
         describe('handleDelete()', () => {
             test('should dispatch resetDrawing action', () => {
                 const resetDrawing = jest.fn();
-                const wrapper = getWrapper({ drawnPathGroups: pathGroups, isCreating: true, resetDrawing });
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isCreating: true,
+                    resetDrawing,
+                });
 
                 wrapper.find(PopupDrawingToolbar).prop('onDelete')();
 
@@ -122,7 +106,13 @@ describe('DrawingAnnotations', () => {
             test('should dispatch setStaged and setStatus actions', () => {
                 const setStaged = jest.fn();
                 const setStatus = jest.fn();
-                const wrapper = getWrapper({ drawnPathGroups: pathGroups, isCreating: true, setStaged, setStatus });
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isCreating: true,
+                    setStaged,
+                    setStatus,
+                });
 
                 wrapper.find(PopupDrawingToolbar).prop('onReply')();
 
@@ -163,10 +153,10 @@ describe('DrawingAnnotations', () => {
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
-        test('should apply ba-is-faded if is currently drawing', () => {
-            const wrapper = getWrapper({ isCreating: true, drawnPathGroups: pathGroups });
+        test('should apply ba-is-drawing if is currently drawing', () => {
+            const wrapper = getWrapper({ canShowPopupToolbar: true, isCreating: true, drawnPathGroups: pathGroups });
 
-            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-faded')).toBe(false);
+            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(false);
 
             act(() => {
                 wrapper.find(DrawingCreator).prop('onStart')();
@@ -174,7 +164,7 @@ describe('DrawingAnnotations', () => {
 
             wrapper.update();
 
-            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-faded')).toBe(true);
+            expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(true);
         });
     });
 });

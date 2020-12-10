@@ -53,7 +53,7 @@ const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props)
                 <button
                     className="ba-PopupDrawingToolbar-delete"
                     data-testid="ba-PopupDrawingToolbar-delete"
-                    onClick={() => onDelete()}
+                    onClick={onDelete}
                     title={intl.formatMessage(messages.buttonDeleteDrawing)}
                     type="button"
                 >
@@ -64,7 +64,7 @@ const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props)
                 <button
                     className="ba-PopupDrawingToolbar-comment"
                     data-testid="ba-PopupDrawingToolbar-comment"
-                    onClick={() => onReply()}
+                    onClick={onReply}
                     type="button"
                 >
                     <FormattedMessage {...messages.buttonAddComent} />

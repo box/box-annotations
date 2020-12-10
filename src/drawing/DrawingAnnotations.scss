@@ -32,7 +32,7 @@
     transition: opacity 200ms ease;
     pointer-events: auto;
 
-    &.ba-is-faded {
+    &.ba-is-drawing {
         opacity: .3;
         pointer-events: none;
     }

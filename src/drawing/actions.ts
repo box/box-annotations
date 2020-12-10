@@ -1,7 +1,8 @@
-import { AppThunkDispatch, AppState } from '../store';
+import { AppThunkDispatch, AppState, getCreatorStatus, CreatorStatus } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { PathGroup } from '../@types';
+import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
 
 export type CreateArg = {
     location: number;
@@ -33,4 +34,15 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
     };
 
     return dispatch(createAnnotationAction(newAnnotation));
+};
+
+export const setupDrawingAction = (location: number) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
+    const state = getState();
+    const creatorStatus = getCreatorStatus(state);
+
+    if (creatorStatus === CreatorStatus.staged) {
+        dispatch(resetDrawingAction());
+    }
+
+    return dispatch(setDrawingLocationAction(location));
 };

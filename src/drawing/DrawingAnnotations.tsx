@@ -15,16 +15,16 @@ export type Props = {
     activeAnnotationId: string | null;
     addDrawingPathGroup: (pathGroup: PathGroup) => void;
     annotations: AnnotationDrawing[];
+    canShowPopupToolbar: boolean;
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
     location: number;
     resetDrawing: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
-    setDrawingLocation: (location: number) => void;
     setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
-    status: CreatorStatus;
+    setupDrawing: (location: number) => void;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
@@ -32,16 +32,16 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         activeAnnotationId,
         addDrawingPathGroup,
         annotations,
+        canShowPopupToolbar,
         drawnPathGroups,
         isCreating,
         location,
         resetDrawing,
         setActiveAnnotationId,
-        setDrawingLocation,
         setReferenceId,
         setStaged,
         setStatus,
-        status,
+        setupDrawing,
     } = props;
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
@@ -63,12 +63,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setStatus(CreatorStatus.staged);
     };
     const handleStart = (): void => {
-        if (status === CreatorStatus.staged) {
-            resetDrawing();
-        }
-
+        setupDrawing(location);
         setStatus(CreatorStatus.started);
-        setDrawingLocation(location);
         setIsDrawing(true);
     };
     const handleStop = (pathGroup: PathGroup): void => {
@@ -112,9 +108,9 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
             )}
 
-            {isCreating && hasDrawnPathGroups && drawingSVGGroup && status !== CreatorStatus.staged && (
+            {isCreating && hasDrawnPathGroups && drawingSVGGroup && canShowPopupToolbar && (
                 <PopupDrawingToolbar
-                    className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-faded': isDrawing })}
+                    className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
                     onDelete={handleDelete}
                     onReply={handleReply}
                     reference={drawingSVGGroup}

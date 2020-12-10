@@ -64,10 +64,11 @@
 }
 
 .ba-PopupDrawingToolbar-comment {
-    @include ba-PopupDrawingToolbarButton(auto, 32px);
+    @include ba-PopupDrawingToolbarButton($width: auto);
     @include common-typography;
 
-    padding: 0 18px;
+    padding-right: 18px;
+    padding-left: 18px;
     color: $white;
     font-weight: bold;
 }

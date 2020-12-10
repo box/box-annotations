@@ -1,13 +1,9 @@
 import { addDrawingPathGroupAction, resetDrawingAction, setDrawingLocationAction } from '../actions';
 import reducer, { initialState } from '../reducer';
 import state from '../__mocks__/drawingState';
-import { annotations } from '../../../drawing/__mocks__/drawingData';
 import { Mode, toggleAnnotationModeAction } from '../../common';
+import { pathGroups } from '../../../drawing/__mocks__/drawingData';
 import { resetCreatorAction } from '../../creator';
-
-const {
-    target: { path_groups: pathGroups },
-} = annotations[0];
 
 describe('store/drawing/reducer', () => {
     describe('addDrawingPathGroupAction', () => {
