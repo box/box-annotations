@@ -153,7 +153,7 @@ describe('DrawingAnnotations', () => {
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
-        test('should apply ba-is-drawing if is currently drawing', () => {
+        test('should apply class if is currently drawing', () => {
             const wrapper = getWrapper({ canShowPopupToolbar: true, isCreating: true, drawnPathGroups: pathGroups });
 
             expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(false);
