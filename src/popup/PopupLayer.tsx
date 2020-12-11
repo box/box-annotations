@@ -15,7 +15,7 @@ import {
 import { PopupReference } from '../components/Popups/Popper';
 import './PopupLayer.scss';
 
-type Props = {
+export type Props = {
     createDrawing?: (arg: DrawingCreateArg) => void;
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;

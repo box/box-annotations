@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
-import PopupLayer from '../PopupLayer';
+import PopupLayer, { Props } from '../PopupLayer';
 import PopupReply from '../../components/Popups/PopupReply';
 import { pathGroups } from '../../drawing/__mocks__/drawingData';
 import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
@@ -28,7 +28,7 @@ describe('PopupLayer', () => {
         location: 1,
         shape: getRect(),
     });
-    const getDefaults = () => ({
+    const getDefaults = (): Props => ({
         createDrawing: jest.fn(),
         createHighlight: jest.fn(),
         createRegion: jest.fn(),
