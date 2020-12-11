@@ -55,7 +55,9 @@
     }
 }
 
-.ba-PopupDrawingToolbar-delete {
+.ba-PopupDrawingToolbar-delete,
+.ba-PopupDrawingToolbar-redo,
+.ba-PopupDrawingToolbar-undo {
     @include ba-PopupDrawingToolbarButton;
 
     path {

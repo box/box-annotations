@@ -14,12 +14,22 @@ export default defineMessages({
     buttonDeleteDrawing: {
         id: 'ba.popups.deleteDrawing',
         description: 'Button title for deleting a staged drawing',
-        defaultMessage: 'Delete Drawing',
+        defaultMessage: 'Delete',
     },
     buttonPost: {
         id: 'ba.popups.post',
         description: 'Button label for creating a description, comment, or reply',
         defaultMessage: 'Post',
+    },
+    buttonRedoDrawing: {
+        id: 'ba.popups.redoDrawing',
+        description: 'Button title for redoing a staged drawing',
+        defaultMessage: 'Redo',
+    },
+    buttonUndoDrawing: {
+        id: 'ba.popups.undoDrawing',
+        description: 'Button title for undoing a staged drawing',
+        defaultMessage: 'Undo',
     },
     fieldPlaceholder: {
         id: 'ba.popups.replyField.placeholder',

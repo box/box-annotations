@@ -1,7 +1,14 @@
 import { connect } from 'react-redux';
 import DrawingAnnotations from './DrawingAnnotations';
 import withProviders from '../common/withProviders';
-import { addDrawingPathGroupAction, getDrawingDrawnPathGroupsForLocation, resetDrawingAction } from '../store/drawing';
+import {
+    addDrawingPathGroupAction,
+    getDrawingDrawnPathGroupsForLocation,
+    getStashedDrawnPathGroupsForLocation,
+    redoDrawingPathGroupAction,
+    resetDrawingAction,
+    undoDrawingPathGroupAction,
+} from '../store/drawing';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import {
     AppState,
@@ -26,6 +33,7 @@ export type Props = {
     canShowPopupToolbar: boolean;
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
+    stashedPathGroups: Array<PathGroup>;
 };
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
@@ -40,17 +48,20 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
             isFeatureEnabled(state, 'drawingCreate') &&
             getAnnotationMode(state) === Mode.DRAWING &&
             creatorStatus !== CreatorStatus.pending,
+        stashedPathGroups: getStashedDrawnPathGroupsForLocation(state, location),
     };
 };
 
 export const mapDispatchToProps = {
     addDrawingPathGroup: addDrawingPathGroupAction,
+    redoDrawingPathGroup: redoDrawingPathGroupAction,
     resetDrawing: resetDrawingAction,
     setActiveAnnotationId: setActiveAnnotationIdAction,
     setReferenceId: setReferenceIdAction,
     setStaged: setStagedAction,
     setStatus: setStatusAction,
     setupDrawing: setupDrawingAction,
+    undoDrawingPathGroup: undoDrawingPathGroupAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withProviders(DrawingAnnotations));

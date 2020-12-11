@@ -1,16 +1,23 @@
 import React from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
+import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
 import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
+import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
 export type Props = {
+    canComment: boolean;
+    canRedo: boolean;
+    canUndo: boolean;
     className?: string;
     onDelete: () => void;
+    onRedo: () => void;
     onReply: () => void;
+    onUndo: () => void;
     reference: PopupReference;
 };
 
@@ -38,7 +45,17 @@ const options: Partial<Options> = {
     placement: 'top',
 };
 
-const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props): JSX.Element => {
+const PopupDrawingToolbar = ({
+    canComment,
+    canRedo,
+    canUndo,
+    className,
+    onDelete,
+    onRedo,
+    onReply,
+    onUndo,
+    reference,
+}: Props): JSX.Element => {
     const intl = useIntl();
 
     return (
@@ -49,7 +66,26 @@ const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props)
             reference={reference}
         >
             <div className="ba-PopupDrawingToolbar-group">
-                {/* TODO: Add undo/redo support */}
+                <button
+                    className="ba-PopupDrawingToolbar-undo"
+                    data-testid="ba-PopupDrawingToolbar-undo"
+                    disabled={!canUndo}
+                    onClick={() => onUndo()}
+                    title={intl.formatMessage(messages.buttonUndoDrawing)}
+                    type="button"
+                >
+                    <IconUndo />
+                </button>
+                <button
+                    className="ba-PopupDrawingToolbar-redo"
+                    data-testid="ba-PopupDrawingToolbar-redo"
+                    disabled={!canRedo}
+                    onClick={() => onRedo()}
+                    title={intl.formatMessage(messages.buttonRedoDrawing)}
+                    type="button"
+                >
+                    <IconRedo />
+                </button>
                 <button
                     className="ba-PopupDrawingToolbar-delete"
                     data-testid="ba-PopupDrawingToolbar-delete"
@@ -64,6 +100,7 @@ const PopupDrawingToolbar = ({ className, onDelete, onReply, reference }: Props)
                 <button
                     className="ba-PopupDrawingToolbar-comment"
                     data-testid="ba-PopupDrawingToolbar-comment"
+                    disabled={!canComment}
                     onClick={() => onReply()}
                     type="button"
                 >
