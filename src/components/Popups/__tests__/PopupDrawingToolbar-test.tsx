@@ -90,28 +90,28 @@ describe('PopupDrawingToolbar', () => {
 
         test.each`
             canProp         | buttonId
-            ${'canComment'} | ${getDataTestId('comment')}
-            ${'canRedo'}    | ${getDataTestId('redo')}
-            ${'canUndo'}    | ${getDataTestId('undo')}
+            ${'canComment'} | ${'comment'}
+            ${'canRedo'}    | ${'redo'}
+            ${'canUndo'}    | ${'undo'}
         `('should disable button with id $buttonId if $canProp is false', ({ canProp, buttonId }) => {
             const wrapper = getWrapper({ [canProp]: false });
 
-            expect(wrapper.find(`[data-testid="${buttonId}"]`).prop('disabled')).toBe(true);
+            expect(getButton(wrapper, buttonId).prop('disabled')).toBe(true);
         });
     });
 
     describe('callbacks', () => {
         test.each`
-            callback      | button
+            callback      | buttonId
             ${'onUndo'}   | ${'undo'}
             ${'onRedo'}   | ${'redo'}
             ${'onDelete'} | ${'delete'}
             ${'onReply'}  | ${'comment'}
-        `('should call $callback when $button is clicked', ({ callback, button }) => {
+        `('should call $callback when $button is clicked', ({ callback, buttonId }) => {
             const mockFn = jest.fn();
             const wrapper = getWrapper({ [callback]: mockFn });
 
-            getButton(wrapper, button).simulate('click');
+            getButton(wrapper, buttonId).simulate('click');
 
             expect(mockFn).toHaveBeenCalled();
         });
