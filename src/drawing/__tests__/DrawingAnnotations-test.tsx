@@ -9,6 +9,7 @@ import DrawingSVGGroup from '../DrawingSVGGroup';
 import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
 import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
+import { PathGroup } from '../../@types';
 
 jest.mock('../DrawingList');
 
@@ -21,12 +22,15 @@ describe('DrawingAnnotations', () => {
         drawnPathGroups: [],
         isCreating: false,
         location: 0,
+        redoDrawingPathGroup: jest.fn(),
         resetDrawing: jest.fn(),
         setActiveAnnotationId: jest.fn(),
         setReferenceId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         setupDrawing: jest.fn(),
+        stashedPathGroups: [],
+        undoDrawingPathGroup: jest.fn(),
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
     const {
@@ -34,6 +38,74 @@ describe('DrawingAnnotations', () => {
     } = annotations[0];
 
     describe('event handlers', () => {
+        describe('toolbar', () => {
+            describe('handleDelete()', () => {
+                test('should dispatch resetDrawing action', () => {
+                    const resetDrawing = jest.fn();
+                    const wrapper = getWrapper({
+                        canShowPopupToolbar: true,
+                        drawnPathGroups: pathGroups,
+                        isCreating: true,
+                        resetDrawing,
+                    });
+
+                    wrapper.find(PopupDrawingToolbar).prop('onDelete')();
+
+                    expect(resetDrawing).toHaveBeenCalled();
+                });
+            });
+
+            describe('handleRedo()', () => {
+                test('should dispatch redoDrawingPathGroup action', () => {
+                    const redoDrawingPathGroup = jest.fn();
+                    const wrapper = getWrapper({
+                        canShowPopupToolbar: true,
+                        drawnPathGroups: pathGroups,
+                        isCreating: true,
+                        redoDrawingPathGroup,
+                    });
+
+                    wrapper.find(PopupDrawingToolbar).prop('onRedo')();
+
+                    expect(redoDrawingPathGroup).toHaveBeenCalled();
+                });
+            });
+
+            describe('handleReply()', () => {
+                test('should dispatch setStaged and setStatus actions', () => {
+                    const setStaged = jest.fn();
+                    const setStatus = jest.fn();
+                    const wrapper = getWrapper({
+                        canShowPopupToolbar: true,
+                        drawnPathGroups: pathGroups,
+                        isCreating: true,
+                        setStaged,
+                        setStatus,
+                    });
+
+                    wrapper.find(PopupDrawingToolbar).prop('onReply')();
+
+                    expect(setStaged).toHaveBeenCalledWith({ location: 0, pathGroups });
+                    expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
+                });
+            });
+
+            describe('handleUndo()', () => {
+                test('should dispatch undoDrawingPathGroup action', () => {
+                    const undoDrawingPathGroup = jest.fn();
+                    const wrapper = getWrapper({
+                        canShowPopupToolbar: true,
+                        drawnPathGroups: pathGroups,
+                        isCreating: true,
+                        undoDrawingPathGroup,
+                    });
+
+                    wrapper.find(PopupDrawingToolbar).prop('onUndo')();
+
+                    expect(undoDrawingPathGroup).toHaveBeenCalled();
+                });
+            });
+        });
         describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId with annotation id', () => {
                 const setActiveAnnotationId = jest.fn();
@@ -75,22 +147,6 @@ describe('DrawingAnnotations', () => {
             });
         });
 
-        describe('handleDelete()', () => {
-            test('should dispatch resetDrawing action', () => {
-                const resetDrawing = jest.fn();
-                const wrapper = getWrapper({
-                    canShowPopupToolbar: true,
-                    drawnPathGroups: pathGroups,
-                    isCreating: true,
-                    resetDrawing,
-                });
-
-                wrapper.find(PopupDrawingToolbar).prop('onDelete')();
-
-                expect(resetDrawing).toHaveBeenCalled();
-            });
-        });
-
         describe('handleDrawingMount()', () => {
             test('should dispatch setReference action', () => {
                 const setReferenceId = jest.fn();
@@ -99,25 +155,6 @@ describe('DrawingAnnotations', () => {
                 wrapper.find(DrawingSVGGroup).prop('onMount')!('123');
 
                 expect(setReferenceId).toHaveBeenCalledWith('123');
-            });
-        });
-
-        describe('handleReply()', () => {
-            test('should dispatch setStaged and setStatus actions', () => {
-                const setStaged = jest.fn();
-                const setStatus = jest.fn();
-                const wrapper = getWrapper({
-                    canShowPopupToolbar: true,
-                    drawnPathGroups: pathGroups,
-                    isCreating: true,
-                    setStaged,
-                    setStatus,
-                });
-
-                wrapper.find(PopupDrawingToolbar).prop('onReply')();
-
-                expect(setStaged).toHaveBeenCalledWith({ location: 0, pathGroups });
-                expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
     });
@@ -144,8 +181,17 @@ describe('DrawingAnnotations', () => {
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
-        test('should render staged drawing if present and allowed', () => {
+        test('should render staged drawing if only drawn path groups exists', () => {
             const wrapper = getWrapper({ drawnPathGroups: pathGroups });
+
+            expect(wrapper.exists(DrawingList)).toBe(true);
+            expect(wrapper.exists(DrawingSVG)).toBe(true);
+            expect(wrapper.exists(DrawingCreator)).toBe(false);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
+        });
+
+        test('should render staged drawing if only stashed path groups exists', () => {
+            const wrapper = getWrapper({ stashedPathGroups: pathGroups });
 
             expect(wrapper.exists(DrawingList)).toBe(true);
             expect(wrapper.exists(DrawingSVG)).toBe(true);
@@ -165,6 +211,61 @@ describe('DrawingAnnotations', () => {
             wrapper.update();
 
             expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(true);
+        });
+
+        describe('toolbar', () => {
+            const getWrapperWithToolbar = (
+                drawnPathGroups: Array<PathGroup>,
+                stashedPathGroups: Array<PathGroup>,
+            ): ReactWrapper =>
+                getWrapper({
+                    canShowPopupToolbar: true,
+                    isCreating: true,
+                    drawnPathGroups,
+                    stashedPathGroups,
+                });
+
+            test.each`
+                drawn         | stashed       | canComment
+                ${pathGroups} | ${[]}         | ${true}
+                ${[]}         | ${pathGroups} | ${false}
+                ${pathGroups} | ${pathGroups} | ${true}
+            `(
+                'should set canComment to $canComment if drawnPathGroups is $drawn and stashedPathGroups is $stashed',
+                ({ drawn, stashed, canComment }) => {
+                    const wrapper = getWrapperWithToolbar(drawn, stashed);
+
+                    expect(wrapper.find(PopupDrawingToolbar).prop('canComment')).toBe(canComment);
+                },
+            );
+
+            test.each`
+                drawn         | stashed       | canRedo
+                ${pathGroups} | ${[]}         | ${false}
+                ${[]}         | ${pathGroups} | ${true}
+                ${pathGroups} | ${pathGroups} | ${true}
+            `(
+                'should set canRedo to $canRedo if drawnPathGroups is $drawn and stashedPathGroups is $stashed',
+                ({ drawn, stashed, canRedo }) => {
+                    const wrapper = getWrapperWithToolbar(drawn, stashed);
+
+                    expect(wrapper.find(PopupDrawingToolbar).prop('canRedo')).toBe(canRedo);
+                },
+            );
+
+            test.each`
+                drawn         | stashed       | canUndo
+                ${pathGroups} | ${[]}         | ${true}
+                ${[]}         | ${pathGroups} | ${false}
+                ${pathGroups} | ${pathGroups} | ${true}
+            `(
+                'should set canUndo to $canUndo if drawnPathGroups is $drawn and stashedPathGroups is $stashed',
+                ({ drawn, stashed, canUndo }) => {
+                    const wrapper = getWrapperWithToolbar(drawn, stashed);
+
+                    expect(wrapper.find(PopupDrawingToolbar).prop('canUndo')).toBe(canUndo);
+                },
+            );
         });
     });
 });
