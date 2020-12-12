@@ -71,7 +71,7 @@ const PopupDrawingToolbar = ({
                     data-testid="ba-PopupDrawingToolbar-undo"
                     disabled={!canUndo}
                     onClick={() => onUndo()}
-                    title={intl.formatMessage(messages.buttonUndoDrawing)}
+                    title={intl.formatMessage(messages.drawingButtonUndo)}
                     type="button"
                 >
                     <IconUndo />
@@ -81,7 +81,7 @@ const PopupDrawingToolbar = ({
                     data-testid="ba-PopupDrawingToolbar-redo"
                     disabled={!canRedo}
                     onClick={() => onRedo()}
-                    title={intl.formatMessage(messages.buttonRedoDrawing)}
+                    title={intl.formatMessage(messages.drawingButtonRedo)}
                     type="button"
                 >
                     <IconRedo />
@@ -90,7 +90,7 @@ const PopupDrawingToolbar = ({
                     className="ba-PopupDrawingToolbar-delete"
                     data-testid="ba-PopupDrawingToolbar-delete"
                     onClick={() => onDelete()}
-                    title={intl.formatMessage(messages.buttonDeleteDrawing)}
+                    title={intl.formatMessage(messages.drawingButtonDelete)}
                     type="button"
                 >
                     <IconTrash />
@@ -104,7 +104,7 @@ const PopupDrawingToolbar = ({
                     onClick={() => onReply()}
                     type="button"
                 >
-                    <FormattedMessage {...messages.buttonAddComent} />
+                    <FormattedMessage {...messages.drawingButtonAddComment} />
                 </button>
             </div>
         </PopupBase>
