@@ -40,6 +40,8 @@ describe('DrawingAnnotationsContainer', () => {
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 setupDrawing: expect.any(Function),
+                stashedPathGroups: [],
+                undoDrawingPathGroup: expect.any(Function),
             });
         });
 

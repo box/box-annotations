@@ -19,12 +19,15 @@ export type Props = {
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
     location: number;
+    redoDrawingPathGroup: () => void;
     resetDrawing: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
     setupDrawing: (location: number) => void;
+    stashedPathGroups: Array<PathGroup>;
+    undoDrawingPathGroup: () => void;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
@@ -36,16 +39,21 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         drawnPathGroups,
         isCreating,
         location,
+        redoDrawingPathGroup,
         resetDrawing,
         setActiveAnnotationId,
         setReferenceId,
         setStaged,
         setStatus,
         setupDrawing,
+        stashedPathGroups,
+        undoDrawingPathGroup,
     } = props;
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
     const hasDrawnPathGroups = drawnPathGroups.length > 0;
+    const hasStashedPathGroups = stashedPathGroups.length > 0;
+    const hasPathGroups = hasDrawnPathGroups || hasStashedPathGroups;
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 
@@ -57,6 +65,9 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     };
     const handleDrawingMount = (uuid: string): void => {
         setReferenceId(uuid);
+    };
+    const handleRedo = (): void => {
+        redoDrawingPathGroup();
     };
     const handleReply = (): void => {
         setStaged({ location, pathGroups: drawnPathGroups });
@@ -71,6 +82,9 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         addDrawingPathGroup(pathGroup);
         setIsDrawing(false);
     };
+    const handleUndo = (): void => {
+        undoDrawingPathGroup();
+    };
 
     return (
         <>
@@ -81,7 +95,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 onSelect={handleAnnotationActive}
             />
 
-            {hasDrawnPathGroups && (
+            {hasPathGroups && (
                 <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
                     {/* Group element to capture the bounding box around the drawn path groups */}
                     <DrawingSVGGroup ref={stagedGroupRef} onMount={handleDrawingMount}>
@@ -108,11 +122,16 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
             )}
 
-            {isCreating && hasDrawnPathGroups && drawingSVGGroup && canShowPopupToolbar && (
+            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
                 <PopupDrawingToolbar
+                    canComment={hasDrawnPathGroups}
+                    canRedo={hasStashedPathGroups}
+                    canUndo={hasDrawnPathGroups}
                     className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
                     onDelete={handleDelete}
+                    onRedo={handleRedo}
                     onReply={handleReply}
+                    onUndo={handleUndo}
                     reference={drawingSVGGroup}
                 />
             )}
