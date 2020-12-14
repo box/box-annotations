@@ -79,7 +79,6 @@ describe('DrawingAnnotationsContainer', () => {
                 const store = createStore({
                     common: { mode },
                     creator: { status },
-                    options: { features: { drawingCreate: true } },
                 });
                 const wrapper = getWrapper({ store });
 

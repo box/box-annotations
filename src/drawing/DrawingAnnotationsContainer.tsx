@@ -17,7 +17,6 @@ import {
     getAnnotationMode,
     getAnnotationsForLocation,
     getCreatorStatus,
-    isFeatureEnabled,
     Mode,
     setActiveAnnotationIdAction,
     setReferenceIdAction,
@@ -44,10 +43,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
         canShowPopupToolbar: creatorStatus === CreatorStatus.started,
         drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),
-        isCreating:
-            isFeatureEnabled(state, 'drawingCreate') &&
-            getAnnotationMode(state) === Mode.DRAWING &&
-            creatorStatus !== CreatorStatus.pending,
+        isCreating: getAnnotationMode(state) === Mode.DRAWING && creatorStatus !== CreatorStatus.pending,
         stashedPathGroups: getStashedDrawnPathGroupsForLocation(state, location),
     };
 };
