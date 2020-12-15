@@ -129,6 +129,33 @@ describe('DrawingCreator', () => {
                 stroke: defaultStroke,
             });
         });
+
+        test('should bound the drawn points by the boundary of the PointerCapture element', () => {
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStop });
+
+            simulateDrawStart(wrapper.find(PointerCapture));
+            wrapper.update();
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawMove(wrapper.find(PointerCapture), -1, -1);
+            wrapper.update();
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawStop(wrapper.find(PointerCapture));
+            wrapper.update();
+            expect(onStop).toHaveBeenCalledWith({
+                paths: [
+                    {
+                        points: [
+                            { x: 10, y: 10 },
+                            { x: 4, y: 4 },
+                        ],
+                    },
+                ],
+                stroke: defaultStroke,
+            });
+        });
     });
 
     describe('svg path rendering', () => {
