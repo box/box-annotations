@@ -1,9 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import createPopper, { Instance, Options, PopupReference } from './Popper';
+import { AnnotationDrawing } from '../../@types';
 import './PopupBase.scss';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
+    annotations: AnnotationDrawing[];
     children: React.ReactNode;
     className?: string;
     options: Partial<Options>;
@@ -24,8 +26,8 @@ export default class PopupBase extends React.PureComponent<Props> {
     }
 
     componentDidUpdate(prevProps: Props): void {
-        const { options: prevOptions, reference: prevReference } = prevProps;
-        const { options, reference } = this.props;
+        const { annotations: prevAnnotations, options: prevOptions, reference: prevReference } = prevProps;
+        const { annotations, options, reference } = this.props;
 
         if (!this.popper) {
             return;
@@ -35,7 +37,7 @@ export default class PopupBase extends React.PureComponent<Props> {
             this.popper.setOptions(options);
         }
 
-        if (reference !== prevReference) {
+        if (annotations !== prevAnnotations || reference !== prevReference) {
             this.popper.destroy();
             this.popper = this.createPopper();
         }
