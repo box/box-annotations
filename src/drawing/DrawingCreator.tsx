@@ -21,8 +21,6 @@ export const defaultStroke = {
     size: 4,
 };
 
-const MIN_SIZE = 4;
-
 export default function DrawingCreator({ className, onStart, onStop, stroke = defaultStroke }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const capturedPointsRef = React.useRef<Array<Position>>([]);
@@ -41,12 +39,13 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         }
 
         const { height, width } = creatorEl.getBoundingClientRect();
-        const MAX_X = width - MIN_SIZE;
-        const MAX_Y = height - MIN_SIZE;
+        const { size: minSize } = stroke;
+        const MAX_X = width - minSize;
+        const MAX_Y = height - minSize;
 
         return points.map(({ x, y }) => ({
-            x: (Math.min(MAX_X, Math.max(MIN_SIZE, x)) / width) * 100,
-            y: (Math.min(MAX_Y, Math.max(MIN_SIZE, y)) / height) * 100,
+            x: (Math.min(MAX_X, Math.max(minSize, x)) / width) * 100,
+            y: (Math.min(MAX_Y, Math.max(minSize, y)) / height) * 100,
         }));
     };
     const getPosition = (x: number, y: number): [number, number] => {

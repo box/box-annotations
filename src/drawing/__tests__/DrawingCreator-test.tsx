@@ -130,9 +130,44 @@ describe('DrawingCreator', () => {
             });
         });
 
-        test('should bound the drawn points by the boundary of the PointerCapture element', () => {
+        test.each`
+            x      | y      | expectedX | expectedY
+            ${-1}  | ${-1}  | ${4}      | ${4}
+            ${110} | ${110} | ${96}     | ${96}
+        `(
+            'should bound the drawn points ($x, $y) by the boundary of the PointerCapture element',
+            ({ x, y, expectedX, expectedY }) => {
+                const onStop = jest.fn();
+                const wrapper = getWrapper({ onStop });
+
+                simulateDrawStart(wrapper.find(PointerCapture));
+                wrapper.update();
+                expect(onStop).not.toHaveBeenCalled();
+
+                simulateDrawMove(wrapper.find(PointerCapture), x, y);
+                wrapper.update();
+                expect(onStop).not.toHaveBeenCalled();
+
+                simulateDrawStop(wrapper.find(PointerCapture));
+                wrapper.update();
+                expect(onStop).toHaveBeenCalledWith({
+                    paths: [
+                        {
+                            points: [
+                                { x: 10, y: 10 },
+                                { x: expectedX, y: expectedY },
+                            ],
+                        },
+                    ],
+                    stroke: defaultStroke,
+                });
+            },
+        );
+
+        test('should bound the drawn points by the boundary of the PointerCapture element based on the provided stroke size', () => {
+            const customStroke = { color: '#000', size: 10 };
             const onStop = jest.fn();
-            const wrapper = getWrapper({ onStop });
+            const wrapper = getWrapper({ onStop, stroke: customStroke });
 
             simulateDrawStart(wrapper.find(PointerCapture));
             wrapper.update();
@@ -149,11 +184,11 @@ describe('DrawingCreator', () => {
                     {
                         points: [
                             { x: 10, y: 10 },
-                            { x: 4, y: 4 },
+                            { x: 10, y: 10 },
                         ],
                     },
                 ],
-                stroke: defaultStroke,
+                stroke: customStroke,
             });
         });
     });
