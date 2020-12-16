@@ -5,7 +5,7 @@ import { AnnotationDrawing } from '../../@types';
 import './PopupBase.scss';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
-    annotations: AnnotationDrawing[];
+    annotations?: AnnotationDrawing[];
     children: React.ReactNode;
     className?: string;
     options: Partial<Options>;
