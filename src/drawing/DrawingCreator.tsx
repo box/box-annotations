@@ -30,7 +30,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
 
-    const getPoints = React.useCallback((): Array<Position> => {
+    const getPoints = (): Array<Position> => {
         const { current: creatorEl } = creatorElRef;
         const { current: points } = capturedPointsRef;
 
@@ -43,34 +43,28 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             x: (x / width) * 100,
             y: (y / height) * 100,
         }));
-    }, [capturedPointsRef, creatorElRef]);
-    const getPosition = React.useCallback(
-        (x: number, y: number): [number, number] => {
-            const { current: creatorEl } = creatorElRef;
+    };
+    const getPosition = (x: number, y: number): [number, number] => {
+        const { current: creatorEl } = creatorElRef;
 
-            if (!creatorEl) {
-                return [x, y];
-            }
+        if (!creatorEl) {
+            return [x, y];
+        }
 
-            // Calculate the new position based on the mouse position less the page offset
-            const { left, top } = creatorEl.getBoundingClientRect();
-            return [x - left, y - top];
-        },
-        [creatorElRef],
-    );
+        // Calculate the new position based on the mouse position less the page offset
+        const { left, top } = creatorEl.getBoundingClientRect();
+        return [x - left, y - top];
+    };
 
     // Drawing Lifecycle Callbacks
-    const startDraw = React.useCallback(
-        (x: number, y: number): void => {
-            const [x1, y1] = getPosition(x, y);
+    const startDraw = (x: number, y: number): void => {
+        const [x1, y1] = getPosition(x, y);
 
-            setDrawingStatus(DrawingStatus.dragging);
+        setDrawingStatus(DrawingStatus.dragging);
 
-            capturedPointsRef.current = [{ x: x1, y: y1 }];
-            drawingDirtyRef.current = true;
-        },
-        [capturedPointsRef, drawingDirtyRef, getPosition, setDrawingStatus],
-    );
+        capturedPointsRef.current = [{ x: x1, y: y1 }];
+        drawingDirtyRef.current = true;
+    };
     const stopDraw = React.useCallback((): void => {
         const adjustedPoints = getPoints();
 
@@ -89,7 +83,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             paths: [{ points: adjustedPoints }],
             stroke,
         });
-    }, [capturedPointsRef, drawingDirtyRef, getPoints, onStop, setDrawingStatus, stroke]);
+    }, [onStop, setDrawingStatus, stroke]);
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
             const [x2, y2] = getPosition(x, y);
@@ -103,7 +97,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
                 onStart();
             }
         },
-        [capturedPointsRef, drawingDirtyRef, drawingStatus, getPosition, onStart, setDrawingStatus],
+        [drawingStatus, onStart, setDrawingStatus],
     );
 
     // Event Handlers

@@ -35,21 +35,18 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
     const renderHandleRef = React.useRef<number | null>(null);
 
     // Drawing Helpers
-    const getPosition = React.useCallback(
-        (x: number, y: number): [number, number] => {
-            const { current: creatorEl } = creatorElRef;
+    const getPosition = (x: number, y: number): [number, number] => {
+        const { current: creatorEl } = creatorElRef;
 
-            if (!creatorEl) {
-                return [x, y];
-            }
+        if (!creatorEl) {
+            return [x, y];
+        }
 
-            // Calculate the new position based on the mouse position less the page offset
-            const { left, top } = creatorEl.getBoundingClientRect();
-            return [x - left, y - top];
-        },
-        [creatorElRef],
-    );
-    const getShape = React.useCallback((): Rect | null => {
+        // Calculate the new position based on the mouse position less the page offset
+        const { left, top } = creatorEl.getBoundingClientRect();
+        return [x - left, y - top];
+    };
+    const getShape = (): Rect | null => {
         const { current: creatorEl } = creatorElRef;
         const { current: x1 } = positionX1Ref;
         const { current: y1 } = positionY1Ref;
@@ -87,23 +84,20 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             x: (originX / width) * 100,
             y: (originY / height) * 100,
         };
-    }, [creatorElRef, positionX1Ref, positionY1Ref, positionX2Ref, positionY2Ref]);
+    };
 
     // Drawing Lifecycle Callbacks
-    const startDraw = React.useCallback(
-        (x: number, y: number): void => {
-            const [x1, y1] = getPosition(x, y);
+    const startDraw = (x: number, y: number): void => {
+        const [x1, y1] = getPosition(x, y);
 
-            setDrawingStatus(DrawingStatus.dragging);
+        setDrawingStatus(DrawingStatus.dragging);
 
-            positionX1Ref.current = x1;
-            positionY1Ref.current = y1;
-            positionX2Ref.current = null;
-            positionY2Ref.current = null;
-            regionDirtyRef.current = true;
-        },
-        [getPosition, setDrawingStatus],
-    );
+        positionX1Ref.current = x1;
+        positionY1Ref.current = y1;
+        positionX2Ref.current = null;
+        positionY2Ref.current = null;
+        regionDirtyRef.current = true;
+    };
     const stopDraw = React.useCallback((): void => {
         const shape = getShape();
 
@@ -120,17 +114,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         } else {
             onAbort();
         }
-    }, [
-        getShape,
-        onAbort,
-        onStop,
-        positionX1Ref,
-        positionY1Ref,
-        positionX2Ref,
-        positionY2Ref,
-        regionDirtyRef,
-        setDrawingStatus,
-    ]);
+    }, [onAbort, onStop, setDrawingStatus]);
 
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
@@ -153,16 +137,16 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
                 onStart();
             }
         },
-        [drawingStatus, getPosition, onStart, positionX1Ref, positionY1Ref, positionX2Ref, setDrawingStatus],
+        [drawingStatus, onStart, setDrawingStatus],
     );
 
     // Event Handlers
-    const handleMouseOut = React.useCallback((): void => {
+    const handleMouseOut = (): void => {
         setIsHovering(false);
-    }, [setIsHovering]);
-    const handleMouseOver = React.useCallback((): void => {
+    };
+    const handleMouseOver = (): void => {
         setIsHovering(true);
-    }, [setIsHovering]);
+    };
     const handleScroll = (x: number, y: number): void => {
         updateDraw(x, y);
     };
