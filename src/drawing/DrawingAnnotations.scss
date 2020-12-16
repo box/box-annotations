@@ -33,7 +33,7 @@
     pointer-events: auto;
 
     &.ba-is-drawing {
-        opacity: .3;
+        opacity: 0;
         pointer-events: none;
     }
 }
