@@ -66,18 +66,6 @@ describe('PopupBase', () => {
             expect(instance.popper).toBeDefined();
             expect(instance.popper).not.toEqual(oldPopper);
         });
-
-        test('should call recreate the popper if the annotations property changes', () => {
-            const wrapper = getWrapper({ annotations: [] });
-            const instance = wrapper.instance() as InstanceType<typeof PopupBase>;
-            const oldPopper = instance.popper as Instance;
-
-            wrapper.setProps({ annotations: [{}] });
-
-            expect(oldPopper.destroy).toHaveBeenCalled();
-            expect(instance.popper).toBeDefined();
-            expect(instance.popper).not.toEqual(oldPopper);
-        });
     });
 
     describe('componentWillUnmount()', () => {

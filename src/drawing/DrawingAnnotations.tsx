@@ -122,9 +122,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
             )}
 
-            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
+            {!isDrawing && isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
                 <PopupDrawingToolbar
-                    annotations={annotations}
                     canComment={hasDrawnPathGroups}
                     canRedo={hasStashedPathGroups}
                     canUndo={hasDrawnPathGroups}

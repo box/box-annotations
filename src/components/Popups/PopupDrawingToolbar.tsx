@@ -6,12 +6,10 @@ import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
 import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import messages from './messages';
 import PopupBase from './PopupBase';
-import { AnnotationDrawing } from '../../@types';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
 export type Props = {
-    annotations: AnnotationDrawing[];
     canComment: boolean;
     canRedo: boolean;
     canUndo: boolean;
@@ -40,6 +38,7 @@ const options: Partial<Options> = {
         {
             name: 'preventOverflow',
             options: {
+                altAxis: true,
                 padding: 5,
             },
         },
@@ -48,7 +47,6 @@ const options: Partial<Options> = {
 };
 
 const PopupDrawingToolbar = ({
-    annotations,
     canComment,
     canRedo,
     canUndo,
@@ -63,7 +61,6 @@ const PopupDrawingToolbar = ({
 
     return (
         <PopupBase
-            annotations={annotations}
             className={classNames(className, 'ba-PopupDrawingToolbar')}
             data-resin-component="popupDrawingToolbar"
             options={options}
