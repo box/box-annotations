@@ -98,6 +98,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
     };
+
     const stopDraw = React.useCallback((): void => {
         const shape = getShape();
 

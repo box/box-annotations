@@ -65,6 +65,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         capturedPointsRef.current = [{ x: x1, y: y1 }];
         drawingDirtyRef.current = true;
     };
+
     const stopDraw = React.useCallback((): void => {
         const adjustedPoints = getPoints();
 
@@ -84,6 +85,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             stroke,
         });
     }, [onStop, setDrawingStatus, stroke]);
+
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
             const [x2, y2] = getPosition(x, y);
