@@ -34,18 +34,27 @@ describe('DrawingCreator', () => {
         jest.spyOn(Element.prototype, 'setAttribute');
     });
 
-    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawStart')(clientX, clientY);
         });
-    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+
+        wrapper.update();
+    };
+    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawUpdate')(clientX, clientY);
         });
-    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void =>
+
+        wrapper.update();
+    };
+    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void => {
         act(() => {
             wrapper.prop('onDrawStop')();
         });
+
+        wrapper.update();
+    };
 
     describe('render', () => {
         test('should render PointerCapture', () => {
@@ -60,8 +69,6 @@ describe('DrawingCreator', () => {
 
             simulateDrawStart(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
         });
@@ -70,8 +77,6 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper();
 
             simulateDrawMove(wrapper.find(PointerCapture));
-
-            wrapper.update();
 
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
@@ -85,8 +90,6 @@ describe('DrawingCreator', () => {
 
             simulateDrawStart(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(onStart).not.toHaveBeenCalled();
         });
 
@@ -95,8 +98,6 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper({ onStart });
 
             simulateDrawMove(wrapper.find(PointerCapture));
-
-            wrapper.update();
 
             expect(onStart).toHaveBeenCalled();
         });
@@ -108,15 +109,15 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper({ onStop });
 
             simulateDrawStart(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawStop(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).toHaveBeenCalledWith({
                 paths: [
                     {
@@ -141,15 +142,15 @@ describe('DrawingCreator', () => {
                 const wrapper = getWrapper({ onStop });
 
                 simulateDrawStart(wrapper.find(PointerCapture));
-                wrapper.update();
+
                 expect(onStop).not.toHaveBeenCalled();
 
                 simulateDrawMove(wrapper.find(PointerCapture), x, y);
-                wrapper.update();
+
                 expect(onStop).not.toHaveBeenCalled();
 
                 simulateDrawStop(wrapper.find(PointerCapture));
-                wrapper.update();
+
                 expect(onStop).toHaveBeenCalledWith({
                     paths: [
                         {
@@ -170,15 +171,15 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper({ onStop, stroke: customStroke });
 
             simulateDrawStart(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawMove(wrapper.find(PointerCapture), -1, -1);
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawStop(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).toHaveBeenCalledWith({
                 paths: [
                     {
@@ -204,7 +205,6 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper();
 
             simulateDrawStart(wrapper.find(PointerCapture));
-            wrapper.update();
             jest.advanceTimersByTime(100);
 
             expect(window.requestAnimationFrame).toHaveBeenCalled();
@@ -223,8 +223,6 @@ describe('DrawingCreator', () => {
             simulateDrawStart(wrapper.find(PointerCapture));
             simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
             simulateDrawMove(wrapper.find(PointerCapture), 20, 20);
-
-            wrapper.update();
 
             jest.advanceTimersByTime(100);
 
