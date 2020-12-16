@@ -65,7 +65,8 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         capturedPointsRef.current = [{ x: x1, y: y1 }];
         drawingDirtyRef.current = true;
     };
-    const stopDraw = (): void => {
+
+    const stopDraw = React.useCallback((): void => {
         const adjustedPoints = getPoints();
 
         // If there is only one point in the points array, it is likely the user clicked
@@ -83,19 +84,23 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             paths: [{ points: adjustedPoints }],
             stroke,
         });
-    };
-    const updateDraw = (x: number, y: number): void => {
-        const [x2, y2] = getPosition(x, y);
-        const { current: points } = capturedPointsRef;
+    }, [onStop, setDrawingStatus, stroke]);
 
-        points.push({ x: x2, y: y2 });
-        drawingDirtyRef.current = true;
+    const updateDraw = React.useCallback(
+        (x: number, y: number): void => {
+            const [x2, y2] = getPosition(x, y);
+            const { current: points } = capturedPointsRef;
 
-        if (drawingStatus !== DrawingStatus.drawing) {
-            setDrawingStatus(DrawingStatus.drawing);
-            onStart();
-        }
-    };
+            points.push({ x: x2, y: y2 });
+            drawingDirtyRef.current = true;
+
+            if (drawingStatus !== DrawingStatus.drawing) {
+                setDrawingStatus(DrawingStatus.drawing);
+                onStart();
+            }
+        },
+        [drawingStatus, onStart, setDrawingStatus],
+    );
 
     // Event Handlers
     const renderStep = (callback: () => void): void => {
