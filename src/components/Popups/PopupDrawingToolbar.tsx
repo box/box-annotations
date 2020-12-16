@@ -38,7 +38,6 @@ const options: Partial<Options> = {
         {
             name: 'preventOverflow',
             options: {
-                altAxis: true,
                 padding: 5,
             },
         },
