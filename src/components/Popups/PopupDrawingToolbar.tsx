@@ -6,6 +6,7 @@ import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
 import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import messages from './messages';
 import PopupBase from './PopupBase';
+import usePrevious from '../../common/usePrevious';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
@@ -38,7 +39,8 @@ const options: Partial<Options> = {
         {
             name: 'preventOverflow',
             options: {
-                padding: 5,
+                altAxis: true,
+                padding: 50,
             },
         },
     ],
@@ -57,9 +59,25 @@ const PopupDrawingToolbar = ({
     reference,
 }: Props): JSX.Element => {
     const intl = useIntl();
+    const popupRef = React.useRef<PopupBase>(null);
+    const prevReference = usePrevious(reference.getBoundingClientRect());
+
+    React.useEffect(() => {
+        const { current: popup } = popupRef;
+
+        if (popup?.popper && prevReference) {
+            const { height: prevHeight, width: prevWidth, x: prevX, y: prevY } = prevReference;
+            const { height, width, x, y } = reference.getBoundingClientRect();
+
+            if (height !== prevHeight || width !== prevWidth || x !== prevX || y !== prevY) {
+                popup.popper.update();
+            }
+        }
+    }, [popupRef, reference.getBoundingClientRect()]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <PopupBase
+            ref={popupRef}
             className={classNames(className, 'ba-PopupDrawingToolbar')}
             data-resin-component="popupDrawingToolbar"
             options={options}
