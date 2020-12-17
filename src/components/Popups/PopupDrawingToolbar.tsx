@@ -60,20 +60,21 @@ const PopupDrawingToolbar = ({
 }: Props): JSX.Element => {
     const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
-    const prevReference = usePrevious(reference.getBoundingClientRect());
+    const refRect = reference.getBoundingClientRect();
+    const prevRect = usePrevious(refRect);
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
 
-        if (popup?.popper && prevReference) {
-            const { height: prevHeight, left: prevLeft, top: prevTop, width: prevWidth } = prevReference;
-            const { height, left, top, width } = reference.getBoundingClientRect();
+        if (popup?.popper && prevRect) {
+            const { height: prevHeight, left: prevLeft, top: prevTop, width: prevWidth } = prevRect;
+            const { height, left, top, width } = refRect;
 
             if (height !== prevHeight || left !== prevLeft || top !== prevTop || width !== prevWidth) {
                 popup.popper.update();
             }
         }
-    }, [popupRef, reference.getBoundingClientRect()]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [popupRef, prevRect, refRect]);
 
     return (
         <PopupBase
