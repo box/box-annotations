@@ -24,7 +24,6 @@ describe('PopupDrawingToolbar', () => {
         y,
     });
     const getDefaults = (): Props => ({
-        annotations: [],
         canComment: true,
         canRedo: false,
         canUndo: false,
