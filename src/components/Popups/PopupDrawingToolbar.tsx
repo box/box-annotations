@@ -66,10 +66,10 @@ const PopupDrawingToolbar = ({
         const { current: popup } = popupRef;
 
         if (popup?.popper && prevReference) {
-            const { height: prevHeight, width: prevWidth, x: prevX, y: prevY } = prevReference;
-            const { height, width, x, y } = reference.getBoundingClientRect();
+            const { height: prevHeight, left: prevLeft, top: prevTop, width: prevWidth } = prevReference;
+            const { height, left, top, width } = reference.getBoundingClientRect();
 
-            if (height !== prevHeight || width !== prevWidth || x !== prevX || y !== prevY) {
+            if (height !== prevHeight || left !== prevLeft || top !== prevTop || width !== prevWidth) {
                 popup.popper.update();
             }
         }
