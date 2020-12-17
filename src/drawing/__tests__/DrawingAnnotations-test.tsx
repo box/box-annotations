@@ -18,6 +18,7 @@ describe('DrawingAnnotations', () => {
         addDrawingPathGroup: jest.fn(),
         annotations: [],
         canShowPopupToolbar: false,
+        color: '#000',
         drawnPathGroups: [],
         isCreating: false,
         location: 0,
@@ -209,6 +210,12 @@ describe('DrawingAnnotations', () => {
             wrapper.update();
 
             expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(true);
+        });
+
+        test('should apply selected color', () => {
+            const wrapper = getWrapper({ color: '#111', isCreating: true });
+
+            expect(wrapper.find(DrawingCreator).prop('color')).toBe('#111');
         });
 
         test.each`

@@ -1,9 +1,17 @@
 import reducer from '../reducer';
 import state from '../__mocks__/commonState';
 import { Mode } from '../types';
-import { toggleAnnotationModeAction } from '../actions';
+import { setColorAction, toggleAnnotationModeAction } from '../actions';
 
 describe('store/common/reducer', () => {
+    describe('setColorAction', () => {
+        test('should set the color in state', () => {
+            const newState = reducer(state, setColorAction('#111'));
+
+            expect(newState.color).toEqual('#111');
+        });
+    });
+
     describe('toggleAnnotationModeAction', () => {
         const { NONE, REGION } = Mode;
         test.each`

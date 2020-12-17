@@ -1,11 +1,19 @@
-import { createReducer, combineReducers } from '@reduxjs/toolkit';
+import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
+import { createReducer } from '@reduxjs/toolkit';
 import { CommonState, Mode } from './types';
-import { toggleAnnotationModeAction } from './actions';
+import { setColorAction, toggleAnnotationModeAction } from './actions';
 
-const modeReducer = createReducer<CommonState['mode']>(Mode.NONE, builder =>
-    builder.addCase(toggleAnnotationModeAction, (state, { payload: mode }: { payload: Mode }) => mode),
+export const initialState = {
+    color: bdlBoxBlue,
+    mode: Mode.NONE,
+};
+
+export default createReducer<CommonState>(initialState, builder =>
+    builder
+        .addCase(setColorAction, (state, { payload }) => {
+            state.color = payload;
+        })
+        .addCase(toggleAnnotationModeAction, (state, { payload }) => {
+            state.mode = payload;
+        }),
 );
-
-export default combineReducers({
-    mode: modeReducer,
-});

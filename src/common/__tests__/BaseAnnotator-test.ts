@@ -152,11 +152,11 @@ describe('BaseAnnotator', () => {
             expect(annotator.features).toEqual(features);
         });
 
-        test('should set initial mode', () => {
-            initAnnotator({ initialMode: Mode.REGION });
+        test('should set initial mode and color', () => {
+            initAnnotator({ initialColor: '#000', initialMode: Mode.REGION });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
-                expect.objectContaining({ common: { mode: Mode.REGION } }),
+                expect.objectContaining({ common: { color: '#000', mode: Mode.REGION } }),
                 expect.any(Object),
             );
         });
@@ -229,6 +229,7 @@ describe('BaseAnnotator', () => {
             jest.spyOn(annotator, 'init');
             jest.spyOn(annotator, 'removeAnnotation');
             jest.spyOn(annotator, 'setActiveId');
+            jest.spyOn(annotator, 'setColor');
             jest.spyOn(annotator, 'setVisibility');
         });
 
@@ -244,6 +245,9 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.VISIBLE_SET, true);
             expect(annotator.setVisibility).toHaveBeenCalledWith(true);
+
+            annotator.emit(Event.COLOR_SET, '#000');
+            expect(annotator.setColor).toHaveBeenCalledWith('#000');
         });
     });
 
