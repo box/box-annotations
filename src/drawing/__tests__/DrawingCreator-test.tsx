@@ -1,8 +1,9 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
-import DrawingCreator, { defaultStroke, Props } from '../DrawingCreator';
+import DrawingCreator, { defaultStrokeColor, defaultStrokeSize, Props } from '../DrawingCreator';
 import DrawingPath from '../DrawingPath';
+import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingSVG from '../DrawingSVG';
 import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
 
@@ -81,6 +82,16 @@ describe('DrawingCreator', () => {
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
         });
+
+        test('should render DrawingPathGroup with right stroke color', () => {
+            const wrapper = getWrapper({ color: '#111' });
+
+            simulateDrawStart(wrapper.find(PointerCapture));
+
+            wrapper.update();
+
+            expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
+        });
     });
 
     describe('onStart()', () => {
@@ -127,7 +138,10 @@ describe('DrawingCreator', () => {
                         ],
                     },
                 ],
-                stroke: defaultStroke,
+                stroke: {
+                    color: defaultStrokeColor,
+                    size: defaultStrokeSize,
+                },
             });
         });
 

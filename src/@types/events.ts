@@ -8,6 +8,7 @@ enum Event {
     ANNOTATION_REMOVE = 'annotations_remove',
     ANNOTATIONS_INITIALIZED = 'annotations_initialized',
     ANNOTATIONS_MODE_CHANGE = 'annotations_mode_change',
+    COLOR_SET = 'annotations_color_set',
     VISIBLE_SET = 'annotations_visible_set',
 }
 

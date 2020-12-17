@@ -6,22 +6,27 @@ import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
 import { getPathCommands } from './drawingUtil';
-import { PathGroup, Position, Stroke } from '../@types';
+import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
 
 export type Props = {
     className?: string;
+    color?: string;
     onStart: () => void;
     onStop: (pathGroup: PathGroup) => void;
-    stroke?: Stroke;
+    size?: number;
 };
 
-export const defaultStroke = {
-    color: bdlBoxBlue,
-    size: 4,
-};
+export const defaultStrokeColor = bdlBoxBlue;
+export const defaultStrokeSize = 4;
 
-export default function DrawingCreator({ className, onStart, onStop, stroke = defaultStroke }: Props): JSX.Element {
+export default function DrawingCreator({
+    className,
+    color = defaultStrokeColor,
+    onStart,
+    onStop,
+    size = defaultStrokeSize,
+}: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const capturedPointsRef = React.useRef<Array<Position>>([]);
     const creatorElRef = React.useRef<PointerCaptureRef>(null);
@@ -29,6 +34,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const drawingPathRef = React.useRef<DrawingPathRef>(null);
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
+    const stroke = { color, size };
 
     const getPoints = React.useCallback((): Array<Position> => {
         const { current: creatorEl } = creatorElRef;

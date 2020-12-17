@@ -1,10 +1,18 @@
 import commonState from '../__mocks__/commonState';
-import { getAnnotationMode } from '../selectors';
+import { getAnnotationMode, getColor } from '../selectors';
 
 describe('store/common/selectors', () => {
+    const state = { common: commonState };
+
     describe('getAnnotationMode', () => {
         test('should return annotation mode', () => {
-            expect(getAnnotationMode({ common: commonState })).toBe('none');
+            expect(getAnnotationMode(state)).toBe('none');
+        });
+    });
+
+    describe('getColor', () => {
+        test('should return the current creator color', () => {
+            expect(getColor(state)).toBe('#000');
         });
     });
 });

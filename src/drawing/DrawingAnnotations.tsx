@@ -16,6 +16,7 @@ export type Props = {
     addDrawingPathGroup: (pathGroup: PathGroup) => void;
     annotations: AnnotationDrawing[];
     canShowPopupToolbar: boolean;
+    color: string;
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
     location: number;
@@ -36,6 +37,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         addDrawingPathGroup,
         annotations,
         canShowPopupToolbar,
+        color,
         drawnPathGroups,
         isCreating,
         location,
@@ -119,7 +121,12 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
             )}
 
             {isCreating && (
-                <DrawingCreator className="ba-DrawingAnnotations-creator" onStart={handleStart} onStop={handleStop} />
+                <DrawingCreator
+                    className="ba-DrawingAnnotations-creator"
+                    color={color}
+                    onStart={handleStart}
+                    onStop={handleStop}
+                />
             )}
 
             {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
