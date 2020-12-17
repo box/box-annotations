@@ -1,12 +1,8 @@
-import React, { MutableRefObject } from 'react';
-import * as ReactRedux from 'react-redux';
+import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightTarget from '../HighlightTarget';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useState: jest.fn(),
-}));
+jest.mock('../../common/useMountId');
 
 describe('HighlightTarget', () => {
     const defaults = {
@@ -25,13 +21,6 @@ describe('HighlightTarget', () => {
     };
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<HighlightTarget {...defaults} {...props} />);
-    const mockInitalRef = { current: '123' } as MutableRefObject<string>;
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
-        jest.spyOn(React, 'useRef').mockImplementation(() => mockInitalRef);
-        jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
-    });
 
     describe('render()', () => {
         test('should render anchor with provided rects', () => {
@@ -160,7 +149,7 @@ describe('HighlightTarget', () => {
             const handleMount = jest.fn();
             getWrapper({ onMount: handleMount });
 
-            expect(handleMount).toHaveBeenCalledWith(expect.any(String));
+            expect(handleMount).toHaveBeenCalledWith('123');
         });
     });
 });
