@@ -29,6 +29,7 @@ describe('PopupDrawingToolbar', () => {
         canComment: true,
         canRedo: false,
         canUndo: false,
+        drawnPathGroups: [],
         onDelete: jest.fn(),
         onRedo: jest.fn(),
         onReply: jest.fn(),
