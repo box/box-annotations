@@ -2,12 +2,12 @@ import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import useMountId from '../useMountId';
 
-type Props = {
-    onMount: (uuid: string) => void;
-};
+jest.mock('uuid', () => ({
+    v4: () => '123',
+}));
 
 describe('useMountId', () => {
-    function TestComponent({ onMount }: Props): JSX.Element {
+    function TestComponent({ onMount }: { onMount: (uuid: string) => void }): JSX.Element {
         const uuid = useMountId(onMount);
 
         return <div data-testid="uuid" data-uuid={uuid} />;
@@ -19,7 +19,7 @@ describe('useMountId', () => {
         const onMount = jest.fn();
         const wrapper = getWrapper(onMount);
 
-        expect(wrapper.find('[data-testid="uuid"]').prop('data-uuid')).toEqual(expect.any(String));
-        expect(onMount).toHaveBeenCalledWith(expect.any(String));
+        expect(wrapper.find('[data-testid="uuid"]').prop('data-uuid')).toEqual('123');
+        expect(onMount).toHaveBeenCalledWith('123');
     });
 });
