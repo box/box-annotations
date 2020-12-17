@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
 import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
@@ -6,7 +6,6 @@ import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
 import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import messages from './messages';
 import PopupBase from './PopupBase';
-import usePrevious from '../../common/usePrevious';
 import { Options, PopupReference, Rect } from './Popper';
 import { PathGroup } from '../../@types';
 import './PopupDrawingToolbar.scss';
@@ -63,15 +62,11 @@ const PopupDrawingToolbar = ({
 }: Props): JSX.Element => {
     const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
-    const prevDrawnPathGroups = usePrevious(drawnPathGroups);
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
-
-        if (popup?.popper && prevDrawnPathGroups && drawnPathGroups.length !== prevDrawnPathGroups.length) {
-            popup.popper.update();
-        }
-    }, [popupRef, drawnPathGroups, prevDrawnPathGroups]);
+        popup.popper.update();
+    }, [popupRef, drawnPathGroups]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <PopupBase
