@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
 import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
@@ -8,6 +8,7 @@ import messages from './messages';
 import PopupBase from './PopupBase';
 import usePrevious from '../../common/usePrevious';
 import { Options, PopupReference, Rect } from './Popper';
+import { PathGroup } from '../../@types';
 import './PopupDrawingToolbar.scss';
 
 export type Props = {
@@ -15,6 +16,7 @@ export type Props = {
     canRedo: boolean;
     canUndo: boolean;
     className?: string;
+    drawnPathGroups: Array<PathGroup>;
     onDelete: () => void;
     onRedo: () => void;
     onReply: () => void;
@@ -52,6 +54,7 @@ const PopupDrawingToolbar = ({
     canRedo,
     canUndo,
     className,
+    drawnPathGroups,
     onDelete,
     onRedo,
     onReply,
@@ -60,21 +63,15 @@ const PopupDrawingToolbar = ({
 }: Props): JSX.Element => {
     const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
-    const refRect = reference.getBoundingClientRect();
-    const prevRect = usePrevious(refRect);
+    const prevDrawnPathGroups = usePrevious(drawnPathGroups);
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
 
-        if (popup?.popper && prevRect) {
-            const { height: prevHeight, left: prevLeft, top: prevTop, width: prevWidth } = prevRect;
-            const { height, left, top, width } = refRect;
-
-            if (height !== prevHeight || left !== prevLeft || top !== prevTop || width !== prevWidth) {
-                popup.popper.update();
-            }
+        if (popup?.popper && prevDrawnPathGroups && drawnPathGroups.length !== prevDrawnPathGroups.length) {
+            popup.popper.update();
         }
-    }, [popupRef, prevRect, refRect]);
+    }, [popupRef, drawnPathGroups, prevDrawnPathGroups]);
 
     return (
         <PopupBase
