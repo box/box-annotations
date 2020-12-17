@@ -6,6 +6,7 @@ import DrawingCreator from './DrawingCreator';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingSVGGroup from './DrawingSVGGroup';
+import PopupBase from '../components/Popups/PopupBase';
 import PopupDrawingToolbar from '../components/Popups/PopupDrawingToolbar';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
@@ -54,6 +55,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const hasDrawnPathGroups = drawnPathGroups.length > 0;
     const hasStashedPathGroups = stashedPathGroups.length > 0;
     const hasPathGroups = hasDrawnPathGroups || hasStashedPathGroups;
+    const popupRef = React.useRef<PopupBase>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 
@@ -85,6 +87,14 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const handleUndo = (): void => {
         undoDrawingPathGroup();
     };
+
+    React.useEffect(() => {
+        const { current: popup } = popupRef;
+
+        if (popup) {
+            popup.popper.update();
+        }
+    }, [popupRef, drawnPathGroups]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -133,6 +143,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                     onRedo={handleRedo}
                     onReply={handleReply}
                     onUndo={handleUndo}
+                    popupRef={popupRef}
                     reference={drawingSVGGroup}
                 />
             )}

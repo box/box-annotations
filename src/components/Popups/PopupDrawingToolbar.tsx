@@ -7,7 +7,6 @@ import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
-import { PathGroup } from '../../@types';
 import './PopupDrawingToolbar.scss';
 
 export type Props = {
@@ -15,11 +14,11 @@ export type Props = {
     canRedo: boolean;
     canUndo: boolean;
     className?: string;
-    drawnPathGroups: Array<PathGroup>;
     onDelete: () => void;
     onRedo: () => void;
     onReply: () => void;
     onUndo: () => void;
+    popupRef: React.Ref<PopupBase>;
     reference: PopupReference;
 };
 
@@ -53,20 +52,14 @@ const PopupDrawingToolbar = ({
     canRedo,
     canUndo,
     className,
-    drawnPathGroups,
     onDelete,
     onRedo,
     onReply,
     onUndo,
+    popupRef,
     reference,
 }: Props): JSX.Element => {
     const intl = useIntl();
-    const popupRef = React.useRef<PopupBase>(null);
-
-    React.useEffect(() => {
-        const { current: popup } = popupRef;
-        popup.popper.update();
-    }, [popupRef, drawnPathGroups]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <PopupBase
