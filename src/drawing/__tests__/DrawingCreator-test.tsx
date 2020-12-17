@@ -88,8 +88,6 @@ describe('DrawingCreator', () => {
 
             simulateDrawStart(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
         });
     });
@@ -174,7 +172,10 @@ describe('DrawingCreator', () => {
                             ],
                         },
                     ],
-                    stroke: defaultStroke,
+                    stroke: {
+                        color: defaultStrokeColor,
+                        size: defaultStrokeSize,
+                    },
                 });
             },
         );
@@ -182,7 +183,7 @@ describe('DrawingCreator', () => {
         test('should bound the drawn points by the boundary of the PointerCapture element based on the provided stroke size', () => {
             const customStroke = { color: '#000', size: 10 };
             const onStop = jest.fn();
-            const wrapper = getWrapper({ onStop, stroke: customStroke });
+            const wrapper = getWrapper({ onStop, ...customStroke });
 
             simulateDrawStart(wrapper.find(PointerCapture));
 

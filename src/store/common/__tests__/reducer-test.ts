@@ -6,9 +6,9 @@ import { setColorAction, toggleAnnotationModeAction } from '../actions';
 describe('store/common/reducer', () => {
     describe('setColorAction', () => {
         test('should set the color in state', () => {
-            const newStata = reducer(state, setColorAction('#111'));
+            const newState = reducer(state, setColorAction('#111'));
 
-            expect(newStata.color).toEqual('#111');
+            expect(newState.color).toEqual('#111');
         });
     });
 
