@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
 import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
 import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import { FormattedMessage } from 'react-intl';
-import { mount, ReactWrapper } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 import messages from '../messages';
 import PopupBase from '../PopupBase';
 import PopupDrawingToolbar, { Props } from '../PopupDrawingToolbar';
@@ -12,7 +12,7 @@ jest.mock('../PopupBase');
 
 describe('PopupDrawingToolbar', () => {
     const getDataTestId = (button: string): string => `ba-PopupDrawingToolbar-${button}`;
-    const getButton = (wrapper: ReactWrapper, button: string): ReactWrapper =>
+    const getButton = (wrapper: ShallowWrapper, button: string): ShallowWrapper =>
         wrapper.find(`[data-testid="${getDataTestId(button)}"]`);
     const getDOMRect = (x = 0, y = 0, height = 1000, width = 1000): DOMRect => ({
         bottom: y + height,
@@ -39,7 +39,7 @@ describe('PopupDrawingToolbar', () => {
 
     const popupMock = { popper: { update: jest.fn() } };
 
-    const getWrapper = (props = {}): ReactWrapper => mount(<PopupDrawingToolbar {...getDefaults()} {...props} />);
+    const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
 
     beforeEach(() => {
         jest.spyOn(React, 'useEffect').mockImplementation(f => f());
@@ -48,11 +48,11 @@ describe('PopupDrawingToolbar', () => {
 
     describe('state changes', () => {
         test('should call update on the underlying popper instance when the drawnPathGroups changes', () => {
-            const wrapper = getWrapper({ drawnPathGroups: {} });
+            const wrapper = getWrapper();
 
-            wrapper.setProps({ drawnPathGroups: [{}, {}] });
+            wrapper.setProps({ drawnPathGroups: [{}] });
 
-            expect(popupMock.popper.update).toHaveBeenCalledTimes(1);
+            expect(popupMock.popper.update).toHaveBeenCalledTimes(2);
         });
     });
 
@@ -129,7 +129,7 @@ describe('PopupDrawingToolbar', () => {
             ${'onReply'}  | ${'comment'}
         `('should call $callback when $button is clicked', ({ callback, buttonId }) => {
             const mockFn = jest.fn();
-            const wrapper = getWrapper({ [callback]: mockFn, canRedo: true, canUndo: true });
+            const wrapper = getWrapper({ [callback]: mockFn });
 
             getButton(wrapper, buttonId).simulate('click');
 
