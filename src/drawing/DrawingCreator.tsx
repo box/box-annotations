@@ -30,7 +30,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
 
-    const getPoints = (): Array<Position> => {
+    const getPoints = React.useCallback((): Array<Position> => {
         const { current: creatorEl } = creatorElRef;
         const { current: points } = capturedPointsRef;
 
@@ -39,11 +39,16 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         }
 
         const { height, width } = creatorEl.getBoundingClientRect();
+        const { size: minSize } = stroke;
+        const MAX_X = width - minSize;
+        const MAX_Y = height - minSize;
+
         return points.map(({ x, y }) => ({
-            x: (x / width) * 100,
-            y: (y / height) * 100,
+            x: (Math.min(MAX_X, Math.max(minSize, x)) / width) * 100,
+            y: (Math.min(MAX_Y, Math.max(minSize, y)) / height) * 100,
         }));
-    };
+    }, [stroke]);
+
     const getPosition = (x: number, y: number): [number, number] => {
         const { current: creatorEl } = creatorElRef;
 
@@ -84,7 +89,7 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             paths: [{ points: adjustedPoints }],
             stroke,
         });
-    }, [onStop, setDrawingStatus, stroke]);
+    }, [getPoints, onStop, setDrawingStatus, stroke]);
 
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
