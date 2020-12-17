@@ -1,7 +1,7 @@
 import React from 'react';
-import * as uuid from 'uuid';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import useMountId from '../common/useMountId';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
 import './HighlightTarget.scss';
@@ -20,7 +20,7 @@ export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
     const { annotationId, className, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } = props;
-    const uuidRef = React.useRef<string>(uuid.v4());
+    const uuid = useMountId(onMount);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
         // These are needed to prevent the anchor link from being followed and updating the url location
@@ -65,16 +65,12 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         }
     };
 
-    React.useEffect(() => {
-        onMount(uuidRef.current);
-    }, [onMount]);
-
     return (
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
-            data-ba-reference-id={uuidRef.current}
+            data-ba-reference-id={uuid}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
             data-testid={`ba-AnnotationTarget-${annotationId}`}
