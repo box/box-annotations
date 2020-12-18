@@ -31,6 +31,7 @@ describe('PopupDrawingToolbar', () => {
         onRedo: jest.fn(),
         onReply: jest.fn(),
         onUndo: jest.fn(),
+        popupRef: React.createRef(),
         reference: { getBoundingClientRect: () => getDOMRect() },
     });
     const getWrapper = (props?: Partial<Props>): ShallowWrapper =>

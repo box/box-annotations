@@ -91,7 +91,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     React.useEffect(() => {
         const { current: popup } = popupRef;
 
-        if (popup) {
+        if (popup && popup.popper) {
             popup.popper.update();
         }
     }, [drawnPathGroups, popupRef]);
