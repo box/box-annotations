@@ -138,7 +138,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                     canRedo={hasStashedPathGroups}
                     canUndo={hasDrawnPathGroups}
                     className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
-                    drawnPathGroups={drawnPathGroups}
                     onDelete={handleDelete}
                     onRedo={handleRedo}
                     onReply={handleReply}
