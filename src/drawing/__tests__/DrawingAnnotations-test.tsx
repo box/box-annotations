@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations, { Props } from '../DrawingAnnotations';
@@ -235,24 +235,25 @@ describe('DrawingAnnotations', () => {
 
     describe('state changes', () => {
         test.each`
-            drawn         | initialDrawn | numberOfCalls
-            ${pathGroups} | ${[]}        | ${2}
-            ${[]}         | ${[]}        | ${0}
+            basePathGroups | nextPathGroups | expected
+            ${[]}          | ${[]}          | ${0}
+            ${[]}          | ${pathGroups}  | ${1}
+            ${pathGroups}  | ${pathGroups}  | ${0}
         `(
-            'should call update $numberOfCalls times if drawn.length is $drawn.length and initialDrawn.length is $initialDrawn.length',
-            ({ drawn, initialDrawn, numberOfCalls }) => {
+            'should call update $expected times if basePathGroups.length is $basePathGroups.length and nextPathGroups.length is $nextPathGroups.length',
+            ({ basePathGroups, nextPathGroups, expected }) => {
                 const popupMock = { popper: { update: jest.fn() } };
                 jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
                 jest.spyOn(React, 'useEffect').mockImplementation(f => f());
                 const wrapper = getWrapper({
                     canShowPopupToolbar: true,
-                    drawnPathGroups: initialDrawn,
+                    drawnPathGroups: basePathGroups,
                     isCreating: true,
                 });
 
-                wrapper.setProps({ drawnPathGroups: drawn });
+                wrapper.setProps({ drawnPathGroups: nextPathGroups });
 
-                expect(popupMock.popper.update).toHaveBeenCalledTimes(numberOfCalls);
+                expect(popupMock.popper.update).toHaveBeenCalledTimes(expected);
             },
         );
     });
