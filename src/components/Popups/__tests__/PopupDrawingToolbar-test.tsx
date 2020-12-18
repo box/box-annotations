@@ -34,7 +34,8 @@ describe('PopupDrawingToolbar', () => {
         reference: { getBoundingClientRect: () => getDOMRect() },
     });
 
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
+    const getWrapper = (props?: Partial<Props>): ShallowWrapper =>
+        shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
 
     describe('render', () => {
         test('should render popup and buttons', () => {
