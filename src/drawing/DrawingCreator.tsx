@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
+import DrawingCursor from './DrawingCursor';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
@@ -28,6 +29,7 @@ export default function DrawingCreator({
     size = defaultStrokeSize,
 }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
+    const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const capturedPointsRef = React.useRef<Array<Position>>([]);
     const creatorElRef = React.useRef<PointerCaptureRef>(null);
     const drawingDirtyRef = React.useRef<boolean>(false);
@@ -130,6 +132,14 @@ export default function DrawingCreator({
         renderStep(renderPath);
     };
 
+    // Event Handlers
+    const handleMouseOut = (): void => {
+        setIsHovering(false);
+    };
+    const handleMouseOver = (): void => {
+        setIsHovering(true);
+    };
+
     React.useEffect(() => {
         if (drawingStatus !== DrawingStatus.init) {
             renderStep(renderPath);
@@ -154,6 +164,8 @@ export default function DrawingCreator({
             onDrawStart={startDraw}
             onDrawStop={stopDraw}
             onDrawUpdate={updateDraw}
+            onMouseOut={handleMouseOut}
+            onMouseOver={handleMouseOver}
             status={drawingStatus}
         >
             {drawingStatus !== DrawingStatus.init && (
@@ -162,6 +174,9 @@ export default function DrawingCreator({
                         <DrawingPath ref={drawingPathRef} />
                     </DrawingPathGroup>
                 </DrawingSVG>
+            )}
+            {isHovering && (
+                <DrawingCursor className="ba-DrawingCreator-cursor" color={color} getGlobalPosition={getPosition} />
             )}
         </PointerCapture>
     );
