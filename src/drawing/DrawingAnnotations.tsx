@@ -55,7 +55,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const hasDrawnPathGroups = drawnPathGroups.length > 0;
     const hasStashedPathGroups = stashedPathGroups.length > 0;
     const hasPathGroups = hasDrawnPathGroups || hasStashedPathGroups;
-    const popupRef = React.useRef<PopupBase>(null);
+    const popupDrawingToolbarRef = React.useRef<PopupBase>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 
@@ -89,12 +89,12 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     };
 
     React.useEffect(() => {
-        const { current: popup } = popupRef;
+        const { current: popup } = popupDrawingToolbarRef;
 
-        if (popup && popup.popper) {
+        if (popup?.popper) {
             popup.popper.update();
         }
-    }, [drawnPathGroups, popupRef]);
+    }, [drawnPathGroups, popupDrawingToolbarRef]);
 
     return (
         <>
@@ -134,6 +134,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
             {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
                 <PopupDrawingToolbar
+                    ref={popupDrawingToolbarRef}
                     canComment={hasDrawnPathGroups}
                     canRedo={hasStashedPathGroups}
                     canUndo={hasDrawnPathGroups}
@@ -142,7 +143,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                     onRedo={handleRedo}
                     onReply={handleReply}
                     onUndo={handleUndo}
-                    popupRef={popupRef}
                     reference={drawingSVGGroup}
                 />
             )}

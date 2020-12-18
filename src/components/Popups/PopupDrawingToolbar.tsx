@@ -18,7 +18,6 @@ export type Props = {
     onRedo: () => void;
     onReply: () => void;
     onUndo: () => void;
-    popupRef: React.Ref<PopupBase>;
     reference: PopupReference;
 };
 
@@ -47,23 +46,13 @@ const options: Partial<Options> = {
     placement: 'top',
 };
 
-const PopupDrawingToolbar = ({
-    canComment,
-    canRedo,
-    canUndo,
-    className,
-    onDelete,
-    onRedo,
-    onReply,
-    onUndo,
-    popupRef,
-    reference,
-}: Props): JSX.Element => {
+const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBase>): JSX.Element => {
+    const { canComment, canRedo, canUndo, className, onDelete, onRedo, onReply, onUndo, reference } = props;
     const intl = useIntl();
 
     return (
         <PopupBase
-            ref={popupRef}
+            ref={ref}
             className={classNames(className, 'ba-PopupDrawingToolbar')}
             data-resin-component="popupDrawingToolbar"
             options={options}
@@ -115,4 +104,5 @@ const PopupDrawingToolbar = ({
     );
 };
 
-export default PopupDrawingToolbar;
+export { PopupDrawingToolbar as PopupDrawingToolbarBase };
+export default React.forwardRef(PopupDrawingToolbar);
