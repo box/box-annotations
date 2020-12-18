@@ -94,7 +94,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         if (popup) {
             popup.popper.update();
         }
-    }, [popupRef, drawnPathGroups]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [drawnPathGroups, popupRef]);
 
     return (
         <>
