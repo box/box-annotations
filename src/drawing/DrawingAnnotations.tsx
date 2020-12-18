@@ -6,8 +6,7 @@ import DrawingCreator from './DrawingCreator';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingSVGGroup from './DrawingSVGGroup';
-import PopupBase from '../components/Popups/PopupBase';
-import PopupDrawingToolbar from '../components/Popups/PopupDrawingToolbar';
+import PopupDrawingToolbar, { PopupBaseRef } from '../components/Popups/PopupDrawingToolbar';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
@@ -55,7 +54,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const hasDrawnPathGroups = drawnPathGroups.length > 0;
     const hasStashedPathGroups = stashedPathGroups.length > 0;
     const hasPathGroups = hasDrawnPathGroups || hasStashedPathGroups;
-    const popupDrawingToolbarRef = React.useRef<PopupBase>(null);
+    const popupDrawingToolbarRef = React.useRef<PopupBaseRef>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 

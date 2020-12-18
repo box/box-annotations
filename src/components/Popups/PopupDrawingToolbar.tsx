@@ -9,6 +9,8 @@ import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
+export type PopupBaseRef = PopupBase;
+
 export type Props = {
     canComment: boolean;
     canRedo: boolean;
@@ -46,7 +48,7 @@ const options: Partial<Options> = {
     placement: 'top',
 };
 
-const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBase>): JSX.Element => {
+const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.Element => {
     const { canComment, canRedo, canUndo, className, onDelete, onRedo, onReply, onUndo, reference } = props;
     const intl = useIntl();
 
