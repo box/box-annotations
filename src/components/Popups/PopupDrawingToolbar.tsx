@@ -104,5 +104,4 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBase>): JSX.Eleme
     );
 };
 
-export { PopupDrawingToolbar as PopupDrawingToolbarBase };
 export default React.forwardRef(PopupDrawingToolbar);
