@@ -6,6 +6,10 @@ import DrawingPath from '../DrawingPath';
 import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingSVG from '../DrawingSVG';
 import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
+import useCustomCursor from '../../common/useCustomCursor';
+
+jest.mock('../../common/useCustomCursor');
+jest.mock('../DrawingCursor.svg', () => 'CustomCursorTemplate');
 
 describe('DrawingCreator', () => {
     const getDefaults = (): Props => ({
@@ -89,6 +93,14 @@ describe('DrawingCreator', () => {
             simulateDrawStart(wrapper.find(PointerCapture));
 
             expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
+        });
+
+        test('should use custom cursor', () => {
+            const wrapper = getWrapper({ color: '#111' });
+
+            const creatorElRef = { current: wrapper.find(DrawingCreator).getDOMNode() };
+
+            expect(useCustomCursor).toHaveBeenCalledWith(creatorElRef, 'CustomCursorTemplate', '#111', 6, 22);
         });
     });
 
