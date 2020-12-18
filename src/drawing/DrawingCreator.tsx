@@ -1,10 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
+import DrawingCursorTemplate from './DrawingCursor.svg';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
+import useCustomCursor from '../common/useCustomCursor';
 import { getPathCommands } from './drawingUtil';
 import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
@@ -144,6 +146,8 @@ export default function DrawingCreator({
             }
         };
     }, [drawingStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useCustomCursor(creatorElRef, DrawingCursorTemplate, color, 6, 22);
 
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
