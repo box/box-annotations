@@ -33,7 +33,6 @@ describe('PopupDrawingToolbar', () => {
         onUndo: jest.fn(),
         reference: { getBoundingClientRect: () => getDOMRect() },
     });
-
     const getWrapper = (props?: Partial<Props>): ShallowWrapper =>
         shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
 
