@@ -234,14 +234,6 @@ describe('DrawingAnnotations', () => {
     });
 
     describe('state changes', () => {
-        let popupMock;
-
-        beforeEach(() => {
-            popupMock = { popper: { update: jest.fn() } };
-            jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
-            jest.spyOn(React, 'useEffect').mockImplementation(f => f());
-        });
-
         test.each`
             drawn         | initialDrawn | numberOfCalls
             ${pathGroups} | ${[]}        | ${2}
@@ -249,6 +241,9 @@ describe('DrawingAnnotations', () => {
         `(
             'should call update $numberOfCalls times if drawn.length is $drawn.length and initialDrawn.length is $initialDrawn.length',
             ({ drawn, initialDrawn, numberOfCalls }) => {
+                const popupMock = { popper: { update: jest.fn() } };
+                jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
+                jest.spyOn(React, 'useEffect').mockImplementation(f => f());
                 const wrapper = getWrapper({
                     canShowPopupToolbar: true,
                     drawnPathGroups: initialDrawn,
