@@ -232,4 +232,16 @@ describe('DrawingAnnotations', () => {
             },
         );
     });
+
+    describe('state changes', () => {
+        test('should call update on the underlying popper instance when the drawnPathGroups changes', () => {
+            const popupMock = { popper: { update: jest.fn() } };
+            jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
+            const wrapper = getWrapper({ canShowPopupToolbar: true, drawnPathGroups: [], isCreating: true });
+
+            wrapper.setProps({ drawnPathGroups: pathGroups });
+
+            expect(popupMock.popper.update).toHaveBeenCalledTimes(1);
+        });
+    });
 });

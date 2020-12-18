@@ -8,8 +8,6 @@ import messages from '../messages';
 import PopupBase from '../PopupBase';
 import PopupDrawingToolbar, { Props } from '../PopupDrawingToolbar';
 
-jest.mock('../PopupBase');
-
 describe('PopupDrawingToolbar', () => {
     const getDataTestId = (button: string): string => `ba-PopupDrawingToolbar-${button}`;
     const getButton = (wrapper: ShallowWrapper, button: string): ShallowWrapper =>
@@ -29,7 +27,6 @@ describe('PopupDrawingToolbar', () => {
         canComment: true,
         canRedo: false,
         canUndo: false,
-        drawnPathGroups: [],
         onDelete: jest.fn(),
         onRedo: jest.fn(),
         onReply: jest.fn(),
@@ -37,24 +34,7 @@ describe('PopupDrawingToolbar', () => {
         reference: { getBoundingClientRect: () => getDOMRect() },
     });
 
-    const popupMock = { popper: { update: jest.fn() } };
-
     const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
-        jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
-    });
-
-    describe('state changes', () => {
-        test('should call update on the underlying popper instance when the drawnPathGroups changes', () => {
-            const wrapper = getWrapper();
-
-            wrapper.setProps({ drawnPathGroups: [{}] });
-
-            expect(popupMock.popper.update).toHaveBeenCalledTimes(2);
-        });
-    });
 
     describe('render', () => {
         test('should render popup and buttons', () => {
