@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import HighlightCanvas, { CanvasShape } from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
-import useOutsideEvent from '../common/useOutsideEvent';
+import useIsListening from '../common/useIsListening';
 import { AnnotationHighlight, Rect, TargetHighlight } from '../@types';
 import { checkValue } from '../utils/util';
 import './HighlightList.scss';
@@ -60,19 +60,16 @@ export function getHighlightShapesFromAnnotations(
 }
 
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
-    const [isListening, setIsListening] = React.useState(true);
     const [hoverId, setHoverId] = React.useState<string | null>(null);
     const svgElRef = React.createRef<SVGSVGElement>();
+
+    const isListening = useIsListening();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
     const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId, hoverId);
 
     const handleTargetHover = (annotationId: string | null): void => {
         setHoverId(annotationId);
     };
-
-    // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', svgElRef, (): void => setIsListening(false));
-    useOutsideEvent('mouseup', svgElRef, (): void => setIsListening(true));
 
     return (
         <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">

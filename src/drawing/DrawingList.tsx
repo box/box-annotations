@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingTarget from './DrawingTarget';
-import useOutsideEvent from '../common/useOutsideEvent';
+import useIsListening from '../common/useIsListening';
 import { AnnotationDrawing } from '../@types';
 import { checkValue } from '../utils/util';
 import { getShape } from './drawingUtil';
@@ -31,15 +31,8 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 }
 
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
-    const [isListening, setIsListening] = React.useState(true);
     const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
-
-    // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', rootEl, (): void => {
-        onSelect(null);
-        setIsListening(false);
-    });
-    useOutsideEvent('mouseup', rootEl, (): void => setIsListening(true));
+    const isListening = useIsListening();
 
     return (
         <DrawingSVG

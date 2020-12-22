@@ -120,6 +120,8 @@ export default class BaseAnnotator extends EventEmitter {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
+        document.removeEventListener('mousedown', this.handleDeselect);
+
         this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
@@ -140,6 +142,8 @@ export default class BaseAnnotator extends EventEmitter {
         // Add classes to the parent elements to support CSS scoping
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
+
+        document.addEventListener('mousedown', this.handleDeselect);
 
         // Defer to the child class to render annotations
         this.render();
@@ -194,6 +198,10 @@ export default class BaseAnnotator extends EventEmitter {
     protected getElement(selector: HTMLElement | string): HTMLElement | null {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
+
+    protected handleDeselect = (): void => {
+        this.setActiveId(null);
+    };
 
     protected handleRemove = (annotationId: string): void => {
         this.removeAnnotation(annotationId);
