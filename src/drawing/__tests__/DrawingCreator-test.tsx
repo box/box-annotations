@@ -6,10 +6,8 @@ import DrawingPath from '../DrawingPath';
 import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingSVG from '../DrawingSVG';
 import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
-import useCustomCursor from '../../common/useCustomCursor';
 
-jest.mock('../../common/useCustomCursor');
-jest.mock('../DrawingCursor.svg', () => 'CustomCursorTemplate');
+jest.mock('../DrawingCursor', () => '<svg><path fill="{{cursorFillColor}}" /></svg>');
 
 describe('DrawingCreator', () => {
     const getDefaults = (): Props => ({
@@ -95,12 +93,14 @@ describe('DrawingCreator', () => {
             expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
         });
 
-        test('should use custom cursor', () => {
-            const wrapper = getWrapper({ color: '#111' });
+        test('should render custom cursor', () => {
+            const wrapper = getWrapper({ color: '#000' });
 
-            const creatorElRef = { current: wrapper.find(DrawingCreator).getDOMNode() };
+            const element: HTMLElement = wrapper.find(PointerCapture).getDOMNode();
 
-            expect(useCustomCursor).toHaveBeenCalledWith(creatorElRef, 'CustomCursorTemplate', '#111', 6, 22);
+            expect(element.style.cursor).toEqual(
+                'url("data:image/svg+xml,%3Csvg%3E%3Cpath%20fill%3D\'%23000\'%20%2F%3E%3C%2Fsvg%3E") 6 22, crosshair',
+            );
         });
     });
 
