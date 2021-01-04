@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import useIsListening from '../useIsListening';
+import useIsListInteractive from '../useIsListInteractive';
 import { createStore, CreatorStatus } from '../../store';
 
-describe('useIsListening', () => {
+describe('useIsListInteractive', () => {
     function TestComponent(): JSX.Element {
-        const isListening = useIsListening();
+        const isListening = useIsListInteractive();
 
         return <div data-islistening={isListening} data-testid="islistening" />;
     }

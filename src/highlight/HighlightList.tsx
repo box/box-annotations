@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import HighlightCanvas, { CanvasShape } from './HighlightCanvas';
 import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
-import useIsListening from '../common/useIsListening';
+import useIsListInteractive from '../common/useIsListInteractive';
 import { AnnotationHighlight, Rect, TargetHighlight } from '../@types';
 import { checkValue } from '../utils/util';
 import './HighlightList.scss';
@@ -62,8 +62,7 @@ export function getHighlightShapesFromAnnotations(
 export function HighlightList({ activeId = null, annotations, className, onSelect }: Props): JSX.Element {
     const [hoverId, setHoverId] = React.useState<string | null>(null);
     const svgElRef = React.createRef<SVGSVGElement>();
-
-    const isListening = useIsListening();
+    const isListening = useIsListInteractive();
     const sortedAnnotations = annotations.filter(filterHighlight).sort(sortHighlight);
     const canvasShapes = getHighlightShapesFromAnnotations(sortedAnnotations, activeId, hoverId);
 

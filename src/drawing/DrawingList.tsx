@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingTarget from './DrawingTarget';
-import useIsListening from '../common/useIsListening';
+import useIsListInteractive from '../common/useIsListInteractive';
 import { AnnotationDrawing } from '../@types';
 import { checkValue } from '../utils/util';
 import { getShape } from './drawingUtil';
@@ -32,7 +32,7 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
-    const isListening = useIsListening();
+    const isListening = useIsListInteractive();
 
     return (
         <DrawingSVG

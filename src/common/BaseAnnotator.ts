@@ -120,7 +120,7 @@ export default class BaseAnnotator extends EventEmitter {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
-        document.removeEventListener('mousedown', this.handleDeselect);
+        document.removeEventListener('mousedown', this.handleMouseDown);
 
         this.removeAnnotationClasses();
 
@@ -131,6 +131,12 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public init(scale = 1, rotation = 0): void {
+        // Check for containerEl prevents listener from being added on subsequent calls to init
+        if (!this.containerEl) {
+            // Add document listener to handle setting active annotation to null on mousedown
+            document.addEventListener('mousedown', this.handleMouseDown);
+        }
+
         this.containerEl = this.getElement(this.container);
         this.annotatedEl = this.getAnnotatedElement();
 
@@ -142,8 +148,6 @@ export default class BaseAnnotator extends EventEmitter {
         // Add classes to the parent elements to support CSS scoping
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
-
-        document.addEventListener('mousedown', this.handleDeselect);
 
         // Defer to the child class to render annotations
         this.render();
@@ -199,7 +203,7 @@ export default class BaseAnnotator extends EventEmitter {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
-    protected handleDeselect = (): void => {
+    protected handleMouseDown = (): void => {
         this.setActiveId(null);
     };
 

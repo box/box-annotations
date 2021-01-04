@@ -2,10 +2,10 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
-import useIsListening from '../../common/useIsListening';
+import useIsListInteractive from '../../common/useIsListInteractive';
 import { AnnotationRegion } from '../../@types';
 
-jest.mock('../../common/useIsListening');
+jest.mock('../../common/useIsListInteractive');
 
 describe('RegionList', () => {
     const defaults = {
@@ -25,7 +25,7 @@ describe('RegionList', () => {
 
     describe('render', () => {
         test.each([true, false])('should render the class based on isListening %s', isListening => {
-            (useIsListening as jest.Mock).mockReturnValue(isListening);
+            (useIsListInteractive as jest.Mock).mockReturnValue(isListening);
 
             const wrapper = getWrapper();
 

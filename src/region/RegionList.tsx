@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
-import useIsListening from '../common/useIsListening';
+import useIsListInteractive from '../common/useIsListInteractive';
 import { AnnotationRegion } from '../@types';
 import { checkValue } from '../utils/util';
 
@@ -29,7 +29,7 @@ export function sortRegion({ target: targetA }: AnnotationRegion, { target: targ
 }
 
 export function RegionList({ activeId, annotations, className, onSelect = noop }: Props): JSX.Element {
-    const isListening = useIsListening();
+    const isListening = useIsListInteractive();
     const rootElRef = React.createRef<HTMLDivElement>();
 
     return (

@@ -4,11 +4,11 @@ import { mount, ReactWrapper } from 'enzyme';
 import HighlightCanvas, { CanvasShape } from '../HighlightCanvas';
 import HighlightSvg from '../HighlightSvg';
 import HighlightTarget from '../HighlightTarget';
-import useIsListening from '../../common/useIsListening';
+import useIsListInteractive from '../../common/useIsListInteractive';
 import { AnnotationHighlight } from '../../@types';
 import { HighlightList, Props } from '../HighlightList';
 
-jest.mock('../../common/useIsListening');
+jest.mock('../../common/useIsListInteractive');
 jest.mock('../HighlightCanvas');
 jest.mock('../HighlightTarget');
 
@@ -34,7 +34,7 @@ describe('HighlightList', () => {
         });
 
         test('should not have is-listening class if isListening state is false', async () => {
-            (useIsListening as jest.Mock).mockReturnValue(false);
+            (useIsListInteractive as jest.Mock).mockReturnValue(false);
 
             const wrapper = getWrapper();
 

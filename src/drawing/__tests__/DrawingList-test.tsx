@@ -2,11 +2,11 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DrawingTarget from '../DrawingTarget';
 import DrawingList, { Props } from '../DrawingList';
-import useIsListening from '../../common/useIsListening';
+import useIsListInteractive from '../../common/useIsListInteractive';
 import { AnnotationDrawing } from '../../@types';
 import { annotations } from '../__mocks__/drawingData';
 
-jest.mock('../../common/useIsListening');
+jest.mock('../../common/useIsListInteractive');
 
 describe('DrawingList', () => {
     const getDefaults = (): Props => ({
@@ -20,7 +20,7 @@ describe('DrawingList', () => {
 
     describe('render', () => {
         test.each([true, false])('should render the class based on isListening %s', isListening => {
-            (useIsListening as jest.Mock).mockReturnValue(isListening);
+            (useIsListInteractive as jest.Mock).mockReturnValue(isListening);
 
             const wrapper = getWrapper();
 
