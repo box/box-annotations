@@ -5,6 +5,7 @@ import RegionAnnotations from '../RegionAnnotations';
 import RegionAnnotationsContainer, { Props } from '../RegionAnnotationsContainer';
 import { createStore } from '../../store';
 
+jest.mock('../../common/useIsListInteractive');
 jest.mock('../../common/withProviders');
 
 describe('RegionAnnotationsContainer', () => {

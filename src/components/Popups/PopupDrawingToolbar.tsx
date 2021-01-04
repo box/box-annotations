@@ -9,6 +9,8 @@ import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
 
+export type PopupBaseRef = PopupBase;
+
 export type Props = {
     canComment: boolean;
     canRedo: boolean;
@@ -38,28 +40,21 @@ const options: Partial<Options> = {
         {
             name: 'preventOverflow',
             options: {
-                padding: 5,
+                altAxis: true,
+                padding: 50,
             },
         },
     ],
     placement: 'top',
 };
 
-const PopupDrawingToolbar = ({
-    canComment,
-    canRedo,
-    canUndo,
-    className,
-    onDelete,
-    onRedo,
-    onReply,
-    onUndo,
-    reference,
-}: Props): JSX.Element => {
+const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.Element => {
+    const { canComment, canRedo, canUndo, className, onDelete, onRedo, onReply, onUndo, reference } = props;
     const intl = useIntl();
 
     return (
         <PopupBase
+            ref={ref}
             className={classNames(className, 'ba-PopupDrawingToolbar')}
             data-resin-component="popupDrawingToolbar"
             options={options}
@@ -111,4 +106,4 @@ const PopupDrawingToolbar = ({
     );
 };
 
-export default PopupDrawingToolbar;
+export default React.forwardRef(PopupDrawingToolbar);

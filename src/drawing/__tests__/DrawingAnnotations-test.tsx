@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations, { Props } from '../DrawingAnnotations';
@@ -11,6 +11,7 @@ import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 
 jest.mock('../DrawingList');
+jest.mock('../../components/Popups/PopupDrawingToolbar');
 
 describe('DrawingAnnotations', () => {
     const getDefaults = (): Props => ({
@@ -236,6 +237,31 @@ describe('DrawingAnnotations', () => {
                 expect(wrapper.find(PopupDrawingToolbar).prop('canComment')).toBe(canComment);
                 expect(wrapper.find(PopupDrawingToolbar).prop('canRedo')).toBe(canRedo);
                 expect(wrapper.find(PopupDrawingToolbar).prop('canUndo')).toBe(canUndo);
+            },
+        );
+    });
+
+    describe('state changes', () => {
+        test.each`
+            basePathGroups | nextPathGroups | expected
+            ${[]}          | ${[]}          | ${0}
+            ${[]}          | ${pathGroups}  | ${1}
+            ${pathGroups}  | ${pathGroups}  | ${1}
+        `(
+            'should call update $expected times if basePathGroups.length is $basePathGroups.length and nextPathGroups.length is $nextPathGroups.length',
+            ({ basePathGroups, nextPathGroups, expected }) => {
+                const popupRef = { popper: { update: jest.fn() } };
+                jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupRef }));
+
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: basePathGroups,
+                    isCreating: true,
+                });
+
+                wrapper.setProps({ drawnPathGroups: nextPathGroups });
+
+                expect(popupRef.popper.update).toHaveBeenCalledTimes(expected);
             },
         );
     });

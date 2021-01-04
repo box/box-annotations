@@ -2,10 +2,10 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import RegionAnnotation from '../RegionAnnotation';
 import RegionList from '../RegionList';
-import useOutsideEvent from '../../common/useOutsideEvent';
+import useIsListInteractive from '../../common/useIsListInteractive';
 import { AnnotationRegion } from '../../@types';
 
-jest.mock('../../common/useOutsideEvent', () => jest.fn((name, ref, cb) => cb()));
+jest.mock('../../common/useIsListInteractive');
 
 describe('RegionList', () => {
     const defaults = {
@@ -18,33 +18,14 @@ describe('RegionList', () => {
         onSelect: jest.fn(),
     };
     const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionList {...defaults} {...props} />);
-    const setIsListeningValue: { current: unknown } = { current: null };
-    const setIsListening = jest.fn((value: unknown): void => {
-        setIsListeningValue.current = value;
-    });
 
     beforeEach(() => {
-        setIsListeningValue.current = null; // Reset the mocked state
-
-        jest.spyOn(React, 'useState').mockImplementation(() => [setIsListeningValue.current, setIsListening]);
-    });
-
-    describe('event handlers', () => {
-        test('should call setIsListening and onSelect based on outside mouse events', () => {
-            const onSelect = jest.fn();
-
-            getWrapper({ onSelect });
-
-            expect(onSelect).toHaveBeenCalledWith(null); // mousedown
-            expect(setIsListening).toHaveBeenNthCalledWith(1, false); // mousedown
-            expect(setIsListening).toHaveBeenNthCalledWith(2, true); // mouseup
-            expect(useOutsideEvent).toHaveBeenCalledTimes(2);
-        });
+        jest.spyOn(React, 'useState').mockImplementation(() => [null, jest.fn()]);
     });
 
     describe('render', () => {
         test.each([true, false])('should render the class based on isListening %s', isListening => {
-            setIsListening(isListening);
+            (useIsListInteractive as jest.Mock).mockReturnValue(isListening);
 
             const wrapper = getWrapper();
 
