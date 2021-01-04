@@ -7,8 +7,6 @@ import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingSVG from '../DrawingSVG';
 import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
 
-jest.mock('../DrawingCursor', () => '<svg><path fill="{{cursorFillColor}}" /></svg>');
-
 describe('DrawingCreator', () => {
     const getDefaults = (): Props => ({
         onStart: jest.fn(),
@@ -94,13 +92,11 @@ describe('DrawingCreator', () => {
         });
 
         test('should render custom cursor', () => {
-            const wrapper = getWrapper({ color: '#000' });
+            const wrapper = getWrapper({ color: '#111' });
 
             const element: HTMLElement = wrapper.find(PointerCapture).getDOMNode();
 
-            expect(element.style.cursor).toEqual(
-                'url("data:image/svg+xml,%3Csvg%3E%3Cpath%20fill%3D\'%23000\'%20%2F%3E%3C%2Fsvg%3E") 6 22, crosshair',
-            );
+            expect(element.style.cursor.includes("fill%3D'%23111'")).toBe(true); // fill='#111'
         });
     });
 

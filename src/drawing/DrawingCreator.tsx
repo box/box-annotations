@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
-import DrawingCursorTemplate from './DrawingCursor';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
+import { getDrawingCursor } from './DrawingCursor';
 import { getPathCommands } from './drawingUtil';
 import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
@@ -153,10 +153,8 @@ export default function DrawingCreator({
             return;
         }
 
-        const svg = encodeURIComponent(DrawingCursorTemplate.replace('{{cursorFillColor}}', color).replace(/"/g, "'"));
-
         Object.assign(element.style, {
-            cursor: `url("data:image/svg+xml,${svg}") 6 22, crosshair`,
+            cursor: getDrawingCursor(color),
         });
     }, [color, creatorElRef]);
 
