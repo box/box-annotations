@@ -7,7 +7,6 @@ import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingSVGGroup from './DrawingSVGGroup';
 import PopupDrawingToolbar, { PopupBaseRef } from '../components/Popups/PopupDrawingToolbar';
-import usePrevious from '../common/usePrevious';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
@@ -56,7 +55,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const hasStashedPathGroups = stashedPathGroups.length > 0;
     const hasPathGroups = hasDrawnPathGroups || hasStashedPathGroups;
     const popupDrawingToolbarRef = React.useRef<PopupBaseRef>(null);
-    const prevDrawnPathGroups = usePrevious(drawnPathGroups);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 
@@ -90,14 +88,10 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     };
     React.useEffect(() => {
         const { current: popup } = popupDrawingToolbarRef;
-
-        const didPathGroupsUpdate =
-            prevDrawnPathGroups && drawnPathGroups && drawnPathGroups.length !== prevDrawnPathGroups.length;
-
-        if (popup?.popper && didPathGroupsUpdate && drawnPathGroups.length) {
+        if (popup?.popper && drawnPathGroups.length) {
             popup.popper.update();
         }
-    }, [drawnPathGroups, prevDrawnPathGroups]);
+    }, [drawnPathGroups]);
 
     return (
         <>

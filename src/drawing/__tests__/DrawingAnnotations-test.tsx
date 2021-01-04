@@ -11,6 +11,7 @@ import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 
 jest.mock('../DrawingList');
+jest.mock('../../components/Popups/PopupDrawingToolbar');
 
 describe('DrawingAnnotations', () => {
     const getDefaults = (): Props => ({
@@ -238,13 +239,13 @@ describe('DrawingAnnotations', () => {
             basePathGroups | nextPathGroups | expected
             ${[]}          | ${[]}          | ${0}
             ${[]}          | ${pathGroups}  | ${1}
-            ${pathGroups}  | ${pathGroups}  | ${0}
+            ${pathGroups}  | ${pathGroups}  | ${1}
         `(
             'should call update $expected times if basePathGroups.length is $basePathGroups.length and nextPathGroups.length is $nextPathGroups.length',
             ({ basePathGroups, nextPathGroups, expected }) => {
-                const popupMock = { popper: { update: jest.fn() } };
-                jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
-                jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+                const popupRef = { popper: { update: jest.fn() } };
+                jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupRef }));
+
                 const wrapper = getWrapper({
                     canShowPopupToolbar: true,
                     drawnPathGroups: basePathGroups,
@@ -253,7 +254,7 @@ describe('DrawingAnnotations', () => {
 
                 wrapper.setProps({ drawnPathGroups: nextPathGroups });
 
-                expect(popupMock.popper.update).toHaveBeenCalledTimes(expected);
+                expect(popupRef.popper.update).toHaveBeenCalledTimes(expected);
             },
         );
     });
