@@ -90,6 +90,14 @@ describe('DrawingCreator', () => {
 
             expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
         });
+
+        test('should render custom cursor', () => {
+            const wrapper = getWrapper({ color: '#111' });
+
+            const element: HTMLElement = wrapper.find(PointerCapture).getDOMNode();
+
+            expect(element.style.cursor.includes("fill%3D'%23111'")).toBe(true); // fill='#111'
+        });
     });
 
     describe('onStart()', () => {

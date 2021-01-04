@@ -5,6 +5,7 @@ import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
+import { getDrawingCursor } from './DrawingCursor';
 import { getPathCommands } from './drawingUtil';
 import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
@@ -144,6 +145,18 @@ export default function DrawingCreator({
             }
         };
     }, [drawingStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    React.useEffect(() => {
+        const { current: element } = creatorElRef;
+
+        if (!element) {
+            return;
+        }
+
+        Object.assign(element.style, {
+            cursor: getDrawingCursor(color),
+        });
+    }, [color, creatorElRef]);
 
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
