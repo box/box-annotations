@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import RegionAnnotation from './RegionAnnotation';
-import useOutsideEvent from '../common/useOutsideEvent';
+import useIsListInteractive from '../common/useIsListInteractive';
 import { AnnotationRegion } from '../@types';
 import { checkValue } from '../utils/util';
 
@@ -29,15 +29,8 @@ export function sortRegion({ target: targetA }: AnnotationRegion, { target: targ
 }
 
 export function RegionList({ activeId, annotations, className, onSelect = noop }: Props): JSX.Element {
-    const [isListening, setIsListening] = React.useState(true);
+    const isListening = useIsListInteractive();
     const rootElRef = React.createRef<HTMLDivElement>();
-
-    // Document-level event handlers for focus and pointer control
-    useOutsideEvent('mousedown', rootElRef, (): void => {
-        onSelect(null);
-        setIsListening(false);
-    });
-    useOutsideEvent('mouseup', rootElRef, (): void => setIsListening(true));
 
     return (
         <div

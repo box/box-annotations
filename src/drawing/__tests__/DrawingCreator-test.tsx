@@ -1,8 +1,9 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
-import DrawingCreator, { defaultStroke, Props } from '../DrawingCreator';
+import DrawingCreator, { defaultStrokeColor, defaultStrokeSize, Props } from '../DrawingCreator';
 import DrawingPath from '../DrawingPath';
+import DrawingPathGroup from '../DrawingPathGroup';
 import DrawingSVG from '../DrawingSVG';
 import PointerCapture, { Props as PointerCaptureProps } from '../../components/PointerCapture';
 
@@ -34,18 +35,27 @@ describe('DrawingCreator', () => {
         jest.spyOn(Element.prototype, 'setAttribute');
     });
 
-    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawStart')(clientX, clientY);
         });
-    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void =>
+
+        wrapper.update();
+    };
+    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawUpdate')(clientX, clientY);
         });
-    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void =>
+
+        wrapper.update();
+    };
+    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void => {
         act(() => {
             wrapper.prop('onDrawStop')();
         });
+
+        wrapper.update();
+    };
 
     describe('render', () => {
         test('should render PointerCapture', () => {
@@ -60,8 +70,6 @@ describe('DrawingCreator', () => {
 
             simulateDrawStart(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
         });
@@ -71,10 +79,16 @@ describe('DrawingCreator', () => {
 
             simulateDrawMove(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(wrapper.find(PointerCapture).exists()).toBe(true);
             expect(wrapper.find(DrawingSVG).exists()).toBe(true);
+        });
+
+        test('should render DrawingPathGroup with right stroke color', () => {
+            const wrapper = getWrapper({ color: '#111' });
+
+            simulateDrawStart(wrapper.find(PointerCapture));
+
+            expect(wrapper.find(DrawingPathGroup).prop('stroke')).toMatchObject({ color: '#111' });
         });
     });
 
@@ -85,8 +99,6 @@ describe('DrawingCreator', () => {
 
             simulateDrawStart(wrapper.find(PointerCapture));
 
-            wrapper.update();
-
             expect(onStart).not.toHaveBeenCalled();
         });
 
@@ -95,8 +107,6 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper({ onStart });
 
             simulateDrawMove(wrapper.find(PointerCapture));
-
-            wrapper.update();
 
             expect(onStart).toHaveBeenCalled();
         });
@@ -108,15 +118,15 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper({ onStop });
 
             simulateDrawStart(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
-            wrapper.update();
+
             expect(onStop).not.toHaveBeenCalled();
 
             simulateDrawStop(wrapper.find(PointerCapture));
-            wrapper.update();
+
             expect(onStop).toHaveBeenCalledWith({
                 paths: [
                     {
@@ -126,7 +136,75 @@ describe('DrawingCreator', () => {
                         ],
                     },
                 ],
-                stroke: defaultStroke,
+                stroke: {
+                    color: defaultStrokeColor,
+                    size: defaultStrokeSize,
+                },
+            });
+        });
+
+        test.each`
+            x      | y      | expectedX | expectedY
+            ${-1}  | ${-1}  | ${4}      | ${4}
+            ${110} | ${110} | ${96}     | ${96}
+        `(
+            'should bound the drawn points ($x, $y) by the boundary of the PointerCapture element',
+            ({ x, y, expectedX, expectedY }) => {
+                const onStop = jest.fn();
+                const wrapper = getWrapper({ onStop });
+
+                simulateDrawStart(wrapper.find(PointerCapture));
+
+                expect(onStop).not.toHaveBeenCalled();
+
+                simulateDrawMove(wrapper.find(PointerCapture), x, y);
+
+                expect(onStop).not.toHaveBeenCalled();
+
+                simulateDrawStop(wrapper.find(PointerCapture));
+
+                expect(onStop).toHaveBeenCalledWith({
+                    paths: [
+                        {
+                            points: [
+                                { x: 10, y: 10 },
+                                { x: expectedX, y: expectedY },
+                            ],
+                        },
+                    ],
+                    stroke: {
+                        color: defaultStrokeColor,
+                        size: defaultStrokeSize,
+                    },
+                });
+            },
+        );
+
+        test('should bound the drawn points by the boundary of the PointerCapture element based on the provided stroke size', () => {
+            const customStroke = { color: '#000', size: 10 };
+            const onStop = jest.fn();
+            const wrapper = getWrapper({ onStop, ...customStroke });
+
+            simulateDrawStart(wrapper.find(PointerCapture));
+
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawMove(wrapper.find(PointerCapture), -1, -1);
+
+            expect(onStop).not.toHaveBeenCalled();
+
+            simulateDrawStop(wrapper.find(PointerCapture));
+
+            expect(onStop).toHaveBeenCalledWith({
+                paths: [
+                    {
+                        points: [
+                            { x: 10, y: 10 },
+                            { x: 10, y: 10 },
+                        ],
+                    },
+                ],
+                stroke: customStroke,
             });
         });
     });
@@ -142,7 +220,6 @@ describe('DrawingCreator', () => {
             const wrapper = getWrapper();
 
             simulateDrawStart(wrapper.find(PointerCapture));
-            wrapper.update();
             jest.advanceTimersByTime(100);
 
             expect(window.requestAnimationFrame).toHaveBeenCalled();
@@ -161,8 +238,6 @@ describe('DrawingCreator', () => {
             simulateDrawStart(wrapper.find(PointerCapture));
             simulateDrawMove(wrapper.find(PointerCapture), 15, 15);
             simulateDrawMove(wrapper.find(PointerCapture), 20, 20);
-
-            wrapper.update();
 
             jest.advanceTimersByTime(100);
 

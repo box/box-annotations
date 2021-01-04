@@ -34,6 +34,7 @@ export type Options = {
     };
     fileOptions?: FileOptions;
     hasTouch?: boolean;
+    initialColor?: string;
     initialMode?: store.Mode;
     intl: IntlOptions;
     locale?: string;
@@ -60,7 +61,17 @@ export default class BaseAnnotator extends EventEmitter {
 
     store: store.AppStore;
 
-    constructor({ apiHost, container, features = {}, file, fileOptions, initialMode, intl, token }: Options) {
+    constructor({
+        apiHost,
+        container,
+        features = {},
+        file,
+        fileOptions,
+        initialColor,
+        initialMode,
+        intl,
+        token,
+    }: Options) {
         super();
 
         const fileOptionsValue = fileOptions?.[file.id];
@@ -72,7 +83,7 @@ export default class BaseAnnotator extends EventEmitter {
             annotations: {
                 activeId: fileOptionsValue?.annotations?.activeId ?? null,
             },
-            common: { mode: initialMode },
+            common: { color: initialColor, mode: initialMode },
             options: {
                 features,
                 fileId: file.id,
@@ -93,6 +104,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.handleSetActive);
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
+        this.addListener(Event.COLOR_SET, this.handleColorSet);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
 
         // Load any required data at startup
@@ -108,6 +120,8 @@ export default class BaseAnnotator extends EventEmitter {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
+        document.removeEventListener('mousedown', this.handleMouseDown);
+
         this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
@@ -117,6 +131,12 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public init(scale = 1, rotation = 0): void {
+        // Check for containerEl prevents listener from being added on subsequent calls to init
+        if (!this.containerEl) {
+            // Add document listener to handle setting active annotation to null on mousedown
+            document.addEventListener('mousedown', this.handleMouseDown);
+        }
+
         this.containerEl = this.getElement(this.container);
         this.annotatedEl = this.getAnnotatedElement();
 
@@ -155,6 +175,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(store.setActiveAnnotationIdAction(annotationId));
     }
 
+    public setColor(color: string): void {
+        this.store.dispatch(store.setColorAction(color));
+    }
+
     public setVisibility(visibility: boolean): void {
         if (!this.containerEl) {
             return;
@@ -179,6 +203,10 @@ export default class BaseAnnotator extends EventEmitter {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
+    protected handleMouseDown = (): void => {
+        this.setActiveId(null);
+    };
+
     protected handleRemove = (annotationId: string): void => {
         this.removeAnnotation(annotationId);
     };
@@ -193,6 +221,10 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected handleSetVisible = (visibility: boolean): void => {
         this.setVisibility(visibility);
+    };
+
+    protected handleColorSet = (color: string): void => {
+        this.setColor(color);
     };
 
     protected hydrate(): void {

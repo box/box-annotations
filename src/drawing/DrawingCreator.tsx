@@ -6,22 +6,27 @@ import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
 import { getPathCommands } from './drawingUtil';
-import { PathGroup, Position, Stroke } from '../@types';
+import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
 
 export type Props = {
     className?: string;
+    color?: string;
     onStart: () => void;
     onStop: (pathGroup: PathGroup) => void;
-    stroke?: Stroke;
+    size?: number;
 };
 
-export const defaultStroke = {
-    color: bdlBoxBlue,
-    size: 4,
-};
+export const defaultStrokeColor = bdlBoxBlue;
+export const defaultStrokeSize = 4;
 
-export default function DrawingCreator({ className, onStart, onStop, stroke = defaultStroke }: Props): JSX.Element {
+export default function DrawingCreator({
+    className,
+    color = defaultStrokeColor,
+    onStart,
+    onStop,
+    size = defaultStrokeSize,
+}: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const capturedPointsRef = React.useRef<Array<Position>>([]);
     const creatorElRef = React.useRef<PointerCaptureRef>(null);
@@ -29,8 +34,9 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
     const drawingPathRef = React.useRef<DrawingPathRef>(null);
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
+    const stroke = { color, size };
 
-    const getPoints = (): Array<Position> => {
+    const getPoints = React.useCallback((): Array<Position> => {
         const { current: creatorEl } = creatorElRef;
         const { current: points } = capturedPointsRef;
 
@@ -39,11 +45,16 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         }
 
         const { height, width } = creatorEl.getBoundingClientRect();
+        const { size: minSize } = stroke;
+        const MAX_X = width - minSize;
+        const MAX_Y = height - minSize;
+
         return points.map(({ x, y }) => ({
-            x: (x / width) * 100,
-            y: (y / height) * 100,
+            x: (Math.min(MAX_X, Math.max(minSize, x)) / width) * 100,
+            y: (Math.min(MAX_Y, Math.max(minSize, y)) / height) * 100,
         }));
-    };
+    }, [stroke]);
+
     const getPosition = (x: number, y: number): [number, number] => {
         const { current: creatorEl } = creatorElRef;
 
@@ -65,7 +76,8 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
         capturedPointsRef.current = [{ x: x1, y: y1 }];
         drawingDirtyRef.current = true;
     };
-    const stopDraw = (): void => {
+
+    const stopDraw = React.useCallback((): void => {
         const adjustedPoints = getPoints();
 
         // If there is only one point in the points array, it is likely the user clicked
@@ -83,19 +95,23 @@ export default function DrawingCreator({ className, onStart, onStop, stroke = de
             paths: [{ points: adjustedPoints }],
             stroke,
         });
-    };
-    const updateDraw = (x: number, y: number): void => {
-        const [x2, y2] = getPosition(x, y);
-        const { current: points } = capturedPointsRef;
+    }, [getPoints, onStop, setDrawingStatus, stroke]);
 
-        points.push({ x: x2, y: y2 });
-        drawingDirtyRef.current = true;
+    const updateDraw = React.useCallback(
+        (x: number, y: number): void => {
+            const [x2, y2] = getPosition(x, y);
+            const { current: points } = capturedPointsRef;
 
-        if (drawingStatus !== DrawingStatus.drawing) {
-            setDrawingStatus(DrawingStatus.drawing);
-            onStart();
-        }
-    };
+            points.push({ x: x2, y: y2 });
+            drawingDirtyRef.current = true;
+
+            if (drawingStatus !== DrawingStatus.drawing) {
+                setDrawingStatus(DrawingStatus.drawing);
+                onStart();
+            }
+        },
+        [drawingStatus, onStart, setDrawingStatus],
+    );
 
     // Event Handlers
     const renderStep = (callback: () => void): void => {

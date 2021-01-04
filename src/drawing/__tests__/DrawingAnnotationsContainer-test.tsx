@@ -6,9 +6,14 @@ import DrawingAnnotations from '../DrawingAnnotations';
 import DrawingAnnotationsContainer, { Props } from '../DrawingAnnotationsContainer';
 import { createStore, CreatorStatus, Mode } from '../../store';
 
+jest.mock('../../common/useIsListInteractive');
 jest.mock('../../common/withProviders');
 
 describe('DrawingAnnotationsContainer', () => {
+    const initialState = {
+        common: { color: '#000' },
+    };
+
     const getDefaults = (): {
         intl: IntlShape;
         location: number;
@@ -16,7 +21,7 @@ describe('DrawingAnnotationsContainer', () => {
     } => ({
         intl: {} as IntlShape,
         location: 1,
-        store: createStore(),
+        store: createStore(initialState),
     });
     const getWrapper = (props = {}): ReactWrapper<Props> =>
         mount(<DrawingAnnotationsContainer {...getDefaults()} {...props} />);
@@ -31,6 +36,7 @@ describe('DrawingAnnotationsContainer', () => {
                 addDrawingPathGroup: expect.any(Function),
                 annotations: [],
                 canShowPopupToolbar: false,
+                color: '#000',
                 drawnPathGroups: [],
                 isCreating: false,
                 location: 1,

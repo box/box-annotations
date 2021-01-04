@@ -19,6 +19,9 @@ const MIN_X = 0; // Minimum region x position must be positive
 const MIN_Y = 0; // Minimum region y position must be positive
 const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 
+const isValid = (x1: number, y1: number, x2: number, y2: number): boolean =>
+    Math.abs(x2 - x1) >= MIN_SIZE || Math.abs(y2 - y1) >= MIN_SIZE;
+
 export default function RegionCreator({ className, onAbort, onStart, onStop }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
@@ -95,7 +98,8 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         positionY2Ref.current = null;
         regionDirtyRef.current = true;
     };
-    const stopDraw = (): void => {
+
+    const stopDraw = React.useCallback((): void => {
         const shape = getShape();
 
         setDrawingStatus(DrawingStatus.init);
@@ -111,31 +115,31 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
         } else {
             onAbort();
         }
-    };
+    }, [onAbort, onStop, setDrawingStatus]);
 
-    const isValid = (x1: number, y1: number, x2: number, y2: number): boolean =>
-        Math.abs(x2 - x1) >= MIN_SIZE || Math.abs(y2 - y1) >= MIN_SIZE;
+    const updateDraw = React.useCallback(
+        (x: number, y: number): void => {
+            const [x2, y2] = getPosition(x, y);
+            const { current: x1 } = positionX1Ref;
+            const { current: y1 } = positionY1Ref;
+            const { current: prevX2 } = positionX2Ref;
 
-    const updateDraw = (x: number, y: number): void => {
-        const [x2, y2] = getPosition(x, y);
-        const { current: x1 } = positionX1Ref;
-        const { current: y1 } = positionY1Ref;
-        const { current: prevX2 } = positionX2Ref;
+            // Suppress the creation of a small region if the intention of the user is to click on the document
+            if (prevX2 === null && !isValid(x1 ?? 0, y1 ?? 0, x2, y2)) {
+                return;
+            }
 
-        // Suppress the creation of a small region if the intention of the user is to click on the document
-        if (prevX2 === null && !isValid(x1 ?? 0, y1 ?? 0, x2, y2)) {
-            return;
-        }
+            positionX2Ref.current = x2;
+            positionY2Ref.current = y2;
+            regionDirtyRef.current = true;
 
-        positionX2Ref.current = x2;
-        positionY2Ref.current = y2;
-        regionDirtyRef.current = true;
-
-        if (drawingStatus !== DrawingStatus.drawing) {
-            setDrawingStatus(DrawingStatus.drawing);
-            onStart();
-        }
-    };
+            if (drawingStatus !== DrawingStatus.drawing) {
+                setDrawingStatus(DrawingStatus.drawing);
+                onStart();
+            }
+        },
+        [drawingStatus, onStart, setDrawingStatus],
+    );
 
     // Event Handlers
     const handleMouseOut = (): void => {

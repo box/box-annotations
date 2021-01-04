@@ -152,11 +152,11 @@ describe('BaseAnnotator', () => {
             expect(annotator.features).toEqual(features);
         });
 
-        test('should set initial mode', () => {
-            initAnnotator({ initialMode: Mode.REGION });
+        test('should set initial mode and color', () => {
+            initAnnotator({ initialColor: '#000', initialMode: Mode.REGION });
 
             expect(store.createStore).toHaveBeenLastCalledWith(
-                expect.objectContaining({ common: { mode: Mode.REGION } }),
+                expect.objectContaining({ common: { color: '#000', mode: Mode.REGION } }),
                 expect.any(Object),
             );
         });
@@ -195,6 +195,14 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
         });
+
+        test('should remove mousedown event listener', () => {
+            const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+
+            annotator.destroy();
+
+            expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
+        });
     });
 
     describe('init()', () => {
@@ -222,6 +230,13 @@ describe('BaseAnnotator', () => {
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             expect(annotator.containerEl).toBeNull();
         });
+
+        test('should add a mousedown handler for deselecting the active id', () => {
+            const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+            annotator.init();
+
+            expect(addEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
+        });
     });
 
     describe('event handlers', () => {
@@ -229,6 +244,7 @@ describe('BaseAnnotator', () => {
             jest.spyOn(annotator, 'init');
             jest.spyOn(annotator, 'removeAnnotation');
             jest.spyOn(annotator, 'setActiveId');
+            jest.spyOn(annotator, 'setColor');
             jest.spyOn(annotator, 'setVisibility');
         });
 
@@ -244,6 +260,9 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.VISIBLE_SET, true);
             expect(annotator.setVisibility).toHaveBeenCalledWith(true);
+
+            annotator.emit(Event.COLOR_SET, '#000');
+            expect(annotator.setColor).toHaveBeenCalledWith('#000');
         });
     });
 

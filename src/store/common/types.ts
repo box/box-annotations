@@ -6,6 +6,7 @@ export enum Mode {
 }
 
 export interface CommonState {
+    color: string;
     mode: Mode;
 }
 export interface ModeState {
