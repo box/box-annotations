@@ -6,6 +6,7 @@ import DrawingAnnotations from '../DrawingAnnotations';
 import DrawingAnnotationsContainer, { Props } from '../DrawingAnnotationsContainer';
 import { createStore, CreatorStatus, Mode } from '../../store';
 
+jest.mock('../../common/useIsListInteractive');
 jest.mock('../../common/withProviders');
 
 describe('DrawingAnnotationsContainer', () => {
