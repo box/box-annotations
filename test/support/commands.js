@@ -11,22 +11,25 @@ Cypress.Commands.add('showPreview', (fileId, { token } = {}) => {
 });
 
 // Annotations-specific commands
-Cypress.Commands.add('drawRegion', ({ x = 200, y = 200, width = 100, height = 100 } = {}) => {
-    // Draw a width * height region starting at (x, y)
-    cy.getByTestId('ba-RegionCreator')
-        .first()
-        .trigger('mousedown', {
-            buttons: 1,
-            clientX: x,
-            clientY: y,
-        })
-        .trigger('mousemove', {
-            buttons: 1,
-            clientX: x + width,
-            clientY: y + height,
-        })
-        .trigger('mouseup');
-});
+Cypress.Commands.add(
+    'drawRegion',
+    (targetSelector = 'ba-RegionCreator', { x = 200, y = 200, width = 100, height = 100 } = {}) => {
+        // Draw a width * height region starting at (x, y)
+        cy.getByTestId(targetSelector)
+            .first()
+            .trigger('mousedown', {
+                buttons: 1,
+                clientX: x,
+                clientY: y,
+            })
+            .trigger('mousemove', {
+                buttons: 1,
+                clientX: x + width,
+                clientY: y + height,
+            })
+            .trigger('mouseup');
+    },
+);
 
 Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
     cy.get('.textLayer')
