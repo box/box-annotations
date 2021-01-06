@@ -19,9 +19,9 @@ describe('Drawing', () => {
         cy.getByTestId('bp-AnnotationsControls-drawBtn').click();
 
         // Add a drawing annotation on the document
-        cy.drawRegion('ba-DrawingCreator');
+        cy.drawStroke();
         // Support multiple draws
-        cy.drawRegion('ba-DrawingCreator', { x: 300 });
+        cy.drawStroke({ x: 300 });
         cy.getByTestId('ba-PopupDrawingToolbar-comment').click();
         cy.submitReply();
 
@@ -41,20 +41,33 @@ describe('Drawing', () => {
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
     });
 
-    it('should not be able to comment if no drawing', () => {
+    it('should show right drawing button status', () => {
         cy.showPreview(Cypress.env('FILE_ID_DOC'));
 
         cy.getByTestId('ba-Layer--drawing');
 
         cy.getByTestId('bp-AnnotationsControls-drawBtn').click();
 
-        cy.drawRegion('ba-DrawingCreator');
-
+        cy.drawStroke();
+        cy.getByTestId('ba-PopupDrawingToolbar-undo').should('not.be.disabled');
         cy.getByTestId('ba-PopupDrawingToolbar-redo').should('be.disabled');
+        cy.getByTestId('ba-PopupDrawingToolbar-comment').should('not.be.disabled');
+
         cy.getByTestId('ba-PopupDrawingToolbar-undo').click();
         cy.getByTestId('ba-PopupDrawingToolbar-undo').should('be.disabled');
+        cy.getByTestId('ba-PopupDrawingToolbar-redo').should('not.be.disabled');
         cy.getByTestId('ba-PopupDrawingToolbar-comment').should('be.disabled');
+
         cy.getByTestId('ba-PopupDrawingToolbar-redo').click();
+        cy.getByTestId('ba-PopupDrawingToolbar-undo').should('not.be.disabled');
+        cy.getByTestId('ba-PopupDrawingToolbar-redo').should('be.disabled');
+        cy.getByTestId('ba-PopupDrawingToolbar-comment').should('not.be.disabled');
+
+        cy.getByTestId('ba-PopupDrawingToolbar-undo').click();
+        cy.getByTestId('ba-PopupDrawingToolbar-redo').should('not.be.disabled');
+        cy.drawStroke();
+        cy.getByTestId('ba-PopupDrawingToolbar-redo').should('be.disabled');
+
         cy.getByTestId('ba-PopupDrawingToolbar-comment').click();
         cy.submitReply();
 

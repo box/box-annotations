@@ -40,7 +40,7 @@ describe('Highlights', () => {
         cy.selectText({ block: 2 });
         cy.getByTestId('ba-PopupHighlight-button').click();
         // Assert highlight creation mode is active
-        cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('have.class', 'is-active');
+        cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('have.class', 'bp-is-active');
         // Create highlight annotation
         cy.submitReply();
 
@@ -50,7 +50,7 @@ describe('Highlights', () => {
             .should('have.class', 'is-active');
 
         // Assert highlight creation mode is not active
-        cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('not.have.class', 'is-active');
+        cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('not.have.class', 'bp-is-active');
     });
 
     it('should restrict highlight annotation to single page', () => {
