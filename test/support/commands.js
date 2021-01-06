@@ -10,10 +10,8 @@ Cypress.Commands.add('showPreview', (fileId, { token } = {}) => {
     cy.get('[data-testid="fileid-set"]').click();
 });
 
-// Annotations-specific commands
-Cypress.Commands.add('drawRegion', ({ x = 200, y = 200, width = 100, height = 100 } = {}) => {
-    // Draw a width * height region starting at (x, y)
-    cy.getByTestId('ba-RegionCreator')
+function getMouseMoveCommands(targetSelector, { height, width, x, y }) {
+    cy.getByTestId(targetSelector)
         .first()
         .trigger('mousedown', {
             buttons: 1,
@@ -26,7 +24,15 @@ Cypress.Commands.add('drawRegion', ({ x = 200, y = 200, width = 100, height = 10
             clientY: y + height,
         })
         .trigger('mouseup');
-});
+}
+
+// Annotations-specific commands
+Cypress.Commands.add('drawRegion', ({ height = 100, width = 100, x = 200, y = 200 } = {}) =>
+    getMouseMoveCommands('ba-RegionCreator', { width, height, x, y }),
+);
+Cypress.Commands.add('drawStroke', ({ height = 100, width = 100, x = 400, y = 400 } = {}) =>
+    getMouseMoveCommands('ba-DrawingCreator', { width, height, x, y }),
+);
 
 Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
     cy.get('.textLayer')
