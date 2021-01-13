@@ -18,10 +18,10 @@ export function DrawingSVG({ className, children, ...rest }: Props, ref: React.R
             {...rest}
         >
             <defs>
-                <filter id="ba-DrawingSVG-shadow" primitiveUnits="objectBoundingBox">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="0.02" />
+                <filter id="ba-DrawingSVG-shadow">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
                     <feComponentTransfer>
-                        <feFuncA slope="0.8" type="linear" />
+                        <feFuncA slope="1" type="linear" />
                     </feComponentTransfer>
                 </filter>
             </defs>
