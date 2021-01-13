@@ -1,4 +1,5 @@
 import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
+import MouseeventManager from '../common/MouseeventManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import {
@@ -27,6 +28,8 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     managers: Map<number, Set<Manager>> = new Map();
 
+    mouseeventManager: MouseeventManager | null = null;
+
     constructor(options: Options) {
         super(options);
 
@@ -40,6 +43,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         if (this.highlightListener) {
             this.highlightListener.destroy();
+        }
+
+        if (this.mouseeventManager) {
+            this.mouseeventManager.destroy();
         }
 
         if (this.managers) {
@@ -142,6 +149,20 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));
+
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (this.mouseeventManager && !this.mouseeventManager.exists(this.annotatedEl)) {
+            this.mouseeventManager.destroy();
+            this.mouseeventManager = null;
+        }
+
+        if (!this.mouseeventManager) {
+            this.mouseeventManager = new MouseeventManager({ referenceEl: this.annotatedEl });
+            this.mouseeventManager.render({ store: this.store });
+        }
     }
 
     renderPage(pageEl: HTMLElement): void {

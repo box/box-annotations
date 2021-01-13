@@ -1,5 +1,6 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
+import MouseeventManager from '../common/MouseeventManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
@@ -17,6 +18,8 @@ export default class ImageAnnotator extends BaseAnnotator {
 
     managers: Set<Manager> = new Set();
 
+    mouseeventManager: MouseeventManager | null = null;
+
     storeHandler?: Unsubscribe;
 
     constructor(options: Options) {
@@ -28,6 +31,10 @@ export default class ImageAnnotator extends BaseAnnotator {
     destroy(): void {
         if (this.storeHandler) {
             this.storeHandler();
+        }
+
+        if (this.mouseeventManager) {
+            this.mouseeventManager.destroy();
         }
 
         if (this.managers) {
@@ -105,6 +112,16 @@ export default class ImageAnnotator extends BaseAnnotator {
                 store: this.store,
             });
         });
+
+        if (this.mouseeventManager && !this.mouseeventManager.exists(this.annotatedEl)) {
+            this.mouseeventManager.destroy();
+            this.mouseeventManager = null;
+        }
+
+        if (!this.mouseeventManager) {
+            this.mouseeventManager = new MouseeventManager({ referenceEl: this.annotatedEl });
+            this.mouseeventManager.render({ store: this.store });
+        }
     }
 
     scrollToAnnotation(annotationId: string | null): void {
