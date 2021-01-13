@@ -18,7 +18,7 @@ export function DrawingSVG({ className, children, ...rest }: Props, ref: React.R
             {...rest}
         >
             <defs>
-                <filter id="ba-DrawingSVG-shadow">
+                <filter filterUnits="userSpaceOnUse" height="100vh" id="ba-DrawingSVG-shadow" width="100vw">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
                 </filter>
             </defs>
