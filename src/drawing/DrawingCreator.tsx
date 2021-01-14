@@ -153,9 +153,11 @@ export default function DrawingCreator({
             return;
         }
 
-        Object.assign(element.style, {
-            cursor: getDrawingCursor(color),
-        });
+        // Safari doesn't support continuous switching custom cursors
+        // So we do "custom -> crosshair -> custom" to solve it
+        // The UX is the same, since it's too fast to feel the switching
+        element.style.cursor = 'crosshair';
+        element.style.cursor = getDrawingCursor(color);
     }, [color, creatorElRef]);
 
     return (
