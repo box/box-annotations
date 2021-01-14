@@ -1,5 +1,6 @@
 import DrawingManager from '../../drawing/DrawingManager';
 import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
+import MouseeventManager from '../../common/MouseeventManager';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
@@ -9,6 +10,7 @@ import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../common/MouseeventManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
 jest.mock('../../region/RegionManager');
@@ -87,6 +89,17 @@ describe('ImageAnnotator', () => {
             annotator.destroy();
 
             expect(mockManager.destroy).toHaveBeenCalled();
+        });
+
+        test('should destroy MouseeventManager', () => {
+            annotator = getAnnotator();
+
+            const mockMouseeventManager = ({ destroy: jest.fn() } as unknown) as MouseeventManager;
+            annotator.mouseeventManager = mockMouseeventManager;
+
+            annotator.destroy();
+
+            expect(mockMouseeventManager.destroy).toHaveBeenCalled();
         });
     });
 
@@ -220,6 +233,17 @@ describe('ImageAnnotator', () => {
             expect(annotator.getManagers).not.toHaveBeenCalled();
             expect(mockManager.render).not.toHaveBeenCalled();
             expect(mockManager.style).not.toHaveBeenCalled();
+        });
+
+        test('should instantiate the MouseeventManager and call render', () => {
+            annotator.annotatedEl = getParent();
+
+            expect(annotator.mouseeventManager).toBeNull();
+
+            annotator.render();
+
+            expect(annotator.mouseeventManager).toBeInstanceOf(MouseeventManager);
+            expect(annotator.mouseeventManager!.render).toHaveBeenCalled();
         });
     });
 

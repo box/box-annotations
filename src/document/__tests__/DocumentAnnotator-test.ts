@@ -1,5 +1,6 @@
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
+import MouseeventManager from '../../common/MouseeventManager';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
@@ -13,6 +14,7 @@ import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../common/MouseeventManager');
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
@@ -109,6 +111,17 @@ describe('DocumentAnnotator', () => {
             annotator.destroy();
 
             expect(mockManager.destroy).toHaveBeenCalled();
+        });
+
+        test('should destroy MouseeventManager', () => {
+            annotator = getAnnotator();
+
+            const mockMouseeventManager = ({ destroy: jest.fn() } as unknown) as MouseeventManager;
+            annotator.mouseeventManager = mockMouseeventManager;
+
+            annotator.destroy();
+
+            expect(mockMouseeventManager.destroy).toHaveBeenCalled();
         });
     });
 
@@ -236,6 +249,17 @@ describe('DocumentAnnotator', () => {
             annotator.render();
 
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
+        });
+
+        test('should instantiate the MouseeventManager and call render', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            expect(annotator.mouseeventManager).toBeNull();
+
+            annotator.render();
+
+            expect(annotator.mouseeventManager).toBeInstanceOf(MouseeventManager);
+            expect(annotator.mouseeventManager!.render).toHaveBeenCalled();
         });
     });
 

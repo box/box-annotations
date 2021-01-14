@@ -195,14 +195,6 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
         });
-
-        test('should remove mousedown event listener', () => {
-            const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
-
-            annotator.destroy();
-
-            expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
-        });
     });
 
     describe('init()', () => {
@@ -229,13 +221,6 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             expect(annotator.containerEl).toBeNull();
-        });
-
-        test('should add a mousedown handler for deselecting the active id', () => {
-            const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
-            annotator.init();
-
-            expect(addEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
         });
     });
 
