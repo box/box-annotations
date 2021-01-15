@@ -1,6 +1,6 @@
+import DeselectManager from '../../common/DeselectManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
-import DeselectManager from '../../common/DeselectManager';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';

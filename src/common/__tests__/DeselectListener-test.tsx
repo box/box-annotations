@@ -8,7 +8,7 @@ jest.mock('react-redux', () => ({
 }));
 jest.mock('../../store/annotations/actions');
 
-describe('MouseeventListener', () => {
+describe('DeselectListener', () => {
     const getWrapper = (): ShallowWrapper => shallow(<DeselectListener />);
 
     beforeEach(() => {

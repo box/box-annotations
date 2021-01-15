@@ -15,8 +15,8 @@ export type Props = {
 
 export default class DeselectManager extends BaseManager {
     decorate(): void {
-        this.reactEl.classList.add('ba-Layer--mouseevents');
-        this.reactEl.dataset.testid = 'ba-Layer--mouseevents';
+        this.reactEl.classList.add('ba-Layer--deselect');
+        this.reactEl.dataset.testid = 'ba-Layer--deselect';
     }
 
     render({ store }: Props): void {

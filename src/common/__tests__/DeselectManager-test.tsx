@@ -8,7 +8,7 @@ jest.mock('react-dom', () => ({
     unmountComponentAtNode: jest.fn(),
 }));
 
-describe('DrawingManager', () => {
+describe('DeselectManager', () => {
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
@@ -26,8 +26,8 @@ describe('DrawingManager', () => {
             const wrapper = getWrapper();
             wrapper.decorate();
 
-            expect(wrapper.reactEl.classList.contains('ba-Layer--mouseevents')).toBe(true);
-            expect(wrapper.reactEl.dataset.testid).toEqual('ba-Layer--mouseevents');
+            expect(wrapper.reactEl.classList.contains('ba-Layer--deselect')).toBe(true);
+            expect(wrapper.reactEl.dataset.testid).toEqual('ba-Layer--deselect');
         });
     });
 

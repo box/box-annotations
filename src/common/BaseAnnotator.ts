@@ -2,6 +2,7 @@ import getProp from 'lodash/get';
 import { IntlShape } from 'react-intl';
 import * as store from '../store';
 import API from '../api';
+import DeselectManager from './DeselectManager';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
@@ -54,6 +55,8 @@ export default class BaseAnnotator extends EventEmitter {
     containerEl?: HTMLElement | null;
 
     container: Container;
+
+    deselectManager: DeselectManager | null = null;
 
     features: Features;
 
@@ -235,5 +238,18 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected render(): void {
         // Must be implemented in child class
+    }
+
+    public postRender(): void {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
+        }
+
+        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl });
+        this.deselectManager.render({ store: this.store });
     }
 }

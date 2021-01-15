@@ -1,6 +1,5 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
-import DeselectManager from '../common/DeselectManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
@@ -17,8 +16,6 @@ export default class ImageAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
     managers: Set<Manager> = new Set();
-
-    deselectManager: DeselectManager | null = null;
 
     storeHandler?: Unsubscribe;
 
@@ -89,19 +86,6 @@ export default class ImageAnnotator extends BaseAnnotator {
             referenceEl.classList.remove(CSS_IS_DRAWING_CLASS);
         }
     };
-
-    postRender(): void {
-        if (!this.annotatedEl) {
-            return;
-        }
-
-        if (this.deselectManager) {
-            this.deselectManager.destroy();
-        }
-
-        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl });
-        this.deselectManager.render({ store: this.store });
-    }
 
     render(): void {
         const referenceEl = this.getReference();

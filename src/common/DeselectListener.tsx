@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveAnnotationIdAction } from '../store/annotations';
 
-export default function MouseeventListener(): null {
+export default function DeselectListener(): null {
     const dispatch = useDispatch();
 
     React.useEffect(() => {

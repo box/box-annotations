@@ -1,5 +1,4 @@
 import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
-import DeselectManager from '../common/DeselectManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import {
@@ -27,8 +26,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
     highlightListener?: HighlightListener;
 
     managers: Map<number, Set<Manager>> = new Map();
-
-    deselectManager: DeselectManager | null = null;
 
     constructor(options: Options) {
         super(options);
@@ -144,19 +141,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
             annotatedElement.classList.add(className);
         }
     };
-
-    postRender(): void {
-        if (!this.annotatedEl) {
-            return;
-        }
-
-        if (this.deselectManager) {
-            this.deselectManager.destroy();
-        }
-
-        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl });
-        this.deselectManager.render({ store: this.store });
-    }
 
     render(): void {
         this.getPages()
