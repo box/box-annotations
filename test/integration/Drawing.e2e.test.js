@@ -39,6 +39,12 @@ describe('Drawing', () => {
 
         // Assert that annotation target is active
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
+
+        // Select annotation target should be a noop, it should remain active
+        cy.get('.ba-DrawingTarget').click();
+
+        // Assert that annotation target is active
+        cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
     });
 
     it('should show right drawing button status', () => {
@@ -96,6 +102,21 @@ describe('Drawing', () => {
         cy.submitReply();
 
         // Assert that at least one annotation is present on the image and is active
+        cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
+
+        // Exit drawing creation mode
+        cy.getByTestId('bp-AnnotationsControls-drawBtn').click();
+
+        // Select annotation target
+        cy.get('.ba-DrawingTarget').click();
+
+        // Assert that annotation target is active
+        cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
+
+        // Select annotation target should be a noop, it should remain active
+        cy.get('.ba-DrawingTarget').click();
+
+        // Assert that annotation target is active
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
     });
 

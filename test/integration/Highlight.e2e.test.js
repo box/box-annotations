@@ -36,6 +36,12 @@ describe('Highlights', () => {
         // Assert that annotation target is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
+        // Select annotation target again should be a noop, it should remain active
+        cy.get('.ba-HighlightTarget-rect').click();
+
+        // Assert that annotation target is active
+        cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
+
         // Select text to trigger promotion flow
         cy.selectText({ block: 2 });
         cy.getByTestId('ba-PopupHighlight-button').click();
