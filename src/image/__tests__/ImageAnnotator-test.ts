@@ -90,17 +90,6 @@ describe('ImageAnnotator', () => {
 
             expect(mockManager.destroy).toHaveBeenCalled();
         });
-
-        test('should destroy DeselectManager', () => {
-            annotator = getAnnotator();
-
-            const mockDeselectManager = ({ destroy: jest.fn() } as unknown) as DeselectManager;
-            annotator.deselectManager = mockDeselectManager;
-
-            annotator.destroy();
-
-            expect(mockDeselectManager.destroy).toHaveBeenCalled();
-        });
     });
 
     describe('getManagers()', () => {

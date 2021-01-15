@@ -123,6 +123,10 @@ export default class BaseAnnotator extends EventEmitter {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
+        }
+
         this.removeAnnotationClasses();
 
         this.removeListener(LegacyEvent.SCALE, this.handleScale);

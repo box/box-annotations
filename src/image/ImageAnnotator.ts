@@ -30,10 +30,6 @@ export default class ImageAnnotator extends BaseAnnotator {
             this.storeHandler();
         }
 
-        if (this.deselectManager) {
-            this.deselectManager.destroy();
-        }
-
         if (this.managers) {
             this.managers.forEach(manager => manager.destroy());
         }

@@ -1,6 +1,7 @@
 import * as store from '../../store';
 import APIFactory from '../../api';
 import BaseAnnotator, { ANNOTATION_CLASSES, CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
+import DeselectManager from '../DeselectManager';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
@@ -194,6 +195,15 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
+        });
+
+        test('should destroy DeselectManager', () => {
+            const mockDeselectManager = ({ destroy: jest.fn() } as unknown) as DeselectManager;
+            annotator.deselectManager = mockDeselectManager;
+
+            annotator.destroy();
+
+            expect(mockDeselectManager.destroy).toHaveBeenCalled();
         });
     });
 
