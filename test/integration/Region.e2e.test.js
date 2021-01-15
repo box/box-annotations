@@ -11,8 +11,7 @@ describe('Regions', () => {
         // Wait for the empty region layer to be present
         cy.getByTestId('ba-Layer--region');
 
-        // Assert that the region creator does not exist and no annotations are present
-        cy.getByTestId('ba-RegionCreator').should('not.exist');
+        // Assert that no annotations are present
         cy.get('.ba-RegionAnnotation').should('not.exist');
 
         // Enter region creation mode
@@ -45,12 +44,8 @@ describe('Regions', () => {
         // Wait for the empty region layer to be present
         cy.getByTestId('ba-Layer--region');
 
-        // Assert that the region creator does not exist and no annotations are present
-        cy.getByTestId('ba-RegionCreator').should('not.exist');
+        // Assert that no annotations are present
         cy.get('.ba-RegionAnnotation').should('not.exist');
-
-        // Enter region creation mode
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').click();
 
         // Add a region annotation on the image
         cy.drawRegion();
