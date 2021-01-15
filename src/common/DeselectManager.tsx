@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import BaseManager from './BaseManager';
-import MouseeventListener from './MouseeventListener';
+import DeselectListener from './DeselectListener';
 
 export type Options = {
     referenceEl: HTMLElement;
@@ -13,7 +13,7 @@ export type Props = {
     store: Store;
 };
 
-export default class MouseeventManager extends BaseManager {
+export default class DeselectManager extends BaseManager {
     decorate(): void {
         this.reactEl.classList.add('ba-Layer--mouseevents');
         this.reactEl.dataset.testid = 'ba-Layer--mouseevents';
@@ -22,7 +22,7 @@ export default class MouseeventManager extends BaseManager {
     render({ store }: Props): void {
         ReactDOM.render(
             <Provider store={store}>
-                <MouseeventListener />
+                <DeselectListener />
             </Provider>,
             this.reactEl,
         );

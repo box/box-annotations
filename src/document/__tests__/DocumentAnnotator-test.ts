@@ -1,6 +1,6 @@
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
-import MouseeventManager from '../../common/MouseeventManager';
+import DeselectManager from '../../common/DeselectManager';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
@@ -14,7 +14,7 @@ import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
-jest.mock('../../common/MouseeventManager');
+jest.mock('../../common/DeselectManager');
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
@@ -113,15 +113,15 @@ describe('DocumentAnnotator', () => {
             expect(mockManager.destroy).toHaveBeenCalled();
         });
 
-        test('should destroy MouseeventManager', () => {
+        test('should destroy DeselectManager', () => {
             annotator = getAnnotator();
 
-            const mockMouseeventManager = ({ destroy: jest.fn() } as unknown) as MouseeventManager;
-            annotator.mouseeventManager = mockMouseeventManager;
+            const mockDeselectManager = ({ destroy: jest.fn() } as unknown) as DeselectManager;
+            annotator.deselectManager = mockDeselectManager;
 
             annotator.destroy();
 
-            expect(mockMouseeventManager.destroy).toHaveBeenCalled();
+            expect(mockDeselectManager.destroy).toHaveBeenCalled();
         });
     });
 
@@ -251,15 +251,15 @@ describe('DocumentAnnotator', () => {
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
         });
 
-        test('should instantiate the MouseeventManager and call render', () => {
+        test('should instantiate the DeselectManager and call render', () => {
             annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
 
-            expect(annotator.mouseeventManager).toBeNull();
+            expect(annotator.deselectManager).toBeNull();
 
             annotator.render();
 
-            expect(annotator.mouseeventManager).toBeInstanceOf(MouseeventManager);
-            expect(annotator.mouseeventManager!.render).toHaveBeenCalled();
+            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
+            expect(annotator.deselectManager!.render).toHaveBeenCalled();
         });
     });
 

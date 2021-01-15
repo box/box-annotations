@@ -1,6 +1,6 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
-import MouseeventManager from '../common/MouseeventManager';
+import DeselectManager from '../common/DeselectManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
@@ -18,7 +18,7 @@ export default class ImageAnnotator extends BaseAnnotator {
 
     managers: Set<Manager> = new Set();
 
-    mouseeventManager: MouseeventManager | null = null;
+    deselectManager: DeselectManager | null = null;
 
     storeHandler?: Unsubscribe;
 
@@ -33,8 +33,8 @@ export default class ImageAnnotator extends BaseAnnotator {
             this.storeHandler();
         }
 
-        if (this.mouseeventManager) {
-            this.mouseeventManager.destroy();
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
         }
 
         if (this.managers) {
@@ -90,6 +90,19 @@ export default class ImageAnnotator extends BaseAnnotator {
         }
     };
 
+    postRender(): void {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
+        }
+
+        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl });
+        this.deselectManager.render({ store: this.store });
+    }
+
     render(): void {
         const referenceEl = this.getReference();
         const rotation = getRotation(this.store.getState()) || 0;
@@ -113,15 +126,7 @@ export default class ImageAnnotator extends BaseAnnotator {
             });
         });
 
-        if (this.mouseeventManager && !this.mouseeventManager.exists(this.annotatedEl)) {
-            this.mouseeventManager.destroy();
-            this.mouseeventManager = null;
-        }
-
-        if (!this.mouseeventManager) {
-            this.mouseeventManager = new MouseeventManager({ referenceEl: this.annotatedEl });
-            this.mouseeventManager.render({ store: this.store });
-        }
+        this.postRender();
     }
 
     scrollToAnnotation(annotationId: string | null): void {

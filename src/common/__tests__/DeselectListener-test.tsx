@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import MouseeventListener from '../MouseeventListener';
+import DeselectListener from '../DeselectListener';
 import { setActiveAnnotationIdAction } from '../../store/annotations/actions';
 
 jest.mock('react-redux', () => ({
@@ -9,7 +9,7 @@ jest.mock('react-redux', () => ({
 jest.mock('../../store/annotations/actions');
 
 describe('MouseeventListener', () => {
-    const getWrapper = (): ShallowWrapper => shallow(<MouseeventListener />);
+    const getWrapper = (): ShallowWrapper => shallow(<DeselectListener />);
 
     beforeEach(() => {
         jest.spyOn(React, 'useEffect').mockImplementation(f => f());

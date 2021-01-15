@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
-import MouseeventManager from '../MouseeventManager';
+import DeselectManager from '../DeselectManager';
 import { createStore } from '../../store';
-import { Options } from '../../common/BaseManager';
+import { Options } from '../BaseManager';
 
 jest.mock('react-dom', () => ({
     render: jest.fn(),
@@ -14,7 +14,7 @@ describe('DrawingManager', () => {
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });
-    const getWrapper = (options?: Partial<Options>): MouseeventManager => new MouseeventManager(getOptions(options));
+    const getWrapper = (options?: Partial<Options>): DeselectManager => new DeselectManager(getOptions(options));
 
     beforeEach(() => {
         rootEl.classList.add('root');
