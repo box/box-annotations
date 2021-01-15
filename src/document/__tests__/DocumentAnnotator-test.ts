@@ -1,3 +1,4 @@
+import DeselectManager from '../../common/DeselectManager';
 import DocumentAnnotator from '../DocumentAnnotator';
 import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
@@ -13,6 +14,7 @@ import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../common/DeselectManager');
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
@@ -236,6 +238,17 @@ describe('DocumentAnnotator', () => {
             annotator.render();
 
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
+        });
+
+        test('should instantiate the DeselectManager and call render', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            expect(annotator.deselectManager).toBeNull();
+
+            annotator.render();
+
+            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
+            expect(annotator.deselectManager!.render).toHaveBeenCalled();
         });
     });
 

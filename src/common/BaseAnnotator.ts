@@ -2,6 +2,7 @@ import getProp from 'lodash/get';
 import { IntlShape } from 'react-intl';
 import * as store from '../store';
 import API from '../api';
+import DeselectManager from './DeselectManager';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
@@ -54,6 +55,8 @@ export default class BaseAnnotator extends EventEmitter {
     containerEl?: HTMLElement | null;
 
     container: Container;
+
+    deselectManager: DeselectManager | null = null;
 
     features: Features;
 
@@ -120,7 +123,9 @@ export default class BaseAnnotator extends EventEmitter {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
 
-        document.removeEventListener('mousedown', this.handleMouseDown);
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
+        }
 
         this.removeAnnotationClasses();
 
@@ -131,12 +136,6 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public init(scale = 1, rotation = 0): void {
-        // Check for containerEl prevents listener from being added on subsequent calls to init
-        if (!this.containerEl) {
-            // Add document listener to handle setting active annotation to null on mousedown
-            document.addEventListener('mousedown', this.handleMouseDown);
-        }
-
         this.containerEl = this.getElement(this.container);
         this.annotatedEl = this.getAnnotatedElement();
 
@@ -203,10 +202,6 @@ export default class BaseAnnotator extends EventEmitter {
         return typeof selector === 'string' ? document.querySelector(selector) : selector;
     }
 
-    protected handleMouseDown = (): void => {
-        this.setActiveId(null);
-    };
-
     protected handleRemove = (annotationId: string): void => {
         this.removeAnnotation(annotationId);
     };
@@ -247,5 +242,18 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected render(): void {
         // Must be implemented in child class
+    }
+
+    public postRender(): void {
+        if (!this.annotatedEl) {
+            return;
+        }
+
+        if (this.deselectManager) {
+            this.deselectManager.destroy();
+        }
+
+        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl });
+        this.deselectManager.render({ store: this.store });
     }
 }

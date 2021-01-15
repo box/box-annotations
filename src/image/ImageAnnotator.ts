@@ -105,6 +105,8 @@ export default class ImageAnnotator extends BaseAnnotator {
                 store: this.store,
             });
         });
+
+        this.postRender();
     }
 
     scrollToAnnotation(annotationId: string | null): void {

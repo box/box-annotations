@@ -1,3 +1,4 @@
+import DeselectManager from '../../common/DeselectManager';
 import DrawingManager from '../../drawing/DrawingManager';
 import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
 import PopupManager from '../../popup/PopupManager';
@@ -9,6 +10,7 @@ import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('../../common/DeselectManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
 jest.mock('../../region/RegionManager');
@@ -220,6 +222,17 @@ describe('ImageAnnotator', () => {
             expect(annotator.getManagers).not.toHaveBeenCalled();
             expect(mockManager.render).not.toHaveBeenCalled();
             expect(mockManager.style).not.toHaveBeenCalled();
+        });
+
+        test('should instantiate the DeselectManager and call render', () => {
+            annotator.annotatedEl = getParent();
+
+            expect(annotator.deselectManager).toBeNull();
+
+            annotator.render();
+
+            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
+            expect(annotator.deselectManager!.render).toHaveBeenCalled();
         });
     });
 

@@ -35,6 +35,12 @@ describe('Regions', () => {
 
         // Assert that annotation target is active
         cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
+
+        // Select annotation target again should be a noop, it should remain active
+        cy.get('.ba-RegionAnnotation').click();
+
+        // Assert that annotation target is active
+        cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 
     it('should create a new region on an image', () => {
@@ -52,6 +58,12 @@ describe('Regions', () => {
         cy.submitReply();
 
         // Assert that at least one annotation is present on the image and is active
+        cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
+
+        // Select annotation target again should be a noop, it should remain active
+        cy.get('.ba-RegionAnnotation').click();
+
+        // Assert that annotation target is active
         cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 

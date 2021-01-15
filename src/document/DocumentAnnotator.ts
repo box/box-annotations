@@ -142,6 +142,8 @@ export default class DocumentAnnotator extends BaseAnnotator {
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));
+
+        this.postRender();
     }
 
     renderPage(pageEl: HTMLElement): void {

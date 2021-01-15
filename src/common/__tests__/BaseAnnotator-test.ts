@@ -1,6 +1,7 @@
 import * as store from '../../store';
 import APIFactory from '../../api';
 import BaseAnnotator, { ANNOTATION_CLASSES, CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
+import DeselectManager from '../DeselectManager';
 import { ANNOTATOR_EVENT } from '../../constants';
 import { Event, LegacyEvent } from '../../@types';
 import { Mode } from '../../store/common';
@@ -196,12 +197,13 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
         });
 
-        test('should remove mousedown event listener', () => {
-            const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+        test('should destroy DeselectManager', () => {
+            const mockDeselectManager = ({ destroy: jest.fn() } as unknown) as DeselectManager;
+            annotator.deselectManager = mockDeselectManager;
 
             annotator.destroy();
 
-            expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
+            expect(mockDeselectManager.destroy).toHaveBeenCalled();
         });
     });
 
@@ -229,13 +231,6 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.emit).toBeCalledWith(ANNOTATOR_EVENT.error, expect.any(String));
             expect(annotator.containerEl).toBeNull();
-        });
-
-        test('should add a mousedown handler for deselecting the active id', () => {
-            const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
-            annotator.init();
-
-            expect(addEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
         });
     });
 
