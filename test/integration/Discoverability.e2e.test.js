@@ -53,8 +53,6 @@ describe('Discoverability', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_IMAGE_SANITY'));
 
-        // Wait for viewer to load
-        cy.get('.bp').should('have.class', 'bp-loaded');
         // Wait for annotations to load
         cy.get('.bp-image').should('have.class', 'ba-annotations-loaded');
 
