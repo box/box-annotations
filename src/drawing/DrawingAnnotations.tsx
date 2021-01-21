@@ -23,7 +23,7 @@ export type Props = {
     redoDrawingPathGroup: () => void;
     resetDrawing: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
-    setReferenceId: (_uuid: string) => void;
+    setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
     setupDrawing: (location: number) => void;
@@ -66,8 +66,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const handleDelete = (): void => {
         resetDrawing();
     };
-    const handleDrawingMount = (_uuid: string): void => {
-        setReferenceId(_uuid);
+    const handleDrawingMount = (uuid: string): void => {
+        setReferenceId(uuid);
     };
     const handleRedo = (): void => {
         redoDrawingPathGroup();
