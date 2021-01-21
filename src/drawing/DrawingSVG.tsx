@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import classNames from 'classnames';
 import * as uuid from 'uuid';
-import { FilterContext } from './FilterContext';
+import { SVGFilterContext } from './SVGFilterContext';
 
 export type Props = {
     children: React.ReactNode;
@@ -11,7 +11,7 @@ export type Props = {
 export type DrawingSVGRef = SVGSVGElement;
 
 export function DrawingSVG({ className, children, ...rest }: Props, ref: React.Ref<DrawingSVGRef>): JSX.Element {
-    const filterID = useRef(`ba-DrawingSVG-shadow_${uuid.v4()}`).current;
+    const { current: filterID } = useRef(`ba-DrawingSVG-shadow_${uuid.v4()}`);
 
     return (
         <svg
@@ -26,7 +26,7 @@ export function DrawingSVG({ className, children, ...rest }: Props, ref: React.R
                     <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
                 </filter>
             </defs>
-            <FilterContext.Provider value={filterID}>{children}</FilterContext.Provider>
+            <SVGFilterContext.Provider value={filterID}>{children}</SVGFilterContext.Provider>
         </svg>
     );
 }
