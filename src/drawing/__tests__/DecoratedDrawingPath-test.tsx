@@ -6,7 +6,6 @@ import DrawingPath from '../DrawingPath';
 describe('DecoratedDrawingPath', () => {
     const getDefaults = (): Props => ({
         borderStrokeWidth: 3,
-        filterID: 'ba-DrawingSVG-shadow_123',
         isDecorated: true,
         points: [
             { x: 10, y: 10 },

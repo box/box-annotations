@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { white } from 'box-ui-elements/es/styles/variables';
 import DrawingPath from './DrawingPath';
+import { FilterContext } from './FilterContext';
 import { getPathCommands } from './drawingUtil';
 import { Position } from '../@types';
 import './DecoratedDrawingPath.scss';
 
 export type Props = {
     borderStrokeWidth?: number;
-    filterID: string;
     isDecorated?: boolean;
     points?: Position[];
 };
 
 export default function DecoratedDrawingPath({
     borderStrokeWidth = 0,
-    filterID,
     isDecorated = false,
     points = [],
 }: Props): JSX.Element {
+    const filterID = React.useContext(FilterContext);
     const pathCommands = getPathCommands(points);
     return (
         <g className="ba-DecoratedDrawingPath">

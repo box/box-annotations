@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import * as uuid from 'uuid';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
@@ -161,8 +160,6 @@ export default function DrawingCreator({
         element.style.cursor = getDrawingCursor(color);
     }, [color, creatorElRef]);
 
-    const filterID = `ba-DrawingSVG-shadow ${uuid.v4()}`;
-
     return (
         // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
         <PointerCapture
@@ -175,7 +172,7 @@ export default function DrawingCreator({
             status={drawingStatus}
         >
             {drawingStatus !== DrawingStatus.init && (
-                <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current" filterID={filterID}>
+                <DrawingSVG ref={drawingSVGRef} className="ba-DrawingCreator-current">
                     <DrawingPathGroup rootEl={drawingSVGRef.current} stroke={stroke}>
                         <DrawingPath ref={drawingPathRef} />
                     </DrawingPathGroup>

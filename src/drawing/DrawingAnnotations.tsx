@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import * as uuid from 'uuid';
 import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingList from './DrawingList';
 import DrawingCreator from './DrawingCreator';
@@ -96,8 +95,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
-    const filterID = `ba-DrawingSVG-shadow_${uuid.v4()}`;
-
     return (
         <>
             <DrawingList
@@ -108,7 +105,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
             />
 
             {hasPathGroups && (
-                <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target" filterID={filterID}>
+                <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
                     {/* Group element to capture the bounding box around the drawn path groups */}
                     <DrawingSVGGroup ref={stagedGroupRef} onMount={handleDrawingMount}>
                         {drawnPathGroups.map(({ clientId: pathGroupClientId, paths, stroke }) => (
@@ -119,7 +116,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                                         <DecoratedDrawingPath
                                             key={pathClientId}
                                             borderStrokeWidth={strokeWidthWithBorder}
-                                            filterID={filterID}
                                             isDecorated
                                             points={points}
                                         />
