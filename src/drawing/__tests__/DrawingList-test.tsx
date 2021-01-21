@@ -20,17 +20,15 @@ describe('DrawingList', () => {
     });
 
     describe('render', () => {
-        test.each([true, false])('should render the class based on isListening %s', isListening => {
+        test.each([
+            { className: 'is-listening', isListening: true },
+            { className: '', isListening: false },
+        ])('should render the class based on isListening $isListening', ({ className, isListening }) => {
             (useIsListInteractive as jest.Mock).mockReturnValue(isListening);
 
             const wrapper = getWrapper();
 
-            expect(
-                wrapper
-                    .find(DrawingSVG)
-                    .prop('className')
-                    .includes('is-listening'),
-            ).toBe(isListening);
+            expect(wrapper.find(DrawingSVG).prop('className')).toBe(className);
         });
 
         test('should filter all invalid annotations', () => {
