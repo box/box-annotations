@@ -7,12 +7,14 @@ import './DecoratedDrawingPath.scss';
 
 export type Props = {
     borderStrokeWidth?: number;
+    filterID: string;
     isDecorated?: boolean;
     points?: Position[];
 };
 
 export default function DecoratedDrawingPath({
     borderStrokeWidth = 0,
+    filterID,
     isDecorated = false,
     points = [],
 }: Props): JSX.Element {
@@ -23,7 +25,7 @@ export default function DecoratedDrawingPath({
                 <g className="ba-DecoratedDrawingPath-decoration">
                     <DrawingPath
                         className="ba-DecoratedDrawingPath-shadow"
-                        filter="url(#ba-DrawingSVG-shadow)"
+                        filter={`url(#${filterID})`}
                         pathCommands={pathCommands}
                     />
                     <DrawingPath

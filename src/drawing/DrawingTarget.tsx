@@ -13,6 +13,7 @@ export type Props = {
     annotationId: string;
     className?: string;
     isActive?: boolean;
+    filterID: string;
     onSelect?: (annotationId: string) => void;
     rootEl: DrawingSVGRef | null;
     target: TargetDrawing;
@@ -24,6 +25,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
     const {
         annotationId,
         className,
+        filterID,
         isActive = false,
         onSelect = noop,
         rootEl,
@@ -86,6 +88,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
                             <DecoratedDrawingPath
                                 key={pathClientId}
                                 borderStrokeWidth={strokeWidthWithBorder}
+                                filterID={filterID}
                                 isDecorated
                                 points={points}
                             />

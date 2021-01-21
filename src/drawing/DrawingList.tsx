@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import * as uuid from 'uuid';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingTarget from './DrawingTarget';
 import useIsListInteractive from '../common/useIsListInteractive';
@@ -33,12 +34,14 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
     const isListening = useIsListInteractive();
+    const filterID = `ba-DrawingSVG-shadow_${uuid.v4()}`;
 
     return (
         <DrawingSVG
             ref={setRootEl}
             className={classNames(className, { 'is-listening': isListening })}
             data-resin-component="drawingList"
+            filterID={filterID}
         >
             {annotations
                 .filter(filterDrawing)
@@ -47,6 +50,7 @@ export function DrawingList({ activeId = null, annotations, className, onSelect 
                     <DrawingTarget
                         key={id}
                         annotationId={id}
+                        filterID={filterID}
                         isActive={activeId === id}
                         onSelect={onSelect}
                         rootEl={rootEl}

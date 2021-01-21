@@ -4,11 +4,15 @@ import classNames from 'classnames';
 export type Props = {
     children: React.ReactNode;
     className?: string;
+    filterID: string;
 };
 
 export type DrawingSVGRef = SVGSVGElement;
 
-export function DrawingSVG({ className, children, ...rest }: Props, ref: React.Ref<DrawingSVGRef>): JSX.Element {
+export function DrawingSVG(
+    { className, children, filterID, ...rest }: Props,
+    ref: React.Ref<DrawingSVGRef>,
+): JSX.Element {
     return (
         <svg
             ref={ref}
@@ -18,7 +22,7 @@ export function DrawingSVG({ className, children, ...rest }: Props, ref: React.R
             {...rest}
         >
             <defs>
-                <filter filterUnits="userSpaceOnUse" id="ba-DrawingSVG-shadow">
+                <filter filterUnits="userSpaceOnUse" id={filterID}>
                     <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
                 </filter>
             </defs>
