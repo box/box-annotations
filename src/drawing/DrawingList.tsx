@@ -21,6 +21,12 @@ export function filterDrawing({ target: { path_groups: pathGroups } }: Annotatio
     );
 }
 
+export function isSafari(): boolean {
+    const { userAgent } = navigator;
+    // In Chrome browser, the agent string contains Safari and Chrome but in Safari there is only Safari
+    return userAgent.indexOf('Safari/') > 0 && userAgent.indexOf('Chrome/') < 0;
+}
+
 export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: targetB }: AnnotationDrawing): number {
     const { height: heightA, width: widthA } = getShape(targetA.path_groups);
     const { height: heightB, width: widthB } = getShape(targetB.path_groups);
@@ -33,6 +39,18 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
     const isListening = useIsListInteractive();
+
+    React.useEffect(() => {
+        // Safari doesn't repaint the SVG after a new annotation is drawn which
+        // results in the lack of a blur on hover of that drawn annotation
+        // The fix is to force a repaint by setting display to none and then to block
+        if (activeId && isSafari() && rootEl) {
+            rootEl.style.display = 'none';
+            setTimeout(() => {
+                rootEl.style.display = 'block';
+            });
+        }
+    }, [activeId, rootEl]);
 
     return (
         <DrawingSVG
