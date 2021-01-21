@@ -3,11 +3,6 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import DecoratedDrawingPath, { Props } from '../DecoratedDrawingPath';
 import DrawingPath from '../DrawingPath';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useContext: () => 'ba-DrawingSVG-shadow_123',
-}));
-
 describe('DecoratedDrawingPath', () => {
     const getDefaults = (): Props => ({
         borderStrokeWidth: 3,
@@ -20,6 +15,10 @@ describe('DecoratedDrawingPath', () => {
     });
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DecoratedDrawingPath {...getDefaults()} {...props} />);
+
+    beforeEach(() => {
+        jest.spyOn(React, 'useContext').mockImplementation(() => 'ba-DrawingSVG-shadow_123');
+    });
 
     describe('render()', () => {
         test('should render path, shadow, and border', () => {

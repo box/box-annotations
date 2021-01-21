@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import * as uuid from 'uuid';
 import { SVGFilterContext } from './SVGFilterContext';
@@ -11,7 +11,7 @@ export type Props = {
 export type DrawingSVGRef = SVGSVGElement;
 
 export function DrawingSVG({ className, children, ...rest }: Props, ref: React.Ref<DrawingSVGRef>): JSX.Element {
-    const { current: filterID } = useRef(`ba-DrawingSVG-shadow_${uuid.v4()}`);
+    const { current: filterID } = React.useRef(`ba-DrawingSVG-shadow_${uuid.v4()}`);
 
     return (
         <svg

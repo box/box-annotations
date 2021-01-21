@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { white } from 'box-ui-elements/es/styles/variables';
 import DrawingPath from './DrawingPath';
 import { SVGFilterContext } from './SVGFilterContext';

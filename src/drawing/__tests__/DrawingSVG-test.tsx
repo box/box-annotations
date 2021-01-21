@@ -2,11 +2,6 @@ import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import DrawingSVG from '../DrawingSVG';
 
-jest.mock('react', () => ({
-    ...jest.requireActual('react'),
-    useRef: jest.fn().mockReturnValue({ current: 'ba-DrawingSVG-shadow_123' }),
-}));
-
 describe('DrawingSVG', () => {
     const Component = (): JSX.Element => <div>Test</div>;
     const getWrapper = (props = {}): ShallowWrapper =>
@@ -15,6 +10,11 @@ describe('DrawingSVG', () => {
                 <Component />
             </DrawingSVG>,
         );
+    beforeEach(() => {
+        jest.spyOn(React, 'useRef').mockImplementation(() => ({
+            current: 'ba-DrawingSVG-shadow_123',
+        }));
+    });
 
     describe('render()', () => {
         test('should render svg, filter, and children', () => {
