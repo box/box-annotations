@@ -10,6 +10,7 @@ const { target: mockTarget } = annotations[0];
 describe('DrawingTarget', () => {
     const getDefaults = (): Props => ({
         annotationId: '123',
+        filterID: 'ba-DrawingSVG-shadow_123',
         target: mockTarget,
         rootEl: null,
     });

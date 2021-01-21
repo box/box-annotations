@@ -6,6 +6,7 @@ import DrawingPath from '../DrawingPath';
 describe('DecoratedDrawingPath', () => {
     const getDefaults = (): Props => ({
         borderStrokeWidth: 3,
+        filterID: 'ba-DrawingSVG-shadow_123',
         isDecorated: true,
         points: [
             { x: 10, y: 10 },
@@ -24,7 +25,7 @@ describe('DecoratedDrawingPath', () => {
             const border = wrapper.find('.ba-DecoratedDrawingPath-border');
 
             expect(wrapper.find(DrawingPath)).toHaveLength(3);
-            expect(shadow.prop('filter')).toBe('url(#ba-DrawingSVG-shadow)');
+            expect(shadow.prop('filter')).toBe('url(#ba-DrawingSVG-shadow_123)');
             expect(border.prop('stroke')).toBe('#fff');
             expect(border.prop('strokeWidth')).toBe(3);
         });
@@ -34,7 +35,7 @@ describe('DecoratedDrawingPath', () => {
 
             expect(wrapper.find(DrawingPath)).toHaveLength(1);
             expect(wrapper.exists('.ba-DecoratedDrawingPath-decoration')).toBe(false);
-            expect(wrapper.exists('.ba-DecoratedDrawingPath-shadow')).toBe(false);
+            expect(wrapper.exists('.ba-DecoratedDrawingPath-shadow_123')).toBe(false);
             expect(wrapper.exists('.ba-DecoratedDrawingPath-border')).toBe(false);
         });
     });
