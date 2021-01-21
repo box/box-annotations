@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import * as uuid from 'uuid';
 import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingList from './DrawingList';
 import DrawingCreator from './DrawingCreator';
@@ -23,7 +24,7 @@ export type Props = {
     redoDrawingPathGroup: () => void;
     resetDrawing: () => void;
     setActiveAnnotationId: (annotationId: string | null) => void;
-    setReferenceId: (uuid: string) => void;
+    setReferenceId: (_uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
     setStatus: (status: CreatorStatus) => void;
     setupDrawing: (location: number) => void;
@@ -66,8 +67,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const handleDelete = (): void => {
         resetDrawing();
     };
-    const handleDrawingMount = (uuid: string): void => {
-        setReferenceId(uuid);
+    const handleDrawingMount = (_uuid: string): void => {
+        setReferenceId(_uuid);
     };
     const handleRedo = (): void => {
         redoDrawingPathGroup();
@@ -95,6 +96,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
+    const filterID = `ba-DrawingSVG-shadow_${uuid.v4()}`;
+
     return (
         <>
             <DrawingList
@@ -105,7 +108,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
             />
 
             {hasPathGroups && (
-                <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target">
+                <DrawingSVG ref={setStagedRootEl} className="ba-DrawingAnnotations-target" filterID={filterID}>
                     {/* Group element to capture the bounding box around the drawn path groups */}
                     <DrawingSVGGroup ref={stagedGroupRef} onMount={handleDrawingMount}>
                         {drawnPathGroups.map(({ clientId: pathGroupClientId, paths, stroke }) => (
@@ -116,6 +119,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                                         <DecoratedDrawingPath
                                             key={pathClientId}
                                             borderStrokeWidth={strokeWidthWithBorder}
+                                            filterID={filterID}
                                             isDecorated
                                             points={points}
                                         />

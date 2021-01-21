@@ -33,8 +33,8 @@ export function sortDrawing({ target: targetA }: AnnotationDrawing, { target: ta
 
 export function DrawingList({ activeId = null, annotations, className, onSelect = noop }: Props): JSX.Element {
     const [rootEl, setRootEl] = React.useState<DrawingSVGRef | null>(null);
-    const isListening = useIsListInteractive();
     const filterID = `ba-DrawingSVG-shadow_${uuid.v4()}`;
+    const isListening = useIsListInteractive();
 
     return (
         <DrawingSVG
