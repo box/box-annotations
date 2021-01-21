@@ -66,7 +66,7 @@ describe('DrawingList', () => {
     describe('useEffect', () => {
         const rootEl = { style: { display: 'block ' } };
         const userAgentStr =
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2';
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15';
 
         beforeEach(() => {
             jest.useFakeTimers();
@@ -75,8 +75,8 @@ describe('DrawingList', () => {
 
         test.each`
             browser     | userAgent                            | expected   | should
-            ${'Safari'} | ${`${userAgentStr} Safari/605.1.15`} | ${'none'}  | ${'should set display to none'}
-            ${'Chrome'} | ${userAgentStr}                      | ${'block'} | ${'should not set display to none'}
+            ${'Safari'} | ${`${userAgentStr}`}                 | ${'none'}  | ${'should set display to none'}
+            ${'Chrome'} | ${`${userAgentStr} Chrome/123.1.10`} | ${'block'} | ${'should not set display to none'}
         `('$should when rootEl and activeId are defined and browser is $browser', ({ expected, userAgent }) => {
             global.window.navigator.userAgent = userAgent;
 
