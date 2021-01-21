@@ -3,6 +3,11 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import DecoratedDrawingPath, { Props } from '../DecoratedDrawingPath';
 import DrawingPath from '../DrawingPath';
 
+jest.mock('react', () => ({
+    ...jest.requireActual('react'),
+    useContext: () => 'ba-DrawingSVG-shadow_123',
+}));
+
 describe('DecoratedDrawingPath', () => {
     const getDefaults = (): Props => ({
         borderStrokeWidth: 3,
