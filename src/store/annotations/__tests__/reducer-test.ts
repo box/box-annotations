@@ -11,6 +11,17 @@ import {
 } from '../actions';
 
 describe('store/annotations/reducer', () => {
+    const getAnnotation = (): AnnotationDrawing => {
+        return {
+            id: 'anno_1',
+            target: {
+                path_groups: [{ paths: [{ points: [] }], stroke: { color: '#000', size: 1 } }] as Array<PathGroup>,
+                type: 'drawing',
+            },
+            type: 'annotation',
+        } as AnnotationDrawing;
+    };
+
     describe('setIsInitialized', () => {
         test('should set isInitialized', () => {
             const newState = reducer(state, setIsInitialized());
@@ -28,9 +39,27 @@ describe('store/annotations/reducer', () => {
             expect(newState.allIds).toContain(payload.id);
             expect(newState.byId.anno_1).toEqual(payload);
         });
+
+        test('should set format drawing if drawing type annotation', () => {
+            const arg = {} as NewAnnotation;
+            const payload = getAnnotation();
+            const newState = reducer(state, createAnnotationAction.fulfilled(payload, 'test', arg));
+
+            expect(newState.allIds).toContain(payload.id);
+            expect(newState.byId.anno_1).toMatchObject({
+                target: {
+                    path_groups: [
+                        {
+                            clientId: expect.any(String),
+                            paths: [{ clientId: expect.any(String) }],
+                        },
+                    ],
+                },
+            });
+        });
     });
 
-    describe('createAnnotationAction', () => {
+    describe('fetchAnnotationsAction', () => {
         test('should set state when fulfilled', () => {
             const annotation = { id: 'anno_1', target: { type: 'region' }, type: 'annotation' };
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
@@ -42,14 +71,7 @@ describe('store/annotations/reducer', () => {
         });
 
         test('should format drawing when target is drawing type', () => {
-            const annotation = {
-                id: 'anno_1',
-                target: {
-                    path_groups: [{ paths: [{ points: [] }], stroke: { color: '#000', size: 1 } }] as Array<PathGroup>,
-                    type: 'drawing',
-                },
-                type: 'annotation',
-            } as AnnotationDrawing;
+            const annotation = getAnnotation();
             const payload = { entries: [annotation], limit: 1000, next_marker: null } as APICollection<Annotation>;
             const newState = reducer(state, fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
 

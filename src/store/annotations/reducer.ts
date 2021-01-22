@@ -31,7 +31,7 @@ const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder 
 const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
     builder
         .addCase(createAnnotationAction.fulfilled, (state, { payload }) => {
-            state[payload.id] = payload;
+            state[payload.id] = isDrawing(payload) ? formatDrawing(payload) : payload;
         })
         .addCase(removeAnnotationAction, (state, { payload: id }) => {
             delete state[id];
