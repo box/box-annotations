@@ -10,13 +10,18 @@ describe('DrawingSVG', () => {
                 <Component />
             </DrawingSVG>,
         );
+    beforeEach(() => {
+        jest.spyOn(React, 'useRef').mockImplementation(() => ({
+            current: 'ba-DrawingSVG-shadow_123',
+        }));
+    });
 
     describe('render()', () => {
         test('should render svg, filter, and children', () => {
             const wrapper = getWrapper();
 
             expect(wrapper.hasClass('ba-DrawingSVG')).toBe(true);
-            expect(wrapper.find('filter').prop('id')).toBe('ba-DrawingSVG-shadow');
+            expect(wrapper.find('filter').prop('id')).toBe('ba-DrawingSVG-shadow_123');
             expect(wrapper.exists('feGaussianBlur')).toBe(true);
             expect(wrapper.exists(Component)).toBe(true);
         });

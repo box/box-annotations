@@ -16,6 +16,10 @@ describe('DecoratedDrawingPath', () => {
 
     const getWrapper = (props = {}): ShallowWrapper => shallow(<DecoratedDrawingPath {...getDefaults()} {...props} />);
 
+    beforeEach(() => {
+        jest.spyOn(React, 'useContext').mockImplementation(() => 'ba-DrawingSVG-shadow_123');
+    });
+
     describe('render()', () => {
         test('should render path, shadow, and border', () => {
             const wrapper = getWrapper();
@@ -24,7 +28,7 @@ describe('DecoratedDrawingPath', () => {
             const border = wrapper.find('.ba-DecoratedDrawingPath-border');
 
             expect(wrapper.find(DrawingPath)).toHaveLength(3);
-            expect(shadow.prop('filter')).toBe('url(#ba-DrawingSVG-shadow)');
+            expect(shadow.prop('filter')).toBe('url(#ba-DrawingSVG-shadow_123)');
             expect(border.prop('stroke')).toBe('#fff');
             expect(border.prop('strokeWidth')).toBe(3);
         });
@@ -34,7 +38,7 @@ describe('DecoratedDrawingPath', () => {
 
             expect(wrapper.find(DrawingPath)).toHaveLength(1);
             expect(wrapper.exists('.ba-DecoratedDrawingPath-decoration')).toBe(false);
-            expect(wrapper.exists('.ba-DecoratedDrawingPath-shadow')).toBe(false);
+            expect(wrapper.exists('.ba-DecoratedDrawingPath-shadow_123')).toBe(false);
             expect(wrapper.exists('.ba-DecoratedDrawingPath-border')).toBe(false);
         });
     });

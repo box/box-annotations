@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import { white } from 'box-ui-elements/es/styles/variables';
 import DrawingPath from './DrawingPath';
+import SVGFilterContext from './SVGFilterContext';
 import { getPathCommands } from './drawingUtil';
 import { Position } from '../@types';
 import './DecoratedDrawingPath.scss';
@@ -16,6 +17,7 @@ export default function DecoratedDrawingPath({
     isDecorated = false,
     points = [],
 }: Props): JSX.Element {
+    const filterID = React.useContext(SVGFilterContext);
     const pathCommands = getPathCommands(points);
     return (
         <g className="ba-DecoratedDrawingPath">
@@ -23,7 +25,7 @@ export default function DecoratedDrawingPath({
                 <g className="ba-DecoratedDrawingPath-decoration">
                     <DrawingPath
                         className="ba-DecoratedDrawingPath-shadow"
-                        filter="url(#ba-DrawingSVG-shadow)"
+                        filter={`url(#${filterID})`}
                         pathCommands={pathCommands}
                     />
                     <DrawingPath
