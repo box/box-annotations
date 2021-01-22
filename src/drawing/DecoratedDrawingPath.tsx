@@ -1,7 +1,7 @@
 import React from 'react';
 import { white } from 'box-ui-elements/es/styles/variables';
 import DrawingPath from './DrawingPath';
-import { SVGFilterContext } from './SVGFilterContext';
+import SVGFilterContext from './SVGFilterContext';
 import { getPathCommands } from './drawingUtil';
 import { Position } from '../@types';
 import './DecoratedDrawingPath.scss';

@@ -1,3 +1,5 @@
 import { createContext } from 'react';
 
-export const SVGFilterContext = createContext('');
+const SVGFilterContext = createContext('');
+
+export default SVGFilterContext;

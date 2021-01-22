@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import * as uuid from 'uuid';
-import { SVGFilterContext } from './SVGFilterContext';
+import SVGFilterContext from './SVGFilterContext';
 
 export type Props = {
     children: React.ReactNode;
