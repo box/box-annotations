@@ -58,6 +58,10 @@ export default class ReplyField extends React.Component<Props, State> {
         fetchCollaborators(trimmedQuery);
     }, DEFAULT_COLLAB_DEBOUNCE);
 
+    componentDidMount(): void {
+        window.addEventListener('resize', this.updatePopupReference);
+    }
+
     componentDidUpdate({ editorState: prevEditorState }: Props): void {
         const { editorState } = this.props;
 
@@ -67,6 +71,7 @@ export default class ReplyField extends React.Component<Props, State> {
     }
 
     componentWillUnmount(): void {
+        window.removeEventListener('resize', this.updatePopupReference);
         this.saveCursorPosition();
     }
 
