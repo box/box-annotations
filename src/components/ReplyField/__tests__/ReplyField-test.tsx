@@ -70,11 +70,11 @@ describe('ReplyField', () => {
             const instance = getWrapper().instance();
 
             jest.spyOn(window, 'addEventListener');
-            jest.spyOn(instance, 'updatePopupReference');
+            jest.spyOn(instance, 'handleResize');
 
             instance.componentDidMount();
 
-            expect(window.addEventListener).toHaveBeenCalledWith('resize', instance.updatePopupReference);
+            expect(window.addEventListener).toHaveBeenCalledWith('resize', instance.handleResize);
         });
     });
 
@@ -83,12 +83,12 @@ describe('ReplyField', () => {
             const instance = getWrapper().instance();
 
             jest.spyOn(window, 'removeEventListener');
-            jest.spyOn(instance, 'updatePopupReference');
+            jest.spyOn(instance, 'handleResize');
             jest.spyOn(instance, 'saveCursorPosition');
 
             instance.componentWillUnmount();
 
-            expect(window.removeEventListener).toHaveBeenCalledWith('resize', instance.updatePopupReference);
+            expect(window.removeEventListener).toHaveBeenCalledWith('resize', instance.handleResize);
             expect(instance.saveCursorPosition).toHaveBeenCalled();
         });
     });

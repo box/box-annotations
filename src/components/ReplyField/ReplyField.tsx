@@ -58,8 +58,11 @@ export default class ReplyField extends React.Component<Props, State> {
         fetchCollaborators(trimmedQuery);
     }, DEFAULT_COLLAB_DEBOUNCE);
 
+    handleResize = debounce(() => this.updatePopupReference(), 100);
+
     componentDidMount(): void {
-        window.addEventListener('resize', this.updatePopupReference);
+        // The browser’s native zoom doesn’t always trigger Preview’s resize
+        window.addEventListener('resize', this.handleResize);
     }
 
     componentDidUpdate({ editorState: prevEditorState }: Props): void {
@@ -71,7 +74,7 @@ export default class ReplyField extends React.Component<Props, State> {
     }
 
     componentWillUnmount(): void {
-        window.removeEventListener('resize', this.updatePopupReference);
+        window.removeEventListener('resize', this.handleResize);
         this.saveCursorPosition();
     }
 
