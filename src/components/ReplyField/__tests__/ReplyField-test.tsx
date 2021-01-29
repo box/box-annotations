@@ -65,6 +65,34 @@ describe('ReplyField', () => {
         });
     });
 
+    describe('componentDidMount()', () => {
+        test('should add resize window event listener', () => {
+            const instance = getWrapper().instance();
+
+            jest.spyOn(window, 'addEventListener');
+            jest.spyOn(instance, 'handleResize');
+
+            instance.componentDidMount();
+
+            expect(window.addEventListener).toHaveBeenCalledWith('resize', instance.handleResize);
+        });
+    });
+
+    describe('componentWillUnmount()', () => {
+        test('should remove resize event listener and save cursor position', () => {
+            const instance = getWrapper().instance();
+
+            jest.spyOn(window, 'removeEventListener');
+            jest.spyOn(instance, 'handleResize');
+            jest.spyOn(instance, 'saveCursorPosition');
+
+            instance.componentWillUnmount();
+
+            expect(window.removeEventListener).toHaveBeenCalledWith('resize', instance.handleResize);
+            expect(instance.saveCursorPosition).toHaveBeenCalled();
+        });
+    });
+
     describe('event handlers', () => {
         test('should handle the editor change event', () => {
             const wrapper = getWrapper();
