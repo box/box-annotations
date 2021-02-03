@@ -45,7 +45,10 @@ export default class BaseManager implements Manager {
     destroy(): void {
         ReactDOM.unmountComponentAtNode(this.reactEl);
 
-        this.reactEl.remove();
+        const parentEl = this.reactEl.parentNode;
+        if (parentEl) {
+            parentEl.removeChild(this.reactEl);
+        }
     }
 
     exists(parentEl: HTMLElement): boolean {
