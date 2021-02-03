@@ -1,5 +1,7 @@
+import * as ReactDOM from 'react-dom';
 import BaseManager, { Options, Props } from '../BaseManager';
 
+jest.mock('react-dom');
 class TestBaseManager extends BaseManager {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     decorate(): void {}
@@ -36,6 +38,17 @@ describe('BaseManager', () => {
             expect(wrapper.reactEl.classList.contains('ba-Layer')).toBe(true);
             expect(wrapper.reactEl.getAttribute('data-resin-feature')).toBe('annotations');
             expect(wrapper.reactEl.getAttribute('data-resin-foo')).toBe('bar');
+        });
+    });
+
+    describe('destroy()', () => {
+        test('should unmount and remove node', () => {
+            const removeChildSpy = jest.spyOn(rootEl, 'removeChild');
+            const wrapper = getWrapper();
+            wrapper.destroy();
+
+            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
         });
     });
 });
