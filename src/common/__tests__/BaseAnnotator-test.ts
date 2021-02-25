@@ -193,6 +193,7 @@ describe('BaseAnnotator', () => {
 
             expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(Event.COLOR_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
         });

@@ -107,7 +107,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(LegacyEvent.SCALE, this.handleScale);
         this.addListener(Event.ACTIVE_SET, this.handleSetActive);
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
-        this.addListener(Event.COLOR_SET, this.handleColorSet);
+        this.addListener(Event.COLOR_SET, this.handleSetColor);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
 
         // Load any required data at startup
@@ -132,6 +132,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(LegacyEvent.SCALE, this.handleScale);
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
         this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
+        this.removeListener(Event.COLOR_SET, this.handleSetColor);
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
     }
 
@@ -218,7 +219,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.setVisibility(visibility);
     };
 
-    protected handleColorSet = (color: string): void => {
+    protected handleSetColor = (color: string): void => {
         this.setColor(color);
     };
 
