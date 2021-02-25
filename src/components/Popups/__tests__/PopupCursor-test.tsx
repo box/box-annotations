@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupCursor from '../PopupCursor';
@@ -31,10 +31,18 @@ describe('PopupCursor', () => {
 
     describe('render()', () => {
         test('should add eventListener when render and remove when unmount', () => {
-            const wrapper = getWrapper();
+            let unmount = (): void => {
+                // placeholder
+            };
+
+            jest.spyOn(React, 'useEffect').mockImplementation(cb => {
+                unmount = cb() as () => void; // Enzyme unmount helper does not currently invoke useEffect cleanup
+            });
+
+            getWrapper();
             expect(document.addEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
 
-            wrapper.unmount();
+            unmount();
             expect(document.removeEventListener).toHaveBeenCalledWith('mousemove', expect.any(Function));
         });
     });

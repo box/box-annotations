@@ -38,7 +38,6 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
     const handleClick = (event: React.MouseEvent): void => {
         event.preventDefault();
         event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
     };
     const handleMouseDown = ({ buttons, clientX, clientY }: React.MouseEvent): void => {
         if (buttons !== MOUSE_PRIMARY) {

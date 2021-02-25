@@ -80,7 +80,6 @@ describe('PointerCapture', () => {
 
             expect(mockEvent.preventDefault).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
         });
 
         test('should not invoke onDrawStart if mousedown event is not the primary button', () => {

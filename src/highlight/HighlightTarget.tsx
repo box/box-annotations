@@ -26,7 +26,6 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         // These are needed to prevent the anchor link from being followed and updating the url location
         event.preventDefault();
         event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
     };
 
     const handleFocus = (): void => {
@@ -48,7 +47,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         const activeElement = document.activeElement as HTMLElement;
 
         event.preventDefault(); // Prevents focus from leaving the anchor immediately in some browsers
-        event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
+        event.stopPropagation(); // Prevents document-level deselect event handlers from executing
 
         // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing active element.
         // If we don't blur it, we cannot re-focus it next time, since it was already focused and never got blurred.

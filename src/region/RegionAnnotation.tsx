@@ -28,7 +28,7 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
         }
 
         event.preventDefault(); // Prevents focus from leaving the button immediately in some browsers
-        event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
+        event.stopPropagation(); // Prevents document-level deselect event handlers from executing
         event.currentTarget.focus(); // Buttons do not receive focus in Firefox and Safari on MacOS; triggers handleFocus
     };
 

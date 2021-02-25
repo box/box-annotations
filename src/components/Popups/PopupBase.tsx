@@ -60,7 +60,6 @@ export default class PopupBase extends React.PureComponent<Props> {
 
     handleEvent = (event: React.SyntheticEvent): void => {
         event.stopPropagation();
-        event.nativeEvent.stopImmediatePropagation();
     };
 
     render(): JSX.Element {

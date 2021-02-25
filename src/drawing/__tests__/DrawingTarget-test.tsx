@@ -60,9 +60,7 @@ describe('DrawingTarget', () => {
                     focus: jest.fn(),
                 },
                 preventDefault: jest.fn(),
-                nativeEvent: {
-                    stopImmediatePropagation: jest.fn(),
-                },
+                stopPropagation: jest.fn(),
             });
 
             test('should do nothing if button is not MOUSE_PRIMARY', () => {
@@ -76,7 +74,7 @@ describe('DrawingTarget', () => {
                 anchor.simulate('mousedown', event);
 
                 expect(event.preventDefault).not.toHaveBeenCalled();
-                expect(event.nativeEvent.stopImmediatePropagation).not.toHaveBeenCalled();
+                expect(event.stopPropagation).not.toHaveBeenCalled();
             });
 
             test('should call focus if focus is supported', () => {
@@ -87,7 +85,7 @@ describe('DrawingTarget', () => {
                 anchor.simulate('mousedown', mockEvent);
 
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
-                expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+                expect(mockEvent.stopPropagation).toHaveBeenCalled();
                 expect(mockEvent.currentTarget.focus).toHaveBeenCalled();
             });
 
@@ -104,7 +102,7 @@ describe('DrawingTarget', () => {
 
                 expect(onSelect).toHaveBeenCalledWith('123');
                 expect(event.preventDefault).toHaveBeenCalled();
-                expect(event.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
+                expect(event.stopPropagation).toHaveBeenCalled();
             });
 
             test('should call blur on the document.activeElement', () => {

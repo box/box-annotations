@@ -42,7 +42,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         const activeElement = document.activeElement as HTMLElement;
 
         event.preventDefault(); // Prevents focus from leaving the button immediately in some browsers
-        event.nativeEvent.stopImmediatePropagation(); // Prevents document event handlers from executing
+        event.stopPropagation(); // Prevents document-level deselect event handlers from executing
 
         // IE11 won't apply the focus to the SVG anchor, so this workaround attempts to blur the existing active element.
         // If we don't blur it, we cannot re-focus it next time, since it was already focused and never got blurred.

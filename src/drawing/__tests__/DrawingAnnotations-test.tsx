@@ -11,7 +11,6 @@ import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 
 jest.mock('../DrawingList');
-jest.mock('../../components/Popups/PopupDrawingToolbar');
 
 describe('DrawingAnnotations', () => {
     const getDefaults = (): Props => ({
@@ -229,8 +228,8 @@ describe('DrawingAnnotations', () => {
             ({ drawn, stashed, canComment, canRedo, canUndo }) => {
                 const wrapper = getWrapper({
                     canShowPopupToolbar: true,
-                    isCreating: true,
                     drawnPathGroups: drawn,
+                    isCreating: true,
                     stashedPathGroups: stashed,
                 });
 
@@ -254,9 +253,7 @@ describe('DrawingAnnotations', () => {
                 jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupRef }));
 
                 const wrapper = getWrapper({
-                    canShowPopupToolbar: true,
                     drawnPathGroups: basePathGroups,
-                    isCreating: true,
                 });
 
                 wrapper.setProps({ drawnPathGroups: nextPathGroups });

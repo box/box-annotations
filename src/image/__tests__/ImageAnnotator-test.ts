@@ -83,8 +83,7 @@ describe('ImageAnnotator', () => {
         });
 
         test('should destroy all managers', () => {
-            const mockManagersSet = new Set([mockManager]);
-            annotator.managers = mockManagersSet;
+            annotator.managers = new Set([mockManager]);
 
             annotator.destroy();
 

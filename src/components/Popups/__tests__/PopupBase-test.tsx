@@ -8,9 +8,6 @@ describe('PopupBase', () => {
         reference: document.createElement('div'),
     };
     const mockEvent = {
-        nativeEvent: {
-            stopImmediatePropagation: jest.fn(),
-        },
         preventDefault: jest.fn(),
         stopPropagation: jest.fn(),
     };
@@ -30,7 +27,6 @@ describe('PopupBase', () => {
 
                 wrapper.simulate(event, mockEvent);
 
-                expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
                 expect(mockEvent.stopPropagation).toHaveBeenCalled();
             },
         );
