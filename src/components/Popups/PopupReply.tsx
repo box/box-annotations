@@ -23,7 +23,7 @@ const isIE = (): boolean => {
     return userAgent.indexOf('Trident/') > 0;
 };
 
-export const options: Partial<Popper.Options> = {
+export const options: Pick<Popper.Options, 'modifiers'> = {
     modifiers: [
         {
             name: 'arrow',
@@ -55,7 +55,7 @@ export const options: Partial<Popper.Options> = {
 };
 
 const getOptions = (): Partial<Popper.Options> => {
-    const { modifiers: defaultModifiers = [] } = options;
+    const { modifiers: defaultModifiers } = options;
     const placement = isIE() ? 'top' : 'bottom';
     const modifiers = isIE()
         ? [
