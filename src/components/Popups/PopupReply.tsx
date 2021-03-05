@@ -54,7 +54,7 @@ export const options: Partial<Popper.Options> = {
     ],
 };
 
-const getModifiers = (): Partial<Popper.Options> => {
+const getOptions = (): Partial<Popper.Options> => {
     const { modifiers: defaultModifiers = [] } = options;
     const placement = isIE() ? 'top' : 'bottom';
     const modifiers = isIE()
@@ -84,7 +84,7 @@ export default function PopupReply({
     ...rest
 }: Props): JSX.Element {
     const popupRef = React.useRef<PopupBase>(null);
-    const popupOptions = React.useRef<Partial<Popper.Options>>(getModifiers()); // Keep the options reference the same between renders
+    const popupOptions = React.useRef<Partial<Popper.Options>>(getOptions()); // Keep the options reference the same between renders
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
     const scale = ReactRedux.useSelector(getScale);
