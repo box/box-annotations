@@ -33,12 +33,6 @@ export const options: Partial<Popper.Options> = {
             },
         },
         {
-            name: 'eventListeners',
-            options: {
-                scroll: false,
-            },
-        },
-        {
             name: 'flip',
             options: {
                 altAxis: false,
@@ -60,6 +54,27 @@ export const options: Partial<Popper.Options> = {
     ],
 };
 
+const getModifiers = (): Partial<Popper.Options> => {
+    const { modifiers: defaultModifiers = [] } = options;
+    const placement = isIE() ? 'top' : 'bottom';
+    const modifiers = isIE()
+        ? [
+              ...defaultModifiers,
+              {
+                  name: 'eventListeners',
+                  options: {
+                      scroll: false,
+                  },
+              },
+          ]
+        : defaultModifiers;
+
+    return {
+        modifiers,
+        placement,
+    };
+};
+
 export default function PopupReply({
     isPending,
     onCancel,
@@ -69,19 +84,11 @@ export default function PopupReply({
     ...rest
 }: Props): JSX.Element {
     const popupRef = React.useRef<PopupBase>(null);
-    const popupOptions = React.useRef<Partial<Popper.Options> | null>(null);
+    const popupOptions = React.useRef<Partial<Popper.Options>>(getModifiers()); // Keep the options reference the same between renders
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
-
-    // Keep the options reference the same between renders
-    if (!popupOptions.current) {
-        popupOptions.current = {
-            ...options,
-            placement: isIE() ? 'top' : 'bottom',
-        };
-    }
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
@@ -89,7 +96,7 @@ export default function PopupReply({
         if (popup?.popper && (rotation !== prevRotation || scale !== prevScale)) {
             popup.popper.update();
         }
-    }, [popupRef, rotation, scale]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [popupRef, prevRotation, prevScale, rotation, scale]);
 
     return (
         <PopupBase ref={popupRef} data-resin-component="popupReply" options={popupOptions.current} {...rest}>

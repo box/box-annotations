@@ -69,10 +69,17 @@ describe('PopupReply', () => {
     });
 
     describe('Popup options', () => {
+        const eventListenersModifier = {
+            name: 'eventListeners',
+            options: { scroll: false },
+        };
+        const IEUserAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko';
+        const otherUserAgent = 'Other';
+
         test.each`
-            userAgent                                                                  | expectedPlacement
-            ${'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'} | ${'top'}
-            ${'Other'}                                                                 | ${'bottom'}
+            userAgent         | expectedPlacement
+            ${IEUserAgent}    | ${'top'}
+            ${otherUserAgent} | ${'bottom'}
         `(
             'should set placement option as $expectedPlacement based on userAgent=$userAgent',
             ({ userAgent, expectedPlacement }) => {
@@ -84,5 +91,23 @@ describe('PopupReply', () => {
                 expect(wrapper.find(PopupBase).prop('options').placement).toBe(expectedPlacement);
             },
         );
+
+        test('should disable scroll event listeners if browser is IE', () => {
+            global.window.navigator.userAgent = IEUserAgent;
+
+            const wrapper = getWrapper();
+
+            expect(window.navigator.userAgent).toEqual(IEUserAgent);
+            expect(wrapper.find(PopupBase).prop('options').modifiers).toContainEqual(eventListenersModifier);
+        });
+
+        test('should not disable scroll event listeners for non IE browsers', () => {
+            global.window.navigator.userAgent = otherUserAgent;
+
+            const wrapper = getWrapper();
+
+            expect(window.navigator.userAgent).toEqual(otherUserAgent);
+            expect(wrapper.find(PopupBase).prop('options').modifiers).not.toContainEqual(eventListenersModifier);
+        });
     });
 });
