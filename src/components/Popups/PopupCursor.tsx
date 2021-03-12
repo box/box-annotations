@@ -50,7 +50,7 @@ export default function PopupCursor(): JSX.Element {
         return () => {
             document.removeEventListener('mousemove', handleMouseMove);
         };
-    });
+    }, []);
 
     return (
         <PopupBase ref={popupRef} className="ba-PopupCursor" options={options} reference={virtualElementRef.current}>

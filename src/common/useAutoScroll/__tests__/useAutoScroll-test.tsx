@@ -61,9 +61,16 @@ describe('useAutoScroll', () => {
         });
 
         test('should remove the event listeners and cancel the scroll check loop on unmount', () => {
-            const wrapper = getWrapper();
+            let unmount = (): void => {
+                // placeholder
+            };
 
-            wrapper.unmount();
+            jest.spyOn(React, 'useEffect').mockImplementation(cb => {
+                unmount = cb() as () => void; // Enzyme unmount helper does not currently invoke useEffect cleanup
+            });
+
+            getWrapper();
+            unmount();
 
             expect(document.removeEventListener).toHaveBeenCalledTimes(2);
             expect(window.cancelAnimationFrame).toHaveBeenCalled();

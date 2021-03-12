@@ -163,7 +163,6 @@ describe('RegionCreator', () => {
 
             expect(mockEvent.preventDefault).toHaveBeenCalled();
             expect(mockEvent.stopPropagation).toHaveBeenCalled();
-            expect(mockEvent.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
         });
 
         test('should cancel the render loop and cleanup all event handlers when done', () => {

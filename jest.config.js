@@ -22,7 +22,7 @@ module.exports = {
     modulePathIgnorePatterns: ['__mocks__'],
     restoreMocks: true,
     roots: ['src'],
-    setupFiles: ['jest-canvas-mock', '<rootDir>/test/jest/envWindow.js'],
+    setupFiles: ['jest-canvas-mock', '<rootDir>/scripts/jest/envWindow.js'],
     setupFilesAfterEnv: ['<rootDir>/scripts/jest/enzyme-adapter.js'],
     snapshotSerializers: ['enzyme-to-json/serializer'],
     testEnvironment: 'jest-environment-jsdom-sixteen',

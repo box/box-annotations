@@ -37,8 +37,8 @@ describe('RegionAnnotation', () => {
             wrapper.simulate('mousedown', event);
 
             expect(button.focus).toHaveBeenCalled();
-            expect(event.nativeEvent.stopImmediatePropagation).toHaveBeenCalled();
             expect(event.preventDefault).toHaveBeenCalled();
+            expect(event.stopPropagation).toHaveBeenCalled();
         });
     });
 
