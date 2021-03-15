@@ -72,10 +72,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
             managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-
-            if (this.isFeatureEnabled('drawing')) {
-                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-            }
+            managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
@@ -95,8 +92,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
-            const referenceEl =
-                this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
+            const referenceEl = canvasLayerEl || pageReferenceEl;
 
             managers.add(new RegionCreationManager({ location: pageNumber, referenceEl, resinTags }));
         }

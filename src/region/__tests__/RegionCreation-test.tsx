@@ -128,16 +128,5 @@ describe('RegionCreation', () => {
             expect(wrapper.exists(RegionCreator)).toBe(false);
             expect(wrapper.exists(RegionRect)).toBe(false);
         });
-
-        test.each([true, false])(
-            'should render RegionCreator with is-discoverability-enabled class based on flag as %s',
-            isDiscoverabilityEnabled => {
-                const wrapper = getWrapper({ isCreating: true, isDiscoverabilityEnabled });
-
-                expect(wrapper.find(RegionCreator).hasClass('is-discoverability-enabled')).toBe(
-                    isDiscoverabilityEnabled,
-                );
-            },
-        );
     });
 });

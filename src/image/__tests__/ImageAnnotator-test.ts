@@ -97,17 +97,6 @@ describe('ImageAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
-            expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
-            expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
-        });
-
-        test('should create DrawingManager is feature is enabled', () => {
-            annotator.destroy();
-            annotator = getAnnotator({ features: { drawing: true } });
-            const managers = annotator.getManagers(getParent(), getImage());
-            const managerIterator = managers.values();
-
-            expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
             expect(managerIterator.next().value).toBeInstanceOf(DrawingManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
