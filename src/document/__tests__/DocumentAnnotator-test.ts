@@ -1,6 +1,5 @@
 import DeselectManager from '../../common/DeselectManager';
 import DocumentAnnotator from '../DocumentAnnotator';
-import DrawingManager from '../../drawing/DrawingManager';
 import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
@@ -16,7 +15,6 @@ import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('../../common/DeselectManager');
-jest.mock('../../drawing/DrawingManager');
 jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
@@ -139,7 +137,6 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
-            expect(managerIterator.next().value).toBeInstanceOf(DrawingManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionCreationManager);
@@ -152,7 +149,6 @@ describe('DocumentAnnotator', () => {
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
-            expect(managerIterator.next().value).toBeInstanceOf(DrawingManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightCreatorManager);
             expect(managerIterator.next().value).toBeInstanceOf(HighlightManager);
             expect(managerIterator.next().value).toBeInstanceOf(RegionManager);

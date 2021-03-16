@@ -72,7 +72,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
             managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-            managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+
+            if (this.isFeatureEnabled('drawing')) {
+                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+            }
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
