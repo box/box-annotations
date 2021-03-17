@@ -95,14 +95,10 @@ export default class DocumentAnnotator extends BaseAnnotator {
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
+            const referenceEl =
+                this.isFeatureEnabled('discoverability') && canvasLayerEl ? canvasLayerEl : pageReferenceEl;
 
-            managers.add(
-                new RegionCreationManager({
-                    location: pageNumber,
-                    referenceEl: canvasLayerEl || pageReferenceEl,
-                    resinTags,
-                }),
-            );
+            managers.add(new RegionCreationManager({ location: pageNumber, referenceEl, resinTags }));
         }
 
         return managers;

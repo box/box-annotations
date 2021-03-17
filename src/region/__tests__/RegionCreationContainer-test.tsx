@@ -23,6 +23,7 @@ describe('RegionCreationContainer', () => {
             expect(wrapper.exists('RootProvider')).toBe(true);
             expect(wrapper.find(RegionCreation).props()).toMatchObject({
                 isCreating: false,
+                isDiscoverabilityEnabled: false,
                 location: 1,
                 staged: null,
                 setReferenceId: expect.any(Function),
@@ -63,6 +64,13 @@ describe('RegionCreationContainer', () => {
             const wrapper = getWrapper({ store });
 
             expect(wrapper.find(RegionCreation).prop('isRotated')).toEqual(isRotated);
+        });
+
+        test('should read the discoverability feature from the store', () => {
+            const store = createStore({ options: { features: { discoverability: true } } });
+            const wrapper = getWrapper({ store });
+
+            expect(wrapper.find(RegionCreation).prop('isDiscoverabilityEnabled')).toBe(true);
         });
     });
 });

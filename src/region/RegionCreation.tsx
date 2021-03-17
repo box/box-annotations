@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import RegionCreator from './RegionCreator';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import { Rect } from '../@types';
@@ -7,6 +8,7 @@ import './RegionCreation.scss';
 
 type Props = {
     isCreating: boolean;
+    isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     location: number;
     resetCreator: () => void;
@@ -23,6 +25,7 @@ type State = {
 export default class RegionCreation extends React.PureComponent<Props, State> {
     static defaultProps = {
         isCreating: false,
+        isDiscoverabilityEnabled: false,
         isRotated: false,
     };
 
@@ -51,7 +54,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     };
 
     render(): JSX.Element | null {
-        const { isCreating, isRotated, staged } = this.props;
+        const { isCreating, isDiscoverabilityEnabled, isRotated, staged } = this.props;
 
         if (isRotated) {
             return null;
@@ -61,7 +64,9 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
             <>
                 {isCreating && (
                     <RegionCreator
-                        className="ba-RegionCreation-creator"
+                        className={classNames('ba-RegionCreation-creator', {
+                            'is-discoverability-enabled': isDiscoverabilityEnabled,
+                        })}
                         onAbort={this.handleAbort}
                         onStart={this.handleStart}
                         onStop={this.handleStop}

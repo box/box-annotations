@@ -8,6 +8,7 @@ import {
     getCreatorStatus,
     getRotation,
     isCreatorStagedRegion,
+    isFeatureEnabled,
     Mode,
     resetCreatorAction,
     setReferenceIdAction,
@@ -19,6 +20,7 @@ import withProviders from '../common/withProviders';
 
 export type Props = {
     isCreating: boolean;
+    isDiscoverabilityEnabled: boolean;
     isRotated: boolean;
     staged: CreatorItemRegion | null;
 };
@@ -28,6 +30,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 
     return {
         isCreating: getAnnotationMode(state) === Mode.REGION && getCreatorStatus(state) !== CreatorStatus.pending,
+        isDiscoverabilityEnabled: isFeatureEnabled(state, 'discoverability'),
         isRotated: !!getRotation(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
     };
