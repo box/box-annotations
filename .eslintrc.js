@@ -5,7 +5,7 @@ module.exports = {
     rules: {
         'class-methods-use-this': 0, // fixme
         'flowtype/no-types-missing-file-annotation': 'off', // Allows types in TS files
-        'import/no-extraneous-dependencies': ['error', { devDependencies: ['scripts/**/*.js', '**/*-test.[j|t]s*'] }],
+        'import/no-extraneous-dependencies': 'off', // All dependencies are included in dist bundle
         'import/no-unresolved': 'off', // Allows JS files to import TS files
         'import/prefer-default-export': 'off',
         'prefer-destructuring': ['error', { object: true, array: false }],
