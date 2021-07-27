@@ -11,7 +11,7 @@ import './PopupHighlight.scss';
 
 export type Props = {
     onCancel?: () => void;
-    onClick?: (event: React.MouseEvent) => void;
+    onSubmit?: () => void;
     shape: Shape;
 };
 
@@ -45,7 +45,7 @@ const options: Partial<Options> = {
     placement: 'bottom',
 };
 
-export default function PopupHighlight({ onCancel = noop, onClick = noop, shape }: Props): JSX.Element {
+export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape }: Props): JSX.Element {
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const { height, width, x, y } = shape;
 
@@ -60,19 +60,33 @@ export default function PopupHighlight({ onCancel = noop, onClick = noop, shape 
         }),
     };
 
-    const handleClick = (event: React.MouseEvent): void => {
-        onClick(event);
+    const handleKeydownOutside = (event: Event): void => {
+        if (!(event instanceof KeyboardEvent) || event.key !== 'Enter' || event.ctrlKey || event.metaKey) {
+            return;
+        }
+
+        event.preventDefault(); // Consume any enter keydown event if the promoter is open
+        event.stopPropagation(); // Prevent the enter keydown event from adding a new line to the textarea
+
+        onSubmit();
     };
 
+    useOutsideEvent('keydown', buttonRef, handleKeydownOutside);
     useOutsideEvent('mousedown', buttonRef, onCancel);
 
     return (
-        <PopupBase className="ba-PopupHighlight" options={options} reference={reference}>
+        <PopupBase
+            aria-live="polite"
+            className="ba-PopupHighlight"
+            options={options}
+            reference={reference}
+            role="dialog"
+        >
             <button
                 ref={buttonRef}
                 className="ba-PopupHighlight-button"
                 data-testid="ba-PopupHighlight-button"
-                onClick={handleClick}
+                onClick={onSubmit}
                 type="button"
             >
                 <IconHighlightTextAnnotation className="ba-PopupHighlight-icon" />
