@@ -136,7 +136,7 @@ describe('HighlightAnnotations', () => {
     describe('handlePromote()', () => {
         test('should clear selection and set isPromoting', () => {
             const wrapper = getWrapper({ selection: selectionMock });
-            wrapper.find(PopupHighlight).prop('onClick')!({} as React.MouseEvent<HTMLButtonElement>);
+            wrapper.find(PopupHighlight).prop('onSubmit')!();
 
             expect(defaults.setStaged).toHaveBeenCalledWith({
                 location: 1,

@@ -4,15 +4,15 @@ import * as React from 'react';
 export default function useOutsideEvent(
     type: string,
     ref?: React.RefObject<Element> | Element | null,
-    callback?: () => void,
+    callback?: EventListener,
 ): void {
     React.useEffect(() => {
-        function handleEvent(event: Event): void {
+        function handleEvent<T extends Event>(event: T): void {
             const element = ref instanceof Element ? ref : ref?.current;
             const containsEventTarget = !!element?.contains(event.target as Node);
 
             if (callback && !containsEventTarget) {
-                callback();
+                callback(event);
             }
         }
 

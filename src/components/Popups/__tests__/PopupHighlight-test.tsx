@@ -1,24 +1,26 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { act } from 'react-dom/test-utils';
+import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupHighlight from '../PopupHighlight';
-import useOutsideEvent from '../../../common/useOutsideEvent';
 
-jest.mock('../../../common/useOutsideEvent');
+jest.mock('../PopupBase');
 
 describe('PopupHighlight', () => {
-    const defaults = {
-        onCancel: jest.fn(),
-        onClick: jest.fn(),
-        shape: {
-            height: 10,
-            width: 100,
-            x: 200,
-            y: 200,
-        },
-    };
-
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<PopupHighlight {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper =>
+        mount(
+            <PopupHighlight
+                onCancel={jest.fn()}
+                onSubmit={jest.fn()}
+                shape={{
+                    height: 10,
+                    width: 100,
+                    x: 200,
+                    y: 200,
+                }}
+                {...props}
+            />,
+        );
 
     const buttonRef = React.createRef();
 
@@ -27,22 +29,43 @@ describe('PopupHighlight', () => {
     });
 
     describe('event handlers', () => {
-        test('should call onCancel', () => {
-            getWrapper();
+        test('should handle outside mousedown events', () => {
+            const onCancel = jest.fn();
+            const wrapper = getWrapper({ onCancel });
 
-            expect(defaults.onCancel).toHaveBeenCalled();
-            expect(useOutsideEvent).toHaveBeenCalledWith('mousedown', buttonRef, defaults.onCancel);
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown'));
+            });
+            wrapper.update();
+
+            expect(onCancel).toBeCalled();
+        });
+
+        test('should handle outside keydown events', () => {
+            const event = new KeyboardEvent('keydown', { key: 'Enter' });
+            const wrapper = getWrapper();
+
+            jest.spyOn(event, 'preventDefault');
+            jest.spyOn(event, 'stopPropagation');
+
+            act(() => {
+                document.dispatchEvent(event);
+            });
+            wrapper.update();
+
+            expect(event.preventDefault).toBeCalled();
+            expect(event.stopPropagation).toBeCalled();
         });
     });
 
     describe('mouse events', () => {
         test('should call onClick', () => {
-            const wrapper = getWrapper();
+            const onSubmit = jest.fn();
+            const wrapper = getWrapper({ onSubmit });
 
-            const mouseEvent = new MouseEvent('click');
-            wrapper.find('[data-testid="ba-PopupHighlight-button"]').simulate('click', mouseEvent);
+            wrapper.find('[data-testid="ba-PopupHighlight-button"]').simulate('click');
 
-            expect(defaults.onClick).toHaveBeenCalledWith(mouseEvent);
+            expect(onSubmit).toBeCalled();
         });
     });
 
