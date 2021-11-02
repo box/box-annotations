@@ -56,7 +56,7 @@
                 }
 
                 /* global BoxAnnotations */
-                var annotations = new BoxAnnotations(null, { features: { drawing: true } });
+                var annotations = new BoxAnnotations();
 
                 /* global Box */
                 var preview = new Box.Preview();
@@ -64,6 +64,8 @@
                 preview.show(fileid, token, {
                     container: '.preview-container',
                     boxAnnotations: annotations,
+                    enableAnnotationsDiscoverability: true,
+                    enableAnnotationsImageDiscoverability: true,
                     showAnnotations: true,
                     showAnnotationsControls: true,
                     showAnnotationsDrawingCreate: true,

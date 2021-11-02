@@ -70,14 +70,13 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
         setStatus(CreatorStatus.staged);
     }, [selection, setStaged, setStatus]);
 
-    const handlePromote = (): void => {
-        stageSelection();
-
-        setIsPromoting(true);
-    };
-
     const handleCancel = (): void => {
         setSelection(null);
+    };
+
+    const handlePromote = (): void => {
+        stageSelection();
+        setIsPromoting(true);
     };
 
     const handleStagedMount = (uuid: string): void => {
@@ -126,7 +125,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 <div className="ba-HighlightAnnotations-popup">
                     <PopupHighlight
                         onCancel={handleCancel}
-                        onClick={handlePromote}
+                        onSubmit={handlePromote}
                         shape={getBoundingRect(selection.rects)}
                     />
                 </div>

@@ -55,9 +55,7 @@ export default class ImageAnnotator extends BaseAnnotator {
 
         if (this.managers.size === 0) {
             this.managers.add(new PopupManager({ referenceEl, resinTags }));
-            if (this.isFeatureEnabled('drawing')) {
-                this.managers.add(new DrawingManager({ referenceEl, resinTags }));
-            }
+            this.managers.add(new DrawingManager({ referenceEl, resinTags }));
             this.managers.add(new RegionManager({ referenceEl, resinTags }));
             this.managers.add(new RegionCreationManager({ referenceEl, resinTags }));
         }
