@@ -10,6 +10,11 @@ export const getBoundingRect = (shapes: Shape[]): Shape => {
         const x2 = x + width;
         const y2 = y + height;
 
+        // Removing extra rects
+        if (width === 0 || height === 0) {
+            return;
+        }
+
         if (x < minX) {
             minX = x;
         }
