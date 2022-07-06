@@ -36,14 +36,14 @@ const shape4: Shape = {
     y: -4,
 };
 
-const shape5: Shape = {
+const noWidthShape: Shape = {
     height: 10,
     width: 0,
     x: 10,
     y: 10,
 };
 
-const shape6: Shape = {
+const noHeightShape: Shape = {
     height: 0,
     width: 10,
     x: 10,
@@ -75,7 +75,7 @@ describe('highlightUtil', () => {
         });
 
         test('should get the bounding rect for multiple shapes, excluding 0 width and height values', () => {
-            expect(getBoundingRect([shape3, shape4, shape5, shape6])).toEqual({
+            expect(getBoundingRect([shape3, shape4, noWidthShape, noHeightShape])).toEqual({
                 height: 3,
                 width: 4,
                 x: -2,
