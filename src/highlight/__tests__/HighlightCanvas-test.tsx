@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import HighlightCanvas, { Props } from '../HighlightCanvas';
-import { rect as mockRect } from '../__mocks__/data';
+import { rect as mockRect, noWidthRect, noHeightRect } from '../__mocks__/data';
 
 describe('HighlightCanvas', () => {
     const defaults: Props = {
@@ -54,6 +54,12 @@ describe('HighlightCanvas', () => {
     describe('render()', () => {
         test('should render', () => {
             const wrapper = getWrapper();
+            expect(wrapper.find('canvas').hasClass('ba-HighlightCanvas')).toBe(true);
+        });
+
+        test('should render, excluding 0 width and height values', () => {
+            const wrapper = getWrapper();
+            wrapper.setProps({ shapes: [mockRect, noWidthRect, noHeightRect] });
             expect(wrapper.find('canvas').hasClass('ba-HighlightCanvas')).toBe(true);
         });
     });

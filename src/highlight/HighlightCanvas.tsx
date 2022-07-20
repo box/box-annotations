@@ -67,6 +67,12 @@ export default class HighlightCanvas extends React.PureComponent<Props> {
 
         shapesArray.forEach(rect => {
             const { height, isActive, isHover, width, x, y } = rect;
+
+            // Ignore empty rects with a width or height of 0
+            if (width === 0 || height === 0) {
+                return;
+            }
+
             const rectHeight = (height / 100) * canvasHeight;
             const rectWidth = (width / 100) * canvasWidth;
             const x1 = (x / 100) * canvasWidth;
