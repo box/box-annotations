@@ -166,6 +166,45 @@ describe('highlightUtil', () => {
             expect(result[1]).toEqual(rects[3]);
             expect(result[2]).toEqual(rects[4]);
         });
+
+        test('should combine rects by row, excluding 0 width and height values', () => {
+            const rects = [
+                {
+                    height: 20,
+                    width: 100,
+                    x: 100,
+                    y: 200,
+                },
+                {
+                    height: 0,
+                    width: 100,
+                    x: 200,
+                    y: 200,
+                },
+                {
+                    height: 21,
+                    width: 100,
+                    x: 500,
+                    y: 200,
+                },
+                {
+                    height: 23,
+                    width: 0,
+                    x: 400,
+                    y: 300,
+                },
+            ];
+
+            const result = combineRects(rects);
+            expect(result).toHaveLength(2);
+            expect(result[0]).toEqual({
+                height: 20,
+                width: 100,
+                x: 100,
+                y: 200,
+            });
+            expect(result[1]).toEqual(rects[2]);
+        });
     });
 
     describe('getShapeRelativeToContainer', () => {
