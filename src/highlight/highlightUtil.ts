@@ -103,6 +103,12 @@ export const combineRects = (rects: Shape[]): Shape[] => {
 
     dedupeRects(rects).forEach(rect => {
         const { height, width, x, y } = rect;
+
+        // Ignore empty rects with a width or height of 0
+        if (width === 0 || height === 0) {
+            return;
+        }
+
         const lastRect = result.pop();
 
         if (!lastRect) {

@@ -8,6 +8,22 @@ export const rect: Rect = {
     y: 5,
 };
 
+export const noWidthRect: Rect = {
+    type: 'rect' as const,
+    height: 10,
+    width: 0,
+    x: 5,
+    y: 5,
+};
+
+export const noHeightRect: Rect = {
+    type: 'rect' as const,
+    height: 0,
+    width: 20,
+    x: 5,
+    y: 5,
+};
+
 export const target: TargetHighlight = {
     location: {
         type: 'page' as const,
@@ -54,4 +70,11 @@ export const selection = {
             y: 200,
         },
     ],
+};
+
+export const canvasContext = {
+    fillRect: jest.fn(),
+    restore: jest.fn(),
+    save: jest.fn(),
+    strokeRect: jest.fn(),
 };
