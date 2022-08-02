@@ -71,3 +71,10 @@ export const selection = {
         },
     ],
 };
+
+export const canvasContext = {
+    fillRect: jest.fn(),
+    restore: jest.fn(),
+    save: jest.fn(),
+    strokeRect: jest.fn(),
+};
