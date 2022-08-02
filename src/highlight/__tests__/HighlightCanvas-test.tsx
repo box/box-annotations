@@ -39,6 +39,7 @@ describe('HighlightCanvas', () => {
     describe('getContext()', () => {
         test.each`
             canvasRef                      | expectedResult
+            ${null}                        | ${null}
             ${{ getContext: () => 'ctx' }} | ${'ctx'}
         `('should return $expectedResult as context if canvasRef is $canvasRef', ({ canvasRef, expectedResult }) => {
             const wrapper = getWrapper();
