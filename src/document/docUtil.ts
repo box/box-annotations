@@ -39,6 +39,10 @@ export function getSelection(): Selection | null {
     // We only care about the last range
     let range = selection.getRangeAt(selection.rangeCount - 1);
 
+    // Changes to the text layer in PDFjs v2.14.305 require the start range to be set manually for correct highlighting behavior
+    const startRange = selection.getRangeAt(0);
+    range.setStart(startRange.startContainer, startRange.startOffset);
+
     const containerEl = findClosestElWithClass(range.endContainer as Element, 'textLayer');
     const startPage = getPageNumber(range.startContainer as Element);
     const endPage = getPageNumber(range.endContainer as Element);
