@@ -204,6 +204,7 @@ export default class ReplyField extends React.Component<Props, State> {
             <div className={classnames(className, 'ba-ReplyField')}>
                 <Editor
                     {...rest}
+                    ariaMultiline
                     editorState={editorState}
                     handleReturn={this.handleReturn}
                     onChange={this.handleChange}
