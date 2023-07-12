@@ -213,6 +213,7 @@ export default class ReplyField extends React.Component<Props, State> {
                     placeholder={placeholder}
                     readOnly={isDisabled}
                     stripPastedStyles
+                    tabIndex={0}
                     webDriverTestID="ba-ReplyField-editor"
                 />
 

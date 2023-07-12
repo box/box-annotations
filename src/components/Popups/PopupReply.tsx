@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Popper from '@popperjs/core';
 import * as ReactRedux from 'react-redux';
 import { useIntl } from 'react-intl';
+import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
 import usePrevious from '../../common/usePrevious';
@@ -102,21 +103,23 @@ export default function PopupReply({
     }, [popupRef, prevRotation, prevScale, rotation, scale]);
 
     return (
-        <PopupBase
-            ref={popupRef}
-            aria-label={intl.formatMessage(messages.ariaLabelComment)}
-            data-resin-component="popupReply"
-            options={popupOptions.current}
-            {...rest}
-            role="dialog"
-        >
-            <ReplyForm
-                isPending={isPending}
-                onCancel={onCancel}
-                onChange={onChange}
-                onSubmit={onSubmit}
-                value={value}
-            />
-        </PopupBase>
+        <FocusTrap>
+            <PopupBase
+                ref={popupRef}
+                aria-label={intl.formatMessage(messages.ariaLabelComment)}
+                data-resin-component="popupReply"
+                options={popupOptions.current}
+                {...rest}
+                role="dialog"
+            >
+                <ReplyForm
+                    isPending={isPending}
+                    onCancel={onCancel}
+                    onChange={onChange}
+                    onSubmit={onSubmit}
+                    value={value}
+                />
+            </PopupBase>
+        </FocusTrap>
     );
 }
