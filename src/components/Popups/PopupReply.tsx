@@ -3,11 +3,11 @@ import * as Popper from '@popperjs/core';
 import * as ReactRedux from 'react-redux';
 import { useIntl } from 'react-intl';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
+import messages from './messages';
 import PopupBase from './PopupBase';
 import ReplyForm from '../ReplyForm';
 import usePrevious from '../../common/usePrevious';
 import { getScale, getRotation } from '../../store/options';
-import messages from '../Popups/messages';
 import { PopupReference } from './Popper';
 import './PopupReply.scss';
 
@@ -86,13 +86,13 @@ export default function PopupReply({
     value = '',
     ...rest
 }: Props): JSX.Element {
+    const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
     const popupOptions = React.useRef<Partial<Popper.Options>>(getOptions()); // Keep the options reference the same between renders
     const rotation = ReactRedux.useSelector(getRotation);
     const prevRotation = usePrevious(rotation);
     const scale = ReactRedux.useSelector(getScale);
     const prevScale = usePrevious(scale);
-    const intl = useIntl();
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
@@ -109,8 +109,8 @@ export default function PopupReply({
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
                 data-resin-component="popupReply"
                 options={popupOptions.current}
-                {...rest}
                 role="dialog"
+                {...rest}
             >
                 <ReplyForm
                     isPending={isPending}

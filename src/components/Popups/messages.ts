@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
     ariaLabelComment: {
-        id: 'ba.popups.comment',
+        id: 'ba.popup.reply.comment',
         description: 'Aria label description for reply popup',
         defaultMessage: 'Comment',
     },
