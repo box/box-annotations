@@ -84,6 +84,7 @@ export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape
         >
             <button
                 ref={buttonRef}
+                aria-haspopup="dialog"
                 className="ba-PopupHighlight-button"
                 data-testid="ba-PopupHighlight-button"
                 onClick={onSubmit}

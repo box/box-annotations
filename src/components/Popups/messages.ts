@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+    ariaLabelComment: {
+        id: 'ba.popup.reply.comment',
+        description: 'Aria label description for reply popup',
+        defaultMessage: 'Comment',
+    },
     buttonCancel: {
         id: 'ba.popups.cancel',
         description: 'Button label for cancelling the creation of a description, comment, or reply',
