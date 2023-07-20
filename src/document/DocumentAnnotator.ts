@@ -67,11 +67,11 @@ export default class DocumentAnnotator extends BaseAnnotator {
             if (!manager.exists(pageEl)) {
                 destroyManagers = true;
             }
-            if (destroyManagers) {
-                manager.destroy();
-            }
         });
         if (destroyManagers) {
+            managers.forEach(manager => {
+                manager.destroy();
+            });
             managers.clear();
             destroyManagers = false;
         }
