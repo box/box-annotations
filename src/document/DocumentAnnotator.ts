@@ -73,7 +73,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 manager.destroy();
             });
             managers.clear();
-            destroyManagers = false;
         }
 
         // Lazily instantiate managers as pages are added or re-rendered
