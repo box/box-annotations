@@ -60,14 +60,20 @@ export default class DocumentAnnotator extends BaseAnnotator {
         const pageReferenceEl = this.getPageReference(pageEl);
         const managers = this.managers.get(pageNumber) || new Set();
         const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
+        let destroyManagers = false;
 
-        // Destroy any managers that were attached to page elements that no longer exist
+        // If a referenced page element doesn't exist, destroy all managers to keep them in sync
         managers.forEach(manager => {
             if (!manager.exists(pageEl)) {
-                manager.destroy();
-                managers.delete(manager);
+                destroyManagers = true;
             }
         });
+        if (destroyManagers) {
+            managers.forEach(manager => {
+                manager.destroy();
+            });
+            managers.clear();
+        }
 
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
