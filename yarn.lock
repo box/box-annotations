@@ -3017,7 +3017,7 @@ box-node-sdk@^1.33.0:
     url-template "^2.0.8"
     uuid "^3.3.3"
 
-box-ui-elements@18.1.0:
+box-ui-elements@^18.1.0:
   version "18.1.0"
   resolved "https://registry.yarnpkg.com/box-ui-elements/-/box-ui-elements-18.1.0.tgz#59524c99596b3a9bc39b79eefa8d320dc487c7ad"
   integrity sha512-D1r1qn0BfzHMHg3qVR+tJfB4jowUtmKtBGjyN1F9oE6dmj/mbp2t12WMpU+x57BRVY/h5COHYwBsYyGjets7tA==
