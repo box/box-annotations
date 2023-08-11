@@ -30,3 +30,13 @@
     @include box-sizing;
     @include common-typography;
 }
+
+.ba-Layer--drawing,
+.ba-Layer--highlight,
+.ba-Layer--region {
+    z-index: 3;
+}
+
+.ba-Layer--popup {
+    z-index: 4;
+}
