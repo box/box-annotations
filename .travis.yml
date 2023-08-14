@@ -1,7 +1,8 @@
 # @desktop @mobile @enabled
 language: node_js
+dist: 'focal'
 node_js:
-    - '14'
+    - '18'
 addons:
     apt:
         packages:
@@ -14,6 +15,7 @@ cache:
 before_install:
     - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.5
     - export HUSKY_SKIP_HOOKS=1
+    - export NODE_OPTIONS=--openssl-legacy-provider
     - export PATH=$HOME/.yarn/bin:$PATH
     - export TZ=America/Los_Angeles
 jobs:
