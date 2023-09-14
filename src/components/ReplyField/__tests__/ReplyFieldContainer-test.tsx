@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { EditorState } from 'draft-js';
 import { mount, ReactWrapper } from 'enzyme';
+import { IntlShape } from 'react-intl';
 import ReplyField from '../ReplyField';
 import ReplyFieldContainer, { Props } from '../ReplyFieldContainer';
 import { createStore } from '../../../store';
@@ -17,6 +18,7 @@ describe('ReplyFieldContainer', () => {
         editorState: EditorState.createEmpty(),
         onChange: jest.fn(),
         onClick: jest.fn(),
+        intl: {} as IntlShape,
         store,
     };
 
