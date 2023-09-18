@@ -29,7 +29,9 @@ jest.mock('lodash/debounce', () => (func: Function) => func);
 describe('ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-field',
-        intl: {} as IntlShape,
+        intl: {
+            formatMessage: message => message,
+        } as IntlShape,
         collaborators: [
             { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' } },
             { id: 'testid2', name: 'test2', item: { id: 'testid2', name: 'test2', type: 'user' } },
