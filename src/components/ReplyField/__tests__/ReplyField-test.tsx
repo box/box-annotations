@@ -2,7 +2,7 @@ import React from 'react';
 import { getActiveMentionForEditorState } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Editor, EditorState } from 'draft-js';
-import { IntlShape } from 'react-intl';
+import { IntlShape, MessageDescriptor } from 'react-intl';
 import PopupList from '../../Popups/PopupList';
 import ReplyField, { Props, State } from '../ReplyField';
 import { VirtualElement } from '../../Popups/Popper';
@@ -30,7 +30,7 @@ describe('ReplyField', () => {
     const defaults: Props = {
         className: 'ba-Popup-field',
         intl: {
-            formatMessage: message => message,
+            formatMessage: (message: MessageDescriptor) => message,
         } as IntlShape,
         collaborators: [
             { id: 'testid1', name: 'test1', item: { id: 'testid1', name: 'test1', type: 'user' } },
