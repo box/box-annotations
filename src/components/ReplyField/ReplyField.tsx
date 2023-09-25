@@ -6,8 +6,10 @@ import {
     getActiveMentionForEditorState,
 } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { DraftHandleValue, Editor, EditorState } from 'draft-js';
+import { IntlShape } from 'react-intl';
 import PopupList from '../Popups/PopupList';
 import { Collaborator } from '../../@types';
+import messages from '../Popups/messages';
 import { VirtualElement } from '../Popups/Popper';
 import './ReplyField.scss';
 
@@ -29,6 +31,7 @@ export type Props = {
     onChange: (editorState: EditorState) => void;
     placeholder?: string;
     setCursorPosition: (cursorPosition: number) => void;
+    intl: IntlShape;
 };
 
 export type State = {
@@ -197,13 +200,14 @@ export default class ReplyField extends React.Component<Props, State> {
     handleMouseDown = (event: React.SyntheticEvent): void => event.preventDefault(); // prevent the blur event so that Editor can remain focus
 
     render(): JSX.Element {
-        const { className, collaborators, editorState, isDisabled, placeholder, ...rest } = this.props;
+        const { className, collaborators, intl, editorState, isDisabled, placeholder, ...rest } = this.props;
         const { activeItemIndex, popupAutoScroll, popupReference } = this.state;
 
         return (
             <div className={classnames(className, 'ba-ReplyField')}>
                 <Editor
                     {...rest}
+                    ariaLabel={intl.formatMessage(messages.ariaLabelReplyField)}
                     ariaMultiline
                     editorState={editorState}
                     handleReturn={this.handleReturn}

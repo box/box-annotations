@@ -6,6 +6,11 @@ export default defineMessages({
         description: 'Aria label description for reply popup',
         defaultMessage: 'Comment',
     },
+    ariaLabelReplyField: {
+        id: 'ba.popup.reply.field',
+        description: 'Aria label description for annotation comment field',
+        defaultMessage: 'Type a comment',
+    },
     buttonCancel: {
         id: 'ba.popups.cancel',
         description: 'Button label for cancelling the creation of a description, comment, or reply',

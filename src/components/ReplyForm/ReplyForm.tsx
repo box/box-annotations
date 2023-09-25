@@ -76,6 +76,7 @@ const ReplyForm = (props: Props): JSX.Element => {
                     className="ba-Popup-field"
                     data-testid="ba-Popup-field"
                     editorState={editorState}
+                    intl={intl}
                     isDisabled={isPending}
                     onChange={handleChange}
                     placeholder={intl.formatMessage(messages.fieldPlaceholder)}
