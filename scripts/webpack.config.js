@@ -35,7 +35,7 @@ const config = Object.assign(commonConfig(), {
     },
     resolve: {
         alias: {
-            'box-annotations-locale-data': path.resolve(`i18n/${language}`),
+            'box-annotations-locale-data': path.resolve(`./i18n/${language}`),
             'box-elements-messages': path.resolve(`node_modules/box-ui-elements/i18n/${language}`),
             'react-intl-relativetimeformat-locale-data': path.resolve(
                 `node_modules/@formatjs/intl-relativetimeformat/dist/locale-data/${locale}`,
