@@ -121,7 +121,7 @@
         "build": "yarn setup && yarn build:prod:dist",
         "build:i18n": "props2es",
         "build:dev:dist": "LANGUAGE=en-US BABEL_ENV=dev NODE_ENV=dev NODE_OPTIONS=--openssl-legacy-provider webpack --config scripts/webpack.config.js --mode development --progress --colors",
-        "build:prod:dist": "BABEL_ENV=production NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config scripts/webpack.config.js --mode production",
+        "build:prod:dist": "LANGUAGE=en-US BABEL_ENV=production NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider webpack --config scripts/webpack.config.js --mode production",
         "clean": "rm -rf dist reports/* i18n/json i18n/*.js",
         "cy:open": "yarn cy:wait; yarn cypress open",
         "cy:run": "yarn cy:wait; yarn cypress run --spec test/integration/**/*.test.js",
