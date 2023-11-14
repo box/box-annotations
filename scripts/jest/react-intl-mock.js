@@ -23,8 +23,6 @@ export const defineMessages = messages => messages;
 
 export const createIntlCache = () => {};
 
-export const intlShape = {};
-
 export const injectIntl = Component => {
     const WrapperComponent = props => {
         const injectedProps = { ...props, intl: intlMock };
