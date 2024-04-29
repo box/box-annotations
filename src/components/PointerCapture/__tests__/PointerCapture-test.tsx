@@ -60,7 +60,7 @@ describe('PointerCapture', () => {
     describe('eventing', () => {
         const mockMouseEvent = {
             ...mockEvent,
-            buttons: 1,
+            button: 0,
         };
 
         const mockTouchEvent = {
@@ -85,7 +85,7 @@ describe('PointerCapture', () => {
         test('should not invoke onDrawStart if mousedown event is not the primary button', () => {
             const onDrawStart = jest.fn();
             const wrapper = getWrapper({ onDrawStart });
-            const event = { ...mockEvent, buttons: 2 };
+            const event = { ...mockEvent, button: 1 };
 
             wrapper.find('div').simulate('mousedown', event);
 
@@ -136,7 +136,7 @@ describe('PointerCapture', () => {
                 document.dispatchEvent(
                     new MouseEvent('mousemove', {
                         ...mockMouseEvent,
-                        buttons: 2,
+                        button: 1,
                         clientX: 10,
                         clientY: 10,
                     }),
@@ -151,7 +151,7 @@ describe('PointerCapture', () => {
                 document.dispatchEvent(
                     new MouseEvent('mousemove', {
                         ...mockMouseEvent,
-                        buttons: 1,
+                        button: 0,
                         clientX: 10,
                         clientY: 10,
                     }),

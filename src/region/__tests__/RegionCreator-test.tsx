@@ -48,11 +48,11 @@ describe('RegionCreator', () => {
     describe('mouse events', () => {
         const simulateDrawStart = (wrapper: ReactWrapper, clientX = 10, clientY = 10): void =>
             act(() => {
-                wrapper.simulate('mousedown', { buttons: 1, clientX, clientY });
+                wrapper.simulate('mousedown', { button: 0, clientX, clientY });
             });
         const simulateDrawMove = (clientX = 10, clientY = 10): void =>
             act(() => {
-                document.dispatchEvent(new MouseEvent('mousemove', { buttons: 1, clientX, clientY }));
+                document.dispatchEvent(new MouseEvent('mousemove', { button: 0, clientX, clientY }));
             });
         const simulateDrawStop = (): void =>
             act(() => {
@@ -132,9 +132,9 @@ describe('RegionCreator', () => {
             const wrapper = getWrapper();
 
             act(() => {
-                wrapper.simulate('mousedown', { buttons: 2, clientX: 50, clientY: 50 });
-                document.dispatchEvent(new MouseEvent('mousemove', { buttons: 2, clientX: 100, clientY: 100 }));
-                document.dispatchEvent(new MouseEvent('mouseup', { buttons: 2, clientX: 100, clientY: 100 }));
+                wrapper.simulate('mousedown', { button: 1, clientX: 50, clientY: 50 });
+                document.dispatchEvent(new MouseEvent('mousemove', { button: 1, clientX: 100, clientY: 100 }));
+                document.dispatchEvent(new MouseEvent('mouseup', { button: 1, clientX: 100, clientY: 100 }));
             });
             jest.advanceTimersByTime(1000);
             wrapper.update();
