@@ -5,4 +5,4 @@ export const ANNOTATOR_EVENT = {
     setVisibility: 'annotationsetvisibility',
 };
 
-export const MOUSE_PRIMARY = 1;
+export const MOUSE_PRIMARY = 0;

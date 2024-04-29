@@ -39,8 +39,8 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
         event.preventDefault();
         event.stopPropagation();
     };
-    const handleMouseDown = ({ buttons, clientX, clientY }: React.MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY) {
+    const handleMouseDown = ({ button, clientX, clientY }: React.MouseEvent): void => {
+        if (button !== MOUSE_PRIMARY) {
             return;
         }
 
@@ -66,8 +66,8 @@ function PointerCapture(props: Props, ref: React.Ref<PointerCaptureRef>): JSX.El
     };
 
     React.useEffect(() => {
-        const handleMouseMove = ({ buttons, clientX, clientY }: MouseEvent): void => {
-            if (buttons !== MOUSE_PRIMARY || status === Status.init) {
+        const handleMouseMove = ({ button, clientX, clientY }: MouseEvent): void => {
+            if (button !== MOUSE_PRIMARY || status === Status.init) {
                 return;
             }
 
