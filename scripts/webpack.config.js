@@ -4,7 +4,8 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const RsyncPlugin = require('@box/frontend/webpack/RsyncPlugin');
 const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+
 const { BannerPlugin } = require('webpack');
 
 const license = require('./license');
@@ -75,8 +76,8 @@ if (isRelease && language === 'en-US') {
     // https://webpack.js.org/configuration/optimization/#optimization-minimize
     config.optimization = {
         minimizer: [
-            new UglifyJsPlugin({
-                uglifyOptions: {
+            new TerserPlugin({
+                terserOptions: {
                     warnings: false, // Don't output warnings
                     compress: {
                         drop_console: true, // Drop console statements
