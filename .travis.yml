@@ -20,6 +20,8 @@ before_install:
     - export TZ=America/Los_Angeles
 jobs:
     include:
+        - name: 'Build'
+          script: yarn build
         - name: 'Code Lint'
           script: yarn lint
         - name: 'Unit Tests'
