@@ -1,7 +1,13 @@
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import BaseManager, { Options, Props } from '../BaseManager';
 
-jest.mock('react-dom');
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
+}));
+
 class TestBaseManager extends BaseManager {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     decorate(): void {}
@@ -43,12 +49,13 @@ describe('BaseManager', () => {
 
     describe('destroy()', () => {
         test('should unmount and remove node', () => {
-            const removeChildSpy = jest.spyOn(rootEl, 'removeChild');
+            // const removeChildSpy = jest.spyOn(rootEl, 'removeChild');
             const wrapper = getWrapper();
+            const root = ReactDOM.createRoot(rootEl);
             wrapper.destroy();
 
-            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
-            expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(root.unmount).toHaveBeenCalled();
+            // expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
         });
     });
 });

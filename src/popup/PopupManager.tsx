@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import BaseManager, { Props } from '../common/BaseManager';
 import PopupContainer from './PopupContainer';
 
@@ -10,6 +10,10 @@ export default class PopupManager extends BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<PopupContainer location={this.location} {...props} />, this.reactEl);
+        if (!this.root) {
+            this.root = ReactDOM.createRoot(this.reactEl);
+        }
+
+        this.root.render(<PopupContainer location={this.location} {...props} />);
     }
 }

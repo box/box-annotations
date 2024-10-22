@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
 import BaseManager from './BaseManager';
@@ -20,11 +20,14 @@ export default class DeselectManager extends BaseManager {
     }
 
     render({ store }: Props): void {
-        ReactDOM.render(
+        if (!this.root) {
+            this.root = ReactDOM.createRoot(this.reactEl);
+        }
+
+        this.root.render(
             <Provider store={store}>
                 <DeselectListener />
             </Provider>,
-            this.reactEl,
         );
     }
 }

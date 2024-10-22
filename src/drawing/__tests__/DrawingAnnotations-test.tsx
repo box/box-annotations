@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations, { Props } from '../DrawingAnnotations';
 import DrawingCreator from '../DrawingCreator';
@@ -123,7 +122,7 @@ describe('DrawingAnnotations', () => {
                 const setupDrawing = jest.fn();
                 const wrapper = getWrapper({ isCreating: true, resetDrawing, setStatus, setupDrawing });
 
-                act(() => {
+                React.act(() => {
                     wrapper.find(DrawingCreator).prop('onStart')();
                 });
 
@@ -138,7 +137,7 @@ describe('DrawingAnnotations', () => {
                 const addDrawingPathGroup = jest.fn();
                 const wrapper = getWrapper({ isCreating: true, addDrawingPathGroup });
 
-                act(() => {
+                React.act(() => {
                     wrapper.find(DrawingCreator).prop('onStop')(pathGroups[0]);
                 });
 
@@ -203,7 +202,7 @@ describe('DrawingAnnotations', () => {
 
             expect(wrapper.find(PopupDrawingToolbar).hasClass('ba-is-drawing')).toBe(false);
 
-            act(() => {
+            React.act(() => {
                 wrapper.find(DrawingCreator).prop('onStart')();
             });
 

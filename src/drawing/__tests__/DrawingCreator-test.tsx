@@ -1,5 +1,4 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingCreator, { defaultStrokeColor, defaultStrokeSize, Props } from '../DrawingCreator';
 import DrawingPath from '../DrawingPath';

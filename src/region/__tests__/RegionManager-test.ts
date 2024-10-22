@@ -1,12 +1,14 @@
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { createIntl } from 'react-intl';
 import RegionManager from '../RegionManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
 
-jest.mock('react-dom', () => ({
-    render: jest.fn(),
-    unmountComponentAtNode: jest.fn(),
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
 }));
 
 describe('RegionManager', () => {
@@ -36,10 +38,11 @@ describe('RegionManager', () => {
     describe('destroy()', () => {
         test('should unmount the React node and remove the root element', () => {
             const wrapper = getWrapper();
+            const root = ReactDOM.createRoot(rootEl);
 
             wrapper.destroy();
 
-            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(root.unmount).toHaveBeenCalled();
         });
     });
 
@@ -55,10 +58,11 @@ describe('RegionManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             const wrapper = getWrapper();
+            const root = ReactDOM.createRoot(rootEl);
 
             wrapper.render({ intl, store: createStore() });
 
-            expect(ReactDOM.render).toHaveBeenCalled();
+            expect(root.render).toHaveBeenCalled();
         });
     });
 
