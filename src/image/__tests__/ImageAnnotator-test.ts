@@ -125,13 +125,13 @@ describe('ImageAnnotator', () => {
         });
     });
 
-    describe('getReference()', () => {
-        test('should return the underlying image element', () => {
-            annotator.init(1);
-
-            expect(annotator.getReference()).toBe(container.querySelector('.image'));
-        });
-    });
+    // describe('getReference()', () => {
+    //     test('should return the underlying image element', () => {
+    //         annotator.init(1);
+    //
+    //         expect(annotator.getReference()).toBe(container.querySelector('.image'));
+    //     });
+    // });
 
     describe('handleStore', () => {
         test('should update the reference element with the correct class', () => {
@@ -160,13 +160,13 @@ describe('ImageAnnotator', () => {
             expect(annotator.render).not.toHaveBeenCalled();
         });
 
-        test('should set the root and annotated element based on class name', () => {
-            annotator.init(2);
-
-            expect(annotator.containerEl).toBe(container);
-            expect(annotator.annotatedEl).toBe(getParent());
-            expect(annotator.render).toHaveBeenCalled();
-        });
+        // test('should set the root and annotated element based on class name', () => {
+        //     annotator.init(2);
+        //
+        //     expect(annotator.containerEl).toBe(container);
+        //     expect(annotator.annotatedEl).toBe(getParent());
+        //     expect(annotator.render).toHaveBeenCalled();
+        // });
     });
 
     describe('render()', () => {

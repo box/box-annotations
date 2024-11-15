@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupCursor from '../PopupCursor';
 import PopupBase from '../PopupBase';
