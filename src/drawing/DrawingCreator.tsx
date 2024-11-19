@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
 import { bdlBoxBlue } from 'box-ui-elements/es/styles/variables';
 import DrawingPath, { DrawingPathRef } from './DrawingPath';
@@ -35,6 +35,7 @@ export default function DrawingCreator({
     const drawingPathRef = React.useRef<DrawingPathRef>(null);
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const stroke = { color, size };
 
     const getPoints = React.useCallback((): Array<Position> => {

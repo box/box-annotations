@@ -24,7 +24,7 @@ jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector
     getFormattedCommentText: jest.fn(() => ({ hasMention: false, text: 'test' })),
 }));
 
-jest.mock('lodash/debounce', () => (func: Function) => func);
+jest.mock('lodash/debounce', () => (func: (...args: any[]) => never) => func);
 
 describe('ReplyField', () => {
     const defaults: Props = {

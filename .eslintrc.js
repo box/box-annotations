@@ -1,7 +1,9 @@
-const eslintrc = require.resolve('@box/frontend/eslint/eslintrc.js');
-
 module.exports = {
-    extends: [eslintrc],
+    extends: [
+        require.resolve('@box/frontend/eslint/base'),
+        require.resolve('@box/frontend/eslint/react'),
+        require.resolve('@box/frontend/eslint/typescript'),
+    ],
     rules: {
         'class-methods-use-this': 0, // fixme
         'flowtype/no-types-missing-file-annotation': 'off', // Allows types in TS files
@@ -22,8 +24,9 @@ module.exports = {
         {
             files: ['**/__mocks__/*', '**/__tests__/*'],
             rules: {
-                '@typescript-eslint/camelcase': 'off',
+                '@typescript-eslint/naming-convention': 'off',
                 '@typescript-eslint/no-non-null-assertion': 'off',
+                'import/no-import-module-exports': 'off'
             },
         },
         {

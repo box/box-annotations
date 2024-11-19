@@ -20,7 +20,6 @@ export function formatDrawing(annotation: AnnotationDrawing): AnnotationDrawing 
 
     return {
         target: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             path_groups: pathGroups.map(pathGroup => addClientIds(pathGroup)),
             ...targetRest,
         },

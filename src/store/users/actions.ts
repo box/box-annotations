@@ -20,9 +20,11 @@ export const fetchCollaboratorsAction = createAsyncThunk<APICollection<Collabora
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Collaborator>>((resolve, reject) => {
             client.getFileCollaborators(fileId, resolve, reject, {
-                filter_term: searchString, // eslint-disable-line @typescript-eslint/camelcase
-                include_groups: false, // eslint-disable-line @typescript-eslint/camelcase
-                include_uploader_collabs: false, // eslint-disable-line @typescript-eslint/camelcase
+                filter_term: searchString,
+
+                include_groups: false,
+
+                include_uploader_collabs: false,
             });
         });
     },

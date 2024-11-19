@@ -3,7 +3,7 @@ import HighlightListener from '../HighlightListener';
 import { AppStore, setSelectionAction, getIsSelecting } from '../../store';
 import { mockContainerRect, mockRange } from '../../store/highlight/__mocks__/data';
 
-jest.mock('lodash/debounce', () => (func: Function) => func);
+jest.mock('lodash/debounce', () => (func: (...args: any[]) => never) => func);
 jest.mock('../../store');
 
 jest.useFakeTimers();

@@ -18,7 +18,6 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
             message,
             type: 'reply' as const,
         },
-        // eslint-disable-next-line @typescript-eslint/camelcase
         file_version: {
             id: getFileVersionId(state),
         },
@@ -27,7 +26,6 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
                 type: 'page' as const,
                 value: location,
             },
-            // eslint-disable-next-line @typescript-eslint/camelcase
             path_groups: pathGroups,
             type: 'drawing' as const,
         },

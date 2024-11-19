@@ -36,8 +36,7 @@ describe('scrollToLocation', () => {
         jest.spyOn(container, 'scrollLeft', 'set');
         jest.spyOn(container, 'scrollTop', 'set');
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
+        // @ts-expect-error Mocking scrollTo method on HTMLDivElement
         container.scrollTo = jest.fn((options?: ScrollToOptions) => {
             const { left, top } = options || {};
 
