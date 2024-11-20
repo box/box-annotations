@@ -1,6 +1,6 @@
 import React from 'react';
 import Popper from '@popperjs/core';
-import ReactRedux from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 import messages from './messages';
@@ -88,8 +88,8 @@ export default function PopupReply({
     const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
     const popupOptions = React.useRef<Partial<Popper.Options>>(getOptions()); // Keep the options reference the same between renders
-    const rotation = ReactRedux.useSelector(getRotation);
-    const scale = ReactRedux.useSelector(getScale);
+    const rotation = useSelector(getRotation);
+    const scale = useSelector(getScale);
 
     React.useEffect(() => {
         const { current: popup } = popupRef;
