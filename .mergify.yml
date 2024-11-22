@@ -1,11 +1,6 @@
 queue_rules:
-    - name: default
-      conditions:
-        - status-success=Travis CI - Pull Request
-
-pull_request_rules:
-  - name: Automatic strict merge
-    conditions:
+  - name: default
+    queue_conditions:
       - base=master
       - "#approved-reviews-by>=1"
       - "#changes-requested-reviews-by=0"
@@ -13,7 +8,12 @@ pull_request_rules:
       - status-success=Travis CI - Pull Request
       - label=ready-to-merge
       - label!=do-not-merge
+    merge_conditions:
+      - status-success=Travis CI - Pull Request
+    merge_method: squash
+
+pull_request_rules:
+  - name: refactored queue action rule
+    conditions: []
     actions:
       queue:
-        method: squash
-        name: default
