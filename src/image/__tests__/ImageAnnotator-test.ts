@@ -167,7 +167,7 @@ describe('ImageAnnotator', () => {
 
         test('should set the root and annotated element based on class name', () => {
             annotator.init(2);
-        
+
             expect(annotator.containerEl).toBe(container);
             expect(annotator.annotatedEl).toBe(getParent());
             expect(annotator.render).toHaveBeenCalled();
