@@ -50,6 +50,9 @@ export default class BaseManager implements Manager {
         if (this.root) {
             this.root.unmount();
         }
+        if (this.reactEl.parentNode) {
+            this.reactEl.parentNode.removeChild(this.reactEl);
+        }
     }
 
     exists(parentEl: HTMLElement): boolean {

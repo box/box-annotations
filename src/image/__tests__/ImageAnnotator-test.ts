@@ -125,13 +125,17 @@ describe('ImageAnnotator', () => {
         });
     });
 
-    // describe('getReference()', () => {
-    //     test('should return the underlying image element', () => {
-    //         annotator.init(1);
-    //
-    //         expect(annotator.getReference()).toBe(container.querySelector('.image'));
-    //     });
-    // });
+    describe('getReference()', () => {
+        beforeEach(() => {
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
+        });
+
+        test('should return the underlying image element', () => {
+            annotator.init(1);
+
+            expect(annotator.getReference()).toBe(container.querySelector('.image'));
+        });
+    });
 
     describe('handleStore', () => {
         test('should update the reference element with the correct class', () => {
@@ -151,6 +155,7 @@ describe('ImageAnnotator', () => {
     describe('init()', () => {
         beforeEach(() => {
             jest.spyOn(annotator, 'render');
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
         });
 
         test('should do nothing if the root element is not defined', () => {
@@ -160,13 +165,13 @@ describe('ImageAnnotator', () => {
             expect(annotator.render).not.toHaveBeenCalled();
         });
 
-        // test('should set the root and annotated element based on class name', () => {
-        //     annotator.init(2);
-        //
-        //     expect(annotator.containerEl).toBe(container);
-        //     expect(annotator.annotatedEl).toBe(getParent());
-        //     expect(annotator.render).toHaveBeenCalled();
-        // });
+        test('should set the root and annotated element based on class name', () => {
+            annotator.init(2);
+        
+            expect(annotator.containerEl).toBe(container);
+            expect(annotator.annotatedEl).toBe(getParent());
+            expect(annotator.render).toHaveBeenCalled();
+        });
     });
 
     describe('render()', () => {

@@ -1,4 +1,3 @@
-import * as ReactDOM from 'react-dom/client';
 import BaseManager, { Options, Props } from '../BaseManager';
 
 jest.mock('react-dom/client', () => ({
@@ -49,13 +48,12 @@ describe('BaseManager', () => {
 
     describe('destroy()', () => {
         test('should unmount and remove node', () => {
-            // const removeChildSpy = jest.spyOn(rootEl, 'removeChild');
+            const removeChildSpy = jest.spyOn(rootEl, 'removeChild');
             const wrapper = getWrapper();
-            const root = ReactDOM.createRoot(rootEl);
             wrapper.destroy();
 
-            expect(root.unmount).toHaveBeenCalled();
-            // expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(wrapper.root.unmount).toHaveBeenCalled();
+            expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
         });
     });
 });

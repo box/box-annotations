@@ -21,9 +21,7 @@ export const fetchCollaboratorsAction = createAsyncThunk<APICollection<Collabora
         return new Promise<APICollection<Collaborator>>((resolve, reject) => {
             client.getFileCollaborators(fileId, resolve, reject, {
                 filter_term: searchString,
-
                 include_groups: false,
-
                 include_uploader_collabs: false,
             });
         });
