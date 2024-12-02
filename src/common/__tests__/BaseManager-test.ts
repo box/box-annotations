@@ -52,7 +52,7 @@ describe('BaseManager', () => {
             const wrapper = getWrapper();
             wrapper.destroy();
 
-            expect(wrapper.root.unmount).toHaveBeenCalled();
+            expect(wrapper.root?.unmount).toHaveBeenCalled();
             expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
         });
     });
