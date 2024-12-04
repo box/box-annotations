@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-namespace */
-declare namespace Intl {
-    const RelativeTimeFormat: {};
-}
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace NodeJS {
     interface Global {
         window: any;

@@ -1,11 +1,13 @@
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import DeselectManager from '../DeselectManager';
 import { createStore } from '../../store';
 import { Options } from '../BaseManager';
 
-jest.mock('react-dom', () => ({
-    render: jest.fn(),
-    unmountComponentAtNode: jest.fn(),
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
 }));
 
 describe('DeselectManager', () => {
@@ -34,10 +36,10 @@ describe('DeselectManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             const wrapper = getWrapper();
-
+            const root = ReactDOM.createRoot(rootEl);
             wrapper.render({ store: createStore() });
 
-            expect(ReactDOM.render).toHaveBeenCalled();
+            expect(root.render).toHaveBeenCalled();
         });
     });
 });

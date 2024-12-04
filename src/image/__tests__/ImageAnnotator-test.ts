@@ -126,6 +126,10 @@ describe('ImageAnnotator', () => {
     });
 
     describe('getReference()', () => {
+        beforeEach(() => {
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
+        });
+
         test('should return the underlying image element', () => {
             annotator.init(1);
 
@@ -151,6 +155,7 @@ describe('ImageAnnotator', () => {
     describe('init()', () => {
         beforeEach(() => {
             jest.spyOn(annotator, 'render');
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
         });
 
         test('should do nothing if the root element is not defined', () => {

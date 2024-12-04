@@ -1,5 +1,4 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import DrawingCreator, { defaultStrokeColor, defaultStrokeSize, Props } from '../DrawingCreator';
 import DrawingPath from '../DrawingPath';
@@ -23,7 +22,7 @@ describe('DrawingCreator', () => {
         x,
         y,
     });
-    const getWrapper = (props?: Partial<Props>): ReactWrapper<PointerCaptureProps, {}> =>
+    const getWrapper = (props?: Partial<Props>): ReactWrapper<PointerCaptureProps, NonNullable<unknown>> =>
         mount(<DrawingCreator {...getDefaults()} {...props} />);
 
     beforeEach(() => {
@@ -35,21 +34,21 @@ describe('DrawingCreator', () => {
         jest.spyOn(Element.prototype, 'setAttribute');
     });
 
-    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
+    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawStart')(clientX, clientY);
         });
 
         wrapper.update();
     };
-    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, {}>, clientX = 10, clientY = 10): void => {
+    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {
         act(() => {
             wrapper.prop('onDrawUpdate')(clientX, clientY);
         });
 
         wrapper.update();
     };
-    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, {}>): void => {
+    const simulateDrawStop = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>): void => {
         act(() => {
             wrapper.prop('onDrawStop')();
         });

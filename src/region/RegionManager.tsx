@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import BaseManager, { Props } from '../common/BaseManager';
 import RegionAnnotationsContainer from './RegionAnnotationsContainer';
 
@@ -10,6 +10,10 @@ export default class RegionListManager extends BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<RegionAnnotationsContainer location={this.location} {...props} />, this.reactEl);
+        if (!this.root) {
+            this.root = ReactDOM.createRoot(this.reactEl);
+        }
+
+        this.root.render(<RegionAnnotationsContainer location={this.location} {...props} />);
     }
 }

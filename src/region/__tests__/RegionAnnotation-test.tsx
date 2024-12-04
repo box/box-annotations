@@ -5,6 +5,13 @@ import RegionAnnotation from '../RegionAnnotation';
 import { mockEvent } from '../../common/__mocks__/events';
 import { rect } from '../__mocks__/data';
 
+// Mock the entire react-redux module
+jest.mock('react-redux', () => ({
+    __esModule: true,
+    ...jest.requireActual('react-redux'),
+    useSelector: jest.fn(),
+}));
+
 describe('RegionAnnotation', () => {
     const defaults = {
         annotationId: '1',

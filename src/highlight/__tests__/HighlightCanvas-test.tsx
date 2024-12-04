@@ -7,7 +7,7 @@ describe('HighlightCanvas', () => {
     const defaults: Props = {
         shapes: [mockRect],
     };
-    const getWrapper = (props?: Props): ShallowWrapper<Props, {}, HighlightCanvas> =>
+    const getWrapper = (props?: Props): ShallowWrapper<Props, NonNullable<unknown>, HighlightCanvas> =>
         shallow(<HighlightCanvas {...defaults} {...props} />);
 
     test('componentDidMount()', () => {
@@ -63,8 +63,7 @@ describe('HighlightCanvas', () => {
 
             instance.canvasRef = {
                 current: {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-                    // @ts-ignore
+                    // @ts-expect-error mock object
                     getContext: () => canvasContext,
                 },
             };

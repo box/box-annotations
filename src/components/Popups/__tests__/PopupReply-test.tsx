@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactRedux from 'react-redux';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';

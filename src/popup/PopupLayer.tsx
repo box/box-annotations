@@ -30,7 +30,7 @@ export type Props = {
     status: CreatorStatus;
 };
 
-const modeStagedMap: { [M in Mode]?: Function } = {
+const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {
     [Mode.DRAWING]: isCreatorStagedDrawing,
     [Mode.HIGHLIGHT]: isCreatorStagedHighlight,
     [Mode.REGION]: isCreatorStagedRegion,
@@ -52,7 +52,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     } = props;
 
     const [reference, setReference] = React.useState<PopupReference | null>(null);
-    const canCreate = (modeStagedMap[mode] || noop)(staged) || isPromoting;
+    const canCreate = (modeStagedMap[mode]?.(staged ?? null) ?? false) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
 

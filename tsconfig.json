@@ -2,6 +2,8 @@
     "extends": "@box/frontend/ts/tsconfig",
     "include": ["./src/**/*.ts", "./src/**/*.tsx"],
     "compilerOptions": {
-        "lib": ["DOM", "ES2020"]
+        "lib": ["DOM", "ES2020"],
+        "jsx": "react-jsx",
+        "esModuleInterop": true
     }
 }

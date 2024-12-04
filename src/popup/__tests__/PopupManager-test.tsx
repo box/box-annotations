@@ -1,12 +1,14 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { createIntl } from 'react-intl';
 import PopupManager from '../PopupManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
 
-jest.mock('react-dom', () => ({
-    render: jest.fn(),
-    unmountComponentAtNode: jest.fn(),
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
 }));
 
 describe('PopupManager', () => {
@@ -36,10 +38,11 @@ describe('PopupManager', () => {
     describe('destroy()', () => {
         test('should unmount the React node and remove the root element', () => {
             const wrapper = getWrapper();
+            const root = createRoot(rootEl);
 
             wrapper.destroy();
 
-            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(root.unmount).toHaveBeenCalled();
         });
     });
 
@@ -55,10 +58,11 @@ describe('PopupManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             const wrapper = getWrapper();
+            const root = createRoot(rootEl);
 
             wrapper.render({ intl, store: createStore() });
 
-            expect(ReactDOM.render).toHaveBeenCalled();
+            expect(root.render).toHaveBeenCalled();
         });
     });
 });

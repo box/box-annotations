@@ -1,4 +1,4 @@
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 import { applyResinTags } from '../utils/resin';
@@ -28,12 +28,16 @@ export default class BaseManager implements Manager {
 
     reactEl: HTMLElement;
 
+    root: ReactDOM.Root | null = null;
+
     constructor({ location = 1, referenceEl, resinTags = {} }: Options) {
         this.location = location;
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
         });
+
+        this.root = ReactDOM.createRoot(this.reactEl);
 
         this.decorate();
     }
@@ -43,11 +47,11 @@ export default class BaseManager implements Manager {
     }
 
     destroy(): void {
-        ReactDOM.unmountComponentAtNode(this.reactEl);
-
-        const parentEl = this.reactEl.parentNode;
-        if (parentEl) {
-            parentEl.removeChild(this.reactEl);
+        if (this.root) {
+            this.root.unmount();
+        }
+        if (this.reactEl.parentNode) {
+            this.reactEl.parentNode.removeChild(this.reactEl);
         }
     }
 

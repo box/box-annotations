@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { act } from 'react-dom/test-utils';
+import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupCursor from '../PopupCursor';
 import PopupBase from '../PopupBase';
@@ -17,7 +16,7 @@ describe('PopupCursor', () => {
         test('should set virtualElement rect', () => {
             const wrapper = getWrapper();
 
-            act(() => {
+            React.act(() => {
                 document.dispatchEvent(new MouseEvent('mousemove', { clientX: 1, clientY: 2 }));
             });
 

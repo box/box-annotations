@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom/client';
 import BaseManager, { Props } from '../common/BaseManager';
 import HighlightContainer from './HighlightContainer';
 
@@ -10,6 +10,10 @@ export default class HighlightManager extends BaseManager {
     }
 
     render(props: Props): void {
-        ReactDOM.render(<HighlightContainer location={this.location} {...props} />, this.reactEl);
+        if (!this.root) {
+            this.root = ReactDOM.createRoot(this.reactEl);
+        }
+
+        this.root.render(<HighlightContainer location={this.location} {...props} />);
     }
 }

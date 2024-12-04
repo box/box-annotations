@@ -35,7 +35,7 @@ export default function DrawingCreator({
     const drawingPathRef = React.useRef<DrawingPathRef>(null);
     const drawingSVGRef = React.useRef<DrawingSVGRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
-    const stroke = { color, size };
+    const stroke = React.useMemo(() => ({ color, size }), [color, size]);
 
     const getPoints = React.useCallback((): Array<Position> => {
         const { current: creatorEl } = creatorElRef;

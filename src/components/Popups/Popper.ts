@@ -31,3 +31,21 @@ export default function create(
 ): Instance {
     return popper.createPopper(reference, popup, mergeWith({}, defaults, options, merger) as Options);
 }
+
+export function clientBoundingRect(height: number, width: number, x: number, y: number): DOMRect {
+    const rect = {
+        bottom: y + height,
+        height,
+        left: x,
+        right: x + width,
+        top: y,
+        width,
+        x,
+        y,
+    };
+
+    return {
+        ...rect,
+        toJSON: () => ({ ...rect }),
+    };
+}

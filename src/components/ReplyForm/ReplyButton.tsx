@@ -7,7 +7,7 @@ export type Props = {
     isDisabled?: boolean;
     isPrimary?: boolean;
     onClick?: (event: React.MouseEvent) => void;
-    type: 'button' | 'submit' | 'reset' | undefined;
+    type?: 'button' | 'submit' | 'reset' | undefined;
 } & HTMLAttributes<HTMLButtonElement>;
 
 export default function ReplyButton({ children, isDisabled, isPrimary, onClick = noop, ...rest }: Props): JSX.Element {

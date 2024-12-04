@@ -1,7 +1,12 @@
-import * as ReactDOM from 'react-dom';
 import BaseManager, { Options, Props } from '../BaseManager';
 
-jest.mock('react-dom');
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
+}));
+
 class TestBaseManager extends BaseManager {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     decorate(): void {}
@@ -47,7 +52,7 @@ describe('BaseManager', () => {
             const wrapper = getWrapper();
             wrapper.destroy();
 
-            expect(ReactDOM.unmountComponentAtNode).toHaveBeenCalledWith(wrapper.reactEl);
+            expect(wrapper.root?.unmount).toHaveBeenCalled();
             expect(removeChildSpy).toHaveBeenCalledWith(wrapper.reactEl);
         });
     });

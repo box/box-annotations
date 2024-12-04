@@ -1,12 +1,14 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { createIntl } from 'react-intl';
 import DrawingManager from '../DrawingManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
 
-jest.mock('react-dom', () => ({
-    render: jest.fn(),
-    unmountComponentAtNode: jest.fn(),
+jest.mock('react-dom/client', () => ({
+    createRoot: jest.fn().mockReturnValue({
+        render: jest.fn(),
+        unmount: jest.fn(),
+    }),
 }));
 
 describe('DrawingManager', () => {
@@ -36,10 +38,11 @@ describe('DrawingManager', () => {
     describe('render()', () => {
         test('should format the props and pass them to the underlying components', () => {
             const wrapper = getWrapper();
+            const root = createRoot(rootEl);
 
             wrapper.render({ intl, store: createStore() });
 
-            expect(ReactDOM.render).toHaveBeenCalled();
+            expect(root.render).toHaveBeenCalled();
         });
     });
 });

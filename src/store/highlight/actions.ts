@@ -19,7 +19,7 @@ declare global {
         createNodeIterator(
             root: Node,
             whatToShow?: number,
-            filter?: NodeFilter | Function,
+            filter?: NodeFilter | ((node: Node) => number | null),
             entityReferenceExpansion?: boolean,
         ): NodeIterator;
     }

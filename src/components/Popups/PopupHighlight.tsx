@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import useOutsideEvent from '../../common/useOutsideEvent';
-import { Options } from './Popper';
+import { clientBoundingRect, Options } from './Popper';
 import { Shape } from '../../@types/model';
 import './PopupHighlight.scss';
 
@@ -50,14 +50,7 @@ export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape
     const { height, width, x, y } = shape;
 
     const reference = {
-        getBoundingClientRect: () => ({
-            bottom: y + height,
-            height,
-            left: x,
-            right: x + width,
-            top: y,
-            width,
-        }),
+        getBoundingClientRect: () => clientBoundingRect(height, width, x, y),
     };
 
     const handleKeydownOutside = (event: Event): void => {

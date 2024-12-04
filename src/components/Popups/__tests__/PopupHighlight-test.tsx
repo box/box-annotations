@@ -1,5 +1,4 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import PopupBase from '../PopupBase';
 import PopupHighlight from '../PopupHighlight';

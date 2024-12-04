@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
-import { Options, VirtualElement } from './Popper';
+import { clientBoundingRect, Options, VirtualElement } from './Popper';
 import './PopupCursor.scss';
 
 const options: Partial<Options> = {
@@ -18,14 +18,7 @@ const options: Partial<Options> = {
 };
 
 const generateGetBoundingClientRect = (x = 0, y = 0) => {
-    return () => ({
-        width: 0,
-        height: 0,
-        top: y,
-        right: x,
-        bottom: y,
-        left: x,
-    });
+    return () => clientBoundingRect(0, 0, x, y);
 };
 
 export default function PopupCursor(): JSX.Element {

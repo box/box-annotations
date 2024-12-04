@@ -18,7 +18,6 @@ export const createHighlightAction = (arg: CreateArg) => (dispatch: AppThunkDisp
             message,
             type: 'reply' as const,
         },
-        // eslint-disable-next-line @typescript-eslint/camelcase
         file_version: {
             id: getFileVersionId(state),
         },
