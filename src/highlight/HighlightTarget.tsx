@@ -41,7 +41,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
     };
 
     const handleMouseDown = (event: React.MouseEvent<HighlightTargetRef>): void => {
-        if (event.buttons !== MOUSE_PRIMARY) {
+        if (event.button !== MOUSE_PRIMARY) {
             return;
         }
         const activeElement = document.activeElement as HTMLElement;

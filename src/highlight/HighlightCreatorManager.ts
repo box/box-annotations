@@ -55,8 +55,8 @@ export default class HighlightCreatorManager implements Manager {
         this.referenceEl.removeEventListener('mouseup', this.handleMouseUp);
     }
 
-    handleMouseDown = ({ buttons }: MouseEvent): void => {
-        if (buttons !== MOUSE_PRIMARY) {
+    handleMouseDown = ({ button }: MouseEvent): void => {
+        if (button !== MOUSE_PRIMARY) {
             return;
         }
 

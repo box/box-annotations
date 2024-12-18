@@ -53,7 +53,7 @@ describe('HighlightTarget', () => {
 
         describe('handleMouseDown()', () => {
             const mockEvent = {
-                buttons: 1,
+                button: 0,
                 currentTarget: {
                     focus: jest.fn(),
                 },
@@ -66,7 +66,7 @@ describe('HighlightTarget', () => {
                 const anchor = wrapper.find('a');
                 const event = {
                     ...mockEvent,
-                    buttons: 2,
+                    button: 1,
                 };
 
                 anchor.simulate('mousedown', event);

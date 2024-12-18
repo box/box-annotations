@@ -23,7 +23,7 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
         onSelect(annotationId);
     };
     const handleMouseDown = (event: React.MouseEvent<RegionAnnotationRef>): void => {
-        if (event.buttons !== MOUSE_PRIMARY) {
+        if (event.button !== MOUSE_PRIMARY) {
             return;
         }
 
