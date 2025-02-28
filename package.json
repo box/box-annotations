@@ -158,6 +158,6 @@
         "**/react-intl/**/@types/react": "^18.3.12",
         "**/@types/react": "^18.3.12",
         "**/@types/react-dom": "^18.2.0",
-        "acorn": "8.7.1"
+        "acorn": "8.14.0"
     }
 }
