@@ -36,7 +36,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         onSelect(annotationId);
     };
     const handleMouseDown = (event: React.MouseEvent<DrawingTargetRef>): void => {
-        if (event.buttons !== MOUSE_PRIMARY) {
+        if (event.button !== MOUSE_PRIMARY) {
             return;
         }
         const activeElement = document.activeElement as HTMLElement;

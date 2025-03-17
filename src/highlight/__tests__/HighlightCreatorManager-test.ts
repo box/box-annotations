@@ -88,7 +88,7 @@ describe('HighlightCreatorManager', () => {
             ((setIsSelectingAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_is_selecting' });
             ((setSelectionAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_selection' });
 
-            wrapper.handleMouseDown(new MouseEvent('mousedown', { buttons: 1 }));
+            wrapper.handleMouseDown(new MouseEvent('mousedown', { button: 0 }));
 
             expect(clearTimeout).toHaveBeenCalledWith(1);
             expect(setIsSelectingAction).toHaveBeenCalledWith(true);
@@ -100,7 +100,7 @@ describe('HighlightCreatorManager', () => {
         test('should do nothing if is not primary button', () => {
             const wrapper = getWrapper();
 
-            wrapper.handleMouseDown(new MouseEvent('mousedown', { buttons: 2 }));
+            wrapper.handleMouseDown(new MouseEvent('mousedown', { button: 1 }));
 
             expect(defaults.store.dispatch).not.toHaveBeenCalled();
         });

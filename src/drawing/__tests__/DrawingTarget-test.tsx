@@ -55,7 +55,7 @@ describe('DrawingTarget', () => {
         describe('handleMouseDown()', () => {
             // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
             const getEvent = () => ({
-                buttons: 1,
+                button: 0,
                 currentTarget: {
                     focus: jest.fn(),
                 },
@@ -68,7 +68,7 @@ describe('DrawingTarget', () => {
                 const anchor = wrapper.find('a');
                 const event = {
                     ...getEvent(),
-                    buttons: 2,
+                    button: 1,
                 };
 
                 anchor.simulate('mousedown', event);

@@ -38,7 +38,7 @@ describe('RegionAnnotation', () => {
 
         test('should focus the button on mousedown', () => {
             const button = { focus: jest.fn() };
-            const event = { buttons: 1, currentTarget: button, ...mockEvent };
+            const event = { button: 0, currentTarget: button, ...mockEvent };
             const wrapper = getWrapper();
 
             wrapper.simulate('mousedown', event);
