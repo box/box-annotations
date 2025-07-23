@@ -4,6 +4,7 @@ import BaseAnnotator from './common/BaseAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
 import DocumentAnnotator from './document/DocumentAnnotator';
 import { IntlOptions, Permissions, PERMISSIONS, Type } from './@types';
+import MediaAnnotator from './media/MediaAnnotator';
 
 type Annotator = {
     CONSTRUCTOR: typeof BaseAnnotator;
@@ -60,6 +61,12 @@ const ANNOTATORS: Annotator[] = [
         TYPES: [Type.region],
         VIEWERS: ['Image'],
     },
+    {
+        CONSTRUCTOR: MediaAnnotator,
+        NAME: 'Media',
+        TYPES: [Type.region],
+        VIEWERS: ['Dash','MP4','MP3'],
+    },
 ];
 
 class BoxAnnotations {
@@ -87,7 +94,8 @@ class BoxAnnotations {
             return false;
         }
 
-        return !!permissions[PERMISSIONS.CAN_CREATE_ANNOTATIONS] || !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS];
+        return !!permissions[PERMISSIONS.CAN_CREATE_ANNOTATIONS] || !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS] 
+        || !!permissions['can_comment'];
     }
 
     /**

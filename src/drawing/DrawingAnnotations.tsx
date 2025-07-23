@@ -95,11 +95,12 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
+    const annotationsById = annotations.filter(annotation => annotation.id === activeAnnotationId);
     return (
         <>
             <DrawingList
                 activeId={activeAnnotationId}
-                annotations={annotations}
+                annotations={annotationsById}
                 className="ba-DrawingAnnotations-list"
                 onSelect={handleAnnotationActive}
             />

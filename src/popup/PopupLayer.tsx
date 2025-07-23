@@ -55,6 +55,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     const canCreate = (modeStagedMap[mode]?.(staged ?? null) ?? false) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
+    const isFailed = status === CreatorStatus.rejected;
 
     const handleCancel = (): void => {
         resetCreator();
@@ -81,6 +82,10 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     React.useEffect(() => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
+
+    if (isFailed) {
+        return null;
+    }
 
     return (
         <>

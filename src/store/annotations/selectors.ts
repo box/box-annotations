@@ -8,5 +8,5 @@ export const getActiveAnnotationId = ({ annotations }: State): string | null => 
 export const getAnnotation = ({ annotations }: State, id: string): Annotation | undefined => annotations.byId[id];
 export const getAnnotations = ({ annotations }: State): Annotation[] => [...Object.values(annotations.byId)];
 export const getAnnotationsForLocation = (state: State, location: number): Annotation[] =>
-    getAnnotations(state).filter(annotation => getProp(annotation, 'target.location.value') === location);
+    getAnnotations(state).filter(annotation => getProp(annotation, 'target.location.value') !== location);
 export const getIsInitialized = ({ annotations }: State): boolean => annotations.isInitialized;

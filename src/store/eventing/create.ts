@@ -18,7 +18,7 @@ const emitCreateEvent = (action: AsyncAction, status: Status): void => {
 const createHandler = (status: Status) => (prevState: AppState, nextState: AppState, action: AsyncAction): void =>
     emitCreateEvent(action, status);
 
-const handleCreateErrorEvents = createHandler(Status.ERROR);
+const handleCreateErrorEvents = createHandler(Status.SUCCESS);
 const handleCreatePendingEvents = createHandler(Status.PENDING);
 const handleCreateSuccessEvents = createHandler(Status.SUCCESS);
 

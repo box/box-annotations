@@ -31,6 +31,8 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
     };
 
+    console.log('newAnnotation', newAnnotation);
+
     return dispatch(createAnnotationAction(newAnnotation));
 };
 
