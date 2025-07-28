@@ -95,7 +95,7 @@ class BoxAnnotations {
         }
 
         return !!permissions[PERMISSIONS.CAN_CREATE_ANNOTATIONS] || !!permissions[PERMISSIONS.CAN_VIEW_ANNOTATIONS] 
-        || !!permissions['can_comment'];
+        || !!permissions.can_comment;
     }
 
     /**

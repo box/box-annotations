@@ -9,6 +9,7 @@ export type Options = {
     location?: number;
     referenceEl: HTMLElement;
     resinTags?: ResinTags;
+    targetType?: 'frame' | 'page';
 };
 
 export type Props = {
@@ -30,13 +31,16 @@ export default class BaseManager implements Manager {
 
     root: ReactDOM.Root | null = null;
 
-    constructor({ location = 1, referenceEl, resinTags = {} }: Options) {
+    targetType: string;
+
+    constructor({ location = 1, referenceEl, resinTags = {}, targetType = 'page' }: Options) {
         this.location = location;
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
         });
 
+        this.targetType = targetType;
         this.root = ReactDOM.createRoot(this.reactEl);
 
         this.decorate();

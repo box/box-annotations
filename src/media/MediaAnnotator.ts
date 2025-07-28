@@ -1,19 +1,17 @@
 import { Unsubscribe } from 'redux';
 import BaseAnnotator, { Options } from '../common/BaseAnnotator';
 import PopupManager from '../popup/PopupManager';
-import { centerDrawing, DrawingManager, isDrawing } from '../drawing';
-import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
+import { DrawingManager } from '../drawing';
+import { RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
-import { addLocalAnnotationAction, getAnnotation, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
-import { getRotatedPosition } from '../utils/rotate';
+import { addLocalAnnotationAction, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
 import { Manager } from '../common/BaseManager';
-import { scrollToLocation } from '../utils/scroll';
 import './MediaAnnotator.scss';
 
 export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
 
 export default class MediaAnnotator extends BaseAnnotator {
-    annotatedEl?: HTMLElement;
+    annotatedEl?: HTMLVideoElement;
 
     managers: Set<Manager> = new Set();
 
@@ -54,7 +52,7 @@ export default class MediaAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
-            this.managers.add(new PopupManager({ referenceEl, resinTags }));
+            this.managers.add(new PopupManager({ referenceEl, resinTags, targetType : 'frame'}));
             this.managers.add(new DrawingManager({ referenceEl, resinTags }));
             this.managers.add(new RegionManager({ referenceEl, resinTags }));
             this.managers.add(new RegionCreationManager({ referenceEl, resinTags }));
@@ -63,7 +61,7 @@ export default class MediaAnnotator extends BaseAnnotator {
         return this.managers;
     }
 
-    getReference(): HTMLElement | null | undefined {
+    getReference(): HTMLVideoElement | null | undefined {
         return this.annotatedEl?.querySelector('video');
     }
 
@@ -119,15 +117,11 @@ export default class MediaAnnotator extends BaseAnnotator {
         let annotation = null;
         const storedAnnotation = localStorage.getItem(annotationId);
 
-        
-
         if (storedAnnotation) {
             try {
                 annotation = JSON.parse(storedAnnotation);
                 this.store.dispatch(addLocalAnnotationAction(annotation));
                 const time = annotation.target.location.value;
-                window.video.currentTime = time;
-                window.video.pause();
             } catch (e) {
                 // If parsing fails, ignore and fallback to store
                 annotation = null;
@@ -135,25 +129,16 @@ export default class MediaAnnotator extends BaseAnnotator {
 
         }
     //    const annotation = getAnnotation(this.store.getState(), annotationId);
-        const annotationLocation = annotation?.target.location.value ?? 1;
-        const referenceEl = this.getReference();
-        const rotation = getRotation(this.store.getState()) || 0;
-
-        if (!annotation || !annotationLocation || !referenceEl || !this.annotatedEl) {
+        const annotationLocation = annotation?.target.location.value ?? 0
+        const video = this.getReference();
+        if (!annotation || !annotationLocation || !video || !this.annotatedEl) {
             return;
         }
 
-        let offsets = null;
-        if (isRegion(annotation)) {
-            offsets = centerRegion(annotation.target.shape);
-        } else if (isDrawing(annotation)) {
-            offsets = centerDrawing(annotation.target.path_groups);
-        }
-
-        if (offsets) {
-            scrollToLocation(this.annotatedEl, referenceEl, {
-                offsets: getRotatedPosition(offsets, rotation),
-            });
+      
+        if (video) {
+            video.currentTime = annotationLocation;
+            video.pause();
         }
     }
 }
