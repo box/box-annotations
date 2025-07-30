@@ -31,7 +31,9 @@ export default class BaseManager implements Manager {
 
     root: ReactDOM.Root | null = null;
 
-    targetType: string;
+    targetType: 'page' | 'frame';
+
+    referenceEl: HTMLElement;
 
     constructor({ location = 1, referenceEl, resinTags = {}, targetType = 'page' }: Options) {
         this.location = location;
@@ -40,6 +42,7 @@ export default class BaseManager implements Manager {
             feature: 'annotations',
         });
 
+        this.referenceEl = referenceEl;
         this.targetType = targetType;
         this.root = ReactDOM.createRoot(this.reactEl);
 

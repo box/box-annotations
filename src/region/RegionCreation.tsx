@@ -14,6 +14,8 @@ type Props = {
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
+    targetType: 'page' | 'frame';
+    referenceEl: HTMLElement;
 };
 
 type State = {
@@ -45,8 +47,10 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     };
 
     handleStop = (shape: Rect): void => {
-        const { location, setStaged, setStatus } = this.props;
-        setStaged({ location, shape });
+        const { location, setStaged, setStatus, targetType, referenceEl } = this.props;
+        const annotationLocation = targetType !== 'frame' ? location : (referenceEl as HTMLVideoElement)?.currentTime;
+        console.log('RegionCreation handleStop', annotationLocation, shape);
+        setStaged({ location: annotationLocation, shape });
         setStatus(CreatorStatus.staged);
     };
 

@@ -14,7 +14,7 @@ export default class PopupManager extends BaseManager {
         if (!this.root) {
             this.root = ReactDOM.createRoot(this.reactEl);
         }
-
-        this.root.render(<PopupContainer location={this.location} {...props} targetType={this.targetType} />);
+        console.log('PopupManager render', this.location, this.referenceEl);
+        this.root.render(<PopupContainer location={this.location} referenceEl={this.referenceEl} {...props} targetType={this.targetType} />);
     }
 }

@@ -8,10 +8,11 @@ export type CreateArg = {
     location: number;
     message: string;
     pathGroups: Array<PathGroup>;
+    targetType: 'page' | 'frame';
 };
 
 export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
-    const { location, message, pathGroups } = arg;
+    const { location, message, pathGroups, targetType } = arg;
     const state = getState();
     const newAnnotation = {
         description: {
@@ -23,7 +24,7 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
         target: {
             location: {
-                type: 'page' as const,
+                type: targetType,
                 value: location,
             },
             path_groups: pathGroups,

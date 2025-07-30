@@ -4,9 +4,10 @@ import PopupManager from '../popup/PopupManager';
 import { DrawingManager } from '../drawing';
 import { RegionCreationManager, RegionManager } from '../region';
 import { CreatorStatus, getCreatorStatus } from '../store/creator';
-import { addLocalAnnotationAction, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
+import { addLocalAnnotationAction, getAnnotation, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
 import { Manager } from '../common/BaseManager';
 import './MediaAnnotator.scss';
+import { MEDIA_LOCATION_INDEX } from '../constants';
 
 export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
 
@@ -39,10 +40,18 @@ export default class MediaAnnotator extends BaseAnnotator {
         return this.containerEl?.querySelector('.bp-media');
     }
 
-    getManagers(parentEl: HTMLElement, referenceEl: HTMLElement): Set<Manager> {
+
+    getTimeStamp(): number {
+        const referenceEl = this.getReference();
+        return referenceEl?.currentTime ?? 0;
+    }
+
+
+    getManagers(parentEl: HTMLElement, referenceEl: HTMLVideoElement): Set<Manager> {
         const fileId = getFileId(this.store.getState());
         const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
         const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
+        const timeStamp = this.getTimeStamp();
 
         this.managers.forEach(manager => {
             if (!manager.exists(parentEl)) {
@@ -52,10 +61,10 @@ export default class MediaAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
-            this.managers.add(new PopupManager({ referenceEl, resinTags, targetType : 'frame'}));
-            this.managers.add(new DrawingManager({ referenceEl, resinTags }));
-            this.managers.add(new RegionManager({ referenceEl, resinTags }));
-            this.managers.add(new RegionCreationManager({ referenceEl, resinTags }));
+            this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX,   referenceEl, resinTags, targetType : 'frame'}));
+            this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : 'frame'}));
+            this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : 'frame'}));
+            this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : 'frame'}));
         }
 
         return this.managers;
@@ -110,25 +119,7 @@ export default class MediaAnnotator extends BaseAnnotator {
             return;
         }
 
-
-
-
-        // Try to get the annotation from local storage using the annotationId as the key
-        let annotation = null;
-        const storedAnnotation = localStorage.getItem(annotationId);
-
-        if (storedAnnotation) {
-            try {
-                annotation = JSON.parse(storedAnnotation);
-                this.store.dispatch(addLocalAnnotationAction(annotation));
-                const time = annotation.target.location.value;
-            } catch (e) {
-                // If parsing fails, ignore and fallback to store
-                annotation = null;
-            }
-
-        }
-    //    const annotation = getAnnotation(this.store.getState(), annotationId);
+        const annotation = getAnnotation(this.store.getState(), annotationId);
         const annotationLocation = annotation?.target.location.value ?? 0
         const video = this.getReference();
         if (!annotation || !annotationLocation || !video || !this.annotatedEl) {

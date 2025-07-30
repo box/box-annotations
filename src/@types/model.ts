@@ -41,6 +41,13 @@ export interface Page {
     value: number;
 }
 
+export interface Frame {
+    type: 'frame';
+    value: number;
+}
+
+export type Location = Page | Frame;
+
 export interface Path {
     clientId?: string;
     points: Array<Position>;
@@ -93,7 +100,7 @@ export interface Stroke {
 export type Target = TargetDrawing | TargetHighlight | TargetPoint | TargetRegion;
 
 export interface TargetDrawing {
-    location: Page;
+    location: Location;
     path_groups: Array<PathGroup>;
     type: 'drawing';
 }

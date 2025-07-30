@@ -29,6 +29,8 @@ export type Props = {
     setupDrawing: (location: number) => void;
     stashedPathGroups: Array<PathGroup>;
     undoDrawingPathGroup: () => void;
+    targetType: 'page' | 'frame';
+    referenceEl: HTMLElement;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
@@ -48,8 +50,10 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setStaged,
         setStatus,
         setupDrawing,
-        stashedPathGroups,
+        stashedPathGroups, 
         undoDrawingPathGroup,
+        targetType,
+        referenceEl,
     } = props;
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
@@ -59,7 +63,6 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const popupDrawingToolbarRef = React.useRef<PopupBaseRef>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
-
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
     };
@@ -73,7 +76,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         redoDrawingPathGroup();
     };
     const handleReply = (): void => {
-        setStaged({ location, pathGroups: drawnPathGroups });
+        const annotationLocation = targetType !== 'frame' ? location :(referenceEl as HTMLVideoElement).currentTime;
+        setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
     const handleStart = (): void => {

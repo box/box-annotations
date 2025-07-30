@@ -20,7 +20,7 @@ export type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
-    location: number;
+    location: number | null;
     message: string;
     mode: Mode;
     referenceId: string | null;
@@ -29,6 +29,7 @@ export type Props = {
     staged?: CreatorItem | null;
     status: CreatorStatus;
     targetType: 'frame' | 'page';
+    referenceEl: HTMLElement;
 };
 
 const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {
@@ -51,6 +52,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         staged,
         status,
         targetType,
+        referenceEl,
     } = props;
 
     const [reference, setReference] = React.useState<PopupReference | null>(null);
@@ -71,7 +73,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         if (!staged) {
             return;
         }
-
+        console.log('PopupLayer handleSubmit', staged, message, targetType, referenceEl);
         if (isCreatorStagedHighlight(staged)) {
             createHighlight({ ...staged, message, targetType });
         } else if (isCreatorStagedRegion(staged)) {
@@ -88,7 +90,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     if (isFailed) {
         return null;
     }
-
+    console.log('PopupLayer', targetType, referenceEl,isPending);
     return (
         <>
             {canCreate && canReply && reference && staged && (
