@@ -13,7 +13,6 @@ jest.mock('react-dom/client', () => ({
 describe('DeselectManager', () => {
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
-        location: 1,
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });

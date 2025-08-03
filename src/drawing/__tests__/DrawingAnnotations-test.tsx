@@ -31,8 +31,7 @@ describe('DrawingAnnotations', () => {
         setupDrawing: jest.fn(),
         stashedPathGroups: [],
         undoDrawingPathGroup: jest.fn(),
-        targetType: PAGE,
-        referenceEl: undefined
+        targetType: PAGE
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
     const {

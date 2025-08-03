@@ -8,7 +8,6 @@ export const handleSetStatusAction = (prevState: AppState, nextState: AppState):
     const prevStatus = getCreatorStatus(prevState);
     const nextStatus = getCreatorStatus(nextState);
 
-    console.log('handleSetStatusAction', prevStatus, nextStatus);
     if (prevStatus === nextStatus) {
         return;
     }

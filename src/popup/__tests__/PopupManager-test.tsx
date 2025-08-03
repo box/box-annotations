@@ -15,8 +15,6 @@ describe('PopupManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
-        // Ensure all required properties for Options are provided
-        location: 1,
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });

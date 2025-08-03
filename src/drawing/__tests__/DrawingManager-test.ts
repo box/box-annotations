@@ -15,7 +15,6 @@ describe('DrawingManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
-        location: 1, 
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });

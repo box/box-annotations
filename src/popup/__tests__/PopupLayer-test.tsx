@@ -45,7 +45,6 @@ describe('PopupLayer', () => {
         staged: getStagedHighlight(),
         status: CreatorStatus.staged,
         targetType: PAGE,
-        referenceEl: document.querySelector(`div[data-ba-reference-id="${referenceId}"]`) as HTMLElement
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);
     

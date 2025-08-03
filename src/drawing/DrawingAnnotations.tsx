@@ -51,7 +51,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setStaged,
         setStatus,
         setupDrawing,
-        stashedPathGroups, 
+        stashedPathGroups,
         undoDrawingPathGroup,
         targetType,
         referenceEl,
@@ -64,6 +64,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const popupDrawingToolbarRef = React.useRef<PopupBaseRef>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
+
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
     };

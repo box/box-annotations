@@ -8,7 +8,7 @@ import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
 export type CreateArg = {
     location: number;
     message: string;
-    pathGroups: PathGroup[];
+    pathGroups: Array<PathGroup>;
     targetType: typeof PAGE | typeof FRAME;
 };
 
@@ -33,7 +33,6 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
     };
 
-    console.log('newAnnotation', newAnnotation);
 
     return dispatch(createAnnotationAction(newAnnotation));
 };

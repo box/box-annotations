@@ -20,13 +20,11 @@ describe('region/actions', () => {
                 y: 10.75,
             } as Rect,
             targetType: PAGE,
-            referenceEl: document.createElement('div'),
         };
         const dispatch = jest.fn();
         const getState = jest.fn();
 
         test('should format its argument and dispatch', async () => {
-
             await createRegionAction(arg)(dispatch, getState);
 
             expect(dispatch).toHaveBeenCalled();

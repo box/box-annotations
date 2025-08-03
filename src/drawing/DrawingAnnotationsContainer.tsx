@@ -15,7 +15,7 @@ import {
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
-    getAnnotations,
+    getAnnotationsForLocation,
     getColor,
     getCreatorStatus,
     Mode,
@@ -42,7 +42,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 
     return {
         activeAnnotationId: getActiveAnnotationId(state),
-        annotations: getAnnotations(state).filter(isDrawing),
+        annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
         color: getColor(state),
         canShowPopupToolbar: creatorStatus === CreatorStatus.started,
         drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),

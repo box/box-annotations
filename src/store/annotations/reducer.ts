@@ -24,9 +24,8 @@ const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder 
         })
         .addCase(removeAnnotationAction, (state, { payload: id }) => state.filter(annotationId => annotationId !== id))
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
-            payload.entries.forEach(({ id }) => state.indexOf(id) === -1 && state.push(id))
-        })
-       
+            payload.entries.forEach(({ id }) => state.indexOf(id) === -1 && state.push(id));
+        }),
 );
 
 const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
@@ -41,7 +40,7 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
             payload.entries.forEach(annotation => {
                 state[annotation.id] = isDrawing(annotation) ? formatDrawing(annotation) : annotation;
             });
-        })
+        }),
 );
 
 const setAnnotationsIsInitialized = createReducer(false, builder => {

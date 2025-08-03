@@ -74,7 +74,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         if (!staged) {
             return;
         }
-        console.log('PopupLayer handleSubmit', staged, message, targetType, referenceEl);
+
         if (isCreatorStagedHighlight(staged)) {
             createHighlight({ ...staged, message, targetType });
         } else if (isCreatorStagedRegion(staged)) {

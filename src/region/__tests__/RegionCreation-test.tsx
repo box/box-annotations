@@ -21,7 +21,6 @@ describe('RegionCreation', () => {
         setStatus: jest.fn(),
         staged: null,
         targetType: PAGE,
-        referenceEl: document.createElement('div'),
     };
     const getRect = (): Rect => ({
         type: 'rect',

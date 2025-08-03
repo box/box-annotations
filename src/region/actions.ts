@@ -4,8 +4,6 @@ import { getFileVersionId } from '../store/options';
 import { Rect } from '../@types';
 import { FRAME, PAGE } from '../constants';
 
-export type PartialRect = Partial<DOMRect>;
-
 export type CreateArg = {
     location: number;
     message: string;
@@ -32,8 +30,6 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
             shape,
             type: 'region' as const,
         },
-        targetType,
-        referenceEl: document.createElement('div'),
     };
 
     return dispatch(createAnnotationAction(newAnnotation));

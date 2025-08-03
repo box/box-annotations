@@ -41,8 +41,6 @@ export const handleSetStagedAction = (prevState: AppState, nextState: AppState):
     const status = getStatus(prevStaged, nextStaged);
     const type = getType(prevStaged) || getType(nextStaged);
 
-    console.log('handleSetStagedAction', prevStaged, nextStaged, status, type);
-
     if (!status || !type) {
         return;
     }
