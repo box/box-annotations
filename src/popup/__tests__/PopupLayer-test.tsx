@@ -5,6 +5,7 @@ import PopupReply from '../../components/Popups/PopupReply';
 import { pathGroups } from '../../drawing/__mocks__/drawingData';
 import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
 import { Rect } from '../../@types';
+import { TARGET_TYPE_PAGE } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 
@@ -28,6 +29,8 @@ describe('PopupLayer', () => {
         location: 1,
         shape: getRect(),
     });
+
+    const referenceId = '123';
     const getDefaults = (): Props => ({
         createDrawing: jest.fn(),
         createHighlight: jest.fn(),
@@ -41,9 +44,11 @@ describe('PopupLayer', () => {
         setMessage: jest.fn(),
         staged: getStagedHighlight(),
         status: CreatorStatus.staged,
+        targetType: TARGET_TYPE_PAGE,
+        referenceEl: document.querySelector(`div[data-ba-reference-id="${referenceId}"]`) as HTMLElement
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);
-    const referenceId = '123';
+    
 
     beforeEach(() => {
         document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
