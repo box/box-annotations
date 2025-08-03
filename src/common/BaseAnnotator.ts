@@ -254,7 +254,7 @@ export default class BaseAnnotator extends EventEmitter {
             this.deselectManager.destroy();
         }
 
-        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl, location: 1});
+        this.deselectManager = new DeselectManager({ referenceEl: this.annotatedEl});
         this.deselectManager.render({ store: this.store });
     }
 }
