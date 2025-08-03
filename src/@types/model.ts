@@ -114,12 +114,12 @@ export interface TargetHighlight {
 }
 
 export interface TargetPoint extends Position {
-    location: Page;
+    location: Location;
     type: 'point';
 }
 
 export interface TargetRegion {
-    location: Page;
+    location: Location;
     shape: Rect;
     type: 'region';
 }
