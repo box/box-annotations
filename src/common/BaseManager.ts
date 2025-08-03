@@ -34,7 +34,7 @@ export default class BaseManager implements Manager {
 
     targetType: typeof TARGET_TYPE_PAGE | typeof TARGET_TYPE_FRAME;
 
-    referenceEl: HTMLElement;
+    referenceEl: HTMLElement|undefined;
 
     constructor({ location = 1, referenceEl, resinTags = {}, targetType = TARGET_TYPE_PAGE }: Options) {
         this.location = location;
