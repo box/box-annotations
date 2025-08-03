@@ -19,7 +19,9 @@ describe('region/actions', () => {
                 x: 10.75,
                 y: 10.75,
             } as Rect,
-            targetType: PAGE,
+            targetType: 'page',
+            
+
         };
         const dispatch = jest.fn();
         const getState = jest.fn();
