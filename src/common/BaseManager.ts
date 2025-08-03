@@ -8,7 +8,7 @@ export type ResinTags = Record<string, unknown>;
 
 export type Options = {
     location?: number;
-    referenceEl?: HTMLElement;
+    referenceEl: HTMLElement;
     resinTags?: Record<string, unknown>;
     targetType?: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
 };
@@ -34,7 +34,7 @@ export default class BaseManager implements Manager {
 
     targetType: typeof TARGET_TYPE_PAGE | typeof TARGET_TYPE_FRAME;
 
-    referenceEl: HTMLElement|undefined;
+    referenceEl: HTMLElement;
 
     constructor({ location = 1, referenceEl, resinTags = {}, targetType = TARGET_TYPE_PAGE }: Options) {
         this.location = location;
