@@ -1,7 +1,7 @@
 import { Rect } from '../../@types';
 import { createAnnotationAction } from '../../store/annotations';
 import { createRegionAction } from '../actions';
-import { PAGE } from '../../constants';
+import { PAGE } from '../../constants'
 
 jest.mock('../../store/annotations');
 jest.mock('../../store/options', () => ({
@@ -39,7 +39,7 @@ describe('region/actions', () => {
                 },
                 target: {
                     location: {
-                        type: 'page',
+                        type: PAGE,
                         value: 5,
                     },
                     shape: arg.shape,
