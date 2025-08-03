@@ -2,12 +2,15 @@ import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { Rect } from '../@types';
+import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
+
+export type PartialRect = Partial<DOMRect>;
 
 export type CreateArg = {
     location: number;
     message: string;
     shape: Rect;
-    targetType: 'frame' | 'page';
+    targetType: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
 };
 
 export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {

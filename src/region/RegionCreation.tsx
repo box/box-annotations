@@ -4,6 +4,7 @@ import RegionRect, { RegionRectRef } from './RegionRect';
 import { Rect } from '../@types';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionCreation.scss';
+import { TARGET_TYPE_FRAME } from '../constants';
 
 type Props = {
     isCreating: boolean;
@@ -48,7 +49,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus, targetType, referenceEl } = this.props;
-        const annotationLocation = targetType !== 'frame' ? location : (referenceEl as HTMLVideoElement)?.currentTime;
+        const annotationLocation = targetType !== TARGET_TYPE_FRAME ? location : (referenceEl as HTMLVideoElement)?.currentTime;
         console.log('RegionCreation handleStop', annotationLocation, shape);
         setStaged({ location: annotationLocation, shape });
         setStatus(CreatorStatus.staged);

@@ -14,6 +14,7 @@ import {
 } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
 import './PopupLayer.scss';
+import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
 
 export type Props = {
     createDrawing?: (arg: DrawingCreateArg) => void;
@@ -28,7 +29,7 @@ export type Props = {
     setMessage: (message: string) => void;
     staged?: CreatorItem | null;
     status: CreatorStatus;
-    targetType: 'frame' | 'page';
+    targetType: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
     referenceEl: HTMLElement;
 };
 

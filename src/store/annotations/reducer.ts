@@ -2,7 +2,6 @@ import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import { formatDrawing, isDrawing } from '../../drawing/drawingUtil';
 import { AnnotationsState } from './types';
 import {
-    addLocalAnnotationAction,
     createAnnotationAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
@@ -43,12 +42,6 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
                 state[annotation.id] = isDrawing(annotation) ? formatDrawing(annotation) : annotation;
             });
         })
-        .addCase(addLocalAnnotationAction, (state, { payload }) => {
-            console.log('addLocalAnnotationAction', payload);
-            if (payload && payload.target && payload.target.type) {
-              state[payload.id] = isDrawing(payload) ? formatDrawing(payload) : payload;
-            }
-        }),
 );
 
 const setAnnotationsIsInitialized = createReducer(false, builder => {

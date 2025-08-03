@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { Permissions } from './api';
+import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
 
 // New Data Model Types
 export interface Annotation {
@@ -37,12 +38,12 @@ export type Dimensions = {
 };
 
 export interface Page {
-    type: 'page';
+    type: typeof TARGET_TYPE_PAGE;
     value: number;
 }
 
 export interface Frame {
-    type: 'frame';
+    type: typeof TARGET_TYPE_FRAME;
     value: number;
 }
 
