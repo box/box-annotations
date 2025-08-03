@@ -36,15 +36,15 @@ describe('MediaAnnotator', () => {
         token: '1234567890',
     };
     const getAnnotator = (options = {}): MediaAnnotator => new MediaAnnotator({ ...defaults, ...options });
-    const getImage = (): HTMLElement => {
-        const image = container.querySelector('video') as HTMLElement;
+    const getVideo = (): HTMLVideoElement => {
+        const video = container.querySelector('video') as HTMLVideoElement;
 
-        Object.defineProperty(image, 'offsetHeight', { configurable: true, value: 100 });
-        Object.defineProperty(image, 'offsetLeft', { configurable: true, value: 50 });
-        Object.defineProperty(image, 'offsetTop', { configurable: true, value: 50 });
-        Object.defineProperty(image, 'offsetWidth', { configurable: true, value: 100 });
+        Object.defineProperty(video, 'offsetHeight', { configurable: true, value: 100 });
+        Object.defineProperty(video, 'offsetLeft', { configurable: true, value: 50 });
+        Object.defineProperty(video, 'offsetTop', { configurable: true, value: 50 });
+        Object.defineProperty(video, 'offsetWidth', { configurable: true, value: 100 });
 
-        return image;
+        return video;
     };
     const getParent = (): HTMLElement => container.querySelector('.bp-media') as HTMLElement;
     const mockManager = {
@@ -94,7 +94,7 @@ describe('MediaAnnotator', () => {
 
     describe('getManagers()', () => {
         test('should create new managers if they are not present in the annotated element', () => {
-            const managers = annotator.getManagers(getParent(), getImage());
+            const managers = annotator.getManagers(getParent(), getVideo());
             const managerIterator = managers.values();
 
             expect(managerIterator.next().value).toBeInstanceOf(PopupManager);
@@ -107,7 +107,7 @@ describe('MediaAnnotator', () => {
             mockManager.exists.mockReturnValue(false);
             annotator.managers = new Set([mockManager]);
 
-            const managers = annotator.getManagers(getParent(), getImage());
+            const managers = annotator.getManagers(getParent(), getVideo());
 
             expect(mockManager.exists).toHaveBeenCalled();
             expect(mockManager.destroy).toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('MediaAnnotator', () => {
             mockManager.exists.mockReturnValue(true);
             annotator.managers = new Set([mockManager]);
 
-            const managers = annotator.getManagers(getParent(), getImage());
+            const managers = annotator.getManagers(getParent(), getVideo());
 
             expect(mockManager.exists).toHaveBeenCalled();
             expect(mockManager.destroy).not.toHaveBeenCalled();
@@ -140,16 +140,16 @@ describe('MediaAnnotator', () => {
 
     describe('handleStore', () => {
         test('should update the reference element with the correct class', () => {
-            jest.spyOn(annotator, 'getReference').mockImplementation(getImage);
+            jest.spyOn(annotator, 'getReference').mockImplementation(getVideo);
 
             annotator.store.dispatch(setStatusAction(CreatorStatus.init));
-            expect(getImage().classList).not.toContain(CSS_IS_DRAWING_CLASS);
+            expect(getVideo().classList).not.toContain(CSS_IS_DRAWING_CLASS);
 
             annotator.store.dispatch(setStatusAction(CreatorStatus.started));
-            expect(getImage().classList).toContain(CSS_IS_DRAWING_CLASS);
+            expect(getVideo().classList).toContain(CSS_IS_DRAWING_CLASS);
 
             annotator.store.dispatch(setStatusAction(CreatorStatus.pending));
-            expect(getImage().classList).not.toContain(CSS_IS_DRAWING_CLASS);
+            expect(getVideo().classList).not.toContain(CSS_IS_DRAWING_CLASS);
         });
     });
 
@@ -178,7 +178,7 @@ describe('MediaAnnotator', () => {
     describe('render()', () => {
         beforeEach(() => {
             jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
-            jest.spyOn(annotator, 'getReference').mockImplementation(getImage);
+            jest.spyOn(annotator, 'getReference').mockImplementation(getVideo);
         });
 
         test('should initialize a manager for a new page', () => {
@@ -245,12 +245,12 @@ describe('MediaAnnotator', () => {
 
         test('should call scrollToLocation for region annotations', () => {
             annotator.scrollToAnnotation('anno_1');
-            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getImage(), { offsets: { x: 15, y: 15 } });
+            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getVideo(), { offsets: { x: 15, y: 15 } });
         });
 
         test('should call scrollToLocation for drawing anntotations', () => {
             annotator.scrollToAnnotation('drawing_anno_1');
-            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getImage(), { offsets: { x: 16, y: 16 } });
+            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getVideo(), { offsets: { x: 16, y: 16 } });
         });
 
         test('should do nothing if the annotation id is undefined or not available in the store', () => {

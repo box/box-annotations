@@ -12,7 +12,7 @@ import { MEDIA_LOCATION_INDEX, TARGET_TYPE_FRAME } from '../constants';
 export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
 
 export default class MediaAnnotator extends BaseAnnotator {
-    annotatedEl?: HTMLVideoElement;
+    annotatedEl?: HTMLElement;
 
     managers: Set<Manager> = new Set();
 

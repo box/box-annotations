@@ -14,7 +14,7 @@ describe('RegionCreationContainer', () => {
         location: 1,
         store: createStore(),
     };
-    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionCreationContainer {...defaults} {...props} />);
+    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionCreationContainer targetType={'page'} referenceEl={undefined} {...defaults} {...props} />);
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {
