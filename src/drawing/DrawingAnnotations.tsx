@@ -10,7 +10,7 @@ import PopupDrawingToolbar, { PopupBaseRef } from '../components/Popups/PopupDra
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
-import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE  } from '../constants';
+import { FRAME, PAGE  } from '../constants';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -30,7 +30,7 @@ export type Props = {
     setupDrawing: (location: number) => void;
     stashedPathGroups: Array<PathGroup>;
     undoDrawingPathGroup: () => void;
-    targetType: typeof TARGET_TYPE_PAGE | typeof TARGET_TYPE_FRAME;
+    targetType: typeof PAGE | typeof FRAME;
     referenceEl?: HTMLElement;
 };
 
@@ -77,7 +77,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         redoDrawingPathGroup();
     };
     const handleReply = (): void => {
-        const annotationLocation = targetType !== TARGET_TYPE_FRAME ? location :(referenceEl as HTMLVideoElement).currentTime;
+        const annotationLocation = targetType !== FRAME ? location :(referenceEl as HTMLVideoElement).currentTime;
         setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
@@ -103,7 +103,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     // change for video
 
 
-    const annotationsToShow = targetType === TARGET_TYPE_FRAME ? annotations.filter(annotation => annotation.id === activeAnnotationId) : annotations;
+    const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.id === activeAnnotationId) : annotations;
     console.log('DrawingAnnotations', annotationsToShow);
     return (
         <>

@@ -1,7 +1,7 @@
 import { Rect } from '../../@types';
 import { createAnnotationAction } from '../../store/annotations';
 import { createRegionAction } from '../actions';
-import { TARGET_TYPE_PAGE } from '../../constants';
+import { PAGE } from '../../constants';
 
 jest.mock('../../store/annotations');
 jest.mock('../../store/options', () => ({
@@ -19,7 +19,8 @@ describe('region/actions', () => {
                 x: 10.75,
                 y: 10.75,
             } as Rect,
-            targetType: TARGET_TYPE_PAGE,
+            targetType: PAGE,
+            referenceEl: document.createElement('div'),
         };
         const dispatch = jest.fn();
         const getState = jest.fn();

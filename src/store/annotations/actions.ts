@@ -18,8 +18,6 @@ export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation
             client.destroy();
         });
 
-        console.log('createAnnotationAction', newAnnotation);
-
         return new Promise<Annotation>((resolve, reject) => {
             client.createAnnotation(fileId, fileVersionId, newAnnotation, permissions, resolve, reject);
         });

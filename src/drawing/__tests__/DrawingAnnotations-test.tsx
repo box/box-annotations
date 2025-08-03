@@ -8,7 +8,7 @@ import DrawingSVGGroup from '../DrawingSVGGroup';
 import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
 import { annotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
-import { TARGET_TYPE_PAGE } from '../../constants';
+import { PAGE } from '../../constants';
 
 jest.mock('../DrawingList');
 
@@ -31,7 +31,7 @@ describe('DrawingAnnotations', () => {
         setupDrawing: jest.fn(),
         stashedPathGroups: [],
         undoDrawingPathGroup: jest.fn(),
-        targetType: TARGET_TYPE_PAGE,
+        targetType: PAGE,
         referenceEl: undefined
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);

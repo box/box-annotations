@@ -2,7 +2,7 @@ import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { Rect } from '../@types';
-import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
+import { FRAME, PAGE } from '../constants';
 
 export type PartialRect = Partial<DOMRect>;
 
@@ -10,7 +10,7 @@ export type CreateArg = {
     location: number;
     message: string;
     shape: Rect;
-    targetType: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
+    targetType: typeof FRAME | typeof PAGE;
 };
 
 export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
@@ -33,6 +33,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
             type: 'region' as const,
         },
         targetType,
+        referenceEl: document.createElement('div'),
     };
 
     return dispatch(createAnnotationAction(newAnnotation));

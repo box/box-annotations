@@ -5,7 +5,7 @@ import PopupReply from '../../components/Popups/PopupReply';
 import { pathGroups } from '../../drawing/__mocks__/drawingData';
 import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
 import { Rect } from '../../@types';
-import { TARGET_TYPE_PAGE } from '../../constants';
+import { PAGE } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 
@@ -44,7 +44,7 @@ describe('PopupLayer', () => {
         setMessage: jest.fn(),
         staged: getStagedHighlight(),
         status: CreatorStatus.staged,
-        targetType: TARGET_TYPE_PAGE,
+        targetType: PAGE,
         referenceEl: document.querySelector(`div[data-ba-reference-id="${referenceId}"]`) as HTMLElement
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);

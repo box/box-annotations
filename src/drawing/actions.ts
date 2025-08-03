@@ -2,14 +2,14 @@ import { AppThunkDispatch, AppState, getCreatorStatus, CreatorStatus } from '../
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { PathGroup } from '../@types';
-import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
+import { FRAME, PAGE } from '../constants';
 import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
 
 export type CreateArg = {
     location: number;
     message: string;
     pathGroups: PathGroup[];
-    targetType: typeof TARGET_TYPE_PAGE | typeof TARGET_TYPE_FRAME;
+    targetType: typeof PAGE | typeof FRAME;
 };
 
 export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
