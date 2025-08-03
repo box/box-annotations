@@ -32,6 +32,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
             shape,
             type: 'region' as const,
         },
+        targetType,
     };
 
     return dispatch(createAnnotationAction(newAnnotation));

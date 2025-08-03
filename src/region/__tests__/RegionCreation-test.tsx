@@ -5,6 +5,7 @@ import RegionCreator from '../RegionCreator';
 import RegionRect from '../RegionRect';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
+import { TARGET_TYPE_PAGE } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionCreator');
@@ -19,6 +20,7 @@ describe('RegionCreation', () => {
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
+        targetType: TARGET_TYPE_PAGE,
     };
     const getRect = (): Rect => ({
         type: 'rect',
