@@ -105,7 +105,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
 
     const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.id === activeAnnotationId) : annotations;
-    console.log('DrawingAnnotations', annotationsToShow);
+    
     return (
         <>
             <DrawingList

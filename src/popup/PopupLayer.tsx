@@ -53,7 +53,6 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         staged,
         status,
         targetType,
-        referenceEl,
     } = props;
 
     const [reference, setReference] = React.useState<PopupReference | null>(null);
@@ -91,7 +90,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     if (isFailed) {
         return null;
     }
-    console.log('PopupLayer', targetType, referenceEl,isPending);
+
     return (
         <>
             {canCreate && canReply && reference && staged && (

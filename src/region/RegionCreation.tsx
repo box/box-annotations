@@ -50,7 +50,6 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus, targetType, referenceEl } = this.props;
         const annotationLocation = targetType !== FRAME ? location : (referenceEl as HTMLVideoElement)?.currentTime;
-        console.log('RegionCreation handleStop', annotationLocation, shape);
         setStaged({ location: annotationLocation, shape });
         setStatus(CreatorStatus.staged);
     };
