@@ -15,7 +15,6 @@ import {
     CreatorStatus,
     getActiveAnnotationId,
     getAnnotationMode,
-    getAnnotationsForLocation,
     getAnnotations,
     getColor,
     getCreatorStatus,

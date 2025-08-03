@@ -7,7 +7,7 @@ import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
 export type ResinTags = Record<string, unknown>;
 
 export type Options = {
-    location: number;
+    location?: number;
     referenceEl?: HTMLElement;
     resinTags?: Record<string, unknown>;
     targetType?: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
@@ -41,6 +41,7 @@ export default class BaseManager implements Manager {
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
+
         });
 
         this.referenceEl = referenceEl;
