@@ -18,6 +18,7 @@ class TestBaseManager extends BaseManager {
 describe('BaseManager', () => {
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
+        location: 1,
         referenceEl: rootEl.querySelector('.reference') as HTMLElement,
         ...options,
     });

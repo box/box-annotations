@@ -30,7 +30,7 @@ export type Props = {
     staged?: CreatorItem | null;
     status: CreatorStatus;
     targetType: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
-    referenceEl: HTMLElement;
+    referenceEl?: HTMLElement;
 };
 
 const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {

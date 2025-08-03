@@ -8,7 +8,7 @@ export type ResinTags = Record<string, unknown>;
 
 export type Options = {
     location: number;
-    referenceEl: HTMLElement;
+    referenceEl?: HTMLElement;
     resinTags?: Record<string, unknown>;
     targetType?: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
 };

@@ -4,7 +4,7 @@ import RegionRect, { RegionRectRef } from './RegionRect';
 import { Rect } from '../@types';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionCreation.scss';
-import { TARGET_TYPE_FRAME } from '../constants';
+import { TARGET_TYPE_FRAME, TARGET_TYPE_PAGE } from '../constants';
 
 type Props = {
     isCreating: boolean;
@@ -15,8 +15,8 @@ type Props = {
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
     staged?: CreatorItemRegion | null;
-    targetType: 'page' | 'frame';
-    referenceEl: HTMLElement;
+    targetType: typeof TARGET_TYPE_FRAME | typeof TARGET_TYPE_PAGE;
+    referenceEl?: HTMLElement;
 };
 
 type State = {

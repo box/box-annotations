@@ -31,7 +31,7 @@ export type Props = {
     stashedPathGroups: Array<PathGroup>;
     undoDrawingPathGroup: () => void;
     targetType: typeof TARGET_TYPE_PAGE | typeof TARGET_TYPE_FRAME;
-    referenceEl: HTMLElement;
+    referenceEl?: HTMLElement;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {

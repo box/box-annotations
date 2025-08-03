@@ -5,6 +5,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import DrawingAnnotations from '../DrawingAnnotations';
 import DrawingAnnotationsContainer, { Props } from '../DrawingAnnotationsContainer';
 import { createStore, CreatorStatus, Mode } from '../../store';
+import { TARGET_TYPE_PAGE } from '../../constants';
 
 jest.mock('../../common/useIsListInteractive');
 jest.mock('../../common/withProviders');
@@ -24,7 +25,7 @@ describe('DrawingAnnotationsContainer', () => {
         store: createStore(initialState),
     });
     const getWrapper = (props = {}): ReactWrapper<Props> =>
-        mount(<DrawingAnnotationsContainer {...getDefaults()} {...props} />);
+        mount(<DrawingAnnotationsContainer targetType={TARGET_TYPE_PAGE} {...getDefaults()} {...props} />);
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {
