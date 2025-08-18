@@ -1,4 +1,3 @@
-import { MEDIA_LOCATION_INDEX } from '../../constants';
 import { AppState } from '../types';
 import { SelectionItem } from './types';
 
@@ -9,9 +8,5 @@ export const getIsSelecting = (state: State): boolean => state.highlight.isSelec
 export const getSelection = (state: State): SelectionItem | null => state.highlight.selection;
 export const getSelectionForLocation = (state: State, location: number): SelectionItem | null => {
     const selection = getSelection(state);
-     if (location === MEDIA_LOCATION_INDEX) {
-        return selection ?? null;
-     }
-        return selection && selection.location === location ? selection : null;
-     
+    return selection && selection.location === location ? selection : null;
 };

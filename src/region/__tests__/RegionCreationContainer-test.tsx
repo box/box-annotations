@@ -9,10 +9,13 @@ jest.mock('../../common/withProviders');
 jest.mock('../RegionCreation');
 
 describe('RegionCreationContainer', () => {
+
+    const referenceEl = document.createElement('div');
     const defaults = {
         intl: {} as IntlShape,
         location: 1,
         store: createStore(),
+        referenceEl,
     };
     const getWrapper = (props = {}): ReactWrapper<Props> => mount(<RegionCreationContainer targetType={'page'} {...defaults} {...props} />);
 
@@ -25,10 +28,27 @@ describe('RegionCreationContainer', () => {
                 isCreating: false,
                 location: 1,
                 staged: null,
+                targetType: 'page',
+                referenceEl,
                 setReferenceId: expect.any(Function),
                 setStaged: expect.any(Function),
                 setStatus: expect.any(Function),
                 store: defaults.store,
+            });
+        });
+
+        test('should connect the underlying component and wrap it with a root provider for video annotations', () => {
+            const wrapper = getWrapper({ targetType: 'frame' as const, location: -1 ,referenceEl: { currentTime: 10 } as HTMLVideoElement});
+            expect(wrapper.exists('RootProvider')).toBe(true);
+            expect(wrapper.find(RegionCreation).props()).toMatchObject({
+                isCreating: false,
+                location: -1,
+                referenceEl: { currentTime: 10 } as HTMLVideoElement,
+                targetType: 'frame',
+                setReferenceId: expect.any(Function),
+                setStaged: expect.any(Function),
+                setStatus: expect.any(Function),
+                resetCreator: expect.any(Function),
             });
         });
 

@@ -11,6 +11,8 @@ jest.mock('react-dom/client', () => ({
     }),
 }));
 
+
+
 describe('RegionCreationManager', () => {
     const intl = createIntl({ locale: 'en' });
     const rootEl = document.createElement('div');
@@ -25,6 +27,7 @@ describe('RegionCreationManager', () => {
     beforeEach(() => {
         rootEl.classList.add('root');
         rootEl.innerHTML = '<div class="reference" />'; // referenceEl
+        jest.clearAllMocks();
     });
 
     describe('constructor', () => {
@@ -63,6 +66,16 @@ describe('RegionCreationManager', () => {
 
             wrapper.render({ intl, store: createStore() });
 
+            expect(root.render).toHaveBeenCalled();
+        });
+
+        test('should pass the correct props to the RegionCreationContainer', () => {
+            const wrapper = getWrapper({ targetType: 'frame' as const, location: -1 });
+            const root = ReactDOM.createRoot(rootEl);
+            wrapper.render({ intl, store: createStore() });
+            expect(wrapper.location).toEqual(-1);
+            expect(wrapper.targetType).toEqual('frame');
+            expect(wrapper.referenceEl).toEqual(rootEl.querySelector('.reference') as HTMLElement);
             expect(root.render).toHaveBeenCalled();
         });
     });

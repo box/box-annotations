@@ -89,8 +89,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
                         referenceEl: textLayer,
                         selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
                         store: this.store,
-                        location: pageNumber,
-                        resinTags,
                     }),
                 );
             }

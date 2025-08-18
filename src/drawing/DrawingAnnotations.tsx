@@ -77,8 +77,15 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const handleRedo = (): void => {
         redoDrawingPathGroup();
     };
+
+    const getCurrentLocation = (): number => { 
+        if (targetType === FRAME) {
+            return (referenceEl as HTMLVideoElement)?.currentTime ?? 0;
+        }
+        return location;
+    };
     const handleReply = (): void => {
-        const annotationLocation = targetType !== FRAME ? location :(referenceEl as HTMLVideoElement).currentTime;
+        const annotationLocation = getCurrentLocation();
         setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
@@ -101,10 +108,11 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
-    // change for video
-
-
-    const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.id === activeAnnotationId) : annotations;
+    // The DoumentAnnotator creates a DrawingManager for each page in a document with the location(page number) as a property. Annotations come filtered by the 
+    // location(page number) by default and passed in from the container via redux. For video annotations, there is no concept of a page and the 
+    // the MediaAnnotator only creates one DrawingManager with the location set to a default value of -1. Thus, for video annotations in order to display
+    // the correct annotations, we have to filter the annotations by the current play time of the video instead of the page number.
+    const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.target.location.value === getCurrentLocation()) : annotations;
     
     return (
         <>

@@ -6,9 +6,9 @@ import DrawingList from '../DrawingList';
 import DrawingSVG from '../DrawingSVG';
 import DrawingSVGGroup from '../DrawingSVGGroup';
 import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
-import { annotations } from '../__mocks__/drawingData';
+import { annotations, videoAnnotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
-import { PAGE } from '../../constants';
+import { FRAME, PAGE } from '../../constants';
 
 jest.mock('../DrawingList');
 
@@ -86,6 +86,25 @@ describe('DrawingAnnotations', () => {
                 wrapper.find(PopupDrawingToolbar).prop('onReply')();
 
                 expect(setStaged).toHaveBeenCalledWith({ location: 0, pathGroups });
+                expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
+            });
+
+            test('should set the location to the current time of the video if the target type is frame', () => {
+                const setStaged = jest.fn();
+                const setStatus = jest.fn();
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isCreating: true,
+                    setStaged,
+                    setStatus,
+                    targetType: FRAME,
+                    referenceEl: { currentTime: 10 } as HTMLVideoElement,
+                });
+
+                wrapper.find(PopupDrawingToolbar).prop('onReply')();
+
+                expect(setStaged).toHaveBeenCalledWith({ location: 10, pathGroups });
                 expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
@@ -171,6 +190,31 @@ describe('DrawingAnnotations', () => {
             expect(wrapper.exists(DrawingCreator)).toBe(false);
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
+
+
+        test('should render DrawingList with correct annotations for video frame', () => {
+            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl: { currentTime: 99 } as HTMLVideoElement });
+            const list = wrapper.find(DrawingList);
+            expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
+            expect(list.prop('activeId')).toBe('123');
+            expect(list.prop('annotations').length).toBe(2);
+            expect(wrapper.exists(DrawingSVG)).toBe(false);
+            expect(wrapper.exists(DrawingCreator)).toBe(false);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
+        });
+
+
+        test('should render DrawingList with no annotations if the current video time does not match any annotation frame location time', () => {
+            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl:  
+                { currentTime: 24 } as HTMLVideoElement });
+            const list = wrapper.find(DrawingList);
+            expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
+            expect(list.prop('activeId')).toBe('123');
+            expect(list.prop('annotations').length).toBe(0);
+        });
+     
+        
+     
 
         test('should render DrawingCreator if allowed', () => {
             const wrapper = getWrapper({ isCreating: true });

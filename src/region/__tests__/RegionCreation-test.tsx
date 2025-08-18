@@ -5,6 +5,7 @@ import RegionCreator from '../RegionCreator';
 import RegionRect from '../RegionRect';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
+import { FRAME } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionCreator');
@@ -78,6 +79,22 @@ describe('RegionCreation', () => {
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
+
+            test('should set the location to the current time of the video if the target type is frame', () => {
+                const videoTimeStamp = 1906
+                wrapper = getWrapper({
+                    targetType: FRAME,
+                    referenceEl: { currentTime: videoTimeStamp } as HTMLVideoElement,
+                });
+                instance = wrapper.instance() as InstanceType<typeof RegionCreation>;
+                instance.handleStop(shape);
+               
+                expect(defaults.setStaged).toHaveBeenCalledWith({
+                    location: videoTimeStamp,
+                    shape,
+                });
+                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
+            })
         });
 
         describe('handleStagedMount()', () => {

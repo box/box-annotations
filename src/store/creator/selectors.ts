@@ -13,11 +13,11 @@ export const getCreatorStagedForLocation = (state: State, location: number): Cre
     // The location is typically a page and this selector is meant to only return the staged annotation.
     // (those that have been drawn but not saved) that belong to the page specified by the location. For documents, 
     // the annotator creates new sets of managers(highlights, drawings, regions) for each page with the current 
-    // page number being the locaton e.g. page 4 of 10 and this selector prevents a staged annotation from staying on 
+    // page number being the location e.g. page 4 of 10. This selector prevents a staged annotation from staying on 
     // the screen when a user navigates to a different page. By default, the location value for managers is 1 which is  
-    // why this selector works for images. Video annotations will not work this way because they reference a timestamp and not a page
-    // and the drawing canvas is the video player which has no pages. In this case, we just need to get the staged annoation and do the 
-    // locaton check. The MEDIA_LOCATION_INDEX is a special value, set in the manager, that is used to indicate that 
+    // why this selector works for images. Video annotations will not work this way because they reference a timestamp, not a page,
+    // and the drawing canvas is the video player which has no pages. In this case, we just need to get the staged annotation and do the 
+    // locaton check for MEDIA_LOCATION_INDEX. The MEDIA_LOCATION_INDEX is a special value, set in the manager, that is used to indicate that 
     // the this is actually a staged video annotation.
     if (location === MEDIA_LOCATION_INDEX) {
         return staged;

@@ -41,7 +41,6 @@ export default class BaseManager implements Manager {
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
-
         });
 
         this.referenceEl = referenceEl;

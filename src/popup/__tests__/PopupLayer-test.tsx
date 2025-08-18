@@ -142,6 +142,7 @@ describe('PopupLayer', () => {
                 expect(createHighlight).toHaveBeenCalledWith({
                     ...getStagedHighlight(),
                     message,
+                    targetType: 'page',
                 });
                 expect(createRegion).not.toHaveBeenCalled();
             });
@@ -165,6 +166,7 @@ describe('PopupLayer', () => {
                 expect(createRegion).toHaveBeenCalledWith({
                     ...getStagedRegion(),
                     message,
+                    targetType: 'page',
                 });
             });
 
@@ -180,12 +182,14 @@ describe('PopupLayer', () => {
                     message,
                     mode: Mode.DRAWING,
                     staged: getStagedDrawing(),
+                    targetType: 'frame',
                 });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
                 expect(createDrawing).toHaveBeenCalledWith({
                     ...getStagedDrawing(),
                     message,
+                    targetType: 'frame',
                 });
                 expect(createHighlight).not.toHaveBeenCalled();
                 expect(createRegion).not.toHaveBeenCalled();

@@ -21,7 +21,7 @@ export type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
-    location: number | null;
+    location: number;
     message: string;
     mode: Mode;
     referenceId: string | null;
@@ -30,7 +30,6 @@ export type Props = {
     staged?: CreatorItem | null;
     status: CreatorStatus;
     targetType: typeof FRAME | typeof PAGE;
-    referenceEl?: HTMLElement;
 };
 
 const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {
@@ -59,7 +58,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     const canCreate = (modeStagedMap[mode]?.(staged ?? null) ?? false) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
-    const isFailed = status === CreatorStatus.rejected;
+   // const isFailed = status === CreatorStatus.rejected;
 
     const handleCancel = (): void => {
         resetCreator();
@@ -87,9 +86,9 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
-    if (isFailed) {
-        return null;
-    }
+    // if (isFailed) {
+    //     return null;
+    // }
 
     return (
         <>

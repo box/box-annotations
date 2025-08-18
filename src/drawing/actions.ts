@@ -33,7 +33,6 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
     };
 
-
     return dispatch(createAnnotationAction(newAnnotation));
 };
 
