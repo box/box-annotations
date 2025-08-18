@@ -91,9 +91,9 @@ export const annotations = [
 
 export const videoAnnotations = [
     {
-        id: 'drawing_anno_1',
+        id: 'video_drawing_anno_1',
         target: {
-            location: { type: 'frame' as const, value: 99 },
+            location: { type: 'frame' as const, value: 10 },
             path_groups: pathGroups,
             type: 'drawing' as const,
         },     
@@ -116,9 +116,9 @@ export const videoAnnotations = [
         },
     },
     {
-        id: 'drawing_anno_2',
+        id: 'video_drawing_anno_2',
         target: {
-            location: { type: 'frame' as const, value: 99 },
+            location: { type: 'frame' as const, value: 20 },
             path_groups: pathGroups,
             type: 'drawing' as const,
         },
@@ -142,9 +142,9 @@ export const videoAnnotations = [
     },
 
     {
-        id: 'drawing_anno_3',
+        id: 'video_drawing_anno_3',
         target: {
-            location: { type: 'frame' as const, value: 110 },
+            location: { type: 'frame' as const, value: 30 },
             path_groups: pathGroups,
             type: 'drawing' as const,
         },
