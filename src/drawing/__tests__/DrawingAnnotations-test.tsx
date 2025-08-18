@@ -193,11 +193,12 @@ describe('DrawingAnnotations', () => {
 
 
         test('should render DrawingList with correct annotations for video frame', () => {
-            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl: { currentTime: 99 } as HTMLVideoElement });
+            const time = videoAnnotations[0].target.location.value;
+            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl: { currentTime: time } as HTMLVideoElement });
             const list = wrapper.find(DrawingList);
             expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
             expect(list.prop('activeId')).toBe('123');
-            expect(list.prop('annotations').length).toBe(2);
+            expect(list.prop('annotations').length).toBe(1);
             expect(wrapper.exists(DrawingSVG)).toBe(false);
             expect(wrapper.exists(DrawingCreator)).toBe(false);
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
