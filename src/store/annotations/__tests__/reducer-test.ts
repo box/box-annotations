@@ -1,5 +1,5 @@
 import reducer from '../reducer';
-import state from '../__mocks__/annotationsState';
+import {annotationState as state} from '../__mocks__/annotationsState';
 import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup } from '../../../@types';
 import { APICollection } from '../../../api';
 import {

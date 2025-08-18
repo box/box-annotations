@@ -24,3 +24,4 @@ export const videoAnnotationState: AnnotationsState = {
 };
 
 
+export default { annotationState, videoAnnotationState };

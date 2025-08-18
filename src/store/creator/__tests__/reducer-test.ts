@@ -1,5 +1,5 @@
 import reducer from '../reducer';
-import state from '../__mocks__/creatorState';
+import {pageCreatorState as state} from '../__mocks__/creatorState';
 import { createAnnotationAction } from '../../annotations';
 import { CreatorStatus } from '../types';
 import { NewAnnotation } from '../../../@types';
