@@ -16,10 +16,20 @@ const RegionAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId(annotationId);
     };
 
+    let annotationsToShow = []
+    if (annotations.length>0) {
+        const {type} = annotations[0].target.location;
+        if(type === 'frame') {
+            annotationsToShow = annotations.filter(annotation => annotation.id === activeAnnotationId);
+        } else {
+            annotationsToShow = annotations;
+        }
+    }
+
     return (
         <RegionList
             activeId={activeAnnotationId}
-            annotations={annotations}
+            annotations={annotationsToShow}
             className="ba-RegionAnnotations-list"
             onSelect={handleAnnotationActive}
         />

@@ -104,7 +104,6 @@ export default class MediaAnnotator extends BaseAnnotator {
                 transform: `rotate(${rotation}deg)`,
                 width: `${referenceEl.offsetWidth}px`,
             });
-
             manager.render({
                 intl: this.intl,
                 store: this.store,
@@ -122,13 +121,13 @@ export default class MediaAnnotator extends BaseAnnotator {
         const annotation = getAnnotation(this.store.getState(), annotationId);
         const annotationLocation = annotation?.target.location.value ?? 0
         const video = this.getReference();
-        if (!annotation || !annotationLocation || !video || !this.annotatedEl) {
+        if (!annotation || !video || !this.annotatedEl) {
             return;
         }
   
         if (video) {
-            video.pause();
             video.currentTime = annotationLocation;
+            video.pause();
         }
     }
 }

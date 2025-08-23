@@ -112,8 +112,18 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     // location(page number) by default and passed in from the container via redux. For video annotations, there is no concept of a page and the 
     // the MediaAnnotator only creates one DrawingManager with the location set to a default value of -1. Thus, for video annotations in order to display
     // the correct annotations, we have to filter the annotations by the current play time of the video instead of the page number.
-    const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.target.location.value === getCurrentLocation()) : annotations;
+   // const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.target.location.value === getCurrentLocation()) : annotations;
     
+   
+    let annotationsToShow = []
+    if (targetType === FRAME ) {
+        annotationsToShow = !activeAnnotationId ? []:annotations.filter(annotation => annotation.id === activeAnnotationId);
+    } else {
+        annotationsToShow = annotations;
+    }
+
+
+    console.log('activeAnnotationId', activeAnnotationId);
     return (
         <>
             <DrawingList
