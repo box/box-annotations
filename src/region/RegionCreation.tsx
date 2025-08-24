@@ -5,6 +5,7 @@ import { Rect } from '../@types';
 import { CreatorItemRegion, CreatorStatus } from '../store/creator';
 import './RegionCreation.scss';
 import { FRAME, PAGE } from '../constants';
+import { getVideoCurrentTimeInMilliseconds } from '../utils/util';
 
 type Props = {
     isCreating: boolean;
@@ -49,10 +50,8 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
 
     handleStop = (shape: Rect): void => {
         const { location, setStaged, setStatus, targetType, referenceEl } = this.props;
-        const annotationLocation = targetType !== FRAME ? location : (referenceEl as HTMLVideoElement)?.currentTime;
-        console.log('annotationLocation', annotationLocation);
-        console.log('targetType', targetType);
-        console.log('referenceEl', referenceEl);
+        const annotationLocation = targetType !== FRAME ? location : getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
+
         setStaged({ location: annotationLocation, shape });
         setStatus(CreatorStatus.staged);
     };

@@ -11,6 +11,7 @@ import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
 import { FRAME, PAGE  } from '../constants';
+import { getVideoCurrentTimeInMilliseconds } from '../utils/util';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -80,12 +81,13 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
     const getCurrentLocation = (): number => { 
         if (targetType === FRAME) {
-            return (referenceEl as HTMLVideoElement)?.currentTime ?? 0;
+            return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
         }
         return location;
     };
     const handleReply = (): void => {
         const annotationLocation = getCurrentLocation();
+        console.log("annotationLocation", annotationLocation);
         setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };

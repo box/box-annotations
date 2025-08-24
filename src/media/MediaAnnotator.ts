@@ -125,10 +125,9 @@ export default class MediaAnnotator extends BaseAnnotator {
             return;
         }
   
-        if (video) {
-            video.currentTime = annotationLocation;
-            video.pause();
-        }
+        video.pause();
+        video.currentTime = annotationLocation / 1000;
+        
     }
 }
 
