@@ -11,7 +11,7 @@ import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
 import { FRAME, PAGE  } from '../constants';
-import { getVideoCurrentTimeInMilliseconds } from '../utils/util';
+import useVideoTiming from '../utils/useVideoTiming';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -66,6 +66,13 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
 
+    const { isVideoSeeking, getCurrentVideoLocation } = useVideoTiming({
+        targetType,
+        referenceEl: referenceEl as HTMLVideoElement,
+        activeAnnotationId,
+        annotations,
+    });
+
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
     };
@@ -79,20 +86,14 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         redoDrawingPathGroup();
     };
 
-    const getCurrentLocation = (): number => { 
-        if (targetType === FRAME) {
-            return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
-        }
-        return location;
-    };
     const handleReply = (): void => {
-        const annotationLocation = getCurrentLocation();
-        console.log("annotationLocation", annotationLocation);
+        const annotationLocation = targetType === FRAME ? getCurrentVideoLocation() : location;
         setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
     const handleStart = (): void => {
-        setupDrawing(location);
+        const currentLocation = targetType === FRAME ? getCurrentVideoLocation() : location;
+        setupDrawing(currentLocation);
         setStatus(CreatorStatus.started);
         setIsDrawing(true);
     };
@@ -110,22 +111,22 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
-    // The DoumentAnnotator creates a DrawingManager for each page in a document with the location(page number) as a property. Annotations come filtered by the 
-    // location(page number) by default and passed in from the container via redux. For video annotations, there is no concept of a page and the 
-    // the MediaAnnotator only creates one DrawingManager with the location set to a default value of -1. Thus, for video annotations in order to display
-    // the correct annotations, we have to filter the annotations by the current play time of the video instead of the page number.
-   // const annotationsToShow = targetType === FRAME ? annotations.filter(annotation => annotation.target.location.value === getCurrentLocation()) : annotations;
-    
-   
-    let annotationsToShow = []
+  
+    let annotationsToShow: AnnotationDrawing[] = [];
+    // For video annotations, we only show the active annotation and we wait for the video 
+    // to seek to the annotation location before showing it. This prevents annoations from being
+    // shown on the incorrect frame while the video is seeking.
     if (targetType === FRAME ) {
-        annotationsToShow = !activeAnnotationId ? []:annotations.filter(annotation => annotation.id === activeAnnotationId);
+        if (!isVideoSeeking && activeAnnotationId) {
+            annotationsToShow = annotations.filter(annotation => annotation.id === activeAnnotationId);
+        }
     } else {
         annotationsToShow = annotations;
     }
 
+    
 
-    console.log('activeAnnotationId', activeAnnotationId);
+
     return (
         <>
             <DrawingList

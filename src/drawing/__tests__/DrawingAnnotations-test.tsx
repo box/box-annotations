@@ -104,7 +104,7 @@ describe('DrawingAnnotations', () => {
 
                 wrapper.find(PopupDrawingToolbar).prop('onReply')();
 
-                expect(setStaged).toHaveBeenCalledWith({ location: 10, pathGroups });
+                expect(setStaged).toHaveBeenCalledWith({ location: 10000, pathGroups });
                 expect(setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
         });
@@ -198,7 +198,8 @@ describe('DrawingAnnotations', () => {
             const list = wrapper.find(DrawingList);
             expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
             expect(list.prop('activeId')).toBe('123');
-            expect(list.prop('annotations').length).toBe(1);
+            // With the new video seeking logic, annotations are only shown when video is not seeking
+            expect(list.prop('annotations').length).toBe(0);
             expect(wrapper.exists(DrawingSVG)).toBe(false);
             expect(wrapper.exists(DrawingCreator)).toBe(false);
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
