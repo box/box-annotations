@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { FRAME, PAGE } from "../constants";
 import { getVideoCurrentTimeInMilliseconds } from "./util";
 
-interface UseVideoTimingProps {
+export interface UseVideoTimingProps {
     targetType: typeof PAGE | typeof FRAME;
-    referenceEl?: HTMLVideoElement;
+    referenceEl?: HTMLElement;
     activeAnnotationId: string | null;
     annotations: Array<{ id: string; target: { location: { value: number } } }>;
 }
 
-interface UseVideoTimingReturnType {
+export interface UseVideoTimingReturnType {
     isVideoSeeking: boolean;
     targetVideoTime: number | null;
     getCurrentVideoLocation: () => number;
@@ -26,7 +26,7 @@ const useVideoTiming = ({
 
 
     const getCurrentVideoTimeStamp = (): number => { 
-         return getVideoCurrentTimeInMilliseconds(referenceEl);
+         return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
     };
 
     // Handle video seeking events
@@ -46,7 +46,7 @@ const useVideoTiming = ({
 
         const handleTimeUpdate = (): void => {
             if (isVideoSeeking && targetVideoTime !== null) {
-                const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl);
+                const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
                 const timeDiff = Math.abs(currentVideoTimePosition - targetVideoTime);
                 
                 // Consider the video has reached the target time if within 100ms
@@ -71,7 +71,7 @@ const useVideoTiming = ({
     // Set target video time when activeAnnotationId changes
     useEffect(() => {
         if (targetType === FRAME && activeAnnotationId && referenceEl) {
-            const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl);
+            const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
             
             // Find the annotation to get its target time
             const annotation = annotations.find(ann => ann.id === activeAnnotationId);
