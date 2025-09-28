@@ -41,12 +41,6 @@ export default class MediaAnnotator extends BaseAnnotator {
     }
 
 
-    getTimeStamp(): number {
-        const referenceEl = this.getReference();
-        return referenceEl?.currentTime ?? 0;
-    }
-
-
     getManagers(parentEl: HTMLElement, referenceEl: HTMLVideoElement): Set<Manager> {
         const fileId = getFileId(this.store.getState());
         const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
@@ -70,6 +64,7 @@ export default class MediaAnnotator extends BaseAnnotator {
 
   
 
+    // returns the actual video element
     getReference(): HTMLVideoElement | null | undefined {
         return this.annotatedEl?.querySelector('video');
     }
@@ -113,6 +108,10 @@ export default class MediaAnnotator extends BaseAnnotator {
         this.postRender();
     }
 
+    // This function gets called by the client. We are using the name scrollToAnnotation to match 
+    // the other annotators as the client calls this function when it wants to show an annoation on the
+    // preview. The only difference is that we are using the video element's currentTime to scroll to the 
+    // annotation instead of the scrollLeft and scrollTop of the parent element.
     scrollToAnnotation(annotationId: string | null): void {
         if (!annotationId) {
             return;
