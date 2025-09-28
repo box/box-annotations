@@ -81,7 +81,7 @@ describe('RegionCreation', () => {
             });
 
             test('should set the location to the current time of the video if the target type is frame', () => {
-                const videoTimeStamp = 1906
+                const videoTimeStamp = 19
                 wrapper = getWrapper({
                     targetType: FRAME,
                     referenceEl: { currentTime: videoTimeStamp } as HTMLVideoElement,
@@ -90,7 +90,7 @@ describe('RegionCreation', () => {
                 instance.handleStop(shape);
                
                 expect(defaults.setStaged).toHaveBeenCalledWith({
-                    location: videoTimeStamp,
+                    location: 19000,
                     shape,
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);

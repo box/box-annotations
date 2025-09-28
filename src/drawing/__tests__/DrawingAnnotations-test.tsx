@@ -9,8 +9,21 @@ import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
 import { annotations, videoAnnotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 import { FRAME, PAGE } from '../../constants';
+import useVideoTiming from '../../utils/useVideoTiming';
+import { createVideoAnnotationTests } from '../../test-utils/videoAnnotations';
+import { AnnotationDrawing } from '../../@types';
 
 jest.mock('../DrawingList');
+jest.mock('../../utils/useVideoTiming', () => jest.fn());
+// Mock useVideoTiming hook
+const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideoTiming>;
+
+const mockVideoTimingReturn = {
+    isVideoSeeking: false,
+    targetVideoTime: null,
+    getCurrentVideoLocation: jest.fn(),
+};
+
 
 describe('DrawingAnnotations', () => {
     const getDefaults = (): Props => ({
@@ -37,6 +50,16 @@ describe('DrawingAnnotations', () => {
     const {
         target: { path_groups: pathGroups },
     } = annotations[0];
+
+    beforeEach(() => {
+        mockVideoTimingReturn.isVideoSeeking = false;
+        mockVideoTimingReturn.targetVideoTime = null;
+        mockVideoTimingReturn.getCurrentVideoLocation.mockReturnValue(0);
+        mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
 
     describe('event handlers', () => {
         describe('handleDelete()', () => {
@@ -92,6 +115,14 @@ describe('DrawingAnnotations', () => {
             test('should set the location to the current time of the video if the target type is frame', () => {
                 const setStaged = jest.fn();
                 const setStatus = jest.fn();
+                const referenceEl = document.createElement('video');
+                referenceEl.currentTime = 10;
+                
+                // Set up the mock before creating the wrapper
+                mockVideoTimingReturn.isVideoSeeking = false;
+                mockVideoTimingReturn.getCurrentVideoLocation.mockReturnValue(10000);
+                mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
+                
                 const wrapper = getWrapper({
                     canShowPopupToolbar: true,
                     drawnPathGroups: pathGroups,
@@ -99,7 +130,7 @@ describe('DrawingAnnotations', () => {
                     setStaged,
                     setStatus,
                     targetType: FRAME,
-                    referenceEl: { currentTime: 10 } as HTMLVideoElement,
+                    referenceEl,
                 });
 
                 wrapper.find(PopupDrawingToolbar).prop('onReply')();
@@ -192,28 +223,24 @@ describe('DrawingAnnotations', () => {
         });
 
 
-        test('should render DrawingList with correct annotations for video frame', () => {
-            const time = videoAnnotations[0].target.location.value;
-            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl: { currentTime: time } as HTMLVideoElement });
+        test('should render DrawingList with correct annotation for video frame', () => {
+            const activeAnnotationId = videoAnnotations[0].id;
+            const referenceEl = document.createElement('video');
+  
+            referenceEl.currentTime = 10;
+       
+            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId, targetType: FRAME, referenceEl });
+            wrapper.update();
+         
             const list = wrapper.find(DrawingList);
             expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
-            expect(list.prop('activeId')).toBe('123');
-            // With the new video seeking logic, annotations are only shown when video is not seeking
-            expect(list.prop('annotations').length).toBe(0);
+            expect(list.prop('activeId')).toBe(activeAnnotationId);
+            expect(list.prop('annotations').length).toBe(1);
             expect(wrapper.exists(DrawingSVG)).toBe(false);
             expect(wrapper.exists(DrawingCreator)).toBe(false);
             expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
         });
 
-
-        test('should render DrawingList with no annotations if the current video time does not match any annotation frame location time', () => {
-            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId: '123', targetType: FRAME, referenceEl:  
-                { currentTime: 24 } as HTMLVideoElement });
-            const list = wrapper.find(DrawingList);
-            expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
-            expect(list.prop('activeId')).toBe('123');
-            expect(list.prop('annotations').length).toBe(0);
-        });
      
         
      
@@ -287,6 +314,43 @@ describe('DrawingAnnotations', () => {
         );
     });
 
+    // Use shared video annotation tests
+    createVideoAnnotationTests({
+        componentName: 'DrawingAnnotations',
+        getWrapper,
+        findListComponent: (wrapper) => wrapper.find(DrawingList),
+        videoAnnotations: videoAnnotations as AnnotationDrawing[],
+        regularAnnotations: annotations as AnnotationDrawing[],
+        activeAnnotationId: 'video_drawing_anno_2',
+        nonExistentAnnotationId: 'non_existent_annotation_id',
+    });
+
+    // Drawing-specific video annotation tests
+    describe('drawing-specific video annotation tests', () => {
+        test('should not render DrawingList if the video is seeking', () => {
+            const activeAnnotationId = videoAnnotations[0].id;
+            const referenceEl = document.createElement('video');
+            referenceEl.currentTime = 10;
+            referenceEl.dispatchEvent(new Event('seeking'));
+            
+            // Set up the mock to simulate seeking
+            mockVideoTimingReturn.isVideoSeeking = true;
+            mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
+            
+            const wrapper = getWrapper({ annotations: videoAnnotations, activeAnnotationId, targetType: FRAME, referenceEl });
+            wrapper.update();
+
+            const list = wrapper.find(DrawingList);
+            expect(list.hasClass('ba-DrawingAnnotations-list')).toBe(true);
+            expect(list.prop('activeId')).toBe(activeAnnotationId);
+            expect(list.prop('annotations').length).toBe(0);
+            expect(wrapper.exists(DrawingSVG)).toBe(false);
+            expect(wrapper.exists(DrawingCreator)).toBe(false);
+            expect(wrapper.exists(PopupDrawingToolbar)).toBe(false);
+        });
+
+    });
+
     describe('state changes', () => {
         test.each`
             basePathGroups | nextPathGroups | expected
@@ -309,4 +373,5 @@ describe('DrawingAnnotations', () => {
             },
         );
     });
+
 });

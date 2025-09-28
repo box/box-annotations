@@ -86,9 +86,6 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
-    // if (isFailed) {
-    //     return null;
-    // }
 
     return (
         <>

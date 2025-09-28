@@ -5,7 +5,7 @@ import './RegionAnnotations.scss';
 import useVideoTiming from '../utils/useVideoTiming';
 import { FRAME, PAGE } from '../constants';
 
-type Props = {
+export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
     setActiveAnnotationId: (annotationId: string | null) => void;
@@ -16,8 +16,8 @@ type Props = {
 const RegionAnnotations = (props: Props): JSX.Element => {
     const { activeAnnotationId, annotations, setActiveAnnotationId, referenceEl, targetType } = props;
     const { isVideoSeeking } = useVideoTiming({
-        targetType: FRAME,
-        referenceEl: referenceEl as HTMLVideoElement,
+        targetType,
+        referenceEl: referenceEl as HTMLElement,
         activeAnnotationId: activeAnnotationId || null,
         annotations: annotations || [],
     });

@@ -68,7 +68,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
     const { isVideoSeeking, getCurrentVideoLocation } = useVideoTiming({
         targetType,
-        referenceEl: referenceEl as HTMLVideoElement,
+        referenceEl: referenceEl as HTMLElement,
         activeAnnotationId,
         annotations,
     });
@@ -86,14 +86,19 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         redoDrawingPathGroup();
     };
 
+    const getCurrentLocation = (): number => { 
+        if (targetType === FRAME) {
+            return getCurrentVideoLocation();
+        }
+        return location;
+    };
     const handleReply = (): void => {
-        const annotationLocation = targetType === FRAME ? getCurrentVideoLocation() : location;
+        const annotationLocation = getCurrentLocation();
         setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
     const handleStart = (): void => {
-        const currentLocation = targetType === FRAME ? getCurrentVideoLocation() : location;
-        setupDrawing(currentLocation);
+        setupDrawing(location);
         setStatus(CreatorStatus.started);
         setIsDrawing(true);
     };
