@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { Permissions } from './api';
+import { FRAME, PAGE } from '../constants';
 
 // New Data Model Types
 export interface Annotation {
@@ -37,9 +38,16 @@ export type Dimensions = {
 };
 
 export interface Page {
-    type: 'page';
+    type: typeof PAGE;
     value: number;
 }
+
+export interface Frame {
+    type: typeof FRAME;
+    value: number;
+}
+
+export type Location = Page | Frame;
 
 export interface Path {
     clientId?: string;
@@ -93,7 +101,7 @@ export interface Stroke {
 export type Target = TargetDrawing | TargetHighlight | TargetPoint | TargetRegion;
 
 export interface TargetDrawing {
-    location: Page;
+    location: Location;
     path_groups: Array<PathGroup>;
     type: 'drawing';
 }
@@ -106,12 +114,12 @@ export interface TargetHighlight {
 }
 
 export interface TargetPoint extends Position {
-    location: Page;
+    location: Location;
     type: 'point';
 }
 
 export interface TargetRegion {
-    location: Page;
+    location: Location;
     shape: Rect;
     type: 'region';
 }

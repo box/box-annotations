@@ -4,6 +4,7 @@ import BaseAnnotator from './common/BaseAnnotator';
 import ImageAnnotator from './image/ImageAnnotator';
 import DocumentAnnotator from './document/DocumentAnnotator';
 import { IntlOptions, Permissions, PERMISSIONS, Type } from './@types';
+import MediaAnnotator from './media/MediaAnnotator';
 
 type Annotator = {
     CONSTRUCTOR: typeof BaseAnnotator;
@@ -59,6 +60,12 @@ const ANNOTATORS: Annotator[] = [
         NAME: 'Image',
         TYPES: [Type.region],
         VIEWERS: ['Image'],
+    },
+    {
+        CONSTRUCTOR: MediaAnnotator,
+        NAME: 'Media',
+        TYPES: [Type.region],
+        VIEWERS: ['Dash','MP4'],
     },
 ];
 
