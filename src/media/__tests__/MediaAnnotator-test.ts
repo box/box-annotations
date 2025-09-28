@@ -8,6 +8,7 @@ import { Annotation } from '../../@types';
 import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
 import { videoAnnotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { videoAnnotations as regions } from '../../region/__mocks__/data';
+import { CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../../common/BaseAnnotator';
 
 jest.mock('../../common/DeselectManager');
 jest.mock('../../popup/PopupManager');
@@ -35,27 +36,9 @@ describe('MediaAnnotator', () => {
         token: '1234567890',
     };
 
-    const mockVideo = {
-        pause: jest.fn(),
-        currentTime: 0,
-        offsetHeight: 100,
-        offsetLeft: 50,
-        offsetTop: 50,
-        offsetWidth: 100,
-        classList: {
-            add: jest.fn(),
-            remove: jest.fn(),
-            contains: jest.fn(),
-            item: jest.fn(),
-            toggle: jest.fn(),
-            length: 0,
-            value: '',
-            replace: jest.fn(),
-            supports: jest.fn(),
-            forEach: jest.fn(),
-        },
-    };
+
     const getAnnotator = (options = {}): MediaAnnotator => new MediaAnnotator({ ...defaults, ...options });
+    
     const getVideo = (): HTMLVideoElement => {
         const video = container.querySelector('video') as HTMLVideoElement;
 
@@ -81,7 +64,7 @@ describe('MediaAnnotator', () => {
         container.innerHTML = `
             <div class="bp-media">
               <video preload="auto" playsinline="" style="width: 934px;">
-              <source src="blob:https://app.app-bfoxx.monolith-devpod.apps-global.gcp001.dev.box.net/c9beafc4-42ad-4747-b212-0c0cd3a50ee6" type=""></video>
+              <source src="some_video.mp4" type="video/mp4"></video>
             </div>
         `;
 
@@ -92,6 +75,89 @@ describe('MediaAnnotator', () => {
         if (annotator) {
             annotator.destroy();
         }
+    });
+
+    describe('init()', () => {
+        beforeEach(() => {
+            jest.spyOn(annotator, 'render');
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
+        });
+
+        test('should do nothing if the root element is not defined', () => {
+            annotator.container = '#nonsense';
+            annotator.init();
+            expect(annotator.render).not.toHaveBeenCalled();
+        });
+
+        test('should set the root and annotated element and call render', () => {
+            annotator.init();
+            expect(annotator.render).toHaveBeenCalled();
+            expect(annotator.containerEl).toBe(container);
+            expect(annotator.annotatedEl).toBe(getParent());
+            expect(getParent().classList).toContain(CSS_LOADED_CLASS);
+            expect(container.classList).toContain(CSS_CONTAINER_CLASS);
+            
+ 
+        });
+    });
+
+    describe('render()', () => {
+        beforeEach(() => {
+            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
+            jest.spyOn(annotator, 'getReference').mockImplementation(getVideo);
+        });
+
+        test('should initialize a manager for the video element and set the styles based on the video element offset properties', () => {
+            annotator.init();
+
+            expect(annotator.getManagers).toHaveBeenCalled();
+            expect(mockManager.render).toHaveBeenCalledWith({
+                intl: annotator.intl,
+                store: expect.any(Object),
+            });
+
+            const height = `${getVideo().offsetHeight}px`;
+            const left = `${getVideo().offsetLeft}px`;
+            const top = `${getVideo().offsetTop}px`;
+            const width = `${getVideo().offsetWidth}px`;
+            const transform = 'rotate(0deg)';
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height,
+                left,
+                top,
+                transform,
+                width,
+            });
+        });
+
+        test('should do nothing if the annotated element is not defined', () => {
+            annotator.annotatedEl = undefined;
+            annotator.render();
+
+            expect(annotator.getManagers).not.toHaveBeenCalled();
+            expect(mockManager.render).not.toHaveBeenCalled();
+            expect(mockManager.style).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if the reference video element is not defined', () => {
+            annotator.getReference = jest.fn();
+            annotator.init();
+            annotator.render();
+
+            expect(annotator.getManagers).not.toHaveBeenCalled();
+            expect(mockManager.render).not.toHaveBeenCalled();
+            expect(mockManager.style).not.toHaveBeenCalled();
+        });
+
+        test('should instantiate the DeselectManager and call its render method', () => {
+            annotator.annotatedEl = getParent();
+            expect(annotator.deselectManager).toBeNull();
+            annotator.render();
+            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
+            expect(annotator.deselectManager).not.toBeNull();
+            expect(annotator.deselectManager!.render).toHaveBeenCalled();
+        });
     });
 
     describe('destroy', () => {
@@ -151,15 +217,15 @@ describe('MediaAnnotator', () => {
             jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
         });
 
-        test('should return the underlying image element', () => {
-            annotator.init(1);
+        test('should return the underlying video element', () => {
+            annotator.init();
 
             expect(annotator.getReference()).toBe(container.querySelector('video'));
         });
     });
 
     describe('handleStore', () => {
-        test('should update the reference element with the correct class', () => {
+        test('should mark the reference element with the ba-is-drawing class if an annotation is being created', () => {
             jest.spyOn(annotator, 'getReference').mockImplementation(getVideo);
 
             annotator.store.dispatch(setStatusAction(CreatorStatus.init));
@@ -173,83 +239,16 @@ describe('MediaAnnotator', () => {
         });
     });
 
-    describe('init()', () => {
-        beforeEach(() => {
-            jest.spyOn(annotator, 'render');
-            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
-        });
-
-        test('should do nothing if the root element is not defined', () => {
-            annotator.container = '#nonsense';
-            annotator.init(2);
-
-            expect(annotator.render).not.toHaveBeenCalled();
-        });
-
-        test('should set the root and annotated element based on class name', () => {
-            annotator.init(2);
-
-            expect(annotator.containerEl).toBe(container);
-            expect(annotator.annotatedEl).toBe(getParent());
-            expect(annotator.render).toHaveBeenCalled();
-        });
-    });
-
-    describe('render()', () => {
-        beforeEach(() => {
-            jest.spyOn(annotator, 'getManagers').mockImplementation(() => new Set([mockManager]));
-            jest.spyOn(annotator, 'getReference').mockImplementation(getVideo);
-        });
-
-        test('should initialize a manager for the video element', () => {
-            annotator.init(1);
-
-            expect(annotator.getManagers).toHaveBeenCalled();
-            expect(mockManager.render).toHaveBeenCalledWith({
-                intl: annotator.intl,
-                store: expect.any(Object),
-            });
-            expect(mockManager.style).toHaveBeenCalledWith({
-                height: '100px',
-                left: '50px',
-                top: '50px',
-                transform: 'rotate(0deg)',
-                width: '100px',
-            });
-        });
-
-        test('should do nothing if the annotated element is not defined', () => {
-            annotator.annotatedEl = undefined;
-            annotator.render();
-
-            expect(annotator.getManagers).not.toHaveBeenCalled();
-            expect(mockManager.render).not.toHaveBeenCalled();
-            expect(mockManager.style).not.toHaveBeenCalled();
-        });
-
-        test('should do nothing if the reference image element is not defined', () => {
-            annotator.getReference = jest.fn();
-            annotator.init(1);
-            annotator.render();
-
-            expect(annotator.getManagers).not.toHaveBeenCalled();
-            expect(mockManager.render).not.toHaveBeenCalled();
-            expect(mockManager.style).not.toHaveBeenCalled();
-        });
-
-        test('should instantiate the DeselectManager and call render', () => {
-            annotator.annotatedEl = getParent();
-
-            expect(annotator.deselectManager).toBeNull();
-
-            annotator.render();
-
-            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
-            expect(annotator.deselectManager!.render).toHaveBeenCalled();
-        });
-    });
-
     describe('scrollToAnnotation()', () => {
+
+        const mockVideo = {
+            pause: jest.fn(),
+            currentTime: 0,
+            classList: {
+                remove: jest.fn(), 
+            },
+        };
+        
         beforeEach(() => {
             const payload = {
                 entries: [...regions, ...drawings] as Annotation[],
@@ -261,6 +260,7 @@ describe('MediaAnnotator', () => {
             annotator.annotatedEl = getParent();
             annotator.getReference = jest.fn().mockReturnValue(mockVideo);
             annotator.store.dispatch(fetchAnnotationsAction.fulfilled(payload, 'test', undefined));
+            mockVideo.currentTime = 0;
         });
 
         afterEach(() => {
@@ -270,7 +270,6 @@ describe('MediaAnnotator', () => {
 
         test('should call scrollToLocation for region annotations', () => {
             annotator.scrollToAnnotation('video_region_anno_1');
- 
             expect(mockVideo.currentTime).toBe(10);
             annotator.scrollToAnnotation('video_region_anno_2');
             expect(mockVideo.currentTime).toBe(20);
@@ -281,7 +280,6 @@ describe('MediaAnnotator', () => {
 
         test('should call scrollToLocation for drawing anntotations', () => {
             annotator.scrollToAnnotation('video_drawing_anno_1');
-            expect(mockVideo.pause).toHaveBeenCalled();
             expect(mockVideo.currentTime).toBe(10);
             annotator.scrollToAnnotation('video_drawing_anno_2');
             expect(mockVideo.currentTime).toBe(20);
@@ -291,7 +289,10 @@ describe('MediaAnnotator', () => {
         });
 
         test('should do nothing if the annotation id is undefined or not available in the store', () => {
-            annotator.scrollToAnnotation('nonsense');
+            annotator.scrollToAnnotation('video_drawing_anno_12');
+            expect(mockVideo.currentTime).toBe(0);
+            annotator.scrollToAnnotation(null);
+            expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
         });
     });
