@@ -1,0 +1,20 @@
+.bp-media {
+    .ba-Layer {
+        position: absolute;
+        white-space: initial; // Overrides white-space: no-wrap inherited .bp-image
+        text-align: initial; // Overrides text-align: center inherited .bp-image
+        pointer-events: none;
+    }
+
+    // Applied to img element, which is managed by Preview SDK
+    .ba-is-drawing {
+        user-select: none; // Prevent visible selection highlight
+    }
+
+    // Raise the rendering order to override the stacking context created by the
+    // transform applied to each of the managers' react mount element to account for
+    // rotation
+    .ba-Layer--popup {
+        z-index: 4;
+    }
+}

@@ -4,6 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import PopupLayer from '../PopupLayer';
 import PopupContainer, { Props } from '../PopupContainer';
 import { createStore, CreatorStatus, Mode } from '../../store';
+import { PAGE } from '../../constants'; 
 
 jest.mock('../PopupLayer');
 jest.mock('../../common/withProviders');
@@ -14,7 +15,15 @@ describe('PopupContainer', () => {
         location: 1,
         store: createStore(),
     };
-    const getWrapper = (props = {}): ReactWrapper<Props> => mount(<PopupContainer {...defaults} {...props} />);
+    // Define PAGE if not already imported
+    const getWrapper = (props = {}): ReactWrapper<Props> =>
+        mount(
+            <PopupContainer
+                targetType={PAGE}
+                {...defaults}
+                {...props}
+            />
+        );
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {

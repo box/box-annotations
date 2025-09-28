@@ -1,4 +1,4 @@
-import annotationsState from '../__mocks__/annotationsState';
+import {annotationState,  videoAnnotationState } from '../__mocks__/annotationsState';
 import {
     getActiveAnnotationId,
     getAnnotation,
@@ -8,7 +8,8 @@ import {
 } from '../selectors';
 
 describe('store/annotations/selectors', () => {
-    const state = { annotations: annotationsState };
+    const state = { annotations: annotationState };
+    const videoState = { annotations: videoAnnotationState };
 
     describe('getAnnotation', () => {
         test('should return an annotation by the specified id', () => {
@@ -33,6 +34,14 @@ describe('store/annotations/selectors', () => {
                 expect.objectContaining({ id: 'test2' }),
             ]);
         });
+
+        test('should return all annotations for video content', () => {
+            expect(getAnnotationsForLocation(videoState, -1)).toEqual([
+                expect.objectContaining({ id: 'testVid1' }),
+                expect.objectContaining({ id: 'testVid2' }),
+                expect.objectContaining({ id: 'testVid3' }),
+            ]);
+        });
     });
 
     describe('getActiveAnnotationId', () => {
@@ -41,7 +50,7 @@ describe('store/annotations/selectors', () => {
         });
 
         test('should get the active id', () => {
-            const newState = { annotations: { ...annotationsState, activeId: '123' } };
+            const newState = { annotations: { ...annotationState, activeId: '123' } };
             expect(getActiveAnnotationId(newState)).toEqual('123');
         });
     });

@@ -2,15 +2,17 @@ import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { Rect } from '../@types';
+import { FRAME, PAGE } from '../constants';
 
 export type CreateArg = {
     location: number;
     message: string;
     shape: Rect;
+    targetType: typeof FRAME | typeof PAGE;
 };
 
 export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
-    const { location, message, shape } = arg;
+    const { location, message, shape, targetType } = arg;
     const state = getState();
     const newAnnotation = {
         description: {
@@ -22,7 +24,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
         },
         target: {
             location: {
-                type: 'page' as const,
+                type: targetType,
                 value: location,
             },
             shape,

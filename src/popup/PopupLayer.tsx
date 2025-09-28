@@ -14,6 +14,7 @@ import {
 } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
 import './PopupLayer.scss';
+import { FRAME, PAGE } from '../constants';
 
 export type Props = {
     createDrawing?: (arg: DrawingCreateArg) => void;
@@ -28,6 +29,7 @@ export type Props = {
     setMessage: (message: string) => void;
     staged?: CreatorItem | null;
     status: CreatorStatus;
+    targetType: typeof FRAME | typeof PAGE;
 };
 
 const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {
@@ -49,12 +51,14 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setMessage,
         staged,
         status,
+        targetType,
     } = props;
 
     const [reference, setReference] = React.useState<PopupReference | null>(null);
     const canCreate = (modeStagedMap[mode]?.(staged ?? null) ?? false) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
     const isPending = status === CreatorStatus.pending;
+   // const isFailed = status === CreatorStatus.rejected;
 
     const handleCancel = (): void => {
         resetCreator();
@@ -70,17 +74,18 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         }
 
         if (isCreatorStagedHighlight(staged)) {
-            createHighlight({ ...staged, message });
+            createHighlight({ ...staged, message, targetType });
         } else if (isCreatorStagedRegion(staged)) {
-            createRegion({ ...staged, message });
+            createRegion({ ...staged, message, targetType });
         } else if (isCreatorStagedDrawing(staged)) {
-            createDrawing({ ...staged, message });
+            createDrawing({ ...staged, message, targetType });
         }
     };
 
     React.useEffect(() => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
+
 
     return (
         <>
