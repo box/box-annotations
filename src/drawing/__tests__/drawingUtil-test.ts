@@ -57,7 +57,7 @@ describe('drawingUtil', () => {
             ${undefined} | ${false}
             ${null}      | ${false}
         `('should return $result for annotation of type $type', ({ result, type }) => {
-            expect(isDrawing({ ...annotations[0], target: { type } } as Annotation)).toEqual(result);
+            expect(isDrawing({ ...annotations[0], target: { type } } as unknown as Annotation)).toEqual(result);
         });
     });
 
