@@ -156,7 +156,7 @@ describe('MediaAnnotator', () => {
             annotator.render();
             expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
             expect(annotator.deselectManager).not.toBeNull();
-            expect(annotator.deselectManager!.render).toHaveBeenCalled();
+            expect(annotator.deselectManager.render).toHaveBeenCalled();
         });
     });
 
