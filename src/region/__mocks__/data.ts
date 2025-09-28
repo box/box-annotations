@@ -76,7 +76,7 @@ export const videoAnnotations = [
     {
         id: 'video_region_anno_1',
         target: {
-            location: { type: 'frame', value: 10 },
+            location: { type: 'frame', value: 10000 },
             shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' },
             type: 'region',
         },
@@ -84,7 +84,7 @@ export const videoAnnotations = [
     {
         id: 'video_region_anno_2',
         target: {
-            location: { type: 'frame', value: 20 },
+            location: { type: 'frame', value: 20000 },
             shape: { height: 20, width: 20, x: 20, y: 20, type: 'rect' },
             type: 'region',
         },
@@ -92,7 +92,7 @@ export const videoAnnotations = [
     {
         id: 'video_region_anno_3',
         target: {
-            location: { type: 'frame', value: 30 },
+            location: { type: 'frame', value: 30000 },
             shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' },
             type: 'region',
         },

@@ -92,7 +92,7 @@ describe('RegionAnnotations', () => {
             const regionList = wrapper.find(RegionList);
             expect(regionList.prop('annotations')).toHaveLength(1);
             expect(regionList.prop('annotations')[0].id).toBe(activeAnnotationId);
-            expect(regionList.prop('annotations')[0].target.location.value).toBe(30);
+            expect(regionList.prop('annotations')[0].target.location.value).toBe(30000);
         });
     });
 });

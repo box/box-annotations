@@ -270,7 +270,8 @@ describe('MediaAnnotator', () => {
 
         test('should call scrollToLocation for region annotations', () => {
             annotator.scrollToAnnotation('video_region_anno_1');
-            expect(mockVideo.pause).toHaveBeenCalled();
+ 
+            expect(mockVideo.currentTime).toBe(10);
             annotator.scrollToAnnotation('video_region_anno_2');
             expect(mockVideo.currentTime).toBe(20);
             annotator.scrollToAnnotation('video_region_anno_3');
