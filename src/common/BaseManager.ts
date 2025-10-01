@@ -2,7 +2,7 @@ import * as ReactDOM from 'react-dom/client';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 import { applyResinTags } from '../utils/resin';
-import { FRAME, PAGE } from '../constants';
+import { TARGET_TYPE } from '../constants';
 
 export type ResinTags = Record<string, unknown>;
 
@@ -10,7 +10,7 @@ export type Options = {
     location?: number;
     referenceEl: HTMLElement;
     resinTags?: Record<string, unknown>;
-    targetType?: typeof FRAME | typeof PAGE;
+    targetType?: TARGET_TYPE;
 };
 
 export type Props = {
@@ -32,11 +32,11 @@ export default class BaseManager implements Manager {
 
     root: ReactDOM.Root | null = null;
 
-    targetType: typeof PAGE | typeof FRAME;
+    targetType: TARGET_TYPE;
 
     referenceEl: HTMLElement;
 
-    constructor({ location = 1, referenceEl, resinTags = {}, targetType = PAGE }: Options) {
+    constructor({ location = 1, referenceEl, resinTags = {}, targetType = TARGET_TYPE.PAGE }: Options) {
         this.location = location;
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,

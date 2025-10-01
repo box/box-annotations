@@ -7,7 +7,7 @@ import { CreatorStatus, getCreatorStatus } from '../store/creator';
 import { getAnnotation, getFileId, getIsCurrentFileVersion, getRotation } from '../store';
 import { Manager } from '../common/BaseManager';
 import './MediaAnnotator.scss';
-import { MEDIA_LOCATION_INDEX, FRAME } from '../constants';
+import { MEDIA_LOCATION_INDEX, TARGET_TYPE } from '../constants';
 
 export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
 export const VIDEO_PARENT_SELECTOR = '.bp-media';
@@ -46,10 +46,10 @@ export default class MediaAnnotator extends BaseAnnotator {
 
 
     addManagers(referenceEl: HTMLVideoElement, resinTags: { fileid: string|null; iscurrent: boolean }): void {
-        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
-        this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
-        this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
-        this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
+        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
+        this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
+        this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
+        this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
     }
 
     getManagers(parentEl: HTMLElement, referenceEl: HTMLVideoElement): Set<Manager> {
