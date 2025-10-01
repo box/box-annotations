@@ -22,10 +22,13 @@ export default class MediaAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
+        // Subscribe to the store so that the annoator can capture changes to the creator status
         this.storeHandler = this.store.subscribe(this.handleStore);
     }
 
     destroy(): void {
+
+        // If the store handler is present, unsubscribe from the store.
         if (this.storeHandler) {
             this.storeHandler();
         }
