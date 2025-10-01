@@ -1,3 +1,5 @@
+import { TARGET_TYPE } from '../../constants';
+
 export const pathGroups = [
     {
         clientId: '1_1',
@@ -45,7 +47,7 @@ export const annotations = [
         permissions: { can_edit: true, can_delete: true },
         type: 'annotation',
         target: {
-            location: { type: 'page' as const, value: 1 },
+            location: { type: TARGET_TYPE.PAGE, value: 1 },
             path_groups: pathGroups,
             type: 'drawing' as const,
         },
@@ -59,7 +61,7 @@ export const annotations = [
         permissions: { can_edit: true, can_delete: true },
         type: 'annotation',
         target: {
-            location: { type: 'page' as const, value: 2 },
+            location: { type: TARGET_TYPE.PAGE, value: 2 },
             path_groups: [
                 {
                     clientId: '2_1',

@@ -3,6 +3,7 @@ import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { PathGroup } from '../@types';
 import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
+import { TARGET_TYPE } from '../constants';
 
 export type CreateArg = {
     location: number;
@@ -23,7 +24,7 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
         target: {
             location: {
-                type: 'page' as const,
+                type: TARGET_TYPE.PAGE,
                 value: location,
             },
             path_groups: pathGroups,

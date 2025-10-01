@@ -1,4 +1,5 @@
 import { AnnotationHighlight, Rect, TargetHighlight, User } from '../../@types';
+import { TARGET_TYPE } from '../../constants';
 
 export const rect: Rect = {
     type: 'rect' as const,
@@ -26,7 +27,7 @@ export const noHeightRect: Rect = {
 
 export const target: TargetHighlight = {
     location: {
-        type: 'page' as const,
+        type: TARGET_TYPE.PAGE,
         value: 1,
     },
     shapes: [rect],
