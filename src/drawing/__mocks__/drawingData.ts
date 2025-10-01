@@ -49,7 +49,7 @@ export const annotations = [
         target: {
             location: { type: TARGET_TYPE.PAGE, value: 1 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
     },
     {
@@ -98,7 +98,7 @@ export const annotations = [
                     },
                 },
             ],
-            type: 'drawing',
+            type: 'drawing' as const,
         },
     },
 ];
@@ -115,7 +115,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 10000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },     
         pathGroups: {
             clientId: '1_1',
@@ -146,7 +146,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 20000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
         pathGroups: {
             clientId: '2_1',
@@ -178,7 +178,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 30000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
         pathGroups: {
             clientId: '2_2',
