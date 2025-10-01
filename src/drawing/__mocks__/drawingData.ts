@@ -39,27 +39,27 @@ export const annotations = [
     {
         id: 'drawing_anno_1',
         created_at: '2023-01-01T00:00:00Z',
-        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         permissions: { can_edit: true, can_delete: true },
-        type: 'annotation' as const,
+        type: 'annotation',
         target: {
-            location: { type: 'page' as const, value: 1 },
+            location: { type: 'page', value: 1 },
             path_groups: pathGroups,
-            type: 'drawing' as const,
+            type: 'drawing',
         },
     },
     {
         id: 'drawing_anno_2',
         created_at: '2023-01-01T00:00:00Z',
-        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         permissions: { can_edit: true, can_delete: true },
-        type: 'annotation' as const,
+        type: 'annotation',
         target: {
-            location: { type: 'page' as const, value: 2 },
+            location: { type: 'page', value: 2 },
             path_groups: [
                 {
                     clientId: '2_1',
@@ -96,7 +96,7 @@ export const annotations = [
                     },
                 },
             ],
-            type: 'drawing' as const,
+            type: 'drawing',
         },
     },
 ];
@@ -105,15 +105,15 @@ export const videoAnnotations = [
     {
         id: 'video_drawing_anno_1',
         created_at: '2023-01-01T00:00:00Z',
-        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user'},
         permissions: { can_edit: true, can_delete: true },
-        type: 'annotation' as const,
+        type: 'annotation',
         target: {
-            location: { type: 'frame' as const, value: 10000 },
+            location: { type: 'frame', value: 10000 },
             path_groups: pathGroups,
-            type: 'drawing' as const,
+            type: 'drawing',
         },     
         pathGroups: {
             clientId: '1_1',
@@ -136,15 +136,15 @@ export const videoAnnotations = [
     {
         id: 'video_drawing_anno_2',
         created_at: '2023-01-01T00:00:00Z',
-        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         permissions: { can_edit: true, can_delete: true },
-        type: 'annotation' as const,
+        type: 'annotation',
         target: {
-            location: { type: 'frame' as const, value: 20000 },
+            location: { type: 'frame', value: 20000 },
             path_groups: pathGroups,
-            type: 'drawing' as const,
+            type: 'drawing',
         },
         pathGroups: {
             clientId: '2_1',
@@ -168,15 +168,15 @@ export const videoAnnotations = [
     {
         id: 'video_drawing_anno_3',
         created_at: '2023-01-01T00:00:00Z',
-        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' as const },
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         permissions: { can_edit: true, can_delete: true },
-        type: 'annotation' as const,
+        type: 'annotation',
         target: {
-            location: { type: 'frame' as const, value: 30000 },
+            location: { type: 'frame', value: 30000 },
             path_groups: pathGroups,
-            type: 'drawing' as const,
+            type: 'drawing',
         },
         pathGroups: {
             clientId: '2_2',

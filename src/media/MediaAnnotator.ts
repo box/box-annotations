@@ -10,6 +10,7 @@ import './MediaAnnotator.scss';
 import { MEDIA_LOCATION_INDEX, FRAME } from '../constants';
 
 export const CSS_IS_DRAWING_CLASS = 'ba-is-drawing';
+export const VIDEO_PARENT_SELECTOR = '.bp-media';
 
 export default class MediaAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
@@ -37,9 +38,16 @@ export default class MediaAnnotator extends BaseAnnotator {
     }
 
     getAnnotatedElement(): HTMLElement | null | undefined {
-        return this.containerEl?.querySelector('.bp-media');
+        return this.containerEl?.querySelector(VIDEO_PARENT_SELECTOR);
     }
 
+
+    addManagers(referenceEl: HTMLVideoElement, resinTags: { fileid: string; iscurrent: boolean }): void {
+        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
+        this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
+        this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
+        this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: FRAME }));
+    }
 
     getManagers(parentEl: HTMLElement, referenceEl: HTMLVideoElement): Set<Manager> {
         const fileId = getFileId(this.store.getState());
@@ -53,10 +61,7 @@ export default class MediaAnnotator extends BaseAnnotator {
         });
 
         if (this.managers.size === 0) {
-            this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX,   referenceEl, resinTags, targetType : FRAME}));
-            this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : FRAME}));
-            this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : FRAME}));
-            this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType : FRAME}));
+            this.addManagers(referenceEl, resinTags);
         }
 
         return this.managers;
