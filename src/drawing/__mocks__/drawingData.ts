@@ -45,9 +45,9 @@ export const annotations = [
         permissions: { can_edit: true, can_delete: true },
         type: 'annotation',
         target: {
-            location: { type: 'page', value: 1 },
+            location: { type: 'page' as const, value: 1 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
     },
     {
@@ -59,7 +59,7 @@ export const annotations = [
         permissions: { can_edit: true, can_delete: true },
         type: 'annotation',
         target: {
-            location: { type: 'page', value: 2 },
+            location: { type: 'page' as const, value: 2 },
             path_groups: [
                 {
                     clientId: '2_1',
@@ -96,7 +96,7 @@ export const annotations = [
                     },
                 },
             ],
-            type: 'drawing',
+            type: 'drawing' as const,
         },
     },
 ];
@@ -113,7 +113,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 10000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },     
         pathGroups: {
             clientId: '1_1',
@@ -144,7 +144,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 20000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
         pathGroups: {
             clientId: '2_1',
@@ -176,7 +176,7 @@ export const videoAnnotations = [
         target: {
             location: { type: 'frame', value: 30000 },
             path_groups: pathGroups,
-            type: 'drawing',
+            type: 'drawing' as const,
         },
         pathGroups: {
             clientId: '2_2',
