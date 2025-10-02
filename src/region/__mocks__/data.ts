@@ -1,3 +1,5 @@
+import { TARGET_TYPE } from '../../constants';
+
 export const rect = {
     type: 'rect' as const,
     height: 10,
@@ -9,7 +11,7 @@ export const rect = {
 export const target = {
     id: 'target_1',
     location: {
-        type: 'page' as const,
+        type: TARGET_TYPE.PAGE,
         value: 1,
     },
     shape: rect,
@@ -41,7 +43,7 @@ export const annotations = [
     {
         id: 'anno_1',
         target: {
-            location: { type: 'page', value: 1 },
+            location: { type: TARGET_TYPE.PAGE, value: 1 },
             shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' },
             type: 'region',
         },
@@ -49,7 +51,7 @@ export const annotations = [
     {
         id: 'anno_2',
         target: {
-            location: { type: 'page', value: 2 },
+            location: { type: TARGET_TYPE.PAGE, value: 2 },
             shape: { height: 20, width: 20, x: 20, y: 20, type: 'rect' },
             type: 'region',
         },
@@ -57,7 +59,7 @@ export const annotations = [
     {
         id: 'anno_3',
         target: {
-            location: { type: 'page', value: 3 },
+            location: { type: TARGET_TYPE.PAGE, value: 3 },
             shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' },
             type: 'region',
         },
@@ -65,9 +67,36 @@ export const annotations = [
     {
         id: 'anno_4',
         target: {
-            location: { type: 'page', value: 10 },
+            location: { type: TARGET_TYPE.PAGE, value: 10 },
             shape: { height: 40, width: 40, x: 40, y: 40, type: 'rect' },
             type: 'region',
         },
     },
 ];
+
+export const videoAnnotations = [
+    {
+        id: 'video_region_anno_1',
+        target: {
+            location: { type: TARGET_TYPE.FRAME, value: 10000 },
+            shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' },
+            type: 'region',
+        },
+    },  
+    {
+        id: 'video_region_anno_2',
+        target: {
+            location: { type: TARGET_TYPE.FRAME, value: 20000 },
+            shape: { height: 20, width: 20, x: 20, y: 20, type: 'rect' },
+            type: 'region',
+        },
+    },
+    {
+        id: 'video_region_anno_3',
+        target: {
+            location: { type: TARGET_TYPE.FRAME, value: 30000 },
+            shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' },
+            type: 'region',
+        },
+    },
+];      

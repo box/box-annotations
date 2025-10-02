@@ -2,13 +2,15 @@ import * as ReactDOM from 'react-dom/client';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
 import { applyResinTags } from '../utils/resin';
+import { TARGET_TYPE } from '../constants';
 
 export type ResinTags = Record<string, unknown>;
 
 export type Options = {
     location?: number;
     referenceEl: HTMLElement;
-    resinTags?: ResinTags;
+    resinTags?: Record<string, unknown>;
+    targetType?: TARGET_TYPE;
 };
 
 export type Props = {
@@ -30,13 +32,19 @@ export default class BaseManager implements Manager {
 
     root: ReactDOM.Root | null = null;
 
-    constructor({ location = 1, referenceEl, resinTags = {} }: Options) {
+    targetType: TARGET_TYPE;
+
+    referenceEl: HTMLElement;
+
+    constructor({ location = 1, referenceEl, resinTags = {}, targetType = TARGET_TYPE.PAGE }: Options) {
         this.location = location;
         this.reactEl = this.insert(referenceEl, {
             ...resinTags,
             feature: 'annotations',
         });
 
+        this.referenceEl = referenceEl;
+        this.targetType = targetType;
         this.root = ReactDOM.createRoot(this.reactEl);
 
         this.decorate();

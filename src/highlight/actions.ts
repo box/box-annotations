@@ -2,6 +2,7 @@ import { AppThunkDispatch, AppState } from '../store';
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { Rect } from '../@types';
+import { TARGET_TYPE } from '../constants';
 
 export type CreateArg = {
     location: number;
@@ -23,7 +24,7 @@ export const createHighlightAction = (arg: CreateArg) => (dispatch: AppThunkDisp
         },
         target: {
             location: {
-                type: 'page' as const,
+                type: TARGET_TYPE.PAGE as const,
                 value: location,
             },
             shapes,
