@@ -1,5 +1,5 @@
 import eventManager from '../../../common/EventManager';
-import annotationState from '../../annotations/__mocks__/annotationsState';
+import {annotationState} from '../../annotations/__mocks__/annotationsState';
 import { AppState } from '../../types';
 import { handleAnnotationsInitialized } from '../init';
 
