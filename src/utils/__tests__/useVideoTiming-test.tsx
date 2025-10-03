@@ -3,6 +3,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import useVideoTiming, { UseVideoTimingProps } from '../useVideoTiming';
 import { TARGET_TYPE } from '../../constants';
 import { getVideoCurrentTimeInMilliseconds } from '../util';
+import { AnnotationDrawing } from '../../@types/model';
 
 // Mock the utility function
 jest.mock('../util', () => ({
@@ -17,7 +18,7 @@ describe('useVideoTiming', () => {
 
     const defaultProps = {
         targetType: TARGET_TYPE.FRAME,
-        referenceEl: undefined as HTMLElement,
+        referenceEl: undefined,
         activeAnnotationId: null,
         annotations: [],
     };
@@ -398,7 +399,7 @@ describe('useVideoTiming', () => {
 
     describe('edge cases', () => {
         test('should handle empty annotations array', () => {
-            const mockAnnotations = [];
+            const mockAnnotations = [] as unknown as AnnotationDrawing[];
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,

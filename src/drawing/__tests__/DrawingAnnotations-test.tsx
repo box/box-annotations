@@ -46,7 +46,9 @@ describe('DrawingAnnotations', () => {
         undoDrawingPathGroup: jest.fn(),
         targetType: TARGET_TYPE.PAGE
     });
-    const getWrapper = (props = {}): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...props} />);
+    const getWrapper = (props= {} as unknown): ReactWrapper => mount(<DrawingAnnotations {...getDefaults()} {...(props as Partial<Props>)} />);
+
+   
     const {
         target: { path_groups: pathGroups },
     } = annotations[0];
@@ -318,7 +320,7 @@ describe('DrawingAnnotations', () => {
     createVideoAnnotationTests({
         componentName: 'DrawingAnnotations',
         getWrapper,
-        findListComponent: (wrapper) => wrapper.find(DrawingList),
+        findListComponent: (wrapper) => wrapper.find(DrawingList) as unknown as ReactWrapper,
         videoAnnotations: videoAnnotations as AnnotationDrawing[],
         regularAnnotations: annotations as AnnotationDrawing[],
         activeAnnotationId: 'video_drawing_anno_2',

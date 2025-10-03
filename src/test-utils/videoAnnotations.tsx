@@ -1,9 +1,10 @@
 import { ReactWrapper } from 'enzyme';
 import { TARGET_TYPE } from '../constants';
 import useVideoTiming from '../utils/useVideoTiming';
-import DrawingList from '../drawing/DrawingList';
-import RegionList from '../region/RegionList';
 import { AnnotationDrawing, AnnotationRegion } from '../@types/model';
+
+// Type alias for the list component wrapper
+type ListComponentWrapper = ReactWrapper;
 
 // Mock useVideoTiming hook
 const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideoTiming>;
@@ -17,14 +18,14 @@ const mockVideoTimingReturn = {
 export interface VideoAnnotationTestConfig {
     componentName: string;
     getWrapper: (props: unknown) => ReactWrapper;
-    findListComponent: (wrapper: ReactWrapper) => ReactWrapper<typeof DrawingList|typeof RegionList>;
+    findListComponent: (wrapper: ReactWrapper) => ListComponentWrapper;
     videoAnnotations: AnnotationDrawing[]|AnnotationRegion[] ;
     regularAnnotations: AnnotationDrawing[]|AnnotationRegion[];
     activeAnnotationId: string;
     nonExistentAnnotationId: string;
 }
 
-export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig) => {
+export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): void => {
     const {
         componentName,
         getWrapper,
@@ -51,8 +52,9 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig) =>
                 });
 
                 const listComponent = findListComponent(wrapper);
-                expect(listComponent.prop('annotations')).toHaveLength(1);
-                expect(listComponent.prop('annotations')[0].id).toBe(activeAnnotationId);
+                const annotations = listComponent.prop('annotations');
+                expect(annotations).toHaveLength(1);
+                expect((annotations as AnnotationDrawing[] | AnnotationRegion[])[0].id).toBe(activeAnnotationId);
             });
 
             test('should show no annotations when seeking and active annotation exists', () => {
