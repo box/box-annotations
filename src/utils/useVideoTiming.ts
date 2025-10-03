@@ -11,7 +11,6 @@ export interface UseVideoTimingProps {
 
 export interface UseVideoTimingReturnType {
     isVideoSeeking: boolean;
-    targetVideoTime: number | null;
     getCurrentVideoLocation: () => number;
 }
 
@@ -90,7 +89,6 @@ const useVideoTiming = ({
 
     return {
         isVideoSeeking,
-        targetVideoTime,
         getCurrentVideoLocation: getCurrentVideoTimeStamp,
     };
 };

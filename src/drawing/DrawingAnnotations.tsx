@@ -31,7 +31,7 @@ export type Props = {
     setupDrawing: (location: number) => void;
     stashedPathGroups: Array<PathGroup>;
     undoDrawingPathGroup: () => void;
-    targetType: typeof TARGET_TYPE.PAGE | typeof TARGET_TYPE.FRAME;
+    targetType: TARGET_TYPE;
     referenceEl?: HTMLElement;
 };
 
