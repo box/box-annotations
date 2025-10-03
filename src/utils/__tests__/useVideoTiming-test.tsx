@@ -26,10 +26,10 @@ describe('useVideoTiming', () => {
     const getWrapper = ( props: UseVideoTimingProps) : ReactWrapper => {
         const TestComponent = (componentProps: UseVideoTimingProps): JSX.Element => {
            const result = useVideoTiming(componentProps);
+
             return (
                 <div>
                     <div data-testid="isVideoSeeking">{result.isVideoSeeking.toString()}</div>
-                    <div data-testid="targetVideoTime">{result.targetVideoTime?.toString() || 'null'}</div>
                     <div data-testid="currentVideoLocation">{result.getCurrentVideoLocation()}</div>
                 </div>
             );
@@ -66,7 +66,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
             expect(wrapper.find('[data-testid="currentVideoLocation"]').text()).toBe('0');
         });
 
@@ -150,18 +149,14 @@ describe('useVideoTiming', () => {
         });
 
         
-        test('should set isVideoSeeking to false and clear targetVideoTime on seeked event', () => {
+        test('should set isVideoSeeking to false on seeked event', () => {
             // First set seeking state
             const seekingEvent = new Event('seeking');
             act(() => {
                 mockVideoElement.dispatchEvent(seekingEvent);
             });
             wrapper.update();
-            
-            // Set a target time
-            wrapper.setProps({ targetVideoTime: 5000 });
-            wrapper.update();
-            
+                        
             // Then trigger seeked event
             const seekedEvent = new Event('seeked');
             act(() => {
@@ -170,7 +165,6 @@ describe('useVideoTiming', () => {
             wrapper.update();
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
     });
 
@@ -196,7 +190,7 @@ describe('useVideoTiming', () => {
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
-        test('should not change seeking state when targetVideoTime is null', () => {
+        test('should not change seeking state when no target time is set', () => {
             // Set seeking state but no target time
             const seekingEvent = new Event('seeking');
             act(() => {
@@ -237,7 +231,6 @@ describe('useVideoTiming', () => {
             
             wrapper.update();
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should continue seeking when more than 100ms away from target time', () => {
@@ -282,7 +275,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should not set seeking state when no referenceEl', () => {
@@ -294,7 +286,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should not set seeking state when annotation not found', () => {
@@ -306,7 +297,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should set seeking state when video is more than 100ms away from annotation time', () => {
@@ -320,7 +310,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('3000');
         });
 
         test('should not set seeking state when video is within 100ms of annotation time', () => {
@@ -334,7 +323,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should update seeking state when activeAnnotationId changes', () => {
@@ -348,14 +336,12 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('3000');
             
             // Change to annotation2 (target time: 7000ms)
             wrapper.setProps({ activeAnnotationId: 'annotation2' });
             wrapper.update();
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('7000');
         });
     });
 
@@ -408,7 +394,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('null');
         });
 
         test('should handle annotation with zero time value', () => {
@@ -426,7 +411,6 @@ describe('useVideoTiming', () => {
             });
             
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
-            expect(wrapper.find('[data-testid="targetVideoTime"]').text()).toBe('0');
         });
 
 
