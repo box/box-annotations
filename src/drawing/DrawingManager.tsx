@@ -14,6 +14,6 @@ export default class DrawingListManager extends BaseManager {
             this.root = ReactDOM.createRoot(this.reactEl);
         }
 
-        this.root.render(<DrawingAnnotationsContainer location={this.location} {...props} />);
+        this.root.render(<DrawingAnnotationsContainer referenceEl={this.referenceEl} targetType={this.targetType} location={this.location} {...props} />);
     }
 }
