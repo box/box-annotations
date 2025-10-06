@@ -14,6 +14,17 @@ export interface UseVideoTimingReturnType {
     getCurrentVideoLocation: () => number;
 }
 
+
+/**
+ * This hook is used to keep track of when the video is currently seeking and when it has reached
+ * the target time definined in the annotation. This is necessary because we cannot control how long it
+ * takes for the video to seek to the target time and we do not want to display an annotation on the video player 
+ * at the wrong time. For example, if an annotation is defined at being at 20 seconds into the video and
+ * the video just loaded and needs to buffer in order to get to 20 seconds, we do not want the annotation
+ * drawing or region to be shown until the video has finished seeking and is at the correct time. The hook
+ * works by listenting the video seeking, seeked, and timeupdate events and setting the isVideoSeeking state
+ * based on these events. The hook will be used with both video drawing and video region annotations.
+ */
 const useVideoTiming = ({
     targetType,
     referenceEl,
