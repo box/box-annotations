@@ -3,7 +3,7 @@ import { TARGET_TYPE } from "../constants";
 import { getVideoCurrentTimeInMilliseconds } from "./util";
 
 export interface UseVideoTimingProps {
-    targetType: typeof TARGET_TYPE.PAGE | typeof TARGET_TYPE.FRAME;
+    targetType: TARGET_TYPE;
     referenceEl?: HTMLElement;
     activeAnnotationId: string | null;
     annotations: Array<{ id: string; target: { location: { value: number } } }>;

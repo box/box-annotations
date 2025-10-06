@@ -9,7 +9,7 @@ export type CreateArg = {
     location: number;
     message: string;
     pathGroups: Array<PathGroup>;
-    targetType: typeof TARGET_TYPE.PAGE | typeof TARGET_TYPE.FRAME;
+    targetType: TARGET_TYPE;
 };
 
 export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
