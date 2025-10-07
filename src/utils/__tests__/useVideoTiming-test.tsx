@@ -2,15 +2,7 @@ import React, { act } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import useVideoTiming, { UseVideoTimingProps } from '../useVideoTiming';
 import { TARGET_TYPE } from '../../constants';
-import { getVideoCurrentTimeInMilliseconds } from '../util';
 import { AnnotationDrawing } from '../../@types/model';
-
-// Mock the utility function
-jest.mock('../util', () => ({
-    getVideoCurrentTimeInMilliseconds: jest.fn(),
-}));
-
-const mockGetVideoCurrentTimeInMilliseconds = getVideoCurrentTimeInMilliseconds as jest.MockedFunction<typeof getVideoCurrentTimeInMilliseconds>;
 
 describe('useVideoTiming', () => {
     let mockVideoElement: HTMLVideoElement;
@@ -42,12 +34,6 @@ describe('useVideoTiming', () => {
         // Create a mock video element
         mockVideoElement = document.createElement('video');
         mockVideoElement.currentTime = 0;
-        
-        // Mock the utility function to return 0 by default
-        mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(0);
-        
-        // Clear all mocks
-        jest.clearAllMocks();
     });
 
     afterEach(() => {
@@ -69,7 +55,9 @@ describe('useVideoTiming', () => {
             expect(wrapper.find('[data-testid="currentVideoLocation"]').text()).toBe('0');
         });
 
-        test('should call getCurrentVideoLocation with reference element', () => {
+        test('should return current video location from reference element', () => {
+            mockVideoElement.currentTime = 5.5; // 5.5 seconds = 5500ms
+            
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
@@ -77,7 +65,7 @@ describe('useVideoTiming', () => {
                 annotations: []
             });
             
-            expect(mockGetVideoCurrentTimeInMilliseconds).toHaveBeenCalledWith(mockVideoElement);
+            expect(wrapper.find('[data-testid="currentVideoLocation"]').text()).toBe('5500');
         });
     });
 
@@ -179,7 +167,7 @@ describe('useVideoTiming', () => {
         });
 
         test('should not change seeking state when not seeking', () => {
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(5000);
+            mockVideoElement.currentTime = 5; // 5 seconds = 5000ms
             
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
@@ -198,7 +186,7 @@ describe('useVideoTiming', () => {
             });
             wrapper.update();
             
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(5000);
+            mockVideoElement.currentTime = 5; // 5 seconds = 5000ms
             
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
@@ -222,7 +210,7 @@ describe('useVideoTiming', () => {
             });
             
             // Mock current time to be within 100ms of target (5000ms)
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(4950);
+            mockVideoElement.currentTime = 4.95; // 4.95 seconds = 4950ms
             
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
@@ -247,7 +235,7 @@ describe('useVideoTiming', () => {
             });
             
             // Mock current time to be more than 100ms away from target (5000ms)
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(4800); // 200ms difference
+            mockVideoElement.currentTime = 4.8; // 4.8 seconds = 4800ms (200ms difference)
             
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
@@ -300,7 +288,7 @@ describe('useVideoTiming', () => {
         });
 
         test('should set seeking state when video is more than 100ms away from annotation time', () => {
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(1000); // Current time: 1000ms
+            mockVideoElement.currentTime = 1; // 1 second = 1000ms
             
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,
@@ -313,7 +301,7 @@ describe('useVideoTiming', () => {
         });
 
         test('should not set seeking state when video is within 100ms of annotation time', () => {
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(2950); // Current time: 2950ms (50ms from 3000ms)
+            mockVideoElement.currentTime = 2.95; // 2.95 seconds = 2950ms (50ms from 3000ms)
             
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,
@@ -326,7 +314,7 @@ describe('useVideoTiming', () => {
         });
 
         test('should update seeking state when activeAnnotationId changes', () => {
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(1000); // Current time: 1000ms
+            mockVideoElement.currentTime = 1; // 1 second = 1000ms
             
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,
@@ -401,7 +389,7 @@ describe('useVideoTiming', () => {
                 { id: 'annotation1', target: { location: { value: 0 } } },
             ];
             
-            mockGetVideoCurrentTimeInMilliseconds.mockReturnValue(200); 
+            mockVideoElement.currentTime = 0.2; // 0.2 seconds = 200ms 
             
             wrapper = getWrapper({ 
                 targetType: TARGET_TYPE.FRAME,

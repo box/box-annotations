@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TARGET_TYPE } from "../constants";
-import { getVideoCurrentTimeInMilliseconds } from "./util";
+
+
 
 export interface UseVideoTimingProps {
     targetType: TARGET_TYPE;
@@ -14,6 +15,9 @@ export interface UseVideoTimingReturnType {
     getCurrentVideoLocation: () => number;
 }
 
+export function getVideoCurrentTimeInMilliseconds(video: HTMLVideoElement): number {
+    return (video?.currentTime ?? 0) * 1000;
+}
 
 /**
  * This hook is used to keep track of when the video is currently seeking and when it has reached
