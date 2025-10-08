@@ -18,6 +18,19 @@ describe('region/actions', () => {
                 x: 10.75,
                 y: 10.75,
             } as Rect,
+            targetType: "page" as const,
+        };
+
+        const videoArg = {
+            location: 100,
+            message: 'message',
+            shape: {
+                height: 50.25,
+                width: 50.25,
+                x: 10.75,
+                y: 10.75,
+            } as Rect,
+            targetType: "frame" as const,
         };
         const dispatch = jest.fn();
         const getState = jest.fn();
@@ -41,6 +54,30 @@ describe('region/actions', () => {
                         value: 5,
                     },
                     shape: arg.shape,
+                    type: 'region',
+                },
+            });
+        });
+
+        test('should format its argument and dispatch for video annotations', async () => {
+            await createRegionAction(videoArg)(dispatch, getState);
+
+            expect(dispatch).toHaveBeenCalled();
+            expect(getState).toHaveBeenCalled();
+            expect(createAnnotationAction).toHaveBeenCalledWith({   
+                description: {
+                    message: 'message',
+                    type: 'reply',
+                },
+                file_version: {
+                    id: '123',
+                },
+                target: {
+                    location: {
+                        type: 'frame' as const,
+                        value: 100,
+                    },
+                    shape: videoArg.shape,
                     type: 'region',
                 },
             });

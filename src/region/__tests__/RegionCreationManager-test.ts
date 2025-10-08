@@ -3,6 +3,7 @@ import { createIntl } from 'react-intl';
 import RegionCreationManager from '../RegionCreationManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
+import { TARGET_TYPE } from '../../constants';
 
 jest.mock('react-dom/client', () => ({
     createRoot: jest.fn().mockReturnValue({
@@ -25,6 +26,7 @@ describe('RegionCreationManager', () => {
     beforeEach(() => {
         rootEl.classList.add('root');
         rootEl.innerHTML = '<div class="reference" />'; // referenceEl
+        jest.clearAllMocks();
     });
 
     describe('constructor', () => {
@@ -63,6 +65,16 @@ describe('RegionCreationManager', () => {
 
             wrapper.render({ intl, store: createStore() });
 
+            expect(root.render).toHaveBeenCalled();
+        });
+
+        test('should pass the correct props to the RegionCreationContainer', () => {
+            const wrapper = getWrapper({ targetType: TARGET_TYPE.FRAME, location: -1 });
+            const root = ReactDOM.createRoot(rootEl);
+            wrapper.render({ intl, store: createStore() });
+            expect(wrapper.location).toEqual(-1);
+            expect(wrapper.targetType).toEqual('frame');
+            expect(wrapper.referenceEl).toEqual(rootEl.querySelector('.reference') as HTMLElement);
             expect(root.render).toHaveBeenCalled();
         });
     });

@@ -5,6 +5,7 @@ import PopupReply from '../../components/Popups/PopupReply';
 import { pathGroups } from '../../drawing/__mocks__/drawingData';
 import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
 import { Rect } from '../../@types';
+import { TARGET_TYPE } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 
@@ -28,6 +29,8 @@ describe('PopupLayer', () => {
         location: 1,
         shape: getRect(),
     });
+
+    const referenceId = '123';
     const getDefaults = (): Props => ({
         createDrawing: jest.fn(),
         createHighlight: jest.fn(),
@@ -41,9 +44,10 @@ describe('PopupLayer', () => {
         setMessage: jest.fn(),
         staged: getStagedHighlight(),
         status: CreatorStatus.staged,
+        targetType: TARGET_TYPE.PAGE,
     });
     const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);
-    const referenceId = '123';
+    
 
     beforeEach(() => {
         document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
@@ -138,6 +142,7 @@ describe('PopupLayer', () => {
                 expect(createHighlight).toHaveBeenCalledWith({
                     ...getStagedHighlight(),
                     message,
+                    targetType: 'page',
                 });
                 expect(createRegion).not.toHaveBeenCalled();
             });
@@ -161,6 +166,7 @@ describe('PopupLayer', () => {
                 expect(createRegion).toHaveBeenCalledWith({
                     ...getStagedRegion(),
                     message,
+                    targetType: 'page',
                 });
             });
 
@@ -176,12 +182,14 @@ describe('PopupLayer', () => {
                     message,
                     mode: Mode.DRAWING,
                     staged: getStagedDrawing(),
+                    targetType: 'frame',
                 });
                 wrapper.find(PopupReply).prop('onSubmit')('');
 
                 expect(createDrawing).toHaveBeenCalledWith({
                     ...getStagedDrawing(),
                     message,
+                    targetType: 'frame',
                 });
                 expect(createHighlight).not.toHaveBeenCalled();
                 expect(createRegion).not.toHaveBeenCalled();

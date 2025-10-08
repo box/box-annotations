@@ -5,6 +5,7 @@ import RegionCreator from '../RegionCreator';
 import RegionRect from '../RegionRect';
 import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
+import { TARGET_TYPE } from '../../constants';
 
 jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionCreator');
@@ -19,6 +20,7 @@ describe('RegionCreation', () => {
         setStaged: jest.fn(),
         setStatus: jest.fn(),
         staged: null,
+        targetType: TARGET_TYPE.PAGE,
     };
     const getRect = (): Rect => ({
         type: 'rect',
@@ -77,6 +79,22 @@ describe('RegionCreation', () => {
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
+
+            test('should set the location to the current time of the video if the target type is frame', () => {
+                const videoTimeStamp = 19
+                wrapper = getWrapper({
+                    targetType: TARGET_TYPE.FRAME,
+                    referenceEl: { currentTime: videoTimeStamp } as HTMLVideoElement,
+                });
+                instance = wrapper.instance() as InstanceType<typeof RegionCreation>;
+                instance.handleStop(shape);
+               
+                expect(defaults.setStaged).toHaveBeenCalledWith({
+                    location: 19000,
+                    shape,
+                });
+                expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
+            })
         });
 
         describe('handleStagedMount()', () => {
