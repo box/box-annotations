@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TARGET_TYPE } from "../constants";
 
 
@@ -39,9 +39,9 @@ const useVideoTiming = ({
     const [targetVideoTime, setTargetVideoTime] = useState<number | null>(null);
 
 
-    const getCurrentVideoTimeStamp = (): number => { 
+    const getCurrentVideoTimeStamp = useCallback((): number => { 
          return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
-    };
+    }, [referenceEl]);
 
     // Handle video seeking events
     useEffect(() => {
@@ -60,7 +60,7 @@ const useVideoTiming = ({
 
         const handleTimeUpdate = (): void => {
             if (isVideoSeeking && targetVideoTime !== null) {
-                const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
+                const currentVideoTimePosition = getCurrentVideoTimeStamp();
                 const timeDiff = Math.abs(currentVideoTimePosition - targetVideoTime);
                 
                 // Consider the video has reached the target time if within 100ms
@@ -80,12 +80,12 @@ const useVideoTiming = ({
             referenceEl.removeEventListener('seeked', handleSeeked);
             referenceEl.removeEventListener('timeupdate', handleTimeUpdate);
         };
-    }, [targetType, referenceEl, isVideoSeeking, targetVideoTime]);
+    }, [targetType, referenceEl, isVideoSeeking, targetVideoTime, getCurrentVideoTimeStamp]);
 
     // Set target video time when activeAnnotationId changes
     useEffect(() => {
         if (targetType === TARGET_TYPE.FRAME && activeAnnotationId && referenceEl) {
-            const currentVideoTimePosition = getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
+            const currentVideoTimePosition = getCurrentVideoTimeStamp();
             
             // Find the annotation to get its target time
             const annotation = annotations.find(ann => ann.id === activeAnnotationId);
@@ -100,7 +100,7 @@ const useVideoTiming = ({
                 }
             }
         }
-    }, [activeAnnotationId, targetType, referenceEl, annotations]);
+    }, [activeAnnotationId, targetType, referenceEl, annotations, getCurrentVideoTimeStamp]);
 
     return {
         isVideoSeeking,
