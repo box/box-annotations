@@ -15,7 +15,7 @@ describe('PopupContainer', () => {
         location: 1,
         store: createStore(),
     };
-    // Define PAGE if not already imported
+    
     const getWrapper = (props = {}): ReactWrapper<Props> =>
         mount(
             <PopupContainer
