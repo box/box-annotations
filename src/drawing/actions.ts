@@ -2,17 +2,18 @@ import { AppThunkDispatch, AppState, getCreatorStatus, CreatorStatus } from '../
 import { createAnnotationAction } from '../store/annotations';
 import { getFileVersionId } from '../store/options';
 import { PathGroup } from '../@types';
-import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
 import { TARGET_TYPE } from '../constants';
+import { resetDrawingAction, setDrawingLocationAction } from '../store/drawing';
 
 export type CreateArg = {
     location: number;
     message: string;
     pathGroups: Array<PathGroup>;
+    targetType: TARGET_TYPE;
 };
 
 export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
-    const { location, message, pathGroups } = arg;
+    const { location, message, pathGroups, targetType } = arg;
     const state = getState();
     const newAnnotation = {
         description: {
@@ -24,7 +25,7 @@ export const createDrawingAction = (arg: CreateArg) => (dispatch: AppThunkDispat
         },
         target: {
             location: {
-                type: TARGET_TYPE.PAGE,
+                type: targetType,
                 value: location,
             },
             path_groups: pathGroups,

@@ -10,6 +10,8 @@ import PopupDrawingToolbar, { PopupBaseRef } from '../components/Popups/PopupDra
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
+import { TARGET_TYPE } from '../constants';
+import useVideoTiming from '../utils/useVideoTiming';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -29,6 +31,8 @@ export type Props = {
     setupDrawing: (location: number) => void;
     stashedPathGroups: Array<PathGroup>;
     undoDrawingPathGroup: () => void;
+    targetType: TARGET_TYPE;
+    referenceEl?: HTMLElement;
 };
 
 const DrawingAnnotations = (props: Props): JSX.Element => {
@@ -50,6 +54,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         setupDrawing,
         stashedPathGroups,
         undoDrawingPathGroup,
+        targetType,
+        referenceEl,
     } = props;
     const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
     const [stagedRootEl, setStagedRootEl] = React.useState<DrawingSVGRef | null>(null);
@@ -59,6 +65,13 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const popupDrawingToolbarRef = React.useRef<PopupBaseRef>(null);
     const stagedGroupRef = React.useRef<SVGGElement>(null);
     const { current: drawingSVGGroup } = stagedGroupRef;
+
+    const { isVideoSeeking, getCurrentVideoLocation } = useVideoTiming({
+        targetType,
+        referenceEl: referenceEl as HTMLElement,
+        activeAnnotationId,
+        annotations,
+    });
 
     const handleAnnotationActive = (annotationId: string | null): void => {
         setActiveAnnotationId(annotationId);
@@ -72,8 +85,16 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
     const handleRedo = (): void => {
         redoDrawingPathGroup();
     };
+
+    const getCurrentLocation = (): number => { 
+        if (targetType === TARGET_TYPE.FRAME) {
+            return getCurrentVideoLocation();
+        }
+        return location;
+    };
     const handleReply = (): void => {
-        setStaged({ location, pathGroups: drawnPathGroups });
+        const annotationLocation = getCurrentLocation();
+        setStaged({ location: annotationLocation, pathGroups: drawnPathGroups });
         setStatus(CreatorStatus.staged);
     };
     const handleStart = (): void => {
@@ -95,11 +116,27 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
+  
+    let annotationsToShow: AnnotationDrawing[] = [];
+    // For video annotations, we only show the active annotation and we wait for the video 
+    // to seek to the annotation location before showing it. This prevents annoations from being
+    // shown on the incorrect frame while the video is seeking.
+    if (targetType === TARGET_TYPE.FRAME ) {
+        if (!isVideoSeeking && activeAnnotationId) {
+            annotationsToShow = annotations.filter(annotation => annotation.id === activeAnnotationId);
+        }
+    } else {
+        annotationsToShow = annotations;
+    }
+
+    
+
+
     return (
         <>
             <DrawingList
                 activeId={activeAnnotationId}
-                annotations={annotations}
+                annotations={annotationsToShow}
                 className="ba-DrawingAnnotations-list"
                 onSelect={handleAnnotationActive}
             />
