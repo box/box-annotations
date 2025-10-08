@@ -4,6 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import RegionAnnotations from '../RegionAnnotations';
 import RegionAnnotationsContainer, { Props } from '../RegionAnnotationsContainer';
 import { createStore } from '../../store';
+import { TARGET_TYPE } from '../../constants';
 
 jest.mock('../../common/useIsListInteractive');
 jest.mock('../../common/withProviders');
@@ -15,7 +16,7 @@ describe('RegionAnnotationsContainer', () => {
         store: createStore(),
     };
     const getWrapper = (props = {}): ReactWrapper<Props> =>
-        mount(<RegionAnnotationsContainer {...defaults} {...props} />);
+        mount(<RegionAnnotationsContainer referenceEl={undefined} targetType={TARGET_TYPE.PAGE} {...defaults} {...props} />);
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {

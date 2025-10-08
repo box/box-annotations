@@ -11,7 +11,6 @@ const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideo
 
 const mockVideoTimingReturn = {
     isVideoSeeking: false,
-    targetVideoTime: null,
     getCurrentVideoLocation: jest.fn(),
 };
 

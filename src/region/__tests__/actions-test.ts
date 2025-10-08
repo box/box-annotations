@@ -1,4 +1,5 @@
 import { Rect } from '../../@types';
+import { TARGET_TYPE } from '../../constants';
 import { createAnnotationAction } from '../../store/annotations';
 import { createRegionAction } from '../actions';
 
@@ -18,7 +19,7 @@ describe('region/actions', () => {
                 x: 10.75,
                 y: 10.75,
             } as Rect,
-            targetType: "page" as const,
+            targetType: TARGET_TYPE.PAGE,
         };
 
         const videoArg = {
@@ -30,7 +31,7 @@ describe('region/actions', () => {
                 x: 10.75,
                 y: 10.75,
             } as Rect,
-            targetType: "frame" as const,
+            targetType: TARGET_TYPE.FRAME,
         };
         const dispatch = jest.fn();
         const getState = jest.fn();

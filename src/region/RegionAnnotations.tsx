@@ -9,7 +9,7 @@ export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationRegion[];
     setActiveAnnotationId: (annotationId: string | null) => void;
-    referenceEl: HTMLElement;
+    referenceEl?: HTMLElement;
     targetType: TARGET_TYPE;
 };
 
@@ -17,7 +17,7 @@ const RegionAnnotations = (props: Props): JSX.Element => {
     const { activeAnnotationId, annotations, setActiveAnnotationId, referenceEl, targetType } = props;
     const { isVideoSeeking } = useVideoTiming({
         targetType,
-        referenceEl: referenceEl as HTMLElement,
+        referenceEl: referenceEl as HTMLElement|undefined,
         activeAnnotationId: activeAnnotationId || null,
         annotations: annotations || [],
     });
@@ -26,7 +26,7 @@ const RegionAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId(annotationId);
     };
 
-    let annotationsToShow = []
+    let annotationsToShow: AnnotationRegion[] = []
   
     if (targetType === TARGET_TYPE.FRAME) {
         if (!isVideoSeeking && activeAnnotationId) {

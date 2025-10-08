@@ -16,7 +16,6 @@ const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideo
 
 const mockVideoTimingReturn = {
     isVideoSeeking: false,
-    targetVideoTime: null,
     getCurrentVideoLocation: jest.fn(),
 };
 
@@ -33,7 +32,7 @@ describe('RegionAnnotations', () => {
         referenceEl: document.createElement('div'),
         targetType: TARGET_TYPE.PAGE,
     });
-    const getWrapper = (props = {}): ReactWrapper => mount(<RegionAnnotations {...getDefaults()} {...props} />);
+    const getWrapper = (props: unknown = {}): ReactWrapper => mount(<RegionAnnotations {...getDefaults()} {...(props as Partial<Props>)} />);
 
 
 
@@ -70,7 +69,7 @@ describe('RegionAnnotations', () => {
     createVideoAnnotationTests({
         componentName: 'RegionAnnotations',
         getWrapper,
-        findListComponent: (wrapper) => wrapper.find(RegionList),
+        findListComponent: (wrapper) => wrapper.find(RegionList) as unknown as ReactWrapper,
         videoAnnotations: videoAnnotations as AnnotationRegion[],
         regularAnnotations: annotations as AnnotationRegion[],
         activeAnnotationId: 'video_region_anno_2',
