@@ -1,27 +1,50 @@
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import RegionAnnotations from '../RegionAnnotations';
+import { mount, ReactWrapper } from 'enzyme';
+import RegionAnnotations, { Props } from '../RegionAnnotations';
 import RegionList from '../RegionList';
-import { annotations } from '../__mocks__/data';
+import { annotations, videoAnnotations } from '../__mocks__/data';
+import { TARGET_TYPE } from '../../constants';
+import useVideoTiming from '../../utils/useVideoTiming';
+import { createVideoAnnotationTests } from '../../test-utils/videoAnnotations';
+import { AnnotationRegion } from '../../@types/model';
 
 jest.mock('../RegionList');
+jest.mock('../../utils/useVideoTiming', () => jest.fn());
+
+// Mock useVideoTiming hook
+const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideoTiming>;
+
+const mockVideoTimingReturn = {
+    isVideoSeeking: false,
+    getCurrentVideoLocation: jest.fn(),
+};
 
 describe('RegionAnnotations', () => {
-    const defaults = {
+
+    beforeEach(() => {
+        mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
+    });
+
+    const getDefaults = (): Props => ({
         activeAnnotationId: null,
         annotations: [],
         setActiveAnnotationId: jest.fn(),
-    };
-    const getWrapper = (props = {}): ShallowWrapper => shallow(<RegionAnnotations {...defaults} {...props} />);
+        referenceEl: document.createElement('div'),
+        targetType: TARGET_TYPE.PAGE,
+    });
+    const getWrapper = (props: unknown = {}): ReactWrapper => mount(<RegionAnnotations {...getDefaults()} {...(props as Partial<Props>)} />);
+
+
 
     describe('event handlers', () => {
         describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId with annotation id', () => {
-                getWrapper()
+                const setActiveAnnotationId = jest.fn();
+                getWrapper({ setActiveAnnotationId })
                     .find(RegionList)
                     .prop('onSelect')!('123');
 
-                expect(defaults.setActiveAnnotationId).toHaveBeenCalledWith('123');
+                expect(setActiveAnnotationId).toHaveBeenCalledWith('123');
             });
         });
     });
@@ -39,6 +62,36 @@ describe('RegionAnnotations', () => {
             const wrapper = getWrapper({ activeAnnotationId: '123' });
 
             expect(wrapper.find(RegionList).prop('activeId')).toBe('123');
+        });
+    });
+
+    // Use shared video annotation tests
+    createVideoAnnotationTests({
+        componentName: 'RegionAnnotations',
+        getWrapper,
+        findListComponent: (wrapper) => wrapper.find(RegionList) as unknown as ReactWrapper,
+        videoAnnotations: videoAnnotations as AnnotationRegion[],
+        regularAnnotations: annotations as AnnotationRegion[],
+        activeAnnotationId: 'video_region_anno_2',
+        nonExistentAnnotationId: 'non_existent_annotation_id',
+    });
+
+    // Region-specific video annotation tests
+    describe('region-specific video annotation tests', () => {
+        test('should filter to show only the matching active annotation', () => {
+            mockVideoTimingReturn.isVideoSeeking = false;
+            const activeAnnotationId = 'video_region_anno_3';
+            
+            const wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
+                annotations: videoAnnotations,
+                activeAnnotationId,
+            });
+
+            const regionList = wrapper.find(RegionList);
+            expect(regionList.prop('annotations')).toHaveLength(1);
+            expect(regionList.prop('annotations')[0].id).toBe(activeAnnotationId);
+            expect(regionList.prop('annotations')[0].target.location.value).toBe(30000);
         });
     });
 });

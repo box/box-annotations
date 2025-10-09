@@ -8,10 +8,11 @@ export type CreateArg = {
     location: number;
     message: string;
     shape: Rect;
+    targetType: TARGET_TYPE;
 };
 
 export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
-    const { location, message, shape } = arg;
+    const { location, message, shape, targetType } = arg;
     const state = getState();
     const newAnnotation = {
         description: {
@@ -23,7 +24,7 @@ export const createRegionAction = (arg: CreateArg) => (dispatch: AppThunkDispatc
         },
         target: {
             location: {
-                type: TARGET_TYPE.PAGE,
+                type: targetType,
                 value: location,
             },
             shape,

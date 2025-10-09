@@ -14,6 +14,6 @@ export default class RegionManager extends BaseManager {
             this.root = ReactDOM.createRoot(this.reactEl);
         }
 
-        this.root.render(<RegionCreationContainer location={this.location} {...props} />);
+        this.root.render(<RegionCreationContainer targetType={this.targetType} referenceEl={this.referenceEl} location={this.location} {...props} />);
     }
 }

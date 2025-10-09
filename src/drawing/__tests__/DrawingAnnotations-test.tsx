@@ -20,7 +20,6 @@ const mockUseVideoTiming = useVideoTiming as jest.MockedFunction<typeof useVideo
 
 const mockVideoTimingReturn = {
     isVideoSeeking: false,
-    targetVideoTime: null,
     getCurrentVideoLocation: jest.fn(),
 };
 
@@ -55,7 +54,6 @@ describe('DrawingAnnotations', () => {
 
     beforeEach(() => {
         mockVideoTimingReturn.isVideoSeeking = false;
-        mockVideoTimingReturn.targetVideoTime = null;
         mockVideoTimingReturn.getCurrentVideoLocation.mockReturnValue(0);
         mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
     });

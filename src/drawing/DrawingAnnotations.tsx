@@ -68,7 +68,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
 
     const { isVideoSeeking, getCurrentVideoLocation } = useVideoTiming({
         targetType,
-        referenceEl: referenceEl as HTMLElement,
+        referenceEl,
         activeAnnotationId,
         annotations,
     });
