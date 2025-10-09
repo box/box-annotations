@@ -17,7 +17,7 @@ const RegionAnnotations = (props: Props): JSX.Element => {
     const { activeAnnotationId, annotations, setActiveAnnotationId, referenceEl, targetType } = props;
     const { isVideoSeeking } = useVideoTiming({
         targetType,
-        referenceEl: referenceEl as HTMLElement|undefined,
+        referenceEl,
         activeAnnotationId: activeAnnotationId || null,
         annotations: annotations || [],
     });
