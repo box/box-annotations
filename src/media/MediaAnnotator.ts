@@ -120,7 +120,7 @@ export default class MediaAnnotator extends BaseAnnotator {
     // the other annotators as the client calls this function when it wants to show an annoation on the
     // preview. The only difference is that we are using the video element's currentTime to scroll to the 
     // annotation instead of the scrollLeft and scrollTop of the parent element.
-    scrollToAnnotation(annotationId: string | null, defaultLocation: number = -1 ): void {
+    scrollToAnnotation(annotationId: string | null | undefined, defaultLocation: number = -1 ): void {
         
         if (!annotationId) {
             return;
