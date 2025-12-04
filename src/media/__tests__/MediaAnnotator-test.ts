@@ -288,7 +288,10 @@ describe('MediaAnnotator', () => {
             expect(mockVideo.pause).toHaveBeenCalledTimes(3);
         });
 
-        test('should do nothing if the annotation id is undefined' ,() => {
+        test('should do nothing if the annotation id is undefined or null' ,() => {
+            annotator.scrollToAnnotation(undefined);
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
             annotator.scrollToAnnotation(null);
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
@@ -304,6 +307,15 @@ describe('MediaAnnotator', () => {
             annotator.scrollToAnnotation('video_region_anno_1', 2100);
             expect(mockVideo.currentTime).toBe(10);
             expect(mockVideo.pause).toHaveBeenCalled();
+        });
+
+        test('should handle undefined and null default location', () => {
+            annotator.scrollToAnnotation('video_region_anno_1', undefined);
+            expect(mockVideo.currentTime).toBe(10);
+            expect(mockVideo.pause).toHaveBeenCalled();
+            annotator.scrollToAnnotation('video_region_anno_2', null);
+            expect(mockVideo.currentTime).toBe(20);
+            expect(mockVideo.pause).toHaveBeenCalledTimes(2);
         });
 
         test('should set correct video time if default location is provided and annotation is not available in the store', () => {
