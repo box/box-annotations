@@ -129,7 +129,7 @@ export default class MediaAnnotator extends BaseAnnotator {
         const annotationLocation = annotation ?  annotation.target?.location?.value : defaultLocation;
        
         const video = this.getReference();
-        if ( !video || !this.annotatedEl || annotationLocation === -1 ) {
+        if ( !video || !this.annotatedEl || annotationLocation === -1 || annotationLocation === undefined ) {
             return;
         }
 

@@ -325,5 +325,11 @@ describe('MediaAnnotator', () => {
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
         });
+
+        test('should do nothing if the annotation target location is invalid', () => {
+            annotator.scrollToAnnotation('annotation_with_invalid_target');
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
+        });
     });
 });
