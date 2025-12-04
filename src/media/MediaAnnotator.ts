@@ -116,22 +116,23 @@ export default class MediaAnnotator extends BaseAnnotator {
         this.postRender();
     }
 
-    // This function gets called by the client. We are using the name scrollToAnnotation to match 
+    // This function gets called by the client. We are using the name scrollToAnnotataion to match 
     // the other annotators as the client calls this function when it wants to show an annoation on the
     // preview. The only difference is that we are using the video element's currentTime to scroll to the 
     // annotation instead of the scrollLeft and scrollTop of the parent element.
-    scrollToAnnotation(annotationId: string | null): void {
+    scrollToAnnotation(annotationId: string | null, defaultLocation: number = -1 ): void {
+        
         if (!annotationId) {
             return;
         }
-
         const annotation = getAnnotation(this.store.getState(), annotationId);
-        const annotationLocation = annotation?.target.location.value ?? 0
+        const annotationLocation = annotation ?  annotation.target?.location?.value : defaultLocation;
+       
         const video = this.getReference();
-        if (!annotation || !video || !this.annotatedEl) {
+        if ( !video || !this.annotatedEl || annotationLocation === -1 ) {
             return;
         }
-  
+
         video.pause();
         video.currentTime = annotationLocation / 1000;
         
