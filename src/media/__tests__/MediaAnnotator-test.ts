@@ -289,6 +289,8 @@ describe('MediaAnnotator', () => {
         });
 
         test('should do nothing if the annotation id is undefined or null' ,() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore - we want to test the undefined case
             annotator.scrollToAnnotation(undefined);
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
@@ -310,6 +312,8 @@ describe('MediaAnnotator', () => {
         });
 
         test('should handle undefined and null default location', () => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore - we want to test the undefined case
             annotator.scrollToAnnotation('video_region_anno_1', undefined);
             expect(mockVideo.currentTime).toBe(10);
             expect(mockVideo.pause).toHaveBeenCalled();
