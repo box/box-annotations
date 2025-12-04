@@ -320,7 +320,7 @@ describe('MediaAnnotator', () => {
         });
 
         test('should do nothing if the annotated element is not defined', () => {
-            annotator.annotatedEl = null;
+            annotator.annotatedEl = undefined;
             annotator.scrollToAnnotation('video_region_anno_1');
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
