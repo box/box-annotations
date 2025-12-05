@@ -28,8 +28,8 @@
 }
 
 .ba-PopupDrawingToolbar {
-    background-color: $bdl-gray;
-    border-radius: $bdl-border-radius-size;
+    background-color: transparent;
+    border-radius: 46px;
 
     .ba-Popup-arrow {
         display: none;
@@ -37,9 +37,11 @@
 
     .ba-Popup-content {
         display: flex;
-        background-color: $bdl-gray;
+        gap: 4px;
+        padding: 8px;
+        background-color: rgba(0, 0, 0, .8);
         border: none;
-        border-radius: $bdl-border-radius-size;
+        border-radius: 46px;
         box-shadow: none;
     }
 }
@@ -47,11 +49,12 @@
 .ba-PopupDrawingToolbar-group {
     position: relative;
     display: flex;
+    gap: 4px;
     align-items: center;
     justify-content: center;
 
     & + & {
-        border-left: 1px solid #000;
+        border-left: 1px solid rgb(255, 255, 255, 8%);
     }
 }
 
@@ -69,8 +72,9 @@
     @include ba-PopupDrawingToolbarButton($width: max-content);
     @include common-typography;
 
-    padding-right: 18px;
-    padding-left: 18px;
+    padding-right: 8px;
+    padding-left: 12px;
     color: $white;
     font-weight: bold;
+    font-size: 15px;
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
-import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
-import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
-import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
+import ArrowBack from '../../icons/ArrowBack';
+import ArrowForward from '../../icons/ArrowForward';
+import Trash from '../../icons/Trash';
 import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
@@ -48,6 +48,8 @@ const options: Partial<Options> = {
     placement: 'top',
 };
 
+const ICON_SIZE = 20;
+
 const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.Element => {
     const { canComment, canRedo, canUndo, className, onDelete, onRedo, onReply, onUndo, reference } = props;
     const intl = useIntl();
@@ -69,7 +71,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonUndo)}
                     type="button"
                 >
-                    <IconUndo />
+                    <ArrowBack height={ICON_SIZE} width={ICON_SIZE} />
                 </button>
                 <button
                     className="ba-PopupDrawingToolbar-redo"
@@ -79,7 +81,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonRedo)}
                     type="button"
                 >
-                    <IconRedo />
+                    <ArrowForward height={ICON_SIZE} width={ICON_SIZE} />
                 </button>
                 <button
                     className="ba-PopupDrawingToolbar-delete"
@@ -88,7 +90,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonDelete)}
                     type="button"
                 >
-                    <IconTrash />
+                    <Trash height={ICON_SIZE} width={ICON_SIZE} />
                 </button>
             </div>
             <div className="ba-PopupDrawingToolbar-group">
