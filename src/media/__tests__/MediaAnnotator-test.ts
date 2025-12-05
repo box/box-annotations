@@ -268,25 +268,20 @@ describe('MediaAnnotator', () => {
             jest.restoreAllMocks();
         });
 
-        test('should call scrollToLocation for region annotations', () => {
-            annotator.scrollToAnnotation('video_region_anno_1');
+        test.each([
+            { type: 'region', ids: ['video_region_anno_1', 'video_region_anno_2', 'video_region_anno_3'] },
+            { type: 'drawing', ids: ['video_drawing_anno_1', 'video_drawing_anno_2', 'video_drawing_anno_3'] },
+        ])('should call scrollToLocation for $type annotations', ({ ids }) => {
+            annotator.scrollToAnnotation(ids[0]);
             expect(mockVideo.currentTime).toBe(10);
-            annotator.scrollToAnnotation('video_region_anno_2');
+            annotator.scrollToAnnotation(ids[1]);
             expect(mockVideo.currentTime).toBe(20);
-            annotator.scrollToAnnotation('video_region_anno_3');
+            annotator.scrollToAnnotation(ids[2]);
             expect(mockVideo.currentTime).toBe(30);
             expect(mockVideo.pause).toHaveBeenCalledTimes(3);
         });
 
-        test('should call scrollToLocation for drawing anntotations', () => {
-            annotator.scrollToAnnotation('video_drawing_anno_1');
-            expect(mockVideo.currentTime).toBe(10);
-            annotator.scrollToAnnotation('video_drawing_anno_2');
-            expect(mockVideo.currentTime).toBe(20);
-            annotator.scrollToAnnotation('video_drawing_anno_3');
-            expect(mockVideo.currentTime).toBe(30);
-            expect(mockVideo.pause).toHaveBeenCalledTimes(3);
-        });
+
 
         test('should do nothing if the annotation id is undefined or null' ,() => {
             annotator.scrollToAnnotation(undefined);
