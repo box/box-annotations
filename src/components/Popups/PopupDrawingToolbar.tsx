@@ -1,6 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
+// Legacy icons (box-ui-elements)
+import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
+import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
+import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
+// Modernized icons
 import ArrowBack from '../../icons/ArrowBack';
 import ArrowForward from '../../icons/ArrowForward';
 import Trash from '../../icons/Trash';
@@ -8,6 +14,8 @@ import messages from './messages';
 import PopupBase from './PopupBase';
 import { Options, PopupReference, Rect } from './Popper';
 import './PopupDrawingToolbar.scss';
+import { isFeatureEnabled } from '../../store/options/selectors';
+import { AppState } from '../../store/types';
 
 export type PopupBaseRef = PopupBase;
 
@@ -52,12 +60,16 @@ const ICON_SIZE = 20;
 
 const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.Element => {
     const { canComment, canRedo, canUndo, className, onDelete, onRedo, onReply, onUndo, reference } = props;
+    const isModernizationEnabled = useSelector((state: AppState) => isFeatureEnabled(state, 'modernization'));
+
     const intl = useIntl();
 
     return (
         <PopupBase
             ref={ref}
-            className={classNames(className, 'ba-PopupDrawingToolbar')}
+            className={classNames(className, 'ba-PopupDrawingToolbar', {
+                'ba-PopupDrawingToolbar--modernized': isModernizationEnabled,
+            })}
             data-resin-component="popupDrawingToolbar"
             options={options}
             reference={reference}
@@ -71,7 +83,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonUndo)}
                     type="button"
                 >
-                    <ArrowBack height={ICON_SIZE} width={ICON_SIZE} />
+                    {isModernizationEnabled ? <ArrowBack height={ICON_SIZE} width={ICON_SIZE} /> : <IconUndo />}
                 </button>
                 <button
                     className="ba-PopupDrawingToolbar-redo"
@@ -81,7 +93,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonRedo)}
                     type="button"
                 >
-                    <ArrowForward height={ICON_SIZE} width={ICON_SIZE} />
+                    {isModernizationEnabled ? <ArrowForward height={ICON_SIZE} width={ICON_SIZE} /> : <IconRedo />}
                 </button>
                 <button
                     className="ba-PopupDrawingToolbar-delete"
@@ -90,7 +102,7 @@ const PopupDrawingToolbar = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.El
                     title={intl.formatMessage(messages.drawingButtonDelete)}
                     type="button"
                 >
-                    <Trash height={ICON_SIZE} width={ICON_SIZE} />
+                    {isModernizationEnabled ? <Trash height={ICON_SIZE} width={ICON_SIZE} /> : <IconTrash />}
                 </button>
             </div>
             <div className="ba-PopupDrawingToolbar-group">
