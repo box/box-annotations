@@ -268,30 +268,75 @@ describe('MediaAnnotator', () => {
             jest.restoreAllMocks();
         });
 
-        test('should call scrollToLocation for region annotations', () => {
-            annotator.scrollToAnnotation('video_region_anno_1');
+        test.each([
+            { type: 'region', ids: ['video_region_anno_1', 'video_region_anno_2', 'video_region_anno_3'] },
+            { type: 'drawing', ids: ['video_drawing_anno_1', 'video_drawing_anno_2', 'video_drawing_anno_3'] },
+        ])('should call scrollToLocation for $type annotations', ({ ids }) => {
+            annotator.scrollToAnnotation(ids[0]);
             expect(mockVideo.currentTime).toBe(10);
-            annotator.scrollToAnnotation('video_region_anno_2');
+            annotator.scrollToAnnotation(ids[1]);
             expect(mockVideo.currentTime).toBe(20);
-            annotator.scrollToAnnotation('video_region_anno_3');
+            annotator.scrollToAnnotation(ids[2]);
             expect(mockVideo.currentTime).toBe(30);
             expect(mockVideo.pause).toHaveBeenCalledTimes(3);
         });
 
-        test('should call scrollToLocation for drawing anntotations', () => {
-            annotator.scrollToAnnotation('video_drawing_anno_1');
-            expect(mockVideo.currentTime).toBe(10);
-            annotator.scrollToAnnotation('video_drawing_anno_2');
-            expect(mockVideo.currentTime).toBe(20);
-            annotator.scrollToAnnotation('video_drawing_anno_3');
-            expect(mockVideo.currentTime).toBe(30);
-            expect(mockVideo.pause).toHaveBeenCalledTimes(3);
-        });
 
-        test('should do nothing if the annotation id is undefined or not available in the store', () => {
-            annotator.scrollToAnnotation('video_drawing_anno_12');
+
+        test('should do nothing if the annotation id is undefined or null' ,() => {
+            annotator.scrollToAnnotation(undefined);
             expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
             annotator.scrollToAnnotation(null);
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if the annotation is not available in the store and default location is not provided', () => {
+            annotator.scrollToAnnotation('id_not_in_store');
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
+        });
+
+        test('should set correct video time if default location is provided but annotation is available in the store', () => {
+            annotator.scrollToAnnotation('video_region_anno_1', 2100);
+            expect(mockVideo.currentTime).toBe(10);
+            expect(mockVideo.pause).toHaveBeenCalled();
+        });
+
+        test('should handle undefined and null default location', () => {
+    
+            annotator.scrollToAnnotation('video_region_anno_1', undefined);
+            expect(mockVideo.currentTime).toBe(10);
+            expect(mockVideo.pause).toHaveBeenCalled();
+         
+            annotator.scrollToAnnotation('video_region_anno_2', null as unknown as number);
+            expect(mockVideo.currentTime).toBe(20);
+            expect(mockVideo.pause).toHaveBeenCalledTimes(2);
+        });
+
+        test('should set correct video time if default location is provided and annotation is not available in the store', () => {
+            annotator.scrollToAnnotation('id_not_in_store', 30000);
+            expect(mockVideo.currentTime).toBe(30);
+            expect(mockVideo.pause).toHaveBeenCalled();
+        });
+
+        test('should do nothing if the video element is not defined', () => {
+            annotator.getReference = jest.fn().mockReturnValue(null);
+            annotator.scrollToAnnotation('video_region_anno_1');
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if the annotated element is not defined', () => {
+            annotator.annotatedEl = undefined;
+            annotator.scrollToAnnotation('video_region_anno_1');
+            expect(mockVideo.currentTime).toBe(0);
+            expect(mockVideo.pause).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if the annotation target location is invalid', () => {
+            annotator.scrollToAnnotation('annotation_with_invalid_target');
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
         });

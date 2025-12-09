@@ -99,4 +99,13 @@ export const videoAnnotations = [
             type: 'region',
         },
     },
+
+    {
+        id: 'annotation_with_invalid_target',
+        target: {
+            location: { type: TARGET_TYPE.FRAME },
+            shape: { height: 30, width: 30, x: 30, y: 30, type: 'rect' },
+            type: 'region',
+        },
+    },
 ];      
