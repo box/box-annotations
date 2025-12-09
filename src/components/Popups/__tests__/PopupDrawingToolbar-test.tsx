@@ -1,12 +1,22 @@
 import React from 'react';
+import * as ReactRedux from 'react-redux';
 import IconRedo from 'box-ui-elements/es/icon/line/Redo16';
 import IconTrash from 'box-ui-elements/es/icon/line/Trash16';
 import IconUndo from 'box-ui-elements/es/icon/line/Undo16';
 import { FormattedMessage } from 'react-intl';
 import { shallow, ShallowWrapper } from 'enzyme';
+import ArrowBack from '../../../icons/ArrowBack';
+import ArrowForward from '../../../icons/ArrowForward';
+import Trash from '../../../icons/Trash';
 import messages from '../messages';
 import PopupBase from '../PopupBase';
 import PopupDrawingToolbar, { Props } from '../PopupDrawingToolbar';
+
+jest.mock('react-redux', () => ({
+    __esModule: true,
+    ...jest.requireActual('react-redux'),
+    useSelector: jest.fn(),
+}));
 
 describe('PopupDrawingToolbar', () => {
     const getDataTestId = (button: string): string => `ba-PopupDrawingToolbar-${button}`;
@@ -35,6 +45,10 @@ describe('PopupDrawingToolbar', () => {
     });
     const getWrapper = (props?: Partial<Props>): ShallowWrapper =>
         shallow(<PopupDrawingToolbar {...getDefaults()} {...props} />);
+
+    beforeEach(() => {
+        jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => false);
+    });
 
     describe('render', () => {
         test('should render popup and buttons', () => {
@@ -114,6 +128,50 @@ describe('PopupDrawingToolbar', () => {
             getButton(wrapper, buttonId).simulate('click');
 
             expect(mockFn).toHaveBeenCalled();
+        });
+    });
+
+    describe('modernization feature flag', () => {
+        test('should render legacy icons when modernization is disabled', () => {
+            jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => false);
+            const wrapper = getWrapper();
+
+            expect(wrapper.exists(IconUndo)).toBe(true);
+            expect(wrapper.exists(IconRedo)).toBe(true);
+            expect(wrapper.exists(IconTrash)).toBe(true);
+            expect(wrapper.exists(ArrowBack)).toBe(false);
+            expect(wrapper.exists(ArrowForward)).toBe(false);
+            expect(wrapper.exists(Trash)).toBe(false);
+        });
+
+        test('should render modernized icons when modernization is enabled', () => {
+            jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
+            const wrapper = getWrapper();
+
+            expect(wrapper.exists(ArrowBack)).toBe(true);
+            expect(wrapper.exists(ArrowForward)).toBe(true);
+            expect(wrapper.exists(Trash)).toBe(true);
+            expect(wrapper.exists(IconUndo)).toBe(false);
+            expect(wrapper.exists(IconRedo)).toBe(false);
+            expect(wrapper.exists(IconTrash)).toBe(false);
+        });
+
+        test('should not apply modernized class when modernization is disabled', () => {
+            jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => false);
+            const wrapper = getWrapper({ className: 'foo' });
+
+            expect(wrapper.find(PopupBase).props()).toMatchObject({
+                className: 'foo ba-PopupDrawingToolbar',
+            });
+        });
+
+        test('should apply modernized class when modernization is enabled', () => {
+            jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
+            const wrapper = getWrapper({ className: 'foo' });
+
+            expect(wrapper.find(PopupBase).props()).toMatchObject({
+                className: 'foo ba-PopupDrawingToolbar ba-PopupDrawingToolbar--modernized',
+            });
         });
     });
 });
