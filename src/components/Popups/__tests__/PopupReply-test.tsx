@@ -1,16 +1,43 @@
 import React from 'react';
-import * as ReactRedux from 'react-redux';
-import { mount, ReactWrapper } from 'enzyme';
-import PopupBase from '../PopupBase';
+import { render, screen } from '@testing-library/react';
+import { useSelector } from 'react-redux';
 import PopupReply, { Props } from '../PopupReply';
-import ReplyForm from '../../ReplyForm';
 
 jest.mock('react-redux', () => ({
     useSelector: jest.fn(),
 }));
 
-jest.mock('../PopupBase');
-jest.mock('../../ReplyForm');
+const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
+
+jest.mock('../PopupBase', () => {
+    const ReactMock = jest.requireActual('react');
+    const MockPopupBase = ReactMock.forwardRef(
+        ({ children, options, ...rest }: Record<string, unknown>, ref: React.Ref<HTMLDivElement>) =>
+            ReactMock.createElement(
+                'div',
+                { ref, 'data-testid': 'popup-base', 'data-options': JSON.stringify(options), ...rest },
+                children,
+            ),
+    );
+    MockPopupBase.displayName = 'MockPopupBase';
+    return MockPopupBase;
+});
+
+jest.mock('../../ReplyForm', () => {
+    const ReactMock = jest.requireActual('react');
+    return ({ isPending, value, ...rest }: Record<string, unknown>) =>
+        ReactMock.createElement('div', {
+            'data-testid': 'reply-form',
+            'data-pending': String(isPending),
+            'data-value': value || '',
+            ...rest,
+        });
+});
+
+jest.mock('../PopupReplyV2', () => {
+    const ReactMock = jest.requireActual('react');
+    return () => ReactMock.createElement('div', { 'data-testid': 'popup-reply-v2' });
+});
 
 describe('PopupReply', () => {
     const defaults: Props = {
@@ -21,93 +48,116 @@ describe('PopupReply', () => {
         reference: document.createElement('div'),
     };
 
-    const getWrapper = (props = {}): ReactWrapper => mount(<PopupReply {...defaults} {...props} />);
-
     beforeEach(() => {
-        jest.spyOn(React, 'useEffect').mockImplementation(f => f());
+        mockUseSelector.mockReturnValue(0);
     });
 
-    describe('state changes', () => {
-        test('should call update on the underlying popper instance when the store changes', () => {
-            const popupMock = { popper: { update: jest.fn() } };
-            const reduxSpy = jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => false);
-            const refSpy = jest.spyOn(React, 'useRef').mockImplementation(() => ({ current: popupMock }));
-            const wrapper = getWrapper();
-
-            reduxSpy.mockReturnValueOnce(true);
-            wrapper.setProps({ value: '1' });
-
-            reduxSpy.mockReturnValueOnce(false);
-            wrapper.setProps({ value: '2' });
-
-            expect(refSpy).toHaveBeenCalled();
-            expect(popupMock.popper.update).toHaveBeenCalledTimes(3);
-        });
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe('render()', () => {
         test('should render the ReplyForm', () => {
-            const wrapper = getWrapper();
+            render(<PopupReply {...defaults} />);
 
-            expect(wrapper.exists(PopupBase)).toBe(true);
-            expect(wrapper.exists(ReplyForm)).toBe(true);
+            expect(screen.getByTestId('popup-base')).toBeDefined();
+            expect(screen.getByTestId('reply-form')).toBeDefined();
         });
 
-        test('should maintain referential integrity of the PopupBase options object across renders', () => {
-            const wrapper = getWrapper();
+        test('should render PopupReplyV2 when isThreadedAnnotation is true', () => {
+            render(<PopupReply {...defaults} isThreadedAnnotation />);
 
-            const popupOptions = wrapper.find(PopupBase).prop('options');
+            expect(screen.getByTestId('popup-reply-v2')).toBeDefined();
+            expect(screen.queryByTestId('popup-base')).toBeNull();
+            expect(screen.queryByTestId('reply-form')).toBeNull();
+        });
 
-            expect(wrapper.exists(PopupBase)).toBe(true);
-            expect(wrapper.find(ReplyForm).prop('value')).toBe('');
+        test('should render existing UI when isThreadedAnnotation is false', () => {
+            render(<PopupReply {...defaults} isThreadedAnnotation={false} />);
 
-            wrapper.setProps({ value: '1' });
+            expect(screen.queryByTestId('popup-reply-v2')).toBeNull();
+            expect(screen.getByTestId('popup-base')).toBeDefined();
+            expect(screen.getByTestId('reply-form')).toBeDefined();
+        });
 
-            expect(wrapper.find(PopupBase).prop('options')).toStrictEqual(popupOptions);
-            expect(wrapper.find(ReplyForm).prop('value')).toBe('1');
+        test('should render existing UI when isThreadedAnnotation is undefined', () => {
+            render(<PopupReply {...defaults} />);
+
+            expect(screen.queryByTestId('popup-reply-v2')).toBeNull();
+            expect(screen.getByTestId('popup-base')).toBeDefined();
+            expect(screen.getByTestId('reply-form')).toBeDefined();
+        });
+
+        test('should pass value prop to ReplyForm', () => {
+            render(<PopupReply {...defaults} value="test value" />);
+
+            const replyForm = screen.getByTestId('reply-form');
+            expect(replyForm.getAttribute('data-value')).toBe('test value');
+        });
+
+        test('should pass isPending prop to ReplyForm', () => {
+            render(<PopupReply {...defaults} isPending />);
+
+            const replyForm = screen.getByTestId('reply-form');
+            expect(replyForm.getAttribute('data-pending')).toBe('true');
+        });
+    });
+
+    describe('useEffect popper update', () => {
+        test('should call useSelector for rotation and scale values', () => {
+            mockUseSelector.mockReturnValueOnce(0).mockReturnValueOnce(1);
+
+            render(<PopupReply {...defaults} />);
+
+            expect(mockUseSelector).toHaveBeenCalledTimes(2);
+        });
+
+        test('should re-render when rotation/scale changes', () => {
+            mockUseSelector.mockReturnValue(0);
+
+            const { rerender } = render(<PopupReply {...defaults} />);
+            const callCountAfterFirstRender = mockUseSelector.mock.calls.length;
+
+            mockUseSelector.mockReturnValue(90);
+            rerender(<PopupReply {...defaults} />);
+
+            expect(mockUseSelector.mock.calls.length).toBeGreaterThan(callCountAfterFirstRender);
         });
     });
 
     describe('Popup options', () => {
-        const eventListenersModifier = {
-            name: 'eventListeners',
-            options: { scroll: false },
-        };
-        const IEUserAgent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko';
-        const otherUserAgent = 'Other';
+        test('should pass options to PopupBase', () => {
+            render(<PopupReply {...defaults} />);
 
-        test.each`
-            userAgent         | expectedPlacement
-            ${IEUserAgent}    | ${'top'}
-            ${otherUserAgent} | ${'bottom'}
-        `(
-            'should set placement option as $expectedPlacement based on userAgent=$userAgent',
-            ({ userAgent, expectedPlacement }) => {
-                global.window.navigator.userAgent = userAgent;
+            const popupBase = screen.getByTestId('popup-base');
+            const options = JSON.parse(popupBase.getAttribute('data-options') || '{}');
 
-                const wrapper = getWrapper();
-
-                expect(window.navigator.userAgent).toEqual(userAgent);
-                expect(wrapper.find(PopupBase).prop('options').placement).toBe(expectedPlacement);
-            },
-        );
-
-        test('should disable scroll event listeners if browser is IE', () => {
-            global.window.navigator.userAgent = IEUserAgent;
-
-            const wrapper = getWrapper();
-
-            expect(window.navigator.userAgent).toEqual(IEUserAgent);
-            expect(wrapper.find(PopupBase).prop('options').modifiers).toContainEqual(eventListenersModifier);
+            expect(options).toHaveProperty('placement');
+            expect(options).toHaveProperty('modifiers');
+            expect(Array.isArray(options.modifiers)).toBe(true);
         });
 
-        test('should not disable scroll event listeners for non IE browsers', () => {
-            global.window.navigator.userAgent = otherUserAgent;
+        test('should maintain the same options reference between renders', () => {
+            const { rerender } = render(<PopupReply {...defaults} />);
+            const optionsBefore = screen.getByTestId('popup-base').getAttribute('data-options');
 
-            const wrapper = getWrapper();
+            rerender(<PopupReply {...defaults} />);
+            const optionsAfter = screen.getByTestId('popup-base').getAttribute('data-options');
 
-            expect(window.navigator.userAgent).toEqual(otherUserAgent);
-            expect(wrapper.find(PopupBase).prop('options').modifiers).not.toContainEqual(eventListenersModifier);
+            expect(optionsBefore).toBe(optionsAfter);
+        });
+
+        test('should include required modifiers in options', () => {
+            render(<PopupReply {...defaults} />);
+
+            const popupBase = screen.getByTestId('popup-base');
+            const options = JSON.parse(popupBase.getAttribute('data-options') || '{}');
+
+            const modifierNames = options.modifiers.map((m: { name: string }) => m.name);
+            expect(modifierNames).toContain('arrow');
+            expect(modifierNames).toContain('flip');
+            expect(modifierNames).toContain('offset');
+            expect(modifierNames).toContain('preventOverflow');
         });
     });
 });

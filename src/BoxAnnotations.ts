@@ -19,7 +19,8 @@ type AnnotationsOptions = {
 };
 
 export type Features = {
-    [key: string]: boolean;
+    isThreadedAnnotation?: boolean;
+    [key: string]: boolean | undefined;
 };
 
 type PreviewOptions = {
