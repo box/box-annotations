@@ -15,12 +15,14 @@ import {
     setMessageAction,
     getCreatorReferenceId,
 } from '../store';
+import { isFeatureEnabled } from '../store/options';
 import { createDrawingAction } from '../drawing/actions';
 import { createHighlightAction } from '../highlight/actions';
 import { createRegionAction } from '../region';
 
 export type Props = {
     isPromoting: boolean;
+    isThreadedAnnotation?: boolean;
     message: string;
     mode: Mode;
     referenceId: string | null;
@@ -31,6 +33,7 @@ export type Props = {
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     return {
         isPromoting: getIsPromoting(state),
+        isThreadedAnnotation: isFeatureEnabled(state, 'isThreadedAnnotation'),
         message: getCreatorMessage(state),
         mode: getAnnotationMode(state),
         referenceId: getCreatorReferenceId(state),

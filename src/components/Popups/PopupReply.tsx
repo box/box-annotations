@@ -5,20 +5,37 @@ import { useIntl } from 'react-intl';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 import messages from './messages';
 import PopupBase from './PopupBase';
+import PopupReplyV2 from './PopupReplyV2';
 import ReplyForm from '../ReplyForm';
 import { getScale, getRotation } from '../../store/options';
 import { PopupReference } from './Popper';
 import './PopupReply.scss';
 
-export type Props = {
+type BaseProps = {
     className?: string;
+};
+
+type LegacyProps = BaseProps & {
     isPending: boolean;
+    isThreadedAnnotation?: false;
     onCancel: (text?: string) => void;
     onChange: (text?: string) => void;
     onSubmit: (text: string) => void;
     reference: PopupReference;
     value?: string;
 };
+
+type ThreadedProps = BaseProps & {
+    isThreadedAnnotation: true;
+    isPending?: boolean;
+    onCancel?: (text?: string) => void;
+    onChange?: (text?: string) => void;
+    onSubmit?: (text: string) => void;
+    reference?: PopupReference;
+    value?: string;
+};
+
+export type Props = LegacyProps | ThreadedProps;
 
 const isIE = (): boolean => {
     const { userAgent } = navigator;
@@ -77,14 +94,7 @@ const getOptions = (): Partial<Popper.Options> => {
     };
 };
 
-export default function PopupReply({
-    isPending,
-    onCancel,
-    onChange,
-    onSubmit,
-    value = '',
-    ...rest
-}: Props): JSX.Element {
+export default function PopupReply(props: Props): JSX.Element {
     const intl = useIntl();
     const popupRef = React.useRef<PopupBase>(null);
     const popupOptions = React.useRef<Partial<Popper.Options>>(getOptions()); // Keep the options reference the same between renders
@@ -98,6 +108,14 @@ export default function PopupReply({
             popup.popper.update();
         }
     }, [popupRef, rotation, scale]);
+
+    // TODO: PopupReplyV2 is a placeholder stub. Props (isPending, onCancel, etc.)
+    // are not yet forwarded and will need to be wired up when V2 is implemented.
+    if (props.isThreadedAnnotation) {
+        return <PopupReplyV2 />;
+    }
+
+    const { isPending, onCancel, onChange, onSubmit, value = '', isThreadedAnnotation: _, ...rest } = props as LegacyProps;
 
     return (
         <FocusTrap>

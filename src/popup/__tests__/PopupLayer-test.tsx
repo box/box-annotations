@@ -1,13 +1,28 @@
 import React from 'react';
-import { ReactWrapper, mount } from 'enzyme';
+import { render, screen, act } from '@testing-library/react';
 import PopupLayer, { Props } from '../PopupLayer';
-import PopupReply from '../../components/Popups/PopupReply';
 import { pathGroups } from '../../drawing/__mocks__/drawingData';
 import { CreatorStatus, CreatorItemHighlight, CreatorItemRegion, Mode, CreatorItemDrawing } from '../../store';
 import { Rect } from '../../@types';
 import { TARGET_TYPE } from '../../constants';
 
-jest.mock('../../components/Popups/PopupReply');
+let mockOnCancel: ((text?: string) => void) | undefined;
+let mockOnChange: ((text?: string) => void) | undefined;
+let mockOnSubmit: ((text: string) => void) | undefined;
+
+jest.mock('../../components/Popups/PopupReply', () => {
+    const ReactMock = jest.requireActual('react');
+    return (props: Record<string, unknown>) => {
+        mockOnCancel = props.onCancel as typeof mockOnCancel;
+        mockOnChange = props.onChange as typeof mockOnChange;
+        mockOnSubmit = props.onSubmit as typeof mockOnSubmit;
+        return ReactMock.createElement('div', {
+            'data-testid': 'popup-reply',
+            'data-is-pending': String(props.isPending),
+            'data-is-threaded': String(props.isThreadedAnnotation),
+        });
+    };
+});
 
 describe('PopupLayer', () => {
     const getRect = (): Rect => ({
@@ -46,12 +61,21 @@ describe('PopupLayer', () => {
         status: CreatorStatus.staged,
         targetType: TARGET_TYPE.PAGE,
     });
-    const getWrapper = (props = {}): ReactWrapper => mount(<PopupLayer {...getDefaults()} {...props} />);
-    
 
     beforeEach(() => {
         document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
+        mockOnCancel = undefined;
+        mockOnChange = undefined;
+        mockOnSubmit = undefined;
     });
+
+    const renderLayer = (props = {}): ReturnType<typeof render> => {
+        let result: ReturnType<typeof render>;
+        act(() => {
+            result = render(<PopupLayer {...getDefaults()} {...props} />);
+        });
+        return result!;
+    };
 
     describe('render()', () => {
         test.each`
@@ -61,9 +85,13 @@ describe('PopupLayer', () => {
             ${CreatorStatus.rejected} | ${true}
             ${CreatorStatus.staged}   | ${true}
         `('should render a reply popup ($showReply) if the creator status is $status', ({ status, showReply }) => {
-            const wrapper = getWrapper({ status });
+            renderLayer({ status });
 
-            expect(wrapper.exists(PopupReply)).toBe(showReply);
+            if (showReply) {
+                expect(screen.getByTestId('popup-reply')).toBeDefined();
+            } else {
+                expect(screen.queryByTestId('popup-reply')).toBeNull();
+            }
         });
 
         test.each`
@@ -72,31 +100,41 @@ describe('PopupLayer', () => {
             ${CreatorStatus.pending}  | ${true}
             ${CreatorStatus.staged}   | ${false}
         `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
-            const wrapper = getWrapper({ status });
+            renderLayer({ status });
 
-            expect(wrapper.find(PopupReply).prop('isPending')).toBe(isPending);
+            expect(screen.getByTestId('popup-reply').getAttribute('data-is-pending')).toBe(String(isPending));
         });
 
         test('should not render PopupReply if there is a staged type and mode mismatch', () => {
             // defaults has staged as highlight
-            const wrapper = getWrapper({ mode: Mode.REGION });
+            renderLayer({ mode: Mode.REGION });
 
-            expect(wrapper.exists(PopupReply)).toBe(false);
+            expect(screen.queryByTestId('popup-reply')).toBeNull();
         });
 
         test('should render PopupReply if promoting a highlight and staged exists', () => {
-            const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true });
-            expect(wrapper.exists(PopupReply)).toBe(true);
+            renderLayer({ mode: Mode.NONE, isPromoting: true });
+            expect(screen.getByTestId('popup-reply')).toBeDefined();
         });
 
         test('should not render PopupReply if promoting a highlight but staged does not exist', () => {
-            const wrapper = getWrapper({ mode: Mode.NONE, isPromoting: true, staged: null });
-            expect(wrapper.exists(PopupReply)).toBe(false);
+            renderLayer({ mode: Mode.NONE, isPromoting: true, staged: null });
+            expect(screen.queryByTestId('popup-reply')).toBeNull();
         });
 
         test('should render PopupReply if it is a staged drawing', () => {
-            const wrapper = getWrapper({ mode: Mode.DRAWING, staged: getStagedDrawing() });
-            expect(wrapper.exists(PopupReply)).toBe(true);
+            renderLayer({ mode: Mode.DRAWING, staged: getStagedDrawing() });
+            expect(screen.getByTestId('popup-reply')).toBeDefined();
+        });
+
+        test('should pass isThreadedAnnotation to PopupReply', () => {
+            renderLayer({ isThreadedAnnotation: true });
+            expect(screen.getByTestId('popup-reply').getAttribute('data-is-threaded')).toBe('true');
+        });
+
+        test('should default isThreadedAnnotation to false on PopupReply', () => {
+            renderLayer();
+            expect(screen.getByTestId('popup-reply').getAttribute('data-is-threaded')).toBe('false');
         });
     });
 
@@ -104,8 +142,8 @@ describe('PopupLayer', () => {
         describe('handleCancel()', () => {
             test('should reset creator and reset isPromoting', () => {
                 const resetCreator = jest.fn();
-                const wrapper = getWrapper({ resetCreator });
-                wrapper.find(PopupReply).prop('onCancel')();
+                renderLayer({ resetCreator });
+                mockOnCancel!();
 
                 expect(resetCreator).toHaveBeenCalled();
             });
@@ -114,16 +152,16 @@ describe('PopupLayer', () => {
         describe('handleChange', () => {
             test('should set the staged state with the new message', () => {
                 const setMessage = jest.fn();
-                const wrapper = getWrapper({ setMessage });
-                wrapper.find(PopupReply).prop('onChange')('foo');
+                renderLayer({ setMessage });
+                mockOnChange!('foo');
 
                 expect(setMessage).toHaveBeenCalledWith('foo');
             });
 
             test('should set the staged state with empty string', () => {
                 const setMessage = jest.fn();
-                const wrapper = getWrapper({ setMessage });
-                wrapper.find(PopupReply).prop('onChange')();
+                renderLayer({ setMessage });
+                mockOnChange!();
 
                 expect(setMessage).toHaveBeenCalledWith('');
             });
@@ -135,8 +173,8 @@ describe('PopupLayer', () => {
                 const createHighlight = jest.fn();
                 const createRegion = jest.fn();
                 const message = 'foo';
-                const wrapper = getWrapper({ createHighlight, createRegion, message });
-                wrapper.find(PopupReply).prop('onSubmit')('');
+                renderLayer({ createHighlight, createRegion, message });
+                mockOnSubmit!('');
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).toHaveBeenCalledWith({
@@ -152,14 +190,14 @@ describe('PopupLayer', () => {
                 const createHighlight = jest.fn();
                 const createRegion = jest.fn();
                 const message = 'foo';
-                const wrapper = getWrapper({
+                renderLayer({
                     createHighlight,
                     createRegion,
                     message,
                     mode: Mode.REGION,
                     staged: getStagedRegion(),
                 });
-                wrapper.find(PopupReply).prop('onSubmit')('');
+                mockOnSubmit!('');
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).not.toHaveBeenCalled();
@@ -175,7 +213,7 @@ describe('PopupLayer', () => {
                 const createHighlight = jest.fn();
                 const createRegion = jest.fn();
                 const message = 'foo';
-                const wrapper = getWrapper({
+                renderLayer({
                     createDrawing,
                     createHighlight,
                     createRegion,
@@ -184,7 +222,7 @@ describe('PopupLayer', () => {
                     staged: getStagedDrawing(),
                     targetType: 'frame',
                 });
-                wrapper.find(PopupReply).prop('onSubmit')('');
+                mockOnSubmit!('');
 
                 expect(createDrawing).toHaveBeenCalledWith({
                     ...getStagedDrawing(),

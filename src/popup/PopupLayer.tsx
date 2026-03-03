@@ -21,6 +21,7 @@ export type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
+    isThreadedAnnotation?: boolean;
     location: number;
     message: string;
     mode: Mode;
@@ -44,6 +45,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         createHighlight = noop,
         createRegion = noop,
         isPromoting = false,
+        isThreadedAnnotation = false,
         message,
         mode,
         referenceId,
@@ -92,6 +94,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
                 <div className="ba-PopupLayer-popup">
                     <PopupReply
                         isPending={isPending}
+                        isThreadedAnnotation={isThreadedAnnotation}
                         onCancel={handleCancel}
                         onChange={handleChange}
                         onSubmit={handleSubmit}
