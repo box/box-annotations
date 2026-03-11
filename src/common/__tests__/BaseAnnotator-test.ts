@@ -304,10 +304,66 @@ describe('BaseAnnotator', () => {
         });
     });
 
+    describe('getActiveId()', () => {
+        test('should return the active annotation id from the store', () => {
+            (annotator.store.getState as jest.Mock).mockReturnValue({
+                annotations: { activeId: 'abc123' },
+            });
+
+            expect(annotator.getActiveId()).toBe('abc123');
+        });
+
+        test('should return null if no active annotation', () => {
+            (annotator.store.getState as jest.Mock).mockReturnValue({
+                annotations: { activeId: null },
+            });
+
+            expect(annotator.getActiveId()).toBeNull();
+        });
+    });
+
+    describe('getAnnotationContainerEl()', () => {
+        test('should return the container element when initialized', () => {
+            annotator.init(1);
+
+            expect(annotator.getAnnotationContainerEl()).toBe(annotator.containerEl);
+        });
+
+        test('should return null when containerEl is undefined', () => {
+            annotator.containerEl = undefined;
+
+            expect(annotator.getAnnotationContainerEl()).toBeNull();
+        });
+    });
+
     describe('isFeatureEnabled()', () => {
         test('should return whether feature is enabled or not', () => {
             expect(annotator.isFeatureEnabled('enabledFeature')).toBe(true);
             expect(annotator.isFeatureEnabled('notEnabledFeature')).toBe(false);
+        });
+    });
+
+    describe('isPopupOpen()', () => {
+        test('should return true when a popup element exists', () => {
+            annotator.init(1);
+            const popup = document.createElement('div');
+            popup.classList.add('ba-Popup');
+            annotator.containerEl?.appendChild(popup);
+
+            expect(annotator.isPopupOpen()).toBe(true);
+        });
+
+        test('should return false when no popup element exists', () => {
+            annotator.init(1);
+            annotator.containerEl?.querySelectorAll('.ba-Popup').forEach(el => el.remove());
+
+            expect(annotator.isPopupOpen()).toBe(false);
+        });
+
+        test('should return false when containerEl is undefined', () => {
+            annotator.containerEl = undefined;
+
+            expect(annotator.isPopupOpen()).toBe(false);
         });
     });
 });
