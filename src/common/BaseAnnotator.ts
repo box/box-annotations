@@ -136,14 +136,6 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
     }
 
-    public getActiveId(): string | null {
-        return store.getActiveAnnotationId(this.store.getState());
-    }
-
-    public getAnnotationContainerEl(): HTMLElement | null {
-        return this.containerEl ?? null;
-    }
-
     public init(scale = 1, rotation = 0): void {
         this.containerEl = this.getElement(this.container);
         this.annotatedEl = this.getAnnotatedElement();
@@ -168,10 +160,6 @@ export default class BaseAnnotator extends EventEmitter {
 
     public isFeatureEnabled(feature = ''): boolean {
         return getProp(this.features, feature, false);
-    }
-
-    public isPopupOpen(): boolean {
-        return !!this.containerEl?.querySelector('.ba-Popup');
     }
 
     public removeAnnotation = (annotationId: string): void => {
