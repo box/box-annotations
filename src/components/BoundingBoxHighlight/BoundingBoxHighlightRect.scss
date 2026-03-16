@@ -1,0 +1,22 @@
+$ba-BoundingBoxHighlight-color: #0061d5;
+$ba-BoundingBoxHighlight-bgColor--default: rgba($ba-BoundingBoxHighlight-color, .05);
+$ba-BoundingBoxHighlight-bgColor--hover: rgba($ba-BoundingBoxHighlight-color, .16);
+$ba-BoundingBoxHighlight-bgColor--selected: rgba($ba-BoundingBoxHighlight-color, .1);
+
+.ba-BoundingBoxHighlightRect {
+    position: absolute;
+    box-sizing: border-box;
+    background-color: $ba-BoundingBoxHighlight-bgColor--default;
+    border: 2px solid rgba($ba-BoundingBoxHighlight-color, .2);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    pointer-events: auto;
+
+    &.is-selected {
+        background-color: $ba-BoundingBoxHighlight-bgColor--selected;
+        border-color: $ba-BoundingBoxHighlight-color;
+        box-shadow: 0 0 0 2px rgba($ba-BoundingBoxHighlight-color, .3), 0 4px 12px rgba(0, 0, 0, .15);
+    }
+}
