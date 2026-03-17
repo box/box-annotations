@@ -32,7 +32,7 @@ const BoundingBoxHighlightList = ({
     onNavigate,
     onSelect,
     selectedId,
-}: Props): React.ReactNode => {
+}: Props): React.ReactElement | null => {
     const total = allBoundingBoxes.length;
 
     if (total === 0) {
