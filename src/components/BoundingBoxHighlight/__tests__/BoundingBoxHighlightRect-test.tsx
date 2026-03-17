@@ -72,8 +72,14 @@ describe('BoundingBoxHighlightRect', () => {
             expect(screen.queryByTestId('ba-BoundingBoxHighlightNav')).not.toBeInTheDocument();
         });
 
-        test('should render BoundingBoxHighlightNav when selected and total > 0', () => {
-            renderRect({ isSelected: true });
+        test('should not render BoundingBoxHighlightNav when selected and total is 1', () => {
+            renderRect({ isSelected: true, total: 1 });
+
+            expect(screen.queryByTestId('ba-BoundingBoxHighlightNav')).not.toBeInTheDocument();
+        });
+
+        test('should render BoundingBoxHighlightNav when selected and total > 1', () => {
+            renderRect({ isSelected: true, total: 2 });
 
             expect(screen.getByTestId('ba-BoundingBoxHighlightNav')).toBeInTheDocument();
         });

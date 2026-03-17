@@ -62,7 +62,7 @@ const BoundingBoxHighlightRect = ({
             role="presentation"
             style={style}
         >
-            {isSelected && total > 0 && (
+            {isSelected && total > 1 && (
                 <BoundingBoxHighlightNav
                     currentIndex={currentIndex}
                     onNext={handleNext}

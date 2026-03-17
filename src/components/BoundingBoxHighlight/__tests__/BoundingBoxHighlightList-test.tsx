@@ -111,7 +111,7 @@ describe('BoundingBoxHighlightList', () => {
             expect(onNavigate).toHaveBeenCalledWith('box-3');
         });
 
-        test('should pass undefined prevId and nextId when total is 1', () => {
+        test('should not render nav when total is 1', () => {
             const singleHighlight = [createBoundingBox('box-only')];
             renderList({
                 allBoundingBoxes: singleHighlight,
@@ -119,9 +119,8 @@ describe('BoundingBoxHighlightList', () => {
                 selectedId: 'box-only',
             });
 
-            // Nav is shown when selected and total > 0, but prev/next buttons are disabled when total is 1
-            expect(screen.getByTestId('ba-BoundingBoxHighlightNav-prev')).toBeDisabled();
-            expect(screen.getByTestId('ba-BoundingBoxHighlightNav-next')).toBeDisabled();
+            // Nav is not shown when total is 1 (nothing to navigate to)
+            expect(screen.queryByTestId('ba-BoundingBoxHighlightNav')).not.toBeInTheDocument();
         });
 
         test('should disable prev button when selectedId is at first item', () => {
@@ -169,7 +168,16 @@ describe('BoundingBoxHighlightList', () => {
     });
 
     describe('empty state', () => {
-        test('should render empty list when boundingBoxes is empty', () => {
+        test('should return null when allBoundingBoxes is empty', () => {
+            const { container } = renderList({
+                allBoundingBoxes: [],
+                boundingBoxes: [],
+            });
+
+            expect(container.firstChild).toBeNull();
+        });
+
+        test('should render empty list when boundingBoxes is empty but allBoundingBoxes has items', () => {
             renderList({ boundingBoxes: [] });
 
             expect(screen.queryByTestId('ba-BoundingBoxHighlightRect-box-1')).not.toBeInTheDocument();

@@ -32,16 +32,20 @@ const BoundingBoxHighlightList = ({
     onNavigate,
     onSelect,
     selectedId,
-}: Props): JSX.Element => {
-    const selectedIndex = allBoundingBoxes.findIndex(h => h.id === selectedId);
+}: Props): React.ReactNode => {
     const total = allBoundingBoxes.length;
+
+    if (total === 0) {
+        return null;
+    }
+
+    const selectedIndex = allBoundingBoxes.findIndex(h => h.id === selectedId);
+    const prevId = selectedIndex > 0 ? allBoundingBoxes[selectedIndex - 1].id : undefined;
+    const nextId = selectedIndex < total - 1 ? allBoundingBoxes[selectedIndex + 1].id : undefined;
 
     return (
         <div className="ba-BoundingBoxHighlightList" data-testid="ba-BoundingBoxHighlightList">
             {boundingBoxes.map(bbox => {
-                const prevId = total > 1 ? allBoundingBoxes[(selectedIndex - 1 + total) % total].id : undefined;
-                const nextId = total > 1 ? allBoundingBoxes[(selectedIndex + 1) % total].id : undefined;
-
                 return (
                     <BoundingBoxHighlightRect
                         key={bbox.id}
