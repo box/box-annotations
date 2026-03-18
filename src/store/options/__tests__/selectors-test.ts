@@ -20,6 +20,7 @@ describe('store/options/selectors', () => {
         },
         rotation: 0,
         scale: 1,
+        viewMode: 'annotations' as const,
     };
 
     describe('getFeatures', () => {
