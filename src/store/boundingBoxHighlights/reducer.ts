@@ -5,6 +5,7 @@ import {
     setBoundingBoxHighlightsAction,
     setSelectedBoundingBoxHighlightAction,
 } from './actions';
+import { setViewModeAction } from '../options/actions';
 
 const initialState: BoundingBoxHighlightsState = {
     boundingBoxes: [],
@@ -21,5 +22,11 @@ export default createReducer(initialState, builder => {
         })
         .addCase(navigateBoundingBoxHighlightAction, (state, { payload }) => {
             state.selectedId = payload;
+        })
+        .addCase(setViewModeAction, (state, { payload }) => {
+            // Clear selected bounding box when switching to annotations mode
+            if (payload === 'annotations') {
+                state.selectedId = null;
+            }
         });
 });

@@ -190,16 +190,42 @@ export default class BaseAnnotator extends EventEmitter {
         // Implemented in DocumentAnnotator
     }
 
+    /**
+     * Sets the bounding box highlights to display. This replaces all existing bounding boxes.
+     * Triggers a re-render.
+     *
+     * Note: Bounding boxes are only visible when viewMode is set to 'boundingBoxes'.
+     *
+     * @param {BoundingBox[]} boundingBoxes - Array of bounding box definitions with coordinates and page numbers
+     */
     public setBoundingBoxHighlights(boundingBoxes: BoundingBox[]): void {
         this.store.dispatch(store.setBoundingBoxHighlightsAction(boundingBoxes));
         this.render();
     }
 
+    /**
+     * Sets the view mode for the annotator. Annotations and bounding boxes are mutually exclusive.
+     * Triggers a re-render.
+     *
+     * Side effects:
+     * - Switching to 'boundingBoxes': Clears active annotation ID
+     * - Switching to 'annotations': Clears selected bounding box ID
+     *
+     * @param {ViewMode} viewMode - Either 'annotations' (default) or 'boundingBoxes'
+     */
     public setViewMode(viewMode: ViewMode): void {
         this.store.dispatch(store.setViewModeAction(viewMode));
         this.render();
     }
 
+    /**
+     * Selects a bounding box highlight and scrolls to it. Pass null to deselect.
+     *
+     * Note: For programmatic navigation (prev/next), use the navigateBoundingBoxHighlightAction
+     * which emits BOUNDING_BOX_HIGHLIGHT_NAVIGATE events.
+     *
+     * @param {string | null} highlightId - The ID of the bounding box to select, or null to clear selection
+     */
     public selectBoundingBoxHighlight(highlightId: string | null): void {
         this.store.dispatch(store.setSelectedBoundingBoxHighlightAction(highlightId));
         if (highlightId) {

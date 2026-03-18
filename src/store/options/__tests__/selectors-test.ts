@@ -5,6 +5,7 @@ import {
     getPermissions,
     getRotation,
     getScale,
+    getViewMode,
     isFeatureEnabled,
 } from '../selectors';
 
@@ -59,6 +60,19 @@ describe('store/options/selectors', () => {
     describe('getScale', () => {
         test('should return the current scale', () => {
             expect(getScale({ options: optionsState })).toBe(1);
+        });
+    });
+
+    describe('getViewMode', () => {
+        test('should return the current view mode', () => {
+            expect(getViewMode({ options: optionsState })).toBe('annotations');
+        });
+
+        test('should return boundingBoxes when set', () => {
+            const stateWithBoundingBoxes = {
+                options: { ...optionsState, viewMode: 'boundingBoxes' as const },
+            };
+            expect(getViewMode(stateWithBoundingBoxes)).toBe('boundingBoxes');
         });
     });
 
