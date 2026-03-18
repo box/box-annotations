@@ -4,6 +4,7 @@ import { commonReducer } from './common';
 import { creatorReducer } from './creator';
 import { drawingReducer } from './drawing';
 import { highlightReducer } from './highlight';
+import { boundingBoxHighlightsReducer } from './boundingBoxHighlights';
 import { optionsReducer } from './options';
 import { usersReducer } from './users';
 
@@ -14,6 +15,7 @@ const createRootReducer = (): Reducer =>
         creator: creatorReducer,
         drawing: drawingReducer,
         highlight: highlightReducer,
+        boundingBoxHighlights: boundingBoxHighlightsReducer,
         options: optionsReducer,
         users: usersReducer,
     });

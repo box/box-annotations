@@ -76,7 +76,7 @@ describe('BaseAnnotator', () => {
                 expect(store.createStore).toHaveBeenLastCalledWith(
                     expect.objectContaining({
                         annotations: { activeId: expectedActiveId },
-                        options: {
+                        options: expect.objectContaining({
                             features: { enabledFeature: true },
                             fileId: '12345',
                             fileVersionId: '98765',
@@ -85,7 +85,7 @@ describe('BaseAnnotator', () => {
                                 can_create_annotations: true,
                                 can_view_annotations: true,
                             },
-                        },
+                        }),
                     }),
                     { api: expect.any(APIFactory) },
                 );
@@ -104,7 +104,7 @@ describe('BaseAnnotator', () => {
             expect(store.createStore).toHaveBeenLastCalledWith(
                 expect.objectContaining({
                     annotations: { activeId: null },
-                    options: {
+                    options: expect.objectContaining({
                         features: { enabledFeature: true },
                         fileId: '12345',
                         fileVersionId: '456',
@@ -113,7 +113,7 @@ describe('BaseAnnotator', () => {
                             can_create_annotations: true,
                             can_view_annotations: true,
                         },
-                    },
+                    }),
                 }),
                 { api: expect.any(APIFactory) },
             );
@@ -158,6 +158,17 @@ describe('BaseAnnotator', () => {
 
             expect(store.createStore).toHaveBeenLastCalledWith(
                 expect.objectContaining({ common: { color: '#000', mode: Mode.REGION } }),
+                expect.any(Object),
+            );
+        });
+
+        test('should set initialViewMode in options', () => {
+            initAnnotator({ initialViewMode: 'boundingBoxes' });
+
+            expect(store.createStore).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    options: expect.objectContaining({ viewMode: 'boundingBoxes' }),
+                }),
                 expect.any(Object),
             );
         });

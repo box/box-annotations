@@ -2,10 +2,12 @@ import getProp from 'lodash/get';
 import { AppState } from '../types';
 import { Permissions } from '../../@types';
 import { Features } from '../../BoxAnnotations';
+import { ViewMode } from './types';
 
 type State = Pick<AppState, 'options'>;
 
 export const getFeatures = (state: State): Features => state.options.features;
+export const getViewMode = (state: State): ViewMode => state.options.viewMode;
 export const getFileId = (state: State): string | null => state.options.fileId;
 export const getFileVersionId = (state: State): string | null => state.options.fileVersionId;
 export const getIsCurrentFileVersion = (state: State): boolean => state.options.isCurrentFileVersion;

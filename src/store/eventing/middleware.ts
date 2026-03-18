@@ -6,11 +6,13 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from '../annotations/actions';
+import { navigateBoundingBoxHighlightAction } from '../boundingBoxHighlights/actions';
 import { EventHandlerMap } from './types';
 import { handleActiveAnnotationEvents } from './active';
 import { handleAnnotationsInitialized } from './init';
 import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
 import { handleFetchErrorEvents } from './fetch';
+import { handleNavigateBoundingBoxHighlight } from './boundingBoxHighlightNav';
 import { handleResetCreatorAction, handleSetStagedAction } from './staged';
 import { handleSetStatusAction } from './status';
 import { handleToggleAnnotationModeAction } from './mode';
@@ -23,6 +25,7 @@ const eventHandlers: EventHandlerMap = {
     [createAnnotationAction.pending.toString()]: handleCreatePendingEvents,
     [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
     [fetchAnnotationsAction.rejected.toString()]: handleFetchErrorEvents,
+    [navigateBoundingBoxHighlightAction.toString()]: handleNavigateBoundingBoxHighlight,
     [resetCreatorAction.toString()]: handleResetCreatorAction,
     [setActiveAnnotationIdAction.toString()]: handleActiveAnnotationEvents,
     [setIsInitialized.toString()]: handleAnnotationsInitialized,

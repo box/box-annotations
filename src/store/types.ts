@@ -6,6 +6,7 @@ import { CommonState } from './common';
 import { CreatorState } from './creator';
 import { DrawingState } from './drawing';
 import { HighlightState } from './highlight';
+import { BoundingBoxHighlightsState } from './boundingBoxHighlights';
 import { OptionsState } from './options';
 import { UsersState } from './users';
 
@@ -15,6 +16,7 @@ export type AppState = {
     creator: CreatorState;
     drawing: DrawingState;
     highlight: HighlightState;
+    boundingBoxHighlights: BoundingBoxHighlightsState;
     options: OptionsState;
     users: UsersState;
 };
