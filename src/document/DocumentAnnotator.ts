@@ -77,7 +77,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // When view mode changes, destroy all managers so they get recreated for the new mode
         if (this.managersViewMode !== null && this.managersViewMode !== viewMode) {
-            console.log('view mode changed, clearing managers');
             this.clearManagers();
         }
         this.managersViewMode = viewMode;

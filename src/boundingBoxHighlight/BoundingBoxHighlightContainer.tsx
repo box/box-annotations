@@ -3,6 +3,7 @@ import { BoundingBoxHighlightList } from '../components/BoundingBoxHighlight';
 import withProviders from '../common/withProviders';
 import {
     AppState,
+    BoundingBox,
     getBoundingBoxHighlights,
     getBoundingBoxHighlightsForPage,
     getSelectedBoundingBoxHighlightId,
@@ -14,7 +15,11 @@ export type Props = {
     location: number;
 };
 
-const mapStateToProps = (state: AppState, { location }: Props) => ({
+const mapStateToProps = (state: AppState, { location }: Props): {
+    allBoundingBoxes: BoundingBox[];
+    boundingBoxes: BoundingBox[];
+    selectedId: string | null;
+} => ({
     allBoundingBoxes: getBoundingBoxHighlights(state),
     boundingBoxes: getBoundingBoxHighlightsForPage(state, location),
     selectedId: getSelectedBoundingBoxHighlightId(state),
