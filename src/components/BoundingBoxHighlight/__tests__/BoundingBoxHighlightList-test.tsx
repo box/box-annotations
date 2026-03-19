@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, type RenderResult } from '@testing-library/react';
 import BoundingBoxHighlightList from '../BoundingBoxHighlightList';
-import { BoundingBox } from '../types';
+import { BoundingBox } from '../../../store/boundingBoxHighlights/types';
 
 describe('BoundingBoxHighlightList', () => {
     const createBoundingBox = (id: string, pageNumber = 1): BoundingBox => ({

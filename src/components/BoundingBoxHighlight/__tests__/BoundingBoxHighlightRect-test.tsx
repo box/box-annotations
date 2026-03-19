@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen, type RenderResult } from '@testing-library/react';
 import BoundingBoxHighlightRect from '../BoundingBoxHighlightRect';
-import { BoundingBox } from '../types';
+import { BoundingBox } from '../../../store/boundingBoxHighlights/types';
 
 describe('BoundingBoxHighlightRect', () => {
     const defaultBoundingBox: BoundingBox = {
