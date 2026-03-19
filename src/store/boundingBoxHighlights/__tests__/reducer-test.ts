@@ -33,9 +33,10 @@ describe('store/boundingBoxHighlights/reducer', () => {
 
             expect(newState.boundingBoxes).toEqual(mockBoundingBoxes);
             expect(newState.boundingBoxes).toHaveLength(3);
+            expect(newState.selectedId).toBeNull();
         });
 
-        test('should replace existing bounding boxes', () => {
+        test('should replace existing bounding boxes and reset selected id', () => {
             const stateWithBoxes = {
                 boundingBoxes: mockBoundingBoxes,
                 selectedId: 'box1',
@@ -49,10 +50,10 @@ describe('store/boundingBoxHighlights/reducer', () => {
 
             expect(newState.boundingBoxes).toEqual(newBoxes);
             expect(newState.boundingBoxes).toHaveLength(1);
-            expect(newState.selectedId).toBe('box1');
+            expect(newState.selectedId).toBeNull();
         });
 
-        test('should handle empty array', () => {
+        test('should handle empty array and reset selected id', () => {
             const stateWithBoxes = {
                 boundingBoxes: mockBoundingBoxes,
                 selectedId: 'box1',
@@ -61,7 +62,7 @@ describe('store/boundingBoxHighlights/reducer', () => {
             const newState = reducer(stateWithBoxes, setBoundingBoxHighlightsAction([]));
 
             expect(newState.boundingBoxes).toEqual([]);
-            expect(newState.selectedId).toBe('box1');
+            expect(newState.selectedId).toBeNull();
         });
     });
 

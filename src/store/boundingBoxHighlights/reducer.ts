@@ -16,6 +16,7 @@ export default createReducer(initialState, builder => {
     builder
         .addCase(setBoundingBoxHighlightsAction, (state, { payload }) => {
             state.boundingBoxes = payload;
+            state.selectedId = null;
         })
         .addCase(setSelectedBoundingBoxHighlightAction, (state, { payload }) => {
             state.selectedId = payload;
