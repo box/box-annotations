@@ -101,36 +101,38 @@ export default class DocumentAnnotator extends BaseAnnotator {
         if (managers.size === 0) {
             if (viewMode === 'boundingBoxes') {
                 managers.add(new BoundingBoxHighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-            } else {
-                managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-                managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+                return managers;
+            }
 
-                const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
+            // Annotations mode
+            managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+            managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
-                if (textLayer) {
-                    managers.add(
-                        new HighlightCreatorManager({
-                            getSelection,
-                            referenceEl: textLayer,
-                            selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
-                            store: this.store,
-                        }),
-                    );
-                }
+            const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
-                managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-                managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-
-                const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
-
+            if (textLayer) {
                 managers.add(
-                    new RegionCreationManager({
-                        location: pageNumber,
-                        referenceEl: canvasLayerEl || pageReferenceEl,
-                        resinTags,
+                    new HighlightCreatorManager({
+                        getSelection,
+                        referenceEl: textLayer,
+                        selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
+                        store: this.store,
                     }),
                 );
             }
+
+            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+            managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+
+            const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
+
+            managers.add(
+                new RegionCreationManager({
+                    location: pageNumber,
+                    referenceEl: canvasLayerEl || pageReferenceEl,
+                    resinTags,
+                }),
+            );
         }
 
         return managers;
