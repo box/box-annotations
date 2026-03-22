@@ -75,12 +75,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
         const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
         const viewMode = getViewMode(this.store.getState());
 
-        // When view mode changes, destroy all managers so they get recreated for the new mode
-        if (this.managersViewMode !== null && this.managersViewMode !== viewMode) {
-            this.clearManagers();
-        }
-        this.managersViewMode = viewMode;
-
         const managers = this.managers.get(pageNumber) || new Set();
         let destroyManagers = false;
 
@@ -173,6 +167,13 @@ export default class DocumentAnnotator extends BaseAnnotator {
     };
 
     render(): void {
+        const viewMode = getViewMode(this.store.getState());
+
+        if (this.managersViewMode !== null && this.managersViewMode !== viewMode) {
+            this.clearManagers();
+        }
+        this.managersViewMode = viewMode;
+
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));

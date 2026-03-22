@@ -285,6 +285,29 @@ describe('DocumentAnnotator', () => {
 
             expect(annotator.deselectManager).toBeNull();
         });
+
+        test('should clear all managers when view mode changes', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            annotator.render();
+
+            const managersBeforeSwitch = new Map(annotator.managers);
+            const destroySpies: jest.Mock[] = [];
+            managersBeforeSwitch.forEach(managers =>
+                managers.forEach(manager => {
+                    const spy = jest.fn();
+                    manager.destroy = spy;
+                    destroySpies.push(spy);
+                }),
+            );
+
+            expect(destroySpies.length).toBeGreaterThan(0);
+
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+            annotator.render();
+
+            destroySpies.forEach(spy => expect(spy).toHaveBeenCalled());
+        });
     });
 
     describe('renderPage()', () => {
