@@ -5,12 +5,14 @@ import HighlightListener from '../../highlight/HighlightListener';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
+import { BoundingBoxHighlightManager } from '../../boundingBoxHighlight';
 import { Annotation, Event } from '../../@types';
 import { ANNOTATION_CLASSES } from '../../common/BaseAnnotator';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, Mode } from '../../store';
+import { setViewModeAction } from '../../store/options';
 import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
@@ -21,6 +23,7 @@ jest.mock('../../highlight/HighlightManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
 jest.mock('../../region/RegionManager');
+jest.mock('../../boundingBoxHighlight');
 jest.mock('../../utils/scroll');
 
 describe('DocumentAnnotator', () => {
@@ -131,6 +134,15 @@ describe('DocumentAnnotator', () => {
             annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.REGION });
             expect(annotator.annotatedEl?.classList.remove).toHaveBeenCalledWith(ANNOTATION_CLASSES[Mode.REGION]);
         });
+
+        test('should not add annotation classes when in bounding box mode', () => {
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+            (annotator.annotatedEl?.classList.add as jest.Mock).mockClear();
+
+            annotator.emit(Event.ANNOTATIONS_MODE_CHANGE, { mode: Mode.HIGHLIGHT });
+
+            expect(annotator.annotatedEl?.classList.add).not.toHaveBeenCalled();
+        });
     });
 
     describe('getPageManagers()', () => {
@@ -170,6 +182,16 @@ describe('DocumentAnnotator', () => {
 
             expect(mockManager.exists).toHaveBeenCalled();
             expect(mockManager.destroy).toHaveBeenCalled();
+        });
+
+        test('should create only BoundingBoxHighlightManager when viewMode is boundingBoxes', () => {
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+
+            const managers = annotator.getPageManagers(getPage());
+            const managerArray = Array.from(managers);
+
+            expect(managerArray).toHaveLength(1);
+            expect(managerArray[0]).toBeInstanceOf(BoundingBoxHighlightManager);
         });
     });
 
@@ -244,7 +266,7 @@ describe('DocumentAnnotator', () => {
             expect(annotator.renderPage).toHaveBeenCalledTimes(3);
         });
 
-        test('should instantiate the DeselectManager and call render', () => {
+        test('should instantiate the DeselectManager and call render when in annotations mode', () => {
             annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
 
             expect(annotator.deselectManager).toBeNull();
@@ -253,6 +275,38 @@ describe('DocumentAnnotator', () => {
 
             expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
             expect(annotator.deselectManager!.render).toHaveBeenCalled();
+        });
+
+        test('should not instantiate DeselectManager when in bounding box mode', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+
+            annotator.render();
+
+            expect(annotator.deselectManager).toBeNull();
+        });
+
+        test('should clear all managers when view mode changes', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            annotator.render();
+
+            const managersBeforeSwitch = new Map(annotator.managers);
+            const destroySpies: jest.Mock[] = [];
+            managersBeforeSwitch.forEach(managers =>
+                managers.forEach(manager => {
+                    const spy = jest.fn();
+                    manager.destroy = spy;
+                    destroySpies.push(spy);
+                }),
+            );
+
+            expect(destroySpies.length).toBeGreaterThan(0);
+
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+            annotator.render();
+
+            destroySpies.forEach(spy => expect(spy).toHaveBeenCalled());
         });
     });
 

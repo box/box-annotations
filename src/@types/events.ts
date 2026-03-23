@@ -9,7 +9,11 @@ enum Event {
     ANNOTATIONS_INITIALIZED = 'annotations_initialized',
     ANNOTATIONS_MODE_CHANGE = 'annotations_mode_change',
     COLOR_SET = 'annotations_color_set',
+    BOUNDING_BOX_HIGHLIGHTS_SET = 'bounding_box_highlights_set',
+    BOUNDING_BOX_HIGHLIGHT_NAVIGATE = 'bounding_box_highlight_navigate',
+    BOUNDING_BOX_HIGHLIGHT_SELECT = 'bounding_box_highlight_select',
     VISIBLE_SET = 'annotations_visible_set',
+    VIEW_MODE_SET = 'view_mode_set',
 }
 
 // Existing legacy events, don't rename

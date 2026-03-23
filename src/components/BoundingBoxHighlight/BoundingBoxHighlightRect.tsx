@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import BoundingBoxHighlightNav from './BoundingBoxHighlightNav';
-import { BoundingBox } from './types';
+import { BoundingBox } from '../../store/boundingBoxHighlights/types';
 import './BoundingBoxHighlightRect.scss';
 
 type Props = {

@@ -6,3 +6,8 @@ export interface BoundingBox {
     pageNumber: number;
     id: string;
 }
+
+export interface BoundingBoxHighlightsState {
+    boundingBoxes: BoundingBox[];
+    selectedId: string | null;
+}

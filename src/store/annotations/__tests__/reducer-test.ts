@@ -9,6 +9,7 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from '../actions';
+import { setViewModeAction } from '../../options/actions';
 
 describe('store/annotations/reducer', () => {
     const getAnnotation = (): AnnotationDrawing => {
@@ -113,6 +114,41 @@ describe('store/annotations/reducer', () => {
             const newState = reducer(state, removeAnnotationAction(payload));
 
             expect(newState.activeId).toBe(null);
+        });
+    });
+
+    describe('setViewModeAction', () => {
+        test('should clear activeId when switching to boundingBoxes mode', () => {
+            const stateWithActiveAnnotation = {
+                ...state,
+                activeId: 'test1',
+            };
+
+            const newState = reducer(stateWithActiveAnnotation, setViewModeAction('boundingBoxes'));
+
+            expect(newState.activeId).toBeNull();
+        });
+
+        test('should not clear activeId when switching to annotations mode', () => {
+            const stateWithActiveAnnotation = {
+                ...state,
+                activeId: 'test1',
+            };
+
+            const newState = reducer(stateWithActiveAnnotation, setViewModeAction('annotations'));
+
+            expect(newState.activeId).toBe('test1');
+        });
+
+        test('should handle clearing when activeId is already null', () => {
+            const stateWithoutActive = {
+                ...state,
+                activeId: null,
+            };
+
+            const newState = reducer(stateWithoutActive, setViewModeAction('boundingBoxes'));
+
+            expect(newState.activeId).toBeNull();
         });
     });
 });

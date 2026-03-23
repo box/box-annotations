@@ -8,13 +8,18 @@ import {
     setActiveAnnotationIdAction,
     setIsInitialized,
 } from './actions';
+import { setViewModeAction } from '../options/actions';
 
 const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
     builder
         /* Preview will set the active ID with a an event which will trigger the url change */
         .addCase(createAnnotationAction.fulfilled, () => null)
         .addCase(removeAnnotationAction, (state, { payload: id }) => (state === id ? null : state))
-        .addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId),
+        .addCase(setActiveAnnotationIdAction, (state, { payload: annotationId }) => annotationId)
+        .addCase(setViewModeAction, (state, { payload }) => {
+            // Clear active annotation when switching to bounding boxes mode
+            return payload === 'boundingBoxes' ? null : state;
+        }),
 );
 
 const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder =>

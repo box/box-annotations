@@ -1,11 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { OptionsState } from './types';
+import { OptionsState, ViewMode } from './types';
 import {
     setFileIdAction,
     setFileVersionIdAction,
     setPermissionsAction,
     setRotationAction,
     setScaleAction,
+    setViewModeAction,
 } from './actions';
 
 export const initialState = {
@@ -16,6 +17,7 @@ export const initialState = {
     permissions: {},
     rotation: 0,
     scale: 1,
+    viewMode: 'annotations' as ViewMode,
 };
 
 export default createReducer<OptionsState>(initialState, builder =>
@@ -34,5 +36,8 @@ export default createReducer<OptionsState>(initialState, builder =>
         })
         .addCase(setScaleAction, (state, { payload }) => {
             state.scale = payload;
+        })
+        .addCase(setViewModeAction, (state, { payload }) => {
+            state.viewMode = payload;
         }),
 );

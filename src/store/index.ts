@@ -5,6 +5,7 @@ export * from './annotations';
 export * from './common';
 export * from './creator';
 export * from './highlight';
+export * from './boundingBoxHighlights';
 export * from './options';
 export * from './types';
 export * from './users';

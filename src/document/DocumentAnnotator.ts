@@ -8,14 +8,18 @@ import {
     HighlightManager,
     isHighlight,
 } from '../highlight';
+import { BoundingBoxHighlightManager } from '../boundingBoxHighlight';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
+import { getBoundingBoxHighlights, BoundingBox } from '../store/boundingBoxHighlights';
 import { getSelection } from './docUtil';
 import { Manager } from '../common/BaseManager';
-import { getFileId, getIsCurrentFileVersion, Mode } from '../store';
+import { getFileId, getIsCurrentFileVersion, getViewMode, Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
+
+import type { ViewMode } from '../store/options/types';
 
 // Pdf.js textLayer enhancement requires waiting for 300ms (they hardcode this magic number)
 const TEXT_LAYER_ENHANCEMENT = 300;
@@ -26,6 +30,9 @@ export default class DocumentAnnotator extends BaseAnnotator {
     highlightListener?: HighlightListener;
 
     managers: Map<number, Set<Manager>> = new Map();
+
+    /** Tracks which view mode the current managers were created for. Used to destroy/recreate when switching. */
+    private managersViewMode: ViewMode | null = null;
 
     constructor(options: Options) {
         super(options);
@@ -53,13 +60,22 @@ export default class DocumentAnnotator extends BaseAnnotator {
         return this.containerEl?.querySelector('.bp-doc');
     }
 
+    /** Destroys all managers and clears the cache. Call when switching view modes. */
+    private clearManagers(): void {
+        this.managers.forEach(managers => managers.forEach(manager => manager.destroy()));
+        this.managers.clear();
+        this.managersViewMode = null;
+    }
+
     getPageManagers(pageEl: HTMLElement): Set<Manager> {
         const fileId = getFileId(this.store.getState());
         const isCurrentFileVersion = getIsCurrentFileVersion(this.store.getState());
         const pageNumber = this.getPageNumber(pageEl);
         const pageReferenceEl = this.getPageReference(pageEl);
-        const managers = this.managers.get(pageNumber) || new Set();
         const resinTags = { fileid: fileId, iscurrent: isCurrentFileVersion };
+        const viewMode = getViewMode(this.store.getState());
+
+        const managers = this.managers.get(pageNumber) || new Set();
         let destroyManagers = false;
 
         // If a referenced page element doesn't exist, destroy all managers to keep them in sync
@@ -77,6 +93,12 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
+            if (viewMode === 'boundingBoxes') {
+                managers.add(new BoundingBoxHighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+                return managers;
+            }
+
+            // Annotations mode
             managers.add(new PopupManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
             managers.add(new DrawingManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
@@ -94,7 +116,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
             }
 
             managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
-
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
@@ -132,7 +153,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
     }
 
     handleChangeMode = ({ mode }: { mode: Mode }): void => {
-        if (!this.annotatedEl) {
+        if (!this.annotatedEl || getViewMode(this.store.getState()) === 'boundingBoxes') {
             return;
         }
 
@@ -146,11 +167,30 @@ export default class DocumentAnnotator extends BaseAnnotator {
     };
 
     render(): void {
+        const viewMode = getViewMode(this.store.getState());
+
+        if (this.managersViewMode !== null && this.managersViewMode !== viewMode) {
+            this.clearManagers();
+        }
+        this.managersViewMode = viewMode;
+
         this.getPages()
             .filter(({ dataset }) => dataset.loaded && dataset.pageNumber)
             .forEach(pageEl => this.renderPage(pageEl));
 
         this.postRender();
+    }
+
+    public postRender(): void {
+        // DeselectManager is only needed for annotation creation; skip in bounding box mode
+        if (getViewMode(this.store.getState()) === 'boundingBoxes') {
+            if (this.deselectManager) {
+                this.deselectManager.destroy();
+                this.deselectManager = null;
+            }
+            return;
+        }
+        super.postRender();
     }
 
     renderPage(pageEl: HTMLElement): void {
@@ -193,5 +233,30 @@ export default class DocumentAnnotator extends BaseAnnotator {
         if (offsets) {
             scrollToLocation(this.annotatedEl, annotationPageEl, { offsets });
         }
+    }
+
+    scrollToBoundingBoxHighlight(highlightId: string | null): void {
+        if (!highlightId || !this.annotatedEl) {
+            return;
+        }
+
+        const highlights = getBoundingBoxHighlights(this.store.getState());
+        const highlight = highlights.find((h: BoundingBox) => h.id === highlightId);
+
+        if (!highlight) {
+            return;
+        }
+
+        const pageEl = this.getPage(highlight.pageNumber);
+        if (!pageEl) {
+            return;
+        }
+
+        const offsets = {
+            x: highlight.x + highlight.width / 2,
+            y: highlight.y + highlight.height / 2,
+        };
+
+        scrollToLocation(this.annotatedEl, pageEl, { offsets, smooth: true });
     }
 }

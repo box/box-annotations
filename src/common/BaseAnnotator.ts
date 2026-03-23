@@ -7,6 +7,8 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { BoundingBox } from '../store/boundingBoxHighlights/types';
+import { ViewMode } from '../store/options/types';
 import { Features } from '../BoxAnnotations';
 import './BaseAnnotator.scss';
 
@@ -37,6 +39,8 @@ export type Options = {
     hasTouch?: boolean;
     initialColor?: string;
     initialMode?: store.Mode;
+    /** View mode: annotations and bounding boxes are mutually exclusive. Defaults to 'annotations'. */
+    initialViewMode?: ViewMode;
     intl: IntlOptions;
     locale?: string;
     token: string;
@@ -72,6 +76,7 @@ export default class BaseAnnotator extends EventEmitter {
         fileOptions,
         initialColor,
         initialMode,
+        initialViewMode = 'annotations',
         intl,
         token,
     }: Options) {
@@ -93,6 +98,7 @@ export default class BaseAnnotator extends EventEmitter {
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
                 isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === currentFileVersionId,
                 permissions: file.permissions,
+                viewMode: initialViewMode,
             },
         };
 
@@ -109,6 +115,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.addListener(Event.COLOR_SET, this.handleSetColor);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
+        this.addListener(Event.BOUNDING_BOX_HIGHLIGHTS_SET, this.handleSetBoundingBoxHighlights);
+        this.addListener(Event.BOUNDING_BOX_HIGHLIGHT_NAVIGATE, this.handleNavigateBoundingBoxHighlight);
+        this.addListener(Event.BOUNDING_BOX_HIGHLIGHT_SELECT, this.handleSelectBoundingBoxHighlight);
+        this.addListener(Event.VIEW_MODE_SET, this.handleSetViewMode);
 
         // Load any required data at startup
         this.hydrate();
@@ -134,6 +144,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.removeListener(Event.COLOR_SET, this.handleSetColor);
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
+        this.removeListener(Event.BOUNDING_BOX_HIGHLIGHTS_SET, this.handleSetBoundingBoxHighlights);
+        this.removeListener(Event.BOUNDING_BOX_HIGHLIGHT_NAVIGATE, this.handleNavigateBoundingBoxHighlight);
+        this.removeListener(Event.BOUNDING_BOX_HIGHLIGHT_SELECT, this.handleSelectBoundingBoxHighlight);
+        this.removeListener(Event.VIEW_MODE_SET, this.handleSetViewMode);
     }
 
     public init(scale = 1, rotation = 0): void {
@@ -169,6 +183,54 @@ export default class BaseAnnotator extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scrollToAnnotation(annotationId: string | null): void {
         // Called by box-content-preview
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public scrollToBoundingBoxHighlight(highlightId: string | null): void {
+        // Implemented in DocumentAnnotator
+    }
+
+    /**
+     * Sets the bounding box highlights to display. This replaces all existing bounding boxes.
+     * Triggers a re-render.
+     *
+     * Note: Bounding boxes are only visible when viewMode is set to 'boundingBoxes'.
+     *
+     * @param {BoundingBox[]} boundingBoxes - Array of bounding box definitions with coordinates and page numbers
+     */
+    public setBoundingBoxHighlights(boundingBoxes: BoundingBox[]): void {
+        this.store.dispatch(store.setBoundingBoxHighlightsAction(boundingBoxes));
+        this.render();
+    }
+
+    /**
+     * Sets the view mode for the annotator. Annotations and bounding boxes are mutually exclusive.
+     * Triggers a re-render.
+     *
+     * Side effects:
+     * - Switching to 'boundingBoxes': Clears active annotation ID
+     * - Switching to 'annotations': Clears selected bounding box ID
+     *
+     * @param {ViewMode} viewMode - Either 'annotations' (default) or 'boundingBoxes'
+     */
+    public setViewMode(viewMode: ViewMode): void {
+        this.store.dispatch(store.setViewModeAction(viewMode));
+        this.render();
+    }
+
+    /**
+     * Selects a bounding box highlight and scrolls to it. Pass null to deselect.
+     *
+     * Note: For programmatic navigation (prev/next), use the navigateBoundingBoxHighlightAction
+     * which emits BOUNDING_BOX_HIGHLIGHT_NAVIGATE events.
+     *
+     * @param {string | null} highlightId - The ID of the bounding box to select, or null to clear selection
+     */
+    public selectBoundingBoxHighlight(highlightId: string | null): void {
+        this.store.dispatch(store.setSelectedBoundingBoxHighlightAction(highlightId));
+        if (highlightId) {
+            this.scrollToBoundingBoxHighlight(highlightId);
+        }
     }
 
     public setActiveId(annotationId: string | null): void {
@@ -221,6 +283,22 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected handleSetColor = (color: string): void => {
         this.setColor(color);
+    };
+
+    protected handleSetBoundingBoxHighlights = (boundingBoxes: BoundingBox[]): void => {
+        this.setBoundingBoxHighlights(boundingBoxes);
+    };
+
+    protected handleNavigateBoundingBoxHighlight = (highlightId: string): void => {
+        this.scrollToBoundingBoxHighlight(highlightId);
+    };
+
+    protected handleSelectBoundingBoxHighlight = (highlightId: string | null): void => {
+        this.selectBoundingBoxHighlight(highlightId);
+    };
+
+    protected handleSetViewMode = ({ viewMode }: { viewMode: ViewMode }): void => {
+        this.setViewMode(viewMode);
     };
 
     protected hydrate(): void {

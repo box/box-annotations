@@ -2,13 +2,14 @@ import { Position } from '../@types';
 
 export type ScrollOptions = {
     offsets?: Position;
+    smooth?: boolean;
     threshold?: number;
 };
 
 const DEFAULT_OFFSETS = { x: 0, y: 0 };
 
 export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement, options: ScrollOptions = {}): void {
-    const { offsets = DEFAULT_OFFSETS } = options;
+    const { offsets = DEFAULT_OFFSETS, smooth = false } = options;
     const { x: offsetXPercentage, y: offsetYPercentage } = offsets;
     // Get the bounding client rects so that the offsetLeft of the reference element can be calculated --
     // even if it has been transformed via rotation
@@ -40,6 +41,10 @@ export function scrollToLocation(parentEl: HTMLElement, referenceEl: HTMLElement
     const scrollLeft = Math.max(0, Math.min(parentEl.scrollLeft + offsetScrollLeft, parentEl.scrollWidth));
     const scrollTop = Math.max(0, Math.min(parentEl.scrollTop + offsetScrollTop, parentEl.scrollHeight));
 
-    parentEl.scrollLeft = scrollLeft;
-    parentEl.scrollTop = scrollTop;
+    if (smooth) {
+        parentEl.scrollTo({ left: scrollLeft, top: scrollTop, behavior: 'smooth' });
+    } else {
+        parentEl.scrollLeft = scrollLeft;
+        parentEl.scrollTop = scrollTop;
+    }
 }

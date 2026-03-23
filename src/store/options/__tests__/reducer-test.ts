@@ -1,7 +1,12 @@
 import reducer from '../reducer';
-import { setFileIdAction, setFileVersionIdAction, setPermissionsAction } from '../actions';
+import {
+    setFileIdAction,
+    setFileVersionIdAction,
+    setPermissionsAction,
+    setViewModeAction,
+} from '../actions';
 
-describe('store/common/reducer', () => {
+describe('store/options/reducer', () => {
     describe('setFileIdAction', () => {
         test('should set the file id', () => {
             const newState = reducer(undefined, setFileIdAction('12345'));
@@ -20,6 +25,18 @@ describe('store/common/reducer', () => {
         test('should set the permissions', () => {
             const newState = reducer(undefined, setPermissionsAction({ can_create_annotations: true }));
             expect(newState.permissions).toEqual({ can_create_annotations: true });
+        });
+    });
+
+    describe('setViewModeAction', () => {
+        test('should set the view mode', () => {
+            const newState = reducer(undefined, setViewModeAction('boundingBoxes'));
+            expect(newState.viewMode).toEqual('boundingBoxes');
+        });
+
+        test('should default viewMode to annotations in initial state', () => {
+            const state = reducer(undefined, setFileIdAction('x'));
+            expect(state.viewMode).toEqual('annotations');
         });
     });
 });
