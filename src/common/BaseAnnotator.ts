@@ -217,7 +217,7 @@ export default class BaseAnnotator extends EventEmitter {
     /** Returns the element to scroll relative to for the given bounding box highlight. */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected getScrollReferenceForHighlight(_highlight: BoundingBox): HTMLElement | null | undefined {
-        return undefined;
+        return undefined; // Must be implemented in child class
     }
 
     /** Adjusts scroll offsets before passing to scrollToLocation (e.g. to apply rotation). */

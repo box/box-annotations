@@ -144,7 +144,6 @@ export default class ImageAnnotator extends BaseAnnotator {
         super.postRender();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected getScrollReferenceForHighlight(): HTMLElement | null | undefined {
         return this.getReference();
     }
