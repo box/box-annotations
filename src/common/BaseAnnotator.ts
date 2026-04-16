@@ -7,9 +7,10 @@ import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
 import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
-import { BoundingBox } from '../store/boundingBoxHighlights/types';
+import { BoundingBox, getBoundingBoxHighlights } from '../store/boundingBoxHighlights';
 import { ViewMode } from '../store/options/types';
 import { Features } from '../BoxAnnotations';
+import { scrollToLocation } from '../utils/scroll';
 import './BaseAnnotator.scss';
 
 export type Container = string | HTMLElement;
@@ -185,9 +186,43 @@ export default class BaseAnnotator extends EventEmitter {
         // Called by box-content-preview
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scrollToBoundingBoxHighlight(highlightId: string | null): void {
-        // Implemented in DocumentAnnotator
+        if (!highlightId || !this.annotatedEl) {
+            return;
+        }
+
+        const highlights = getBoundingBoxHighlights(this.store.getState());
+        const highlight = highlights.find((h: BoundingBox) => h.id === highlightId);
+
+        if (!highlight) {
+            return;
+        }
+
+        const referenceEl = this.getScrollReferenceForHighlight(highlight);
+        if (!referenceEl) {
+            return;
+        }
+
+        const offsets = {
+            x: highlight.x + highlight.width / 2,
+            y: highlight.y + highlight.height / 2,
+        };
+
+        scrollToLocation(this.annotatedEl, referenceEl, {
+            offsets: this.getAdjustedScrollOffsets(offsets),
+            smooth: true,
+        });
+    }
+
+    /** Returns the element to scroll relative to for the given bounding box highlight. */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected getScrollReferenceForHighlight(_highlight: BoundingBox): HTMLElement | null | undefined {
+        return undefined; // Must be implemented in child class
+    }
+
+    /** Adjusts scroll offsets before passing to scrollToLocation (e.g. to apply rotation). */
+    protected getAdjustedScrollOffsets(offsets: { x: number; y: number }): { x: number; y: number } {
+        return offsets;
     }
 
     /**

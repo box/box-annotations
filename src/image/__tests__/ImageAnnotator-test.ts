@@ -4,8 +4,11 @@ import ImageAnnotator, { CSS_IS_DRAWING_CLASS } from '../ImageAnnotator';
 import PopupManager from '../../popup/PopupManager';
 import RegionCreationManager from '../../region/RegionCreationManager';
 import RegionManager from '../../region/RegionManager';
+import { BoundingBoxHighlightManager } from '../../boundingBoxHighlight';
 import { Annotation } from '../../@types';
 import { CreatorStatus, fetchAnnotationsAction, setStatusAction } from '../../store';
+import { setViewModeAction } from '../../store/options';
+import { setBoundingBoxHighlightsAction } from '../../store/boundingBoxHighlights';
 import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
@@ -14,6 +17,7 @@ jest.mock('../../common/DeselectManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');
 jest.mock('../../region/RegionManager');
+jest.mock('../../boundingBoxHighlight');
 jest.mock('../../utils/scroll');
 
 describe('ImageAnnotator', () => {
@@ -123,6 +127,16 @@ describe('ImageAnnotator', () => {
             expect(mockManager.destroy).not.toHaveBeenCalled();
             expect(managers.values().next().value).toEqual(mockManager);
         });
+
+        test('should create only BoundingBoxHighlightManager when viewMode is boundingBoxes', () => {
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+
+            const managers = annotator.getManagers(getParent(), getImage());
+            const managerArray = Array.from(managers);
+
+            expect(managerArray).toHaveLength(1);
+            expect(managerArray[0]).toBeInstanceOf(BoundingBoxHighlightManager);
+        });
     });
 
     describe('getReference()', () => {
@@ -226,6 +240,97 @@ describe('ImageAnnotator', () => {
 
             expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
             expect(annotator.deselectManager!.render).toHaveBeenCalled();
+        });
+
+        test('should not instantiate DeselectManager when in bounding box mode', () => {
+            annotator.annotatedEl = getParent();
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+
+            annotator.render();
+
+            expect(annotator.deselectManager).toBeNull();
+        });
+
+        test('should destroy existing DeselectManager when switching to bounding box mode', () => {
+            annotator.annotatedEl = getParent();
+
+            annotator.render();
+            expect(annotator.deselectManager).toBeInstanceOf(DeselectManager);
+
+            const destroySpy = annotator.deselectManager!.destroy as jest.Mock;
+
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+            annotator.render();
+
+            expect(destroySpy).toHaveBeenCalled();
+            expect(annotator.deselectManager).toBeNull();
+        });
+
+        test('should clear all managers when view mode changes', () => {
+            annotator.annotatedEl = getParent();
+
+            const destroySpy = jest.fn();
+            const existingSpy = jest.fn().mockReturnValue(true);
+            const mgr = { destroy: destroySpy, exists: existingSpy, render: jest.fn(), style: jest.fn() };
+            annotator.managers = new Set([mgr]);
+
+            // First render keeps managers because exists() returns true
+            annotator.render();
+
+            expect(annotator.managers.size).toBe(1);
+
+            annotator.store.dispatch(setViewModeAction('boundingBoxes'));
+            annotator.render();
+
+            expect(destroySpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('scrollToBoundingBoxHighlight()', () => {
+        const boundingBoxes = [
+            { id: 'box-1', x: 10, y: 20, width: 30, height: 40, pageNumber: 1 },
+            { id: 'box-2', x: 50, y: 60, width: 70, height: 80, pageNumber: 1 },
+        ];
+
+        beforeEach(() => {
+            annotator.annotatedEl = getParent();
+            annotator.store.dispatch(setBoundingBoxHighlightsAction(boundingBoxes));
+        });
+
+        test('should call scrollToLocation with center offsets and smooth scrolling', () => {
+            jest.spyOn(annotator, 'getReference').mockImplementation(getImage);
+
+            annotator.scrollToBoundingBoxHighlight('box-1');
+
+            expect(scrollToLocation).toHaveBeenCalledWith(getParent(), getImage(), {
+                offsets: { x: 25, y: 40 },
+                smooth: true,
+            });
+        });
+
+        test('should do nothing if highlightId is null', () => {
+            annotator.scrollToBoundingBoxHighlight(null);
+            expect(scrollToLocation).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if annotatedEl is not defined', () => {
+            annotator.annotatedEl = undefined;
+            annotator.scrollToBoundingBoxHighlight('box-1');
+            expect(scrollToLocation).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if highlight is not found in the store', () => {
+            jest.spyOn(annotator, 'getReference').mockImplementation(getImage);
+
+            annotator.scrollToBoundingBoxHighlight('nonexistent');
+            expect(scrollToLocation).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if reference element is not defined', () => {
+            jest.spyOn(annotator, 'getReference').mockReturnValue(undefined);
+
+            annotator.scrollToBoundingBoxHighlight('box-1');
+            expect(scrollToLocation).not.toHaveBeenCalled();
         });
     });
 
