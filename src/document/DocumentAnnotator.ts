@@ -12,7 +12,7 @@ import { BoundingBoxHighlightManager } from '../boundingBoxHighlight';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { Event } from '../@types';
 import { getAnnotation } from '../store/annotations';
-import { getBoundingBoxHighlights, BoundingBox } from '../store/boundingBoxHighlights';
+import { BoundingBox } from '../store/boundingBoxHighlights';
 import { getSelection } from './docUtil';
 import { Manager } from '../common/BaseManager';
 import { getFileId, getIsCurrentFileVersion, getViewMode, Mode } from '../store';
@@ -235,28 +235,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
         }
     }
 
-    scrollToBoundingBoxHighlight(highlightId: string | null): void {
-        if (!highlightId || !this.annotatedEl) {
-            return;
-        }
-
-        const highlights = getBoundingBoxHighlights(this.store.getState());
-        const highlight = highlights.find((h: BoundingBox) => h.id === highlightId);
-
-        if (!highlight) {
-            return;
-        }
-
-        const pageEl = this.getPage(highlight.pageNumber);
-        if (!pageEl) {
-            return;
-        }
-
-        const offsets = {
-            x: highlight.x + highlight.width / 2,
-            y: highlight.y + highlight.height / 2,
-        };
-
-        scrollToLocation(this.annotatedEl, pageEl, { offsets, smooth: true });
+    protected getScrollReferenceForHighlight(highlight: BoundingBox): HTMLElement | undefined {
+        return this.getPage(highlight.pageNumber);
     }
 }
