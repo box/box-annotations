@@ -19,12 +19,16 @@ const BoundingBoxHighlightNav = ({ currentIndex, total, onPrev, onNext }: Props)
 
     React.useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent): void => {
-            if (event.key === 'ArrowLeft' && !isPrevDisabled) {
+            if (event.key === 'ArrowLeft') {
                 event.stopPropagation();
-                onPrev(event);
-            } else if (event.key === 'ArrowRight' && !isNextDisabled) {
+                if (!isPrevDisabled) {
+                    onPrev(event);
+                }
+            } else if (event.key === 'ArrowRight') {
                 event.stopPropagation();
-                onNext(event);
+                if (!isNextDisabled) {
+                    onNext(event);
+                }
             }
         };
 

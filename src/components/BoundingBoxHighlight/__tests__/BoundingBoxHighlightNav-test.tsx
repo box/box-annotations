@@ -153,6 +153,36 @@ describe('BoundingBoxHighlightNav', () => {
             expect(onNext).not.toHaveBeenCalled();
         });
 
+        test('should stop propagation for ArrowLeft even when prev is disabled', () => {
+            renderNav({ currentIndex: 0 });
+            const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
+            jest.spyOn(event, 'stopPropagation');
+
+            document.dispatchEvent(event);
+
+            expect(event.stopPropagation).toHaveBeenCalled();
+        });
+
+        test('should stop propagation for ArrowRight even when next is disabled', () => {
+            renderNav({ currentIndex: 4, total: 5 });
+            const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+            jest.spyOn(event, 'stopPropagation');
+
+            document.dispatchEvent(event);
+
+            expect(event.stopPropagation).toHaveBeenCalled();
+        });
+
+        test('should not stop propagation for non-arrow keys', () => {
+            renderNav({ currentIndex: 1 });
+            const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+            jest.spyOn(event, 'stopPropagation');
+
+            document.dispatchEvent(event);
+
+            expect(event.stopPropagation).not.toHaveBeenCalled();
+        });
+
         test('should not call callbacks for non-arrow keys', () => {
             const onPrev = jest.fn();
             const onNext = jest.fn();
