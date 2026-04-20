@@ -116,6 +116,65 @@ describe('BoundingBoxHighlightNav', () => {
         });
     });
 
+    describe('keyboard navigation', () => {
+        test('should call onPrev when ArrowLeft is pressed', () => {
+            const onPrev = jest.fn();
+            renderNav({ currentIndex: 1, onPrev });
+
+            fireEvent.keyDown(document, { key: 'ArrowLeft' });
+
+            expect(onPrev).toHaveBeenCalledTimes(1);
+        });
+
+        test('should call onNext when ArrowRight is pressed', () => {
+            const onNext = jest.fn();
+            renderNav({ currentIndex: 1, onNext });
+
+            fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+            expect(onNext).toHaveBeenCalledTimes(1);
+        });
+
+        test('should not call onPrev when ArrowLeft is pressed and at first item', () => {
+            const onPrev = jest.fn();
+            renderNav({ currentIndex: 0, onPrev });
+
+            fireEvent.keyDown(document, { key: 'ArrowLeft' });
+
+            expect(onPrev).not.toHaveBeenCalled();
+        });
+
+        test('should not call onNext when ArrowRight is pressed and at last item', () => {
+            const onNext = jest.fn();
+            renderNav({ currentIndex: 4, total: 5, onNext });
+
+            fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+            expect(onNext).not.toHaveBeenCalled();
+        });
+
+        test('should not call callbacks for non-arrow keys', () => {
+            const onPrev = jest.fn();
+            const onNext = jest.fn();
+            renderNav({ currentIndex: 1, onPrev, onNext });
+
+            fireEvent.keyDown(document, { key: 'Enter' });
+
+            expect(onPrev).not.toHaveBeenCalled();
+            expect(onNext).not.toHaveBeenCalled();
+        });
+
+        test('should remove keydown listener on unmount', () => {
+            const onPrev = jest.fn();
+            const { unmount } = renderNav({ currentIndex: 1, onPrev });
+
+            unmount();
+            fireEvent.keyDown(document, { key: 'ArrowLeft' });
+
+            expect(onPrev).not.toHaveBeenCalled();
+        });
+    });
+
     describe('accessibility', () => {
         test('should have aria-label on prev button', () => {
             renderNav();

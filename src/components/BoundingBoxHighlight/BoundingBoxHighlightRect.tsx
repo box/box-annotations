@@ -40,14 +40,14 @@ const BoundingBoxHighlightRect = ({
         onSelect?.(id);
     };
 
-    const handlePrev = (event: React.MouseEvent): void => {
+    const handlePrev = (event: React.MouseEvent | KeyboardEvent): void => {
         event.stopPropagation();
         if (prevId) {
             onNavigate?.(prevId);
         }
     };
 
-    const handleNext = (event: React.MouseEvent): void => {
+    const handleNext = (event: React.MouseEvent | KeyboardEvent): void => {
         event.stopPropagation();
         if (nextId) {
             onNavigate?.(nextId);
