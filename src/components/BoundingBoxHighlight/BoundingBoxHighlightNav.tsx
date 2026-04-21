@@ -8,14 +8,33 @@ import './BoundingBoxHighlightNav.scss';
 type Props = {
     currentIndex: number;
     total: number;
-    onPrev: (event: React.MouseEvent) => void;
-    onNext: (event: React.MouseEvent) => void;
+    onPrev: (event: React.MouseEvent | KeyboardEvent) => void;
+    onNext: (event: React.MouseEvent | KeyboardEvent) => void;
 };
 
 const BoundingBoxHighlightNav = ({ currentIndex, total, onPrev, onNext }: Props): JSX.Element => {
     const intl = useIntl();
     const isPrevDisabled = currentIndex === 0;
     const isNextDisabled = currentIndex === total - 1;
+
+    React.useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent): void => {
+            if (event.key === 'ArrowLeft') {
+                event.stopPropagation();
+                if (!isPrevDisabled) {
+                    onPrev(event);
+                }
+            } else if (event.key === 'ArrowRight') {
+                event.stopPropagation();
+                if (!isNextDisabled) {
+                    onNext(event);
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown, { capture: true });
+        return () => document.removeEventListener('keydown', handleKeyDown, { capture: true });
+    }, [isPrevDisabled, isNextDisabled, onPrev, onNext]);
 
     return (
         <div className="ba-BoundingBoxHighlightNav" data-testid="ba-BoundingBoxHighlightNav">
