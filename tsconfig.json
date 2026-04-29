@@ -4,6 +4,8 @@
     "compilerOptions": {
         "lib": ["DOM", "ES2020"],
         "jsx": "react-jsx",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "types": ["classnames", "draft-js", "enzyme", "jest", "lodash", "react", "react-dom", "react-redux", "uuid"]
     }
 }

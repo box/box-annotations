@@ -28,14 +28,14 @@ module.exports = () => {
                 },
                 {
                     test: /\.(svg|html)$/,
-                    loader: 'raw-loader',
+                    type: 'asset/source',
                     exclude: [path.resolve('node_modules')],
                 },
                 {
                     test: /\.(jpe?g|png|gif|woff2|woff)$/,
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]',
+                    type: 'asset/resource',
+                    generator: {
+                        filename: '[name][ext]',
                     },
                     exclude: [path.resolve('node_modules')],
                 },

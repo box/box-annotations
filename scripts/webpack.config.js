@@ -1,10 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const RsyncPlugin = require('@box/frontend/webpack/RsyncPlugin');
 const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
-const TerserPlugin = require('terser-webpack-plugin');
 
 const { BannerPlugin } = require('webpack');
 
@@ -49,10 +48,9 @@ const config = Object.assign(commonConfig(), {
         modules: ['src', 'node_modules'],
     },
     devServer: {
-        contentBase: './test',
-        disableHostCheck: true,
+        static: './test',
+        allowedHosts: 'all',
         host: '0.0.0.0',
-        inline: true,
         port: 8001,
     },
 });
@@ -62,7 +60,7 @@ if (isDev) {
         config.plugins.push(new RsyncPlugin('dist/.', rsyncLocation, 'annotations'));
     }
 
-    config.devtool = isLinked ? 'cheap-module-eval-source-map' : 'source-map';
+    config.devtool = isLinked ? 'eval-cheap-module-source-map' : 'source-map';
     config.plugins.push(new TranslationsPlugin());
     config.plugins.push(
         new CircularDependencyPlugin({
@@ -73,33 +71,12 @@ if (isDev) {
 }
 
 if (isRelease && language === 'en-US') {
-    // https://webpack.js.org/configuration/optimization/#optimization-minimize
     config.optimization = {
         minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    warnings: false, // Don't output warnings
-                    compress: {
-                        drop_console: true, // Drop console statements
-                    },
-                    output: {
-                        comments: false, // Remove comments
-                    },
-                },
-                sourceMap: false,
-            }),
+            '...',
+            new CssMinimizerPlugin(),
         ],
     };
-
-    // Optimize CSS - minimize, remove comments and duplicate rules
-    config.plugins.push(
-        new OptimizeCssAssetsPlugin({
-            cssProcessorOptions: {
-                discardComments: { removeAll: true },
-                safe: true,
-            },
-        }),
-    );
 
     // Add license message to top of code
     config.plugins.push(new BannerPlugin(license));
