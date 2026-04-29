@@ -30,7 +30,7 @@ const config = Object.assign(commonConfig(), {
         annotations: ['./src/BoxAnnotations.ts'],
     },
     output: {
-        filename: '[Name].js',
+        filename: '[name].js',
         path: path.resolve('dist'),
     },
     resolve: {

@@ -50,10 +50,7 @@ module.exports = () => {
                 __LANGUAGE__: JSON.stringify(language),
                 __NAME__: JSON.stringify(packageJSON.name),
                 __VERSION__: JSON.stringify(version),
-                'process.env': {
-                    BABEL_ENV: JSON.stringify(process.env.BABEL_ENV),
-                    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-                },
+                'process.env.BABEL_ENV': JSON.stringify(process.env.BABEL_ENV),
             }),
             new MiniCssExtractPlugin({
                 filename: '[name].css',
