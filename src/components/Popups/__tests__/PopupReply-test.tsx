@@ -34,11 +34,6 @@ jest.mock('../../ReplyForm', () => {
         });
 });
 
-jest.mock('../PopupReplyV2', () => {
-    const ReactMock = jest.requireActual('react');
-    return () => ReactMock.createElement('div', { 'data-testid': 'popup-reply-v2' });
-});
-
 describe('PopupReply', () => {
     const defaults: Props = {
         isPending: false,
@@ -60,32 +55,8 @@ describe('PopupReply', () => {
         test('should render the ReplyForm', () => {
             render(<PopupReply {...defaults} />);
 
-            expect(screen.getByTestId('popup-base')).toBeDefined();
-            expect(screen.getByTestId('reply-form')).toBeDefined();
-        });
-
-        test('should render PopupReplyV2 when isThreadedAnnotation is true', () => {
-            render(<PopupReply {...defaults} isThreadedAnnotation />);
-
-            expect(screen.getByTestId('popup-reply-v2')).toBeDefined();
-            expect(screen.queryByTestId('popup-base')).toBeNull();
-            expect(screen.queryByTestId('reply-form')).toBeNull();
-        });
-
-        test('should render existing UI when isThreadedAnnotation is false', () => {
-            render(<PopupReply {...defaults} isThreadedAnnotation={false} />);
-
-            expect(screen.queryByTestId('popup-reply-v2')).toBeNull();
-            expect(screen.getByTestId('popup-base')).toBeDefined();
-            expect(screen.getByTestId('reply-form')).toBeDefined();
-        });
-
-        test('should render existing UI when isThreadedAnnotation is undefined', () => {
-            render(<PopupReply {...defaults} />);
-
-            expect(screen.queryByTestId('popup-reply-v2')).toBeNull();
-            expect(screen.getByTestId('popup-base')).toBeDefined();
-            expect(screen.getByTestId('reply-form')).toBeDefined();
+            expect(screen.getByTestId('popup-base')).toBeVisible();
+            expect(screen.getByTestId('reply-form')).toBeVisible();
         });
 
         test('should pass value prop to ReplyForm', () => {

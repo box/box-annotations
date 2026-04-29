@@ -1,6 +1,7 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
+import PopupReplyV2 from '../components/Popups/PopupReplyV2';
 import PopupThreadV2 from '../components/Popups/PopupThreadV2';
 import { CreateArg as DrawingCreateArg } from '../drawing/actions';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
@@ -103,33 +104,41 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     }, [activeAnnotationId, isThreadedAnnotation]);
 
     const showCreator = canCreate && canReply && reference && staged;
-    const showActiveThread = !showCreator && isThreadedAnnotation && activeAnnotationId && activeReference;
 
-    return (
-        <>
-            {showCreator && (
-                <div className="ba-PopupLayer-popup">
+    if (showCreator) {
+        return (
+            <div className="ba-PopupLayer-popup">
+                {isThreadedAnnotation ? (
+                    <PopupReplyV2
+                        onSubmit={handleSubmit}
+                        reference={reference}
+                    />
+                ) : (
                     <PopupReply
                         isPending={isPending}
-                        isThreadedAnnotation={isThreadedAnnotation}
                         onCancel={handleCancel}
                         onChange={handleChange}
                         onSubmit={handleSubmit}
                         reference={reference}
                         value={message}
                     />
-                </div>
-            )}
-            {showActiveThread && activeReference && activeAnnotationId && (
-                <div className="ba-PopupLayer-popup">
-                    <PopupThreadV2
-                        annotationId={activeAnnotationId}
-                        reference={activeReference}
-                    />
-                </div>
-            )}
-        </>
-    );
+                )}
+            </div>
+        );
+    }
+
+    if (isThreadedAnnotation && activeAnnotationId && activeReference) {
+        return (
+            <div className="ba-PopupLayer-popup">
+                <PopupThreadV2
+                    annotationId={activeAnnotationId}
+                    reference={activeReference}
+                />
+            </div>
+        );
+    }
+
+    return null;
 };
 
 export default PopupLayer;
