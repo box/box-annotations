@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { BlueprintModernizationProvider } from '@box/blueprint-web';
 import {
     MentionContextProvider,
+    MessageEditorV2,
     ThreadedAnnotationsV2,
     serializeMentionMarkup,
 } from '@box/threaded-annotations';
@@ -27,10 +28,11 @@ import type { AppState, AppThunkDispatch } from '../../store/types';
 import createPopper, { PopupReference } from './Popper';
 import type { Instance, Options } from './Popper';
 import messages from './messages';
-import './PopupReplyV2.scss';
+import './PopupV2.scss';
 
 export type Props = {
-    annotationId: string;
+    annotationId?: string;
+    onSubmit: (text: string) => void;
     reference: PopupReference;
 };
 
@@ -55,14 +57,16 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
 
-const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
+const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
     const popupRef = React.useRef<HTMLDivElement>(null);
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
 
-    const annotation = useSelector((state: AppState) => getAnnotation(state, annotationId));
+    const annotation = useSelector((state: AppState) =>
+        annotationId ? getAnnotation(state, annotationId) : undefined,
+    );
 
     React.useEffect(() => {
         if (popupRef.current) {
@@ -104,20 +108,27 @@ const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
         async (content: JSONContent | null): Promise<void> => {
             const doc = createDocumentNode(content);
             const { text } = serializeMentionMarkup(doc);
-            await dispatch(createReplyAction({ annotationId, message: text }));
+            if (annotationId) {
+                await dispatch(createReplyAction({ annotationId, message: text }));
+            } else {
+                onSubmit(text);
+            }
         },
-        [annotationId, dispatch],
+        [annotationId, dispatch, onSubmit],
     );
 
     const handleThreadDelete = React.useCallback(
         async (): Promise<void> => {
-            await dispatch(deleteAnnotationAction(annotationId));
+            if (annotationId) {
+                await dispatch(deleteAnnotationAction(annotationId));
+            }
         },
         [annotationId, dispatch],
     );
 
     const handleResolve = React.useCallback(
         async (): Promise<void> => {
+            if (!annotationId) return;
             const result = await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'resolved' } }));
             if (updateAnnotationAction.fulfilled.match(result)) {
                 dispatch(setActiveAnnotationIdAction(null));
@@ -128,6 +139,7 @@ const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
 
     const handleUnresolve = React.useCallback(
         async (): Promise<void> => {
+            if (!annotationId) return;
             await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
         },
         [annotationId, dispatch],
@@ -138,8 +150,8 @@ const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
             <div
                 ref={popupRef}
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
-                className="ba-PopupReplyV2"
-                data-resin-component="popupThreadV2"
+                className="ba-PopupV2"
+                data-resin-component={annotationId ? 'popupThreadV2' : 'popupReplyV2'}
                 onClick={handleEvent}
                 onMouseDown={handleEvent}
                 onMouseMove={handleEvent}
@@ -154,17 +166,25 @@ const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
                             onSubmit: () => Promise.resolve(),
                         },
                     }}>
-                        <ThreadedAnnotationsV2
-                            isAnnotations
-                            messages={threadMessages}
-                            onAvatarClick={noop}
-                            onDelete={noop}
-                            onPost={handlePost}
-                            onResolve={handleResolve}
-                            onThreadDelete={handleThreadDelete}
-                            onUnresolve={handleUnresolve}
-                            userSelectorProps={userSelectorProps}
-                        />
+                        {annotationId ? (
+                            <ThreadedAnnotationsV2
+                                isAnnotations
+                                messages={threadMessages}
+                                onAvatarClick={noop}
+                                onDelete={noop}
+                                onPost={handlePost}
+                                onResolve={handleResolve}
+                                onThreadDelete={handleThreadDelete}
+                                onUnresolve={handleUnresolve}
+                                userSelectorProps={userSelectorProps}
+                            />
+                        ) : (
+                            <MessageEditorV2
+                                isFirstAnnotation
+                                onPost={handlePost}
+                                userSelectorProps={userSelectorProps}
+                            />
+                        )}
                     </MentionContextProvider>
                 </BlueprintModernizationProvider>
                 <div data-threaded-annotations-portal />
@@ -173,4 +193,4 @@ const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
     );
 };
 
-export default PopupThreadV2;
+export default PopupV2;

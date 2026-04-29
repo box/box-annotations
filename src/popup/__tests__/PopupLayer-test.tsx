@@ -10,20 +10,14 @@ let mockOnCancel: ((text?: string) => void) | undefined;
 let mockOnChange: ((text?: string) => void) | undefined;
 let mockOnSubmit: ((text: string) => void) | undefined;
 
-jest.mock('../../components/Popups/PopupThreadV2', () => {
-    const ReactMock = jest.requireActual('react');
-    return (props: Record<string, unknown>) =>
-        ReactMock.createElement('div', {
-            'data-testid': 'popup-thread-v2',
-            'data-annotation-id': props.annotationId,
-        });
-});
-
-jest.mock('../../components/Popups/PopupReplyV2', () => {
+jest.mock('../../components/Popups/PopupV2', () => {
     const ReactMock = jest.requireActual('react');
     return (props: Record<string, unknown>) => {
         mockOnSubmit = props.onSubmit as typeof mockOnSubmit;
-        return ReactMock.createElement('div', { 'data-testid': 'popup-reply-v2' });
+        return ReactMock.createElement('div', {
+            'data-testid': 'popup-v2',
+            'data-annotation-id': props.annotationId || '',
+        });
     };
 });
 
@@ -146,14 +140,14 @@ describe('PopupLayer', () => {
 
         test('should render PopupReplyV2 when isThreadedAnnotation is true', () => {
             renderLayer({ isThreadedAnnotation: true });
-            expect(screen.getByTestId('popup-reply-v2')).toBeDefined();
+            expect(screen.getByTestId('popup-v2')).toBeDefined();
             expect(screen.queryByTestId('popup-reply')).toBeNull();
         });
 
         test('should render PopupReply when isThreadedAnnotation is false', () => {
             renderLayer();
             expect(screen.getByTestId('popup-reply')).toBeDefined();
-            expect(screen.queryByTestId('popup-reply-v2')).toBeNull();
+            expect(screen.queryByTestId('popup-v2')).toBeNull();
         });
     });
 

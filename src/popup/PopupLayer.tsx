@@ -1,8 +1,7 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
-import PopupReplyV2 from '../components/Popups/PopupReplyV2';
-import PopupThreadV2 from '../components/Popups/PopupThreadV2';
+import PopupV2 from '../components/Popups/PopupV2';
 import { CreateArg as DrawingCreateArg } from '../drawing/actions';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
 import { CreateArg as RegionCreateArg } from '../region/actions';
@@ -15,8 +14,10 @@ import {
     Mode,
 } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
-import './PopupLayer.scss';
+
 import { TARGET_TYPE } from '../constants';
+
+import './PopupLayer.scss';
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -96,7 +97,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
 
     React.useEffect(() => {
         if (activeAnnotationId && isThreadedAnnotation) {
-            const el = document.querySelector(`[data-ba-annotation-id="${activeAnnotationId}"]`);
+            const el = document.querySelector(`[data-ba-annotation-id="${CSS.escape(activeAnnotationId)}"]`);
             setActiveReference(el);
         } else {
             setActiveReference(null);
@@ -105,24 +106,28 @@ const PopupLayer = (props: Props): JSX.Element | null => {
 
     const showCreator = canCreate && canReply && reference && staged;
 
+    if (showCreator && isThreadedAnnotation) {
+        return (
+            <div className="ba-PopupLayer-popup">
+                <PopupV2
+                    onSubmit={handleSubmit}
+                    reference={reference}
+                />
+            </div>
+        );
+    }
+
     if (showCreator) {
         return (
             <div className="ba-PopupLayer-popup">
-                {isThreadedAnnotation ? (
-                    <PopupReplyV2
-                        onSubmit={handleSubmit}
-                        reference={reference}
-                    />
-                ) : (
-                    <PopupReply
-                        isPending={isPending}
-                        onCancel={handleCancel}
-                        onChange={handleChange}
-                        onSubmit={handleSubmit}
-                        reference={reference}
-                        value={message}
-                    />
-                )}
+                <PopupReply
+                    isPending={isPending}
+                    onCancel={handleCancel}
+                    onChange={handleChange}
+                    onSubmit={handleSubmit}
+                    reference={reference}
+                    value={message}
+                />
             </div>
         );
     }
@@ -130,8 +135,9 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     if (isThreadedAnnotation && activeAnnotationId && activeReference) {
         return (
             <div className="ba-PopupLayer-popup">
-                <PopupThreadV2
+                <PopupV2
                     annotationId={activeAnnotationId}
+                    onSubmit={handleSubmit}
                     reference={activeReference}
                 />
             </div>
