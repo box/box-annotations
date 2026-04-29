@@ -36,6 +36,7 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
         <button
             ref={ref}
             className={classNames('ba-RegionAnnotation', className, { 'is-active': isActive })}
+            data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}
             data-resin-target="highlightRegion"
             data-testid={`ba-AnnotationTarget-${annotationId}`}

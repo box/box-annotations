@@ -1,13 +1,16 @@
 import reducer from '../reducer';
 import {annotationState as state} from '../__mocks__/annotationsState';
-import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup } from '../../../@types';
+import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup, Reply } from '../../../@types';
 import { APICollection } from '../../../api';
 import {
     createAnnotationAction,
+    createReplyAction,
+    deleteAnnotationAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
     setIsInitialized,
+    updateAnnotationAction,
 } from '../actions';
 import { setViewModeAction } from '../../options/actions';
 
@@ -114,6 +117,105 @@ describe('store/annotations/reducer', () => {
             const newState = reducer(state, removeAnnotationAction(payload));
 
             expect(newState.activeId).toBe(null);
+        });
+    });
+
+    describe('createReplyAction', () => {
+        test('should append reply to annotation replies', () => {
+            const annotationId = 'test1';
+            const reply = {
+                created_at: '2026-01-01T00:00:00Z',
+                created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+                id: 'reply-1',
+                message: 'A reply',
+                parent: { id: annotationId, type: 'annotation' },
+                type: 'reply',
+            } as Reply;
+
+            const stateWithAnnotation = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithAnnotation,
+                createReplyAction.fulfilled({ annotationId, reply }, 'test', { annotationId, message: 'A reply' }),
+            );
+
+            expect(newState.byId.test1.replies).toHaveLength(1);
+            expect(newState.byId.test1.replies![0]).toEqual(reply);
+        });
+
+        test('should create replies array if annotation has no replies', () => {
+            const annotationId = 'test1';
+            const reply = {
+                created_at: '2026-01-01T00:00:00Z',
+                created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+                id: 'reply-1',
+                message: 'A reply',
+                parent: { id: annotationId, type: 'annotation' },
+                type: 'reply',
+            } as Reply;
+
+            const newState = reducer(
+                state,
+                createReplyAction.fulfilled({ annotationId, reply }, 'test', { annotationId, message: 'A reply' }),
+            );
+
+            expect(newState.byId.test1.replies).toHaveLength(1);
+        });
+
+        test('should not modify state if annotation does not exist', () => {
+            const reply = { id: 'reply-1', message: 'A reply' } as Reply;
+
+            const newState = reducer(
+                state,
+                createReplyAction.fulfilled(
+                    { annotationId: 'nonexistent', reply },
+                    'test',
+                    { annotationId: 'nonexistent', message: 'A reply' },
+                ),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
+        });
+    });
+
+    describe('deleteAnnotationAction', () => {
+        test('should remove annotation from byId and allIds', () => {
+            const newState = reducer(state, deleteAnnotationAction.fulfilled('test1', 'test', 'test1'));
+
+            expect(newState.allIds).not.toContain('test1');
+            expect(newState.byId.test1).toBeUndefined();
+        });
+
+        test('should clear activeId when deleted annotation is active', () => {
+            const stateWithActive = { ...state, activeId: 'test1' };
+            const newState = reducer(stateWithActive, deleteAnnotationAction.fulfilled('test1', 'test', 'test1'));
+
+            expect(newState.activeId).toBeNull();
+        });
+
+        test('should not clear activeId when deleted annotation is not active', () => {
+            const stateWithActive = { ...state, activeId: 'test2' };
+            const newState = reducer(stateWithActive, deleteAnnotationAction.fulfilled('test1', 'test', 'test1'));
+
+            expect(newState.activeId).toBe('test2');
+        });
+    });
+
+    describe('updateAnnotationAction', () => {
+        test('should update annotation in byId', () => {
+            const updated = { id: 'test1', target: { type: 'region' }, type: 'annotation', status: 'resolved' } as unknown as Annotation;
+            const newState = reducer(
+                state,
+                updateAnnotationAction.fulfilled(updated, 'test', { annotationId: 'test1', payload: { status: 'resolved' } }),
+            );
+
+            expect(newState.byId.test1).toEqual(updated);
         });
     });
 

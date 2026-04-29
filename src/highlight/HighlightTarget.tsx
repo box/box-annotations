@@ -69,6 +69,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         <a
             ref={ref}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
+            data-ba-annotation-id={annotationId}
             data-ba-reference-id={uuid}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"

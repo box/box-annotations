@@ -1,5 +1,8 @@
 import BoxAnnotations from '../BoxAnnotations';
 
+jest.mock('@box/blueprint-web', () => ({}));
+jest.mock('@box/threaded-annotations', () => ({}));
+
 describe('BoxAnnotations', () => {
     let loader;
 

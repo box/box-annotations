@@ -64,6 +64,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         <a
             ref={ref}
             className={classNames('ba-DrawingTarget', className, { 'is-active': isActive })}
+            data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}
             data-resin-target="highlightDrawing"
             data-testid={`ba-AnnotationTarget-${annotationId}`}

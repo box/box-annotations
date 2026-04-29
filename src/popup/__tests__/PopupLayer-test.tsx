@@ -10,6 +10,15 @@ let mockOnCancel: ((text?: string) => void) | undefined;
 let mockOnChange: ((text?: string) => void) | undefined;
 let mockOnSubmit: ((text: string) => void) | undefined;
 
+jest.mock('../../components/Popups/PopupThreadV2', () => {
+    const ReactMock = jest.requireActual('react');
+    return (props: Record<string, unknown>) =>
+        ReactMock.createElement('div', {
+            'data-testid': 'popup-thread-v2',
+            'data-annotation-id': props.annotationId,
+        });
+});
+
 jest.mock('../../components/Popups/PopupReply', () => {
     const ReactMock = jest.requireActual('react');
     return (props: Record<string, unknown>) => {
@@ -47,6 +56,7 @@ describe('PopupLayer', () => {
 
     const referenceId = '123';
     const getDefaults = (): Props => ({
+        activeAnnotationId: null,
         createDrawing: jest.fn(),
         createHighlight: jest.fn(),
         createRegion: jest.fn(),
@@ -174,7 +184,7 @@ describe('PopupLayer', () => {
                 const createRegion = jest.fn();
                 const message = 'foo';
                 renderLayer({ createHighlight, createRegion, message });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).toHaveBeenCalledWith({
@@ -197,7 +207,7 @@ describe('PopupLayer', () => {
                     mode: Mode.REGION,
                     staged: getStagedRegion(),
                 });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).not.toHaveBeenCalled();
@@ -222,7 +232,7 @@ describe('PopupLayer', () => {
                     staged: getStagedDrawing(),
                     targetType: 'frame',
                 });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).toHaveBeenCalledWith({
                     ...getStagedDrawing(),

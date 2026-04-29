@@ -13,6 +13,8 @@ import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('@box/blueprint-web', () => ({}));
+jest.mock('@box/threaded-annotations', () => ({}));
 jest.mock('../../common/DeselectManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');

@@ -74,9 +74,9 @@ export const deserializeMentionMarkup = (text: string): DocumentNodeV2 => {
  */
 export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
     author: {
-        email: reply.created_by.login ?? '',
-        id: parseInt(reply.created_by.id, 10),
-        name: reply.created_by.name,
+        email: reply.created_by?.login ?? '',
+        id: parseInt(reply.created_by?.id ?? '0', 10),
+        name: reply.created_by?.name ?? '',
     },
     createdAt: new Date(reply.created_at).getTime(),
     id: reply.id,
@@ -92,18 +92,20 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
 /**
  * Converts an Annotation's description (root message) to a TextMessageType.
  * The root message gets resolve permission from the annotation's permissions.
+ * Falls back to annotation-level fields when the description object is sparse
+ * (the list endpoint returns description with only { message }).
  */
 const descriptionToTextMessage = (
     annotation: Annotation,
     reply: Reply,
 ): TextMessageTypeV2 => ({
     author: {
-        email: reply.created_by.login ?? '',
-        id: parseInt(reply.created_by.id, 10),
-        name: reply.created_by.name,
+        email: (reply.created_by ?? annotation.created_by)?.login ?? '',
+        id: parseInt((reply.created_by ?? annotation.created_by)?.id ?? '0', 10),
+        name: (reply.created_by ?? annotation.created_by)?.name ?? '',
     },
-    createdAt: new Date(reply.created_at).getTime(),
-    id: reply.id,
+    createdAt: new Date(reply.created_at ?? annotation.created_at).getTime(),
+    id: reply.id ?? annotation.id,
     message: deserializeMentionMarkup(reply.message),
     permissions: {
         canDelete: annotation.permissions?.can_delete ?? false,

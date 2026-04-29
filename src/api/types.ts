@@ -1,4 +1,4 @@
-import { Annotation, Collaborator, NewAnnotation, Permissions, Token } from '../@types';
+import { Annotation, Collaborator, NewAnnotation, Permissions, Reply, Token } from '../@types';
 
 export type APICollection<R> = {
     entries: R[];
@@ -33,6 +33,23 @@ export interface AnnotationsAPI {
         errorCallback: (error: APIError) => void,
     ): Promise<void>;
 
+    createAnnotationReply(
+        fileId: string | null,
+        annotationId: string,
+        permissions: Permissions,
+        message: string,
+        successCallback: (result: Reply) => void,
+        errorCallback: (error: APIError) => void,
+    ): Promise<void>;
+
+    deleteAnnotation(
+        fileId: string | null,
+        annotationId: string,
+        permissions: Permissions,
+        successCallback: () => void,
+        errorCallback: (error: APIError) => void,
+    ): Promise<void>;
+
     getAnnotations(
         fileId: string | null,
         fileVersionId: string | null,
@@ -41,6 +58,16 @@ export interface AnnotationsAPI {
         errorCallback: (error: APIError) => void,
         limit?: number,
         shouldFetchAll?: boolean,
+        shouldFetchReplies?: boolean,
+    ): Promise<void>;
+
+    updateAnnotation(
+        fileId: string | null,
+        annotationId: string,
+        permissions: Permissions,
+        payload: { message?: string; status?: string },
+        successCallback: (result: Annotation) => void,
+        errorCallback: (error: APIError) => void,
     ): Promise<void>;
 
     destroy(): void;

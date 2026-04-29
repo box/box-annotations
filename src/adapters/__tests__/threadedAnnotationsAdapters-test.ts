@@ -210,6 +210,39 @@ describe('threadedAnnotationsAdapters', () => {
             expect(result[0].id).toBe('desc-1');
             expect(result[1].id).toBe('reply-1');
         });
+
+        test('should fall back to annotation fields when description is sparse', () => {
+            const annotation: Annotation = {
+                ...baseAnnotation,
+                description: {
+                    message: 'Sparse description',
+                } as unknown as Reply,
+            };
+            const result = annotationToMessages(annotation);
+
+            expect(result).toHaveLength(1);
+            expect(result[0].id).toBe('ann-1');
+            expect(result[0].author.name).toBe('User');
+            expect(result[0].author.email).toBe('user@box.com');
+            expect(result[0].author.id).toBe(1);
+            expect(result[0].createdAt).toBe(new Date('2026-01-01T00:00:00Z').getTime());
+        });
+
+        test('should handle description with missing created_by gracefully', () => {
+            const annotation: Annotation = {
+                ...baseAnnotation,
+                description: {
+                    id: 'desc-1',
+                    message: 'Test',
+                    created_at: '2026-01-01T00:00:00Z',
+                } as unknown as Reply,
+            };
+            const result = annotationToMessages(annotation);
+
+            expect(result).toHaveLength(1);
+            expect(result[0].author.name).toBe('User');
+            expect(result[0].author.email).toBe('user@box.com');
+        });
     });
 
     describe('collaboratorToUserContact', () => {

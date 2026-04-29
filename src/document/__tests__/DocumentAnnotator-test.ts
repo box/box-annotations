@@ -17,6 +17,8 @@ import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
+jest.mock('@box/blueprint-web', () => ({}));
+jest.mock('@box/threaded-annotations', () => ({}));
 jest.mock('../../common/DeselectManager');
 jest.mock('../../drawing/DrawingManager');
 jest.mock('../../highlight/HighlightManager');

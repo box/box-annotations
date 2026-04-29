@@ -110,11 +110,9 @@ export default function PopupReply(props: Props): JSX.Element {
     }, [popupRef, rotation, scale]);
 
     if (props.isThreadedAnnotation) {
-        const { isPending, onCancel, onSubmit, reference } = props as ThreadedProps;
+        const { onSubmit, reference } = props as ThreadedProps;
         return (
             <PopupReplyV2
-                isPending={isPending}
-                onCancel={onCancel}
                 onSubmit={onSubmit}
                 reference={reference}
             />

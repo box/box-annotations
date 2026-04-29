@@ -1,20 +1,28 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import noop from 'lodash/noop';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { BlueprintModernizationProvider } from '@box/blueprint-web';
 import {
     MentionContextProvider,
-    MessageEditorV2,
+    ThreadedAnnotationsV2,
     serializeMentionMarkup,
 } from '@box/threaded-annotations';
-import type { DocumentNodeV2 } from '@box/threaded-annotations';
+import type { DocumentNodeV2, TextMessageTypeV2 } from '@box/threaded-annotations';
 import type { JSONContent } from '@tiptap/core';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 
-import { collaboratorToUserContact } from '../../adapters/threadedAnnotationsAdapters';
+import { annotationToMessages, collaboratorToUserContact } from '../../adapters/threadedAnnotationsAdapters';
+import {
+    createReplyAction,
+    deleteAnnotationAction,
+    setActiveAnnotationIdAction,
+    updateAnnotationAction,
+} from '../../store/annotations/actions';
+import { getAnnotation } from '../../store/annotations/selectors';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
-import type { AppThunkDispatch } from '../../store/types';
+import type { AppState, AppThunkDispatch } from '../../store/types';
 
 import createPopper, { PopupReference } from './Popper';
 import type { Instance, Options } from './Popper';
@@ -22,7 +30,7 @@ import messages from './messages';
 import './PopupReplyV2.scss';
 
 export type Props = {
-    onSubmit: (text: string) => void;
+    annotationId: string;
     reference: PopupReference;
 };
 
@@ -47,12 +55,14 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
 
-const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
+const PopupThreadV2 = ({ annotationId, reference }: Props): JSX.Element => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
     const popupRef = React.useRef<HTMLDivElement>(null);
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
+
+    const annotation = useSelector((state: AppState) => getAnnotation(state, annotationId));
 
     React.useEffect(() => {
         if (popupRef.current) {
@@ -67,6 +77,11 @@ const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
     const handleEvent = React.useCallback((event: React.SyntheticEvent) => {
         event.stopPropagation();
     }, []);
+
+    const threadMessages: TextMessageTypeV2[] = React.useMemo(
+        () => (annotation ? annotationToMessages(annotation) : []),
+        [annotation],
+    );
 
     const userSelectorProps = React.useMemo(
         () => ({
@@ -89,9 +104,33 @@ const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
         async (content: JSONContent | null): Promise<void> => {
             const doc = createDocumentNode(content);
             const { text } = serializeMentionMarkup(doc);
-            onSubmit(text);
+            await dispatch(createReplyAction({ annotationId, message: text }));
         },
-        [onSubmit],
+        [annotationId, dispatch],
+    );
+
+    const handleThreadDelete = React.useCallback(
+        async (): Promise<void> => {
+            await dispatch(deleteAnnotationAction(annotationId));
+        },
+        [annotationId, dispatch],
+    );
+
+    const handleResolve = React.useCallback(
+        async (): Promise<void> => {
+            const result = await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'resolved' } }));
+            if (updateAnnotationAction.fulfilled.match(result)) {
+                dispatch(setActiveAnnotationIdAction(null));
+            }
+        },
+        [annotationId, dispatch],
+    );
+
+    const handleUnresolve = React.useCallback(
+        async (): Promise<void> => {
+            await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
+        },
+        [annotationId, dispatch],
     );
 
     return (
@@ -100,7 +139,7 @@ const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
                 ref={popupRef}
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
                 className="ba-PopupReplyV2"
-                data-resin-component="popupReplyV2"
+                data-resin-component="popupThreadV2"
                 onClick={handleEvent}
                 onMouseDown={handleEvent}
                 onMouseMove={handleEvent}
@@ -115,9 +154,15 @@ const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
                             onSubmit: () => Promise.resolve(),
                         },
                     }}>
-                        <MessageEditorV2
-                            isFirstAnnotation
+                        <ThreadedAnnotationsV2
+                            isAnnotations
+                            messages={threadMessages}
+                            onAvatarClick={noop}
+                            onDelete={noop}
                             onPost={handlePost}
+                            onResolve={handleResolve}
+                            onThreadDelete={handleThreadDelete}
+                            onUnresolve={handleUnresolve}
                             userSelectorProps={userSelectorProps}
                         />
                     </MentionContextProvider>
@@ -128,4 +173,4 @@ const PopupReplyV2 = ({ onSubmit, reference }: Props): JSX.Element => {
     );
 };
 
-export default PopupReplyV2;
+export default PopupThreadV2;
