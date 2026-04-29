@@ -26,12 +26,12 @@ type LegacyProps = BaseProps & {
 };
 
 type ThreadedProps = BaseProps & {
+    isPending: boolean;
     isThreadedAnnotation: true;
-    isPending?: boolean;
-    onCancel?: (text?: string) => void;
-    onChange?: (text?: string) => void;
-    onSubmit?: (text: string) => void;
-    reference?: PopupReference;
+    onCancel: (text?: string) => void;
+    onChange: (text?: string) => void;
+    onSubmit: (text: string) => void;
+    reference: PopupReference;
     value?: string;
 };
 
@@ -109,10 +109,16 @@ export default function PopupReply(props: Props): JSX.Element {
         }
     }, [popupRef, rotation, scale]);
 
-    // TODO: PopupReplyV2 is a placeholder stub. Props (isPending, onCancel, etc.)
-    // are not yet forwarded and will need to be wired up when V2 is implemented.
     if (props.isThreadedAnnotation) {
-        return <PopupReplyV2 />;
+        const { isPending, onCancel, onSubmit, reference } = props as ThreadedProps;
+        return (
+            <PopupReplyV2
+                isPending={isPending}
+                onCancel={onCancel}
+                onSubmit={onSubmit}
+                reference={reference}
+            />
+        );
     }
 
     const { isPending, onCancel, onChange, onSubmit, value = '', isThreadedAnnotation: _, ...rest } = props as LegacyProps;

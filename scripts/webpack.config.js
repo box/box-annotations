@@ -29,6 +29,19 @@ const config = Object.assign(commonConfig(), {
     entry: {
         annotations: ['./src/BoxAnnotations.ts'],
     },
+    externals: [
+        // @box/threaded-annotations and its transitive dependencies are provided
+        // by the consuming application (EUA) at runtime. Bundling them here would
+        // duplicate code and cause webpack 4 / ESM exports compatibility issues.
+        /^@box\/threaded-annotations/,
+        /^@box\/blueprint-web/,
+        /^@box\/blueprint-web-assets/,
+        /^@box\/collaboration-popover/,
+        /^@box\/readable-time/,
+        /^@box\/user-selector/,
+        /^@box\/combobox-with-api/,
+        /^@tiptap\//,
+    ],
     output: {
         filename: '[name].js',
         path: path.resolve('dist'),

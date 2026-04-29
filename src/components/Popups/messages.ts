@@ -6,6 +6,16 @@ export default defineMessages({
         description: 'Aria label description for reply popup',
         defaultMessage: 'Comment',
     },
+    ariaLabelMentionLoading: {
+        id: 'ba.popup.reply.mentionLoading',
+        description: 'Aria label for mention selector loading state',
+        defaultMessage: 'Loading users...',
+    },
+    ariaLabelMentionSelector: {
+        id: 'ba.popup.reply.mentionSelector',
+        description: 'Aria role description for mention user selector',
+        defaultMessage: 'Mention a collaborator',
+    },
     ariaLabelReplyField: {
         id: 'ba.popup.reply.field',
         description: 'Aria label description for annotation comment field',
