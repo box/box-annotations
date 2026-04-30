@@ -10,6 +10,8 @@ import { videoAnnotations as drawings } from '../../drawing/__mocks__/drawingDat
 import { videoAnnotations as regions } from '../../region/__mocks__/data';
 import { CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../../common/BaseAnnotator';
 
+jest.mock('@box/blueprint-web', () => ({}));
+jest.mock('@box/threaded-annotations', () => ({}));
 jest.mock('../../common/DeselectManager');
 jest.mock('../../popup/PopupManager');
 jest.mock('../../region/RegionCreationManager');

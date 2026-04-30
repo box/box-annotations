@@ -1,0 +1,25 @@
+.ba-PopupV2 {
+    z-index: 1;
+    width: 348px;
+}
+
+// Specificity must beat .ba selectors from box-ui-elements globals
+// (forms, buttons, links) that cascade into threaded-annotations components.
+.ba .ba-PopupV2 {
+    div[contenteditable='true'],
+    div[contenteditable='true']:hover,
+    div[contenteditable='true']:focus {
+        width: auto;
+        padding: 0;
+        color: inherit;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        box-shadow: none;
+        transition: none;
+    }
+
+    button svg {
+        pointer-events: auto;
+    }
+}

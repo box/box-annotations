@@ -4,6 +4,9 @@ import PopupManager from '../PopupManager';
 import { createStore } from '../../store';
 import { Options } from '../../common/BaseManager';
 
+jest.mock('@box/blueprint-web', () => ({}));
+jest.mock('@box/threaded-annotations', () => ({}));
+
 jest.mock('react-dom/client', () => ({
     createRoot: jest.fn().mockReturnValue({
         render: jest.fn(),

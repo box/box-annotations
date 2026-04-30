@@ -29,6 +29,24 @@ const config = Object.assign(commonConfig(), {
     entry: {
         annotations: ['./src/BoxAnnotations.ts'],
     },
+    externals: [
+        // @box/threaded-annotations and its transitive dependencies are provided
+        // by the consuming application (EUA) at runtime. Marking them as externals
+        // avoids duplicating code that is already bundled by the host app.
+        /^react(\/.*)?$/,
+        /^react-dom(\/.*)?$/,
+        /^react-intl(\/.*)?$/,
+        /^react-redux(\/.*)?$/,
+        /^@box\/threaded-annotations/,
+        /^@box\/blueprint-web/,
+        /^@box\/blueprint-web-assets/,
+        /^@box\/collaboration-popover/,
+        /^@box\/readable-time/,
+        /^@box\/user-selector/,
+        /^@box\/combobox-with-api/,
+        /^@tiptap\//,
+    ],
+    externalsType: 'commonjs',
     output: {
         filename: '[name].js',
         path: path.resolve('dist'),

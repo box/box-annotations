@@ -10,6 +10,17 @@ let mockOnCancel: ((text?: string) => void) | undefined;
 let mockOnChange: ((text?: string) => void) | undefined;
 let mockOnSubmit: ((text: string) => void) | undefined;
 
+jest.mock('../../components/Popups/PopupV2', () => {
+    const ReactMock = jest.requireActual('react');
+    return (props: Record<string, unknown>) => {
+        mockOnSubmit = props.onSubmit as typeof mockOnSubmit;
+        return ReactMock.createElement('div', {
+            'data-testid': 'popup-v2',
+            'data-annotation-id': props.annotationId || '',
+        });
+    };
+});
+
 jest.mock('../../components/Popups/PopupReply', () => {
     const ReactMock = jest.requireActual('react');
     return (props: Record<string, unknown>) => {
@@ -19,7 +30,6 @@ jest.mock('../../components/Popups/PopupReply', () => {
         return ReactMock.createElement('div', {
             'data-testid': 'popup-reply',
             'data-is-pending': String(props.isPending),
-            'data-is-threaded': String(props.isThreadedAnnotation),
         });
     };
 });
@@ -47,6 +57,7 @@ describe('PopupLayer', () => {
 
     const referenceId = '123';
     const getDefaults = (): Props => ({
+        activeAnnotationId: null,
         createDrawing: jest.fn(),
         createHighlight: jest.fn(),
         createRegion: jest.fn(),
@@ -127,14 +138,16 @@ describe('PopupLayer', () => {
             expect(screen.getByTestId('popup-reply')).toBeDefined();
         });
 
-        test('should pass isThreadedAnnotation to PopupReply', () => {
+        test('should render PopupReplyV2 when isThreadedAnnotation is true', () => {
             renderLayer({ isThreadedAnnotation: true });
-            expect(screen.getByTestId('popup-reply').getAttribute('data-is-threaded')).toBe('true');
+            expect(screen.getByTestId('popup-v2')).toBeDefined();
+            expect(screen.queryByTestId('popup-reply')).toBeNull();
         });
 
-        test('should default isThreadedAnnotation to false on PopupReply', () => {
+        test('should render PopupReply when isThreadedAnnotation is false', () => {
             renderLayer();
-            expect(screen.getByTestId('popup-reply').getAttribute('data-is-threaded')).toBe('false');
+            expect(screen.getByTestId('popup-reply')).toBeDefined();
+            expect(screen.queryByTestId('popup-v2')).toBeNull();
         });
     });
 
@@ -174,7 +187,7 @@ describe('PopupLayer', () => {
                 const createRegion = jest.fn();
                 const message = 'foo';
                 renderLayer({ createHighlight, createRegion, message });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).toHaveBeenCalledWith({
@@ -197,7 +210,7 @@ describe('PopupLayer', () => {
                     mode: Mode.REGION,
                     staged: getStagedRegion(),
                 });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).not.toHaveBeenCalled();
                 expect(createHighlight).not.toHaveBeenCalled();
@@ -222,7 +235,7 @@ describe('PopupLayer', () => {
                     staged: getStagedDrawing(),
                     targetType: 'frame',
                 });
-                mockOnSubmit!('');
+                mockOnSubmit!(message);
 
                 expect(createDrawing).toHaveBeenCalledWith({
                     ...getStagedDrawing(),
