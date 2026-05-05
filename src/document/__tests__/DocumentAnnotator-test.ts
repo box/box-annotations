@@ -12,7 +12,7 @@ import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { fetchAnnotationsAction, Mode } from '../../store';
-import { setViewModeAction } from '../../store/options';
+import { setRotationAction, setViewModeAction } from '../../store/options';
 import { HighlightCreatorManager, HighlightManager } from '../../highlight';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
@@ -314,7 +314,7 @@ describe('DocumentAnnotator', () => {
 
     describe('renderPage()', () => {
         test('should initialize a manager for a new page', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn() } as unknown) as Manager;
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
@@ -327,6 +327,92 @@ describe('DocumentAnnotator', () => {
             expect(mockManager.render).toHaveBeenCalledWith({
                 intl: annotator.intl,
                 store: expect.any(Object),
+            });
+        });
+
+        test('should apply rotation styles when rotation is non-zero', () => {
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const pageNumber = 1;
+            const pageEl = getPage(pageNumber);
+
+            // Mock page dimensions (after PDF.js rotation, dimensions are swapped)
+            Object.defineProperty(pageEl, 'clientWidth', { value: 400, configurable: true });
+            Object.defineProperty(pageEl, 'clientHeight', { value: 800, configurable: true });
+
+            annotator.getPageManagers = jest.fn(() => new Set([mockManager]));
+            annotator.getPageNumber = jest.fn(() => pageNumber);
+            annotator.store.dispatch(setRotationAction(90));
+            annotator.renderPage(pageEl);
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '400px',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%) rotate(90deg)',
+                width: '800px',
+            });
+        });
+
+        test('should swap dimensions for 270 degree rotation', () => {
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const pageNumber = 1;
+            const pageEl = getPage(pageNumber);
+
+            Object.defineProperty(pageEl, 'clientWidth', { value: 400, configurable: true });
+            Object.defineProperty(pageEl, 'clientHeight', { value: 800, configurable: true });
+
+            annotator.getPageManagers = jest.fn(() => new Set([mockManager]));
+            annotator.getPageNumber = jest.fn(() => pageNumber);
+            annotator.store.dispatch(setRotationAction(270));
+            annotator.renderPage(pageEl);
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '400px',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%) rotate(270deg)',
+                width: '800px',
+            });
+        });
+
+        test('should not swap dimensions for 180 degree rotation', () => {
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const pageNumber = 1;
+            const pageEl = getPage(pageNumber);
+
+            Object.defineProperty(pageEl, 'clientWidth', { value: 800, configurable: true });
+            Object.defineProperty(pageEl, 'clientHeight', { value: 600, configurable: true });
+
+            annotator.getPageManagers = jest.fn(() => new Set([mockManager]));
+            annotator.getPageNumber = jest.fn(() => pageNumber);
+            annotator.store.dispatch(setRotationAction(180));
+            annotator.renderPage(pageEl);
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '600px',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%) rotate(180deg)',
+                width: '800px',
+            });
+        });
+
+        test('should reset styles when rotation is 0', () => {
+            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const pageNumber = 1;
+            const pageEl = getPage(pageNumber);
+
+            annotator.getPageManagers = jest.fn(() => new Set([mockManager]));
+            annotator.getPageNumber = jest.fn(() => pageNumber);
+            annotator.store.dispatch(setRotationAction(0));
+            annotator.renderPage(pageEl);
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '',
+                left: '',
+                top: '',
+                transform: '',
+                width: '',
             });
         });
     });
