@@ -12,6 +12,11 @@ export interface Annotation {
     modified_by: User;
     permissions: Permissions;
     replies?: Array<Reply>;
+    resolution?: {
+        resolved_at: string;
+        resolved_by: User;
+    } | null;
+    status?: 'open' | 'resolved';
     target: Target;
     type: 'annotation';
 }
