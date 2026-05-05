@@ -59,8 +59,20 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
 
-const getAvatarUrl = (apiHost: string, token: string, userId: string): string =>
-    `${apiHost}/2.0/users/${userId}/avatar?access_token=${token}&pic_type=large`;
+// Callers render initials as a fallback on null.
+// A persistent null across all users usually indicates a stale token.
+const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): Promise<string | null> => {
+    try {
+        const response = await fetch(`${apiHost}/2.0/users/${userId}/avatar?pic_type=large`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) return null;
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+    } catch {
+        return null;
+    }
+};
 
 const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
     const intl = useIntl();
@@ -75,6 +87,37 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
         annotationId ? getAnnotation(state, annotationId) : undefined,
     );
 
+    const [avatarBlobs, setAvatarBlobs] = React.useState<Record<string, string>>({});
+    const avatarCacheRef = React.useRef<Map<string, string>>(new Map());
+    const credentialsRef = React.useRef({ apiHost, token });
+    credentialsRef.current = { apiHost, token };
+
+    const getOrFetchAvatarBlob = React.useCallback(
+        async (userId: string): Promise<string | null> => {
+            const cached = avatarCacheRef.current.get(userId);
+            if (cached) return cached;
+            const capturedApiHost = apiHost;
+            const capturedToken = token;
+            const url = await fetchAvatarBlob(capturedApiHost, capturedToken, userId);
+            if (!url) return null;
+            if (
+                credentialsRef.current.apiHost !== capturedApiHost ||
+                credentialsRef.current.token !== capturedToken
+            ) {
+                URL.revokeObjectURL(url);
+                return null;
+            }
+            const existing = avatarCacheRef.current.get(userId);
+            if (existing) {
+                URL.revokeObjectURL(url);
+                return existing;
+            }
+            avatarCacheRef.current.set(userId, url);
+            return url;
+        },
+        [apiHost, token],
+    );
+
     React.useEffect(() => {
         if (popupRef.current) {
             popperRef.current = createPopper(reference, popupRef.current, optionsRef.current);
@@ -85,23 +128,58 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
         };
     }, [reference]);
 
+    React.useEffect(() => {
+        const cache = avatarCacheRef.current;
+        return () => {
+            cache.forEach(url => URL.revokeObjectURL(url));
+            cache.clear();
+        };
+    }, []);
+
+    React.useEffect(() => {
+        avatarCacheRef.current.forEach(url => URL.revokeObjectURL(url));
+        avatarCacheRef.current.clear();
+        setAvatarBlobs({});
+    }, [apiHost, token]);
+
     const handleEvent = React.useCallback((event: React.SyntheticEvent) => {
         event.stopPropagation();
     }, []);
 
-    const threadMessages: TextMessageTypeV2[] = React.useMemo(
-        () => {
-            if (!annotation) return [];
-            return annotationToMessages(annotation).map(msg => ({
-                ...msg,
-                author: {
-                    ...msg.author,
-                    avatarUrl: getAvatarUrl(apiHost, token, String(msg.author.id)),
-                },
-            }));
-        },
-        [annotation, apiHost, token],
-    );
+    React.useEffect(() => {
+        if (!annotation) return undefined;
+
+        const userIds = Array.from(
+            new Set(annotationToMessages(annotation).map(msg => String(msg.author.id))),
+        );
+        let cancelled = false;
+
+        Promise.all(userIds.map(async id => [id, await getOrFetchAvatarBlob(id)] as const)).then(entries => {
+            if (cancelled) return;
+            setAvatarBlobs(prev => {
+                const next = { ...prev };
+                entries.forEach(([id, url]) => {
+                    if (url) next[id] = url;
+                });
+                return next;
+            });
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [annotation, getOrFetchAvatarBlob]);
+
+    const threadMessages: TextMessageTypeV2[] = React.useMemo(() => {
+        if (!annotation) return [];
+        return annotationToMessages(annotation).map(msg => ({
+            ...msg,
+            author: {
+                ...msg.author,
+                avatarUrl: avatarBlobs[String(msg.author.id)],
+            },
+        }));
+    }, [annotation, avatarBlobs]);
 
     const isResolved = annotation?.status === 'resolved';
     const resolvedBy = isResolved
@@ -118,10 +196,15 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
             ariaRoleDescription: intl.formatMessage(messages.ariaLabelMentionSelector),
             fetchAvatarUrls: async (userContacts: UserContactType[]): Promise<FetchedAvatarUrls> => {
                 const urls: FetchedAvatarUrls = {};
-                userContacts.forEach(({ id }) => {
-                    const key = String(id);
-                    urls[key] = getAvatarUrl(apiHost, token, key);
-                });
+                await Promise.all(
+                    userContacts.map(async ({ id }) => {
+                        const key = String(id);
+                        const blobUrl = await getOrFetchAvatarBlob(key);
+                        if (blobUrl) {
+                            urls[key] = blobUrl;
+                        }
+                    }),
+                );
                 return urls;
             },
             fetchUsers: async (query: string) => {
@@ -133,7 +216,7 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
             },
             loadingAriaLabel: intl.formatMessage(messages.ariaLabelMentionLoading),
         }),
-        [apiHost, dispatch, intl, token],
+        [dispatch, getOrFetchAvatarBlob, intl],
     );
 
     const handlePost = React.useCallback(
