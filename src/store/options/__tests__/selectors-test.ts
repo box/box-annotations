@@ -11,6 +11,7 @@ import {
 
 describe('store/options/selectors', () => {
     const optionsState = {
+        apiHost: 'https://api.box.com',
         features: { enabledFeature: true },
         fileId: '12345',
         fileVersionId: '67890',
@@ -21,6 +22,7 @@ describe('store/options/selectors', () => {
         },
         rotation: 0,
         scale: 1,
+        token: 'test-token',
         viewMode: 'annotations' as const,
     };
 

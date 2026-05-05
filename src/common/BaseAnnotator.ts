@@ -94,11 +94,13 @@ export default class BaseAnnotator extends EventEmitter {
             },
             common: { color: initialColor, mode: initialMode },
             options: {
+                apiHost,
                 features,
                 fileId: file.id,
                 fileVersionId: fileOptionsVersionId ?? fileVersionId,
                 isCurrentFileVersion: !fileOptionsVersionId || fileOptionsVersionId === currentFileVersionId,
                 permissions: file.permissions,
+                token,
                 viewMode: initialViewMode,
             },
         };

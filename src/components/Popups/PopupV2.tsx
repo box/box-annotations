@@ -10,6 +10,7 @@ import {
     serializeMentionMarkup,
 } from '@box/threaded-annotations';
 import type { DocumentNodeV2, TextMessageTypeV2 } from '@box/threaded-annotations';
+import type { FetchedAvatarUrls, UserContactType } from '@box/user-selector';
 import type { JSONContent } from '@tiptap/core';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 
@@ -21,6 +22,7 @@ import {
     updateAnnotationAction,
 } from '../../store/annotations/actions';
 import { getAnnotation } from '../../store/annotations/selectors';
+import { getApiHost, getToken } from '../../store/options';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
 import type { AppState, AppThunkDispatch } from '../../store/types';
@@ -57,6 +59,9 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
 
+const getAvatarUrl = (apiHost: string, token: string, userId: string): string =>
+    `${apiHost}/2.0/users/${userId}/avatar?access_token=${token}&pic_type=large`;
+
 const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
@@ -64,6 +69,8 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
 
+    const apiHost = useSelector(getApiHost);
+    const token = useSelector(getToken);
     const annotation = useSelector((state: AppState) =>
         annotationId ? getAnnotation(state, annotationId) : undefined,
     );
@@ -83,15 +90,40 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
     }, []);
 
     const threadMessages: TextMessageTypeV2[] = React.useMemo(
-        () => (annotation ? annotationToMessages(annotation) : []),
-        [annotation],
+        () => {
+            if (!annotation) return [];
+            return annotationToMessages(annotation).map(msg => ({
+                ...msg,
+                author: {
+                    ...msg.author,
+                    avatarUrl: getAvatarUrl(apiHost, token, String(msg.author.id)),
+                },
+            }));
+        },
+        [annotation, apiHost, token],
     );
+
+    const isResolved = annotation?.status === 'resolved';
+    const resolvedBy = isResolved
+        ? annotation?.resolution?.resolved_by?.name ?? annotation?.modified_by?.name
+        : undefined;
+    const resolvedAtSource = isResolved
+        ? annotation?.resolution?.resolved_at ?? annotation?.modified_at
+        : undefined;
+    const resolvedAt = resolvedAtSource ? new Date(resolvedAtSource).getTime() : undefined;
 
     const userSelectorProps = React.useMemo(
         () => ({
             allowEmptyQuery: true,
             ariaRoleDescription: intl.formatMessage(messages.ariaLabelMentionSelector),
-            fetchAvatarUrls: async () => ({}),
+            fetchAvatarUrls: async (userContacts: UserContactType[]): Promise<FetchedAvatarUrls> => {
+                const urls: FetchedAvatarUrls = {};
+                userContacts.forEach(({ id }) => {
+                    const key = String(id);
+                    urls[key] = getAvatarUrl(apiHost, token, key);
+                });
+                return urls;
+            },
             fetchUsers: async (query: string) => {
                 const action = await dispatch(fetchCollaboratorsAction(query));
                 if (fetchCollaboratorsAction.fulfilled.match(action)) {
@@ -101,7 +133,7 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
             },
             loadingAriaLabel: intl.formatMessage(messages.ariaLabelMentionLoading),
         }),
-        [dispatch, intl],
+        [apiHost, dispatch, intl, token],
     );
 
     const handlePost = React.useCallback(
@@ -169,6 +201,7 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
                         {annotationId ? (
                             <ThreadedAnnotationsV2
                                 isAnnotations
+                                isResolved={isResolved}
                                 messages={threadMessages}
                                 onAvatarClick={noop}
                                 onDelete={noop}
@@ -176,6 +209,8 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
                                 onResolve={handleResolve}
                                 onThreadDelete={handleThreadDelete}
                                 onUnresolve={handleUnresolve}
+                                resolvedAt={resolvedAt}
+                                resolvedBy={resolvedBy}
                                 userSelectorProps={userSelectorProps}
                             />
                         ) : (

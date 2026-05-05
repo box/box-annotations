@@ -5,6 +5,7 @@ import { Permissions } from '../../@types';
 export type ViewMode = 'annotations' | 'boundingBoxes';
 
 export type OptionsState = {
+    apiHost: string;
     features: Features;
     fileId: string | null;
     fileVersionId: string | null;
@@ -12,5 +13,6 @@ export type OptionsState = {
     permissions: Permissions;
     rotation: number;
     scale: number;
+    token: string;
     viewMode: ViewMode;
 };

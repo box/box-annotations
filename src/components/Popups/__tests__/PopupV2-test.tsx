@@ -67,6 +67,14 @@ jest.mock('../../../store/users/actions', () => ({
 const mockUseDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>;
 const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 
+// useSelector is called for: apiHost, token, annotation
+const mockSelectorValues = (annotation?: unknown): void => {
+    mockUseSelector
+        .mockReturnValueOnce('https://api.box.com') // apiHost
+        .mockReturnValueOnce('test-token')          // token
+        .mockReturnValueOnce(annotation);           // annotation
+};
+
 describe('PopupV2', () => {
     const mockDispatch = jest.fn();
 
@@ -105,7 +113,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockUseSelector.mockReturnValue(undefined);
+            mockSelectorValues(undefined);
         });
 
         test('should render MessageEditorV2 with FocusTrap and MentionContextProvider', () => {
@@ -139,7 +147,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockUseSelector.mockReturnValue(mockAnnotation);
+            mockSelectorValues(mockAnnotation);
         });
 
         test('should render ThreadedAnnotationsV2 with FocusTrap and MentionContextProvider', () => {
@@ -160,7 +168,8 @@ describe('PopupV2', () => {
         });
 
         test('should render empty messages when annotation is not found', () => {
-            mockUseSelector.mockReturnValue(undefined);
+            mockUseSelector.mockReset();
+            mockSelectorValues(undefined);
             render(<PopupV2 {...defaults} />);
 
             expect(screen.getByTestId('threaded-annotations-v2').getAttribute('data-messages-count')).toBe('0');
@@ -185,12 +194,14 @@ describe('PopupV2', () => {
     });
 
     test('should set aria-label on popup container', () => {
+        mockSelectorValues(undefined);
         render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
 
         expect(screen.getByRole('presentation')).toHaveAttribute('aria-label', 'Comment');
     });
 
     test('should render portal container for threaded-annotations popovers', () => {
+        mockSelectorValues(undefined);
         render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');

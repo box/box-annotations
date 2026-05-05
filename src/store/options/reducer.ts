@@ -9,7 +9,8 @@ import {
     setViewModeAction,
 } from './actions';
 
-export const initialState = {
+export const initialState: OptionsState = {
+    apiHost: '',
     features: {},
     fileId: null,
     fileVersionId: null,
@@ -17,6 +18,7 @@ export const initialState = {
     permissions: {},
     rotation: 0,
     scale: 1,
+    token: '',
     viewMode: 'annotations' as ViewMode,
 };
 
