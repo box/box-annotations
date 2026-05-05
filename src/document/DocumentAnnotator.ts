@@ -15,7 +15,7 @@ import { getAnnotation } from '../store/annotations';
 import { BoundingBox } from '../store/boundingBoxHighlights';
 import { getSelection } from './docUtil';
 import { Manager } from '../common/BaseManager';
-import { getFileId, getIsCurrentFileVersion, getViewMode, Mode } from '../store';
+import { getFileId, getIsCurrentFileVersion, getRotation, getViewMode, Mode } from '../store';
 import { scrollToLocation } from '../utils/scroll';
 import './DocumentAnnotator.scss';
 
@@ -196,14 +196,35 @@ export default class DocumentAnnotator extends BaseAnnotator {
     renderPage(pageEl: HTMLElement): void {
         const pageManagers = this.getPageManagers(pageEl);
         const pageNumber = this.getPageNumber(pageEl);
+        const rotation = getRotation(this.store.getState()) || 0;
+
+        // Calculate original (unrotated) page dimensions for annotation layer sizing
+        const pageWidth = pageEl.clientWidth;
+        const pageHeight = pageEl.clientHeight;
+        const isOrthogonal = rotation % 180 !== 0;
+        const origWidth = isOrthogonal ? pageHeight : pageWidth;
+        const origHeight = isOrthogonal ? pageWidth : pageHeight;
 
         // Render annotations for every page
-        pageManagers.forEach(manager =>
+        pageManagers.forEach(manager => {
+            // Apply rotation transform to annotation layers
+            if (rotation) {
+                manager.style({
+                    height: `${origHeight}px`,
+                    left: '50%',
+                    top: '50%',
+                    transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+                    width: `${origWidth}px`,
+                });
+            } else {
+                manager.style({height: '', left: '', top: '', transform: '', width: ''});
+            }
+
             manager.render({
                 intl: this.intl,
                 store: this.store,
-            }),
-        );
+            });
+        });
 
         this.managers.set(pageNumber, pageManagers);
     }
