@@ -1,6 +1,14 @@
 .ba-PopupV2 {
-    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 150;
     width: 348px;
+}
+
+// Popup is portaled to body, so mirror the annotator's .is-hidden state here.
+body:has(.ba.is-hidden) .ba-PopupV2 {
+    display: none;
 }
 
 // Specificity must beat .ba selectors from box-ui-elements globals

@@ -246,4 +246,14 @@ describe('PopupV2', () => {
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
         expect(portal).not.toBeNull();
     });
+
+    test('should render popup into document.body via portal', () => {
+        mockSelectorValues(undefined);
+        const { container } = render(
+            <PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />,
+        );
+
+        expect(container.querySelector('.ba-PopupV2')).toBeNull();
+        expect(document.body.querySelector('.ba-PopupV2')).toBeVisible();
+    });
 });
