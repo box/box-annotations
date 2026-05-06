@@ -6,7 +6,9 @@ export default function DeselectListener(): null {
     const dispatch = useDispatch();
 
     React.useEffect(() => {
-        const handleMouseDown = (): void => {
+        const handleMouseDown = (event: MouseEvent): void => {
+            // Popup is portaled to body, so its clicks reach this listener.
+            if ((event.target as Element | null)?.closest?.('.ba-PopupV2')) return;
             dispatch(setActiveAnnotationIdAction(null));
         };
 
