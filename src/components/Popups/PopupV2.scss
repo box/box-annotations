@@ -11,9 +11,9 @@ body:has(.ba.is-hidden) .ba-PopupV2 {
     display: none;
 }
 
-// Specificity must beat .ba selectors from box-ui-elements globals
-// (forms, buttons, links) that cascade into threaded-annotations components.
-.ba .ba-PopupV2 {
+// Specificity must beat box-ui-elements globals (forms, buttons, links) that
+// cascade into threaded-annotations components.
+.ba-PopupV2.ba-PopupV2 {
     div[contenteditable='true'],
     div[contenteditable='true']:hover,
     div[contenteditable='true']:focus {
