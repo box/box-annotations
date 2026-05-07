@@ -1,9 +1,20 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import BaseManager, { Props } from '../common/BaseManager';
+import BaseManager, { Options as BaseOptions, Props } from '../common/BaseManager';
 import PopupContainer from './PopupContainer';
 
+export type Options = BaseOptions & {
+    popupPortalEl?: HTMLElement | null;
+};
+
 export default class PopupManager extends BaseManager {
+    popupPortalEl?: HTMLElement | null;
+
+    constructor({ popupPortalEl, ...options }: Options) {
+        super(options);
+        this.popupPortalEl = popupPortalEl;
+    }
+
     decorate(): void {
         this.reactEl.classList.add('ba-Layer--popup');
         this.reactEl.dataset.testid = 'ba-Layer--popup';
@@ -13,7 +24,14 @@ export default class PopupManager extends BaseManager {
         if (!this.root) {
             this.root = ReactDOM.createRoot(this.reactEl);
         }
-       
-        this.root.render(<PopupContainer location={this.location}  {...props} targetType={this.targetType} />);
+
+        this.root.render(
+            <PopupContainer
+                location={this.location}
+                {...props}
+                popupPortalEl={this.popupPortalEl}
+                targetType={this.targetType}
+            />,
+        );
     }
 }

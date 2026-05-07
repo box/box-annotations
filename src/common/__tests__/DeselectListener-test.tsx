@@ -25,4 +25,20 @@ describe('DeselectListener', () => {
         expect(document.addEventListener).toHaveBeenCalledWith('mousedown', expect.any(Function));
         expect(setActiveAnnotationIdAction).toHaveBeenCalledWith(null);
     });
+
+    test('should not deselect when mousedown originates inside a portaled popup', () => {
+        getWrapper();
+
+        const popup = document.createElement('div');
+        popup.className = 'ba-PopupV2';
+        const inner = document.createElement('button');
+        popup.appendChild(inner);
+        document.body.appendChild(popup);
+
+        inner.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+        expect(setActiveAnnotationIdAction).not.toHaveBeenCalled();
+
+        document.body.removeChild(popup);
+    });
 });

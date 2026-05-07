@@ -49,6 +49,7 @@ export type Options = {
 
 export const CSS_CONTAINER_CLASS = 'ba';
 export const CSS_LOADED_CLASS = 'ba-annotations-loaded';
+export const CSS_POPUP_PORTAL_CLASS = 'ba-PopupPortal';
 export const ANNOTATION_CLASSES: { [M in store.Mode]?: string } = {
     [store.Mode.HIGHLIGHT]: 'ba-is-create--highlight',
     [store.Mode.REGION]: 'ba-is-create--region',
@@ -58,6 +59,8 @@ export default class BaseAnnotator extends EventEmitter {
     annotatedEl?: HTMLElement | null;
 
     containerEl?: HTMLElement | null;
+
+    popupPortalEl?: HTMLElement | null;
 
     container: Container;
 
@@ -132,6 +135,11 @@ export default class BaseAnnotator extends EventEmitter {
             this.containerEl.classList.remove(CSS_CONTAINER_CLASS);
         }
 
+        if (this.popupPortalEl) {
+            this.popupPortalEl.remove();
+            this.popupPortalEl = null;
+        }
+
         if (this.annotatedEl) {
             this.annotatedEl.classList.remove(CSS_LOADED_CLASS);
         }
@@ -165,6 +173,12 @@ export default class BaseAnnotator extends EventEmitter {
         // Add classes to the parent elements to support CSS scoping
         this.annotatedEl.classList.add(CSS_LOADED_CLASS);
         this.containerEl.classList.add(CSS_CONTAINER_CLASS);
+
+        if (!this.popupPortalEl) {
+            this.popupPortalEl = this.containerEl.ownerDocument.createElement('div');
+            this.popupPortalEl.classList.add(CSS_POPUP_PORTAL_CLASS);
+            this.containerEl.appendChild(this.popupPortalEl);
+        }
 
         // Defer to the child class to render annotations
         this.render();

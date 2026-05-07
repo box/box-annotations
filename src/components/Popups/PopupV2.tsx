@@ -1,7 +1,9 @@
-import React from 'react';
 import noop from 'lodash/noop';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { BlueprintModernizationProvider } from '@box/blueprint-web';
 import {
     MentionContextProvider,
@@ -35,6 +37,7 @@ import './PopupV2.scss';
 export type Props = {
     annotationId?: string;
     onSubmit: (text: string) => void;
+    popupPortalEl?: HTMLElement | null;
     reference: PopupReference;
 };
 
@@ -74,7 +77,7 @@ const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): 
     }
 };
 
-const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
+const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
     const popupRef = React.useRef<HTMLDivElement>(null);
@@ -260,7 +263,9 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
         [annotationId, dispatch],
     );
 
-    return (
+    if (!popupPortalEl) return null;
+
+    return ReactDOM.createPortal(
         <FocusTrap>
             <div
                 ref={popupRef}
@@ -307,7 +312,8 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element => {
                 </BlueprintModernizationProvider>
                 <div data-threaded-annotations-portal />
             </div>
-        </FocusTrap>
+        </FocusTrap>,
+        popupPortalEl,
     );
 };
 
