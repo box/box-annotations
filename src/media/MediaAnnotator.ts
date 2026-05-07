@@ -46,7 +46,7 @@ export default class MediaAnnotator extends BaseAnnotator {
 
 
     addManagers(referenceEl: HTMLVideoElement, resinTags: { fileid: string|null; iscurrent: boolean }): void {
-        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
+        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, popupPortalEl: this.popupPortalEl, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
         this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
         this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
         this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));

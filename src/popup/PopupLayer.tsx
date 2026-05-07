@@ -29,6 +29,7 @@ export type Props = {
     location: number;
     message: string;
     mode: Mode;
+    popupPortalEl?: HTMLElement | null;
     referenceId: string | null;
     resetCreator: () => void;
     setMessage: (message: string) => void;
@@ -53,6 +54,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         isThreadedAnnotation = false,
         message,
         mode,
+        popupPortalEl,
         referenceId,
         resetCreator,
         setMessage,
@@ -111,6 +113,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
             <div className="ba-PopupLayer-popup">
                 <PopupV2
                     onSubmit={handleSubmit}
+                    popupPortalEl={popupPortalEl}
                     reference={reference}
                 />
             </div>
@@ -138,6 +141,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
                 <PopupV2
                     annotationId={activeAnnotationId}
                     onSubmit={handleSubmit}
+                    popupPortalEl={popupPortalEl}
                     reference={activeReference}
                 />
             </div>

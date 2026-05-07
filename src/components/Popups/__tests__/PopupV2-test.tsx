@@ -129,9 +129,16 @@ describe('PopupV2', () => {
         jest.clearAllMocks();
     });
 
+    const makePortalEl = (): HTMLElement => {
+        const el = document.createElement('div');
+        document.body.appendChild(el);
+        return el;
+    };
+
     describe('create mode (no annotationId)', () => {
         const defaults: Props = {
             onSubmit: jest.fn(),
+            popupPortalEl: makePortalEl(),
             reference: document.createElement('div'),
         };
 
@@ -166,6 +173,7 @@ describe('PopupV2', () => {
         const defaults: Props = {
             annotationId: 'annotation-1',
             onSubmit: jest.fn(),
+            popupPortalEl: makePortalEl(),
             reference: document.createElement('div'),
         };
 
@@ -234,26 +242,37 @@ describe('PopupV2', () => {
 
     test('should set aria-label on popup container', () => {
         mockSelectorValues(undefined);
-        render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
+        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         expect(screen.getByRole('presentation')).toHaveAttribute('aria-label', 'Comment');
     });
 
     test('should render portal container for threaded-annotations popovers', () => {
         mockSelectorValues(undefined);
-        render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
+        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
         expect(portal).not.toBeNull();
     });
 
-    test('should render popup into document.body via portal', () => {
+    test('should render popup into popupPortalEl, not the render container', () => {
+        mockSelectorValues(undefined);
+        const portalEl = makePortalEl();
+        const { container } = render(
+            <PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={document.createElement('div')} />,
+        );
+
+        expect(container.querySelector('.ba-PopupV2')).toBeNull();
+        expect(portalEl.querySelector('.ba-PopupV2')).toBeVisible();
+    });
+
+    test('should render nothing when popupPortalEl is missing', () => {
         mockSelectorValues(undefined);
         const { container } = render(
             <PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />,
         );
 
         expect(container.querySelector('.ba-PopupV2')).toBeNull();
-        expect(document.body.querySelector('.ba-PopupV2')).toBeVisible();
+        expect(document.body.querySelector('.ba-PopupV2')).toBeNull();
     });
 });

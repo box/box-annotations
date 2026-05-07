@@ -37,6 +37,7 @@ import './PopupV2.scss';
 export type Props = {
     annotationId?: string;
     onSubmit: (text: string) => void;
+    popupPortalEl?: HTMLElement | null;
     reference: PopupReference;
 };
 
@@ -76,7 +77,7 @@ const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): 
     }
 };
 
-const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element | null => {
+const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
     const popupRef = React.useRef<HTMLDivElement>(null);
@@ -262,7 +263,7 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element | nu
         [annotationId, dispatch],
     );
 
-    if (typeof document === 'undefined') return null;
+    if (!popupPortalEl) return null;
 
     return ReactDOM.createPortal(
         <FocusTrap>
@@ -312,7 +313,7 @@ const PopupV2 = ({ annotationId, onSubmit, reference }: Props): JSX.Element | nu
                 <div data-threaded-annotations-portal />
             </div>
         </FocusTrap>,
-        document.body,
+        popupPortalEl,
     );
 };
 
