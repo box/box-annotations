@@ -42,6 +42,8 @@ describe('RegionCreator', () => {
         jest.spyOn(document, 'removeEventListener');
         jest.spyOn(window, 'cancelAnimationFrame');
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps
+        Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get: () => 1000 });
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get: () => 1000 });
     });
 
     describe('mouse events', () => {

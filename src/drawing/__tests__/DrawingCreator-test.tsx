@@ -32,6 +32,8 @@ describe('DrawingCreator', () => {
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps;
         jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
         jest.spyOn(Element.prototype, 'setAttribute');
+        Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get: () => 100 });
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get: () => 100 });
     });
 
     const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {

@@ -70,20 +70,17 @@ describe('RegionCreationContainer', () => {
         );
 
         test.each`
-            rotation     | isRotated
-            ${null}      | ${false}
-            ${undefined} | ${false}
-            ${0}         | ${false}
-            ${90}        | ${true}
-            ${360}       | ${true}
-            ${-360}      | ${true}
-            ${-90}       | ${true}
-            ${-0}        | ${false}
-        `('should set the isRotated prop based on the rotation angle value', ({ isRotated, rotation }) => {
+            rotation
+            ${0}
+            ${90}
+            ${-90}
+            ${-180}
+            ${-270}
+        `('should pass rotation=$rotation to the underlying component', ({ rotation }) => {
             const store = createStore({ options: { rotation } });
             const wrapper = getWrapper({ store });
 
-            expect(wrapper.find(RegionCreation).prop('isRotated')).toEqual(isRotated);
+            expect(wrapper.find(RegionCreation).prop('rotation')).toEqual(rotation);
         });
     });
 });

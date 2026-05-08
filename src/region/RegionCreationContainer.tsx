@@ -19,7 +19,7 @@ import withProviders from '../common/withProviders';
 
 export type Props = {
     isCreating: boolean;
-    isRotated: boolean;
+    rotation: number;
     staged: CreatorItemRegion | null;
 };
 
@@ -28,7 +28,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
 
     return {
         isCreating: getAnnotationMode(state) === Mode.REGION && getCreatorStatus(state) !== CreatorStatus.pending,
-        isRotated: !!getRotation(state),
+        rotation: getRotation(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
     };
 };

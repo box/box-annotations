@@ -9,9 +9,9 @@ import { getVideoCurrentTimeInMilliseconds } from '../utils/useVideoTiming';
 
 type Props = {
     isCreating: boolean;
-    isRotated: boolean;
     location: number;
     resetCreator: () => void;
+    rotation: number;
     setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemRegion | null) => void;
     setStatus: (status: CreatorStatus) => void;
@@ -27,7 +27,7 @@ type State = {
 export default class RegionCreation extends React.PureComponent<Props, State> {
     static defaultProps = {
         isCreating: false,
-        isRotated: false,
+        rotation: 0,
     };
 
     state: State = {};
@@ -57,11 +57,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     };
 
     render(): JSX.Element | null {
-        const { isCreating, isRotated, staged } = this.props;
-
-        if (isRotated) {
-            return null;
-        }
+        const { isCreating, rotation, staged } = this.props;
 
         return (
             <>
@@ -71,6 +67,7 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
                         onAbort={this.handleAbort}
                         onStart={this.handleStart}
                         onStop={this.handleStop}
+                        rotation={rotation}
                     />
                 )}
 

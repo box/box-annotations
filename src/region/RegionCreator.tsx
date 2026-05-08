@@ -4,6 +4,7 @@ import PointerCapture, { Status as DrawingStatus } from '../components/PointerCa
 import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';
+import { rotatePoint } from '../utils/rotate';
 import { Rect } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
@@ -13,6 +14,7 @@ type Props = {
     onAbort: () => void;
     onStart: () => void;
     onStop: (shape: Rect) => void;
+    rotation?: number;
 };
 
 const MIN_X = 0; // Minimum region x position must be positive
@@ -22,7 +24,7 @@ const MIN_SIZE = 10; // Minimum region size must be large enough to be clickable
 const isValid = (x1: number, y1: number, x2: number, y2: number): boolean =>
     Math.abs(x2 - x1) >= MIN_SIZE || Math.abs(y2 - y1) >= MIN_SIZE;
 
-export default function RegionCreator({ className, onAbort, onStart, onStop }: Props): JSX.Element {
+export default function RegionCreator({ className, onAbort, onStart, onStop, rotation = 0 }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
     const [isHovering, setIsHovering] = React.useState<boolean>(false);
     const creatorElRef = React.useRef<HTMLDivElement>(null);
@@ -42,9 +44,25 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             return [x, y];
         }
 
-        // Calculate the new position based on the mouse position less the page offset
-        const { left, top } = creatorEl.getBoundingClientRect();
-        return [x - left, y - top];
+        const rect = creatorEl.getBoundingClientRect();
+
+        if (!rotation) {
+            return [x - rect.left, y - rect.top];
+        }
+
+        // When the annotation layer is CSS-rotated, getBoundingClientRect() returns the
+        // axis-aligned bounding box in screen space, but the element's internal coordinate
+        // system is rotated. We must apply the inverse rotation to convert screen-space
+        // coordinates into the element's local coordinate system.
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const relX = x - centerX;
+        const relY = y - centerY;
+
+        const local = rotatePoint({ x: relX, y: relY }, -rotation);
+
+        return [local.x + creatorEl.offsetWidth / 2, local.y + creatorEl.offsetHeight / 2];
     };
     const getShape = (): Rect | null => {
         const { current: creatorEl } = creatorElRef;
@@ -57,7 +75,9 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
             return null;
         }
 
-        const { height, width } = creatorEl.getBoundingClientRect();
+        // Use offsetWidth/offsetHeight to get pre-transform dimensions (local coordinate space)
+        const width = creatorEl.offsetWidth;
+        const height = creatorEl.offsetHeight;
         const MAX_HEIGHT = height - MIN_SIZE;
         const MAX_WIDTH = width - MIN_SIZE;
         const MAX_X = Math.max(0, width - MIN_X);
@@ -138,6 +158,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop }: P
                 onStart();
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [drawingStatus, onStart, setDrawingStatus],
     );
 

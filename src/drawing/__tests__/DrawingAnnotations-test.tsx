@@ -40,6 +40,7 @@ describe('DrawingAnnotations', () => {
         location: 0,
         redoDrawingPathGroup: jest.fn(),
         resetDrawing: jest.fn(),
+        rotation: 0,
         setActiveAnnotationId: jest.fn(),
         setReferenceId: jest.fn(),
         setStaged: jest.fn(),

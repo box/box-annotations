@@ -18,6 +18,7 @@ import {
     getAnnotationsForLocation,
     getColor,
     getCreatorStatus,
+    getRotation,
     Mode,
     setActiveAnnotationIdAction,
     setReferenceIdAction,
@@ -34,6 +35,7 @@ export type Props = {
     canShowPopupToolbar: boolean;
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
+    rotation: number;
     stashedPathGroups: Array<PathGroup>;
 };
 
@@ -47,6 +49,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         canShowPopupToolbar: creatorStatus === CreatorStatus.started,
         drawnPathGroups: getDrawingDrawnPathGroupsForLocation(state, location),
         isCreating: getAnnotationMode(state) === Mode.DRAWING && creatorStatus !== CreatorStatus.pending,
+        rotation: getRotation(state),
         stashedPathGroups: getStashedDrawnPathGroupsForLocation(state, location),
     };
 };
