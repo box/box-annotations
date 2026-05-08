@@ -20,6 +20,13 @@ import { isFeatureEnabled } from '../store/options';
 import { createDrawingAction } from '../drawing/actions';
 import { createHighlightAction } from '../highlight/actions';
 import { createRegionAction } from '../region';
+import { TARGET_TYPE } from '../constants';
+
+export type OwnProps = {
+    location: number;
+    popupPortalEl?: HTMLElement | null;
+    targetType?: TARGET_TYPE;
+};
 
 export type Props = {
     activeAnnotationId: string | null;
@@ -32,7 +39,7 @@ export type Props = {
     status: CreatorStatus;
 };
 
-export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
+export const mapStateToProps = (state: AppState, { location }: OwnProps): Props => {
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         isPromoting: getIsPromoting(state),

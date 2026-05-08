@@ -73,7 +73,7 @@ export default class ImageAnnotator extends BaseAnnotator {
                 return this.managers;
             }
 
-            this.managers.add(new PopupManager({ referenceEl, resinTags }));
+            this.managers.add(new PopupManager({ popupPortalEl: this.popupPortalEl, referenceEl, resinTags }));
             this.managers.add(new DrawingManager({ referenceEl, resinTags }));
             this.managers.add(new RegionManager({ referenceEl, resinTags }));
             this.managers.add(new RegionCreationManager({ referenceEl, resinTags }));
