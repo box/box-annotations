@@ -24,6 +24,9 @@ import type { ViewMode } from '../store/options/types';
 // Pdf.js textLayer enhancement requires waiting for 300ms (they hardcode this magic number)
 const TEXT_LAYER_ENHANCEMENT = 300;
 
+// Vertical padding on each page element as provided by Preview SDK (see DocumentAnnotator.scss)
+const PAGE_PADDING = 15;
+
 export default class DocumentAnnotator extends BaseAnnotator {
     annotatedEl?: HTMLElement;
 
@@ -200,7 +203,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
         // Calculate original (unrotated) page dimensions for annotation layer sizing
         const pageWidth = pageEl.clientWidth;
-        const pageHeight = pageEl.clientHeight;
+        const pageHeight = pageEl.clientHeight - PAGE_PADDING * 2;
         const isOrthogonal = rotation % 180 !== 0;
         const origWidth = isOrthogonal ? pageHeight : pageWidth;
         const origHeight = isOrthogonal ? pageWidth : pageHeight;

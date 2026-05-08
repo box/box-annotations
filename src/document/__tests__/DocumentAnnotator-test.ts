@@ -28,6 +28,8 @@ jest.mock('../../region/RegionManager');
 jest.mock('../../boundingBoxHighlight');
 jest.mock('../../utils/scroll');
 
+const PAGE_PADDING = 15;
+
 describe('DocumentAnnotator', () => {
     const container = document.createElement('div');
     const defaults = {
@@ -349,7 +351,7 @@ describe('DocumentAnnotator', () => {
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%) rotate(90deg)',
-                width: '800px',
+                width: `${800 - PAGE_PADDING * 2}px`,
             });
         });
 
@@ -371,7 +373,7 @@ describe('DocumentAnnotator', () => {
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%) rotate(270deg)',
-                width: '800px',
+                width: `${800 - PAGE_PADDING * 2}px`,
             });
         });
 
@@ -389,7 +391,7 @@ describe('DocumentAnnotator', () => {
             annotator.renderPage(pageEl);
 
             expect(mockManager.style).toHaveBeenCalledWith({
-                height: '600px',
+                height: `${600 - PAGE_PADDING * 2}px`,
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%) rotate(180deg)',
