@@ -105,7 +105,6 @@ export default class DocumentAnnotator extends BaseAnnotator {
             managers.add(new PopupManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
             managers.add(new DrawingManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
 
-
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
             if (textLayer) {

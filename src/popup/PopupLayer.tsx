@@ -122,7 +122,8 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     }
 
     if (showCreator) {
-        const replyPopup = (
+        if (!popupPortalEl) return null;
+        return ReactDOM.createPortal(
             <div className="ba-PopupLayer-popup">
                 <PopupReply
                     isPending={isPending}
@@ -132,9 +133,9 @@ const PopupLayer = (props: Props): JSX.Element | null => {
                     reference={reference}
                     value={message}
                 />
-            </div>
+            </div>,
+            popupPortalEl,
         );
-        return popupPortalEl ? ReactDOM.createPortal(replyPopup, popupPortalEl) : replyPopup;
     }
 
     if (isThreadedAnnotation && activeAnnotationId && activeReference) {

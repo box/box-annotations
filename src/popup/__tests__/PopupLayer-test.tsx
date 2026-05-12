@@ -56,6 +56,7 @@ describe('PopupLayer', () => {
     });
 
     const referenceId = '123';
+    const popupPortalEl = document.createElement('div');
     const getDefaults = (): Props => ({
         activeAnnotationId: null,
         createDrawing: jest.fn(),
@@ -65,6 +66,7 @@ describe('PopupLayer', () => {
         location: 1,
         message: '',
         mode: Mode.HIGHLIGHT,
+        popupPortalEl,
         referenceId: '123',
         resetCreator: jest.fn(),
         setMessage: jest.fn(),
@@ -75,6 +77,7 @@ describe('PopupLayer', () => {
 
     beforeEach(() => {
         document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
+        document.body.appendChild(popupPortalEl);
         mockOnCancel = undefined;
         mockOnChange = undefined;
         mockOnSubmit = undefined;
@@ -148,6 +151,20 @@ describe('PopupLayer', () => {
             renderLayer();
             expect(screen.getByTestId('popup-reply')).toBeDefined();
             expect(screen.queryByTestId('popup-v2')).toBeNull();
+        });
+    });
+
+    describe('popup portal', () => {
+        test('should render PopupReply into popupPortalEl', () => {
+            renderLayer();
+
+            expect(popupPortalEl.querySelector('[data-testid="popup-reply"]')).toBeTruthy();
+        });
+
+        test('should render nothing when popupPortalEl is missing', () => {
+            renderLayer({ popupPortalEl: null });
+
+            expect(screen.queryByTestId('popup-reply')).toBeNull();
         });
     });
 
