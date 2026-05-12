@@ -43,6 +43,8 @@ type ViewerOption = {
 
 type ViewerOptions = Record<string, ViewerOption>;
 
+type GlobalWithBoxAnnotations = typeof globalThis & { BoxAnnotations: typeof BoxAnnotations };
+
 /**
  * NAME: The name of the annotator.
  * CONSTRUCTOR: Constructor for the annotator.
@@ -145,5 +147,5 @@ class BoxAnnotations {
     }
 }
 
-global.BoxAnnotations = BoxAnnotations;
+(globalThis as GlobalWithBoxAnnotations).BoxAnnotations = BoxAnnotations;
 export default BoxAnnotations;
