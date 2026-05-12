@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingList from './DrawingList';
@@ -22,6 +23,7 @@ export type Props = {
     drawnPathGroups: Array<PathGroup>;
     isCreating: boolean;
     location: number;
+    popupPortalEl?: HTMLElement | null;
     redoDrawingPathGroup: () => void;
     resetDrawing: () => void;
     rotation: number;
@@ -46,6 +48,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         drawnPathGroups,
         isCreating,
         location,
+        popupPortalEl,
         redoDrawingPathGroup,
         resetDrawing,
         rotation,
@@ -176,20 +179,23 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 />
             )}
 
-            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (
-                <PopupDrawingToolbar
-                    ref={popupDrawingToolbarRef}
-                    canComment={hasDrawnPathGroups}
-                    canRedo={hasStashedPathGroups}
-                    canUndo={hasDrawnPathGroups}
-                    className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
-                    onDelete={handleDelete}
-                    onRedo={handleRedo}
-                    onReply={handleReply}
-                    onUndo={handleUndo}
-                    reference={drawingSVGGroup}
-                />
-            )}
+            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (() => {
+                const toolbar = (
+                    <PopupDrawingToolbar
+                        ref={popupDrawingToolbarRef}
+                        canComment={hasDrawnPathGroups}
+                        canRedo={hasStashedPathGroups}
+                        canUndo={hasDrawnPathGroups}
+                        className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
+                        onDelete={handleDelete}
+                        onRedo={handleRedo}
+                        onReply={handleReply}
+                        onUndo={handleUndo}
+                        reference={drawingSVGGroup}
+                    />
+                );
+                return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;
+            })()}
         </>
     );
 };

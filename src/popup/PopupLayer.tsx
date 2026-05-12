@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import noop from 'lodash/noop';
 import PopupReply from '../components/Popups/PopupReply';
 import PopupV2 from '../components/Popups/PopupV2';
@@ -121,7 +122,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     }
 
     if (showCreator) {
-        return (
+        const replyPopup = (
             <div className="ba-PopupLayer-popup">
                 <PopupReply
                     isPending={isPending}
@@ -133,6 +134,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
                 />
             </div>
         );
+        return popupPortalEl ? ReactDOM.createPortal(replyPopup, popupPortalEl) : replyPopup;
     }
 
     if (isThreadedAnnotation && activeAnnotationId && activeReference) {
