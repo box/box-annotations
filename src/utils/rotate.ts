@@ -129,3 +129,46 @@ export function getRotatedPosition({ x, y }: Position, rotation: number): Positi
     const { x: rotatedX, y: rotatedY } = getRotatedShape({ height: 0, width: 0, x, y }, rotation);
     return { x: rotatedX, y: rotatedY };
 }
+
+/**
+ * Converts a mouse position (in browser window coordinates) to a position relative to
+ * a CSS-rotated element's own top-left corner.
+ *
+ * When an element has a CSS rotation, its internal axes are rotated with it.
+ * This function maps window coordinates to element-local coordinates.
+ *
+ * If element is null, returns the raw coordinates as a passthrough.
+ *
+ * Assumes transform-origin: center (the CSS default), which matches how
+ * box-content-preview applies rotation to annotation layers.
+ */
+export function getElementLocalPosition(
+    clientX: number,
+    clientY: number,
+    element: HTMLElement | null,
+    rotation: number,
+): [number, number] {
+    if (!element) {
+        return [clientX, clientY];
+    }
+
+    const rect = element.getBoundingClientRect();
+
+    if (!rotation) {
+        return [clientX - rect.left, clientY - rect.top];
+    }
+
+    // 1. Find the element's center (rotation doesn't move the center)
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // 2. Get the mouse position relative to the center (in browser window coordinates)
+    const relX = clientX - centerX;
+    const relY = clientY - centerY;
+
+    // 3. Apply inverse rotation to obtain the mouse position from center in element-local coordinates
+    const local = rotatePoint({ x: relX, y: relY }, -rotation);
+
+    // 4. Convert coordinates from center-relative to top-left-relative
+    return [local.x + element.offsetWidth / 2, local.y + element.offsetHeight / 2];
+}

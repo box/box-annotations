@@ -7,6 +7,7 @@ import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
 import { getDrawingCursor } from './DrawingCursor';
 import { getPathCommands } from './drawingUtil';
+import { getElementLocalPosition } from '../utils/rotate';
 import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
 
@@ -15,6 +16,7 @@ export type Props = {
     color?: string;
     onStart: () => void;
     onStop: (pathGroup: PathGroup) => void;
+    rotation?: number;
     size?: number;
 };
 
@@ -26,6 +28,7 @@ export default function DrawingCreator({
     color = defaultStrokeColor,
     onStart,
     onStop,
+    rotation = 0,
     size = defaultStrokeSize,
 }: Props): JSX.Element {
     const [drawingStatus, setDrawingStatus] = React.useState<DrawingStatus>(DrawingStatus.init);
@@ -45,7 +48,9 @@ export default function DrawingCreator({
             return [];
         }
 
-        const { height, width } = creatorEl.getBoundingClientRect();
+        // Get the element's dimensions (before any rotation is applied)
+        const width = creatorEl.offsetWidth;
+        const height = creatorEl.offsetHeight;
         const { size: minSize } = stroke;
         const MAX_X = width - minSize;
         const MAX_Y = height - minSize;
@@ -56,21 +61,9 @@ export default function DrawingCreator({
         }));
     }, [stroke]);
 
-    const getPosition = (x: number, y: number): [number, number] => {
-        const { current: creatorEl } = creatorElRef;
-
-        if (!creatorEl) {
-            return [x, y];
-        }
-
-        // Calculate the new position based on the mouse position less the page offset
-        const { left, top } = creatorEl.getBoundingClientRect();
-        return [x - left, y - top];
-    };
-
     // Drawing Lifecycle Callbacks
     const startDraw = (x: number, y: number): void => {
-        const [x1, y1] = getPosition(x, y);
+        const [x1, y1] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
 
         setDrawingStatus(DrawingStatus.dragging);
 
@@ -100,7 +93,7 @@ export default function DrawingCreator({
 
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
-            const [x2, y2] = getPosition(x, y);
+            const [x2, y2] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
             const { current: points } = capturedPointsRef;
 
             points.push({ x: x2, y: y2 });
@@ -111,7 +104,7 @@ export default function DrawingCreator({
                 onStart();
             }
         },
-        [drawingStatus, onStart, setDrawingStatus],
+        [drawingStatus, onStart, rotation, setDrawingStatus],
     );
 
     // Event Handlers

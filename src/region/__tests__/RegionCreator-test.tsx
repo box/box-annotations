@@ -34,6 +34,9 @@ describe('RegionCreator', () => {
     // Render helpers
     const getWrapper = (props = {}): ReactWrapper => mount(<RegionCreator {...defaults} {...props} />);
 
+    let origOffsetWidth: PropertyDescriptor | undefined;
+    let origOffsetHeight: PropertyDescriptor | undefined;
+
     beforeEach(() => {
         jest.useFakeTimers();
 
@@ -42,6 +45,16 @@ describe('RegionCreator', () => {
         jest.spyOn(document, 'removeEventListener');
         jest.spyOn(window, 'cancelAnimationFrame');
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps
+
+        origOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
+        origOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+        Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get: () => 1000 });
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get: () => 1000 });
+    });
+
+    afterEach(() => {
+        if (origOffsetWidth) Object.defineProperty(HTMLElement.prototype, 'offsetWidth', origOffsetWidth);
+        if (origOffsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeight);
     });
 
     describe('mouse events', () => {

@@ -24,6 +24,7 @@ export type Props = {
     location: number;
     redoDrawingPathGroup: () => void;
     resetDrawing: () => void;
+    rotation: number;
     setActiveAnnotationId: (annotationId: string | null) => void;
     setReferenceId: (uuid: string) => void;
     setStaged: (staged: CreatorItemDrawing | null) => void;
@@ -47,6 +48,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         location,
         redoDrawingPathGroup,
         resetDrawing,
+        rotation,
         setActiveAnnotationId,
         setReferenceId,
         setStaged,
@@ -170,6 +172,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                     color={color}
                     onStart={handleStart}
                     onStop={handleStop}
+                    rotation={rotation}
                 />
             )}
 

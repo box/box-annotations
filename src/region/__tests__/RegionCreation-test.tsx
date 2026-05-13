@@ -136,15 +136,15 @@ describe('RegionCreation', () => {
             expect(wrapper.exists(RegionRect)).toBe(false);
         });
 
-        test('should not render creation components if file is rotated', () => {
+        test('should render creation components when file is rotated', () => {
             const wrapper = getWrapper({
                 isCreating: true,
-                isRotated: true,
-                staged: {},
+                rotation: -90,
+                staged: getStaged(),
             });
 
-            expect(wrapper.exists(RegionCreator)).toBe(false);
-            expect(wrapper.exists(RegionRect)).toBe(false);
+            expect(wrapper.exists(RegionCreator)).toBe(true);
+            expect(wrapper.exists(RegionRect)).toBe(true);
         });
     });
 });
