@@ -114,7 +114,7 @@ export default function DrawingCreator({
                 onStart();
             }
         },
-        [drawingStatus, onStart, setDrawingStatus],
+        [drawingStatus, getPosition, onStart, setDrawingStatus],
     );
 
     // Event Handlers

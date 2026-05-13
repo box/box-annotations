@@ -140,7 +140,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
                 onStart();
             }
         },
-        [drawingStatus, onStart, setDrawingStatus],
+        [drawingStatus, getPosition, onStart, setDrawingStatus],
     );
 
     // Event Handlers

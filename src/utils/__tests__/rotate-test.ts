@@ -35,7 +35,7 @@ describe('rotate', () => {
     });
 
     describe('getElementLocalPosition()', () => {
-        const createElement = (width: number, height: number, rect: Partial<DOMRect> = {}) => {
+        const createElement = (width: number, height: number, rect: Partial<DOMRect> = {}): HTMLElement => {
             const el = document.createElement('div');
             Object.defineProperty(el, 'offsetWidth', { get: () => width });
             Object.defineProperty(el, 'offsetHeight', { get: () => height });
