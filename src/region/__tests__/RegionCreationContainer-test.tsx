@@ -70,17 +70,22 @@ describe('RegionCreationContainer', () => {
         );
 
         test.each`
-            rotation
-            ${0}
-            ${90}
-            ${-90}
-            ${-180}
-            ${-270}
-        `('should pass rotation=$rotation to the underlying component', ({ rotation }) => {
+            rotation     | expected
+            ${null}      | ${null}
+            ${undefined} | ${0}
+            ${0}         | ${0}
+            ${-0}        | ${-0}
+            ${90}        | ${90}
+            ${-90}       | ${-90}
+            ${-180}      | ${-180}
+            ${-270}      | ${-270}
+            ${360}       | ${360}
+            ${-360}      | ${-360}
+        `('should pass rotation=$rotation as $expected to the underlying component', ({ rotation, expected }) => {
             const store = createStore({ options: { rotation } });
             const wrapper = getWrapper({ store });
 
-            expect(wrapper.find(RegionCreation).prop('rotation')).toEqual(rotation);
+            expect(wrapper.find(RegionCreation).prop('rotation')).toEqual(expected);
         });
     });
 });

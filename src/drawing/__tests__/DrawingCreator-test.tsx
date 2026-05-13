@@ -25,6 +25,9 @@ describe('DrawingCreator', () => {
     const getWrapper = (props?: Partial<Props>): ReactWrapper<PointerCaptureProps, NonNullable<unknown>> =>
         mount(<DrawingCreator {...getDefaults()} {...props} />);
 
+    let origOffsetWidth: PropertyDescriptor | undefined;
+    let origOffsetHeight: PropertyDescriptor | undefined;
+
     beforeEach(() => {
         jest.useFakeTimers();
 
@@ -32,8 +35,16 @@ describe('DrawingCreator', () => {
         jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps;
         jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
         jest.spyOn(Element.prototype, 'setAttribute');
+
+        origOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
+        origOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
         Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get: () => 100 });
         Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get: () => 100 });
+    });
+
+    afterEach(() => {
+        if (origOffsetWidth) Object.defineProperty(HTMLElement.prototype, 'offsetWidth', origOffsetWidth);
+        if (origOffsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeight);
     });
 
     const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {
