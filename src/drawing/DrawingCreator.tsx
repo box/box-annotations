@@ -61,22 +61,9 @@ export default function DrawingCreator({
         }));
     }, [stroke]);
 
-    const getPosition = React.useCallback(
-        (x: number, y: number): [number, number] => {
-            const { current: creatorEl } = creatorElRef;
-
-            if (!creatorEl) {
-                return [x, y];
-            }
-
-            return getElementLocalPosition(x, y, creatorEl, rotation);
-        },
-        [rotation],
-    );
-
     // Drawing Lifecycle Callbacks
     const startDraw = (x: number, y: number): void => {
-        const [x1, y1] = getPosition(x, y);
+        const [x1, y1] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
 
         setDrawingStatus(DrawingStatus.dragging);
 
@@ -106,7 +93,7 @@ export default function DrawingCreator({
 
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
-            const [x2, y2] = getPosition(x, y);
+            const [x2, y2] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
             const { current: points } = capturedPointsRef;
 
             points.push({ x: x2, y: y2 });
@@ -117,7 +104,7 @@ export default function DrawingCreator({
                 onStart();
             }
         },
-        [drawingStatus, getPosition, onStart, setDrawingStatus],
+        [drawingStatus, onStart, rotation, setDrawingStatus],
     );
 
     // Event Handlers

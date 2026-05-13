@@ -36,19 +36,6 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
     const regionRectRef = React.useRef<RegionRectRef>(null);
     const renderHandleRef = React.useRef<number | null>(null);
 
-    // Drawing Helpers
-    const getPosition = React.useCallback(
-        (x: number, y: number): [number, number] => {
-            const { current: creatorEl } = creatorElRef;
-
-            if (!creatorEl) {
-                return [x, y];
-            }
-
-            return getElementLocalPosition(x, y, creatorEl, rotation);
-        },
-        [rotation],
-    );
     const getShape = (): Rect | null => {
         const { current: creatorEl } = creatorElRef;
         const { current: x1 } = positionX1Ref;
@@ -93,7 +80,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
 
     // Drawing Lifecycle Callbacks
     const startDraw = (x: number, y: number): void => {
-        const [x1, y1] = getPosition(x, y);
+        const [x1, y1] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
 
         setDrawingStatus(DrawingStatus.dragging);
 
@@ -124,7 +111,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
 
     const updateDraw = React.useCallback(
         (x: number, y: number): void => {
-            const [x2, y2] = getPosition(x, y);
+            const [x2, y2] = getElementLocalPosition(x, y, creatorElRef.current, rotation);
             const { current: x1 } = positionX1Ref;
             const { current: y1 } = positionY1Ref;
             const { current: prevX2 } = positionX2Ref;
@@ -143,7 +130,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
                 onStart();
             }
         },
-        [drawingStatus, getPosition, onStart, setDrawingStatus],
+        [drawingStatus, onStart, rotation, setDrawingStatus],
     );
 
     // Event Handlers

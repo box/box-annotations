@@ -136,16 +136,22 @@ export function getRotatedPosition({ x, y }: Position, rotation: number): Positi
  *
  * When an element has a CSS rotation, its internal axes are rotated with it.
  * This function maps window coordinates to element-local coordinates.
- * 
+ *
+ * If element is null, returns the raw coordinates as a passthrough.
+ *
  * Assumes transform-origin: center (the CSS default), which matches how
  * box-content-preview applies rotation to annotation layers.
  */
 export function getElementLocalPosition(
     clientX: number,
     clientY: number,
-    element: HTMLElement,
+    element: HTMLElement | null,
     rotation: number,
 ): [number, number] {
+    if (!element) {
+        return [clientX, clientY];
+    }
+
     const rect = element.getBoundingClientRect();
 
     if (!rotation) {

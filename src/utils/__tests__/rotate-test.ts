@@ -79,6 +79,13 @@ describe('rotate', () => {
             expect(Math.round(x)).toBe(50);
             expect(Math.round(y)).toBe(50);
         });
+
+        test('should return raw coordinates when element is null', () => {
+            const [x, y] = getElementLocalPosition(123, 456, null, -90);
+
+            expect(x).toBe(123);
+            expect(y).toBe(456);
+        });
     });
 
     describe('getRotatedShape()', () => {
