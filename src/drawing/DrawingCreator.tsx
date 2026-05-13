@@ -61,15 +61,18 @@ export default function DrawingCreator({
         }));
     }, [stroke]);
 
-    const getPosition = (x: number, y: number): [number, number] => {
-        const { current: creatorEl } = creatorElRef;
+    const getPosition = React.useCallback(
+        (x: number, y: number): [number, number] => {
+            const { current: creatorEl } = creatorElRef;
 
-        if (!creatorEl) {
-            return [x, y];
-        }
+            if (!creatorEl) {
+                return [x, y];
+            }
 
-        return getElementLocalPosition(x, y, creatorEl, rotation);
-    };
+            return getElementLocalPosition(x, y, creatorEl, rotation);
+        },
+        [rotation],
+    );
 
     // Drawing Lifecycle Callbacks
     const startDraw = (x: number, y: number): void => {
