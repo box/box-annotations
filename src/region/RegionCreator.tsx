@@ -4,7 +4,7 @@ import PointerCapture, { Status as DrawingStatus } from '../components/PointerCa
 import PopupCursor from '../components/Popups/PopupCursor';
 import RegionRect, { RegionRectRef } from './RegionRect';
 import useAutoScroll from '../common/useAutoScroll';
-import { rotatePoint } from '../utils/rotate';
+import { getElementLocalPosition } from '../utils/rotate';
 import { Rect } from '../@types';
 import { styleShape } from './regionUtil';
 import './RegionCreator.scss';
@@ -44,25 +44,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
             return [x, y];
         }
 
-        const rect = creatorEl.getBoundingClientRect();
-
-        if (!rotation) {
-            return [x - rect.left, y - rect.top];
-        }
-
-        // When the annotation layer is CSS-rotated, getBoundingClientRect() returns the
-        // axis-aligned bounding box in screen space, but the element's internal coordinate
-        // system is rotated. We must apply the inverse rotation to convert screen-space
-        // coordinates into the element's local coordinate system.
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const relX = x - centerX;
-        const relY = y - centerY;
-
-        const local = rotatePoint({ x: relX, y: relY }, -rotation);
-
-        return [local.x + creatorEl.offsetWidth / 2, local.y + creatorEl.offsetHeight / 2];
+        return getElementLocalPosition(x, y, creatorEl, rotation);
     };
     const getShape = (): Rect | null => {
         const { current: creatorEl } = creatorElRef;
@@ -75,7 +57,7 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
             return null;
         }
 
-        // Use offsetWidth/offsetHeight to get pre-transform dimensions (local coordinate space)
+        // Get the element's dimensions (before any rotation is applied)
         const width = creatorEl.offsetWidth;
         const height = creatorEl.offsetHeight;
         const MAX_HEIGHT = height - MIN_SIZE;
@@ -158,7 +140,6 @@ export default function RegionCreator({ className, onAbort, onStart, onStop, rot
                 onStart();
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [drawingStatus, onStart, setDrawingStatus],
     );
 

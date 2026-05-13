@@ -7,7 +7,7 @@ import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import PointerCapture, { PointerCaptureRef, Status as DrawingStatus } from '../components/PointerCapture';
 import { getDrawingCursor } from './DrawingCursor';
 import { getPathCommands } from './drawingUtil';
-import { rotatePoint } from '../utils/rotate';
+import { getElementLocalPosition } from '../utils/rotate';
 import { PathGroup, Position } from '../@types';
 import './DrawingCreator.scss';
 
@@ -48,7 +48,7 @@ export default function DrawingCreator({
             return [];
         }
 
-        // Use offsetWidth/offsetHeight to get pre-transform dimensions (local coordinate space)
+        // Get the element's dimensions (before any rotation is applied)
         const width = creatorEl.offsetWidth;
         const height = creatorEl.offsetHeight;
         const { size: minSize } = stroke;
@@ -68,28 +68,7 @@ export default function DrawingCreator({
             return [x, y];
         }
 
-        const rect = creatorEl.getBoundingClientRect();
-
-        if (!rotation) {
-            return [x - rect.left, y - rect.top];
-        }
-
-        // When the annotation layer is CSS-rotated, getBoundingClientRect() returns the
-        // axis-aligned bounding box in screen space, but the element's internal coordinate
-        // system is rotated. We must apply the inverse rotation to convert screen-space
-        // coordinates into the element's local coordinate system.
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        // Get mouse position relative to element center (in screen space)
-        const relX = x - centerX;
-        const relY = y - centerY;
-
-        // Apply inverse rotation to transform into local coordinate space
-        const local = rotatePoint({ x: relX, y: relY }, -rotation);
-
-        // Convert from center-relative to top-left-relative using pre-transform dimensions
-        return [local.x + creatorEl.offsetWidth / 2, local.y + creatorEl.offsetHeight / 2];
+        return getElementLocalPosition(x, y, creatorEl, rotation);
     };
 
     // Drawing Lifecycle Callbacks
@@ -135,7 +114,6 @@ export default function DrawingCreator({
                 onStart();
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [drawingStatus, onStart, setDrawingStatus],
     );
 
