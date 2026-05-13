@@ -24,6 +24,7 @@ jest.mock('box-ui-elements/es/components/focus-trap/FocusTrap', () => {
 
 jest.mock('@box/blueprint-web', () => ({
     BlueprintModernizationProvider: ({ children }: { children: React.ReactNode }) => children,
+    TooltipProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 jest.mock('@box/threaded-annotations', () => {
