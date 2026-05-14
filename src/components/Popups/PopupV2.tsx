@@ -17,6 +17,7 @@ import type { JSONContent } from '@tiptap/core';
 import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 
 import { annotationToMessages, collaboratorToUserContact } from '../../adapters/threadedAnnotationsAdapters';
+import AnnotationCallbacksContext from '../../common/AnnotationCallbacksContext';
 import {
     createReplyAction,
     deleteAnnotationAction,
@@ -80,6 +81,7 @@ const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): 
 const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
+    const { onCopyLink } = React.useContext(AnnotationCallbacksContext);
     const popupRef = React.useRef<HTMLDivElement>(null);
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
@@ -235,6 +237,16 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         [annotationId, dispatch, onSubmit],
     );
 
+    const handleEdit = React.useCallback(
+        async (id: string, content: JSONContent | null): Promise<void> => {
+            if (!annotationId || id !== annotationId) return;
+            const doc = createDocumentNode(content);
+            const { text } = serializeMentionMarkup(doc);
+            await dispatch(updateAnnotationAction({ annotationId, payload: { message: text } }));
+        },
+        [annotationId, dispatch],
+    );
+
     const handleThreadDelete = React.useCallback(
         async (): Promise<void> => {
             if (annotationId) {
@@ -293,7 +305,9 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                                     isResolved={isResolved}
                                     messages={threadMessages}
                                     onAvatarClick={noop}
+                                    onCopyLink={onCopyLink}
                                     onDelete={noop}
+                                    onEdit={handleEdit}
                                     onPost={handlePost}
                                     onResolve={handleResolve}
                                     onThreadDelete={handleThreadDelete}

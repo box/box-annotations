@@ -86,6 +86,13 @@ export interface Rect extends Position {
     width: number;
 }
 
+export interface ReplyPermissions {
+    can_delete?: boolean;
+    can_edit?: boolean;
+    can_reply?: boolean;
+    can_resolve?: boolean;
+}
+
 export interface Reply {
     created_at: string;
     created_by: User;
@@ -95,6 +102,7 @@ export interface Reply {
         id: string;
         type: string;
     };
+    permissions?: ReplyPermissions;
     type: 'reply';
 }
 

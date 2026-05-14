@@ -44,6 +44,12 @@ export type Options = {
     initialViewMode?: ViewMode;
     intl: IntlOptions;
     locale?: string;
+    /**
+     * Called when the user clicks Copy link in a thread message's options menu.
+     * The consumer owns URL construction, clipboard writes, and any user feedback.
+     * When omitted, the Copy link menu item is hidden.
+     */
+    onCopyLink?: (id: string) => void;
     token: string;
 };
 
@@ -70,6 +76,8 @@ export default class BaseAnnotator extends EventEmitter {
 
     intl: IntlShape;
 
+    onCopyLink?: (id: string) => void;
+
     store: store.AppStore;
 
     constructor({
@@ -82,6 +90,7 @@ export default class BaseAnnotator extends EventEmitter {
         initialMode,
         initialViewMode = 'annotations',
         intl,
+        onCopyLink,
         token,
     }: Options) {
         super();
@@ -111,6 +120,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.container = container;
         this.features = features;
         this.intl = i18n.createIntlProvider(intl);
+        this.onCopyLink = onCopyLink;
         this.store = store.createStore(initialState, {
             api: new API({ apiHost, token }),
         });
