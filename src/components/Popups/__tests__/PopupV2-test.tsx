@@ -263,7 +263,25 @@ describe('PopupV2', () => {
 
             (lastThreadedAnnotationsProps.onCopyLink as (id: string) => void)('reply-1');
 
-            expect(onCopyLink).toHaveBeenCalledWith('annotation-1', 'fv-1');
+            expect(onCopyLink).toHaveBeenCalledWith({ annotationId: 'annotation-1', fileVersionId: 'fv-1' });
+        });
+
+        test('should leave onCopyLink undefined when fileVersionId is missing from the store', async () => {
+            const onCopyLink = jest.fn();
+            mockUseSelector.mockImplementation(selector => {
+                if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileVersionId) return null;
+                if (selector === getToken) return 'test-token';
+                return mockAnnotation;
+            });
+            render(
+                <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
+                    <PopupV2 {...defaults} />
+                </AnnotationCallbacksContext.Provider>,
+            );
+            await flushPromises();
+
+            expect(lastThreadedAnnotationsProps.onCopyLink).toBeUndefined();
         });
 
         test('should leave onCopyLink undefined when no context value is provided', async () => {

@@ -92,7 +92,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const onCopyLink = React.useMemo(
         () =>
             consumerOnCopyLink && annotationId && fileVersionId
-                ? () => consumerOnCopyLink(annotationId, fileVersionId)
+                ? () => consumerOnCopyLink({ annotationId, fileVersionId })
                 : undefined,
         [consumerOnCopyLink, annotationId, fileVersionId],
     );

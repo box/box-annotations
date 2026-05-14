@@ -44,7 +44,7 @@ export type Options = {
     initialViewMode?: ViewMode;
     intl: IntlOptions;
     locale?: string;
-    onCopyLink?: (annotationId: string, fileVersionId: string) => void;
+    onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
     token: string;
 };
 
@@ -71,7 +71,7 @@ export default class BaseAnnotator extends EventEmitter {
 
     intl: IntlShape;
 
-    onCopyLink?: (annotationId: string, fileVersionId: string) => void;
+    onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
 
     store: store.AppStore;
 
