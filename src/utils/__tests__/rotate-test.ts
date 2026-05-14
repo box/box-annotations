@@ -1,4 +1,4 @@
-import { getPoints, getRotatedShape, selectTransformationPoint } from '../../utils/rotate';
+import { getElementLocalPosition, getPoints, getRotatedShape, selectTransformationPoint } from '../../utils/rotate';
 
 describe('rotate', () => {
     const parseValue = (value: number): number => parseFloat(value.toFixed(3));
@@ -32,6 +32,60 @@ describe('rotate', () => {
                 expect(selectTransformationPoint(shape, rotation)).toEqual(expectedPoint);
             },
         );
+    });
+
+    describe('getElementLocalPosition()', () => {
+        const createElement = (width: number, height: number, rect: Partial<DOMRect> = {}): HTMLElement => {
+            const el = document.createElement('div');
+            Object.defineProperty(el, 'offsetWidth', { get: () => width });
+            Object.defineProperty(el, 'offsetHeight', { get: () => height });
+            jest.spyOn(el, 'getBoundingClientRect').mockReturnValue({
+                left: 0,
+                top: 0,
+                right: width,
+                bottom: height,
+                width,
+                height,
+                x: 0,
+                y: 0,
+                toJSON: jest.fn(),
+                ...rect,
+            });
+            return el;
+        };
+
+        test.each`
+            rotation | clientX | clientY | rectWidth | rectHeight | expectedX | expectedY
+            ${0}     | ${75}   | ${55}   | ${100}    | ${100}     | ${75}     | ${55}
+            ${-90}   | ${0}    | ${0}    | ${100}    | ${100}     | ${100}    | ${0}
+            ${-180}  | ${25}   | ${25}   | ${100}    | ${100}     | ${75}     | ${75}
+            ${-270}  | ${75}   | ${25}   | ${100}    | ${100}     | ${25}     | ${25}
+        `(
+            'should map window coords ($clientX, $clientY) to element-local coords ($expectedX, $expectedY) at rotation=$rotation',
+            ({ rotation, clientX, clientY, rectWidth, rectHeight, expectedX, expectedY }) => {
+                const el = createElement(100, 100, { left: 0, top: 0, width: rectWidth, height: rectHeight });
+                const [x, y] = getElementLocalPosition(clientX, clientY, el, rotation);
+
+                expect(Math.round(x)).toBe(expectedX);
+                expect(Math.round(y)).toBe(expectedY);
+            },
+        );
+
+        test('should account for element screen offset', () => {
+            const el = createElement(100, 100, { left: 100, top: 200, width: 100, height: 100 });
+            // Click at center of element on screen → maps to center regardless of rotation
+            const [x, y] = getElementLocalPosition(150, 250, el, -90);
+
+            expect(Math.round(x)).toBe(50);
+            expect(Math.round(y)).toBe(50);
+        });
+
+        test('should return raw coordinates when element is null', () => {
+            const [x, y] = getElementLocalPosition(123, 456, null, -90);
+
+            expect(x).toBe(123);
+            expect(y).toBe(456);
+        });
     });
 
     describe('getRotatedShape()', () => {
