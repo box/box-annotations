@@ -44,11 +44,6 @@ export type Options = {
     initialViewMode?: ViewMode;
     intl: IntlOptions;
     locale?: string;
-    /**
-     * Called when the user clicks Copy link in a thread message's options menu.
-     * The consumer owns URL construction, clipboard writes, and any user feedback.
-     * When omitted, the Copy link menu item is hidden.
-     */
     onCopyLink?: (id: string) => void;
     token: string;
 };
