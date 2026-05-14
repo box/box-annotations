@@ -5,7 +5,7 @@ import type { ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
 import { updateAnnotationAction } from '../../../store/annotations/actions';
-import { getApiHost, getToken } from '../../../store/options';
+import { getApiHost, getFileVersionId, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -80,6 +80,7 @@ const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 const mockSelectorValues = (annotation?: unknown): void => {
     mockUseSelector.mockImplementation(selector => {
         if (selector === getApiHost) return 'https://api.box.com';
+        if (selector === getFileVersionId) return 'fv-1';
         if (selector === getToken) return 'test-token';
         return annotation;
     });
@@ -251,7 +252,7 @@ describe('PopupV2', () => {
             expect(updateAnnotationAction).not.toHaveBeenCalled();
         });
 
-        test('should forward onCopyLink from AnnotationCallbacksContext to ThreadedAnnotationsV2', async () => {
+        test('should invoke context onCopyLink with the root annotationId and fileVersionId regardless of clicked message id', async () => {
             const onCopyLink = jest.fn();
             render(
                 <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
@@ -260,7 +261,9 @@ describe('PopupV2', () => {
             );
             await flushPromises();
 
-            expect(lastThreadedAnnotationsProps.onCopyLink).toBe(onCopyLink);
+            (lastThreadedAnnotationsProps.onCopyLink as (id: string) => void)('reply-1');
+
+            expect(onCopyLink).toHaveBeenCalledWith('annotation-1', 'fv-1');
         });
 
         test('should leave onCopyLink undefined when no context value is provided', async () => {

@@ -25,7 +25,7 @@ import {
     updateAnnotationAction,
 } from '../../store/annotations/actions';
 import { getAnnotation } from '../../store/annotations/selectors';
-import { getApiHost, getToken } from '../../store/options';
+import { getApiHost, getFileVersionId, getToken } from '../../store/options';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
 import type { AppState, AppThunkDispatch } from '../../store/types';
@@ -81,13 +81,21 @@ const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): 
 const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
-    const { onCopyLink } = React.useContext(AnnotationCallbacksContext);
+    const { onCopyLink: consumerOnCopyLink } = React.useContext(AnnotationCallbacksContext);
     const popupRef = React.useRef<HTMLDivElement>(null);
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
 
     const apiHost = useSelector(getApiHost);
+    const fileVersionId = useSelector(getFileVersionId);
     const token = useSelector(getToken);
+    const onCopyLink = React.useMemo(
+        () =>
+            consumerOnCopyLink && annotationId && fileVersionId
+                ? () => consumerOnCopyLink(annotationId, fileVersionId)
+                : undefined,
+        [consumerOnCopyLink, annotationId, fileVersionId],
+    );
     const annotation = useSelector((state: AppState) =>
         annotationId ? getAnnotation(state, annotationId) : undefined,
     );
