@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BlueprintModernizationProvider } from '@box/blueprint-web';
+import { BlueprintModernizationProvider, TooltipProvider } from '@box/blueprint-web';
 import {
     MentionContextProvider,
     MessageEditorV2,
@@ -281,34 +281,36 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                 role="presentation"
             >
                 <BlueprintModernizationProvider enableModernizedComponents>
-                    <MentionContextProvider value={{
-                        collaborationPopoverProps: {
-                            onSubmit: () => Promise.resolve(),
-                        },
-                    }}>
-                        {annotationId ? (
-                            <ThreadedAnnotationsV2
-                                isAnnotations
-                                isResolved={isResolved}
-                                messages={threadMessages}
-                                onAvatarClick={noop}
-                                onDelete={noop}
-                                onPost={handlePost}
-                                onResolve={handleResolve}
-                                onThreadDelete={handleThreadDelete}
-                                onUnresolve={handleUnresolve}
-                                resolvedAt={resolvedAt}
-                                resolvedBy={resolvedBy}
-                                userSelectorProps={userSelectorProps}
-                            />
-                        ) : (
-                            <MessageEditorV2
-                                isFirstAnnotation
-                                onPost={handlePost}
-                                userSelectorProps={userSelectorProps}
-                            />
-                        )}
-                    </MentionContextProvider>
+                    <TooltipProvider>
+                        <MentionContextProvider value={{
+                            collaborationPopoverProps: {
+                                onSubmit: () => Promise.resolve(),
+                            },
+                        }}>
+                            {annotationId ? (
+                                <ThreadedAnnotationsV2
+                                    isAnnotations
+                                    isResolved={isResolved}
+                                    messages={threadMessages}
+                                    onAvatarClick={noop}
+                                    onDelete={noop}
+                                    onPost={handlePost}
+                                    onResolve={handleResolve}
+                                    onThreadDelete={handleThreadDelete}
+                                    onUnresolve={handleUnresolve}
+                                    resolvedAt={resolvedAt}
+                                    resolvedBy={resolvedBy}
+                                    userSelectorProps={userSelectorProps}
+                                />
+                            ) : (
+                                <MessageEditorV2
+                                    isFirstAnnotation
+                                    onPost={handlePost}
+                                    userSelectorProps={userSelectorProps}
+                                />
+                            )}
+                        </MentionContextProvider>
+                    </TooltipProvider>
                 </BlueprintModernizationProvider>
                 <div data-threaded-annotations-portal />
             </div>
