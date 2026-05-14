@@ -28,3 +28,14 @@
 .ba-Layer--popup {
     z-index: 4;
 }
+
+.ba-PopupPortal {
+    position: relative;
+    z-index: 10;
+    pointer-events: none;
+
+    .ba-Popup {
+        z-index: 150;
+        pointer-events: auto;
+    }
+}

@@ -8,7 +8,7 @@ export default function DeselectListener(): null {
     React.useEffect(() => {
         const handleMouseDown = (event: MouseEvent): void => {
             // Popup is portaled outside .ba-Layer; native mousedown still bubbles here.
-            if ((event.target as Element | null)?.closest?.('.ba-PopupV2')) return;
+            if ((event.target as Element | null)?.closest?.('.ba-PopupV2, .ba-Popup')) return;
             dispatch(setActiveAnnotationIdAction(null));
         };
 

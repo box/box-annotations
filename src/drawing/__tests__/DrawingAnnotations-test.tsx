@@ -38,6 +38,7 @@ describe('DrawingAnnotations', () => {
         drawnPathGroups: [],
         isCreating: false,
         location: 0,
+        popupPortalEl: document.createElement('div'),
         redoDrawingPathGroup: jest.fn(),
         resetDrawing: jest.fn(),
         rotation: 0,
@@ -317,6 +318,35 @@ describe('DrawingAnnotations', () => {
                 expect(wrapper.find(PopupDrawingToolbar).prop('canUndo')).toBe(canUndo);
             },
         );
+    });
+
+    describe('popup portal', () => {
+        test('should render PopupDrawingToolbar into popupPortalEl', () => {
+            const popupPortalEl = document.createElement('div');
+            document.body.appendChild(popupPortalEl);
+
+            getWrapper({
+                canShowPopupToolbar: true,
+                drawnPathGroups: pathGroups,
+                isCreating: true,
+                popupPortalEl,
+            });
+
+            expect(popupPortalEl.querySelector('.ba-PopupDrawingToolbar')).toBeTruthy();
+
+            document.body.removeChild(popupPortalEl);
+        });
+
+        test('should not render PopupDrawingToolbar when popupPortalEl is missing', () => {
+            const wrapper = getWrapper({
+                canShowPopupToolbar: true,
+                drawnPathGroups: pathGroups,
+                isCreating: true,
+                popupPortalEl: null,
+            });
+
+            expect(wrapper.find(PopupDrawingToolbar).exists()).toBe(false);
+        });
     });
 
     // Use shared video annotation tests
