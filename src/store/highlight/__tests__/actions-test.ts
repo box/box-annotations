@@ -72,9 +72,9 @@ describe('store/highlight/actions', () => {
                 expect(rect.width).toBeCloseTo(state.rotatedSelection.rects[0].width);
                 expect(rect.height).toBeCloseTo(state.rotatedSelection.rects[0].height);
 
-                expect(result.payload.containerRect).toEqual(state.rotatedSelection.containerRect);
-                expect(result.payload.popupRect).toEqual(state.rotatedSelection.popupRect);
-                expect(result.payload.location).toEqual(state.rotatedSelection.location);
+                expect(result.payload!.containerRect).toEqual(state.rotatedSelection.containerRect);
+                expect(result.payload!.popupRect).toEqual(state.rotatedSelection.popupRect);
+                expect(result.payload!.location).toEqual(state.rotatedSelection.location);
             });
 
             test('should prepare correct argument when rotation is 0', () => {
