@@ -34,12 +34,6 @@ export type Props = {
 const options: Partial<Options> = {
     modifiers: [
         {
-            name: 'eventListeners',
-            options: {
-                scroll: false,
-            },
-        },
-        {
             name: 'offset',
             options: {
                 offset: ({ popper }: { popper: Rect }) => [-popper.width / 2, 8],
@@ -48,7 +42,6 @@ const options: Partial<Options> = {
         {
             name: 'preventOverflow',
             options: {
-                altAxis: true,
                 padding: 50,
             },
         },
