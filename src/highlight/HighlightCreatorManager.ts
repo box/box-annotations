@@ -1,6 +1,7 @@
 import {
     AppStore,
     getIsSelecting,
+    getRotation,
     SelectionArg as Selection,
     setIsSelectingAction,
     setSelectionAction,
@@ -41,18 +42,18 @@ export default class HighlightCreatorManager implements Manager {
         this.store.dispatch(setSelectionAction(null));
 
         this.referenceEl.addEventListener('mousedown', this.handleMouseDown);
-        this.referenceEl.addEventListener('mouseup', this.handleMouseUp);
+        document.addEventListener('mouseup', this.handleMouseUp);
     }
 
-    style(styles: Partial<CSSStyleDeclaration>): CSSStyleDeclaration {
-        return Object.assign(this.referenceEl.style, styles);
+    style(): CSSStyleDeclaration {
+        return this.referenceEl.style;
     }
 
     destroy(): void {
         clearTimeout(this.selectionChangeTimer);
 
         this.referenceEl.removeEventListener('mousedown', this.handleMouseDown);
-        this.referenceEl.removeEventListener('mouseup', this.handleMouseUp);
+        document.removeEventListener('mouseup', this.handleMouseUp);
     }
 
     handleMouseDown = ({ buttons }: MouseEvent): void => {
@@ -72,7 +73,9 @@ export default class HighlightCreatorManager implements Manager {
         }
 
         this.selectionChangeTimer = window.setTimeout(() => {
-            this.store.dispatch(setSelectionAction(this.getSelection()));
+            const selection = this.getSelection();
+            const rotation = getRotation(this.store.getState());
+            this.store.dispatch(setSelectionAction(selection ? { ...selection, rotation } : null));
             this.store.dispatch(setIsSelectingAction(false));
         }, this.selectionChangeDelay);
     };

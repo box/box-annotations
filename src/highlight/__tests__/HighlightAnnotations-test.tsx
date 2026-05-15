@@ -26,6 +26,8 @@ describe('HighlightAnnotations', () => {
         isPromoting: false,
         isSelecting: false,
         location: 1,
+        popupPortalEl: null as HTMLElement | null,
+        rotation: 0,
         selection: null,
         setActiveAnnotationId: jest.fn(),
         setIsPromoting: jest.fn(),
@@ -222,6 +224,71 @@ describe('HighlightAnnotations', () => {
                 });
                 expect(defaults.setStatus).toHaveBeenCalledWith(CreatorStatus.staged);
             });
+        });
+    });
+
+    describe('popup portal (rotation)', () => {
+        let popupPortalEl: HTMLElement;
+
+        beforeEach(() => {
+            popupPortalEl = document.createElement('div');
+            document.body.appendChild(popupPortalEl);
+        });
+
+        afterEach(() => {
+            document.body.removeChild(popupPortalEl);
+        });
+
+        test('should portal PopupHighlight into popupPortalEl when rotated', () => {
+            getWrapper({
+                rotation: -90,
+                popupPortalEl,
+                selection: selectionMock,
+            });
+
+            expect(popupPortalEl.querySelector('.ba-HighlightAnnotations-popup')).toBeTruthy();
+        });
+
+        test('should portal PopupHighlightError into popupPortalEl when rotated', () => {
+            getWrapper({
+                rotation: -90,
+                popupPortalEl,
+                selection: { ...selectionMock, hasError: true },
+            });
+
+            expect(popupPortalEl.querySelector('.ba-HighlightAnnotations-popup')).toBeTruthy();
+        });
+
+        test('should render PopupHighlight inline when rotation is 0', () => {
+            const wrapper = getWrapper({
+                rotation: 0,
+                popupPortalEl,
+                selection: selectionMock,
+            });
+
+            expect(wrapper.exists(PopupHighlight)).toBe(true);
+            expect(popupPortalEl.querySelector('.ba-HighlightAnnotations-popup')).toBeNull();
+        });
+
+        test('should render PopupHighlight inline when popupPortalEl is not provided', () => {
+            const wrapper = getWrapper({
+                rotation: -90,
+                popupPortalEl: null,
+                selection: selectionMock,
+            });
+
+            expect(wrapper.exists(PopupHighlight)).toBe(true);
+        });
+
+        test('should use popupRect for popup positioning when available', () => {
+            const popupRect = { x: 50, y: 60, width: 200, height: 30 };
+            getWrapper({
+                rotation: -90,
+                popupPortalEl,
+                selection: { ...selectionMock, popupRect },
+            });
+
+            expect(popupPortalEl.querySelector('.ba-HighlightAnnotations-popup')).toBeTruthy();
         });
     });
 });

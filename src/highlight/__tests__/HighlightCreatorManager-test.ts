@@ -46,12 +46,13 @@ describe('HighlightCreatorManager', () => {
             wrapper.selectionChangeTimer = 1;
 
             jest.spyOn(mockReferenceEl, 'removeEventListener');
+            jest.spyOn(document, 'removeEventListener');
 
             wrapper.destroy();
 
             expect(clearTimeout).toHaveBeenCalledWith(1);
             expect(mockReferenceEl.removeEventListener).toHaveBeenCalledWith('mousedown', wrapper.handleMouseDown);
-            expect(mockReferenceEl.removeEventListener).toHaveBeenCalledWith('mouseup', wrapper.handleMouseUp);
+            expect(document.removeEventListener).toHaveBeenCalledWith('mouseup', wrapper.handleMouseUp);
         });
     });
 
@@ -71,12 +72,13 @@ describe('HighlightCreatorManager', () => {
             wrapper.referenceEl = mockReferenceEl;
 
             jest.spyOn(mockReferenceEl, 'addEventListener');
+            jest.spyOn(document, 'addEventListener');
 
             wrapper.render();
 
             expect(defaults.store.dispatch).toHaveBeenCalled();
             expect(mockReferenceEl.addEventListener).toHaveBeenCalledWith('mousedown', wrapper.handleMouseDown);
-            expect(mockReferenceEl.addEventListener).toHaveBeenCalledWith('mouseup', wrapper.handleMouseUp);
+            expect(document.addEventListener).toHaveBeenCalledWith('mouseup', wrapper.handleMouseUp);
         });
     });
 

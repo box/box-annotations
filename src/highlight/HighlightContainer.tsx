@@ -13,6 +13,7 @@ import {
     getCreatorStatus,
     getIsPromoting,
     getIsSelecting,
+    getRotation,
     getSelectionForLocation,
     isCreatorStagedHighlight,
     Mode,
@@ -33,6 +34,7 @@ export type Props = {
     isPending: boolean;
     isPromoting: boolean;
     isSelecting: boolean;
+    rotation: number;
     selection: SelectionItem | null;
     staged: CreatorItemHighlight | null;
 };
@@ -47,6 +49,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
         isPending: getCreatorStatus(state) === CreatorStatus.pending,
         isPromoting: getIsPromoting(state),
         isSelecting: getIsSelecting(state),
+        rotation: getRotation(state),
         selection: getSelectionForLocation(state, location),
         staged: isCreatorStagedHighlight(staged) ? staged : null,
     };
