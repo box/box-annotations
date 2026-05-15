@@ -82,35 +82,28 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
     id: reply.id,
     message: deserializeMentionMarkup(reply.message),
     permissions: {
-        canDelete: false,
+        canDelete: reply.permissions?.can_delete ?? false,
         canEdit: false,
-        canReply: true,
-        canResolve: false,
+        canReply: reply.permissions?.can_reply ?? false,
+        canResolve: reply.permissions?.can_resolve ?? false,
     },
 });
 
-/**
- * Converts an Annotation's description (root message) to a TextMessageType.
- * The root message gets resolve permission from the annotation's permissions.
- * Falls back to annotation-level fields when the description object is sparse
- * (the list endpoint returns description with only { message }).
- */
-const descriptionToTextMessage = (
-    annotation: Annotation,
-    reply: Reply,
-): TextMessageTypeV2 => ({
+// The root message shares the annotation's author and permissions; description
+// comes back sparse ({ message } only) from the list endpoint.
+const descriptionToTextMessage = (annotation: Annotation): TextMessageTypeV2 => ({
     author: {
-        email: (reply.created_by ?? annotation.created_by)?.login ?? '',
-        id: parseInt((reply.created_by ?? annotation.created_by)?.id ?? '0', 10),
-        name: (reply.created_by ?? annotation.created_by)?.name ?? '',
+        email: annotation.created_by?.login ?? '',
+        id: parseInt(annotation.created_by?.id ?? '0', 10),
+        name: annotation.created_by?.name ?? '',
     },
-    createdAt: new Date(reply.created_at ?? annotation.created_at).getTime(),
-    id: reply.id ?? annotation.id,
-    message: deserializeMentionMarkup(reply.message),
+    createdAt: new Date(annotation.created_at).getTime(),
+    id: annotation.id,
+    message: deserializeMentionMarkup(annotation.description?.message ?? ''),
     permissions: {
         canDelete: annotation.permissions?.can_delete ?? false,
         canEdit: annotation.permissions?.can_edit ?? false,
-        canReply: true,
+        canReply: annotation.permissions?.can_reply ?? false,
         canResolve: annotation.permissions?.can_resolve ?? false,
     },
 });
@@ -123,7 +116,7 @@ export const annotationToMessages = (annotation: Annotation): TextMessageTypeV2[
     const messages: TextMessageTypeV2[] = [];
 
     if (annotation.description) {
-        messages.push(descriptionToTextMessage(annotation, annotation.description));
+        messages.push(descriptionToTextMessage(annotation));
     }
 
     if (annotation.replies) {

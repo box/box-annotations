@@ -1,6 +1,7 @@
 import * as ReactDOM from 'react-dom/client';
 import { IntlShape } from 'react-intl';
 import { Store } from 'redux';
+import { AnnotationCallbacks } from './AnnotationCallbacksContext';
 import { applyResinTags } from '../utils/resin';
 import { TARGET_TYPE } from '../constants';
 
@@ -14,6 +15,7 @@ export type Options = {
 };
 
 export type Props = {
+    callbacks?: AnnotationCallbacks;
     intl: IntlShape;
     store: Store;
 };

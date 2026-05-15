@@ -114,6 +114,7 @@ describe('MediaAnnotator', () => {
 
             expect(annotator.getManagers).toHaveBeenCalled();
             expect(mockManager.render).toHaveBeenCalledWith({
+                callbacks: { onCopyLink: undefined },
                 intl: annotator.intl,
                 store: expect.any(Object),
             });

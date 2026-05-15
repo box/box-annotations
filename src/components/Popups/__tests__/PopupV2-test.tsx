@@ -1,8 +1,11 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
+import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
-import { getApiHost, getToken } from '../../../store/options';
+import { updateAnnotationAction } from '../../../store/annotations/actions';
+import { getApiHost, getFileVersionId, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -27,6 +30,8 @@ jest.mock('@box/blueprint-web', () => ({
     TooltipProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+let lastThreadedAnnotationsProps: Partial<ThreadedAnnotationsPropsV2> = {};
+
 jest.mock('@box/threaded-annotations', () => {
     const ReactMock = jest.requireActual('react');
     return {
@@ -37,17 +42,20 @@ jest.mock('@box/threaded-annotations', () => {
                 'data-testid': 'message-editor-v2',
                 'data-is-first-annotation': String(props.isFirstAnnotation),
             }),
-        ThreadedAnnotationsV2: (props: Record<string, unknown>) =>
-            ReactMock.createElement('div', {
+        ThreadedAnnotationsV2: (props: Partial<ThreadedAnnotationsPropsV2>) => {
+            lastThreadedAnnotationsProps = props;
+            return ReactMock.createElement('div', {
                 'data-testid': 'threaded-annotations-v2',
                 'data-is-annotations': String(props.isAnnotations),
-                'data-messages-count': String((props.messages as unknown[])?.length ?? 0),
+                'data-messages-count': String(props.messages?.length ?? 0),
+                'data-has-on-edit': String(typeof props.onEdit === 'function'),
                 'data-has-on-post': String(typeof props.onPost === 'function'),
                 'data-has-on-resolve': String(typeof props.onResolve === 'function'),
                 'data-has-on-thread-delete': String(typeof props.onThreadDelete === 'function'),
                 'data-has-on-unresolve': String(typeof props.onUnresolve === 'function'),
-            }),
-        serializeMentionMarkup: jest.fn().mockReturnValue({ hasMention: false, text: '' }),
+            });
+        },
+        serializeMentionMarkup: jest.fn().mockReturnValue({ hasMention: false, text: 'serialized text' }),
     };
 });
 
@@ -72,6 +80,7 @@ const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 const mockSelectorValues = (annotation?: unknown): void => {
     mockUseSelector.mockImplementation(selector => {
         if (selector === getApiHost) return 'https://api.box.com';
+        if (selector === getFileVersionId) return 'fv-1';
         if (selector === getToken) return 'test-token';
         return annotation;
     });
@@ -119,6 +128,7 @@ describe('PopupV2', () => {
     };
 
     beforeEach(() => {
+        lastThreadedAnnotationsProps = {};
         mockUseDispatch.mockReturnValue(mockDispatch);
         mockFetch.mockResolvedValue({
             blob: () => Promise.resolve(new Blob(['avatar'])),
@@ -214,10 +224,71 @@ describe('PopupV2', () => {
             await flushPromises();
 
             const thread = screen.getByTestId('threaded-annotations-v2');
+            expect(thread.getAttribute('data-has-on-edit')).toBe('true');
             expect(thread.getAttribute('data-has-on-post')).toBe('true');
             expect(thread.getAttribute('data-has-on-resolve')).toBe('true');
             expect(thread.getAttribute('data-has-on-thread-delete')).toBe('true');
             expect(thread.getAttribute('data-has-on-unresolve')).toBe('true');
+        });
+
+        test('should dispatch updateAnnotationAction when editing the root message', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onEdit?.('annotation-1', { type: 'doc', content: [] });
+
+            expect(updateAnnotationAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                payload: { message: 'serialized text' },
+            });
+        });
+
+        test('should not dispatch updateAnnotationAction when editing a reply', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onEdit?.('reply-1', { type: 'doc', content: [] });
+
+            expect(updateAnnotationAction).not.toHaveBeenCalled();
+        });
+
+        test('should invoke context onCopyLink with the root annotationId and fileVersionId regardless of clicked message id', async () => {
+            const onCopyLink = jest.fn();
+            render(
+                <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
+                    <PopupV2 {...defaults} />
+                </AnnotationCallbacksContext.Provider>,
+            );
+            await flushPromises();
+
+            (lastThreadedAnnotationsProps.onCopyLink as (id: string) => void)('reply-1');
+
+            expect(onCopyLink).toHaveBeenCalledWith({ annotationId: 'annotation-1', fileVersionId: 'fv-1' });
+        });
+
+        test('should leave onCopyLink undefined when fileVersionId is missing from the store', async () => {
+            const onCopyLink = jest.fn();
+            mockUseSelector.mockImplementation(selector => {
+                if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileVersionId) return null;
+                if (selector === getToken) return 'test-token';
+                return mockAnnotation;
+            });
+            render(
+                <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
+                    <PopupV2 {...defaults} />
+                </AnnotationCallbacksContext.Provider>,
+            );
+            await flushPromises();
+
+            expect(lastThreadedAnnotationsProps.onCopyLink).toBeUndefined();
+        });
+
+        test('should leave onCopyLink undefined when no context value is provided', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(lastThreadedAnnotationsProps.onCopyLink).toBeUndefined();
         });
 
         test('should set popupThreadV2 as resin component', async () => {

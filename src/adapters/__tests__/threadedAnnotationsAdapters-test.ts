@@ -133,14 +133,29 @@ describe('threadedAnnotationsAdapters', () => {
             });
         });
 
-        test('should set default permissions for replies', () => {
+        test('should default permissions to false when reply has no permissions field', () => {
             const result = replyToTextMessage(mockReply);
 
             expect(result.permissions).toEqual({
                 canDelete: false,
                 canEdit: false,
-                canReply: true,
+                canReply: false,
                 canResolve: false,
+            });
+        });
+
+        test('should map reply permissions from backend payload, forcing canEdit false', () => {
+            const reply: Reply = {
+                ...mockReply,
+                permissions: { can_delete: true, can_edit: true, can_reply: true, can_resolve: true },
+            };
+            const result = replyToTextMessage(reply);
+
+            expect(result.permissions).toEqual({
+                canDelete: true,
+                canEdit: false,
+                canReply: true,
+                canResolve: true,
             });
         });
     });
@@ -162,22 +177,19 @@ describe('threadedAnnotationsAdapters', () => {
             expect(result).toEqual([]);
         });
 
-        test('should include description as first message', () => {
+        test('should include description as first message using annotation-level author and permissions', () => {
             const annotation: Annotation = {
                 ...baseAnnotation,
-                description: {
-                    created_at: '2026-01-01T00:00:00Z',
-                    created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
-                    id: 'desc-1',
-                    message: 'Root message',
-                    parent: { id: 'ann-1', type: 'annotation' },
-                    type: 'reply',
-                },
+                description: { message: 'Root message' } as unknown as Reply,
             };
             const result = annotationToMessages(annotation);
 
             expect(result).toHaveLength(1);
-            expect(result[0].id).toBe('desc-1');
+            expect(result[0].id).toBe('ann-1');
+            expect(result[0].author.name).toBe('User');
+            expect(result[0].author.email).toBe('user@box.com');
+            expect(result[0].author.id).toBe(1);
+            expect(result[0].createdAt).toBe(new Date('2026-01-01T00:00:00Z').getTime());
             expect(result[0].permissions.canDelete).toBe(true);
             expect(result[0].permissions.canEdit).toBe(true);
         });
@@ -185,14 +197,7 @@ describe('threadedAnnotationsAdapters', () => {
         test('should include description and replies in order', () => {
             const annotation: Annotation = {
                 ...baseAnnotation,
-                description: {
-                    created_at: '2026-01-01T00:00:00Z',
-                    created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
-                    id: 'desc-1',
-                    message: 'Root',
-                    parent: { id: 'ann-1', type: 'annotation' },
-                    type: 'reply',
-                },
+                description: { message: 'Root' } as unknown as Reply,
                 replies: [
                     {
                         created_at: '2026-01-02T00:00:00Z',
@@ -207,42 +212,12 @@ describe('threadedAnnotationsAdapters', () => {
             const result = annotationToMessages(annotation);
 
             expect(result).toHaveLength(2);
-            expect(result[0].id).toBe('desc-1');
-            expect(result[1].id).toBe('reply-1');
-        });
-
-        test('should fall back to annotation fields when description is sparse', () => {
-            const annotation: Annotation = {
-                ...baseAnnotation,
-                description: {
-                    message: 'Sparse description',
-                } as unknown as Reply,
-            };
-            const result = annotationToMessages(annotation);
-
-            expect(result).toHaveLength(1);
             expect(result[0].id).toBe('ann-1');
+            expect(result[1].id).toBe('reply-1');
             expect(result[0].author.name).toBe('User');
-            expect(result[0].author.email).toBe('user@box.com');
-            expect(result[0].author.id).toBe(1);
-            expect(result[0].createdAt).toBe(new Date('2026-01-01T00:00:00Z').getTime());
+            expect(result[1].author.name).toBe('Other');
         });
 
-        test('should handle description with missing created_by gracefully', () => {
-            const annotation: Annotation = {
-                ...baseAnnotation,
-                description: {
-                    id: 'desc-1',
-                    message: 'Test',
-                    created_at: '2026-01-01T00:00:00Z',
-                } as unknown as Reply,
-            };
-            const result = annotationToMessages(annotation);
-
-            expect(result).toHaveLength(1);
-            expect(result[0].author.name).toBe('User');
-            expect(result[0].author.email).toBe('user@box.com');
-        });
     });
 
     describe('collaboratorToUserContact', () => {

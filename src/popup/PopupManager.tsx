@@ -20,16 +20,18 @@ export default class PopupManager extends BaseManager {
         this.reactEl.dataset.testid = 'ba-Layer--popup';
     }
 
-    render(props: Props): void {
+    render({ callbacks, intl, store }: Props): void {
         if (!this.root) {
             this.root = ReactDOM.createRoot(this.reactEl);
         }
 
         this.root.render(
             <PopupContainer
+                callbacks={callbacks}
+                intl={intl}
                 location={this.location}
-                {...props}
                 popupPortalEl={this.popupPortalEl}
+                store={store}
                 targetType={this.targetType}
             />,
         );

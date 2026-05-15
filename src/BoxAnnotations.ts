@@ -16,6 +16,7 @@ type Annotator = {
 type AnnotationsOptions = {
     features: Features;
     intl: IntlOptions;
+    onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
 };
 
 export type Features = {

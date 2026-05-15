@@ -108,6 +108,7 @@ export default class MediaAnnotator extends BaseAnnotator {
                 width: `${referenceEl.offsetWidth}px`,
             });
             manager.render({
+                callbacks: { onCopyLink: this.onCopyLink },
                 intl: this.intl,
                 store: this.store,
             });

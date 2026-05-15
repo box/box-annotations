@@ -153,6 +153,19 @@ describe('BaseAnnotator', () => {
             expect(annotator.features).toEqual(features);
         });
 
+        test('should store onCopyLink callback when provided', () => {
+            const onCopyLink = jest.fn();
+            initAnnotator({ onCopyLink });
+
+            expect(annotator.onCopyLink).toBe(onCopyLink);
+        });
+
+        test('should leave onCopyLink undefined when not provided', () => {
+            initAnnotator();
+
+            expect(annotator.onCopyLink).toBeUndefined();
+        });
+
         test('should set initial mode and color', () => {
             initAnnotator({ initialColor: '#000', initialMode: Mode.REGION });
 
