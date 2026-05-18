@@ -124,6 +124,7 @@ export default class ImageAnnotator extends BaseAnnotator {
             });
 
             manager.render({
+                callbacks: { onCopyLink: this.onCopyLink },
                 intl: this.intl,
                 store: this.store,
             });

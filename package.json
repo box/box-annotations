@@ -1,6 +1,6 @@
 {
     "name": "box-annotations",
-    "version": "5.2.1-beta.11",
+    "version": "5.2.1-beta.13",
     "description": "Box Annotations",
     "author": "Box (https://www.box.com/)",
     "license": "SEE LICENSE IN LICENSE",
@@ -28,13 +28,13 @@
         "@babel/preset-react": "^7.25.9",
         "@babel/preset-typescript": "^7.25.9",
         "@box/frontend": "^10.0.0",
-        "@box/blueprint-web": "^14.27.0",
-        "@box/blueprint-web-assets": "^4.116.6",
-        "@box/collaboration-popover": "^1.61.30",
+        "@box/blueprint-web": "^14.31.0",
+        "@box/blueprint-web-assets": "^4.118.3",
+        "@box/collaboration-popover": "^1.62.9",
         "@box/languages": "^1.1.0",
-        "@box/readable-time": "^1.40.30",
-        "@box/threaded-annotations": "^1.86.0",
-        "@box/user-selector": "^1.75.30",
+        "@box/readable-time": "^1.41.9",
+        "@box/threaded-annotations": "^1.89.8",
+        "@box/user-selector": "^1.76.9",
         "@cfaester/enzyme-adapter-react-18": "^0.8.0",
         "@commitlint/cli": "^8.3.5",
         "@commitlint/config-conventional": "^8.2.0",
@@ -128,12 +128,12 @@
         "worker-farm": "^1.7.0"
     },
     "peerDependencies": {
-        "@box/blueprint-web": "^14.27.0",
-        "@box/blueprint-web-assets": "^4.116.6",
-        "@box/collaboration-popover": "^1.61.30",
-        "@box/readable-time": "^1.40.30",
-        "@box/threaded-annotations": "^1.86.0",
-        "@box/user-selector": "^1.75.30"
+        "@box/blueprint-web": "^14.31.0",
+        "@box/blueprint-web-assets": "^4.118.3",
+        "@box/collaboration-popover": "^1.62.9",
+        "@box/readable-time": "^1.41.9",
+        "@box/threaded-annotations": "^1.89.8",
+        "@box/user-selector": "^1.76.9"
     },
     "scripts": {
         "build": "yarn setup && yarn build:prod:dist",

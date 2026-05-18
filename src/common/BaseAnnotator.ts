@@ -44,6 +44,7 @@ export type Options = {
     initialViewMode?: ViewMode;
     intl: IntlOptions;
     locale?: string;
+    onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
     token: string;
 };
 
@@ -70,6 +71,8 @@ export default class BaseAnnotator extends EventEmitter {
 
     intl: IntlShape;
 
+    onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
+
     store: store.AppStore;
 
     constructor({
@@ -82,6 +85,7 @@ export default class BaseAnnotator extends EventEmitter {
         initialMode,
         initialViewMode = 'annotations',
         intl,
+        onCopyLink,
         token,
     }: Options) {
         super();
@@ -111,6 +115,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.container = container;
         this.features = features;
         this.intl = i18n.createIntlProvider(intl);
+        this.onCopyLink = onCopyLink;
         this.store = store.createStore(initialState, {
             api: new API({ apiHost, token }),
         });

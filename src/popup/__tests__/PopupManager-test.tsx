@@ -67,5 +67,16 @@ describe('PopupManager', () => {
 
             expect(root.render).toHaveBeenCalled();
         });
+
+        test('should forward callbacks to PopupContainer', () => {
+            const wrapper = getWrapper();
+            const root = createRoot(rootEl);
+            const onCopyLink = jest.fn();
+
+            wrapper.render({ callbacks: { onCopyLink }, intl, store: createStore() });
+
+            const element = (root.render as jest.Mock).mock.calls[0][0];
+            expect(element.props.callbacks).toEqual({ onCopyLink });
+        });
     });
 });

@@ -327,6 +327,7 @@ describe('DocumentAnnotator', () => {
             expect(annotator.getPageManagers).toHaveBeenCalledWith(pageEl);
             expect(annotator.getPageNumber).toHaveBeenCalledWith(pageEl);
             expect(mockManager.render).toHaveBeenCalledWith({
+                callbacks: { onCopyLink: undefined },
                 intl: annotator.intl,
                 store: expect.any(Object),
             });
