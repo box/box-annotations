@@ -1,4 +1,5 @@
 type Selection = {
+    containerEl: HTMLElement;
     containerRect: DOMRect;
     hasError?: boolean;
     location: number;
@@ -61,5 +62,5 @@ export function getSelection(): Selection | null {
         location = getPageNumber(selection.focusNode as Element) ?? endPage;
     }
 
-    return { containerRect: containerEl.getBoundingClientRect(), hasError, location, range };
+    return { containerEl: containerEl as HTMLElement, containerRect: containerEl.getBoundingClientRect(), hasError, location, range };
 }

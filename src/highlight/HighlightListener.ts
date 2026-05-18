@@ -1,5 +1,5 @@
 import debounce from 'lodash/debounce';
-import { AppStore, getIsSelecting, SelectionArg as Selection, setSelectionAction } from '../store';
+import { AppStore, getIsSelecting, getRotation, SelectionArg as Selection, setSelectionAction } from '../store';
 
 export type Options = {
     getSelection: () => Selection | null;
@@ -30,7 +30,9 @@ export default class HighlightListener {
             return;
         }
 
-        this.store.dispatch(setSelectionAction(this.getSelection()));
+        const selection = this.getSelection();
+        const rotation = getRotation(this.store.getState());
+        this.store.dispatch(setSelectionAction(selection ? { ...selection, rotation } : null));
     };
 
     debounceHandleSelectionChange = debounce(this.handleSelectionChange, SELECTION_CHANGE_DEBOUNCE);

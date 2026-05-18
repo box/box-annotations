@@ -16,6 +16,7 @@ module.exports = {
     getIsInitialized: jest.fn().mockReturnValue(false),
     getIsPromoting: jest.fn().mockReturnValue(false),
     getIsSelecting: jest.fn().mockReturnValue(false),
+    getRotation: jest.fn().mockReturnValue(0),
     getSelectionForLocation: jest.fn(),
     isCreatorStagedHighlight,
     isCreatorStagedRegion,

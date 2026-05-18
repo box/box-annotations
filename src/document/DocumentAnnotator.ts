@@ -118,7 +118,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 );
             }
 
-            managers.add(new HighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+            managers.add(new HighlightManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
