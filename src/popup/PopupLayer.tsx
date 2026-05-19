@@ -45,6 +45,8 @@ const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } =
     [Mode.REGION]: isCreatorStagedRegion,
 };
 
+const ACTIVE_TARGET_OBSERVER_TIMEOUT_MS = 10000;
+
 const PopupLayer = (props: Props): JSX.Element | null => {
     const {
         activeAnnotationId,
@@ -98,13 +100,39 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
+    // activeAnnotationId can be set (e.g. via deep link) before the target DOM node mounts;
+    // observe until it appears, or give up after ACTIVE_TARGET_OBSERVER_TIMEOUT_MS.
     React.useEffect(() => {
-        if (activeAnnotationId && isThreadedAnnotation) {
-            const el = document.querySelector(`[data-ba-annotation-id="${CSS.escape(activeAnnotationId)}"]`);
-            setActiveReference(el);
-        } else {
+        if (!activeAnnotationId || !isThreadedAnnotation) {
             setActiveReference(null);
+            return noop;
         }
+
+        const selector = `[data-ba-annotation-id="${CSS.escape(activeAnnotationId)}"]`;
+        const existing = document.querySelector(selector);
+        if (existing) {
+            setActiveReference(existing);
+            return noop;
+        }
+
+        setActiveReference(null);
+        const observer = new MutationObserver(() => {
+            const el = document.querySelector(selector);
+            if (el) {
+                setActiveReference(el);
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        const timeoutId = window.setTimeout(() => {
+            observer.disconnect();
+        }, ACTIVE_TARGET_OBSERVER_TIMEOUT_MS);
+
+        return () => {
+            observer.disconnect();
+            window.clearTimeout(timeoutId);
+        };
     }, [activeAnnotationId, isThreadedAnnotation]);
 
     const showCreator = canCreate && canReply && reference && staged;
