@@ -34,7 +34,8 @@
     z-index: 10;
     pointer-events: none;
 
-    .ba-Popup {
+    .ba-Popup,
+    .ba-PopupV2 {
         z-index: 150;
         pointer-events: auto;
     }
