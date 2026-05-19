@@ -152,6 +152,134 @@ describe('PopupLayer', () => {
             expect(screen.getByTestId('popup-reply')).toBeDefined();
             expect(screen.queryByTestId('popup-v2')).toBeNull();
         });
+
+        describe('active annotation thread', () => {
+            const activeAnnotationId = 'annotation-1';
+
+            const appendTarget = (id: string): HTMLElement => {
+                const target = document.createElement('div');
+                target.setAttribute('data-ba-annotation-id', id);
+                document.body.appendChild(target);
+                return target;
+            };
+
+            test('should register a MutationObserver and resolve once the target element appears in the DOM', async () => {
+                const observeSpy = jest.spyOn(MutationObserver.prototype, 'observe');
+                const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
+
+                renderLayer({
+                    activeAnnotationId,
+                    isThreadedAnnotation: true,
+                    staged: null,
+                    status: CreatorStatus.init,
+                });
+
+                expect(screen.queryByTestId('popup-v2')).toBeNull();
+                expect(observeSpy).toHaveBeenCalledWith(document.body, { childList: true, subtree: true });
+
+                act(() => {
+                    appendTarget(activeAnnotationId);
+                });
+
+                const popup = await screen.findByTestId('popup-v2');
+                expect(popup.getAttribute('data-annotation-id')).toBe(activeAnnotationId);
+                expect(disconnectSpy).toHaveBeenCalled();
+
+                observeSpy.mockRestore();
+                disconnectSpy.mockRestore();
+            });
+
+            test('should disconnect the previous observer when activeAnnotationId changes', () => {
+                const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
+
+                const { rerender } = renderLayer({
+                    activeAnnotationId,
+                    isThreadedAnnotation: true,
+                    staged: null,
+                    status: CreatorStatus.init,
+                });
+
+                const callsBeforeChange = disconnectSpy.mock.calls.length;
+
+                act(() => {
+                    rerender(
+                        <PopupLayer
+                            {...getDefaults()}
+                            activeAnnotationId="annotation-2"
+                            isThreadedAnnotation
+                            staged={null}
+                            status={CreatorStatus.init}
+                        />,
+                    );
+                });
+
+                expect(disconnectSpy.mock.calls.length).toBeGreaterThan(callsBeforeChange);
+
+                disconnectSpy.mockRestore();
+            });
+
+            test('should disconnect the observer on unmount', () => {
+                const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
+
+                const { unmount } = renderLayer({
+                    activeAnnotationId,
+                    isThreadedAnnotation: true,
+                    staged: null,
+                    status: CreatorStatus.init,
+                });
+
+                const callsBeforeUnmount = disconnectSpy.mock.calls.length;
+                act(() => {
+                    unmount();
+                });
+
+                expect(disconnectSpy.mock.calls.length).toBeGreaterThan(callsBeforeUnmount);
+
+                disconnectSpy.mockRestore();
+            });
+
+            test('should not update reference when target appears after unmount', () => {
+                const { unmount } = renderLayer({
+                    activeAnnotationId,
+                    isThreadedAnnotation: true,
+                    staged: null,
+                    status: CreatorStatus.init,
+                });
+
+                act(() => {
+                    unmount();
+                });
+
+                expect(() => {
+                    act(() => {
+                        appendTarget(activeAnnotationId);
+                    });
+                }).not.toThrow();
+            });
+
+            test('should disconnect the observer after the timeout when no target appears', () => {
+                jest.useFakeTimers();
+                const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
+
+                renderLayer({
+                    activeAnnotationId,
+                    isThreadedAnnotation: true,
+                    staged: null,
+                    status: CreatorStatus.init,
+                });
+
+                const callsBeforeTimeout = disconnectSpy.mock.calls.length;
+
+                act(() => {
+                    jest.advanceTimersByTime(10000);
+                });
+
+                expect(disconnectSpy.mock.calls.length).toBeGreaterThan(callsBeforeTimeout);
+
+                disconnectSpy.mockRestore();
+                jest.useRealTimers();
+            });
+        });
     });
 
     describe('popup portal', () => {
