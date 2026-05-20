@@ -194,6 +194,22 @@ describe('threadedAnnotationsAdapters', () => {
             expect(result[0].permissions.canEdit).toBe(true);
         });
 
+        test.each([
+            ['identical timestamps', '2026-01-01T00:00:00Z', undefined],
+            ['equivalent ISO formats with fractional precision', '2026-01-01T00:00:00.000Z', undefined],
+            ['unparseable modified_at', 'not-a-date', undefined],
+            ['edited later', '2026-02-01T00:00:00Z', new Date('2026-02-01T00:00:00Z').getTime()],
+        ])('should map updatedAt for %s', (_label, modifiedAt, expected) => {
+            const annotation: Annotation = {
+                ...baseAnnotation,
+                description: { message: 'Root' } as unknown as Reply,
+                modified_at: modifiedAt,
+            };
+            const result = annotationToMessages(annotation);
+
+            expect(result[0].updatedAt).toBe(expected);
+        });
+
         test('should include description and replies in order', () => {
             const annotation: Annotation = {
                 ...baseAnnotation,
@@ -217,7 +233,6 @@ describe('threadedAnnotationsAdapters', () => {
             expect(result[0].author.name).toBe('User');
             expect(result[1].author.name).toBe('Other');
         });
-
     });
 
     describe('collaboratorToUserContact', () => {
