@@ -2,28 +2,58 @@ import noop from 'lodash/noop';
 import { Action, Dispatch, Middleware, MiddlewareAPI } from '@reduxjs/toolkit';
 import {
     createAnnotationAction,
+    createReplyAction,
+    deleteAnnotationAction,
+    deleteReplyAction,
     fetchAnnotationsAction,
     setActiveAnnotationIdAction,
     setIsInitialized,
+    updateAnnotationAction,
+    updateReplyAction,
 } from '../annotations/actions';
 import { navigateBoundingBoxHighlightAction } from '../boundingBoxHighlights/actions';
 import { EventHandlerMap } from './types';
 import { handleActiveAnnotationEvents } from './active';
 import { handleAnnotationsInitialized } from './init';
-import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
-import { handleFetchErrorEvents } from './fetch';
 import { handleNavigateBoundingBoxHighlight } from './boundingBoxHighlightNav';
+import { handleCreateErrorEvents, handleCreatePendingEvents, handleCreateSuccessEvents } from './create';
+import { handleDeleteErrorEvents, handleDeletePendingEvents, handleDeleteSuccessEvents } from './delete';
+import { handleFetchErrorEvents } from './fetch';
+import { handleToggleAnnotationModeAction } from './mode';
+import {
+    handleReplyCreateErrorEvents,
+    handleReplyCreatePendingEvents,
+    handleReplyCreateSuccessEvents,
+} from './replyCreate';
+import {
+    handleReplyDeleteErrorEvents,
+    handleReplyDeletePendingEvents,
+    handleReplyDeleteSuccessEvents,
+} from './replyDelete';
+import {
+    handleReplyUpdateErrorEvents,
+    handleReplyUpdatePendingEvents,
+    handleReplyUpdateSuccessEvents,
+} from './replyUpdate';
 import { handleResetCreatorAction, handleSetStagedAction } from './staged';
 import { handleSetStatusAction } from './status';
-import { handleToggleAnnotationModeAction } from './mode';
+import { handleUpdateErrorEvents, handleUpdatePendingEvents, handleUpdateSuccessEvents } from './update';
 import { resetCreatorAction, setStagedAction, setStatusAction } from '../creator';
 import { toggleAnnotationModeAction } from '../common/actions';
 
-// Array of event handlers based on redux action. To add handling for new events add an entry keyed by action
-const eventHandlers: EventHandlerMap = {
+export const eventHandlers: EventHandlerMap = {
     [createAnnotationAction.fulfilled.toString()]: handleCreateSuccessEvents,
     [createAnnotationAction.pending.toString()]: handleCreatePendingEvents,
     [createAnnotationAction.rejected.toString()]: handleCreateErrorEvents,
+    [createReplyAction.fulfilled.toString()]: handleReplyCreateSuccessEvents,
+    [createReplyAction.pending.toString()]: handleReplyCreatePendingEvents,
+    [createReplyAction.rejected.toString()]: handleReplyCreateErrorEvents,
+    [deleteAnnotationAction.fulfilled.toString()]: handleDeleteSuccessEvents,
+    [deleteAnnotationAction.pending.toString()]: handleDeletePendingEvents,
+    [deleteAnnotationAction.rejected.toString()]: handleDeleteErrorEvents,
+    [deleteReplyAction.fulfilled.toString()]: handleReplyDeleteSuccessEvents,
+    [deleteReplyAction.pending.toString()]: handleReplyDeletePendingEvents,
+    [deleteReplyAction.rejected.toString()]: handleReplyDeleteErrorEvents,
     [fetchAnnotationsAction.rejected.toString()]: handleFetchErrorEvents,
     [navigateBoundingBoxHighlightAction.toString()]: handleNavigateBoundingBoxHighlight,
     [resetCreatorAction.toString()]: handleResetCreatorAction,
@@ -32,6 +62,12 @@ const eventHandlers: EventHandlerMap = {
     [setStagedAction.toString()]: handleSetStagedAction,
     [setStatusAction.toString()]: handleSetStatusAction,
     [toggleAnnotationModeAction.toString()]: handleToggleAnnotationModeAction,
+    [updateAnnotationAction.fulfilled.toString()]: handleUpdateSuccessEvents,
+    [updateAnnotationAction.pending.toString()]: handleUpdatePendingEvents,
+    [updateAnnotationAction.rejected.toString()]: handleUpdateErrorEvents,
+    [updateReplyAction.fulfilled.toString()]: handleReplyUpdateSuccessEvents,
+    [updateReplyAction.pending.toString()]: handleReplyUpdatePendingEvents,
+    [updateReplyAction.rejected.toString()]: handleReplyUpdateErrorEvents,
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {

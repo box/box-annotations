@@ -1,9 +1,9 @@
 import eventManager from '../../common/EventManager';
 import { AsyncAction, Status } from './types';
 import { AppState } from '../types';
-import { Event } from '../../@types';
+import { Annotation, Event, NewAnnotation } from '../../@types';
 
-const emitCreateEvent = (action: AsyncAction, status: Status): void => {
+const emitCreateEvent = (action: AsyncAction<NewAnnotation, Annotation>, status: Status): void => {
     const { error, meta: { arg, requestId } = {}, payload } = action;
     eventManager.emit(Event.ANNOTATION_CREATE, {
         annotation: payload || arg,
@@ -16,7 +16,7 @@ const emitCreateEvent = (action: AsyncAction, status: Status): void => {
 };
 
 const createHandler = (status: Status) => (prevState: AppState, nextState: AppState, action: AsyncAction): void =>
-    emitCreateEvent(action, status);
+    emitCreateEvent(action as AsyncAction<NewAnnotation, Annotation>, status);
 
 const handleCreateErrorEvents = createHandler(Status.ERROR);
 const handleCreatePendingEvents = createHandler(Status.PENDING);
