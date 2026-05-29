@@ -12,4 +12,9 @@ export default jest.fn(() => ({
         ),
         destroy: jest.fn(),
     })),
+    getThreadedCommentsAPI: jest.fn(() => ({
+        deleteComment: jest.fn(({ successCallback }) => successCallback()),
+        updateComment: jest.fn(({ successCallback }) => successCallback({ id: 'reply_1', message: 'updated' })),
+        destroy: jest.fn(),
+    })),
 }));

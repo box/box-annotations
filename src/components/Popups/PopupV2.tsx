@@ -21,13 +21,16 @@ import AnnotationCallbacksContext from '../../common/AnnotationCallbacksContext'
 import {
     createReplyAction,
     deleteAnnotationAction,
+    deleteReplyAction,
     setActiveAnnotationIdAction,
     updateAnnotationAction,
+    updateReplyAction,
 } from '../../store/annotations/actions';
 import { getAnnotation } from '../../store/annotations/selectors';
-import { getApiHost, getFileVersionId, getToken } from '../../store/options';
+import { getApiHost, getFileId, getFileVersionId, getToken } from '../../store/options';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
+import type { Token, TokenLiteral, TokenMap } from '../../@types';
 import type { AppState, AppThunkDispatch } from '../../store/types';
 
 import createPopper, { PopupReference } from './Popper';
@@ -63,12 +66,32 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
 
-// Callers render initials as a fallback on null.
-// A persistent null across all users usually indicates a stale token.
-const fetchAvatarBlob = async (apiHost: string, token: string, userId: string): Promise<string | null> => {
+const literalToString = (literal: TokenLiteral): string | null => {
+    if (!literal) return null;
+    if (typeof literal === 'string') return literal;
+    return literal.read ?? literal.write ?? null;
+};
+
+const resolveStringToken = async (token: Token, typedFileId: string): Promise<string | null> => {
+    const resolved = typeof token === 'function' ? await token(typedFileId) : token;
+    if (!resolved) return null;
+    if (typeof resolved === 'string') return resolved;
+    if ('read' in resolved) return literalToString(resolved as TokenLiteral);
+    return literalToString((resolved as TokenMap)[typedFileId]);
+};
+
+const fetchAvatarBlob = async (
+    apiHost: string,
+    token: Token,
+    fileId: string | null,
+    userId: string,
+): Promise<string | null> => {
     try {
+        if (!fileId) return null;
+        const stringToken = await resolveStringToken(token, `file_${fileId}`);
+        if (!stringToken) return null;
         const response = await fetch(`${apiHost}/2.0/users/${userId}/avatar?pic_type=large`, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${stringToken}` },
         });
         if (!response.ok) return null;
         const blob = await response.blob();
@@ -87,6 +110,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
 
     const apiHost = useSelector(getApiHost);
+    const fileId = useSelector(getFileId);
     const fileVersionId = useSelector(getFileVersionId);
     const token = useSelector(getToken);
     const onCopyLink = React.useMemo(
@@ -111,7 +135,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             if (cached) return cached;
             const capturedApiHost = apiHost;
             const capturedToken = token;
-            const url = await fetchAvatarBlob(capturedApiHost, capturedToken, userId);
+            const url = await fetchAvatarBlob(capturedApiHost, capturedToken, fileId, userId);
             if (!url) return null;
             if (
                 credentialsRef.current.apiHost !== capturedApiHost ||
@@ -128,7 +152,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             avatarCacheRef.current.set(userId, url);
             return url;
         },
-        [apiHost, token],
+        [apiHost, fileId, token],
     );
 
     React.useEffect(() => {
@@ -247,10 +271,14 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
 
     const handleEdit = React.useCallback(
         async (id: string, content: JSONContent | null): Promise<void> => {
-            if (!annotationId || id !== annotationId) return;
+            if (!annotationId) return;
             const doc = createDocumentNode(content);
             const { text } = serializeMentionMarkup(doc);
-            await dispatch(updateAnnotationAction({ annotationId, payload: { message: text } }));
+            if (id === annotationId) {
+                await dispatch(updateAnnotationAction({ annotationId, payload: { message: text } }));
+                return;
+            }
+            await dispatch(updateReplyAction({ annotationId, replyId: id, payload: { message: text } }));
         },
         [annotationId, dispatch],
     );
@@ -260,6 +288,14 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             if (annotationId) {
                 await dispatch(deleteAnnotationAction(annotationId));
             }
+        },
+        [annotationId, dispatch],
+    );
+
+    const handleDelete = React.useCallback(
+        async (id: string): Promise<void> => {
+            if (!annotationId || id === annotationId) return;
+            await dispatch(deleteReplyAction({ annotationId, replyId: id }));
         },
         [annotationId, dispatch],
     );
@@ -314,7 +350,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                                     messages={threadMessages}
                                     onAvatarClick={noop}
                                     onCopyLink={onCopyLink}
-                                    onDelete={noop}
+                                    onDelete={handleDelete}
                                     onEdit={handleEdit}
                                     onPost={handlePost}
                                     onResolve={handleResolve}

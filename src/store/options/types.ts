@@ -1,5 +1,5 @@
 import { Features } from '../../BoxAnnotations';
-import { Permissions } from '../../@types';
+import { Permissions, Token } from '../../@types';
 
 /** View mode: annotations and bounding boxes are mutually exclusive. */
 export type ViewMode = 'annotations' | 'boundingBoxes';
@@ -13,6 +13,6 @@ export type OptionsState = {
     permissions: Permissions;
     rotation: number;
     scale: number;
-    token: string;
+    token: Token;
     viewMode: ViewMode;
 };

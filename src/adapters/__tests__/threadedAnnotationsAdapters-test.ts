@@ -144,10 +144,25 @@ describe('threadedAnnotationsAdapters', () => {
             });
         });
 
-        test('should map reply permissions from backend payload, forcing canEdit false', () => {
+        test('should map reply permissions from backend payload', () => {
             const reply: Reply = {
                 ...mockReply,
                 permissions: { can_delete: true, can_edit: true, can_reply: true, can_resolve: true },
+            };
+            const result = replyToTextMessage(reply);
+
+            expect(result.permissions).toEqual({
+                canDelete: true,
+                canEdit: true,
+                canReply: true,
+                canResolve: true,
+            });
+        });
+
+        test('should default canEdit to false when backend payload omits it', () => {
+            const reply: Reply = {
+                ...mockReply,
+                permissions: { can_delete: true, can_reply: true, can_resolve: true },
             };
             const result = replyToTextMessage(reply);
 

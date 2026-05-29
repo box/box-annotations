@@ -83,7 +83,7 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
     message: deserializeMentionMarkup(reply.message),
     permissions: {
         canDelete: reply.permissions?.can_delete ?? false,
-        canEdit: false,
+        canEdit: reply.permissions?.can_edit ?? false,
         canReply: reply.permissions?.can_reply ?? false,
         canResolve: reply.permissions?.can_resolve ?? false,
     },

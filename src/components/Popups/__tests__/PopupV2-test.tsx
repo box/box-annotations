@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
-import { updateAnnotationAction } from '../../../store/annotations/actions';
-import { getApiHost, getFileVersionId, getToken } from '../../../store/options';
+import {
+    deleteReplyAction,
+    updateAnnotationAction,
+    updateReplyAction,
+} from '../../../store/annotations/actions';
+import { getApiHost, getFileId, getFileVersionId, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -62,10 +66,12 @@ jest.mock('@box/threaded-annotations', () => {
 jest.mock('../../../store/annotations/actions', () => ({
     createReplyAction: jest.fn(),
     deleteAnnotationAction: jest.fn(),
+    deleteReplyAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
     updateAnnotationAction: Object.assign(jest.fn(), {
         fulfilled: { match: jest.fn().mockReturnValue(true) },
     }),
+    updateReplyAction: jest.fn(),
 }));
 
 jest.mock('../../../store/users/actions', () => ({
@@ -80,6 +86,7 @@ const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 const mockSelectorValues = (annotation?: unknown): void => {
     mockUseSelector.mockImplementation(selector => {
         if (selector === getApiHost) return 'https://api.box.com';
+        if (selector === getFileId) return '12345';
         if (selector === getFileVersionId) return 'fv-1';
         if (selector === getToken) return 'test-token';
         return annotation;
@@ -243,13 +250,39 @@ describe('PopupV2', () => {
             });
         });
 
-        test('should not dispatch updateAnnotationAction when editing a reply', async () => {
+        test('should dispatch updateReplyAction (not updateAnnotationAction) when editing a reply', async () => {
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
             await lastThreadedAnnotationsProps.onEdit?.('reply-1', { type: 'doc', content: [] });
 
             expect(updateAnnotationAction).not.toHaveBeenCalled();
+            expect(updateReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                replyId: 'reply-1',
+                payload: { message: 'serialized text' },
+            });
+        });
+
+        test('should dispatch deleteReplyAction when a reply is deleted', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onDelete?.('reply-1');
+
+            expect(deleteReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                replyId: 'reply-1',
+            });
+        });
+
+        test('should not dispatch deleteReplyAction when deleting the root annotation id', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onDelete?.('annotation-1');
+
+            expect(deleteReplyAction).not.toHaveBeenCalled();
         });
 
         test('should invoke context onCopyLink with the root annotationId and fileVersionId regardless of clicked message id', async () => {
@@ -270,6 +303,7 @@ describe('PopupV2', () => {
             const onCopyLink = jest.fn();
             mockUseSelector.mockImplementation(selector => {
                 if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileId) return '12345';
                 if (selector === getFileVersionId) return null;
                 if (selector === getToken) return 'test-token';
                 return mockAnnotation;
@@ -309,6 +343,60 @@ describe('PopupV2', () => {
             );
             const [calledUrl] = mockFetch.mock.calls[0];
             expect(calledUrl).not.toContain('access_token');
+        });
+
+        test('should resolve a function token by typed file id before building Authorization header', async () => {
+            const tokenResolver = jest.fn().mockResolvedValue('resolved-token');
+            mockUseSelector.mockImplementation(selector => {
+                if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileId) return '12345';
+                if (selector === getFileVersionId) return 'fv-1';
+                if (selector === getToken) return tokenResolver;
+                return mockAnnotation;
+            });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(tokenResolver).toHaveBeenCalledWith('file_12345');
+            expect(mockFetch).toHaveBeenCalledWith(
+                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
+                { headers: { Authorization: 'Bearer resolved-token' } },
+            );
+        });
+
+        test('should resolve a per-file map token by extracting the read string', async () => {
+            const tokenMap = { file_12345: { read: 'read-token', write: 'write-token' } };
+            mockUseSelector.mockImplementation(selector => {
+                if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileId) return '12345';
+                if (selector === getFileVersionId) return 'fv-1';
+                if (selector === getToken) return tokenMap;
+                return mockAnnotation;
+            });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
+                { headers: { Authorization: 'Bearer read-token' } },
+            );
+        });
+
+        test('should not call fetch when fileId is missing', async () => {
+            mockUseSelector.mockImplementation(selector => {
+                if (selector === getApiHost) return 'https://api.box.com';
+                if (selector === getFileId) return null;
+                if (selector === getFileVersionId) return 'fv-1';
+                if (selector === getToken) return 'test-token';
+                return mockAnnotation;
+            });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(mockFetch).not.toHaveBeenCalled();
         });
     });
 
