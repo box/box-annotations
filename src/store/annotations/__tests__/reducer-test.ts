@@ -3,6 +3,10 @@ import {annotationState as state} from '../__mocks__/annotationsState';
 import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup, Reply } from '../../../@types';
 import { APICollection } from '../../../api';
 import {
+    applySidebarAnnotationUpdateAction,
+    applySidebarReplyCreateAction,
+    applySidebarReplyDeleteAction,
+    applySidebarReplyUpdateAction,
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
@@ -370,6 +374,214 @@ describe('store/annotations/reducer', () => {
             );
 
             expect(newState.byId).toEqual(state.byId);
+        });
+    });
+
+    describe('applySidebarAnnotationUpdateAction', () => {
+        test('should merge partial annotation into existing state without erasing other fields', () => {
+            const description = { message: 'original' } as unknown as Reply;
+            const stateWithDescription = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, description, status: 'open' } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithDescription,
+                applySidebarAnnotationUpdateAction({ id: 'test1', status: 'resolved' }),
+            );
+
+            expect(newState.byId.test1).toMatchObject({ id: 'test1', description, status: 'resolved' });
+        });
+
+        test('should ignore updates for annotations not in state', () => {
+            const newState = reducer(
+                state,
+                applySidebarAnnotationUpdateAction({ id: 'unknown' }),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
+        });
+
+        test.each([['resolved' as const], ['open' as const]])(
+            'should apply status=%s for resolve/unresolve flow',
+            annotationStatus => {
+                const newState = reducer(state, applySidebarAnnotationUpdateAction({ id: 'test1', status: annotationStatus }));
+
+                expect(newState.byId.test1).toMatchObject({ status: annotationStatus });
+            },
+        );
+
+        test('should not erase existing fields when payload key value is undefined', () => {
+            const permissions = { can_delete: true, can_edit: true } as const;
+            const stateWithPermissions = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, permissions, status: 'open' } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithPermissions,
+                applySidebarAnnotationUpdateAction({
+                    id: 'test1',
+                    status: 'resolved',
+                    permissions: undefined,
+                } as unknown as ReturnType<typeof applySidebarAnnotationUpdateAction>['payload']),
+            );
+
+            expect(newState.byId.test1).toMatchObject({ permissions, status: 'resolved' });
+        });
+    });
+
+    describe('applySidebarReplyCreateAction', () => {
+        const reply = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'A reply',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+
+        test('should append the reply when annotation has no replies yet', () => {
+            const newState = reducer(state, applySidebarReplyCreateAction({ annotationId: 'test1', reply }));
+
+            expect(newState.byId.test1.replies).toHaveLength(1);
+            expect(newState.byId.test1.replies![0]).toEqual(reply);
+        });
+
+        test('should dedupe by reply.id when the same reply is applied twice', () => {
+            const stateWithReply = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [reply] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReply,
+                applySidebarReplyCreateAction({ annotationId: 'test1', reply }),
+            );
+
+            expect(newState.byId.test1.replies).toHaveLength(1);
+        });
+
+        test('should ignore create for annotations not in state', () => {
+            const newState = reducer(
+                state,
+                applySidebarReplyCreateAction({ annotationId: 'unknown', reply }),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
+        });
+    });
+
+    describe('applySidebarReplyUpdateAction', () => {
+        const existingReply = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'old',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+
+        test('should merge updated fields into the matching reply', () => {
+            const stateWithReply = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [existingReply] } as unknown as Annotation,
+                },
+            };
+
+            const updatedReply = { ...existingReply, message: 'new' } as Reply;
+            const newState = reducer(
+                stateWithReply,
+                applySidebarReplyUpdateAction({ annotationId: 'test1', reply: updatedReply }),
+            );
+
+            expect(newState.byId.test1.replies![0]).toMatchObject({ id: 'reply-1', message: 'new' });
+        });
+
+        test('should leave other replies untouched', () => {
+            const otherReply = { ...existingReply, id: 'reply-2', message: 'other' } as Reply;
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [existingReply, otherReply] } as unknown as Annotation,
+                },
+            };
+
+            const updatedReply = { ...existingReply, message: 'new' } as Reply;
+            const newState = reducer(
+                stateWithReplies,
+                applySidebarReplyUpdateAction({ annotationId: 'test1', reply: updatedReply }),
+            );
+
+            expect(newState.byId.test1.replies![1]).toEqual(otherReply);
+        });
+
+        test('should ignore update when annotation does not exist', () => {
+            const updatedReply = { ...existingReply, message: 'new' } as Reply;
+            const newState = reducer(
+                state,
+                applySidebarReplyUpdateAction({ annotationId: 'unknown', reply: updatedReply }),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
+        });
+    });
+
+    describe('applySidebarReplyDeleteAction', () => {
+        const replyA = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'first',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+        const replyB = { ...replyA, id: 'reply-2', message: 'second' } as Reply;
+
+        test('should remove the targeted reply by id', () => {
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [replyA, replyB] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReplies,
+                applySidebarReplyDeleteAction({ annotationId: 'test1', replyId: 'reply-1' }),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([replyB]);
+        });
+
+        test('should leave replies unchanged when id does not match', () => {
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [replyA] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReplies,
+                applySidebarReplyDeleteAction({ annotationId: 'test1', replyId: 'reply-other' }),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([replyA]);
         });
     });
 

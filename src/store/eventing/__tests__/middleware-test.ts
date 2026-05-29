@@ -1,5 +1,9 @@
 import getEventingMiddleware, { eventHandlers } from '../middleware';
 import {
+    applySidebarAnnotationUpdateAction,
+    applySidebarReplyCreateAction,
+    applySidebarReplyDeleteAction,
+    applySidebarReplyUpdateAction,
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
@@ -50,6 +54,15 @@ describe('store/eventing/middleware', () => {
             expect(eventHandlers).toHaveProperty(thunk.fulfilled.toString());
             expect(eventHandlers).toHaveProperty(thunk.pending.toString());
             expect(eventHandlers).toHaveProperty(thunk.rejected.toString());
+        });
+
+        test.each([
+            applySidebarAnnotationUpdateAction,
+            applySidebarReplyCreateAction,
+            applySidebarReplyDeleteAction,
+            applySidebarReplyUpdateAction,
+        ])('should NOT register sidebar inbound action $type in the eventing middleware', action => {
+            expect(eventHandlers).not.toHaveProperty(action.toString());
         });
     });
 });

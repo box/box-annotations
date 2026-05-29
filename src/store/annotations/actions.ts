@@ -193,6 +193,23 @@ export const deleteReplyAction = createAsyncThunk<
     },
 );
 
+export type SidebarAnnotationUpdatePayload = Partial<Annotation> & { id: string };
+export type SidebarReplyMutationPayload = { annotationId: string; reply: Reply };
+export type SidebarReplyDeletePayload = { annotationId: string; replyId: string };
+
+export const applySidebarAnnotationUpdateAction = createAction<SidebarAnnotationUpdatePayload>(
+    'APPLY_SIDEBAR_ANNOTATION_UPDATE',
+);
+export const applySidebarReplyCreateAction = createAction<SidebarReplyMutationPayload>(
+    'APPLY_SIDEBAR_REPLY_CREATE',
+);
+export const applySidebarReplyDeleteAction = createAction<SidebarReplyDeletePayload>(
+    'APPLY_SIDEBAR_REPLY_DELETE',
+);
+export const applySidebarReplyUpdateAction = createAction<SidebarReplyMutationPayload>(
+    'APPLY_SIDEBAR_REPLY_UPDATE',
+);
+
 export const removeAnnotationAction = createAction<string>('REMOVE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');
 export const setIsInitialized = createAction('SET_IS_INITIALIZED');

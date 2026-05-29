@@ -2,6 +2,10 @@ import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import { formatDrawing, isDrawing } from '../../drawing/drawingUtil';
 import { AnnotationsState } from './types';
 import {
+    applySidebarAnnotationUpdateAction,
+    applySidebarReplyCreateAction,
+    applySidebarReplyDeleteAction,
+    applySidebarReplyUpdateAction,
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
@@ -73,6 +77,38 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
             if (annotation && annotation.replies) {
                 annotation.replies = annotation.replies.filter(existing => existing.id !== replyId);
             }
+        })
+        .addCase(applySidebarAnnotationUpdateAction, (state, { payload }) => {
+            const existing = state[payload.id];
+            if (!existing) return;
+            // Skip explicit-undefined keys so a sparse payload does not erase fields like permissions.
+            const merged = { ...existing };
+            (Object.keys(payload) as Array<keyof typeof payload>).forEach(key => {
+                const value = payload[key];
+                if (value !== undefined) {
+                    (merged as Record<string, unknown>)[key as string] = value;
+                }
+            });
+            state[payload.id] = merged;
+        })
+        .addCase(applySidebarReplyCreateAction, (state, { payload: { annotationId, reply } }) => {
+            const annotation = state[annotationId];
+            if (!annotation) return;
+            const replies = annotation.replies ?? [];
+            if (replies.some(existing => existing.id === reply.id)) return;
+            annotation.replies = [...replies, reply];
+        })
+        .addCase(applySidebarReplyUpdateAction, (state, { payload: { annotationId, reply } }) => {
+            const annotation = state[annotationId];
+            if (!annotation || !annotation.replies) return;
+            annotation.replies = annotation.replies.map(existing =>
+                existing.id === reply.id ? { ...existing, ...reply } : existing,
+            );
+        })
+        .addCase(applySidebarReplyDeleteAction, (state, { payload: { annotationId, replyId } }) => {
+            const annotation = state[annotationId];
+            if (!annotation || !annotation.replies) return;
+            annotation.replies = annotation.replies.filter(existing => existing.id !== replyId);
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(annotation => {
