@@ -46,6 +46,16 @@ describe('store/eventing/replyUpdate', () => {
                 meta: { requestId: '123', status: 'pending' },
             });
         });
+
+        test('should emit with undefined annotation, annotationReply, and requestId when meta is missing', () => {
+            handleReplyUpdatePendingEvents(prevState, nextState, { type: 'action' } as Action);
+
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_reply_update', {
+                annotation: undefined,
+                annotationReply: undefined,
+                meta: { requestId: undefined, status: 'pending' },
+            });
+        });
     });
 
     describe('handleReplyUpdateSuccessEvents()', () => {

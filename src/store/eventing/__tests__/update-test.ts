@@ -40,6 +40,15 @@ describe('store/eventing/update', () => {
                 meta: { requestId: '123', status: 'pending' },
             });
         });
+
+        test('should emit with undefined annotation and requestId when meta is missing', () => {
+            handleUpdatePendingEvents(prevState, nextState, { type: 'action' } as Action);
+
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_update', {
+                annotation: undefined,
+                meta: { requestId: undefined, status: 'pending' },
+            });
+        });
     });
 
     describe('handleUpdateSuccessEvents()', () => {

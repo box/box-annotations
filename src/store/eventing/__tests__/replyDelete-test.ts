@@ -45,6 +45,16 @@ describe('store/eventing/replyDelete', () => {
                 meta: { requestId: '123', status: 'pending' },
             });
         });
+
+        test('should emit with undefined annotation, annotationReply, and requestId when meta is missing', () => {
+            handleReplyDeletePendingEvents(prevState, nextState, { type: 'action' } as Action);
+
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_reply_delete', {
+                annotation: undefined,
+                annotationReply: undefined,
+                meta: { requestId: undefined, status: 'pending' },
+            });
+        });
     });
 
     describe('handleReplyDeleteSuccessEvents()', () => {

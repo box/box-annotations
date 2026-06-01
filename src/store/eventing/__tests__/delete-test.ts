@@ -39,6 +39,15 @@ describe('store/eventing/delete', () => {
                 meta: { requestId: '123', status: 'pending' },
             });
         });
+
+        test('should emit with undefined annotation and requestId when meta is missing', () => {
+            handleDeletePendingEvents(prevState, nextState, { type: 'action' } as Action);
+
+            expect(eventManager.emit).toHaveBeenLastCalledWith('annotations_delete', {
+                annotation: undefined,
+                meta: { requestId: undefined, status: 'pending' },
+            });
+        });
     });
 
     describe('handleDeleteSuccessEvents()', () => {
