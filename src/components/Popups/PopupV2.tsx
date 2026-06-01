@@ -76,8 +76,8 @@ const resolveStringToken = async (token: Token, typedFileId: string): Promise<st
     const resolved = typeof token === 'function' ? await token(typedFileId) : token;
     if (!resolved) return null;
     if (typeof resolved === 'string') return resolved;
-    if ('read' in resolved) return literalToString(resolved as TokenLiteral);
-    return literalToString((resolved as TokenMap)[typedFileId]);
+    if (typedFileId in resolved) return literalToString((resolved as TokenMap)[typedFileId]);
+    return literalToString(resolved as TokenLiteral);
 };
 
 const fetchAvatarBlob = async (

@@ -83,12 +83,26 @@ jest.mock('../../../store/users/actions', () => ({
 const mockUseDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>;
 const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 
-const mockSelectorValues = (annotation?: unknown): void => {
+type SelectorOverrides = {
+    annotation?: unknown;
+    apiHost?: string;
+    fileId?: string | null;
+    fileVersionId?: string | null;
+    token?: unknown;
+};
+
+const mockSelectorValues = ({
+    annotation,
+    apiHost = 'https://api.box.com',
+    fileId = '12345',
+    fileVersionId = 'fv-1',
+    token = 'test-token',
+}: SelectorOverrides = {}): void => {
     mockUseSelector.mockImplementation(selector => {
-        if (selector === getApiHost) return 'https://api.box.com';
-        if (selector === getFileId) return '12345';
-        if (selector === getFileVersionId) return 'fv-1';
-        if (selector === getToken) return 'test-token';
+        if (selector === getApiHost) return apiHost;
+        if (selector === getFileId) return fileId;
+        if (selector === getFileVersionId) return fileVersionId;
+        if (selector === getToken) return token;
         return annotation;
     });
 };
@@ -161,7 +175,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockSelectorValues(undefined);
+            mockSelectorValues();
         });
 
         test('should render MessageEditorV2 with FocusTrap and MentionContextProvider', () => {
@@ -196,7 +210,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockSelectorValues(mockAnnotation);
+            mockSelectorValues({ annotation: mockAnnotation });
         });
 
         test('should render ThreadedAnnotationsV2 with FocusTrap and MentionContextProvider', async () => {
@@ -219,7 +233,7 @@ describe('PopupV2', () => {
         });
 
         test('should render empty messages when annotation is not found', async () => {
-            mockSelectorValues(undefined);
+            mockSelectorValues();
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
@@ -301,13 +315,7 @@ describe('PopupV2', () => {
 
         test('should leave onCopyLink undefined when fileVersionId is missing from the store', async () => {
             const onCopyLink = jest.fn();
-            mockUseSelector.mockImplementation(selector => {
-                if (selector === getApiHost) return 'https://api.box.com';
-                if (selector === getFileId) return '12345';
-                if (selector === getFileVersionId) return null;
-                if (selector === getToken) return 'test-token';
-                return mockAnnotation;
-            });
+            mockSelectorValues({ annotation: mockAnnotation, fileVersionId: null });
             render(
                 <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
                     <PopupV2 {...defaults} />
@@ -347,13 +355,7 @@ describe('PopupV2', () => {
 
         test('should resolve a function token by typed file id before building Authorization header', async () => {
             const tokenResolver = jest.fn().mockResolvedValue('resolved-token');
-            mockUseSelector.mockImplementation(selector => {
-                if (selector === getApiHost) return 'https://api.box.com';
-                if (selector === getFileId) return '12345';
-                if (selector === getFileVersionId) return 'fv-1';
-                if (selector === getToken) return tokenResolver;
-                return mockAnnotation;
-            });
+            mockSelectorValues({ annotation: mockAnnotation, token: tokenResolver });
 
             render(<PopupV2 {...defaults} />);
             await flushPromises();
@@ -367,13 +369,7 @@ describe('PopupV2', () => {
 
         test('should resolve a per-file map token by extracting the read string', async () => {
             const tokenMap = { file_12345: { read: 'read-token', write: 'write-token' } };
-            mockUseSelector.mockImplementation(selector => {
-                if (selector === getApiHost) return 'https://api.box.com';
-                if (selector === getFileId) return '12345';
-                if (selector === getFileVersionId) return 'fv-1';
-                if (selector === getToken) return tokenMap;
-                return mockAnnotation;
-            });
+            mockSelectorValues({ annotation: mockAnnotation, token: tokenMap });
 
             render(<PopupV2 {...defaults} />);
             await flushPromises();
@@ -385,13 +381,7 @@ describe('PopupV2', () => {
         });
 
         test('should not call fetch when fileId is missing', async () => {
-            mockUseSelector.mockImplementation(selector => {
-                if (selector === getApiHost) return 'https://api.box.com';
-                if (selector === getFileId) return null;
-                if (selector === getFileVersionId) return 'fv-1';
-                if (selector === getToken) return 'test-token';
-                return mockAnnotation;
-            });
+            mockSelectorValues({ annotation: mockAnnotation, fileId: null });
 
             render(<PopupV2 {...defaults} />);
             await flushPromises();
@@ -401,14 +391,14 @@ describe('PopupV2', () => {
     });
 
     test('should set aria-label on popup container', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         expect(screen.getByRole('presentation')).toHaveAttribute('aria-label', 'Comment');
     });
 
     test('should render portal container for threaded-annotations popovers', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
@@ -416,7 +406,7 @@ describe('PopupV2', () => {
     });
 
     test('should render popup into popupPortalEl, not the render container', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         const portalEl = makePortalEl();
         const { container } = render(
             <PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={document.createElement('div')} />,
@@ -427,7 +417,7 @@ describe('PopupV2', () => {
     });
 
     test('should render nothing when popupPortalEl is missing', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         const { container } = render(
             <PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />,
         );

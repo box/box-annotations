@@ -107,11 +107,6 @@ describe('store/annotations/actions', () => {
             expect(result.payload).toBeUndefined();
             const {error} = (result as { error: { message: string } });
             expect(error.message).toContain('reply reply_1 not found');
-
-            getState.mockReturnValue({
-                ...baseState,
-                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
-            });
         });
 
         test('should abort the request if the action abort method is called', async () => {
@@ -159,11 +154,6 @@ describe('store/annotations/actions', () => {
             expect(result.payload).toBeUndefined();
             const {error} = (result as { error: { message: string } });
             expect(error.message).toContain('reply reply_1 not found');
-
-            getState.mockReturnValue({
-                ...baseState,
-                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
-            });
         });
 
         test('should abort the request if the action abort method is called', async () => {
