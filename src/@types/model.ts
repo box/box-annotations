@@ -98,6 +98,7 @@ export interface Reply {
     created_by: User;
     id: string;
     message: string;
+    modified_at?: string;
     parent: {
         id: string;
         type: string;

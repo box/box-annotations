@@ -10,5 +10,6 @@ export interface Permissions {
 }
 
 export type TokenLiteral = null | undefined | string | { read: string; write?: string };
-export type TokenResolver = () => TokenLiteral | Promise<TokenLiteral>;
-export type Token = TokenLiteral | TokenResolver;
+export type TokenMap = { [typedFileId: string]: TokenLiteral };
+export type TokenResolver = (typedFileId?: string) => TokenLiteral | TokenMap | Promise<TokenLiteral | TokenMap>;
+export type Token = TokenLiteral | TokenMap | TokenResolver;

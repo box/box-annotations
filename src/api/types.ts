@@ -1,4 +1,4 @@
-import { Annotation, Collaborator, NewAnnotation, Permissions, Reply, Token } from '../@types';
+import { Annotation, Collaborator, NewAnnotation, Permissions, Reply, ReplyPermissions, Token } from '../@types';
 
 export type APICollection<R> = {
     entries: R[];
@@ -69,6 +69,28 @@ export interface AnnotationsAPI {
         successCallback: (result: Annotation) => void,
         errorCallback: (error: APIError) => void,
     ): Promise<void>;
+
+    destroy(): void;
+}
+
+export interface ThreadedCommentsAPI {
+    deleteComment(args: {
+        commentId: string;
+        errorCallback: (error: APIError) => void;
+        fileId: string | null;
+        permissions: ReplyPermissions;
+        successCallback: () => void;
+    }): void;
+
+    updateComment(args: {
+        commentId: string;
+        errorCallback: (error: APIError) => void;
+        fileId: string | null;
+        message?: string;
+        permissions: ReplyPermissions;
+        status?: string;
+        successCallback: (reply: Reply) => void;
+    }): void;
 
     destroy(): void;
 }

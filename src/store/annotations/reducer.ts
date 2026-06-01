@@ -5,11 +5,13 @@ import {
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
+    deleteReplyAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
     setIsInitialized,
     updateAnnotationAction,
+    updateReplyAction,
 } from './actions';
 import { setViewModeAction } from '../options/actions';
 
@@ -57,6 +59,20 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         })
         .addCase(updateAnnotationAction.fulfilled, (state, { payload }) => {
             state[payload.id] = isDrawing(payload) ? formatDrawing(payload) : payload;
+        })
+        .addCase(updateReplyAction.fulfilled, (state, { payload: { annotationId, reply } }) => {
+            const annotation = state[annotationId];
+            if (annotation && annotation.replies) {
+                annotation.replies = annotation.replies.map(existing =>
+                    existing.id === reply.id ? reply : existing,
+                );
+            }
+        })
+        .addCase(deleteReplyAction.fulfilled, (state, { payload: { annotationId, replyId } }) => {
+            const annotation = state[annotationId];
+            if (annotation && annotation.replies) {
+                annotation.replies = annotation.replies.filter(existing => existing.id !== replyId);
+            }
         })
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(annotation => {

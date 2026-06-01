@@ -121,6 +121,78 @@ export const updateAnnotationAction = createAsyncThunk<
     },
 );
 
+export const updateReplyAction = createAsyncThunk<
+    { annotationId: string; reply: Reply },
+    { annotationId: string; replyId: string; payload: { message?: string; status?: string } },
+    AppThunkAPI
+>(
+    'UPDATE_REPLY',
+    async ({ annotationId, replyId, payload }, { extra, getState, signal }) => {
+        const client = extra.api.getThreadedCommentsAPI();
+        const state = getState();
+        const fileId = getFileId(state);
+        const annotation = getAnnotation(state, annotationId);
+        const reply = annotation?.replies?.find(r => r.id === replyId);
+
+        if (!reply) {
+            throw new Error(`updateReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
+        }
+
+        signal.addEventListener('abort', () => {
+            client.destroy();
+        });
+
+        const updated = await new Promise<Reply>((resolve, reject) => {
+            client.updateComment({
+                commentId: replyId,
+                errorCallback: reject,
+                fileId,
+                message: payload.message,
+                permissions: reply.permissions ?? {},
+                status: payload.status,
+                successCallback: resolve,
+            });
+        });
+
+        return { annotationId, reply: updated };
+    },
+);
+
+export const deleteReplyAction = createAsyncThunk<
+    { annotationId: string; replyId: string },
+    { annotationId: string; replyId: string },
+    AppThunkAPI
+>(
+    'DELETE_REPLY',
+    async ({ annotationId, replyId }, { extra, getState, signal }) => {
+        const client = extra.api.getThreadedCommentsAPI();
+        const state = getState();
+        const fileId = getFileId(state);
+        const annotation = getAnnotation(state, annotationId);
+        const reply = annotation?.replies?.find(r => r.id === replyId);
+
+        if (!reply) {
+            throw new Error(`deleteReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
+        }
+
+        signal.addEventListener('abort', () => {
+            client.destroy();
+        });
+
+        await new Promise<void>((resolve, reject) => {
+            client.deleteComment({
+                commentId: replyId,
+                errorCallback: reject,
+                fileId,
+                permissions: reply.permissions ?? {},
+                successCallback: resolve,
+            });
+        });
+
+        return { annotationId, replyId };
+    },
+);
+
 export const removeAnnotationAction = createAction<string>('REMOVE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');
 export const setIsInitialized = createAction('SET_IS_INITIALIZED');

@@ -144,10 +144,25 @@ describe('threadedAnnotationsAdapters', () => {
             });
         });
 
-        test('should map reply permissions from backend payload, forcing canEdit false', () => {
+        test('should map reply permissions from backend payload', () => {
             const reply: Reply = {
                 ...mockReply,
                 permissions: { can_delete: true, can_edit: true, can_reply: true, can_resolve: true },
+            };
+            const result = replyToTextMessage(reply);
+
+            expect(result.permissions).toEqual({
+                canDelete: true,
+                canEdit: true,
+                canReply: true,
+                canResolve: true,
+            });
+        });
+
+        test('should default canEdit to false when backend payload omits it', () => {
+            const reply: Reply = {
+                ...mockReply,
+                permissions: { can_delete: true, can_reply: true, can_resolve: true },
             };
             const result = replyToTextMessage(reply);
 
@@ -157,6 +172,26 @@ describe('threadedAnnotationsAdapters', () => {
                 canReply: true,
                 canResolve: true,
             });
+        });
+
+        test('should leave updatedAt undefined when reply has no modified_at', () => {
+            const result = replyToTextMessage(mockReply);
+
+            expect(result.updatedAt).toBeUndefined();
+        });
+
+        test('should leave updatedAt undefined when modified_at equals created_at', () => {
+            const reply: Reply = { ...mockReply, modified_at: mockReply.created_at };
+            const result = replyToTextMessage(reply);
+
+            expect(result.updatedAt).toBeUndefined();
+        });
+
+        test('should set updatedAt to modified_at instant when reply was edited', () => {
+            const reply: Reply = { ...mockReply, modified_at: '2026-03-15T11:00:00Z' };
+            const result = replyToTextMessage(reply);
+
+            expect(result.updatedAt).toBe(new Date('2026-03-15T11:00:00Z').getTime());
         });
     });
 

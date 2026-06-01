@@ -6,7 +6,7 @@ import DeselectManager from './DeselectManager';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Event, IntlOptions, LegacyEvent, Permissions } from '../@types';
+import { Event, IntlOptions, LegacyEvent, Permissions, Token } from '../@types';
 import { BoundingBox, getBoundingBoxHighlights } from '../store/boundingBoxHighlights';
 import { ViewMode } from '../store/options/types';
 import { Features } from '../BoxAnnotations';
@@ -45,7 +45,7 @@ export type Options = {
     intl: IntlOptions;
     locale?: string;
     onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
-    token: string;
+    token: Token;
 };
 
 export const CSS_CONTAINER_CLASS = 'ba';

@@ -5,6 +5,7 @@ import {
     getPermissions,
     getRotation,
     getScale,
+    getToken,
     getViewMode,
     isFeatureEnabled,
 } from '../selectors';
@@ -62,6 +63,16 @@ describe('store/options/selectors', () => {
     describe('getScale', () => {
         test('should return the current scale', () => {
             expect(getScale({ options: optionsState })).toBe(1);
+        });
+    });
+
+    describe('getToken', () => {
+        test.each([
+            ['string', 'test-token'],
+            ['function resolver', () => 'resolved'],
+        ])('should return a %s token unchanged so callers can resolve it', (_label, token) => {
+            const stateWithToken = { options: { ...optionsState, token } };
+            expect(getToken(stateWithToken)).toBe(token);
         });
     });
 

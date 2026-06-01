@@ -6,11 +6,13 @@ import {
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
+    deleteReplyAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
     setIsInitialized,
     updateAnnotationAction,
+    updateReplyAction,
 } from '../actions';
 import { setViewModeAction } from '../../options/actions';
 
@@ -216,6 +218,158 @@ describe('store/annotations/reducer', () => {
             );
 
             expect(newState.byId.test1).toEqual(updated);
+        });
+    });
+
+    describe('updateReplyAction', () => {
+        const existingReply = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'old message',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+
+        test('should replace the matching reply in the annotation replies list', () => {
+            const updatedReply = { ...existingReply, message: 'new message' } as Reply;
+            const stateWithReply = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [existingReply] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReply,
+                updateReplyAction.fulfilled(
+                    { annotationId: 'test1', reply: updatedReply },
+                    'test',
+                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
+                ),
+            );
+
+            expect(newState.byId.test1.replies).toHaveLength(1);
+            expect(newState.byId.test1.replies![0]).toEqual(updatedReply);
+        });
+
+        test('should leave other replies untouched when one reply is updated', () => {
+            const otherReply = { ...existingReply, id: 'reply-2', message: 'other' } as Reply;
+            const updatedReply = { ...existingReply, message: 'new message' } as Reply;
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [existingReply, otherReply] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReplies,
+                updateReplyAction.fulfilled(
+                    { annotationId: 'test1', reply: updatedReply },
+                    'test',
+                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
+                ),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([updatedReply, otherReply]);
+        });
+
+        test('should not modify state if annotation does not exist', () => {
+            const updatedReply = { ...existingReply, message: 'new message' } as Reply;
+            const newState = reducer(
+                state,
+                updateReplyAction.fulfilled(
+                    { annotationId: 'nonexistent', reply: updatedReply },
+                    'test',
+                    { annotationId: 'nonexistent', replyId: 'reply-1', payload: { message: 'new message' } },
+                ),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
+        });
+
+        test('should not modify state if annotation has no replies', () => {
+            const updatedReply = { ...existingReply, message: 'new message' } as Reply;
+            const newState = reducer(
+                state,
+                updateReplyAction.fulfilled(
+                    { annotationId: 'test1', reply: updatedReply },
+                    'test',
+                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
+                ),
+            );
+
+            expect(newState.byId.test1).toEqual(state.byId.test1);
+        });
+    });
+
+    describe('deleteReplyAction', () => {
+        const replyA = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'first',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+        const replyB = { ...replyA, id: 'reply-2', message: 'second' } as Reply;
+
+        test('should remove the targeted reply from the replies list', () => {
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [replyA, replyB] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReplies,
+                deleteReplyAction.fulfilled(
+                    { annotationId: 'test1', replyId: 'reply-1' },
+                    'test',
+                    { annotationId: 'test1', replyId: 'reply-1' },
+                ),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([replyB]);
+        });
+
+        test('should leave replies unchanged when replyId is not found', () => {
+            const stateWithReplies = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [replyA] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithReplies,
+                deleteReplyAction.fulfilled(
+                    { annotationId: 'test1', replyId: 'reply-other' },
+                    'test',
+                    { annotationId: 'test1', replyId: 'reply-other' },
+                ),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([replyA]);
+        });
+
+        test('should not modify state if annotation does not exist', () => {
+            const newState = reducer(
+                state,
+                deleteReplyAction.fulfilled(
+                    { annotationId: 'nonexistent', replyId: 'reply-1' },
+                    'test',
+                    { annotationId: 'nonexistent', replyId: 'reply-1' },
+                ),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
         });
     });
 

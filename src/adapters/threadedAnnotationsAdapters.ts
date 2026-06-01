@@ -70,6 +70,20 @@ export const deserializeMentionMarkup = (text: string): DocumentNodeV2 => {
 };
 
 /**
+ * Returns the edit timestamp consumers use to render an edited indicator.
+ * Compares parsed instants, not raw strings, so equivalent ISO formats
+ * (Z vs +00:00, fractional precision) are treated as unedited.
+ */
+const toUpdatedAt = (createdAt: string, modifiedAt: string | undefined): number | undefined => {
+    if (!modifiedAt) return undefined;
+    const modifiedMs = new Date(modifiedAt).getTime();
+    if (Number.isNaN(modifiedMs)) return undefined;
+    const createdMs = new Date(createdAt).getTime();
+    if (modifiedMs === createdMs) return undefined;
+    return modifiedMs;
+};
+
+/**
  * Converts a box-annotations Reply to a threaded-annotations TextMessageType.
  */
 export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
@@ -83,24 +97,12 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
     message: deserializeMentionMarkup(reply.message),
     permissions: {
         canDelete: reply.permissions?.can_delete ?? false,
-        canEdit: false,
+        canEdit: reply.permissions?.can_edit ?? false,
         canReply: reply.permissions?.can_reply ?? false,
         canResolve: reply.permissions?.can_resolve ?? false,
     },
+    updatedAt: toUpdatedAt(reply.created_at, reply.modified_at),
 });
-
-/**
- * Returns the edit timestamp consumers use to render an edited indicator.
- * Compares parsed instants, not raw strings, so equivalent ISO formats
- * (Z vs +00:00, fractional precision) are treated as unedited.
- */
-const toUpdatedAt = (createdAt: string, modifiedAt: string): number | undefined => {
-    const modifiedMs = new Date(modifiedAt).getTime();
-    if (Number.isNaN(modifiedMs)) return undefined;
-    const createdMs = new Date(createdAt).getTime();
-    if (modifiedMs === createdMs) return undefined;
-    return modifiedMs;
-};
 
 // The root message shares the annotation's author and permissions; description
 // comes back sparse ({ message } only) from the list endpoint.

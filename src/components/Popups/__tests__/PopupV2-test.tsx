@@ -4,8 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
-import { updateAnnotationAction } from '../../../store/annotations/actions';
-import { getApiHost, getFileVersionId, getToken } from '../../../store/options';
+import {
+    deleteReplyAction,
+    updateAnnotationAction,
+    updateReplyAction,
+} from '../../../store/annotations/actions';
+import { getApiHost, getFileId, getFileVersionId, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -62,10 +66,12 @@ jest.mock('@box/threaded-annotations', () => {
 jest.mock('../../../store/annotations/actions', () => ({
     createReplyAction: jest.fn(),
     deleteAnnotationAction: jest.fn(),
+    deleteReplyAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
     updateAnnotationAction: Object.assign(jest.fn(), {
         fulfilled: { match: jest.fn().mockReturnValue(true) },
     }),
+    updateReplyAction: jest.fn(),
 }));
 
 jest.mock('../../../store/users/actions', () => ({
@@ -77,11 +83,26 @@ jest.mock('../../../store/users/actions', () => ({
 const mockUseDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>;
 const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 
-const mockSelectorValues = (annotation?: unknown): void => {
+type SelectorOverrides = {
+    annotation?: unknown;
+    apiHost?: string;
+    fileId?: string | null;
+    fileVersionId?: string | null;
+    token?: unknown;
+};
+
+const mockSelectorValues = ({
+    annotation,
+    apiHost = 'https://api.box.com',
+    fileId = '12345',
+    fileVersionId = 'fv-1',
+    token = 'test-token',
+}: SelectorOverrides = {}): void => {
     mockUseSelector.mockImplementation(selector => {
-        if (selector === getApiHost) return 'https://api.box.com';
-        if (selector === getFileVersionId) return 'fv-1';
-        if (selector === getToken) return 'test-token';
+        if (selector === getApiHost) return apiHost;
+        if (selector === getFileId) return fileId;
+        if (selector === getFileVersionId) return fileVersionId;
+        if (selector === getToken) return token;
         return annotation;
     });
 };
@@ -154,7 +175,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockSelectorValues(undefined);
+            mockSelectorValues();
         });
 
         test('should render MessageEditorV2 with FocusTrap and MentionContextProvider', () => {
@@ -189,7 +210,7 @@ describe('PopupV2', () => {
         };
 
         beforeEach(() => {
-            mockSelectorValues(mockAnnotation);
+            mockSelectorValues({ annotation: mockAnnotation });
         });
 
         test('should render ThreadedAnnotationsV2 with FocusTrap and MentionContextProvider', async () => {
@@ -212,7 +233,7 @@ describe('PopupV2', () => {
         });
 
         test('should render empty messages when annotation is not found', async () => {
-            mockSelectorValues(undefined);
+            mockSelectorValues();
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
@@ -243,13 +264,39 @@ describe('PopupV2', () => {
             });
         });
 
-        test('should not dispatch updateAnnotationAction when editing a reply', async () => {
+        test('should dispatch updateReplyAction (not updateAnnotationAction) when editing a reply', async () => {
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
             await lastThreadedAnnotationsProps.onEdit?.('reply-1', { type: 'doc', content: [] });
 
             expect(updateAnnotationAction).not.toHaveBeenCalled();
+            expect(updateReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                replyId: 'reply-1',
+                payload: { message: 'serialized text' },
+            });
+        });
+
+        test('should dispatch deleteReplyAction when a reply is deleted', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onDelete?.('reply-1');
+
+            expect(deleteReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                replyId: 'reply-1',
+            });
+        });
+
+        test('should not dispatch deleteReplyAction when deleting the root annotation id', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onDelete?.('annotation-1');
+
+            expect(deleteReplyAction).not.toHaveBeenCalled();
         });
 
         test('should invoke context onCopyLink with the root annotationId and fileVersionId regardless of clicked message id', async () => {
@@ -268,12 +315,7 @@ describe('PopupV2', () => {
 
         test('should leave onCopyLink undefined when fileVersionId is missing from the store', async () => {
             const onCopyLink = jest.fn();
-            mockUseSelector.mockImplementation(selector => {
-                if (selector === getApiHost) return 'https://api.box.com';
-                if (selector === getFileVersionId) return null;
-                if (selector === getToken) return 'test-token';
-                return mockAnnotation;
-            });
+            mockSelectorValues({ annotation: mockAnnotation, fileVersionId: null });
             render(
                 <AnnotationCallbacksContext.Provider value={{ onCopyLink }}>
                     <PopupV2 {...defaults} />
@@ -310,17 +352,53 @@ describe('PopupV2', () => {
             const [calledUrl] = mockFetch.mock.calls[0];
             expect(calledUrl).not.toContain('access_token');
         });
+
+        test('should resolve a function token by typed file id before building Authorization header', async () => {
+            const tokenResolver = jest.fn().mockResolvedValue('resolved-token');
+            mockSelectorValues({ annotation: mockAnnotation, token: tokenResolver });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(tokenResolver).toHaveBeenCalledWith('file_12345');
+            expect(mockFetch).toHaveBeenCalledWith(
+                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
+                { headers: { Authorization: 'Bearer resolved-token' } },
+            );
+        });
+
+        test('should resolve a per-file map token by extracting the read string', async () => {
+            const tokenMap = { file_12345: { read: 'read-token', write: 'write-token' } };
+            mockSelectorValues({ annotation: mockAnnotation, token: tokenMap });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
+                { headers: { Authorization: 'Bearer read-token' } },
+            );
+        });
+
+        test('should not call fetch when fileId is missing', async () => {
+            mockSelectorValues({ annotation: mockAnnotation, fileId: null });
+
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(mockFetch).not.toHaveBeenCalled();
+        });
     });
 
     test('should set aria-label on popup container', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         expect(screen.getByRole('presentation')).toHaveAttribute('aria-label', 'Comment');
     });
 
     test('should render portal container for threaded-annotations popovers', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
@@ -328,7 +406,7 @@ describe('PopupV2', () => {
     });
 
     test('should render popup into popupPortalEl, not the render container', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         const portalEl = makePortalEl();
         const { container } = render(
             <PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={document.createElement('div')} />,
@@ -339,7 +417,7 @@ describe('PopupV2', () => {
     });
 
     test('should render nothing when popupPortalEl is missing', () => {
-        mockSelectorValues(undefined);
+        mockSelectorValues();
         const { container } = render(
             <PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />,
         );
