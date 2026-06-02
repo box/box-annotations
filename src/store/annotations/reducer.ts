@@ -81,15 +81,11 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         .addCase(applySidebarAnnotationUpdateAction, (state, { payload }) => {
             const existing = state[payload.id];
             if (!existing) return;
-            // Skip explicit-undefined keys so a sparse payload does not erase fields like permissions.
-            const merged = { ...existing };
-            (Object.keys(payload) as Array<keyof typeof payload>).forEach(key => {
-                const value = payload[key];
+            Object.entries(payload).forEach(([key, value]) => {
                 if (value !== undefined) {
-                    (merged as Record<string, unknown>)[key as string] = value;
+                    (existing as Record<string, unknown>)[key] = value;
                 }
             });
-            state[payload.id] = merged;
         })
         .addCase(applySidebarReplyCreateAction, (state, { payload: { annotationId, reply } }) => {
             const annotation = state[annotationId];
