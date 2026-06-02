@@ -3,7 +3,7 @@ import APIFactory from '../../api';
 import BaseAnnotator, { ANNOTATION_CLASSES, CSS_CONTAINER_CLASS, CSS_LOADED_CLASS } from '../BaseAnnotator';
 import DeselectManager from '../DeselectManager';
 import { ANNOTATOR_EVENT } from '../../constants';
-import { Event, LegacyEvent } from '../../@types';
+import { Event, LegacyEvent, SidebarEvent } from '../../@types';
 import { Mode } from '../../store/common';
 import { setIsInitialized } from '../../store';
 
@@ -220,6 +220,10 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.COLOR_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_ANNOTATION_UPDATE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_CREATE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_UPDATE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_DELETE, expect.any(Function));
         });
 
         test('should destroy DeselectManager', () => {
@@ -283,6 +287,38 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.COLOR_SET, '#000');
             expect(annotator.setColor).toHaveBeenCalledWith('#000');
+        });
+
+        test('should dispatch applySidebarAnnotationUpdate when sidebar emits annotation update', () => {
+            const partial = { id: 'anno_1', status: 'resolved' as const };
+
+            annotator.emit(SidebarEvent.SIDEBAR_ANNOTATION_UPDATE, partial);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.applySidebarAnnotationUpdateAction(partial));
+        });
+
+        test('should dispatch applySidebarReplyCreate when sidebar emits reply create', () => {
+            const payload = { annotationId: 'anno_1', reply: { id: 'r1' } as never };
+
+            annotator.emit(SidebarEvent.SIDEBAR_REPLY_CREATE, payload);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.applySidebarReplyCreateAction(payload));
+        });
+
+        test('should dispatch applySidebarReplyUpdate when sidebar emits reply update', () => {
+            const payload = { annotationId: 'anno_1', reply: { id: 'r1', message: 'updated' } as never };
+
+            annotator.emit(SidebarEvent.SIDEBAR_REPLY_UPDATE, payload);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.applySidebarReplyUpdateAction(payload));
+        });
+
+        test('should translate sidebar emit `id` to action payload `replyId` and dispatch applySidebarReplyDelete', () => {
+            annotator.emit(SidebarEvent.SIDEBAR_REPLY_DELETE, { annotationId: 'anno_1', id: 'r1' });
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(
+                store.applySidebarReplyDeleteAction({ annotationId: 'anno_1', replyId: 'r1' }),
+            );
         });
     });
 

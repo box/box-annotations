@@ -26,6 +26,13 @@ enum Event {
     BOUNDING_BOX_HIGHLIGHT_NAVIGATE = 'bounding_box_highlight_navigate',
 }
 
+enum SidebarEvent {
+    SIDEBAR_ANNOTATION_UPDATE = 'sidebar.annotations_update',
+    SIDEBAR_REPLY_CREATE = 'sidebar.annotations_reply_create',
+    SIDEBAR_REPLY_DELETE = 'sidebar.annotations_reply_delete',
+    SIDEBAR_REPLY_UPDATE = 'sidebar.annotations_reply_update',
+}
+
 // Existing legacy events, don't rename
 enum LegacyEvent {
     ANNOTATOR = 'annotatorevent',
@@ -33,4 +40,4 @@ enum LegacyEvent {
     SCALE = 'scaleannotations',
 }
 
-export { Event, LegacyEvent };
+export { Event, LegacyEvent, SidebarEvent };

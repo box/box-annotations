@@ -6,7 +6,7 @@ import DeselectManager from './DeselectManager';
 import EventEmitter from './EventEmitter';
 import i18n from '../utils/i18n';
 import messages from '../messages';
-import { Event, IntlOptions, LegacyEvent, Permissions, Token } from '../@types';
+import { Event, IntlOptions, LegacyEvent, Permissions, SidebarEvent, Token } from '../@types';
 import { BoundingBox, getBoundingBoxHighlights } from '../store/boundingBoxHighlights';
 import { ViewMode } from '../store/options/types';
 import { Features } from '../BoxAnnotations';
@@ -131,6 +131,11 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(Event.BOUNDING_BOX_HIGHLIGHT_SELECT, this.handleSelectBoundingBoxHighlight);
         this.addListener(Event.VIEW_MODE_SET, this.handleSetViewMode);
 
+        this.addListener(SidebarEvent.SIDEBAR_ANNOTATION_UPDATE, this.handleSidebarAnnotationUpdate);
+        this.addListener(SidebarEvent.SIDEBAR_REPLY_CREATE, this.handleSidebarReplyCreate);
+        this.addListener(SidebarEvent.SIDEBAR_REPLY_UPDATE, this.handleSidebarReplyUpdate);
+        this.addListener(SidebarEvent.SIDEBAR_REPLY_DELETE, this.handleSidebarReplyDelete);
+
         // Load any required data at startup
         this.hydrate();
     }
@@ -164,6 +169,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.BOUNDING_BOX_HIGHLIGHT_NAVIGATE, this.handleNavigateBoundingBoxHighlight);
         this.removeListener(Event.BOUNDING_BOX_HIGHLIGHT_SELECT, this.handleSelectBoundingBoxHighlight);
         this.removeListener(Event.VIEW_MODE_SET, this.handleSetViewMode);
+        this.removeListener(SidebarEvent.SIDEBAR_ANNOTATION_UPDATE, this.handleSidebarAnnotationUpdate);
+        this.removeListener(SidebarEvent.SIDEBAR_REPLY_CREATE, this.handleSidebarReplyCreate);
+        this.removeListener(SidebarEvent.SIDEBAR_REPLY_UPDATE, this.handleSidebarReplyUpdate);
+        this.removeListener(SidebarEvent.SIDEBAR_REPLY_DELETE, this.handleSidebarReplyDelete);
     }
 
     public init(scale = 1, rotation = 0): void {
@@ -355,6 +364,22 @@ export default class BaseAnnotator extends EventEmitter {
 
     protected handleSetViewMode = ({ viewMode }: { viewMode: ViewMode }): void => {
         this.setViewMode(viewMode);
+    };
+
+    protected handleSidebarAnnotationUpdate = (annotation: store.SidebarAnnotationUpdatePayload): void => {
+        this.store.dispatch(store.applySidebarAnnotationUpdateAction(annotation));
+    };
+
+    protected handleSidebarReplyCreate = (payload: store.SidebarReplyMutationPayload): void => {
+        this.store.dispatch(store.applySidebarReplyCreateAction(payload));
+    };
+
+    protected handleSidebarReplyUpdate = (payload: store.SidebarReplyMutationPayload): void => {
+        this.store.dispatch(store.applySidebarReplyUpdateAction(payload));
+    };
+
+    protected handleSidebarReplyDelete = ({ annotationId, id }: { annotationId: string; id: string }): void => {
+        this.store.dispatch(store.applySidebarReplyDeleteAction({ annotationId, replyId: id }));
     };
 
     protected hydrate(): void {
