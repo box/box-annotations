@@ -1,4 +1,12 @@
-import getEventingMiddleware from '../middleware';
+import getEventingMiddleware, { eventHandlers } from '../middleware';
+import {
+    createAnnotationAction,
+    createReplyAction,
+    deleteAnnotationAction,
+    deleteReplyAction,
+    updateAnnotationAction,
+    updateReplyAction,
+} from '../../annotations/actions';
 
 describe('store/eventing/middleware', () => {
     describe('getEventingMiddleware()', () => {
@@ -27,6 +35,21 @@ describe('store/eventing/middleware', () => {
             expect(next).toHaveBeenCalled();
             expect(store.getState).toHaveBeenCalledTimes(2);
             expect(mockHandler).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('eventHandlers registration', () => {
+        test.each([
+            createAnnotationAction,
+            createReplyAction,
+            deleteAnnotationAction,
+            deleteReplyAction,
+            updateAnnotationAction,
+            updateReplyAction,
+        ])('should register fulfilled, pending, and rejected handlers for $typePrefix', thunk => {
+            expect(eventHandlers).toHaveProperty(thunk.fulfilled.toString());
+            expect(eventHandlers).toHaveProperty(thunk.pending.toString());
+            expect(eventHandlers).toHaveProperty(thunk.rejected.toString());
         });
     });
 });
