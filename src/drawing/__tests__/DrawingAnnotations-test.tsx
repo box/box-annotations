@@ -337,7 +337,7 @@ describe('DrawingAnnotations', () => {
             document.body.removeChild(popupPortalEl);
         });
 
-        test('should not render PopupDrawingToolbar when popupPortalEl is missing', () => {
+        test('should render PopupDrawingToolbar inline when popupPortalEl is missing', () => {
             const wrapper = getWrapper({
                 canShowPopupToolbar: true,
                 drawnPathGroups: pathGroups,
@@ -345,7 +345,7 @@ describe('DrawingAnnotations', () => {
                 popupPortalEl: null,
             });
 
-            expect(wrapper.find(PopupDrawingToolbar).exists()).toBe(false);
+            expect(wrapper.find(PopupDrawingToolbar).exists()).toBe(true);
         });
     });
 
