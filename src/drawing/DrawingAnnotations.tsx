@@ -179,8 +179,8 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 />
             )}
 
-            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && popupPortalEl &&
-                ReactDOM.createPortal(
+            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (() => {
+                const toolbar = (
                     <PopupDrawingToolbar
                         ref={popupDrawingToolbarRef}
                         canComment={hasDrawnPathGroups}
@@ -192,9 +192,10 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                         onReply={handleReply}
                         onUndo={handleUndo}
                         reference={drawingSVGGroup}
-                    />,
-                    popupPortalEl,
-                )}
+                    />
+                );
+                return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;
+            })()}
         </>
     );
 };
