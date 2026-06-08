@@ -1027,19 +1027,19 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@box/blueprint-web-assets@^4.120.5":
-  version "4.120.5"
-  resolved "https://registry.yarnpkg.com/@box/blueprint-web-assets/-/blueprint-web-assets-4.120.5.tgz#f115d2b6a16d7a25665c25be262e3d7fbab0a7e6"
-  integrity sha512-YNWm11ek2lSyrVWlJPeV4SU7jcKmjUw39w+ejsa+f7f7Ae8qGX3Je9r3yc7vj2e142ALRpOLnHNxFV8YA7+KiA==
+"@box/blueprint-web-assets@^4.121.8":
+  version "4.121.8"
+  resolved "https://registry.yarnpkg.com/@box/blueprint-web-assets/-/blueprint-web-assets-4.121.8.tgz#83300866affa8e93a70eb484ba4a0f9b0e640b25"
+  integrity sha512-PgTQ04Kc3lGHUomDz7zvpHEMHnnFFljlHNrbwilg3qv+nDhFmf4qRQWygxMZv0J0wRSsM6GnByMIBH+S1q60CQ==
 
-"@box/blueprint-web@^14.38.0":
-  version "14.38.0"
-  resolved "https://registry.yarnpkg.com/@box/blueprint-web/-/blueprint-web-14.38.0.tgz#4e61ccdba8cda57806ef81dc184856b68f165db6"
-  integrity sha512-EFEo7DjIcfxxEmbEfF98uYxbjFUgFTTSuSHpvY9gHgbaPphSH9073rMa1QLb4C/KCh2Ia5AG2m0NSRJeRxd/9Q==
+"@box/blueprint-web@^15.5.0":
+  version "15.5.0"
+  resolved "https://registry.yarnpkg.com/@box/blueprint-web/-/blueprint-web-15.5.0.tgz#30d84fd716b71078518fea34a81ea941d3a12c09"
+  integrity sha512-ZFIzNQT+HzB6LxGEqDnfzxsxiB542KlMTinNa6aTlxFKyJklLSTLZaKKkITnfPTLhkdYjLIHLMapT0m4tohQZA==
   dependencies:
     "@ariakit/react" "0.4.21"
     "@ariakit/react-core" "0.4.21"
-    "@box/blueprint-web-assets" "^4.120.5"
+    "@box/blueprint-web-assets" "^4.121.8"
     "@internationalized/date" "^3.12.0"
     "@radix-ui/react-accordion" "1.1.2"
     "@radix-ui/react-checkbox" "1.0.4"
@@ -1068,10 +1068,10 @@
     react-aria-components "1.16.0"
     type-fest "^3.2.0"
 
-"@box/collaboration-popover@^1.62.27":
-  version "1.62.27"
-  resolved "https://registry.yarnpkg.com/@box/collaboration-popover/-/collaboration-popover-1.62.27.tgz#26765e84b4ab1280a87fe3b24765edc11d0fa33c"
-  integrity sha512-H6cJc8PwVL+jKKyL5s62uD02QverLQa/cUEW7T/uSJC/vjNdnQ/Vx0l+B6j+ihNj6j6cV3lUyrsjVBVhp7fWyQ==
+"@box/collaboration-popover@^1.63.9":
+  version "1.63.9"
+  resolved "https://registry.yarnpkg.com/@box/collaboration-popover/-/collaboration-popover-1.63.9.tgz#5a048202e40fa9060c44384a1174f14f3be3ea15"
+  integrity sha512-aPQjbeAZri3v3fzYYkRktenvrfvCGJ/HY25xpFvM6lU+9ycCSszzwYUauCmYSydxym5aewIBUoP7qfhQ+vu16g==
 
 "@box/frontend@^10.0.0":
   version "10.0.0"
@@ -1087,15 +1087,15 @@
   resolved "https://registry.yarnpkg.com/@box/languages/-/languages-1.1.0.tgz#58bef2d4166d344aa316919e5dc09c7149ab801f"
   integrity sha512-nGP1D5mNPwKajbl6i0NERXvHzK56HNjrRnkJlhbVl62IlpgCJtayEpRPWWAbSAC4NFyku03KieavaaXnWalx+A==
 
-"@box/readable-time@^1.41.27":
-  version "1.41.27"
-  resolved "https://registry.yarnpkg.com/@box/readable-time/-/readable-time-1.41.27.tgz#2a7fc352fa9717caaaccc00a2559299411117ba9"
-  integrity sha512-10CuMCBGPDGCh5Va26RVyqIPvqmA7tZ1Q0CUO65o3NvnTEiDmPW15o9TCUtZy98jm32CISYhyIsspXVMoYpoRg==
+"@box/readable-time@^1.42.9":
+  version "1.42.9"
+  resolved "https://registry.yarnpkg.com/@box/readable-time/-/readable-time-1.42.9.tgz#84c61fcc2d054099ce455e3320cdb5c833a86f4d"
+  integrity sha512-ehUDSxeNgDJp3b2hbWzY0bf0MuQ7nz9ovqCoEuTCnVw30mY0kf3uaszxwzU8DOFKI5jPjCM+GAnIMDriB2A3ag==
 
-"@box/threaded-annotations@^1.93.2":
-  version "1.93.2"
-  resolved "https://registry.yarnpkg.com/@box/threaded-annotations/-/threaded-annotations-1.93.2.tgz#95985b4eedd872b40cb401d833b21f8101dbbe94"
-  integrity sha512-86VLTlox7D/hGkNsfZNUJf9q92vcCluXaNSxhk1qHVfNbVh/VySzz6JqnBSN3Czqq2m+MM4lHg0FMMRY0PMcmQ==
+"@box/threaded-annotations@^1.94.11":
+  version "1.94.11"
+  resolved "https://registry.yarnpkg.com/@box/threaded-annotations/-/threaded-annotations-1.94.11.tgz#e92ea32f6bbcd64759c7cfa3b360e9b3f5de6772"
+  integrity sha512-Udk4RS1eSzMR31U1BuJK9roTAWC1U1IflNk07dlVRhKFeybvfRVAmzFHTiXzcwDNLVJurK3xm7UGD0HcLdipPQ==
   dependencies:
     "@tanstack/react-virtual" "^3.10.8"
     "@tiptap/core" "2.0.2"
@@ -1109,10 +1109,10 @@
     "@tiptap/suggestion" "2.0.2"
     uuid "^9.0.1"
 
-"@box/user-selector@^1.76.27":
-  version "1.76.27"
-  resolved "https://registry.yarnpkg.com/@box/user-selector/-/user-selector-1.76.27.tgz#948852854174b1514db7de6d085ef882e5e5171b"
-  integrity sha512-cKgXX1y78+GKNh058R+I25dwOCsLdIMtyxlMeZhdiGkJV3yVki9MQAll1TBTsD+qWQDVk+o5L8pyfqJ2RSwFKA==
+"@box/user-selector@^1.77.9":
+  version "1.77.9"
+  resolved "https://registry.yarnpkg.com/@box/user-selector/-/user-selector-1.77.9.tgz#649ca75e793248738cbcee8c15d56d6ba7b747cb"
+  integrity sha512-3+mwI2C1q24BeMFXL67ewlQX41Hw7Oa1zIL9YnMLEFPFzpbpEfFl8k+HET2gPYG+mUKvXqq4RhfTqAbbpT4PKw==
 
 "@cfaester/enzyme-adapter-react-18@^0.8.0":
   version "0.8.0"
