@@ -10,6 +10,27 @@ const { BannerPlugin } = require('webpack');
 const license = require('./license');
 const commonConfig = require('./webpack.common.config');
 
+// Provided by the consuming application at runtime; kept out of the bundle to
+// avoid duplicating code the host app already ships. The react family must
+// stay commonjs: module externals are assumed to be spec ESM at build time,
+// which strips Babel's _interopRequireDefault checks from bundled CJS code;
+// consumers that provide CJS react then crash on namespace.default access.
+const commonjsExternals = ['react', 'react-dom', 'react-intl', 'react-redux'];
+// These ship ESM, so they are externalized as module imports, which lets the
+// consumer's bundler tree-shake their unused exports. '@tiptap' matches the
+// whole scope.
+const moduleExternals = [
+    '@box/blueprint-web',
+    '@box/blueprint-web-assets',
+    '@box/collaboration-popover',
+    '@box/combobox-with-api',
+    '@box/readable-time',
+    '@box/threaded-annotations',
+    '@box/user-selector',
+    '@tiptap',
+];
+const matchesPackage = (request, name) => request === name || request.startsWith(`${name}/`);
+
 const isDev = process.env.NODE_ENV === 'dev';
 const isLinked = process.env.IS_LINKED === '1';
 const isRelease = process.env.NODE_ENV === 'production';
@@ -30,25 +51,27 @@ const config = Object.assign(commonConfig(), {
         annotations: ['./src/BoxAnnotations.ts'],
     },
     externals: [
-        // @box/threaded-annotations and its transitive dependencies are provided
-        // by the consuming application (EUA) at runtime. Marking them as externals
-        // avoids duplicating code that is already bundled by the host app.
-        /^react(\/.*)?$/,
-        /^react-dom(\/.*)?$/,
-        /^react-intl(\/.*)?$/,
-        /^react-redux(\/.*)?$/,
-        /^@box\/threaded-annotations/,
-        /^@box\/blueprint-web/,
-        /^@box\/blueprint-web-assets/,
-        /^@box\/collaboration-popover/,
-        /^@box\/readable-time/,
-        /^@box\/user-selector/,
-        /^@box\/combobox-with-api/,
-        /^@tiptap\//,
+        ({ request }, callback) => {
+            if (!request) {
+                return callback();
+            }
+            if (commonjsExternals.some(name => matchesPackage(request, name))) {
+                return callback(null, `commonjs ${request}`);
+            }
+            if (moduleExternals.some(name => matchesPackage(request, name))) {
+                return callback(null, `module ${request}`);
+            }
+            return callback();
+        },
     ],
-    externalsType: 'commonjs',
+    experiments: {
+        outputModule: true,
+    },
     output: {
         filename: '[name].js',
+        library: {
+            type: 'module',
+        },
         path: path.resolve('dist'),
     },
     resolve: {
@@ -90,10 +113,7 @@ if (isDev) {
 
 if (isRelease && language === 'en-US') {
     config.optimization = {
-        minimizer: [
-            '...',
-            new CssMinimizerPlugin(),
-        ],
+        minimizer: ['...', new CssMinimizerPlugin()],
     };
 
     // Add license message to top of code
