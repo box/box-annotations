@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
+import type { MentionContextData, ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
 import {
@@ -34,13 +34,16 @@ jest.mock('@box/blueprint-web', () => ({
     TooltipProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+let lastMentionContextValue: MentionContextData = {};
 let lastThreadedAnnotationsProps: Partial<ThreadedAnnotationsPropsV2> = {};
 
 jest.mock('@box/threaded-annotations', () => {
     const ReactMock = jest.requireActual('react');
     return {
-        MentionContextProvider: ({ children }: { children: React.ReactNode }) =>
-            ReactMock.createElement('div', { 'data-testid': 'mention-context' }, children),
+        MentionContextProvider: ({ children, value }: { children: React.ReactNode; value: MentionContextData }) => {
+            lastMentionContextValue = value;
+            return ReactMock.createElement('div', { 'data-testid': 'mention-context' }, children);
+        },
         MessageEditorV2: (props: Record<string, unknown>) =>
             ReactMock.createElement('div', {
                 'data-testid': 'message-editor-v2',
@@ -149,6 +152,7 @@ describe('PopupV2', () => {
     };
 
     beforeEach(() => {
+        lastMentionContextValue = {};
         lastThreadedAnnotationsProps = {};
         mockUseDispatch.mockReturnValue(mockDispatch);
         mockFetch.mockResolvedValue({
@@ -198,6 +202,21 @@ describe('PopupV2', () => {
 
             const popup = screen.getByRole('presentation');
             expect(popup).toHaveAttribute('data-resin-component', 'popupReplyV2');
+        });
+
+        // Mention contacts are file collaborators, so fetchCollaboratorState must resolve true
+        // or threaded-annotations opens the non-collaborator invite popover after every mention
+        test('should provide fetchCollaboratorState resolving true so the invite popover never opens', async () => {
+            render(<PopupV2 {...defaults} />);
+
+            const user = {
+                id: 100,
+                email: 'test@box.com',
+                name: 'Test User',
+                type: 'user' as const,
+                value: 'test@box.com',
+            };
+            await expect(lastMentionContextValue.fetchCollaboratorState?.(user)).resolves.toBe(true);
         });
     });
 

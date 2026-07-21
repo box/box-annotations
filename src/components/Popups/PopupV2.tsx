@@ -342,6 +342,8 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                             collaborationPopoverProps: {
                                 onSubmit: () => Promise.resolve(),
                             },
+                            // Mentions are restricted to file collaborators; the invite popover is intentionally never shown.
+                            fetchCollaboratorState: async () => true,
                         }}>
                             {annotationId ? (
                                 <ThreadedAnnotationsV2
