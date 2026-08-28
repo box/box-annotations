@@ -1,0 +1,17 @@
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+    defaultCommandTimeout: 8000,
+    fileServerFolder: 'test',
+    fixturesFolder: 'test/fixtures',
+    screenshotsFolder: 'test/screenshots',
+    video: false,
+    videosFolder: 'test/videos',
+    viewportHeight: 1260,
+    viewportWidth: 1600,
+    e2e: {
+        baseUrl: 'http://localhost:8001/#',
+        specPattern: 'test/integration/**/*.test.{js,jsx,ts,tsx}',
+        supportFile: 'test/support/index.js',
+    },
+});

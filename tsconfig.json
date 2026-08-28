@@ -1,5 +1,5 @@
 {
-    "extends": "@box/frontend/ts/tsconfig",
+    "extends": "@box/frontend/ts/tsconfig.json",
     "include": ["./src/**/*.ts", "./src/**/*.tsx"],
     "compilerOptions": {
         "lib": ["DOM", "ES2020"],

@@ -32,6 +32,7 @@ const moduleExternals = [
 const matchesPackage = (request, name) => request === name || request.startsWith(`${name}/`);
 
 const isDev = process.env.NODE_ENV === 'dev';
+const isDevServer = Boolean(process.env.WEBPACK_SERVE);
 const isLinked = process.env.IS_LINKED === '1';
 const isRelease = process.env.NODE_ENV === 'production';
 const language = process.env.LANGUAGE || 'en-US';
@@ -50,29 +51,39 @@ const config = Object.assign(commonConfig(), {
     entry: {
         annotations: ['./src/BoxAnnotations.ts'],
     },
-    externals: [
-        ({ request }, callback) => {
-            if (!request) {
-                return callback();
-            }
-            if (commonjsExternals.some(name => matchesPackage(request, name))) {
-                return callback(null, `commonjs ${request}`);
-            }
-            if (moduleExternals.some(name => matchesPackage(request, name))) {
-                return callback(null, `module ${request}`);
-            }
-            return callback();
-        },
-    ],
-    experiments: {
-        outputModule: true,
-    },
+    // The test page loads annotations.js with a classic script tag, so the
+    // webpack-dev-server build inlines deps and emits a non-module file.
+    ...(isDevServer
+        ? {}
+        : {
+              externals: [
+                  ({ request }, callback) => {
+                      if (!request) {
+                          return callback();
+                      }
+                      if (commonjsExternals.some(name => matchesPackage(request, name))) {
+                          return callback(null, `commonjs ${request}`);
+                      }
+                      if (moduleExternals.some(name => matchesPackage(request, name))) {
+                          return callback(null, `module ${request}`);
+                      }
+                      return callback();
+                  },
+              ],
+              experiments: {
+                  outputModule: true,
+              },
+          }),
     output: {
         filename: '[name].js',
-        library: {
-            type: 'module',
-        },
         path: path.resolve('dist'),
+        ...(isDevServer
+            ? {}
+            : {
+                  library: {
+                      type: 'module',
+                  },
+              }),
     },
     resolve: {
         alias: {
