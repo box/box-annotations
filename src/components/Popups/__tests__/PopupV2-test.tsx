@@ -1,15 +1,20 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+    serializeMentionMarkup,
+    serializeMessageToMarkdown,
+} from '@box/threaded-annotations';
 import type { MentionContextData, ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
 import {
+    createReplyAction,
     deleteReplyAction,
     updateAnnotationAction,
     updateReplyAction,
 } from '../../../store/annotations/actions';
-import { getApiHost, getFileId, getFileVersionId, getToken } from '../../../store/options';
+import { getApiHost, getFileId, getFileVersionId, getIsRichTextEnabled, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -35,6 +40,11 @@ jest.mock('@box/blueprint-web', () => ({
 }));
 
 let lastMentionContextValue: MentionContextData = {};
+let lastMessageEditorProps: {
+    isFirstAnnotation?: boolean;
+    isRichTextEnabled?: boolean;
+    onPost?: (content: unknown) => Promise<void>;
+} = {};
 let lastThreadedAnnotationsProps: Partial<ThreadedAnnotationsPropsV2> = {};
 
 jest.mock('@box/threaded-annotations', () => {
@@ -44,16 +54,24 @@ jest.mock('@box/threaded-annotations', () => {
             lastMentionContextValue = value;
             return ReactMock.createElement('div', { 'data-testid': 'mention-context' }, children);
         },
-        MessageEditorV2: (props: Record<string, unknown>) =>
-            ReactMock.createElement('div', {
+        MessageEditorV2: (props: {
+            isFirstAnnotation?: boolean;
+            isRichTextEnabled?: boolean;
+            onPost?: (content: unknown) => Promise<void>;
+        }) => {
+            lastMessageEditorProps = props;
+            return ReactMock.createElement('div', {
                 'data-testid': 'message-editor-v2',
                 'data-is-first-annotation': String(props.isFirstAnnotation),
-            }),
+                'data-is-rich-text-enabled': String(props.isRichTextEnabled),
+            });
+        },
         ThreadedAnnotationsV2: (props: Partial<ThreadedAnnotationsPropsV2>) => {
             lastThreadedAnnotationsProps = props;
             return ReactMock.createElement('div', {
                 'data-testid': 'threaded-annotations-v2',
                 'data-is-annotations': String(props.isAnnotations),
+                'data-is-rich-text-enabled': String(props.isRichTextEnabled),
                 'data-messages-count': String(props.messages?.length ?? 0),
                 'data-has-on-edit': String(typeof props.onEdit === 'function'),
                 'data-has-on-post': String(typeof props.onPost === 'function'),
@@ -63,6 +81,8 @@ jest.mock('@box/threaded-annotations', () => {
             });
         },
         serializeMentionMarkup: jest.fn().mockReturnValue({ hasMention: false, text: 'serialized text' }),
+        serializeMessageToMarkdown: jest.fn().mockReturnValue('markdown text'),
+        parseMessageMarkdown: jest.fn().mockReturnValue({ type: 'doc', content: [] }),
     };
 });
 
@@ -91,6 +111,7 @@ type SelectorOverrides = {
     apiHost?: string;
     fileId?: string | null;
     fileVersionId?: string | null;
+    isRichTextEnabled?: boolean;
     token?: unknown;
 };
 
@@ -99,12 +120,14 @@ const mockSelectorValues = ({
     apiHost = 'https://api.box.com',
     fileId = '12345',
     fileVersionId = 'fv-1',
+    isRichTextEnabled = false,
     token = 'test-token',
 }: SelectorOverrides = {}): void => {
     mockUseSelector.mockImplementation(selector => {
         if (selector === getApiHost) return apiHost;
         if (selector === getFileId) return fileId;
         if (selector === getFileVersionId) return fileVersionId;
+        if (selector === getIsRichTextEnabled) return isRichTextEnabled;
         if (selector === getToken) return token;
         return annotation;
     });
@@ -153,6 +176,7 @@ describe('PopupV2', () => {
 
     beforeEach(() => {
         lastMentionContextValue = {};
+        lastMessageEditorProps = {};
         lastThreadedAnnotationsProps = {};
         mockUseDispatch.mockReturnValue(mockDispatch);
         mockFetch.mockResolvedValue({
@@ -195,6 +219,35 @@ describe('PopupV2', () => {
             render(<PopupV2 {...defaults} />);
 
             expect(screen.getByTestId('message-editor-v2').getAttribute('data-is-first-annotation')).toBe('true');
+            expect(screen.getByTestId('message-editor-v2').getAttribute('data-is-rich-text-enabled')).toBe('false');
+        });
+
+        test('should pass isRichTextEnabled to MessageEditorV2 when the feature is on', () => {
+            mockSelectorValues({ isRichTextEnabled: true });
+            render(<PopupV2 {...defaults} />);
+
+            expect(screen.getByTestId('message-editor-v2').getAttribute('data-is-rich-text-enabled')).toBe('true');
+        });
+
+        test('should serialize mention markup when posting a new annotation with rich text disabled', async () => {
+            render(<PopupV2 {...defaults} />);
+
+            await lastMessageEditorProps.onPost?.({ type: 'doc', content: [] });
+
+            expect(serializeMentionMarkup).toHaveBeenCalled();
+            expect(serializeMessageToMarkdown).not.toHaveBeenCalled();
+            expect(defaults.onSubmit).toHaveBeenCalledWith('serialized text');
+        });
+
+        test('should serialize markdown when posting a new annotation with rich text enabled', async () => {
+            mockSelectorValues({ isRichTextEnabled: true });
+            render(<PopupV2 {...defaults} />);
+
+            await lastMessageEditorProps.onPost?.({ type: 'doc', content: [] });
+
+            expect(serializeMessageToMarkdown).toHaveBeenCalled();
+            expect(serializeMentionMarkup).not.toHaveBeenCalled();
+            expect(defaults.onSubmit).toHaveBeenCalledWith('markdown text');
         });
 
         test('should set popupReplyV2 as resin component', () => {
@@ -248,7 +301,18 @@ describe('PopupV2', () => {
 
             const thread = screen.getByTestId('threaded-annotations-v2');
             expect(thread.getAttribute('data-is-annotations')).toBe('true');
+            expect(thread.getAttribute('data-is-rich-text-enabled')).toBe('false');
             expect(thread.getAttribute('data-messages-count')).toBe('1');
+        });
+
+        test('should pass isRichTextEnabled to ThreadedAnnotationsV2 when the feature is on', async () => {
+            mockSelectorValues({ annotation: mockAnnotation, isRichTextEnabled: true });
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(screen.getByTestId('threaded-annotations-v2').getAttribute('data-is-rich-text-enabled')).toBe(
+                'true',
+            );
         });
 
         test('should render empty messages when annotation is not found', async () => {
@@ -294,6 +358,50 @@ describe('PopupV2', () => {
                 annotationId: 'annotation-1',
                 replyId: 'reply-1',
                 payload: { message: 'serialized text' },
+            });
+        });
+
+        test('should serialize markdown when editing the root message with rich text enabled', async () => {
+            mockSelectorValues({ annotation: mockAnnotation, isRichTextEnabled: true });
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onEdit?.('annotation-1', { type: 'doc', content: [] });
+
+            expect(serializeMessageToMarkdown).toHaveBeenCalled();
+            expect(serializeMentionMarkup).not.toHaveBeenCalled();
+            expect(updateAnnotationAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                payload: { message: 'markdown text' },
+            });
+        });
+
+        test('should dispatch createReplyAction with mention markup when posting a reply', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onPost?.({ type: 'doc', content: [] });
+
+            expect(serializeMentionMarkup).toHaveBeenCalled();
+            expect(serializeMessageToMarkdown).not.toHaveBeenCalled();
+            expect(createReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                message: 'serialized text',
+            });
+        });
+
+        test('should serialize markdown when posting a reply with rich text enabled', async () => {
+            mockSelectorValues({ annotation: mockAnnotation, isRichTextEnabled: true });
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            await lastThreadedAnnotationsProps.onPost?.({ type: 'doc', content: [] });
+
+            expect(serializeMessageToMarkdown).toHaveBeenCalled();
+            expect(serializeMentionMarkup).not.toHaveBeenCalled();
+            expect(createReplyAction).toHaveBeenCalledWith({
+                annotationId: 'annotation-1',
+                message: 'markdown text',
             });
         });
 

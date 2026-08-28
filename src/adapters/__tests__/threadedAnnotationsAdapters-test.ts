@@ -1,3 +1,5 @@
+import { parseMessageMarkdown } from '@box/threaded-annotations';
+
 import {
     annotationToMessages,
     collaboratorToUserContact,
@@ -6,6 +8,12 @@ import {
 } from '../threadedAnnotationsAdapters';
 import type { Annotation, Collaborator, Reply } from '../../@types';
 import { TARGET_TYPE } from '../../constants';
+
+jest.mock('@box/threaded-annotations', () => ({
+    parseMessageMarkdown: jest.fn((text: string | null | undefined) =>
+        text ? { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] } : { type: 'doc', content: [] },
+    ),
+}));
 
 describe('threadedAnnotationsAdapters', () => {
     describe('deserializeMentionMarkup', () => {
@@ -109,6 +117,10 @@ describe('threadedAnnotationsAdapters', () => {
             type: 'reply',
         };
 
+        beforeEach(() => {
+            (parseMessageMarkdown as jest.Mock).mockClear();
+        });
+
         test('should map reply fields to TextMessageType', () => {
             const result = replyToTextMessage(mockReply);
 
@@ -126,6 +138,7 @@ describe('threadedAnnotationsAdapters', () => {
             };
             const result = replyToTextMessage(reply);
 
+            expect(parseMessageMarkdown).not.toHaveBeenCalled();
             expect(result.message.content[0].content).toHaveLength(3);
             expect(result.message.content[0].content?.[1]).toMatchObject({
                 type: 'mention',
@@ -174,6 +187,18 @@ describe('threadedAnnotationsAdapters', () => {
             });
         });
 
+        test('should parse markdown when isRichTextEnabled is true', () => {
+            const reply: Reply = { ...mockReply, message: '**bold**' };
+
+            const result = replyToTextMessage(reply, true);
+
+            expect(parseMessageMarkdown).toHaveBeenCalledWith('**bold**');
+            expect(result.message).toEqual({
+                type: 'doc',
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: '**bold**' }] }],
+            });
+        });
+
         test('should leave updatedAt undefined when reply has no modified_at', () => {
             const result = replyToTextMessage(mockReply);
 
@@ -206,6 +231,10 @@ describe('threadedAnnotationsAdapters', () => {
             target: { type: 'point', location: { type: TARGET_TYPE.PAGE, value: 1 }, x: 0, y: 0 },
             type: 'annotation',
         };
+
+        beforeEach(() => {
+            (parseMessageMarkdown as jest.Mock).mockClear();
+        });
 
         test('should return empty array when no description or replies', () => {
             const result = annotationToMessages(baseAnnotation);
@@ -267,6 +296,29 @@ describe('threadedAnnotationsAdapters', () => {
             expect(result[1].id).toBe('reply-1');
             expect(result[0].author.name).toBe('User');
             expect(result[1].author.name).toBe('Other');
+        });
+
+        test('should parse description and replies with parseMessageMarkdown when enabled', () => {
+            const annotation: Annotation = {
+                ...baseAnnotation,
+                description: { message: 'Root' } as unknown as Reply,
+                replies: [
+                    {
+                        created_at: '2026-01-02T00:00:00Z',
+                        created_by: { id: '2', login: 'other@box.com', name: 'Other', type: 'user' },
+                        id: 'reply-1',
+                        message: 'First reply',
+                        parent: { id: 'ann-1', type: 'annotation' },
+                        type: 'reply',
+                    },
+                ],
+            };
+
+            annotationToMessages(annotation, true);
+
+            expect(parseMessageMarkdown).toHaveBeenCalledWith('Root');
+            expect(parseMessageMarkdown).toHaveBeenCalledWith('First reply');
+            expect(parseMessageMarkdown).toHaveBeenCalledTimes(2);
         });
     });
 

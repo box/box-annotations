@@ -1,4 +1,5 @@
 import type { DocumentNodeV2, MentionNodeV2, ParagraphNodeV2, TextMessageTypeV2, TextNodeV2 } from '@box/threaded-annotations';
+import { parseMessageMarkdown } from '@box/threaded-annotations';
 
 import type { Annotation, Collaborator, Reply, UserMini } from '../@types';
 
@@ -69,6 +70,9 @@ export const deserializeMentionMarkup = (text: string): DocumentNodeV2 => {
     return { type: 'doc', content };
 };
 
+const toDocumentNode = (text: string, isRichTextEnabled = false): DocumentNodeV2 =>
+    isRichTextEnabled ? (parseMessageMarkdown(text) as DocumentNodeV2) : deserializeMentionMarkup(text);
+
 /**
  * Returns the edit timestamp consumers use to render an edited indicator.
  * Compares parsed instants, not raw strings, so equivalent ISO formats
@@ -86,7 +90,7 @@ const toUpdatedAt = (createdAt: string, modifiedAt: string | undefined): number 
 /**
  * Converts a box-annotations Reply to a threaded-annotations TextMessageType.
  */
-export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
+export const replyToTextMessage = (reply: Reply, isRichTextEnabled = false): TextMessageTypeV2 => ({
     author: {
         email: reply.created_by?.login ?? '',
         id: parseInt(reply.created_by?.id ?? '0', 10),
@@ -94,7 +98,7 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
     },
     createdAt: new Date(reply.created_at).getTime(),
     id: reply.id,
-    message: deserializeMentionMarkup(reply.message),
+    message: toDocumentNode(reply.message, isRichTextEnabled),
     permissions: {
         canDelete: reply.permissions?.can_delete ?? false,
         canEdit: reply.permissions?.can_edit ?? false,
@@ -106,7 +110,7 @@ export const replyToTextMessage = (reply: Reply): TextMessageTypeV2 => ({
 
 // The root message shares the annotation's author and permissions; description
 // comes back sparse ({ message } only) from the list endpoint.
-const descriptionToTextMessage = (annotation: Annotation): TextMessageTypeV2 => ({
+const descriptionToTextMessage = (annotation: Annotation, isRichTextEnabled = false): TextMessageTypeV2 => ({
     author: {
         email: annotation.created_by?.login ?? '',
         id: parseInt(annotation.created_by?.id ?? '0', 10),
@@ -114,7 +118,7 @@ const descriptionToTextMessage = (annotation: Annotation): TextMessageTypeV2 => 
     },
     createdAt: new Date(annotation.created_at).getTime(),
     id: annotation.id,
-    message: deserializeMentionMarkup(annotation.description?.message ?? ''),
+    message: toDocumentNode(annotation.description?.message ?? '', isRichTextEnabled),
     permissions: {
         canDelete: annotation.permissions?.can_delete ?? false,
         canEdit: annotation.permissions?.can_edit ?? false,
@@ -128,16 +132,16 @@ const descriptionToTextMessage = (annotation: Annotation): TextMessageTypeV2 => 
  * Maps a full Annotation (description + replies) to an array of TextMessageType
  * suitable for ThreadedAnnotationsV2.
  */
-export const annotationToMessages = (annotation: Annotation): TextMessageTypeV2[] => {
+export const annotationToMessages = (annotation: Annotation, isRichTextEnabled = false): TextMessageTypeV2[] => {
     const messages: TextMessageTypeV2[] = [];
 
     if (annotation.description) {
-        messages.push(descriptionToTextMessage(annotation));
+        messages.push(descriptionToTextMessage(annotation, isRichTextEnabled));
     }
 
     if (annotation.replies) {
         annotation.replies.forEach(reply => {
-            messages.push(replyToTextMessage(reply));
+            messages.push(replyToTextMessage(reply, isRichTextEnabled));
         });
     }
 
