@@ -45,7 +45,15 @@ describe('RegionCreation', () => {
         });
 
         describe('handleAbort', () => {
-            test('should call resetCreator', () => {
+            test('should not reset creator when a staged region already exists', () => {
+                instance.handleAbort();
+
+                expect(defaults.resetCreator).not.toHaveBeenCalled();
+            });
+
+            test('should call resetCreator when nothing is staged', () => {
+                wrapper = getWrapper({ staged: null });
+                instance = wrapper.instance() as InstanceType<typeof RegionCreation>;
                 instance.handleAbort();
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
