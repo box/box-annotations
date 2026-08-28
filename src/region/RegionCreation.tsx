@@ -33,7 +33,13 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     state: State = {};
 
     handleAbort = (): void => {
-        const { resetCreator } = this.props;
+        const { resetCreator, staged } = this.props;
+
+        // Click-away (a click too small to start a new region) must not discard an in-progress comment/annotation
+        if (staged) {
+            return;
+        }
+
         resetCreator();
     };
 
