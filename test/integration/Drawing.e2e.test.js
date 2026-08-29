@@ -128,7 +128,7 @@ describe('Drawing', () => {
         // The parent ControlsLayer starts at opacity 0 until the pointer enters it, and Cypress does
         // not move a real pointer. Trigger mouseenter before each visibility assertion so the layer
         // faded state doesn't shadow the actual visibility of the button we care about.
-        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+        cy.get('.bp-ControlsLayer').trigger('mouseenter');
 
         // Assert drawing button is not hidden
         cy.getByTestId('bp-AnnotationsControls-drawBtn')
@@ -144,24 +144,24 @@ describe('Drawing', () => {
         cy.get('.ba-DrawingTarget').should('be.visible');
 
         // Rotate image
-        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left').click();
 
         // Assert drawing button is hidden
-        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTestId('bp-AnnotationsControls-drawBtn').should('not.be.visible');
         // Assert that drawing annotations are still visible after rotation
         cy.get('.ba-DrawingTarget').should('be.visible');
 
         // Rotate image back to non-rotated state
-        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left')
             .click()
             .click()
             .click();
 
         // Assert drawing button is not hidden
-        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTestId('bp-AnnotationsControls-drawBtn').should('be.visible');
         // Assert that drawing annotations are still visible after rotation
         cy.get('.ba-DrawingTarget').should('be.visible');
