@@ -35,9 +35,11 @@ Cypress.Commands.add('drawStroke', ({ height = 100, width = 100, x = 400, y = 40
 );
 
 Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
+    // Pdfjs interleaves zero-width <br> line breaks and a trailing .endOfContent sentinel among the
+    // text spans; filter to real content so mousedown always lands on a visible node.
     cy.get('.textLayer')
         .eq(Math.max(0, page - 1))
-        .children()
+        .children(':not(br):not(.endOfContent)')
         .eq(Math.max(0, block - 1))
         .trigger('mousedown')
         .then($el => {
