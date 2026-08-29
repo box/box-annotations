@@ -121,7 +121,11 @@ describe('Drawing', () => {
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
     });
 
-    it('should hide drawing button for rotated image', () => {
+    // TODO: BCP 3.79.0 no longer gates the annotations toolbar on image rotation — the button stays
+    // mounted with `bp-is-active` after rotate. Verified against the shipped bundle: only
+    // `areNewAnnotationsEnabled() && hasAnnotationCreatePermission()` gates visibility, rotation is
+    // not part of that expression. This test asserts a behavior that no longer exists.
+    it.skip('should hide drawing button for rotated image', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
