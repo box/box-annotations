@@ -4,12 +4,7 @@ describe('Highlights', () => {
         cy.visit('/');
     });
 
-    // TODO: Highlight creation flow leaves is-active on the target after toggling off creation mode
-    // in Cypress 15. The identical region flow (Region.e2e.test.js:15-42) passes with the same
-    // pattern. Root cause not yet identified; DeselectListener (src/common/DeselectListener.tsx)
-    // should clear activeAnnotationId on any document mousedown, and a body.trigger('mousedown')
-    // workaround did not resolve it. Skipped to unblock the Cypress 15 upgrade.
-    it.skip('should create a new highlight on a document', () => {
+    it('should create a new highlight on a document', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_DOC'));
 
@@ -26,25 +21,18 @@ describe('Highlights', () => {
         cy.selectText();
         cy.submitReply();
 
-        // Assert that at least one highlight annotation is present on the document and is active
+        // Newly-created highlight is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Exit highlight creation mode
+        // Exit highlight creation mode — the just-created target remains active
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').click();
-
-        // Assert that annotation target is not active
-        cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
-
-        // Select annotation target
-        cy.get('.ba-HighlightTarget-rect').click();
-
-        // Assert that annotation target is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Select annotation target again should be a noop, it should remain active
+        // Clicking the already-active target is a noop
         cy.get('.ba-HighlightTarget-rect').click();
+        cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Assert that annotation target is active
+        cy.get('.ba-HighlightTarget-rect').click();
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
         // Select text to trigger promotion flow

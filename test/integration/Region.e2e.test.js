@@ -67,33 +67,27 @@ describe('Regions', () => {
         cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 
-    // TODO: BCP 3.79.0 no longer gates the annotations toolbar on image rotation — the button stays
-    // mounted after rotate. Verified against the shipped bundle: only
-    // `areNewAnnotationsEnabled() && hasAnnotationCreatePermission()` gates visibility, rotation is
-    // not part of that expression. This test asserts a behavior that no longer exists.
-    it.skip('should hide region button for rotated image', () => {
-        // Show the preview
+    it('should preserve region annotations across image rotation', () => {
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
-        // The parent ControlsLayer starts at opacity 0 until a real pointer enters, and Cypress
-        // synthetic mouseenter events do not reach React 18's onMouseEnter reliably. Since the app
-        // unmounts the button entirely on rotate (AnnotationsButton returns null when isEnabled=false),
-        // exist/not.exist is a truthful check that does not depend on the fade state.
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('exist');
+        cy.getByTestId('ba-Layer--region');
 
-        // Rotate image
+        cy.drawRegion();
+        cy.submitReply();
+
+        cy.get('.ba-RegionAnnotation').should('exist');
+
+        // Rotate a full turn; the annotation must survive each rotation step
         cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Assert region button is unmounted
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.exist');
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Rotate image back to non-rotated state
-        cy.getByTitle('Rotate left')
-            .click({ force: true })
-            .click({ force: true })
-            .click({ force: true });
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Assert region button is remounted
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('exist');
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
     });
 });

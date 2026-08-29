@@ -121,44 +121,28 @@ describe('Drawing', () => {
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
     });
 
-    // TODO: BCP 3.79.0 no longer gates the annotations toolbar on image rotation — the button stays
-    // mounted with `bp-is-active` after rotate. Verified against the shipped bundle: only
-    // `areNewAnnotationsEnabled() && hasAnnotationCreatePermission()` gates visibility, rotation is
-    // not part of that expression. This test asserts a behavior that no longer exists.
-    it.skip('should hide drawing button for rotated image', () => {
-        // Show the preview
+    it('should preserve drawing annotations across image rotation', () => {
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
-        // The parent ControlsLayer starts at opacity 0 until a real pointer enters, and Cypress
-        // synthetic mouseenter events do not reach React 18's onMouseEnter reliably. Since the app
-        // unmounts the button entirely on rotate (AnnotationsButton returns null when isEnabled=false),
-        // exist/not.exist is a truthful check that does not depend on the fade state. Use force:true
-        // on clicks so the fade cannot block them.
-        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('exist').click({ force: true });
+        cy.getByTestId('bp-AnnotationsControls-drawBtn').click({ force: true });
 
-        // Add a drawing annotation on the image
         cy.drawStroke();
         cy.getByTestId('ba-PopupDrawingToolbar-comment').click();
         cy.submitReply();
 
-        // Assert that at least one annotation is present on the image
         cy.get('.ba-DrawingTarget').should('exist');
 
-        // Rotate image
+        // Rotate a full turn; the annotation must survive each rotation step
         cy.getByTitle('Rotate left').click({ force: true });
-
-        // Assert drawing button is unmounted
-        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('not.exist');
         cy.get('.ba-DrawingTarget').should('exist');
 
-        // Rotate image back to non-rotated state
-        cy.getByTitle('Rotate left')
-            .click({ force: true })
-            .click({ force: true })
-            .click({ force: true });
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-DrawingTarget').should('exist');
 
-        // Assert drawing button is remounted
-        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('exist');
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-DrawingTarget').should('exist');
+
+        cy.getByTitle('Rotate left').click({ force: true });
         cy.get('.ba-DrawingTarget').should('exist');
     });
 });
