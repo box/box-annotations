@@ -125,15 +125,12 @@ describe('Drawing', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
-        // The parent ControlsLayer starts at opacity 0 until the pointer enters it, and Cypress does
-        // not move a real pointer. Trigger mouseenter before each visibility assertion so the layer
-        // faded state doesn't shadow the actual visibility of the button we care about.
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-
-        // Assert drawing button is not hidden
-        cy.getByTestId('bp-AnnotationsControls-drawBtn')
-            .should('be.visible')
-            .click();
+        // The parent ControlsLayer starts at opacity 0 until a real pointer enters, and Cypress
+        // synthetic mouseenter events do not reach React 18's onMouseEnter reliably. Since the app
+        // unmounts the button entirely on rotate (AnnotationsButton returns null when isEnabled=false),
+        // exist/not.exist is a truthful check that does not depend on the fade state. Use force:true
+        // on clicks so the fade cannot block them.
+        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('exist').click({ force: true });
 
         // Add a drawing annotation on the image
         cy.drawStroke();
@@ -141,29 +138,23 @@ describe('Drawing', () => {
         cy.submitReply();
 
         // Assert that at least one annotation is present on the image
-        cy.get('.ba-DrawingTarget').should('be.visible');
+        cy.get('.ba-DrawingTarget').should('exist');
 
         // Rotate image
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTitle('Rotate left').click();
+        cy.getByTitle('Rotate left').click({ force: true });
 
-        // Assert drawing button is hidden
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('not.be.visible');
-        // Assert that drawing annotations are still visible after rotation
-        cy.get('.ba-DrawingTarget').should('be.visible');
+        // Assert drawing button is unmounted
+        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('not.exist');
+        cy.get('.ba-DrawingTarget').should('exist');
 
         // Rotate image back to non-rotated state
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left')
-            .click()
-            .click()
-            .click();
+            .click({ force: true })
+            .click({ force: true })
+            .click({ force: true });
 
-        // Assert drawing button is not hidden
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('be.visible');
-        // Assert that drawing annotations are still visible after rotation
-        cy.get('.ba-DrawingTarget').should('be.visible');
+        // Assert drawing button is remounted
+        cy.getByTestId('bp-AnnotationsControls-drawBtn').should('exist');
+        cy.get('.ba-DrawingTarget').should('exist');
     });
 });

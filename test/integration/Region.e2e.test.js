@@ -71,31 +71,25 @@ describe('Regions', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
-        // The parent ControlsLayer starts at opacity 0 until the pointer enters it, and Cypress
-        // does not move a real pointer. Trigger mouseenter before each visibility assertion so the
-        // layer faded state doesn't shadow the actual visibility of the button we care about.
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-
-        // Assert region button is not hidden
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
+        // The parent ControlsLayer starts at opacity 0 until a real pointer enters, and Cypress
+        // synthetic mouseenter events do not reach React 18's onMouseEnter reliably. Since the app
+        // unmounts the button entirely on rotate (AnnotationsButton returns null when isEnabled=false),
+        // exist/not.exist is a truthful check that does not depend on the fade state.
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('exist');
 
         // Rotate image
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTitle('Rotate left').click();
+        cy.getByTitle('Rotate left').click({ force: true });
 
-        // Assert region button is hidden
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.be.visible');
+        // Assert region button is unmounted
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.exist');
 
         // Rotate image back to non-rotated state
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left')
-            .click()
-            .click()
-            .click();
+            .click({ force: true })
+            .click({ force: true })
+            .click({ force: true });
 
-        // Assert region button is not hidden
-        cy.get('.bp-ControlsLayer').trigger('mouseenter');
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
+        // Assert region button is remounted
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('exist');
     });
 });
