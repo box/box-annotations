@@ -1,6 +1,9 @@
 # @desktop @mobile @enabled
 language: node_js
 dist: 'focal'
+branches:
+    only:
+        - master
 node_js:
     - '22'
 addons:

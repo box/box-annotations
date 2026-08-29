@@ -71,22 +71,31 @@ describe('Regions', () => {
         // Show the preview
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
+        // The parent ControlsLayer starts at opacity 0 until the pointer enters it, and Cypress
+        // does not move a real pointer. Trigger mouseenter before each visibility assertion so the
+        // layer faded state doesn't shadow the actual visibility of the button we care about.
+        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
+
         // Assert region button is not hidden
         cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
 
         // Rotate image
+        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left').click();
 
         // Assert region button is hidden
+        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
         cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.be.visible');
 
         // Rotate image back to non-rotated state
+        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
         cy.getByTitle('Rotate left')
             .click()
             .click()
             .click();
 
         // Assert region button is not hidden
+        cy.getByTestId('bp-ControlsLayer').trigger('mouseenter');
         cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
     });
 });
