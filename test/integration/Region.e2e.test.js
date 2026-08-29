@@ -77,7 +77,6 @@ describe('Regions', () => {
 
         cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Rotate a full turn; the annotation must survive each rotation step
         cy.getByTitle('Rotate left').click({ force: true });
         cy.get('.ba-RegionAnnotation').should('exist');
 

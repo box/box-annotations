@@ -59,18 +59,17 @@ describe('Highlights', () => {
         // Wait for the empty highlight layer to be present
         cy.getByTestId('ba-Layer--highlight');
 
-        // Alias the last text block of the first textLayer, skipping the zero-height .endOfContent
-        // sentinel that pdfjs (in BCP 3.79.0) appends to every textLayer.
+        // Alias the last text block of the first textLayer
         cy.get('[data-page-number="1"')
             .find('.textLayer')
-            .children(':not(.endOfContent)')
+            .children('span')
             .last()
             .as('pageOneEndTextEl');
 
         // Select texts across pages
         cy.get('[data-page-number="2"')
             .find('.textLayer')
-            .children(':not(.endOfContent)')
+            .children('span')
             .first()
             .then($pageTwoStartTextEl => {
                 cy.get('@pageOneEndTextEl')

@@ -28,8 +28,7 @@ describe('Drawing', () => {
         // Assert that at least one annotation is present on the document and is active
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
 
-        // Exit drawing creation mode. The DrawingCreator overlay covers the toolbar button in draw mode,
-        // so a plain click fails Cypress's element-actionability check.
+        // Exit drawing creation mode; DrawingCreator overlays the toolbar button
         cy.getByTestId('bp-AnnotationsControls-drawBtn').click({ force: true });
 
         // Assert that annotation target is not active
@@ -105,7 +104,7 @@ describe('Drawing', () => {
         // Assert that at least one annotation is present on the image and is active
         cy.get('.ba-DrawingTarget').should('have.class', 'is-active');
 
-        // Exit drawing creation mode. See note above about DrawingCreator overlay.
+        // Exit drawing creation mode; DrawingCreator overlays the toolbar button
         cy.getByTestId('bp-AnnotationsControls-drawBtn').click({ force: true });
 
         // Select annotation target
@@ -132,7 +131,6 @@ describe('Drawing', () => {
 
         cy.get('.ba-DrawingTarget').should('exist');
 
-        // Rotate a full turn; the annotation must survive each rotation step
         cy.getByTitle('Rotate left').click({ force: true });
         cy.get('.ba-DrawingTarget').should('exist');
 
