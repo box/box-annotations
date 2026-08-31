@@ -18,4 +18,3 @@ export const getScale = (state: State): number => state.options.scale;
 export const getToken = (state: State): Token => state.options.token;
 export const isFeatureEnabled = (state: State, featurename: string): boolean =>
     getProp(getFeatures(state), featurename, false);
-export const getIsRichTextEnabled = (state: State): boolean => isFeatureEnabled(state, 'isRichTextEnabled');

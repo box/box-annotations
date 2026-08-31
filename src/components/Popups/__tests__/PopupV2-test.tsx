@@ -14,7 +14,7 @@ import {
     updateAnnotationAction,
     updateReplyAction,
 } from '../../../store/annotations/actions';
-import { getApiHost, getFileId, getFileVersionId, getIsRichTextEnabled, getToken } from '../../../store/options';
+import { getApiHost, getFileId, getFileVersionId, getToken } from '../../../store/options';
 
 jest.mock('react-redux', () => ({
     useDispatch: jest.fn(),
@@ -127,9 +127,12 @@ const mockSelectorValues = ({
         if (selector === getApiHost) return apiHost;
         if (selector === getFileId) return fileId;
         if (selector === getFileVersionId) return fileVersionId;
-        if (selector === getIsRichTextEnabled) return isRichTextEnabled;
         if (selector === getToken) return token;
-        return annotation;
+        const result = selector({
+            annotations: { byId: {} },
+            options: { features: { isRichTextEnabled } },
+        });
+        return typeof result === 'boolean' ? result : annotation;
     });
 };
 

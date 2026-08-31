@@ -2,7 +2,6 @@ import {
     getFeatures,
     getFileId,
     getFileVersionId,
-    getIsRichTextEnabled,
     getPermissions,
     getRotation,
     getScale,
@@ -97,18 +96,6 @@ describe('store/options/selectors', () => {
 
         test('should return false for feature not in the features object', () => {
             expect(isFeatureEnabled({ options: optionsState }, 'nonExistentFeature')).toBe(false);
-        });
-    });
-
-    describe('getIsRichTextEnabled', () => {
-        test('should return true when the feature is set', () => {
-            expect(
-                getIsRichTextEnabled({ options: { ...optionsState, features: { isRichTextEnabled: true } } }),
-            ).toBe(true);
-        });
-
-        test('should return false when the feature is absent', () => {
-            expect(getIsRichTextEnabled({ options: optionsState })).toBe(false);
         });
     });
 });

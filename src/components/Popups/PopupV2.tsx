@@ -28,7 +28,7 @@ import {
     updateReplyAction,
 } from '../../store/annotations/actions';
 import { getAnnotation } from '../../store/annotations/selectors';
-import { getApiHost, getFileId, getFileVersionId, getIsRichTextEnabled, getToken } from '../../store/options';
+import { getApiHost, getFileId, getFileVersionId, getToken, isFeatureEnabled } from '../../store/options';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
 import type { Token, TokenLiteral, TokenMap } from '../../@types';
@@ -116,7 +116,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const apiHost = useSelector(getApiHost);
     const fileId = useSelector(getFileId);
     const fileVersionId = useSelector(getFileVersionId);
-    const isRichTextEnabled = useSelector(getIsRichTextEnabled);
+    const isRichTextEnabled = useSelector((state: AppState) => isFeatureEnabled(state, 'isRichTextEnabled'));
     const token = useSelector(getToken);
     const onCopyLink = React.useMemo(
         () =>
