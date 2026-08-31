@@ -19,16 +19,16 @@ describe('store/highlight/selectors', () => {
     describe('getSelection', () => {
         test('should return the current selection item', () => {
             expect(getSelection(state)).toMatchInlineSnapshot(`
-                Object {
-                  "containerRect": Object {
+                {
+                  "containerRect": {
                     "height": 1000,
                     "width": 1000,
                     "x": 0,
                     "y": 0,
                   },
                   "location": 1,
-                  "rects": Array [
-                    Object {
+                  "rects": [
+                    {
                       "height": 100,
                       "width": 100,
                       "x": 200,

@@ -28,6 +28,8 @@ describe('HighlightCreatorManager', () => {
     beforeEach(() => {
         rootEl.classList.add('root');
         rootEl.innerHTML = '<div class="reference" />'; // referenceEl
+        jest.spyOn(window, 'setTimeout');
+        jest.spyOn(window, 'clearTimeout');
     });
 
     describe('constructor()', () => {
