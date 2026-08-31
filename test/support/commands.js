@@ -37,7 +37,7 @@ Cypress.Commands.add('drawStroke', ({ height = 100, width = 100, x = 400, y = 40
 Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
     cy.get('.textLayer')
         .eq(Math.max(0, page - 1))
-        .children()
+        .children('span')
         .eq(Math.max(0, block - 1))
         .trigger('mousedown')
         .then($el => {

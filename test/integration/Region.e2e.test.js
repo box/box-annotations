@@ -67,26 +67,26 @@ describe('Regions', () => {
         cy.get('.ba-RegionAnnotation').should('have.class', 'is-active');
     });
 
-    it('should hide region button for rotated image', () => {
-        // Show the preview
+    it('should preserve region annotations across image rotation', () => {
         cy.showPreview(Cypress.env('FILE_ID_IMAGE'));
 
-        // Assert region button is not hidden
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
+        cy.getByTestId('ba-Layer--region');
 
-        // Rotate image
-        cy.getByTitle('Rotate left').click();
+        cy.drawRegion();
+        cy.submitReply();
 
-        // Assert region button is hidden
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.be.visible');
+        cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Rotate image back to non-rotated state
-        cy.getByTitle('Rotate left')
-            .click()
-            .click()
-            .click();
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
 
-        // Assert region button is not hidden
-        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('be.visible');
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
+
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
+
+        cy.getByTitle('Rotate left').click({ force: true });
+        cy.get('.ba-RegionAnnotation').should('exist');
     });
 });

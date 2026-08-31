@@ -62,26 +62,25 @@ async function main() {
         console.log('Cypress run starting...');
 
         const suffix = argv.indexOf('-o') >= 0 ? 'open' : 'run'; // Pass -o to run Cypress in "open" mode
-        const output = childProcess.execSync(`yarn npm-run-all -p -r start:dev cy:${suffix}`, {
+        const result = childProcess.spawnSync('yarn', ['npm-run-all', '-p', '-r', 'start:dev', `cy:${suffix}`], {
             env: {
                 ...env,
                 CYPRESS_ACCESS_TOKEN: E2E_ACCESS_TOKEN,
                 CYPRESS_FILE_ID_DOC: documentId,
                 CYPRESS_FILE_ID_IMAGE: imageId,
             },
+            stdio: 'inherit',
         });
 
-        console.log('Cypress run SUCCESS. Output:');
-        console.log('------------------------------');
-        console.log(output.toString());
-    } catch (error) {
-        console.log('Cypress run FAILURE. Output:');
-        console.log('------------------------------');
-        console.log(error.stdout.toString());
-        process.exitCode = error && error.status ? error.status : 0;
+        if (result.status === 0) {
+            console.log('Cypress run SUCCESS.');
+        } else {
+            console.log('Cypress run FAILURE.');
+            process.exitCode = result.status || 1;
+        }
+    } finally {
+        await cleanup(folderId);
     }
-
-    await cleanup(folderId);
 
     console.log('Test script complete. Exiting.');
 }

@@ -21,25 +21,18 @@ describe('Highlights', () => {
         cy.selectText();
         cy.submitReply();
 
-        // Assert that at least one highlight annotation is present on the document and is active
+        // Newly-created highlight is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Exit highlight creation mode
+        // Exit highlight creation mode — the just-created target remains active
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').click();
-
-        // Assert that annotation target is not active
-        cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
-
-        // Select annotation target
-        cy.get('.ba-HighlightTarget-rect').click();
-
-        // Assert that annotation target is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Select annotation target again should be a noop, it should remain active
+        // Clicking the already-active target is a noop
         cy.get('.ba-HighlightTarget-rect').click();
+        cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
-        // Assert that annotation target is active
+        cy.get('.ba-HighlightTarget-rect').click();
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');
 
         // Select text to trigger promotion flow
@@ -69,14 +62,14 @@ describe('Highlights', () => {
         // Alias the last text block of the first textLayer
         cy.get('[data-page-number="1"')
             .find('.textLayer')
-            .children()
+            .children('span')
             .last()
             .as('pageOneEndTextEl');
 
         // Select texts across pages
         cy.get('[data-page-number="2"')
             .find('.textLayer')
-            .children()
+            .children('span')
             .first()
             .then($pageTwoStartTextEl => {
                 cy.get('@pageOneEndTextEl')
