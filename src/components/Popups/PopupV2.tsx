@@ -10,6 +10,7 @@ import {
     MessageEditorV2,
     ThreadedAnnotationsV2,
     serializeMentionMarkup,
+    serializeMessageToMarkdown,
 } from '@box/threaded-annotations';
 import type { DocumentNodeV2, TextMessageTypeV2 } from '@box/threaded-annotations';
 import type { FetchedAvatarUrls, UserContactType } from '@box/user-selector';
@@ -27,7 +28,7 @@ import {
     updateReplyAction,
 } from '../../store/annotations/actions';
 import { getAnnotation } from '../../store/annotations/selectors';
-import { getApiHost, getFileId, getFileVersionId, getToken } from '../../store/options';
+import { getApiHost, getFileId, getFileVersionId, getToken, isFeatureEnabled } from '../../store/options';
 import { fetchCollaboratorsAction } from '../../store/users/actions';
 
 import type { Token, TokenLiteral, TokenMap } from '../../@types';
@@ -65,6 +66,9 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
 
     return { type: 'doc', content: [content] } as DocumentNodeV2;
 };
+
+const serializePopupMessage = (doc: DocumentNodeV2, isRichTextEnabled: boolean): string =>
+    isRichTextEnabled ? serializeMessageToMarkdown(doc) : serializeMentionMarkup(doc).text;
 
 const literalToString = (literal: TokenLiteral): string | null => {
     if (!literal) return null;
@@ -112,6 +116,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const apiHost = useSelector(getApiHost);
     const fileId = useSelector(getFileId);
     const fileVersionId = useSelector(getFileVersionId);
+    const isRichTextEnabled = useSelector((state: AppState) => isFeatureEnabled(state, 'isRichTextEnabled'));
     const token = useSelector(getToken);
     const onCopyLink = React.useMemo(
         () =>
@@ -187,7 +192,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         if (!annotation) return undefined;
 
         const userIds = Array.from(
-            new Set(annotationToMessages(annotation).map(msg => String(msg.author.id))),
+            new Set(annotationToMessages(annotation, isRichTextEnabled).map(msg => String(msg.author.id))),
         );
         let cancelled = false;
 
@@ -205,18 +210,18 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         return () => {
             cancelled = true;
         };
-    }, [annotation, getOrFetchAvatarBlob]);
+    }, [annotation, getOrFetchAvatarBlob, isRichTextEnabled]);
 
     const threadMessages: TextMessageTypeV2[] = React.useMemo(() => {
         if (!annotation) return [];
-        return annotationToMessages(annotation).map(msg => ({
+        return annotationToMessages(annotation, isRichTextEnabled).map(msg => ({
             ...msg,
             author: {
                 ...msg.author,
                 avatarUrl: avatarBlobs[String(msg.author.id)],
             },
         }));
-    }, [annotation, avatarBlobs]);
+    }, [annotation, avatarBlobs, isRichTextEnabled]);
 
     const isResolved = annotation?.status === 'resolved';
     const resolvedBy = isResolved
@@ -259,28 +264,28 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const handlePost = React.useCallback(
         async (content: JSONContent | null): Promise<void> => {
             const doc = createDocumentNode(content);
-            const { text } = serializeMentionMarkup(doc);
+            const text = serializePopupMessage(doc, isRichTextEnabled);
             if (annotationId) {
                 await dispatch(createReplyAction({ annotationId, message: text }));
             } else {
                 onSubmit(text);
             }
         },
-        [annotationId, dispatch, onSubmit],
+        [annotationId, dispatch, isRichTextEnabled, onSubmit],
     );
 
     const handleEdit = React.useCallback(
         async (id: string, content: JSONContent | null): Promise<void> => {
             if (!annotationId) return;
             const doc = createDocumentNode(content);
-            const { text } = serializeMentionMarkup(doc);
+            const text = serializePopupMessage(doc, isRichTextEnabled);
             if (id === annotationId) {
                 await dispatch(updateAnnotationAction({ annotationId, payload: { message: text } }));
                 return;
             }
             await dispatch(updateReplyAction({ annotationId, replyId: id, payload: { message: text } }));
         },
-        [annotationId, dispatch],
+        [annotationId, dispatch, isRichTextEnabled],
     );
 
     const handleThreadDelete = React.useCallback(
@@ -349,6 +354,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                                 <ThreadedAnnotationsV2
                                     isAnnotations
                                     isResolved={isResolved}
+                                    isRichTextEnabled={isRichTextEnabled}
                                     messages={threadMessages}
                                     onAvatarClick={noop}
                                     onCopyLink={onCopyLink}
@@ -365,6 +371,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                             ) : (
                                 <MessageEditorV2
                                     isFirstAnnotation
+                                    isRichTextEnabled={isRichTextEnabled}
                                     onPost={handlePost}
                                     userSelectorProps={userSelectorProps}
                                 />
