@@ -77,59 +77,61 @@ export const getShape = ({ height, left, top, width }: DOMRect): Shape => ({
     y: top,
 });
 
-export const setSelectionAction = createAction(
-    'SET_SELECTION',
-    (arg: SelectionArg | null): Payload => {
-        if (!arg) {
+export const setSelectionAction = createAction('SET_SELECTION', (arg: SelectionArg | null): Payload => {
+    if (!arg) {
+        return {
+            payload: null,
+        };
+    }
+
+    const { containerEl, containerRect, hasError, location, range, rotation } = arg;
+
+    let rects = Array.from(range.getClientRects());
+    // getClientRects on IE/Edge might return 0 rects
+    if (!rects.length) {
+        rects = getClientRects(range);
+    }
+
+    const screenShapes = rects.map(getShape);
+
+    if (rotation && containerEl) {
+        // Convert screen rects to element-local coordinates
+        const localRects = screenShapes.map(shape => {
+            const [lx1, ly1] = getElementLocalPosition(shape.x, shape.y, containerEl, rotation);
+            const [lx2, ly2] = getElementLocalPosition(
+                shape.x + shape.width,
+                shape.y + shape.height,
+                containerEl,
+                rotation,
+            );
             return {
-                payload: null,
+                x: Math.min(lx1, lx2),
+                y: Math.min(ly1, ly2),
+                width: Math.abs(lx2 - lx1),
+                height: Math.abs(ly2 - ly1),
             };
-        }
-
-        const { containerEl, containerRect, hasError, location, range, rotation } = arg;
-
-        let rects = Array.from(range.getClientRects());
-        // getClientRects on IE/Edge might return 0 rects
-        if (!rects.length) {
-            rects = getClientRects(range);
-        }
-
-        const screenShapes = rects.map(getShape);
-
-        if (rotation && containerEl) {
-            // Convert screen rects to element-local coordinates
-            const localRects = screenShapes.map(shape => {
-                const [lx1, ly1] = getElementLocalPosition(shape.x, shape.y, containerEl, rotation);
-                const [lx2, ly2] = getElementLocalPosition(shape.x + shape.width, shape.y + shape.height, containerEl, rotation);
-                return {
-                    x: Math.min(lx1, lx2),
-                    y: Math.min(ly1, ly2),
-                    width: Math.abs(lx2 - lx1),
-                    height: Math.abs(ly2 - ly1),
-                };
-            });
-
-            return {
-                payload: {
-                    containerRect: { x: 0, y: 0, width: containerEl.offsetWidth, height: containerEl.offsetHeight },
-                    hasError,
-                    location,
-                    popupRect: getBoundingRect(screenShapes),
-                    rects: combineRects(localRects),
-                },
-            };
-        }
+        });
 
         return {
             payload: {
-                containerRect: getShape(containerRect),
+                containerRect: { x: 0, y: 0, width: containerEl.offsetWidth, height: containerEl.offsetHeight },
                 hasError,
                 location,
-                rects: combineRects(screenShapes),
+                popupRect: getBoundingRect(screenShapes),
+                rects: combineRects(localRects),
             },
         };
-    },
-);
+    }
+
+    return {
+        payload: {
+            containerRect: getShape(containerRect),
+            hasError,
+            location,
+            rects: combineRects(screenShapes),
+        },
+    };
+});
 
 export const setIsPromotingAction = createAction<boolean>('SET_IS_PROMOTING');
 export const setIsSelectingAction = createAction<boolean>('SET_IS_SELECTING');

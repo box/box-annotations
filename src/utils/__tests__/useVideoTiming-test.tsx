@@ -15,9 +15,9 @@ describe('useVideoTiming', () => {
         annotations: [],
     };
 
-    const getWrapper = ( props: UseVideoTimingProps) : ReactWrapper => {
+    const getWrapper = (props: UseVideoTimingProps): ReactWrapper => {
         const TestComponent = (componentProps: UseVideoTimingProps): JSX.Element => {
-           const result = useVideoTiming(componentProps);
+            const result = useVideoTiming(componentProps);
 
             return (
                 <div>
@@ -26,7 +26,7 @@ describe('useVideoTiming', () => {
                 </div>
             );
         };
-        
+
         return mount(<TestComponent {...defaultProps} {...props} />);
     };
 
@@ -48,23 +48,23 @@ describe('useVideoTiming', () => {
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: undefined,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
             expect(wrapper.find('[data-testid="currentVideoLocation"]').text()).toBe('0');
         });
 
         test('should return current video location from reference element', () => {
             mockVideoElement.currentTime = 5.5; // 5.5 seconds = 5500ms
-            
-            wrapper = getWrapper({ 
+
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             expect(wrapper.find('[data-testid="currentVideoLocation"]').text()).toBe('5500');
         });
     });
@@ -72,27 +72,27 @@ describe('useVideoTiming', () => {
     describe('targetType handling', () => {
         test('should not set up event listeners when targetType is TARGET_TYPE.PAGE', () => {
             const addEventListenerSpy = jest.spyOn(mockVideoElement, 'addEventListener');
-            
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.PAGE, 
+
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.PAGE,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             expect(addEventListenerSpy).not.toHaveBeenCalled();
         });
 
         test('should set up event listeners when targetType is TARGET_TYPE.FRAME and referenceEl exists', () => {
             const addEventListenerSpy = jest.spyOn(mockVideoElement, 'addEventListener');
-            
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             expect(addEventListenerSpy).toHaveBeenCalledWith('seeking', expect.any(Function));
             expect(addEventListenerSpy).toHaveBeenCalledWith('seeked', expect.any(Function));
             expect(addEventListenerSpy).toHaveBeenCalledWith('timeupdate', expect.any(Function));
@@ -100,43 +100,41 @@ describe('useVideoTiming', () => {
 
         test('should not set up event listeners when targetType is TARGET_TYPE.FRAME but no referenceEl', () => {
             const addEventListenerSpy = jest.spyOn(mockVideoElement, 'addEventListener');
-            
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: undefined,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             expect(addEventListenerSpy).not.toHaveBeenCalled();
         });
     });
 
     describe('video seeking events', () => {
         beforeEach(() => {
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
         });
-     
-        test('should set isVideoSeeking to true on seeking event', () => {          
-               
+
+        test('should set isVideoSeeking to true on seeking event', () => {
             const seekingEvent = new Event('seeking');
-            
+
             act(() => {
-                mockVideoElement.dispatchEvent(seekingEvent);  
+                mockVideoElement.dispatchEvent(seekingEvent);
             });
-            
+
             wrapper.update();
-            
+
             const text = wrapper.find('[data-testid="isVideoSeeking"]').text();
             expect(text).toBe('true');
         });
 
-        
         test('should set isVideoSeeking to false on seeked event', () => {
             // First set seeking state
             const seekingEvent = new Event('seeking');
@@ -144,36 +142,36 @@ describe('useVideoTiming', () => {
                 mockVideoElement.dispatchEvent(seekingEvent);
             });
             wrapper.update();
-                        
+
             // Then trigger seeked event
             const seekedEvent = new Event('seeked');
             act(() => {
                 mockVideoElement.dispatchEvent(seekedEvent);
             });
             wrapper.update();
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
     });
 
     describe('timeupdate event handling', () => {
         beforeEach(() => {
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
         });
 
         test('should not change seeking state when not seeking', () => {
             mockVideoElement.currentTime = 5; // 5 seconds = 5000ms
-            
+
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
-            mockVideoElement.dispatchEvent(timeUpdateEvent);
+                mockVideoElement.dispatchEvent(timeUpdateEvent);
             });
-            
+
             wrapper.update();
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
@@ -185,58 +183,54 @@ describe('useVideoTiming', () => {
                 mockVideoElement.dispatchEvent(seekingEvent);
             });
             wrapper.update();
-            
+
             mockVideoElement.currentTime = 5; // 5 seconds = 5000ms
-            
+
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
-            mockVideoElement.dispatchEvent(timeUpdateEvent);    
+                mockVideoElement.dispatchEvent(timeUpdateEvent);
             });
             wrapper.update();
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
         });
 
         test('should stop seeking when within 100ms of target time', () => {
-            const mockAnnotations = [
-                { id: 'annotation1', target: { location: { value: 5000 } } },
-            ];
-            
+            const mockAnnotations = [{ id: 'annotation1', target: { location: { value: 5000 } } }];
+
             // Set up component with annotation that has target time of 5000ms
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             // Mock current time to be within 100ms of target (5000ms)
             mockVideoElement.currentTime = 4.95; // 4.95 seconds = 4950ms
-            
+
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
-            mockVideoElement.dispatchEvent(timeUpdateEvent);    
+                mockVideoElement.dispatchEvent(timeUpdateEvent);
             });
-            
+
             wrapper.update();
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should continue seeking when more than 100ms away from target time', () => {
-            const mockAnnotations = [
-                { id: 'annotation1', target: { location: { value: 5000 } } },
-            ];
-            
+            const mockAnnotations = [{ id: 'annotation1', target: { location: { value: 5000 } } }];
+
             // Set up component with annotation that has target time of 5000ms
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             // Mock current time to be more than 100ms away from target (5000ms)
             mockVideoElement.currentTime = 4.8; // 4.8 seconds = 4800ms (200ms difference)
-            
+
             const timeUpdateEvent = new Event('timeupdate');
             act(() => {
                 mockVideoElement.dispatchEvent(timeUpdateEvent);
@@ -252,83 +246,81 @@ describe('useVideoTiming', () => {
             { id: 'annotation2', target: { location: { value: 7000 } } },
         ];
 
-  
-
         test('should not set seeking state when no activeAnnotationId', () => {
-            wrapper = getWrapper({ 
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should not set seeking state when no referenceEl', () => {
-            wrapper = getWrapper({ 
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: undefined,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should not set seeking state when annotation not found', () => {
-            wrapper = getWrapper({ 
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'nonexistent',
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should set seeking state when video is more than 100ms away from annotation time', () => {
             mockVideoElement.currentTime = 1; // 1 second = 1000ms
-            
-            wrapper = getWrapper({ 
+
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations // Target time: 3000ms
+                annotations: mockAnnotations, // Target time: 3000ms
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
         });
 
         test('should not set seeking state when video is within 100ms of annotation time', () => {
             mockVideoElement.currentTime = 2.95; // 2.95 seconds = 2950ms (50ms from 3000ms)
-            
-            wrapper = getWrapper({ 
+
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations // Target time: 3000ms
+                annotations: mockAnnotations, // Target time: 3000ms
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should update seeking state when activeAnnotationId changes', () => {
             mockVideoElement.currentTime = 1; // 1 second = 1000ms
-            
-            wrapper = getWrapper({ 
+
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations // Target time: 3000ms
+                annotations: mockAnnotations, // Target time: 3000ms
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
-            
+
             // Change to annotation2 (target time: 7000ms)
             wrapper.setProps({ activeAnnotationId: 'annotation2' });
             wrapper.update();
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
         });
     });
@@ -336,16 +328,16 @@ describe('useVideoTiming', () => {
     describe('cleanup', () => {
         test('should remove event listeners on unmount', () => {
             const removeEventListenerSpy = jest.spyOn(mockVideoElement, 'removeEventListener');
-            
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             wrapper.unmount();
-            
+
             expect(removeEventListenerSpy).toHaveBeenCalledWith('seeking', expect.any(Function));
             expect(removeEventListenerSpy).toHaveBeenCalledWith('seeked', expect.any(Function));
             expect(removeEventListenerSpy).toHaveBeenCalledWith('timeupdate', expect.any(Function));
@@ -353,18 +345,18 @@ describe('useVideoTiming', () => {
 
         test('should remove event listeners when referenceEl changes', () => {
             const removeEventListenerSpy = jest.spyOn(mockVideoElement, 'removeEventListener');
-            
-            wrapper = getWrapper({ 
-                targetType: TARGET_TYPE.FRAME, 
+
+            wrapper = getWrapper({
+                targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: null,
-                annotations: []
+                annotations: [],
             });
-            
+
             // Change referenceEl to null
             wrapper.setProps({ referenceEl: null });
             wrapper.update();
-            
+
             expect(removeEventListenerSpy).toHaveBeenCalledWith('seeking', expect.any(Function));
             expect(removeEventListenerSpy).toHaveBeenCalledWith('seeked', expect.any(Function));
             expect(removeEventListenerSpy).toHaveBeenCalledWith('timeupdate', expect.any(Function));
@@ -374,33 +366,29 @@ describe('useVideoTiming', () => {
     describe('edge cases', () => {
         test('should handle empty annotations array', () => {
             const mockAnnotations = [] as unknown as AnnotationDrawing[];
-            wrapper = getWrapper({ 
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: mockAnnotations
+                annotations: mockAnnotations,
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('false');
         });
 
         test('should handle annotation with zero time value', () => {
-            const annotationsWithZeroTime = [
-                { id: 'annotation1', target: { location: { value: 0 } } },
-            ];
-            
-            mockVideoElement.currentTime = 0.2; // 0.2 seconds = 200ms 
-            
-            wrapper = getWrapper({ 
+            const annotationsWithZeroTime = [{ id: 'annotation1', target: { location: { value: 0 } } }];
+
+            mockVideoElement.currentTime = 0.2; // 0.2 seconds = 200ms
+
+            wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 referenceEl: mockVideoElement,
                 activeAnnotationId: 'annotation1',
-                annotations: annotationsWithZeroTime
+                annotations: annotationsWithZeroTime,
             });
-            
+
             expect(wrapper.find('[data-testid="isVideoSeeking"]').text()).toBe('true');
         });
-
-
     });
 });

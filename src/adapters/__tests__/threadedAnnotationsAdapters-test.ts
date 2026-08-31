@@ -11,7 +11,9 @@ import { TARGET_TYPE } from '../../constants';
 
 jest.mock('@box/threaded-annotations', () => ({
     parseMessageMarkdown: jest.fn((text: string | null | undefined) =>
-        text ? { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] } : { type: 'doc', content: [] },
+        text
+            ? { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] }
+            : { type: 'doc', content: [] },
     ),
 }));
 

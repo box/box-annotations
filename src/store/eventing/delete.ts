@@ -14,11 +14,10 @@ const emitDeleteEvent = (action: AsyncAction<string, string>, status: Status): v
     });
 };
 
-const deleteHandler = (status: Status) => (
-    _prev: AppState,
-    _next: AppState,
-    action: AsyncAction,
-): void => emitDeleteEvent(action as AsyncAction<string, string>, status);
+const deleteHandler =
+    (status: Status) =>
+    (_prev: AppState, _next: AppState, action: AsyncAction): void =>
+        emitDeleteEvent(action as AsyncAction<string, string>, status);
 
 const handleDeleteErrorEvents = deleteHandler(Status.ERROR);
 const handleDeletePendingEvents = deleteHandler(Status.PENDING);

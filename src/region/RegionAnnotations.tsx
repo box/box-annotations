@@ -26,8 +26,8 @@ const RegionAnnotations = (props: Props): JSX.Element => {
         setActiveAnnotationId(annotationId);
     };
 
-    let annotationsToShow: AnnotationRegion[] = []
-  
+    let annotationsToShow: AnnotationRegion[] = [];
+
     if (targetType === TARGET_TYPE.FRAME) {
         if (!isVideoSeeking && activeAnnotationId) {
             annotationsToShow = annotations.filter(annotation => annotation.id === activeAnnotationId);
@@ -35,7 +35,6 @@ const RegionAnnotations = (props: Props): JSX.Element => {
     } else {
         annotationsToShow = annotations;
     }
-    
 
     return (
         <RegionList

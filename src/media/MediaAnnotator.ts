@@ -27,7 +27,6 @@ export default class MediaAnnotator extends BaseAnnotator {
     }
 
     destroy(): void {
-
         // If the store handler is present, unsubscribe from the store.
         if (this.storeHandler) {
             this.storeHandler();
@@ -44,12 +43,40 @@ export default class MediaAnnotator extends BaseAnnotator {
         return this.containerEl?.querySelector(VIDEO_PARENT_SELECTOR);
     }
 
-
-    addManagers(referenceEl: HTMLVideoElement, resinTags: { fileid: string|null; iscurrent: boolean }): void {
-        this.managers.add(new PopupManager({ location: MEDIA_LOCATION_INDEX, popupPortalEl: this.popupPortalEl, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
-        this.managers.add(new DrawingManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
-        this.managers.add(new RegionManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
-        this.managers.add(new RegionCreationManager({ location: MEDIA_LOCATION_INDEX, referenceEl, resinTags, targetType: TARGET_TYPE.FRAME }));
+    addManagers(referenceEl: HTMLVideoElement, resinTags: { fileid: string | null; iscurrent: boolean }): void {
+        this.managers.add(
+            new PopupManager({
+                location: MEDIA_LOCATION_INDEX,
+                popupPortalEl: this.popupPortalEl,
+                referenceEl,
+                resinTags,
+                targetType: TARGET_TYPE.FRAME,
+            }),
+        );
+        this.managers.add(
+            new DrawingManager({
+                location: MEDIA_LOCATION_INDEX,
+                referenceEl,
+                resinTags,
+                targetType: TARGET_TYPE.FRAME,
+            }),
+        );
+        this.managers.add(
+            new RegionManager({
+                location: MEDIA_LOCATION_INDEX,
+                referenceEl,
+                resinTags,
+                targetType: TARGET_TYPE.FRAME,
+            }),
+        );
+        this.managers.add(
+            new RegionCreationManager({
+                location: MEDIA_LOCATION_INDEX,
+                referenceEl,
+                resinTags,
+                targetType: TARGET_TYPE.FRAME,
+            }),
+        );
     }
 
     getManagers(parentEl: HTMLElement, referenceEl: HTMLVideoElement): Set<Manager> {
@@ -69,8 +96,6 @@ export default class MediaAnnotator extends BaseAnnotator {
 
         return this.managers;
     }
-
-  
 
     // returns the actual video element
     getReference(): HTMLVideoElement | null | undefined {
@@ -117,12 +142,11 @@ export default class MediaAnnotator extends BaseAnnotator {
         this.postRender();
     }
 
-    // This function gets called by the client. We are using the name scrollToAnnotation to match 
+    // This function gets called by the client. We are using the name scrollToAnnotation to match
     // the other annotators as the client calls this function when it wants to show an annoation on the
-    // preview. The only difference is that we are using the video element's currentTime to scroll to the 
+    // preview. The only difference is that we are using the video element's currentTime to scroll to the
     // annotation instead of the scrollLeft and scrollTop of the parent element.
-    scrollToAnnotation(annotationId: string | null | undefined, defaultLocation: number = -1 ): void {
-        
+    scrollToAnnotation(annotationId: string | null | undefined, defaultLocation: number = -1): void {
         if (!annotationId) {
             return;
         }
@@ -130,13 +154,11 @@ export default class MediaAnnotator extends BaseAnnotator {
         const annotationLocation = annotation?.target?.location?.value ?? defaultLocation;
         const video = this.getReference();
 
-        if ( !video || !this.annotatedEl || annotationLocation === -1 ) {
+        if (!video || !this.annotatedEl || annotationLocation === -1) {
             return;
         }
 
         video.pause();
         video.currentTime = annotationLocation / 1000;
-        
     }
 }
-

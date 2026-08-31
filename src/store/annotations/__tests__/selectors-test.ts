@@ -1,4 +1,4 @@
-import {annotationState,  videoAnnotationState } from '../__mocks__/annotationsState';
+import { annotationState, videoAnnotationState } from '../__mocks__/annotationsState';
 import {
     getActiveAnnotationId,
     getAnnotation,

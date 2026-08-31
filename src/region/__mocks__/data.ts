@@ -82,7 +82,7 @@ export const videoAnnotations = [
             shape: { height: 10, width: 10, x: 10, y: 10, type: 'rect' },
             type: 'region',
         },
-    },  
+    },
     {
         id: 'video_region_anno_2',
         target: {
@@ -108,4 +108,4 @@ export const videoAnnotations = [
             type: 'region',
         },
     },
-];      
+];

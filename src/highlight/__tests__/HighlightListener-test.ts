@@ -11,7 +11,7 @@ jest.useFakeTimers();
 describe('HighlightListener', () => {
     const defaults = {
         getSelection: jest.fn(() => ({ containerRect: mockContainerRect, location: 1, range: mockRange })),
-        store: (createStore() as unknown) as AppStore,
+        store: createStore() as unknown as AppStore,
     };
 
     const getListener = (options = {}): HighlightListener => {

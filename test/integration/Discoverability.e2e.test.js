@@ -41,9 +41,7 @@ describe('Discoverability', () => {
         cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
 
         // Select annotation target
-        cy.get('.ba-HighlightTarget-rect')
-            .first()
-            .click();
+        cy.get('.ba-HighlightTarget-rect').first().click();
 
         // Assert that annotation target is active
         cy.get('.ba-HighlightTarget').should('have.class', 'is-active');

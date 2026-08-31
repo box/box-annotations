@@ -97,13 +97,29 @@ export default class DocumentAnnotator extends BaseAnnotator {
         // Lazily instantiate managers as pages are added or re-rendered
         if (managers.size === 0) {
             if (viewMode === 'boundingBoxes') {
-                managers.add(new BoundingBoxHighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
+                managers.add(
+                    new BoundingBoxHighlightManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }),
+                );
                 return managers;
             }
 
             // Annotations mode
-            managers.add(new PopupManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
-            managers.add(new DrawingManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
+            managers.add(
+                new PopupManager({
+                    location: pageNumber,
+                    popupPortalEl: this.popupPortalEl,
+                    referenceEl: pageReferenceEl,
+                    resinTags,
+                }),
+            );
+            managers.add(
+                new DrawingManager({
+                    location: pageNumber,
+                    popupPortalEl: this.popupPortalEl,
+                    referenceEl: pageReferenceEl,
+                    resinTags,
+                }),
+            );
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
@@ -118,7 +134,14 @@ export default class DocumentAnnotator extends BaseAnnotator {
                 );
             }
 
-            managers.add(new HighlightManager({ location: pageNumber, popupPortalEl: this.popupPortalEl, referenceEl: pageReferenceEl, resinTags }));
+            managers.add(
+                new HighlightManager({
+                    location: pageNumber,
+                    popupPortalEl: this.popupPortalEl,
+                    referenceEl: pageReferenceEl,
+                    resinTags,
+                }),
+            );
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
             const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
@@ -220,7 +243,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
                     width: `${origWidth}px`,
                 });
             } else {
-                manager.style({height: '', left: '', top: '', transform: '', width: ''});
+                manager.style({ height: '', left: '', top: '', transform: '', width: '' });
             }
 
             manager.render({

@@ -20,7 +20,8 @@ module.exports = () => {
                 {
                     test: /\.(js|ts|tsx)$/,
                     loader: 'babel-loader',
-                    exclude: /node_modules\/(?!(@reduxjs\/toolkit|react-intl|intl-messageformat|intl-messageformat-parser)\/).*/,
+                    exclude:
+                        /node_modules\/(?!(@reduxjs\/toolkit|react-intl|intl-messageformat|intl-messageformat-parser)\/).*/,
                 },
                 {
                     test: /\.s?css$/,

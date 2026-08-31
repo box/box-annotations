@@ -23,5 +23,4 @@ export const videoAnnotationState: AnnotationsState = {
     isInitialized: false,
 };
 
-
 export default { annotationState, videoAnnotationState };

@@ -42,9 +42,7 @@ describe('store/boundingBoxHighlights/reducer', () => {
                 selectedId: 'box1',
             };
 
-            const newBoxes: BoundingBox[] = [
-                { id: 'new1', x: 0, y: 0, width: 50, height: 25, pageNumber: 1 },
-            ];
+            const newBoxes: BoundingBox[] = [{ id: 'new1', x: 0, y: 0, width: 50, height: 25, pageNumber: 1 }];
 
             const newState = reducer(stateWithBoxes, setBoundingBoxHighlightsAction(newBoxes));
 

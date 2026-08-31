@@ -65,7 +65,7 @@ describe('region/actions', () => {
 
             expect(dispatch).toHaveBeenCalled();
             expect(getState).toHaveBeenCalled();
-            expect(createAnnotationAction).toHaveBeenCalledWith({   
+            expect(createAnnotationAction).toHaveBeenCalledWith({
                 description: {
                     message: 'message',
                     type: 'reply',

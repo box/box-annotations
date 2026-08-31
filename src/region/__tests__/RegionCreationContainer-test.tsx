@@ -49,7 +49,11 @@ describe('RegionCreationContainer', () => {
     });
 
     test('renders the underlying creation UI for a video frame target', () => {
-        renderContainer({ targetType: 'frame' as const, location: -1, referenceEl: { currentTime: 10 } as HTMLVideoElement });
+        renderContainer({
+            targetType: 'frame' as const,
+            location: -1,
+            referenceEl: { currentTime: 10 } as HTMLVideoElement,
+        });
 
         const el = screen.getByRole('article', { name: 'region creation' });
         expect(el).toHaveAttribute('data-target-type', 'frame');
@@ -62,18 +66,15 @@ describe('RegionCreationContainer', () => {
         ${Mode.HIGHLIGHT} | ${CreatorStatus.staged}  | ${false}
         ${Mode.REGION}    | ${CreatorStatus.staged}  | ${true}
         ${Mode.REGION}    | ${CreatorStatus.pending} | ${false}
-    `(
-        'reflects isCreating=$isCreating when mode is $mode and status is $status',
-        ({ mode, isCreating, status }) => {
-            const store = createStore({ common: { mode }, creator: { status } });
-            renderContainer({ store });
+    `('reflects isCreating=$isCreating when mode is $mode and status is $status', ({ mode, isCreating, status }) => {
+        const store = createStore({ common: { mode }, creator: { status } });
+        renderContainer({ store });
 
-            expect(screen.getByRole('article', { name: 'region creation' })).toHaveAttribute(
-                'data-is-creating',
-                String(isCreating),
-            );
-        },
-    );
+        expect(screen.getByRole('article', { name: 'region creation' })).toHaveAttribute(
+            'data-is-creating',
+            String(isCreating),
+        );
+    });
 
     test.each`
         rotation     | expected

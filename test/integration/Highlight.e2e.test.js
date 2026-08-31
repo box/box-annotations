@@ -44,9 +44,7 @@ describe('Highlights', () => {
         cy.submitReply();
 
         // Assert that one more highlight annotation is present on the document and is active
-        cy.get('.ba-HighlightTarget')
-            .should('have.length', 2)
-            .should('have.class', 'is-active');
+        cy.get('.ba-HighlightTarget').should('have.length', 2).should('have.class', 'is-active');
 
         // Assert highlight creation mode is not active
         cy.getByTestId('bp-AnnotationsControls-highlightBtn').should('not.have.class', 'bp-is-active');
@@ -60,11 +58,7 @@ describe('Highlights', () => {
         cy.getByTestId('ba-Layer--highlight');
 
         // Alias the last text block of the first textLayer
-        cy.get('[data-page-number="1"')
-            .find('.textLayer')
-            .children('span')
-            .last()
-            .as('pageOneEndTextEl');
+        cy.get('[data-page-number="1"').find('.textLayer').children('span').last().as('pageOneEndTextEl');
 
         // Select texts across pages
         cy.get('[data-page-number="2"')

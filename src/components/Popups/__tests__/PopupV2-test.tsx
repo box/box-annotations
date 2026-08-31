@@ -1,10 +1,7 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    serializeMentionMarkup,
-    serializeMessageToMarkdown,
-} from '@box/threaded-annotations';
+import { serializeMentionMarkup, serializeMessageToMarkdown } from '@box/threaded-annotations';
 import type { MentionContextData, ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
@@ -155,7 +152,13 @@ describe('PopupV2', () => {
         window.URL.revokeObjectURL = originalRevokeObjectURL;
     });
 
-    const flushPromises = (): Promise<void> => act(() => new Promise<void>(resolve => { setTimeout(resolve, 0); }));
+    const flushPromises = (): Promise<void> =>
+        act(
+            () =>
+                new Promise<void>(resolve => {
+                    setTimeout(resolve, 0);
+                }),
+        );
 
     const mockAnnotation = {
         created_at: '2026-01-01T00:00:00Z',
@@ -475,10 +478,9 @@ describe('PopupV2', () => {
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
-            expect(mockFetch).toHaveBeenCalledWith(
-                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
-                { headers: { Authorization: 'Bearer test-token' } },
-            );
+            expect(mockFetch).toHaveBeenCalledWith('https://api.box.com/2.0/users/100/avatar?pic_type=large', {
+                headers: { Authorization: 'Bearer test-token' },
+            });
             const [calledUrl] = mockFetch.mock.calls[0];
             expect(calledUrl).not.toContain('access_token');
         });
@@ -491,10 +493,9 @@ describe('PopupV2', () => {
             await flushPromises();
 
             expect(tokenResolver).toHaveBeenCalledWith('file_12345');
-            expect(mockFetch).toHaveBeenCalledWith(
-                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
-                { headers: { Authorization: 'Bearer resolved-token' } },
-            );
+            expect(mockFetch).toHaveBeenCalledWith('https://api.box.com/2.0/users/100/avatar?pic_type=large', {
+                headers: { Authorization: 'Bearer resolved-token' },
+            });
         });
 
         test('should resolve a per-file map token by extracting the read string', async () => {
@@ -504,10 +505,9 @@ describe('PopupV2', () => {
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
-            expect(mockFetch).toHaveBeenCalledWith(
-                'https://api.box.com/2.0/users/100/avatar?pic_type=large',
-                { headers: { Authorization: 'Bearer read-token' } },
-            );
+            expect(mockFetch).toHaveBeenCalledWith('https://api.box.com/2.0/users/100/avatar?pic_type=large', {
+                headers: { Authorization: 'Bearer read-token' },
+            });
         });
 
         test('should not call fetch when fileId is missing', async () => {
@@ -522,14 +522,18 @@ describe('PopupV2', () => {
 
     test('should set aria-label on popup container', () => {
         mockSelectorValues();
-        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
+        render(
+            <PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />,
+        );
 
         expect(screen.getByRole('presentation')).toHaveAttribute('aria-label', 'Comment');
     });
 
     test('should render portal container for threaded-annotations popovers', () => {
         mockSelectorValues();
-        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />);
+        render(
+            <PopupV2 onSubmit={jest.fn()} popupPortalEl={makePortalEl()} reference={document.createElement('div')} />,
+        );
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
         expect(portal).not.toBeNull();
@@ -548,9 +552,7 @@ describe('PopupV2', () => {
 
     test('should render nothing when popupPortalEl is missing', () => {
         mockSelectorValues();
-        const { container } = render(
-            <PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />,
-        );
+        const { container } = render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
 
         expect(container.querySelector('.ba-PopupV2')).toBeNull();
         expect(document.body.querySelector('.ba-PopupV2')).toBeNull();

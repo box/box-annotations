@@ -1,5 +1,5 @@
 import eventManager from '../../common/EventManager';
-import { Annotation , Event } from '../../@types';
+import { Annotation, Event } from '../../@types';
 import { AppState } from '../types';
 import { AsyncAction, Status } from './types';
 
@@ -16,11 +16,10 @@ const emitUpdateEvent = (action: AsyncAction<UpdateArg, Annotation>, status: Sta
     });
 };
 
-const updateHandler = (status: Status) => (
-    _prev: AppState,
-    _next: AppState,
-    action: AsyncAction,
-): void => emitUpdateEvent(action as AsyncAction<UpdateArg, Annotation>, status);
+const updateHandler =
+    (status: Status) =>
+    (_prev: AppState, _next: AppState, action: AsyncAction): void =>
+        emitUpdateEvent(action as AsyncAction<UpdateArg, Annotation>, status);
 
 const handleUpdateErrorEvents = updateHandler(Status.ERROR);
 const handleUpdatePendingEvents = updateHandler(Status.PENDING);

@@ -15,8 +15,10 @@ const emitCreateEvent = (action: AsyncAction<NewAnnotation, Annotation>, status:
     });
 };
 
-const createHandler = (status: Status) => (prevState: AppState, nextState: AppState, action: AsyncAction): void =>
-    emitCreateEvent(action as AsyncAction<NewAnnotation, Annotation>, status);
+const createHandler =
+    (status: Status) =>
+    (prevState: AppState, nextState: AppState, action: AsyncAction): void =>
+        emitCreateEvent(action as AsyncAction<NewAnnotation, Annotation>, status);
 
 const handleCreateErrorEvents = createHandler(Status.ERROR);
 const handleCreatePendingEvents = createHandler(Status.PENDING);

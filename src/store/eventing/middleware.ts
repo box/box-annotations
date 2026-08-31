@@ -71,19 +71,21 @@ export const eventHandlers: EventHandlerMap = {
 };
 
 function getEventingMiddleware(handlers: EventHandlerMap = eventHandlers): Middleware {
-    return (store: MiddlewareAPI) => (next: Dispatch) => (action: Action): Action => {
-        const { type } = action;
-        // Retrieve the prevState as well as the nextState after the action has modified the state in order
-        // to pass all that information to the event handler
-        const prevState = store.getState();
-        const result = next(action);
-        const nextState = store.getState();
+    return (store: MiddlewareAPI) =>
+        (next: Dispatch) =>
+        (action: Action): Action => {
+            const { type } = action;
+            // Retrieve the prevState as well as the nextState after the action has modified the state in order
+            // to pass all that information to the event handler
+            const prevState = store.getState();
+            const result = next(action);
+            const nextState = store.getState();
 
-        const handler = handlers[type] || noop;
-        handler(prevState, nextState, action);
+            const handler = handlers[type] || noop;
+            handler(prevState, nextState, action);
 
-        return result;
-    };
+            return result;
+        };
 }
 
 export default getEventingMiddleware;

@@ -126,30 +126,31 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             )}
 
             {/* Layer 3a: Annotations promoter to promote selection to staged */}
-            {!isCreating && selection && !selection.hasError && (() => {
-                const popupShape = selection.popupRect || getBoundingRect(selection.rects);
-                const popup = (
-                    <div className="ba-HighlightAnnotations-popup">
-                        <PopupHighlight
-                            onCancel={handleCancel}
-                            onSubmit={handlePromote}
-                            shape={popupShape}
-                        />
-                    </div>
-                );
-                return rotation && popupPortalEl ? ReactDOM.createPortal(popup, popupPortalEl) : popup;
-            })()}
+            {!isCreating &&
+                selection &&
+                !selection.hasError &&
+                (() => {
+                    const popupShape = selection.popupRect || getBoundingRect(selection.rects);
+                    const popup = (
+                        <div className="ba-HighlightAnnotations-popup">
+                            <PopupHighlight onCancel={handleCancel} onSubmit={handlePromote} shape={popupShape} />
+                        </div>
+                    );
+                    return rotation && popupPortalEl ? ReactDOM.createPortal(popup, popupPortalEl) : popup;
+                })()}
 
             {/* Layer 3b: Highlight error popup */}
-            {selection && selection.hasError && (() => {
-                const popupShape = selection.popupRect || getBoundingRect(selection.rects);
-                const popup = (
-                    <div className="ba-HighlightAnnotations-popup">
-                        <PopupHighlightError onCancel={handleCancel} shape={popupShape} />
-                    </div>
-                );
-                return rotation && popupPortalEl ? ReactDOM.createPortal(popup, popupPortalEl) : popup;
-            })()}
+            {selection &&
+                selection.hasError &&
+                (() => {
+                    const popupShape = selection.popupRect || getBoundingRect(selection.rects);
+                    const popup = (
+                        <div className="ba-HighlightAnnotations-popup">
+                            <PopupHighlightError onCancel={handleCancel} shape={popupShape} />
+                        </div>
+                    );
+                    return rotation && popupPortalEl ? ReactDOM.createPortal(popup, popupPortalEl) : popup;
+                })()}
         </>
     );
 };

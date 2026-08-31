@@ -87,10 +87,7 @@ describe('HighlightList', () => {
             expect(shapes[3].isHover).toBe(false);
 
             act(() => {
-                wrapper
-                    .find(HighlightTarget)
-                    .at(2)
-                    .prop('onHover')!('anno_1');
+                wrapper.find(HighlightTarget).at(2).prop('onHover')!('anno_1');
             });
 
             wrapper.update();

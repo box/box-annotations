@@ -1,4 +1,10 @@
-import type { DocumentNodeV2, MentionNodeV2, ParagraphNodeV2, TextMessageTypeV2, TextNodeV2 } from '@box/threaded-annotations';
+import type {
+    DocumentNodeV2,
+    MentionNodeV2,
+    ParagraphNodeV2,
+    TextMessageTypeV2,
+    TextNodeV2,
+} from '@box/threaded-annotations';
 import { parseMessageMarkdown } from '@box/threaded-annotations';
 
 import type { Annotation, Collaborator, Reply, UserMini } from '../@types';
@@ -151,7 +157,9 @@ export const annotationToMessages = (annotation: Annotation, isRichTextEnabled =
 /**
  * Converts a box-annotations Collaborator to a @box/user-selector UserContactType.
  */
-export const collaboratorToUserContact = (collaborator: Collaborator): {
+export const collaboratorToUserContact = (
+    collaborator: Collaborator,
+): {
     email: string;
     id: number;
     name: string;

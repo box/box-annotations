@@ -35,12 +35,12 @@ describe('store/eventing/staged', () => {
     const getCreatorHighlight = (): CreatorState =>
         ({
             staged: getStagedHighlight(),
-        } as CreatorState);
+        }) as CreatorState;
 
     const getCreatorRegion = (): CreatorState =>
         ({
             staged: getStagedRegion(),
-        } as CreatorState);
+        }) as CreatorState;
 
     const getCreatorState = (isHighlight = true): AppState => {
         const creator = isHighlight ? getCreatorHighlight() : getCreatorRegion();

@@ -6,10 +6,7 @@ import { Event } from '../../@types';
 type ReplyDeleteArg = { annotationId: string; replyId: string };
 type ReplyDeletePayload = { annotationId: string; replyId: string };
 
-const emitReplyDeleteEvent = (
-    action: AsyncAction<ReplyDeleteArg, ReplyDeletePayload>,
-    status: Status,
-): void => {
+const emitReplyDeleteEvent = (action: AsyncAction<ReplyDeleteArg, ReplyDeletePayload>, status: Status): void => {
     const { error, meta: { arg, requestId } = {}, payload } = action;
     if (status === Status.SUCCESS && !payload) return;
     const annotationId = payload?.annotationId ?? arg?.annotationId;
@@ -22,11 +19,10 @@ const emitReplyDeleteEvent = (
     });
 };
 
-const replyDeleteHandler = (status: Status) => (
-    _prev: AppState,
-    _next: AppState,
-    action: AsyncAction,
-): void => emitReplyDeleteEvent(action as AsyncAction<ReplyDeleteArg, ReplyDeletePayload>, status);
+const replyDeleteHandler =
+    (status: Status) =>
+    (_prev: AppState, _next: AppState, action: AsyncAction): void =>
+        emitReplyDeleteEvent(action as AsyncAction<ReplyDeleteArg, ReplyDeletePayload>, status);
 
 const handleReplyDeleteErrorEvents = replyDeleteHandler(Status.ERROR);
 const handleReplyDeletePendingEvents = replyDeleteHandler(Status.PENDING);

@@ -189,10 +189,10 @@ describe('ReplyField', () => {
                 setEnd: jest.fn(),
                 getBoundingClientRect: () => mockMentionRect,
             };
-            getSelectionSpy.mockReturnValue(({
+            getSelectionSpy.mockReturnValue({
                 focusNode: mockTextNode,
                 getRangeAt: () => mockRange,
-            } as unknown) as Selection);
+            } as unknown as Selection);
 
             const virtualElement = instance.getVirtualElement(mockMention) as VirtualElement;
 
@@ -212,7 +212,7 @@ describe('ReplyField', () => {
 
             const getVirtualElementSpy = jest
                 .spyOn(instance, 'getVirtualElement')
-                .mockReturnValueOnce(('virtualElement' as unknown) as VirtualElement);
+                .mockReturnValueOnce('virtualElement' as unknown as VirtualElement);
             instance.updatePopupReference();
 
             expect(getVirtualElementSpy).toBeCalledWith(mockMention);
@@ -244,10 +244,10 @@ describe('ReplyField', () => {
 
     describe('stopDefaultEvent()', () => {
         test('should prevent default and stop propagation', () => {
-            const mockEvent = ({
+            const mockEvent = {
                 preventDefault: jest.fn(),
                 stopPropagation: jest.fn(),
-            } as unknown) as React.SyntheticEvent;
+            } as unknown as React.SyntheticEvent;
 
             const wrapper = getWrapper();
             wrapper.instance().stopDefaultEvent(mockEvent);
@@ -275,13 +275,13 @@ describe('ReplyField', () => {
         let setActiveItemSpy: jest.SpyInstance;
 
         beforeEach(() => {
-            mockKeyboardEvent = ({
+            mockKeyboardEvent = {
                 preventDefault: jest.fn(),
                 stopPropagation: jest.fn(),
-            } as unknown) as React.KeyboardEvent<HTMLDivElement>;
+            } as unknown as React.KeyboardEvent<HTMLDivElement>;
 
             wrapper = getWrapper();
-            wrapper.setState({ activeItemIndex: 0, popupReference: ('popupReference' as unknown) as VirtualElement });
+            wrapper.setState({ activeItemIndex: 0, popupReference: 'popupReference' as unknown as VirtualElement });
             instance = wrapper.instance();
 
             stopDefaultEventSpy = jest.spyOn(instance, 'stopDefaultEvent');

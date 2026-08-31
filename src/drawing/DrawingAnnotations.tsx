@@ -91,7 +91,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         redoDrawingPathGroup();
     };
 
-    const getCurrentLocation = (): number => { 
+    const getCurrentLocation = (): number => {
         if (targetType === TARGET_TYPE.FRAME) {
             return getCurrentVideoLocation();
         }
@@ -121,21 +121,17 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         }
     }, [drawnPathGroups]);
 
-  
     let annotationsToShow: AnnotationDrawing[] = [];
-    // For video annotations, we only show the active annotation and we wait for the video 
+    // For video annotations, we only show the active annotation and we wait for the video
     // to seek to the annotation location before showing it. This prevents annoations from being
     // shown on the incorrect frame while the video is seeking.
-    if (targetType === TARGET_TYPE.FRAME ) {
+    if (targetType === TARGET_TYPE.FRAME) {
         if (!isVideoSeeking && activeAnnotationId) {
             annotationsToShow = annotations.filter(annotation => annotation.id === activeAnnotationId);
         }
     } else {
         annotationsToShow = annotations;
     }
-
-    
-
 
     return (
         <>
@@ -179,23 +175,27 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 />
             )}
 
-            {isCreating && hasPathGroups && drawingSVGGroup && canShowPopupToolbar && (() => {
-                const toolbar = (
-                    <PopupDrawingToolbar
-                        ref={popupDrawingToolbarRef}
-                        canComment={hasDrawnPathGroups}
-                        canRedo={hasStashedPathGroups}
-                        canUndo={hasDrawnPathGroups}
-                        className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
-                        onDelete={handleDelete}
-                        onRedo={handleRedo}
-                        onReply={handleReply}
-                        onUndo={handleUndo}
-                        reference={drawingSVGGroup}
-                    />
-                );
-                return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;
-            })()}
+            {isCreating &&
+                hasPathGroups &&
+                drawingSVGGroup &&
+                canShowPopupToolbar &&
+                (() => {
+                    const toolbar = (
+                        <PopupDrawingToolbar
+                            ref={popupDrawingToolbarRef}
+                            canComment={hasDrawnPathGroups}
+                            canRedo={hasStashedPathGroups}
+                            canUndo={hasDrawnPathGroups}
+                            className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
+                            onDelete={handleDelete}
+                            onRedo={handleRedo}
+                            onReply={handleReply}
+                            onUndo={handleUndo}
+                            reference={drawingSVGGroup}
+                        />
+                    );
+                    return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;
+                })()}
         </>
     );
 };

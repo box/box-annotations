@@ -142,10 +142,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             const capturedToken = token;
             const url = await fetchAvatarBlob(capturedApiHost, capturedToken, fileId, userId);
             if (!url) return null;
-            if (
-                credentialsRef.current.apiHost !== capturedApiHost ||
-                credentialsRef.current.token !== capturedToken
-            ) {
+            if (credentialsRef.current.apiHost !== capturedApiHost || credentialsRef.current.token !== capturedToken) {
                 URL.revokeObjectURL(url);
                 return null;
             }
@@ -225,11 +222,9 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
 
     const isResolved = annotation?.status === 'resolved';
     const resolvedBy = isResolved
-        ? annotation?.resolution?.resolved_by?.name ?? annotation?.modified_by?.name
+        ? (annotation?.resolution?.resolved_by?.name ?? annotation?.modified_by?.name)
         : undefined;
-    const resolvedAtSource = isResolved
-        ? annotation?.resolution?.resolved_at ?? annotation?.modified_at
-        : undefined;
+    const resolvedAtSource = isResolved ? (annotation?.resolution?.resolved_at ?? annotation?.modified_at) : undefined;
     const resolvedAt = resolvedAtSource ? new Date(resolvedAtSource).getTime() : undefined;
 
     const userSelectorProps = React.useMemo(
@@ -288,14 +283,11 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         [annotationId, dispatch, isRichTextEnabled],
     );
 
-    const handleThreadDelete = React.useCallback(
-        async (): Promise<void> => {
-            if (annotationId) {
-                await dispatch(deleteAnnotationAction(annotationId));
-            }
-        },
-        [annotationId, dispatch],
-    );
+    const handleThreadDelete = React.useCallback(async (): Promise<void> => {
+        if (annotationId) {
+            await dispatch(deleteAnnotationAction(annotationId));
+        }
+    }, [annotationId, dispatch]);
 
     const handleDelete = React.useCallback(
         async (id: string): Promise<void> => {
@@ -305,24 +297,18 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         [annotationId, dispatch],
     );
 
-    const handleResolve = React.useCallback(
-        async (): Promise<void> => {
-            if (!annotationId) return;
-            const result = await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'resolved' } }));
-            if (updateAnnotationAction.fulfilled.match(result)) {
-                dispatch(setActiveAnnotationIdAction(null));
-            }
-        },
-        [annotationId, dispatch],
-    );
+    const handleResolve = React.useCallback(async (): Promise<void> => {
+        if (!annotationId) return;
+        const result = await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'resolved' } }));
+        if (updateAnnotationAction.fulfilled.match(result)) {
+            dispatch(setActiveAnnotationIdAction(null));
+        }
+    }, [annotationId, dispatch]);
 
-    const handleUnresolve = React.useCallback(
-        async (): Promise<void> => {
-            if (!annotationId) return;
-            await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
-        },
-        [annotationId, dispatch],
-    );
+    const handleUnresolve = React.useCallback(async (): Promise<void> => {
+        if (!annotationId) return;
+        await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
+    }, [annotationId, dispatch]);
 
     if (!popupPortalEl) return null;
 
@@ -343,13 +329,15 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             >
                 <BlueprintModernizationProvider enableModernizedComponents>
                     <TooltipProvider>
-                        <MentionContextProvider value={{
-                            collaborationPopoverProps: {
-                                onSubmit: () => Promise.resolve(),
-                            },
-                            // Mentions are restricted to file collaborators; the invite popover is intentionally never shown.
-                            fetchCollaboratorState: async () => true,
-                        }}>
+                        <MentionContextProvider
+                            value={{
+                                collaborationPopoverProps: {
+                                    onSubmit: () => Promise.resolve(),
+                                },
+                                // Mentions are restricted to file collaborators; the invite popover is intentionally never shown.
+                                fetchCollaboratorState: async () => true,
+                            }}
+                        >
                             {annotationId ? (
                                 <ThreadedAnnotationsV2
                                     isAnnotations

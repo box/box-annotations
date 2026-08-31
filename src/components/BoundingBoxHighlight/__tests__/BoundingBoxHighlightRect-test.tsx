@@ -19,8 +19,7 @@ describe('BoundingBoxHighlightRect', () => {
         total: 5,
     };
 
-    const renderRect = (props = {}): RenderResult =>
-        render(<BoundingBoxHighlightRect {...defaults} {...props} />);
+    const renderRect = (props = {}): RenderResult => render(<BoundingBoxHighlightRect {...defaults} {...props} />);
 
     beforeEach(() => {
         jest.clearAllMocks();
