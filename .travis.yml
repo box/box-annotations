@@ -1,6 +1,9 @@
 # @desktop @mobile @enabled
 language: node_js
 dist: 'focal'
+branches:
+    only:
+        - master
 node_js:
     - '22'
 addons:
@@ -28,7 +31,7 @@ jobs:
           script: yarn test
         - name: 'E2E Tests'
           if: fork = false # Note: We can only run E2E tests on canonical due to security concerns
-          script: travis_wait 60 yarn test:e2e
+          script: yarn test:e2e
 notifications:
     email:
         recipients:
