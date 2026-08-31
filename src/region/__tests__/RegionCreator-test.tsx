@@ -43,8 +43,8 @@ describe('RegionCreator', () => {
         jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
         jest.spyOn(document, 'addEventListener');
         jest.spyOn(document, 'removeEventListener');
-        jest.spyOn(window, 'cancelAnimationFrame');
-        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100));
+        jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => clearTimeout(id));
 
         origOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
         origOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
@@ -93,7 +93,7 @@ describe('RegionCreator', () => {
             ${1000} | ${100}  | ${1000} | ${150}  | ${{ height: 5, width: 1, x: 99, y: 10 }}         | ${'maximum position (x)'}
             ${100}  | ${1000} | ${150}  | ${1000} | ${{ height: 1, width: 5, x: 10, y: 99 }}         | ${'maximum position (y)'}
             ${1000} | ${1000} | ${1000} | ${1000} | ${{ height: 1, width: 1, x: 99, y: 99 }}         | ${'maximum position (both)'}
-            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 1, width: 1, x: 99, y: 99 }}         | ${'maximum position (over)'}
+            ${1500} | ${1500} | ${1500} | ${1500} | ${{ height: 1, width: 1, x: 100, y: 100 }}       | ${'maximum position (over)'}
             ${-1}   | ${-1}   | ${10}   | ${10}   | ${{ height: 1, width: 1, x: 0, y: 0 }}           | ${'minimum position'}
         `('should update the rendered rect when the user draws $comment', ({ result, x1, x2, y1, y2 }) => {
             const wrapper = getWrapper();

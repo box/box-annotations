@@ -31,8 +31,8 @@ describe('DrawingCreator', () => {
     beforeEach(() => {
         jest.useFakeTimers();
 
-        jest.spyOn(window, 'cancelAnimationFrame');
-        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps;
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100));
+        jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => clearTimeout(id));
         jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(() => getDOMRect());
         jest.spyOn(Element.prototype, 'setAttribute');
 
