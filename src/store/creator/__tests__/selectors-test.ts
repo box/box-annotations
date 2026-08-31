@@ -1,4 +1,4 @@
-import {pageCreatorState, videoCreatorState} from '../__mocks__/creatorState';
+import { pageCreatorState, videoCreatorState } from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
 import {
     getCreatorMessage,
@@ -27,9 +27,9 @@ describe('store/annotations/selectors', () => {
     describe('getCreatorStaged', () => {
         test('should return the current creator staged item', () => {
             expect(getCreatorStaged(state)).toMatchInlineSnapshot(`
-                Object {
+                {
                   "location": 1,
-                  "shape": Object {
+                  "shape": {
                     "height": 100,
                     "type": "rect",
                     "width": 100,
@@ -44,9 +44,9 @@ describe('store/annotations/selectors', () => {
 
         test('should return the current creator staged item for video content', () => {
             expect(getCreatorStaged(videoState)).toMatchInlineSnapshot(`
-                Object {
+                {
                   "location": 120,
-                  "shape": Object {
+                  "shape": {
                     "height": 100,
                     "type": "rect",
                     "width": 100,

@@ -44,8 +44,8 @@ describe('useAutoScroll', () => {
 
         jest.spyOn(document, 'addEventListener');
         jest.spyOn(document, 'removeEventListener');
-        jest.spyOn(window, 'cancelAnimationFrame');
-        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100)); // 10 fps
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 100));
+        jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => clearTimeout(id));
 
         document.body.innerHTML = '<div id="parent"><div id="child"/></div>';
     });
