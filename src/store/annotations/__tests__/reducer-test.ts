@@ -1,5 +1,5 @@
 import reducer from '../reducer';
-import {annotationState as state} from '../__mocks__/annotationsState';
+import { annotationState as state } from '../__mocks__/annotationsState';
 import { Annotation, AnnotationDrawing, NewAnnotation, PathGroup, Reply } from '../../../@types';
 import { APICollection } from '../../../api';
 import {
@@ -179,11 +179,10 @@ describe('store/annotations/reducer', () => {
 
             const newState = reducer(
                 state,
-                createReplyAction.fulfilled(
-                    { annotationId: 'nonexistent', reply },
-                    'test',
-                    { annotationId: 'nonexistent', message: 'A reply' },
-                ),
+                createReplyAction.fulfilled({ annotationId: 'nonexistent', reply }, 'test', {
+                    annotationId: 'nonexistent',
+                    message: 'A reply',
+                }),
             );
 
             expect(newState.byId).toEqual(state.byId);
@@ -215,10 +214,18 @@ describe('store/annotations/reducer', () => {
 
     describe('updateAnnotationAction', () => {
         test('should update annotation in byId', () => {
-            const updated = { id: 'test1', target: { type: 'region' }, type: 'annotation', status: 'resolved' } as unknown as Annotation;
+            const updated = {
+                id: 'test1',
+                target: { type: 'region' },
+                type: 'annotation',
+                status: 'resolved',
+            } as unknown as Annotation;
             const newState = reducer(
                 state,
-                updateAnnotationAction.fulfilled(updated, 'test', { annotationId: 'test1', payload: { status: 'resolved' } }),
+                updateAnnotationAction.fulfilled(updated, 'test', {
+                    annotationId: 'test1',
+                    payload: { status: 'resolved' },
+                }),
             );
 
             expect(newState.byId.test1).toEqual(updated);
@@ -247,11 +254,11 @@ describe('store/annotations/reducer', () => {
 
             const newState = reducer(
                 stateWithReply,
-                updateReplyAction.fulfilled(
-                    { annotationId: 'test1', reply: updatedReply },
-                    'test',
-                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
-                ),
+                updateReplyAction.fulfilled({ annotationId: 'test1', reply: updatedReply }, 'test', {
+                    annotationId: 'test1',
+                    replyId: 'reply-1',
+                    payload: { message: 'new message' },
+                }),
             );
 
             expect(newState.byId.test1.replies).toHaveLength(1);
@@ -271,11 +278,11 @@ describe('store/annotations/reducer', () => {
 
             const newState = reducer(
                 stateWithReplies,
-                updateReplyAction.fulfilled(
-                    { annotationId: 'test1', reply: updatedReply },
-                    'test',
-                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
-                ),
+                updateReplyAction.fulfilled({ annotationId: 'test1', reply: updatedReply }, 'test', {
+                    annotationId: 'test1',
+                    replyId: 'reply-1',
+                    payload: { message: 'new message' },
+                }),
             );
 
             expect(newState.byId.test1.replies).toEqual([updatedReply, otherReply]);
@@ -285,11 +292,11 @@ describe('store/annotations/reducer', () => {
             const updatedReply = { ...existingReply, message: 'new message' } as Reply;
             const newState = reducer(
                 state,
-                updateReplyAction.fulfilled(
-                    { annotationId: 'nonexistent', reply: updatedReply },
-                    'test',
-                    { annotationId: 'nonexistent', replyId: 'reply-1', payload: { message: 'new message' } },
-                ),
+                updateReplyAction.fulfilled({ annotationId: 'nonexistent', reply: updatedReply }, 'test', {
+                    annotationId: 'nonexistent',
+                    replyId: 'reply-1',
+                    payload: { message: 'new message' },
+                }),
             );
 
             expect(newState.byId).toEqual(state.byId);
@@ -299,11 +306,11 @@ describe('store/annotations/reducer', () => {
             const updatedReply = { ...existingReply, message: 'new message' } as Reply;
             const newState = reducer(
                 state,
-                updateReplyAction.fulfilled(
-                    { annotationId: 'test1', reply: updatedReply },
-                    'test',
-                    { annotationId: 'test1', replyId: 'reply-1', payload: { message: 'new message' } },
-                ),
+                updateReplyAction.fulfilled({ annotationId: 'test1', reply: updatedReply }, 'test', {
+                    annotationId: 'test1',
+                    replyId: 'reply-1',
+                    payload: { message: 'new message' },
+                }),
             );
 
             expect(newState.byId.test1).toEqual(state.byId.test1);
@@ -332,11 +339,10 @@ describe('store/annotations/reducer', () => {
 
             const newState = reducer(
                 stateWithReplies,
-                deleteReplyAction.fulfilled(
-                    { annotationId: 'test1', replyId: 'reply-1' },
-                    'test',
-                    { annotationId: 'test1', replyId: 'reply-1' },
-                ),
+                deleteReplyAction.fulfilled({ annotationId: 'test1', replyId: 'reply-1' }, 'test', {
+                    annotationId: 'test1',
+                    replyId: 'reply-1',
+                }),
             );
 
             expect(newState.byId.test1.replies).toEqual([replyB]);
@@ -353,11 +359,10 @@ describe('store/annotations/reducer', () => {
 
             const newState = reducer(
                 stateWithReplies,
-                deleteReplyAction.fulfilled(
-                    { annotationId: 'test1', replyId: 'reply-other' },
-                    'test',
-                    { annotationId: 'test1', replyId: 'reply-other' },
-                ),
+                deleteReplyAction.fulfilled({ annotationId: 'test1', replyId: 'reply-other' }, 'test', {
+                    annotationId: 'test1',
+                    replyId: 'reply-other',
+                }),
             );
 
             expect(newState.byId.test1.replies).toEqual([replyA]);
@@ -366,11 +371,10 @@ describe('store/annotations/reducer', () => {
         test('should not modify state if annotation does not exist', () => {
             const newState = reducer(
                 state,
-                deleteReplyAction.fulfilled(
-                    { annotationId: 'nonexistent', replyId: 'reply-1' },
-                    'test',
-                    { annotationId: 'nonexistent', replyId: 'reply-1' },
-                ),
+                deleteReplyAction.fulfilled({ annotationId: 'nonexistent', replyId: 'reply-1' }, 'test', {
+                    annotationId: 'nonexistent',
+                    replyId: 'reply-1',
+                }),
             );
 
             expect(newState.byId).toEqual(state.byId);
@@ -397,10 +401,7 @@ describe('store/annotations/reducer', () => {
         });
 
         test('should ignore updates for annotations not in state', () => {
-            const newState = reducer(
-                state,
-                applySidebarAnnotationUpdateAction({ id: 'unknown' }),
-            );
+            const newState = reducer(state, applySidebarAnnotationUpdateAction({ id: 'unknown' }));
 
             expect(newState.byId).toEqual(state.byId);
         });
@@ -408,7 +409,10 @@ describe('store/annotations/reducer', () => {
         test.each([['resolved' as const], ['open' as const]])(
             'should apply status=%s for resolve/unresolve flow',
             annotationStatus => {
-                const newState = reducer(state, applySidebarAnnotationUpdateAction({ id: 'test1', status: annotationStatus }));
+                const newState = reducer(
+                    state,
+                    applySidebarAnnotationUpdateAction({ id: 'test1', status: annotationStatus }),
+                );
 
                 expect(newState.byId.test1).toMatchObject({ status: annotationStatus });
             },
@@ -463,19 +467,13 @@ describe('store/annotations/reducer', () => {
                 },
             };
 
-            const newState = reducer(
-                stateWithReply,
-                applySidebarReplyCreateAction({ annotationId: 'test1', reply }),
-            );
+            const newState = reducer(stateWithReply, applySidebarReplyCreateAction({ annotationId: 'test1', reply }));
 
             expect(newState.byId.test1.replies).toHaveLength(1);
         });
 
         test('should ignore create for annotations not in state', () => {
-            const newState = reducer(
-                state,
-                applySidebarReplyCreateAction({ annotationId: 'unknown', reply }),
-            );
+            const newState = reducer(state, applySidebarReplyCreateAction({ annotationId: 'unknown', reply }));
 
             expect(newState.byId).toEqual(state.byId);
         });

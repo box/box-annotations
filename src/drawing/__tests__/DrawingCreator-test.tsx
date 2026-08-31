@@ -47,14 +47,22 @@ describe('DrawingCreator', () => {
         if (origOffsetHeight) Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeight);
     });
 
-    const simulateDrawStart = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {
+    const simulateDrawStart = (
+        wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>,
+        clientX = 10,
+        clientY = 10,
+    ): void => {
         act(() => {
             wrapper.prop('onDrawStart')(clientX, clientY);
         });
 
         wrapper.update();
     };
-    const simulateDrawMove = (wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>, clientX = 10, clientY = 10): void => {
+    const simulateDrawMove = (
+        wrapper: ReactWrapper<PointerCaptureProps, NonNullable<unknown>>,
+        clientX = 10,
+        clientY = 10,
+    ): void => {
         act(() => {
             wrapper.prop('onDrawUpdate')(clientX, clientY);
         });
@@ -243,13 +251,7 @@ describe('DrawingCreator', () => {
             jest.advanceTimersByTime(100);
 
             expect(window.requestAnimationFrame).toHaveBeenCalled();
-            expect(
-                wrapper
-                    .find(DrawingPath)
-                    .childAt(0)
-                    .getDOMNode()
-                    .getAttribute('d'),
-            ).toEqual('M 10 10');
+            expect(wrapper.find(DrawingPath).childAt(0).getDOMNode().getAttribute('d')).toEqual('M 10 10');
         });
 
         test('should update svg path if drawing', () => {
@@ -262,13 +264,9 @@ describe('DrawingCreator', () => {
             jest.advanceTimersByTime(100);
 
             expect(window.requestAnimationFrame).toHaveBeenCalled();
-            expect(
-                wrapper
-                    .find(DrawingPath)
-                    .childAt(0)
-                    .getDOMNode()
-                    .getAttribute('d'),
-            ).toEqual('M 10 10 C 12.5 12.5, 15 15, 17.5 17.5');
+            expect(wrapper.find(DrawingPath).childAt(0).getDOMNode().getAttribute('d')).toEqual(
+                'M 10 10 C 12.5 12.5, 15 15, 17.5 17.5',
+            );
         });
     });
 });

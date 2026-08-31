@@ -24,12 +24,12 @@ export const mockDOMRect: DOMRect = {
 
 const mockTextNode = document.createTextNode('test');
 
-export const mockRange: Range = ({
+export const mockRange: Range = {
     endContainer: mockTextNode,
     getBoundingClientRect: () => mockDOMRect,
     getClientRects: () => [mockDOMRect],
     startContainer: mockTextNode,
-} as unknown) as Range;
+} as unknown as Range;
 
 // Simulates an 800x600 element rotated -90deg (appears as 600x800 on screen)
 export const mockRotatedContainerEl = (() => {

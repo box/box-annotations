@@ -15,7 +15,10 @@ export type Props = {
     location: number;
 };
 
-const mapStateToProps = (state: AppState, { location }: Props): {
+const mapStateToProps = (
+    state: AppState,
+    { location }: Props,
+): {
     allBoundingBoxes: BoundingBox[];
     boundingBoxes: BoundingBox[];
     selectedId: string | null;

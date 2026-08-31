@@ -20,7 +20,6 @@ export const pageCreatorState = {
     status: CreatorStatus.init,
 };
 
-
 export const videoCreatorState = {
     cursor: 0,
     error: null,
@@ -29,7 +28,7 @@ export const videoCreatorState = {
     staged: {
         location: 120,
         shape: {
-            height: 100, 
+            height: 100,
             width: 100,
             type: 'rect' as const,
             x: 10,

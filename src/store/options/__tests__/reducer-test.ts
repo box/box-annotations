@@ -1,10 +1,5 @@
 import reducer from '../reducer';
-import {
-    setFileIdAction,
-    setFileVersionIdAction,
-    setPermissionsAction,
-    setViewModeAction,
-} from '../actions';
+import { setFileIdAction, setFileVersionIdAction, setPermissionsAction, setViewModeAction } from '../actions';
 
 describe('store/options/reducer', () => {
     describe('setFileIdAction', () => {

@@ -7,6 +7,13 @@ $text_cursor_32_3x: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAA
     $offset_x: 10;
     $offset_y: 16;
 
-    cursor: url($text_cursor_32) $offset_x $offset_y, text; /* Legacy */
-    cursor: image-set(url($text_cursor_32) 1x, url($text_cursor_32_2x) 2x, url($text_cursor_32_3x) 3x) $offset_x $offset_y, text; /* Webkit */ /* stylelint-disable-line */
+    cursor:
+        url($text_cursor_32) $offset_x $offset_y,
+        text; /* Legacy */
+
+    /* stylelint-disable unit-no-unknown */
+    cursor:
+        image-set(url($text_cursor_32) 1x, url($text_cursor_32_2x) 2x, url($text_cursor_32_3x) 3x) $offset_x $offset_y,
+        text; /* Webkit */
+    /* stylelint-enable unit-no-unknown */
 }

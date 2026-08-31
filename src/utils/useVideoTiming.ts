@@ -1,7 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { TARGET_TYPE } from "../constants";
-
-
+import { useState, useEffect, useCallback } from 'react';
+import { TARGET_TYPE } from '../constants';
 
 export interface UseVideoTimingProps {
     targetType: TARGET_TYPE;
@@ -22,7 +20,7 @@ export function getVideoCurrentTimeInMilliseconds(video: HTMLVideoElement): numb
 /**
  * This hook is used to keep track of when the video is currently seeking and when it has reached
  * the target time definined in the annotation. This is necessary because we cannot control how long it
- * takes for the video to seek to the target time and we do not want to display an annotation on the video player 
+ * takes for the video to seek to the target time and we do not want to display an annotation on the video player
  * at the wrong time. For example, if an annotation is defined at being at 20 seconds into the video and
  * the video just loaded and needs to buffer in order to get to 20 seconds, we do not want the annotation
  * drawing or region to be shown until the video has finished seeking and is at the correct time. The hook
@@ -38,9 +36,8 @@ const useVideoTiming = ({
     const [isVideoSeeking, setIsVideoSeeking] = useState<boolean>(false);
     const [targetVideoTime, setTargetVideoTime] = useState<number | null>(null);
 
-
-    const getCurrentVideoTimeStamp = useCallback((): number => { 
-         return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
+    const getCurrentVideoTimeStamp = useCallback((): number => {
+        return getVideoCurrentTimeInMilliseconds(referenceEl as HTMLVideoElement);
     }, [referenceEl]);
 
     // Handle video seeking events
@@ -48,7 +45,7 @@ const useVideoTiming = ({
         if (targetType !== TARGET_TYPE.FRAME || !referenceEl) {
             return undefined;
         }
-        
+
         const handleSeeking = (): void => {
             setIsVideoSeeking(true);
         };
@@ -62,7 +59,7 @@ const useVideoTiming = ({
             if (isVideoSeeking && targetVideoTime !== null) {
                 const currentVideoTimePosition = getCurrentVideoTimeStamp();
                 const timeDiff = Math.abs(currentVideoTimePosition - targetVideoTime);
-                
+
                 // Consider the video has reached the target time if within 100ms
                 if (timeDiff <= 100) {
                     setIsVideoSeeking(false);
@@ -86,13 +83,13 @@ const useVideoTiming = ({
     useEffect(() => {
         if (targetType === TARGET_TYPE.FRAME && activeAnnotationId && referenceEl) {
             const currentVideoTimePosition = getCurrentVideoTimeStamp();
-            
+
             // Find the annotation to get its target time
             const annotation = annotations.find(ann => ann.id === activeAnnotationId);
             if (annotation) {
                 const annotationTimePosition = annotation.target.location.value;
                 const timeDiff = Math.abs(currentVideoTimePosition - annotationTimePosition);
-                
+
                 // If the video is not at the annotation's time, set seeking state
                 if (timeDiff > 100) {
                     setTargetVideoTime(annotationTimePosition);
@@ -109,4 +106,3 @@ const useVideoTiming = ({
 };
 
 export default useVideoTiming;
-

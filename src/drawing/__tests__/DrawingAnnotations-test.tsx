@@ -165,9 +165,7 @@ describe('DrawingAnnotations', () => {
         describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId with annotation id', () => {
                 const setActiveAnnotationId = jest.fn();
-                getWrapper({ setActiveAnnotationId })
-                    .find(DrawingList)
-                    .prop('onSelect')!('123');
+                getWrapper({ setActiveAnnotationId }).find(DrawingList).prop('onSelect')!('123');
 
                 expect(setActiveAnnotationId).toHaveBeenCalledWith('123');
             });
@@ -353,7 +351,7 @@ describe('DrawingAnnotations', () => {
     createVideoAnnotationTests({
         componentName: 'DrawingAnnotations',
         getWrapper,
-        findListComponent: wrapper => (wrapper.find(DrawingList) as unknown) as ReactWrapper,
+        findListComponent: wrapper => wrapper.find(DrawingList) as unknown as ReactWrapper,
         videoAnnotations: videoAnnotations as AnnotationDrawing[],
         regularAnnotations: annotations as AnnotationDrawing[],
         activeAnnotationId: 'video_drawing_anno_2',

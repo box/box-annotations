@@ -4,11 +4,7 @@
     "description": "Box Annotations",
     "author": "Box (https://www.box.com/)",
     "license": "SEE LICENSE IN LICENSE",
-    "sideEffects": [
-        "./dist/annotations.js",
-        "**/*.css",
-        "**/*.scss"
-    ],
+    "sideEffects": ["./dist/annotations.js", "**/*.css", "**/*.scss"],
     "repository": {
         "type": "git",
         "url": "git@github.com:box/box-annotations.git"
@@ -109,7 +105,7 @@
         "mini-css-extract-plugin": "^2.10.1",
         "npm-run-all": "^4.1.5",
         "postcss-loader": "^8.1.1",
-        "prettier": "^1.19.1",
+        "prettier": "^3.2.5",
         "react": "18.3.1",
         "react-dom": "18.3.1",
         "react-intl": "6.4.2",

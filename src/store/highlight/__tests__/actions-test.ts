@@ -1,5 +1,11 @@
 import state from '../__mocks__/highlightState';
-import { mockContainerRect, mockDOMRect, mockRange, mockRotatedContainerEl, mockRotatedContainerRect } from '../__mocks__/data';
+import {
+    mockContainerRect,
+    mockDOMRect,
+    mockRange,
+    mockRotatedContainerEl,
+    mockRotatedContainerRect,
+} from '../__mocks__/data';
 import { setSelectionAction } from '../actions';
 
 describe('store/highlight/actions', () => {
@@ -18,9 +24,9 @@ describe('store/highlight/actions', () => {
         });
 
         test('should prepare correct argument in IE/Edge', () => {
-            jest.spyOn(document, 'createNodeIterator').mockReturnValueOnce(({
+            jest.spyOn(document, 'createNodeIterator').mockReturnValueOnce({
                 nextNode: jest.fn().mockReturnValueOnce(mockRange.startContainer),
-            } as unknown) as NodeIterator);
+            } as unknown as NodeIterator);
             jest.spyOn(document, 'createRange').mockReturnValueOnce({
                 ...new Range(),
                 getBoundingClientRect: jest.fn().mockReturnValueOnce(mockDOMRect),
@@ -30,7 +36,7 @@ describe('store/highlight/actions', () => {
             });
             const range = {
                 ...mockRange,
-                getClientRects: () => ({ length: 0 } as DOMRectList),
+                getClientRects: () => ({ length: 0 }) as DOMRectList,
             };
 
             const newArg = {

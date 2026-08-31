@@ -10,8 +10,15 @@ $region_cursor_new_3x: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCA
     $offset_x: 9;
     $offset_y: 4;
 
-    cursor: url($region_cursor_new) $offset_x $offset_y, auto; /* Legacy */
-    cursor: image-set(url($region_cursor_new) 1x, url($region_cursor_new_2x) 2x, url($region_cursor_new_3x) 3x) $offset_x $offset_y, auto; /* Webkit */ /* stylelint-disable-line */
+    cursor:
+        url($region_cursor_new) $offset_x $offset_y,
+        auto; /* Legacy */
+
+    /* stylelint-disable unit-no-unknown */
+    cursor:
+        image-set(url($region_cursor_new) 1x, url($region_cursor_new_2x) 2x, url($region_cursor_new_3x) 3x) $offset_x $offset_y,
+        auto; /* Webkit */
+    /* stylelint-enable unit-no-unknown */
 }
 
 .ba-RegionCreator-rect {

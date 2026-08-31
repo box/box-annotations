@@ -113,7 +113,7 @@ describe('DocumentAnnotator', () => {
         test('should destroy existing managers', () => {
             annotator = getAnnotator();
 
-            const mockManager = ({ destroy: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn() } as unknown as Manager;
             const mockManagersSet = new Set([mockManager]);
             annotator.managers.set(1, mockManagersSet);
 
@@ -176,10 +176,10 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should destroy any existing managers if they are not present in a given page element', () => {
-            const mockManager = ({
+            const mockManager = {
                 destroy: jest.fn(),
                 exists: jest.fn(() => false),
-            } as unknown) as RegionCreationManager;
+            } as unknown as RegionCreationManager;
 
             annotator.managers.set(1, new Set([mockManager]));
             annotator.getPageManagers(getPage());
@@ -316,7 +316,7 @@ describe('DocumentAnnotator', () => {
 
     describe('renderPage()', () => {
         test('should initialize a manager for a new page', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
@@ -334,7 +334,7 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should apply rotation styles when rotation is non-zero', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
@@ -357,7 +357,7 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should swap dimensions for 270 degree rotation', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
@@ -379,7 +379,7 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should not swap dimensions for 180 degree rotation', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 
@@ -401,7 +401,7 @@ describe('DocumentAnnotator', () => {
         });
 
         test('should reset styles when rotation is 0', () => {
-            const mockManager = ({ destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown) as Manager;
+            const mockManager = { destroy: jest.fn(), render: jest.fn(), style: jest.fn() } as unknown as Manager;
             const pageNumber = 1;
             const pageEl = getPage(pageNumber);
 

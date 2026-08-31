@@ -11,7 +11,7 @@ jest.useFakeTimers();
 describe('HighlightCreatorManager', () => {
     const defaults = {
         getSelection: jest.fn(() => ({ containerRect: mockContainerRect, location: 1, range: mockRange })),
-        store: (createStore() as unknown) as AppStore,
+        store: createStore() as unknown as AppStore,
     };
     const rootEl = document.createElement('div');
     const getOptions = (options: Partial<Options> = {}): Options => ({
@@ -89,8 +89,8 @@ describe('HighlightCreatorManager', () => {
             const wrapper = getWrapper();
 
             wrapper.selectionChangeTimer = 1;
-            ((setIsSelectingAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_is_selecting' });
-            ((setSelectionAction as unknown) as jest.Mock).mockReturnValue({ type: 'set_selection' });
+            (setIsSelectingAction as unknown as jest.Mock).mockReturnValue({ type: 'set_is_selecting' });
+            (setSelectionAction as unknown as jest.Mock).mockReturnValue({ type: 'set_selection' });
 
             wrapper.handleMouseDown(new MouseEvent('mousedown', { buttons: 1 }));
 

@@ -40,9 +40,10 @@ describe('drawing/actions', () => {
         },
     });
 
-
     beforeEach(() => {
-        mockCreateAnnotationAction.mockReturnValue({ type: 'CREATE_ANNOTATION' } as unknown as ReturnType<typeof createAnnotationAction>);
+        mockCreateAnnotationAction.mockReturnValue({ type: 'CREATE_ANNOTATION' } as unknown as ReturnType<
+            typeof createAnnotationAction
+        >);
     });
 
     afterEach(() => {
@@ -50,11 +51,10 @@ describe('drawing/actions', () => {
     });
 
     describe('createDrawingAction', () => {
-  
         test('should create annotation with page target type', () => {
             const arg = getCreateArg({ targetType: 'page' as TestTargetType as CreateArg['targetType'] });
             const action = createDrawingAction(arg);
-            
+
             action(mockDispatch, mockGetState);
 
             expect(mockCreateAnnotationAction).toHaveBeenCalledWith({
@@ -79,7 +79,7 @@ describe('drawing/actions', () => {
         test('should create annotation with frame target type', () => {
             const arg = getCreateArg({ targetType: 'frame' as TestTargetType as CreateArg['targetType'] });
             const action = createDrawingAction(arg);
-            
+
             action(mockDispatch, mockGetState);
 
             expect(mockCreateAnnotationAction).toHaveBeenCalledWith({
@@ -101,7 +101,6 @@ describe('drawing/actions', () => {
             });
         });
 
-
         test('should dispatch createAnnotationAction', () => {
             const arg = getCreateArg();
             const action = createDrawingAction(arg);
@@ -112,7 +111,9 @@ describe('drawing/actions', () => {
 
     describe('setupDrawingAction', () => {
         beforeEach(() => {
-            mockResetDrawingAction.mockReturnValue({ type: 'RESET_DRAWING' } as unknown as ReturnType<typeof resetDrawingAction>);
+            mockResetDrawingAction.mockReturnValue({ type: 'RESET_DRAWING' } as unknown as ReturnType<
+                typeof resetDrawingAction
+            >);
         });
         afterEach(() => {
             jest.clearAllMocks();
@@ -144,7 +145,6 @@ describe('drawing/actions', () => {
             expect(mockSetDrawingLocationAction).toHaveBeenCalledTimes(1);
             expect(mockSetDrawingLocationAction).toHaveBeenCalledWith(100);
             expect(mockDispatch).toHaveBeenCalledTimes(1);
-        }); 
-
+        });
     });
 });

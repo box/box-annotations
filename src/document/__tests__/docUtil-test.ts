@@ -51,7 +51,7 @@ describe('docUtil', () => {
         `;
 
         const generateSelection = (startClass: string, endClass: string): Selection => {
-            return ({
+            return {
                 focusNode: rootElement.querySelector(endClass),
                 getRangeAt: () => {
                     const range = document.createRange();
@@ -63,7 +63,7 @@ describe('docUtil', () => {
                 },
                 rangeCount: 1,
                 type: 'Range',
-            } as unknown) as Selection;
+            } as unknown as Selection;
         };
 
         const mockSelection = {
@@ -78,7 +78,7 @@ describe('docUtil', () => {
             { ...mockSelection, rangeCount: 0 },
             { ...mockSelection, focusNode: null },
         ])('should return null if range is null', selection => {
-            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => (selection as unknown) as Selection);
+            jest.spyOn(window, 'getSelection').mockImplementationOnce(() => selection as unknown as Selection);
 
             expect(getSelection()).toBe(null);
         });

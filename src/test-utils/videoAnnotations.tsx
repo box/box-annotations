@@ -18,8 +18,8 @@ export interface VideoAnnotationTestConfig {
     componentName: string;
     getWrapper: (props: unknown) => ReactWrapper;
     findListComponent: (wrapper: ReactWrapper) => ListComponentWrapper;
-    videoAnnotations: AnnotationDrawing[]|AnnotationRegion[] ;
-    regularAnnotations: AnnotationDrawing[]|AnnotationRegion[];
+    videoAnnotations: AnnotationDrawing[] | AnnotationRegion[];
+    regularAnnotations: AnnotationDrawing[] | AnnotationRegion[];
     activeAnnotationId: string;
     nonExistentAnnotationId: string;
 }
@@ -43,7 +43,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
         describe('TARGET_TYPE.FRAME target type', () => {
             test('should show only active annotation when not seeking and active annotation exists', () => {
                 mockVideoTimingReturn.isVideoSeeking = false;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -58,7 +58,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should show no annotations when seeking and active annotation exists', () => {
                 mockVideoTimingReturn.isVideoSeeking = true;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -71,7 +71,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should show no annotations when not seeking but no active annotation', () => {
                 mockVideoTimingReturn.isVideoSeeking = false;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -84,7 +84,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should show no annotations when seeking and no active annotation', () => {
                 mockVideoTimingReturn.isVideoSeeking = true;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -97,7 +97,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should call useVideoTiming with correct parameters for TARGET_TYPE.FRAME type', () => {
                 const referenceEl = document.createElement('video');
-                
+
                 getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -117,7 +117,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
         describe('useVideoTiming integration', () => {
             test('should call useVideoTiming hook on component mount', () => {
                 const referenceEl = document.createElement('video');
-                
+
                 getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,
@@ -130,7 +130,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should pass correct parameters to useVideoTiming for TARGET_TYPE.PAGE type', () => {
                 const referenceEl = document.createElement('div');
-                
+
                 getWrapper({
                     targetType: TARGET_TYPE.PAGE,
                     annotations: regularAnnotations,
@@ -150,7 +150,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
         describe('annotation filtering edge cases', () => {
             test('should handle empty annotations array for TARGET_TYPE.FRAME type', () => {
                 mockVideoTimingReturn.isVideoSeeking = false;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: [],
@@ -163,7 +163,7 @@ export const createVideoAnnotationTests = (config: VideoAnnotationTestConfig): v
 
             test('should handle active annotation that does not exist in annotations array', () => {
                 mockVideoTimingReturn.isVideoSeeking = false;
-                
+
                 const wrapper = getWrapper({
                     targetType: TARGET_TYPE.FRAME,
                     annotations: videoAnnotations,

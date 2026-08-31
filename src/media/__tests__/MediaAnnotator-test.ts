@@ -19,7 +19,7 @@ jest.mock('../../region/RegionManager');
 
 describe('MediaAnnotator', () => {
     const container = document.createElement('div');
-  
+
     const defaults = {
         apiHost: 'https://api.box.com',
         container,
@@ -38,9 +38,8 @@ describe('MediaAnnotator', () => {
         token: '1234567890',
     };
 
-
     const getAnnotator = (options = {}): MediaAnnotator => new MediaAnnotator({ ...defaults, ...options });
-    
+
     const getVideo = (): HTMLVideoElement => {
         const video = container.querySelector('video') as HTMLVideoElement;
 
@@ -98,8 +97,6 @@ describe('MediaAnnotator', () => {
             expect(annotator.annotatedEl).toBe(getParent());
             expect(getParent().classList).toContain(CSS_LOADED_CLASS);
             expect(container.classList).toContain(CSS_CONTAINER_CLASS);
-            
- 
         });
     });
 
@@ -243,15 +240,14 @@ describe('MediaAnnotator', () => {
     });
 
     describe('scrollToAnnotation()', () => {
-
         const mockVideo = {
             pause: jest.fn(),
             currentTime: 0,
             classList: {
-                remove: jest.fn(), 
+                remove: jest.fn(),
             },
         };
-        
+
         beforeEach(() => {
             const payload = {
                 entries: [...regions, ...drawings] as Annotation[],
@@ -284,9 +280,7 @@ describe('MediaAnnotator', () => {
             expect(mockVideo.pause).toHaveBeenCalledTimes(3);
         });
 
-
-
-        test('should do nothing if the annotation id is undefined or null' ,() => {
+        test('should do nothing if the annotation id is undefined or null', () => {
             annotator.scrollToAnnotation(undefined);
             expect(mockVideo.currentTime).toBe(0);
             expect(mockVideo.pause).not.toHaveBeenCalled();
@@ -308,11 +302,10 @@ describe('MediaAnnotator', () => {
         });
 
         test('should handle undefined and null default location', () => {
-    
             annotator.scrollToAnnotation('video_region_anno_1', undefined);
             expect(mockVideo.currentTime).toBe(10);
             expect(mockVideo.pause).toHaveBeenCalled();
-         
+
             annotator.scrollToAnnotation('video_region_anno_2', null as unknown as number);
             expect(mockVideo.currentTime).toBe(20);
             expect(mockVideo.pause).toHaveBeenCalledTimes(2);

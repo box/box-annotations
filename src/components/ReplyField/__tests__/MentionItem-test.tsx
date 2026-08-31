@@ -6,11 +6,11 @@ import MentionItem, { Props } from '../MentionItem';
 describe('MentionItem', () => {
     const defaults: Props = {
         children: <div />,
-        contentState: ({
+        contentState: {
             getEntity: () => ({
                 getData: () => ({ id: 'testid' }),
             }),
-        } as unknown) as ContentState,
+        } as unknown as ContentState,
         entityKey: 'testEntityKey',
     };
 
@@ -28,11 +28,11 @@ describe('MentionItem', () => {
 
         test('should not render link if no id', () => {
             const wrapper = getWrapper({
-                contentState: ({
+                contentState: {
                     getEntity: () => ({
                         getData: () => ({}),
                     }),
-                } as unknown) as ContentState,
+                } as unknown as ContentState,
             });
 
             expect(wrapper.exists('[data-testid="ba-MentionItem-link"]')).toBeFalsy();

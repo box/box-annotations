@@ -109,14 +109,14 @@ export const videoAnnotations = [
         created_at: '2023-01-01T00:00:00Z',
         created_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         modified_at: '2023-01-01T00:00:00Z',
-        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user'},
+        modified_by: { id: 'user1', login: 'user1@example.com', name: 'User 1', type: 'user' },
         permissions: { can_edit: true, can_delete: true },
         type: 'annotation',
         target: {
             location: { type: 'frame', value: 10000 },
             path_groups: pathGroups,
             type: 'drawing' as const,
-        },     
+        },
         pathGroups: {
             clientId: '1_1',
             paths: [

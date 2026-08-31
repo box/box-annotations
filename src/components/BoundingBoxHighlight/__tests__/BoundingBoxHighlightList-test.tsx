@@ -25,8 +25,7 @@ describe('BoundingBoxHighlightList', () => {
         selectedId: 'box-2' as string | null,
     };
 
-    const renderList = (props = {}): RenderResult =>
-        render(<BoundingBoxHighlightList {...defaults} {...props} />);
+    const renderList = (props = {}): RenderResult => render(<BoundingBoxHighlightList {...defaults} {...props} />);
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -71,12 +70,8 @@ describe('BoundingBoxHighlightList', () => {
 
             const selectedRect = screen.getByTestId('ba-BoundingBoxHighlightRect-box-2');
             expect(selectedRect).toHaveClass('is-selected');
-            expect(screen.getByTestId('ba-BoundingBoxHighlightRect-box-1')).not.toHaveClass(
-                'is-selected',
-            );
-            expect(screen.getByTestId('ba-BoundingBoxHighlightRect-box-3')).not.toHaveClass(
-                'is-selected',
-            );
+            expect(screen.getByTestId('ba-BoundingBoxHighlightRect-box-1')).not.toHaveClass('is-selected');
+            expect(screen.getByTestId('ba-BoundingBoxHighlightRect-box-3')).not.toHaveClass('is-selected');
         });
 
         test('should pass currentIndex based on selectedId position in allBoundingBoxes', () => {

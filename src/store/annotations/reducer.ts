@@ -37,7 +37,9 @@ const annotationsAllIds = createReducer<AnnotationsState['allIds']>([], builder 
         .addCase(createAnnotationAction.fulfilled, (state, { payload: { id } }) => {
             state.push(id);
         })
-        .addCase(deleteAnnotationAction.fulfilled, (state, { payload: id }) => state.filter(annotationId => annotationId !== id))
+        .addCase(deleteAnnotationAction.fulfilled, (state, { payload: id }) =>
+            state.filter(annotationId => annotationId !== id),
+        )
         .addCase(removeAnnotationAction, (state, { payload: id }) => state.filter(annotationId => annotationId !== id))
         .addCase(fetchAnnotationsAction.fulfilled, (state, { payload }) => {
             payload.entries.forEach(({ id }) => state.indexOf(id) === -1 && state.push(id));
@@ -67,9 +69,7 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
         .addCase(updateReplyAction.fulfilled, (state, { payload: { annotationId, reply } }) => {
             const annotation = state[annotationId];
             if (annotation && annotation.replies) {
-                annotation.replies = annotation.replies.map(existing =>
-                    existing.id === reply.id ? reply : existing,
-                );
+                annotation.replies = annotation.replies.map(existing => (existing.id === reply.id ? reply : existing));
             }
         })
         .addCase(deleteReplyAction.fulfilled, (state, { payload: { annotationId, replyId } }) => {

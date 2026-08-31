@@ -220,14 +220,17 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.COLOR_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
-            expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_ANNOTATION_UPDATE, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(
+                SidebarEvent.SIDEBAR_ANNOTATION_UPDATE,
+                expect.any(Function),
+            );
             expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_CREATE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_UPDATE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(SidebarEvent.SIDEBAR_REPLY_DELETE, expect.any(Function));
         });
 
         test('should destroy DeselectManager', () => {
-            const mockDeselectManager = ({ destroy: jest.fn() } as unknown) as DeselectManager;
+            const mockDeselectManager = { destroy: jest.fn() } as unknown as DeselectManager;
             annotator.deselectManager = mockDeselectManager;
 
             annotator.destroy();

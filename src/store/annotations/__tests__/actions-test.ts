@@ -1,10 +1,5 @@
 import API from '../../../api';
-import {
-    createAnnotationAction,
-    deleteReplyAction,
-    fetchAnnotationsAction,
-    updateReplyAction,
-} from '../actions';
+import { createAnnotationAction, deleteReplyAction, fetchAnnotationsAction, updateReplyAction } from '../actions';
 import { Annotation, NewAnnotation, Reply } from '../../../@types';
 
 jest.mock('../../../api/APIFactory');
@@ -105,7 +100,7 @@ describe('store/annotations/actions', () => {
 
             expect(result.type).toBe('UPDATE_REPLY/rejected');
             expect(result.payload).toBeUndefined();
-            const {error} = (result as { error: { message: string } });
+            const { error } = result as { error: { message: string } };
             expect(error.message).toContain('reply reply_1 not found');
         });
 
@@ -152,7 +147,7 @@ describe('store/annotations/actions', () => {
 
             expect(result.type).toBe('DELETE_REPLY/rejected');
             expect(result.payload).toBeUndefined();
-            const {error} = (result as { error: { message: string } });
+            const { error } = result as { error: { message: string } };
             expect(error.message).toContain('reply reply_1 not found');
         });
 

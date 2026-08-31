@@ -16,7 +16,14 @@ describe('RegionAnnotationsContainer', () => {
         store: createStore(),
     };
     const getWrapper = (props = {}): ReactWrapper<Props> =>
-        mount(<RegionAnnotationsContainer referenceEl={undefined} targetType={TARGET_TYPE.PAGE} {...defaults} {...props} />);
+        mount(
+            <RegionAnnotationsContainer
+                referenceEl={undefined}
+                targetType={TARGET_TYPE.PAGE}
+                {...defaults}
+                {...props}
+            />,
+        );
 
     describe('render', () => {
         test('should connect the underlying component and wrap it with a root provider', () => {

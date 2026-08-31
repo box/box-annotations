@@ -70,7 +70,7 @@ const ANNOTATORS: Annotator[] = [
         CONSTRUCTOR: MediaAnnotator,
         NAME: 'Media',
         TYPES: [Type.region],
-        VIEWERS: ['Dash','MP4'],
+        VIEWERS: ['Dash', 'MP4'],
     },
 ];
 

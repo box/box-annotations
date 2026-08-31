@@ -26,7 +26,7 @@ module.exports = {
             rules: {
                 '@typescript-eslint/naming-convention': 'off',
                 '@typescript-eslint/no-non-null-assertion': 'off',
-                'import/no-import-module-exports': 'off'
+                'import/no-import-module-exports': 'off',
             },
         },
         {

@@ -62,5 +62,11 @@ export function getSelection(): Selection | null {
         location = getPageNumber(selection.focusNode as Element) ?? endPage;
     }
 
-    return { containerEl: containerEl as HTMLElement, containerRect: containerEl.getBoundingClientRect(), hasError, location, range };
+    return {
+        containerEl: containerEl as HTMLElement,
+        containerRect: containerEl.getBoundingClientRect(),
+        hasError,
+        location,
+        range,
+    };
 }

@@ -20,7 +20,6 @@ const mockVideoTimingReturn = {
 };
 
 describe('RegionAnnotations', () => {
-
     beforeEach(() => {
         mockUseVideoTiming.mockReturnValue(mockVideoTimingReturn);
     });
@@ -32,17 +31,14 @@ describe('RegionAnnotations', () => {
         referenceEl: document.createElement('div'),
         targetType: TARGET_TYPE.PAGE,
     });
-    const getWrapper = (props: unknown = {}): ReactWrapper => mount(<RegionAnnotations {...getDefaults()} {...(props as Partial<Props>)} />);
-
-
+    const getWrapper = (props: unknown = {}): ReactWrapper =>
+        mount(<RegionAnnotations {...getDefaults()} {...(props as Partial<Props>)} />);
 
     describe('event handlers', () => {
         describe('handleAnnotationActive()', () => {
             test('should call setActiveAnnotationId with annotation id', () => {
                 const setActiveAnnotationId = jest.fn();
-                getWrapper({ setActiveAnnotationId })
-                    .find(RegionList)
-                    .prop('onSelect')!('123');
+                getWrapper({ setActiveAnnotationId }).find(RegionList).prop('onSelect')!('123');
 
                 expect(setActiveAnnotationId).toHaveBeenCalledWith('123');
             });
@@ -69,7 +65,7 @@ describe('RegionAnnotations', () => {
     createVideoAnnotationTests({
         componentName: 'RegionAnnotations',
         getWrapper,
-        findListComponent: (wrapper) => wrapper.find(RegionList) as unknown as ReactWrapper,
+        findListComponent: wrapper => wrapper.find(RegionList) as unknown as ReactWrapper,
         videoAnnotations: videoAnnotations as AnnotationRegion[],
         regularAnnotations: annotations as AnnotationRegion[],
         activeAnnotationId: 'video_region_anno_2',
@@ -81,7 +77,7 @@ describe('RegionAnnotations', () => {
         test('should filter to show only the matching active annotation', () => {
             mockVideoTimingReturn.isVideoSeeking = false;
             const activeAnnotationId = 'video_region_anno_3';
-            
+
             const wrapper = getWrapper({
                 targetType: TARGET_TYPE.FRAME,
                 annotations: videoAnnotations,

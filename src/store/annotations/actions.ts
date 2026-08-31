@@ -53,27 +53,24 @@ export const createReplyAction = createAsyncThunk<
     { annotationId: string; reply: Reply },
     { annotationId: string; message: string },
     AppThunkAPI
->(
-    'CREATE_REPLY',
-    async ({ annotationId, message }, { extra, getState, signal }) => {
-        const client = extra.api.getAnnotationsAPI();
-        const state = getState();
-        const fileId = getFileId(state);
-        const filePermissions = getPermissions(state);
-        const annotation = getAnnotation(state, annotationId);
-        const permissions = { ...filePermissions, ...annotation?.permissions };
+>('CREATE_REPLY', async ({ annotationId, message }, { extra, getState, signal }) => {
+    const client = extra.api.getAnnotationsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const filePermissions = getPermissions(state);
+    const annotation = getAnnotation(state, annotationId);
+    const permissions = { ...filePermissions, ...annotation?.permissions };
 
-        signal.addEventListener('abort', () => {
-            client.destroy();
-        });
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
 
-        const reply = await new Promise<Reply>((resolve, reject) => {
-            client.createAnnotationReply(fileId, annotationId, permissions, message, resolve, reject);
-        });
+    const reply = await new Promise<Reply>((resolve, reject) => {
+        client.createAnnotationReply(fileId, annotationId, permissions, message, resolve, reject);
+    });
 
-        return { annotationId, reply };
-    },
-);
+    return { annotationId, reply };
+});
 
 export const deleteAnnotationAction = createAsyncThunk<string, string, AppThunkAPI>(
     'DELETE_ANNOTATION',
@@ -101,97 +98,88 @@ export const updateAnnotationAction = createAsyncThunk<
     Annotation,
     { annotationId: string; payload: { message?: string; status?: string } },
     AppThunkAPI
->(
-    'UPDATE_ANNOTATION',
-    async ({ annotationId, payload }, { extra, getState, signal }) => {
-        const client = extra.api.getAnnotationsAPI();
-        const state = getState();
-        const fileId = getFileId(state);
-        const filePermissions = getPermissions(state);
-        const existingAnnotation = getAnnotation(state, annotationId);
-        const permissions = { ...filePermissions, ...existingAnnotation?.permissions };
+>('UPDATE_ANNOTATION', async ({ annotationId, payload }, { extra, getState, signal }) => {
+    const client = extra.api.getAnnotationsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const filePermissions = getPermissions(state);
+    const existingAnnotation = getAnnotation(state, annotationId);
+    const permissions = { ...filePermissions, ...existingAnnotation?.permissions };
 
-        signal.addEventListener('abort', () => {
-            client.destroy();
-        });
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
 
-        return new Promise<Annotation>((resolve, reject) => {
-            client.updateAnnotation(fileId, annotationId, permissions, payload, resolve, reject);
-        });
-    },
-);
+    return new Promise<Annotation>((resolve, reject) => {
+        client.updateAnnotation(fileId, annotationId, permissions, payload, resolve, reject);
+    });
+});
 
 export const updateReplyAction = createAsyncThunk<
     { annotationId: string; reply: Reply },
     { annotationId: string; replyId: string; payload: { message?: string; status?: string } },
     AppThunkAPI
->(
-    'UPDATE_REPLY',
-    async ({ annotationId, replyId, payload }, { extra, getState, signal }) => {
-        const client = extra.api.getThreadedCommentsAPI();
-        const state = getState();
-        const fileId = getFileId(state);
-        const annotation = getAnnotation(state, annotationId);
-        const reply = annotation?.replies?.find(r => r.id === replyId);
+>('UPDATE_REPLY', async ({ annotationId, replyId, payload }, { extra, getState, signal }) => {
+    const client = extra.api.getThreadedCommentsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const annotation = getAnnotation(state, annotationId);
+    const reply = annotation?.replies?.find(r => r.id === replyId);
 
-        if (!reply) {
-            throw new Error(`updateReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
-        }
+    if (!reply) {
+        throw new Error(`updateReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
+    }
 
-        signal.addEventListener('abort', () => {
-            client.destroy();
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
+
+    const updated = await new Promise<Reply>((resolve, reject) => {
+        client.updateComment({
+            commentId: replyId,
+            errorCallback: reject,
+            fileId,
+            message: payload.message,
+            permissions: reply.permissions ?? {},
+            status: payload.status,
+            successCallback: resolve,
         });
+    });
 
-        const updated = await new Promise<Reply>((resolve, reject) => {
-            client.updateComment({
-                commentId: replyId,
-                errorCallback: reject,
-                fileId,
-                message: payload.message,
-                permissions: reply.permissions ?? {},
-                status: payload.status,
-                successCallback: resolve,
-            });
-        });
-
-        return { annotationId, reply: updated };
-    },
-);
+    return { annotationId, reply: updated };
+});
 
 export const deleteReplyAction = createAsyncThunk<
     { annotationId: string; replyId: string },
     { annotationId: string; replyId: string },
     AppThunkAPI
->(
-    'DELETE_REPLY',
-    async ({ annotationId, replyId }, { extra, getState, signal }) => {
-        const client = extra.api.getThreadedCommentsAPI();
-        const state = getState();
-        const fileId = getFileId(state);
-        const annotation = getAnnotation(state, annotationId);
-        const reply = annotation?.replies?.find(r => r.id === replyId);
+>('DELETE_REPLY', async ({ annotationId, replyId }, { extra, getState, signal }) => {
+    const client = extra.api.getThreadedCommentsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const annotation = getAnnotation(state, annotationId);
+    const reply = annotation?.replies?.find(r => r.id === replyId);
 
-        if (!reply) {
-            throw new Error(`deleteReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
-        }
+    if (!reply) {
+        throw new Error(`deleteReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
+    }
 
-        signal.addEventListener('abort', () => {
-            client.destroy();
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
+
+    await new Promise<void>((resolve, reject) => {
+        client.deleteComment({
+            commentId: replyId,
+            errorCallback: reject,
+            fileId,
+            permissions: reply.permissions ?? {},
+            successCallback: resolve,
         });
+    });
 
-        await new Promise<void>((resolve, reject) => {
-            client.deleteComment({
-                commentId: replyId,
-                errorCallback: reject,
-                fileId,
-                permissions: reply.permissions ?? {},
-                successCallback: resolve,
-            });
-        });
-
-        return { annotationId, replyId };
-    },
-);
+    return { annotationId, replyId };
+});
 
 export type SidebarAnnotationUpdatePayload = Partial<Annotation> & { id: string };
 export type SidebarReplyMutationPayload = { annotationId: string; reply: Reply };
@@ -200,15 +188,9 @@ export type SidebarReplyDeletePayload = { annotationId: string; replyId: string 
 export const applySidebarAnnotationUpdateAction = createAction<SidebarAnnotationUpdatePayload>(
     'APPLY_SIDEBAR_ANNOTATION_UPDATE',
 );
-export const applySidebarReplyCreateAction = createAction<SidebarReplyMutationPayload>(
-    'APPLY_SIDEBAR_REPLY_CREATE',
-);
-export const applySidebarReplyDeleteAction = createAction<SidebarReplyDeletePayload>(
-    'APPLY_SIDEBAR_REPLY_DELETE',
-);
-export const applySidebarReplyUpdateAction = createAction<SidebarReplyMutationPayload>(
-    'APPLY_SIDEBAR_REPLY_UPDATE',
-);
+export const applySidebarReplyCreateAction = createAction<SidebarReplyMutationPayload>('APPLY_SIDEBAR_REPLY_CREATE');
+export const applySidebarReplyDeleteAction = createAction<SidebarReplyDeletePayload>('APPLY_SIDEBAR_REPLY_DELETE');
+export const applySidebarReplyUpdateAction = createAction<SidebarReplyMutationPayload>('APPLY_SIDEBAR_REPLY_UPDATE');
 
 export const removeAnnotationAction = createAction<string>('REMOVE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');
