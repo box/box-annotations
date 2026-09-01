@@ -1173,7 +1173,7 @@
     "@box/tree" "^1.42.13"
     react-accessible-treeview "2.9.0"
 
-"@box/frontend@11.0.1":
+"@box/frontend@^11.0.1":
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/@box/frontend/-/frontend-11.0.1.tgz#0d83557dc820c576396ca89d661cc61ff01dd809"
   integrity sha512-57kJpViHPsquXv2+aStwOKsXz16z4xc9bSaspf9lyLbQ9f0xpCsMwJPU1NreOIL5AZRQl7D7lJU/GPSaVNoqGg==
