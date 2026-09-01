@@ -317,7 +317,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
             <div
                 ref={popupRef}
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
-                className="ba-PopupV2"
+                className="ba-PopupAnnotation"
                 data-resin-component={annotationId ? 'popupThreadV2' : 'popupReplyV2'}
                 data-resin-feature="annotations"
                 onMouseDown={handleEvent}

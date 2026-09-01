@@ -2,7 +2,7 @@
 
 $ba-RegionRect-color: $bdl-yellorange;
 $ba-RegionRect-bgColor--default: rgba($ba-RegionRect-color, 0); // Default color uses zero alpha value for transition
-$ba-RegionRect-bgColor--hover: rgba($ba-RegionRect-color, .1);
+$ba-RegionRect-bgColor--hover: rgba($ba-RegionRect-color, 0.1);
 $ba-RegionRect-bgColor--active: rgba($ba-RegionRect-color, 0);
 $ba-RegionRect-transitionDelay: 25ms;
 $ba-RegionRect-transitionDuration: 200ms;
@@ -21,17 +21,14 @@ $ba-RegionRect-transitionDuration: 200ms;
 
     &::after {
         position: absolute;
-        top: $border-size-outer;
-        right: $border-size-outer;
-        bottom: $border-size-outer;
-        left: $border-size-outer;
+        inset: $border-size-outer;
         display: block;
         background-color: $ba-RegionRect-bgColor--default;
         border-radius: $border-radius;
         box-shadow:
             0 0 0 $border-size-inner rgba($white, 1),
-            0 0 0 $border-size-outer rgba($ba-RegionRect-color, .6),
-            0 0 0 0 rgba(0, 0, 0, 0);
+            0 0 0 $border-size-outer rgba($ba-RegionRect-color, 0.6),
+            0 0 0 0 rgb(0 0 0 / 0%);
         transition:
             background-color $ba-RegionRect-transitionDuration ease,
             box-shadow $ba-RegionRect-transitionDuration ease;
@@ -44,7 +41,7 @@ $ba-RegionRect-transitionDuration: 200ms;
             box-shadow:
                 0 0 0 $border-size-inner rgba($white, 1),
                 0 0 0 $border-size-outer rgba($ba-RegionRect-color, 1),
-                0 8px 16px 0 rgba(0, 0, 0, .1);
+                0 8px 16px 0 rgb(0 0 0 / 10%);
         }
     }
 
@@ -54,7 +51,7 @@ $ba-RegionRect-transitionDuration: 200ms;
             box-shadow:
                 0 0 0 $border-size-inner rgba($ba-RegionRect-color, 1),
                 0 0 0 $border-size-outer rgba($ba-RegionRect-color, 1),
-                0 8px 52px 0 rgba(0, 0, 0, .2);
+                0 8px 52px 0 rgb(0 0 0 / 20%);
             transition-delay: $ba-RegionRect-transitionDelay;
         }
     }

@@ -1,4 +1,4 @@
-.ba-PopupV2 {
+.ba-PopupAnnotation {
     position: absolute;
     top: 0;
     left: 0;
@@ -8,7 +8,7 @@
 
 // Specificity must beat .ba selectors from box-ui-elements globals
 // (forms, buttons, links) that cascade into threaded-annotations components.
-.ba .ba-PopupV2 {
+.ba .ba-PopupAnnotation {
     div[contenteditable='true'],
     div[contenteditable='true']:hover,
     div[contenteditable='true']:focus {

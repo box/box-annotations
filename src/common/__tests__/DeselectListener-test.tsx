@@ -30,7 +30,7 @@ describe('DeselectListener', () => {
         getWrapper();
 
         const popup = document.createElement('div');
-        popup.className = 'ba-PopupV2';
+        popup.className = 'ba-PopupAnnotation';
         const inner = document.createElement('button');
         popup.appendChild(inner);
         document.body.appendChild(popup);
