@@ -32,7 +32,7 @@
         "@box/blueprint-web-assets": "^5.5.12",
         "@box/collaboration-popover": "^2.1.32",
         "@box/combobox-with-api": "^1.42.22",
-        "@box/frontend": "11.0.1",
+        "@box/frontend": "^11.0.1",
         "@box/item-icon": "^3.2.0",
         "@box/languages": "^1.1.0",
         "@box/readable-time": "^2.1.32",
