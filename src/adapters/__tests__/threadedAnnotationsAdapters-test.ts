@@ -201,6 +201,30 @@ describe('threadedAnnotationsAdapters', () => {
             });
         });
 
+        test('should strip wrapping markdown when isRichTextEnabled is false', () => {
+            const reply: Reply = { ...mockReply, message: '**bold**' };
+
+            const result = replyToTextMessage(reply);
+
+            expect(parseMessageMarkdown).not.toHaveBeenCalled();
+            expect(result.message.content[0].content).toEqual([{ type: 'text', text: 'bold' }]);
+        });
+
+        test('should leave list markers when stripping wraps with isRichTextEnabled false', () => {
+            const reply: Reply = { ...mockReply, message: '- @[10:Alice] dogs' };
+
+            const result = replyToTextMessage(reply);
+
+            expect(result.message.content[0].content).toEqual([
+                { type: 'text', text: '- ' },
+                {
+                    type: 'mention',
+                    attrs: { authorId: '', mentionId: '10', mentionedUserId: '10', mentionedUserName: 'Alice' },
+                },
+                { type: 'text', text: ' dogs' },
+            ]);
+        });
+
         test('should leave updatedAt undefined when reply has no modified_at', () => {
             const result = replyToTextMessage(mockReply);
 

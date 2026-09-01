@@ -9,6 +9,8 @@ import { parseMessageMarkdown } from '@box/threaded-annotations';
 
 import type { Annotation, Collaborator, Reply, UserMini } from '../@types';
 
+import { stripWrappingMarkdown } from './stripWrappingMarkdown';
+
 const MENTION_REGEX = /@\[(\d+):([^\]]+)\]/g;
 
 /**
@@ -77,7 +79,9 @@ export const deserializeMentionMarkup = (text: string): DocumentNodeV2 => {
 };
 
 const toDocumentNode = (text: string, isRichTextEnabled = false): DocumentNodeV2 =>
-    isRichTextEnabled ? (parseMessageMarkdown(text) as DocumentNodeV2) : deserializeMentionMarkup(text);
+    isRichTextEnabled
+        ? (parseMessageMarkdown(text) as DocumentNodeV2)
+        : deserializeMentionMarkup(stripWrappingMarkdown(text));
 
 /**
  * Returns the edit timestamp consumers use to render an edited indicator.
