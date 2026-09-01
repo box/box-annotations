@@ -25,7 +25,7 @@
         }
 
         .ba-ReplyForm {
-            opacity: .99; // Creates a new stacking context so that the collaborators list shows on top of the ba-Popup-footer
+            opacity: 0.99; // Creates a new stacking context so that the collaborators list shows on top of the ba-Popup-footer
         }
     }
 
@@ -34,7 +34,7 @@
         background-color: $popup-content-bg;
         border: 1px solid $popup-border-color;
         border-radius: 6px;
-        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .15);
+        box-shadow: 0 2px 12px 0 rgb(0 0 0 / 15%);
     }
 
     .ba-Popup-footer {

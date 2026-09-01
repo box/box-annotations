@@ -580,15 +580,15 @@ describe('PopupV2', () => {
             <PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={document.createElement('div')} />,
         );
 
-        expect(container.querySelector('.ba-PopupV2')).toBeNull();
-        expect(portalEl.querySelector('.ba-PopupV2')).toBeVisible();
+        expect(container.querySelector('.ba-PopupAnnotation')).toBeNull();
+        expect(portalEl.querySelector('.ba-PopupAnnotation')).toBeVisible();
     });
 
     test('should render nothing when popupPortalEl is missing', () => {
         mockSelectorValues();
         const { container } = render(<PopupV2 onSubmit={jest.fn()} reference={document.createElement('div')} />);
 
-        expect(container.querySelector('.ba-PopupV2')).toBeNull();
-        expect(document.body.querySelector('.ba-PopupV2')).toBeNull();
+        expect(container.querySelector('.ba-PopupAnnotation')).toBeNull();
+        expect(document.body.querySelector('.ba-PopupAnnotation')).toBeNull();
     });
 });

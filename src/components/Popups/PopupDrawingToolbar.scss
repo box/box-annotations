@@ -13,7 +13,7 @@
     border-radius: $bdl-border-radius-size;
     outline: none;
     cursor: pointer;
-    opacity: .7;
+    opacity: 0.7;
     transition: opacity 200ms ease;
 
     &:focus,
@@ -23,7 +23,7 @@
 
     &[disabled] {
         cursor: default;
-        opacity: .2;
+        opacity: 0.2;
     }
 }
 
@@ -53,7 +53,7 @@
     .ba-Popup-content {
         gap: 4px;
         padding: 8px;
-        background-color: rgba(0, 0, 0, .8);
+        background-color: rgb(0 0 0 / 80%);
         border-radius: 46px;
     }
 }
@@ -75,7 +75,7 @@
 
 // Modernized border-left for adjacent groups
 .ba-PopupDrawingToolbar--modernized .ba-PopupDrawingToolbar-group + .ba-PopupDrawingToolbar-group {
-    border-left: 1px solid rgb(255, 255, 255, 8%);
+    border-left: 1px solid rgb(255 255 255 / 8%);
 }
 
 .ba-PopupDrawingToolbar-delete,

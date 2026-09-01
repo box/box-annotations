@@ -1,5 +1,5 @@
 $ba-BoundingBoxHighlightNav-bg: #fff;
-$ba-BoundingBoxHighlightNav-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+$ba-BoundingBoxHighlightNav-shadow: 0 6px 20px rgb(0 0 0 / 10%);
 $ba-BoundingBoxHighlightNav-arrow: #909090;
 $ba-BoundingBoxHighlightNav-border: #e8e8e8;
 $ba-BoundingBoxHighlightNav-counter: #222;
@@ -45,11 +45,11 @@ $ba-BoundingBoxHighlightNav-counter: #222;
     }
 
     &:hover:not(:disabled) {
-        background: rgba(0, 0, 0, .06);
+        background: rgb(0 0 0 / 6%);
     }
 
     &:active:not(:disabled) {
-        background: rgba(0, 0, 0, .12);
+        background: rgb(0 0 0 / 12%);
     }
 
     &:disabled {
