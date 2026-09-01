@@ -261,6 +261,39 @@ describe('PopupV2', () => {
 
             const popup = screen.getByRole('presentation');
             expect(popup).toHaveAttribute('data-resin-component', 'popupReplyV2');
+            expect(popup).toHaveAttribute('data-resin-feature', 'annotations');
+        });
+
+        test('should let mouseup and click bubble so resinjs can record them', () => {
+            render(<PopupV2 {...defaults} />);
+
+            const mouseupListener = jest.fn();
+            const clickListener = jest.fn();
+            document.addEventListener('mouseup', mouseupListener);
+            document.addEventListener('click', clickListener);
+
+            const popup = screen.getByRole('presentation');
+            popup.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+            popup.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+            expect(mouseupListener).toHaveBeenCalled();
+            expect(clickListener).toHaveBeenCalled();
+
+            document.removeEventListener('mouseup', mouseupListener);
+            document.removeEventListener('click', clickListener);
+        });
+
+        test('should stop mousedown from bubbling so the annotator does not treat it as a page click', () => {
+            render(<PopupV2 {...defaults} />);
+
+            const mousedownListener = jest.fn();
+            document.addEventListener('mousedown', mousedownListener);
+
+            screen.getByRole('presentation').dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+            expect(mousedownListener).not.toHaveBeenCalled();
+
+            document.removeEventListener('mousedown', mousedownListener);
         });
 
         // Mention contacts are file collaborators, so fetchCollaboratorState must resolve true
@@ -472,6 +505,7 @@ describe('PopupV2', () => {
 
             const popup = screen.getByRole('presentation');
             expect(popup).toHaveAttribute('data-resin-component', 'popupThreadV2');
+            expect(popup).toHaveAttribute('data-resin-feature', 'annotations');
         });
 
         test('should fetch avatars with Authorization header and no access_token query param', async () => {
