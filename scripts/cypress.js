@@ -1,9 +1,12 @@
 /* eslint-disable no-console */
-const BoxSDK = require('box-node-sdk');
+const axios = require('axios');
 const childProcess = require('child_process');
 
 const { argv, env } = process;
-const { E2E_ACCESS_TOKEN, E2E_CLIENT_ID } = env;
+const { E2E_ACCESS_TOKEN } = env;
+const TEST_PARENT_FOLDER_ID = '118537970832';
+const DOCUMENT_TEMPLATE_FILE_ID = '694470903390';
+const IMAGE_TEMPLATE_FILE_ID = '694468799644';
 const KILL_SIGNALS = [
     'SIGABRT',
     'SIGBUS',
@@ -23,22 +26,18 @@ if (!E2E_ACCESS_TOKEN) {
     throw new Error('E2E_ACCESS_TOKEN must be set as an environment variable');
 }
 
-if (!E2E_CLIENT_ID) {
-    throw new Error('E2E_CLIENT_ID must be set as an environment variable');
-}
-
-const sdk = new BoxSDK({
-    clientID: E2E_CLIENT_ID,
-    clientSecret: 'none',
+const api = axios.create({
+    baseURL: 'https://api.box.com/2.0',
+    headers: {
+        Authorization: `Bearer ${E2E_ACCESS_TOKEN}`,
+    },
 });
-
-const client = sdk.getBasicClient(E2E_ACCESS_TOKEN);
 
 async function cleanup(folderId) {
     console.log('Cleanup test folder and files...');
 
     try {
-        await client.folders.delete(folderId, { recursive: true });
+        await api.delete(`/folders/${folderId}`, { params: { recursive: true } });
         console.log('Cleanup complete.');
     } catch (error) {
         console.error(`Cleanup failed. Error: ${error.message}`);
@@ -48,26 +47,32 @@ async function cleanup(folderId) {
 async function main() {
     const testFolderName = `Test ${new Date().toISOString()}`;
 
-    // Bootstrap the test folder and copy template files into it
     console.log(`Setup test folder: ${testFolderName}...`);
-    const { id: folderId } = await client.folders.create('118537970832', testFolderName); // Test folder
-    const { id: documentId } = await client.files.copy('694470903390', folderId); // Document template
-    const { id: imageId } = await client.files.copy('694468799644', folderId); // Image template
+    const { data: folder } = await api.post('/folders', {
+        name: testFolderName,
+        parent: { id: TEST_PARENT_FOLDER_ID },
+    });
+    const { id: folderId } = folder;
+    const { data: document } = await api.post(`/files/${DOCUMENT_TEMPLATE_FILE_ID}/copy`, {
+        parent: { id: folderId },
+    });
+    const { data: image } = await api.post(`/files/${IMAGE_TEMPLATE_FILE_ID}/copy`, {
+        parent: { id: folderId },
+    });
     console.log('Setup complete.');
 
-    // Attempt to cleanup test folder before script is killed (example: CTL+C)
     KILL_SIGNALS.forEach(signal => process.on(signal, () => cleanup(folderId)));
 
     try {
         console.log('Cypress run starting...');
 
-        const suffix = argv.indexOf('-o') >= 0 ? 'open' : 'run'; // Pass -o to run Cypress in "open" mode
+        const suffix = argv.indexOf('-o') >= 0 ? 'open' : 'run';
         const result = childProcess.spawnSync('yarn', ['npm-run-all', '-p', '-r', 'start:dev', `cy:${suffix}`], {
             env: {
                 ...env,
                 CYPRESS_ACCESS_TOKEN: E2E_ACCESS_TOKEN,
-                CYPRESS_FILE_ID_DOC: documentId,
-                CYPRESS_FILE_ID_IMAGE: imageId,
+                CYPRESS_FILE_ID_DOC: document.id,
+                CYPRESS_FILE_ID_IMAGE: image.id,
             },
             stdio: 'inherit',
         });
