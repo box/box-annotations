@@ -70,14 +70,7 @@ const ReplyForm = (props: Props): JSX.Element => {
     }, [formRef]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <Form
-            ref={formRef}
-            className="ba-ReplyForm"
-            data-testid="ba-ReplyForm"
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-            placeholder={undefined}
-        >
+        <Form ref={formRef} className="ba-ReplyForm" data-testid="ba-ReplyForm">
             <div className="ba-Popup-main">
                 <ReplyField
                     className="ba-Popup-field"
