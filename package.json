@@ -62,7 +62,6 @@
         "@typescript-eslint/parser": "^7.3.1",
         "autoprefixer": "^10.4.19",
         "axios": "^0.33.0",
-        "babel-eslint": "^10.1.0",
         "babel-jest": "^29.7.0",
         "babel-loader": "^9.2.1",
         "babel-plugin-istanbul": "^6.0.0",
@@ -78,7 +77,7 @@
         "css-loader": "^7.1.2",
         "css-minimizer-webpack-plugin": "^8.0.0",
         "cypress": "^15.20.1",
-        "draft-js": "0.10.5",
+        "draft-js": "^0.11.7",
         "enzyme": "^3.11.0",
         "enzyme-to-json": "^3.4.4",
         "eslint": "^8.57.0",
@@ -95,7 +94,7 @@
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-react": "^7.34.3",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "formik": "^2.1.4",
+        "formik": "^2.4.9",
         "husky": "^3.1.0",
         "jest": "^29.7.0",
         "jest-canvas-mock": "^2.5.2",
@@ -115,7 +114,7 @@
         "react-textarea-autosize": "^7.1.2",
         "redux": "^4.0.5",
         "regenerator-runtime": "^0.13.9",
-        "sass": "^1.64.1",
+        "sass": "1.77.6",
         "sass-loader": "^16.0.4",
         "scroll-into-view-if-needed": "^2.2.24",
         "style-loader": "^4.0.0",
@@ -183,6 +182,6 @@
         "**/react-intl/**/@types/react": "^18.3.12",
         "**/@types/react": "^18.3.12",
         "**/@types/react-dom": "^18.2.0",
-        "acorn": "8.14.0"
+        "draft-js/immutable": "^3.8.3"
     }
 }
