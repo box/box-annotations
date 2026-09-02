@@ -111,8 +111,81 @@ increment_version() {
     VERSION=$(./scripts/current_version.sh)
 }
 
+update_changelog() {
+    echo "----------------------------------------------------------------------"
+    echo "Updating CHANGELOG.md"
+    echo "----------------------------------------------------------------------"
+
+    if [ ! -f CHANGELOG.md ]; then
+        : > CHANGELOG.md
+    fi
+
+    if ./node_modules/.bin/conventional-changelog -n changelog.config.js -i CHANGELOG.md; then
+        echo "----------------------------------------------------------------------"
+        echo "Updated CHANGELOG successfully"
+        echo "----------------------------------------------------------------------"
+    else
+        echo "----------------------------------------------------------------------"
+        echo "Error: Could not update the CHANGELOG for this version"
+        echo "----------------------------------------------------------------------"
+        return 1
+    fi
+}
+
+publish_github_release() {
+    echo "----------------------------------------------------------------------"
+    echo "Publishing GitHub release v$VERSION"
+    echo "----------------------------------------------------------------------"
+
+    local token="${GITHUB_TOKEN:-${CONVENTIONAL_GITHUB_RELEASER_TOKEN:-}}"
+
+    local notes_file payload_file
+    notes_file=$(mktemp)
+    payload_file=$(mktemp)
+    awk 'BEGIN { section = 0 } /^## / { section += 1; if (section == 2) exit } section' CHANGELOG.md >"$notes_file"
+
+    if [ -z "$token" ]; then
+        rm -f "$notes_file" "$payload_file"
+        echo "----------------------------------------------------------------------"
+        echo "Error: GITHUB_TOKEN (or CONVENTIONAL_GITHUB_RELEASER_TOKEN) is required"
+        echo "----------------------------------------------------------------------"
+        return 1
+    fi
+
+    if ! jq -n \
+        --arg tag "v$VERSION" \
+        --arg name "v$VERSION" \
+        --rawfile body "$notes_file" \
+        '{tag_name:$tag, name:$name, body:$body, draft:false, prerelease:false}' >"$payload_file"; then
+        rm -f "$notes_file" "$payload_file"
+        echo "----------------------------------------------------------------------"
+        echo "Error: Could not build GitHub release payload"
+        echo "----------------------------------------------------------------------"
+        return 1
+    fi
+
+    if curl --fail --silent --show-error \
+        -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $token" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        "https://api.github.com/repos/box/box-annotations/releases" \
+        -d @"$payload_file"; then
+        rm -f "$notes_file" "$payload_file"
+        echo "----------------------------------------------------------------------"
+        echo "Published GitHub release v$VERSION"
+        echo "----------------------------------------------------------------------"
+    else
+        rm -f "$notes_file" "$payload_file"
+        echo "----------------------------------------------------------------------"
+        echo "Error: Could not publish GitHub release v$VERSION"
+        echo "----------------------------------------------------------------------"
+        return 1
+    fi
+}
+
 push_to_github() {
-    # Add new files
+    git add CHANGELOG.md
     git commit -am "chore(release): $VERSION"
 
     # Force update tag after updating files
@@ -177,14 +250,14 @@ push_new_release() {
     # Bump the version number
     increment_version || return 1
 
+    # Update changelog
+    update_changelog || return 1
+
     # Push to GitHub
     push_to_github || return 1
 
-    # Push GitHub release
-    echo "----------------------------------------------------------------------"
-    echo "Pushing new GitHub release"
-    echo "----------------------------------------------------------------------"
-    ./node_modules/.bin/conventional-github-releaser
+    # Create the GitHub Release from the new CHANGELOG section
+    publish_github_release || return 1
 
     # Push NPM release
     echo "----------------------------------------------------------------------"
