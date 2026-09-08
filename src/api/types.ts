@@ -59,6 +59,7 @@ export interface AnnotationsAPI {
         limit?: number,
         shouldFetchAll?: boolean,
         shouldFetchReplies?: boolean,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     updateAnnotation(
