@@ -2,7 +2,6 @@
 .idea
 dist
 functional-tests/output
-i18n/*.js
 i18n/json
 node_modules
 npm-debug.log
