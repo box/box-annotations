@@ -40,7 +40,15 @@ export default class DocumentAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
-        this.highlightListener = new HighlightListener({ getSelection: this.getDocumentSelection, store: this.store });
+        // Text-select promote is create, not view. Compared/read-only panes
+        // pass showAnnotationsControls=false; skip the listener so existing
+        // highlights still render without the comment composer.
+        if (options.showAnnotationsControls !== false) {
+            this.highlightListener = new HighlightListener({
+                getSelection: this.getDocumentSelection,
+                store: this.store,
+            });
+        }
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
     }

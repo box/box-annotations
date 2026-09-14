@@ -45,6 +45,10 @@ export type Options = {
     intl: IntlOptions;
     locale?: string;
     onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
+    // Passed through from BCP preview options. When false, the annotator must
+    // not start create (toolbar + discoverability are both off).
+    showAnnotationsControls?: boolean;
+    enableAnnotationsDiscoverability?: boolean;
     token: Token;
 };
 
