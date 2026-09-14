@@ -3,7 +3,6 @@ const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const RsyncPlugin = require('@box/frontend/webpack/RsyncPlugin');
-const TranslationsPlugin = require('@box/frontend/webpack/TranslationsPlugin');
 
 const { BannerPlugin } = require('webpack');
 
@@ -113,7 +112,6 @@ if (isDev) {
     }
 
     config.devtool = isLinked ? 'eval-cheap-module-source-map' : 'source-map';
-    config.plugins.push(new TranslationsPlugin());
     config.plugins.push(
         new CircularDependencyPlugin({
             exclude: /node_modules/,

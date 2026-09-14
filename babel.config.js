@@ -18,12 +18,6 @@ module.exports = api => {
             '@babel/plugin-transform-flow-strip-types', // Required for jest coverage, for some reason
             '@babel/plugin-transform-object-assign',
             '@babel/plugin-transform-runtime',
-            [
-                'react-intl',
-                {
-                    messagesDir: './i18n/json',
-                },
-            ],
         ],
         env: {
             test: {
