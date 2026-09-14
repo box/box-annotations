@@ -45,7 +45,7 @@ export type Options = {
     intl: IntlOptions;
     locale?: string;
     onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
-    // When false, skip text-select create.
+    // When false, skip annotation create. Existing annotations still render.
     showAnnotationsControls?: boolean;
     token: Token;
 };
