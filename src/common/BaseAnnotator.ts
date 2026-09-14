@@ -45,8 +45,7 @@ export type Options = {
     intl: IntlOptions;
     locale?: string;
     onCopyLink?: (params: { annotationId: string; fileVersionId: string }) => void;
-    // Passed through from BCP preview options. When false, skip create
-    // (text-select promote). Discoverability itself is owned by BCP.
+    // When false, skip text-select create.
     showAnnotationsControls?: boolean;
     token: Token;
 };

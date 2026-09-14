@@ -15,10 +15,7 @@ export default class EventEmitter {
     }
 
     removeAllListeners(): void {
-        // eventManager is shared by every annotator instance on the page, so a
-        // global removeAllListeners here would strip listeners belonging to
-        // other live annotators (e.g. side-by-side comparison panes). Only
-        // remove the listeners this instance registered.
+        // Shared eventManager: remove only this instance's listeners.
         this.ownListeners.forEach(({ event, listener }) => eventManager.removeListener(event, listener));
         this.ownListeners = [];
     }
