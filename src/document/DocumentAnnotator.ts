@@ -32,6 +32,8 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
     highlightListener?: HighlightListener;
 
+    private readonly canCreate: boolean;
+
     managers: Map<number, Set<Manager>> = new Map();
 
     /** Tracks which view mode the current managers were created for. Used to destroy/recreate when switching. */
@@ -40,7 +42,11 @@ export default class DocumentAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
-        this.highlightListener = new HighlightListener({ getSelection, store: this.store });
+        // Controls off: skip create; existing annotations still render.
+        this.canCreate = options.showAnnotationsControls !== false;
+        if (this.canCreate) {
+            this.highlightListener = new HighlightListener({ getSelection, store: this.store });
+        }
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
     }
@@ -123,7 +129,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
 
             const textLayer = pageEl.querySelector('.textLayer') as HTMLElement;
 
-            if (textLayer) {
+            if (this.canCreate && textLayer) {
                 managers.add(
                     new HighlightCreatorManager({
                         getSelection,
@@ -144,15 +150,17 @@ export default class DocumentAnnotator extends BaseAnnotator {
             );
             managers.add(new RegionManager({ location: pageNumber, referenceEl: pageReferenceEl, resinTags }));
 
-            const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
+            if (this.canCreate) {
+                const canvasLayerEl = pageEl.querySelector<HTMLElement>('.canvasWrapper');
 
-            managers.add(
-                new RegionCreationManager({
-                    location: pageNumber,
-                    referenceEl: canvasLayerEl || pageReferenceEl,
-                    resinTags,
-                }),
-            );
+                managers.add(
+                    new RegionCreationManager({
+                        location: pageNumber,
+                        referenceEl: canvasLayerEl || pageReferenceEl,
+                        resinTags,
+                    }),
+                );
+            }
         }
 
         return managers;
