@@ -40,10 +40,16 @@ export default class DocumentAnnotator extends BaseAnnotator {
     constructor(options: Options) {
         super(options);
 
-        this.highlightListener = new HighlightListener({ getSelection, store: this.store });
+        this.highlightListener = new HighlightListener({ getSelection: this.getDocumentSelection, store: this.store });
 
         this.addListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
     }
+
+    // Resolve .bp-doc at event time; it may not exist in the constructor.
+    getDocumentSelection = (): ReturnType<typeof getSelection> => {
+        const rootEl = this.annotatedEl ?? this.getAnnotatedElement();
+        return rootEl ? getSelection(rootEl) : null;
+    };
 
     destroy(): void {
         this.removeListener(Event.ANNOTATIONS_MODE_CHANGE, this.handleChangeMode);
@@ -126,7 +132,7 @@ export default class DocumentAnnotator extends BaseAnnotator {
             if (textLayer) {
                 managers.add(
                     new HighlightCreatorManager({
-                        getSelection,
+                        getSelection: this.getDocumentSelection,
                         referenceEl: textLayer,
                         selectionChangeDelay: TEXT_LAYER_ENHANCEMENT,
                         store: this.store,
