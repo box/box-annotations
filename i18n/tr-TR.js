@@ -1,24 +1,2 @@
-export default {
-  "ba.annotationsClose": "Kapat",
-  "ba.annotationsCreateError": "Üzgünüz, açıklama oluşturulamadı.",
-  "ba.annotationsLoadError": "Üzgünüz, açıklamalar bu dosya için yüklenemedi.",
-  "ba.annotationsPost": "Gönder",
-  "ba.annotationsSave": "Kaydet",
-  "ba.boundingBoxHighlight.viewNextReference": "Sonraki referansı görüntüleyin",
-  "ba.boundingBoxHighlight.viewPrevReference": "Önceki referansı görüntüleyin",
-  "ba.popup.reply.comment": "Yorum",
-  "ba.popup.reply.field": "Bir yorum yazın",
-  "ba.popup.reply.mentionLoading": "Kullanıcılar yükleniyor…",
-  "ba.popup.reply.mentionSelector": "Bir ortak çalışandan bahsedin",
-  "ba.popups.cancel": "İptal",
-  "ba.popups.drawing.addComment": "Yorum Ekle",
-  "ba.popups.drawing.delete": "Sil",
-  "ba.popups.drawing.redo": "Yinele",
-  "ba.popups.drawing.undo": "Geri Al",
-  "ba.popups.popupCursor.regionPrompt": "Yorum yapmak için bir kutu çizin",
-  "ba.popups.popupHighlight.promoter": "Vurgulayın ve Yorum Yapın",
-  "ba.popups.popupHighlight.restrictedPrompt": "Yorumlar tek sayfayla sınırlandırıldı",
-  "ba.popups.popupList.prompt": "Bildirim alması için birinden bahsedin",
-  "ba.popups.post": "Gönder",
-  "ba.popups.replyField.placeholder": "Bir yorum yazın..."
-}
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {};

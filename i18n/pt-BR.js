@@ -1,24 +1,2 @@
-export default {
-  "ba.annotationsClose": "Fechar",
-  "ba.annotationsCreateError": "Não foi possível criar a anotação.",
-  "ba.annotationsLoadError": "Não foi possível carregar as anotações deste arquivo.",
-  "ba.annotationsPost": "Publicar",
-  "ba.annotationsSave": "Salvar",
-  "ba.boundingBoxHighlight.viewNextReference": "Visualizar próxima referência",
-  "ba.boundingBoxHighlight.viewPrevReference": "Visualizar referência anterior",
-  "ba.popup.reply.comment": "Comentário",
-  "ba.popup.reply.field": "Digite um comentário",
-  "ba.popup.reply.mentionLoading": "Carregando usuários…",
-  "ba.popup.reply.mentionSelector": "Mencionar um colaborador",
-  "ba.popups.cancel": "Cancelar",
-  "ba.popups.drawing.addComment": "Adicionar comentário",
-  "ba.popups.drawing.delete": "Excluir",
-  "ba.popups.drawing.redo": "Refazer",
-  "ba.popups.drawing.undo": "Desfazer",
-  "ba.popups.popupCursor.regionPrompt": "Desenhe uma caixa para comentar",
-  "ba.popups.popupHighlight.promoter": "Realçar e comentar",
-  "ba.popups.popupHighlight.restrictedPrompt": "Comentários restritos a uma única página",
-  "ba.popups.popupList.prompt": "Mencione alguém para notificá-lo",
-  "ba.popups.post": "Publicar",
-  "ba.popups.replyField.placeholder": "Digite um comentário..."
-}
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {};

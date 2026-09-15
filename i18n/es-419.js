@@ -1,24 +1,2 @@
-export default {
-  "ba.annotationsClose": "Cerrar",
-  "ba.annotationsCreateError": "Lo sentimos, no se ha podido crear la anotación.",
-  "ba.annotationsLoadError": "Lo sentimos, no se han podido cargar las anotaciones de este archivo.",
-  "ba.annotationsPost": "Publicar",
-  "ba.annotationsSave": "Guardar",
-  "ba.boundingBoxHighlight.viewNextReference": "Ver siguiente referencia",
-  "ba.boundingBoxHighlight.viewPrevReference": "Ver referencia anterior",
-  "ba.popup.reply.comment": "Comentario",
-  "ba.popup.reply.field": "Escriba un comentario",
-  "ba.popup.reply.mentionLoading": "Cargando usuarios…",
-  "ba.popup.reply.mentionSelector": "Mencione a un colaborador",
-  "ba.popups.cancel": "Cancelar",
-  "ba.popups.drawing.addComment": "Agregar comentario",
-  "ba.popups.drawing.delete": "Eliminar",
-  "ba.popups.drawing.redo": "Repetir",
-  "ba.popups.drawing.undo": "Deshacer",
-  "ba.popups.popupCursor.regionPrompt": "Dibuje un cuadro para comentar",
-  "ba.popups.popupHighlight.promoter": "Resaltar y comentar",
-  "ba.popups.popupHighlight.restrictedPrompt": "Los comentarios están restringidos a una sola página.",
-  "ba.popups.popupList.prompt": "Mencione a alguien para que reciba una notificación",
-  "ba.popups.post": "Publicar",
-  "ba.popups.replyField.placeholder": "Escriba un comentario..."
-}
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {};
