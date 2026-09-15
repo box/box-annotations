@@ -103,5 +103,22 @@ describe('docUtil', () => {
 
             expect(getSelection()).toEqual(result);
         });
+
+        test('should return null if rootEl does not contain the focus node', () => {
+            const otherRoot = document.createElement('div');
+            jest.spyOn(window, 'getSelection').mockReturnValueOnce(generateSelection('.range1', '.range1'));
+
+            expect(getSelection(otherRoot)).toBe(null);
+        });
+
+        test('should return the selection if rootEl contains the focus node', () => {
+            const pane = document.createElement('div');
+            pane.appendChild(rootElement);
+            jest.spyOn(window, 'getSelection').mockReturnValueOnce(generateSelection('.range1', '.range1'));
+
+            expect(getSelection(pane)).toEqual(expect.objectContaining({ location: 1, hasError: false }));
+
+            pane.removeChild(rootElement);
+        });
     });
 });
