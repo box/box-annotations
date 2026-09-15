@@ -1,24 +1,2 @@
-export default {
-  "ba.annotationsClose": "Fermer",
-  "ba.annotationsCreateError": "Nous sommes désolés, l'annotation n'a pas pu être créée.",
-  "ba.annotationsLoadError": "Nous sommes désolés, nous n'avons pas pu charger les annotations pour ce fichier.",
-  "ba.annotationsPost": "Publier",
-  "ba.annotationsSave": "Enregistrer",
-  "ba.boundingBoxHighlight.viewNextReference": "Afficher la référence suivante",
-  "ba.boundingBoxHighlight.viewPrevReference": "Afficher la référence précédente",
-  "ba.popup.reply.comment": "commentaire",
-  "ba.popup.reply.field": "Saisir un commentaire",
-  "ba.popup.reply.mentionLoading": "Chargement des utilisateurs…",
-  "ba.popup.reply.mentionSelector": "Mentionnez un collaborateur",
-  "ba.popups.cancel": "Annuler",
-  "ba.popups.drawing.addComment": "Ajouter un commentaire",
-  "ba.popups.drawing.delete": "Supprimer",
-  "ba.popups.drawing.redo": "Rétablir",
-  "ba.popups.drawing.undo": "Annuler",
-  "ba.popups.popupCursor.regionPrompt": "Dessinez un cadre pour commenter",
-  "ba.popups.popupHighlight.promoter": "Surligner et commenter",
-  "ba.popups.popupHighlight.restrictedPrompt": "Commentaires limités à une seule page",
-  "ba.popups.popupList.prompt": "Mentionnez un utilisateur pour l’avertir",
-  "ba.popups.post": "Publier",
-  "ba.popups.replyField.placeholder": "Saisissez un commentaire..."
-}
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {};
