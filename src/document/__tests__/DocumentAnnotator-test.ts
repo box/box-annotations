@@ -94,6 +94,34 @@ describe('DocumentAnnotator', () => {
         });
     });
 
+    describe('getDocumentSelection()', () => {
+        test('should return null for a selection outside this pane', () => {
+            annotator.annotatedEl = container.querySelector('.bp-doc') as HTMLElement;
+
+            const otherPane = document.createElement('div');
+            otherPane.classList.add('textLayer');
+            otherPane.innerHTML = `<div class="page" data-page-number="1"><div class="range1"></div></div>`;
+            document.body.appendChild(otherPane);
+
+            const focusNode = otherPane.querySelector('.range1');
+            jest.spyOn(window, 'getSelection').mockReturnValue({
+                focusNode,
+                isCollapsed: false,
+                rangeCount: 1,
+                getRangeAt: () => {
+                    const range = document.createRange();
+                    range.setStart(focusNode as Node, 0);
+                    range.setEnd(focusNode as Node, 0);
+                    return range;
+                },
+            } as unknown as Selection);
+
+            expect(annotator.getDocumentSelection()).toBe(null);
+
+            document.body.removeChild(otherPane);
+        });
+    });
+
     describe('destroy()', () => {
         test('should remove event handler ', () => {
             annotator = getAnnotator();
