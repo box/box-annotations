@@ -1,2 +1,25 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
-export default {};
+export default {
+    "ba.annotationsClose": "Закрыть",
+    "ba.annotationsCreateError": "К сожалению, не удалось создать примечание.",
+    "ba.annotationsLoadError": "К сожалению, при загрузке примечаний для этого файла произошел сбой.",
+    "ba.annotationsPost": "Отправить",
+    "ba.annotationsSave": "Сохранить",
+    "ba.boundingBoxHighlight.viewNextReference": "Посмотреть следующую ссылку",
+    "ba.boundingBoxHighlight.viewPrevReference": "Посмотреть предыдущую ссылку",
+    "ba.popup.reply.comment": "Комментировать",
+    "ba.popup.reply.field": "Введите комментарий",
+    "ba.popup.reply.mentionLoading": "Загрузка пользователей",
+    "ba.popup.reply.mentionSelector": "Упомянуть участника совместной работы",
+    "ba.popups.cancel": "Отмена",
+    "ba.popups.drawing.addComment": "Добавить комментарий",
+    "ba.popups.drawing.delete": "Удалить",
+    "ba.popups.drawing.redo": "Вернуть",
+    "ba.popups.drawing.undo": "Отменить",
+    "ba.popups.popupCursor.regionPrompt": "Нарисуйте рамку для добавления комментария",
+    "ba.popups.popupHighlight.promoter": "Выделить и прокомментировать",
+    "ba.popups.popupHighlight.restrictedPrompt": "Комментарии ограничены одной страницей",
+    "ba.popups.popupList.prompt": "Упомяните пользователя, чтобы он получил уведомление",
+    "ba.popups.post": "Отправить",
+    "ba.popups.replyField.placeholder": "Введите комментарий…"
+};
