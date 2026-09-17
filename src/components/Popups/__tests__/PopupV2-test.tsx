@@ -40,6 +40,7 @@ let lastMentionContextValue: MentionContextData = {};
 let lastMessageEditorProps: {
     isFirstAnnotation?: boolean;
     isRichTextEnabled?: boolean;
+    onChange?: (content: unknown) => void;
     onPost?: (content: unknown) => Promise<void>;
 } = {};
 let lastThreadedAnnotationsProps: Partial<ThreadedAnnotationsPropsV2> = {};
@@ -54,6 +55,7 @@ jest.mock('@box/threaded-annotations', () => {
         MessageEditorV2: (props: {
             isFirstAnnotation?: boolean;
             isRichTextEnabled?: boolean;
+            onChange?: (content: unknown) => void;
             onPost?: (content: unknown) => Promise<void>;
         }) => {
             lastMessageEditorProps = props;
@@ -294,6 +296,65 @@ describe('PopupV2', () => {
             expect(mousedownListener).not.toHaveBeenCalled();
 
             document.removeEventListener('mousedown', mousedownListener);
+        });
+
+        test('should dismiss on outside mousedown when the editor is empty', () => {
+            const onCancel = jest.fn();
+            render(<PopupV2 {...defaults} onCancel={onCancel} />);
+
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            });
+
+            expect(onCancel).toHaveBeenCalled();
+        });
+
+        test('should not dismiss on outside mousedown when the editor has text', () => {
+            const onCancel = jest.fn();
+            render(<PopupV2 {...defaults} onCancel={onCancel} />);
+
+            act(() => {
+                lastMessageEditorProps.onChange?.({
+                    type: 'doc',
+                    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'hello' }] }],
+                });
+            });
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            });
+
+            expect(onCancel).not.toHaveBeenCalled();
+        });
+
+        test('should dismiss on outside mousedown after the editor is cleared', () => {
+            const onCancel = jest.fn();
+            render(<PopupV2 {...defaults} onCancel={onCancel} />);
+
+            act(() => {
+                lastMessageEditorProps.onChange?.({
+                    type: 'doc',
+                    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'hello' }] }],
+                });
+            });
+            act(() => {
+                lastMessageEditorProps.onChange?.(null);
+            });
+            act(() => {
+                document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            });
+
+            expect(onCancel).toHaveBeenCalled();
+        });
+
+        test('should not dismiss when mousedown originates inside the popup', () => {
+            const onCancel = jest.fn();
+            render(<PopupV2 {...defaults} onCancel={onCancel} />);
+
+            act(() => {
+                screen.getByRole('presentation').dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+            });
+
+            expect(onCancel).not.toHaveBeenCalled();
         });
 
         // Mention contacts are file collaborators, so fetchCollaboratorState must resolve true
