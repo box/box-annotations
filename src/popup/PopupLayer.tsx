@@ -140,7 +140,12 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     if (showCreator && isThreadedAnnotation) {
         return (
             <div className="ba-PopupLayer-popup">
-                <PopupV2 onSubmit={handleSubmit} popupPortalEl={popupPortalEl} reference={reference} />
+                <PopupV2
+                    onCancel={handleCancel}
+                    onSubmit={handleSubmit}
+                    popupPortalEl={popupPortalEl}
+                    reference={reference}
+                />
             </div>
         );
     }
