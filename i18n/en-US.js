@@ -1,24 +1,4 @@
-export default {
-  "ba.annotationsClose": "Close",
-  "ba.annotationsCreateError": "We’re sorry, the annotation could not be created.",
-  "ba.annotationsLoadError": "We’re sorry, the annotations failed to load for this file.",
-  "ba.annotationsPost": "Post",
-  "ba.annotationsSave": "Save",
-  "ba.boundingBoxHighlight.viewNextReference": "View next reference",
-  "ba.boundingBoxHighlight.viewPrevReference": "View previous reference",
-  "ba.popup.reply.comment": "Comment",
-  "ba.popup.reply.field": "Type a comment",
-  "ba.popup.reply.mentionLoading": "Loading users...",
-  "ba.popup.reply.mentionSelector": "Mention a collaborator",
-  "ba.popups.cancel": "Cancel",
-  "ba.popups.drawing.addComment": "Add Comment",
-  "ba.popups.drawing.delete": "Delete",
-  "ba.popups.drawing.redo": "Redo",
-  "ba.popups.drawing.undo": "Undo",
-  "ba.popups.popupCursor.regionPrompt": "Draw a box to comment",
-  "ba.popups.popupHighlight.promoter": "Highlight and Comment",
-  "ba.popups.popupHighlight.restrictedPrompt": "Comments restricted to single page",
-  "ba.popups.popupList.prompt": "Mention someone to notify them",
-  "ba.popups.post": "Post",
-  "ba.popups.replyField.placeholder": "Type a comment..."
-}
+// THIS FILE IS INTENTIONALLY LEFT BLANK.
+// Messages for the source locale are loaded from message definitions via react-intl fallback.
+// DO NOT ADD ANY MESSAGES HERE!
+export default {};
