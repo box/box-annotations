@@ -23,9 +23,11 @@ describe('EventEmitter', () => {
     });
 
     describe('removeAllListeners()', () => {
-        test('should proxy removeAllListeners to eventManager', () => {
+        test('should remove only listeners this instance registered', () => {
+            emitter.addListener('foo', noop);
             emitter.removeAllListeners();
-            expect(eventManager.removeAllListeners).toHaveBeenCalled();
+            expect(eventManager.removeListener).toHaveBeenCalledWith('foo', noop);
+            expect(eventManager.removeAllListeners).not.toHaveBeenCalled();
         });
     });
 
