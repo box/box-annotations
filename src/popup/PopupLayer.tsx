@@ -107,10 +107,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
-    // activeAnnotationId can be set (e.g. via deep link) before the target DOM node mounts;
-    // observe until it appears, or give up after ACTIVE_TARGET_OBSERVER_TIMEOUT_MS.
-    // Scope to this pane (.ba) and this page so a compare-mode sibling annotator
-    // cannot steal the popup or fallback-position it in the visible clipping area.
+    // Wait for the target to mount (e.g. deep link). Limit the search to this pane and page.
     React.useEffect(() => {
         const isMatchingPage = location === MEDIA_LOCATION_INDEX || activeAnnotationLocation === location;
 

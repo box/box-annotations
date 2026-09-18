@@ -310,10 +310,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
     }, [annotationId, dispatch]);
 
-    // ThreadedAnnotationsV2 falls back to a bare "Add a comment" editor when it has no messages,
-    // which posts replies to an annotation this instance cannot show. The active id is broadcast
-    // to every annotator, so in compare mode the pane without the annotation reaches this with an
-    // empty thread. Render nothing rather than a second composer beside the real thread.
+    // No messages means this pane does not own the thread; do not render an empty composer.
     if (annotationId && !threadMessages.length) return null;
 
     if (!popupPortalEl) return null;

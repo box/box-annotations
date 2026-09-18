@@ -309,8 +309,6 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.ACTIVE_SET, 'foreign-id');
 
-            // Silent: setActiveAnnotationIdAction(null) would tell the host nothing is active
-            // and undo the navigation it is performing for the sibling pane.
             expect(annotator.store.dispatch).toHaveBeenCalledWith(store.clearActiveAnnotationIdAction());
             expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
         });

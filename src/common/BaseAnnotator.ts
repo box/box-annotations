@@ -343,11 +343,7 @@ export default class BaseAnnotator extends EventEmitter {
     protected handleSetActive = (annotationId: string | null): void => {
         const state = this.store.getState();
 
-        // Shared EventManager broadcasts ACTIVE_SET to every annotator. An id this instance
-        // does not have belongs to a sibling pane, so activating it here would open a popup
-        // for an annotation this pane cannot render. Close whatever this pane had open
-        // instead of leaving a stale thread beside the one the user clicked, and stay silent
-        // so the host does not read it as a deselect. null still clears both panes.
+        // Ignore ids this pane does not own. Clear locally so the host is not told to deselect.
         if (annotationId && state?.annotations?.isInitialized && !store.getAnnotation(state, annotationId)) {
             this.store.dispatch(store.clearActiveAnnotationIdAction());
             return;

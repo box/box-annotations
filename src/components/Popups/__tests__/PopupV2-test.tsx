@@ -355,8 +355,6 @@ describe('PopupV2', () => {
         });
 
         test('should render nothing when the annotation is not found', async () => {
-            // An empty thread renders as a bare composer that can still post replies. In compare
-            // mode every annotator gets the active id, so the pane without the annotation lands here.
             mockSelectorValues();
             render(<PopupV2 {...defaults} />);
             await flushPromises();
