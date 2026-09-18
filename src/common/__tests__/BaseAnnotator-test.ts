@@ -292,6 +292,57 @@ describe('BaseAnnotator', () => {
             expect(annotator.setColor).toHaveBeenCalledWith('#000');
         });
 
+        test('should ignore ACTIVE_SET when store is initialized and id is not in store', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'foreign-id');
+
+            expect(annotator.setActiveId).not.toHaveBeenCalled();
+        });
+
+        test('should close its own annotation when another annotator owns the activated one', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: 'anno-1' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'foreign-id');
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.clearActiveAnnotationIdAction());
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+        });
+
+        test('should set active id when store is initialized and id is in store', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith('anno-1');
+        });
+
+        test('should still set active id when store is uninitialized', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: false, byId: {}, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith('anno-1');
+        });
+
+        test('should still clear active id when annotationId is null', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: 'anno-1' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, null);
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith(null);
+        });
+
         test('should dispatch applySidebarAnnotationUpdate when sidebar emits annotation update', () => {
             const partial = { id: 'anno_1', status: 'resolved' as const };
 

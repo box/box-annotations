@@ -6,6 +6,7 @@ import {
     applySidebarReplyCreateAction,
     applySidebarReplyDeleteAction,
     applySidebarReplyUpdateAction,
+    clearActiveAnnotationIdAction,
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
@@ -22,6 +23,7 @@ import { setViewModeAction } from '../options/actions';
 const activeAnnotationId = createReducer<AnnotationsState['activeId']>(null, builder =>
     builder
         /* Preview will set the active ID with a an event which will trigger the url change */
+        .addCase(clearActiveAnnotationIdAction, () => null)
         .addCase(createAnnotationAction.fulfilled, () => null)
         .addCase(deleteAnnotationAction.fulfilled, (state, { payload: id }) => (state === id ? null : state))
         .addCase(removeAnnotationAction, (state, { payload: id }) => (state === id ? null : state))
