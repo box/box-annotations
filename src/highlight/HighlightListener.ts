@@ -1,5 +1,12 @@
 import debounce from 'lodash/debounce';
-import { AppStore, getIsSelecting, getRotation, SelectionArg as Selection, setSelectionAction } from '../store';
+import {
+    AppStore,
+    getActiveAnnotationId,
+    getIsSelecting,
+    getRotation,
+    SelectionArg as Selection,
+    setSelectionAction,
+} from '../store';
 
 export type Options = {
     getSelection: () => Selection | null;
@@ -26,12 +33,15 @@ export default class HighlightListener {
     }
 
     handleSelectionChange = (): void => {
-        if (getIsSelecting(this.store.getState())) {
+        const state = this.store.getState();
+        // Clicking a highlight can restore a text selection; do not stage a new
+        // promoter while a thread is already open.
+        if (getIsSelecting(state) || getActiveAnnotationId(state)) {
             return;
         }
 
         const selection = this.getSelection();
-        const rotation = getRotation(this.store.getState());
+        const rotation = getRotation(state);
         this.store.dispatch(setSelectionAction(selection ? { ...selection, rotation } : null));
     };
 

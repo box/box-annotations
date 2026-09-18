@@ -127,6 +127,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
 
             {/* Layer 3a: Annotations promoter to promote selection to staged */}
             {!isCreating &&
+                !activeAnnotationId &&
                 selection &&
                 !selection.hasError &&
                 (() => {

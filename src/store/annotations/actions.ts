@@ -194,4 +194,8 @@ export const applySidebarReplyUpdateAction = createAction<SidebarReplyMutationPa
 
 export const removeAnnotationAction = createAction<string>('REMOVE_ANNOTATION');
 export const setActiveAnnotationIdAction = createAction<string | null>('SET_ACTIVE_ANNOTATION_ID');
+// Clears the active annotation without emitting ACTIVE_CHANGE. Used when a sibling annotator
+// owns the annotation the host just activated: this instance must drop its own selection, but
+// telling the host "nothing is active" would undo the navigation the host is performing.
+export const clearActiveAnnotationIdAction = createAction('CLEAR_ACTIVE_ANNOTATION_ID');
 export const setIsInitialized = createAction('SET_IS_INITIALIZED');

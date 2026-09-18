@@ -292,6 +292,146 @@ describe('BaseAnnotator', () => {
             expect(annotator.setColor).toHaveBeenCalledWith('#000');
         });
 
+        test('should ignore ACTIVE_SET when store is initialized and id is not in store', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'foreign-id');
+
+            expect(annotator.setActiveId).not.toHaveBeenCalled();
+        });
+
+        test('should close its own annotation when another annotator owns the activated one', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: 'anno-1' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'foreign-id');
+
+            // Silent: setActiveAnnotationIdAction(null) would tell the host nothing is active
+            // and undo the navigation it is performing for the sibling pane.
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.clearActiveAnnotationIdAction());
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+        });
+
+        test('should set active id when store is initialized and id is in store', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith('anno-1');
+        });
+
+        test('should still set active id when store is uninitialized', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: false, byId: {}, activeId: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith('anno-1');
+        });
+
+        test('should discard an untouched draft when an annotation is activated', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+                creator: { message: '', staged: { location: 1 }, status: 'staged' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.resetCreatorAction());
+        });
+
+        test('should discard an untouched draft even when the id belongs to another annotator', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: null },
+                creator: { message: '', staged: { location: 1 }, status: 'staged' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'foreign-id');
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.resetCreatorAction());
+            expect(annotator.setActiveId).not.toHaveBeenCalled();
+        });
+
+        test.each`
+            description               | creator
+            ${'the draft has a message'} | ${{ message: 'typed', staged: { location: 1 }, status: 'staged' }}
+            ${'the draft is saving'}     | ${{ message: '', staged: { location: 1 }, status: 'pending' }}
+            ${'there is no draft'}       | ${{ message: '', staged: null, status: 'init' }}
+        `('should keep the draft when $description', ({ creator }) => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+                creator,
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.resetCreatorAction());
+        });
+
+        test('should clear a leftover text selection when an annotation is activated', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+                creator: { message: '', staged: null, status: 'init' },
+                highlight: { selection: { location: 1 } },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setSelectionAction(null));
+        });
+
+        test('should clear a leftover text selection even when the draft is kept', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+                creator: { message: 'typed', staged: { location: 1 }, status: 'staged' },
+                highlight: { selection: { location: 1 } },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setSelectionAction(null));
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.resetCreatorAction());
+        });
+
+        test('should not clear the text selection when there is none', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: { 'anno-1': { id: 'anno-1' } }, activeId: null },
+                creator: { message: '', staged: null, status: 'init' },
+                highlight: { selection: null },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, 'anno-1');
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setSelectionAction(null));
+        });
+
+        test('should not discard a draft when clearing the active annotation', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: 'anno-1' },
+                creator: { message: '', staged: { location: 1 }, status: 'staged' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, null);
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.resetCreatorAction());
+        });
+
+        test('should still clear active id when annotationId is null', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: { isInitialized: true, byId: {}, activeId: 'anno-1' },
+            });
+
+            annotator.emit(Event.ACTIVE_SET, null);
+
+            expect(annotator.setActiveId).toHaveBeenCalledWith(null);
+        });
+
         test('should dispatch applySidebarAnnotationUpdate when sidebar emits annotation update', () => {
             const partial = { id: 'anno_1', status: 'resolved' as const };
 

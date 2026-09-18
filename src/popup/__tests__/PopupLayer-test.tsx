@@ -155,30 +155,45 @@ describe('PopupLayer', () => {
 
         describe('active annotation thread', () => {
             const activeAnnotationId = 'annotation-1';
+            const threadProps = {
+                activeAnnotationId,
+                activeAnnotationLocation: 1,
+                isThreadedAnnotation: true,
+                staged: null,
+                status: CreatorStatus.init,
+            };
 
-            const appendTarget = (id: string): HTMLElement => {
+            const appendTarget = (id: string, parent: ParentNode = document.body): HTMLElement => {
                 const target = document.createElement('div');
                 target.setAttribute('data-ba-annotation-id', id);
-                document.body.appendChild(target);
+                parent.appendChild(target);
                 return target;
             };
 
+            const createPane = (): { pane: HTMLElement; portal: HTMLElement } => {
+                const pane = document.createElement('div');
+                pane.className = 'ba';
+                const portal = document.createElement('div');
+                pane.appendChild(portal);
+                document.body.appendChild(pane);
+                return { pane, portal };
+            };
+
             test('should register a MutationObserver and resolve once the target element appears in the DOM', async () => {
+                const { pane, portal } = createPane();
                 const observeSpy = jest.spyOn(MutationObserver.prototype, 'observe');
                 const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
                 renderLayer({
-                    activeAnnotationId,
-                    isThreadedAnnotation: true,
-                    staged: null,
-                    status: CreatorStatus.init,
+                    ...threadProps,
+                    popupPortalEl: portal,
                 });
 
                 expect(screen.queryByTestId('popup-v2')).toBeNull();
-                expect(observeSpy).toHaveBeenCalledWith(document.body, { childList: true, subtree: true });
+                expect(observeSpy).toHaveBeenCalledWith(pane, { childList: true, subtree: true });
 
                 act(() => {
-                    appendTarget(activeAnnotationId);
+                    appendTarget(activeAnnotationId, pane);
                 });
 
                 const popup = await screen.findByTestId('popup-v2');
@@ -189,15 +204,37 @@ describe('PopupLayer', () => {
                 disconnectSpy.mockRestore();
             });
 
+            test('should not render a thread popup for a different page', () => {
+                const { pane, portal } = createPane();
+                appendTarget(activeAnnotationId, pane);
+
+                renderLayer({
+                    ...threadProps,
+                    activeAnnotationLocation: 8,
+                    location: 1,
+                    popupPortalEl: portal,
+                });
+
+                expect(screen.queryByTestId('popup-v2')).toBeNull();
+            });
+
+            test('should ignore targets in another .ba pane', () => {
+                const { portal } = createPane();
+                const otherPane = createPane().pane;
+                appendTarget(activeAnnotationId, otherPane);
+
+                renderLayer({
+                    ...threadProps,
+                    popupPortalEl: portal,
+                });
+
+                expect(screen.queryByTestId('popup-v2')).toBeNull();
+            });
+
             test('should disconnect the previous observer when activeAnnotationId changes', () => {
                 const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
-                const { rerender } = renderLayer({
-                    activeAnnotationId,
-                    isThreadedAnnotation: true,
-                    staged: null,
-                    status: CreatorStatus.init,
-                });
+                const { rerender } = renderLayer(threadProps);
 
                 const callsBeforeChange = disconnectSpy.mock.calls.length;
 
@@ -206,6 +243,7 @@ describe('PopupLayer', () => {
                         <PopupLayer
                             {...getDefaults()}
                             activeAnnotationId="annotation-2"
+                            activeAnnotationLocation={1}
                             isThreadedAnnotation
                             staged={null}
                             status={CreatorStatus.init}
@@ -221,12 +259,7 @@ describe('PopupLayer', () => {
             test('should disconnect the observer on unmount', () => {
                 const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
-                const { unmount } = renderLayer({
-                    activeAnnotationId,
-                    isThreadedAnnotation: true,
-                    staged: null,
-                    status: CreatorStatus.init,
-                });
+                const { unmount } = renderLayer(threadProps);
 
                 const callsBeforeUnmount = disconnectSpy.mock.calls.length;
                 act(() => {
@@ -239,12 +272,7 @@ describe('PopupLayer', () => {
             });
 
             test('should not update reference when target appears after unmount', () => {
-                const { unmount } = renderLayer({
-                    activeAnnotationId,
-                    isThreadedAnnotation: true,
-                    staged: null,
-                    status: CreatorStatus.init,
-                });
+                const { unmount } = renderLayer(threadProps);
 
                 act(() => {
                     unmount();
@@ -261,12 +289,7 @@ describe('PopupLayer', () => {
                 jest.useFakeTimers();
                 const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
-                renderLayer({
-                    activeAnnotationId,
-                    isThreadedAnnotation: true,
-                    staged: null,
-                    status: CreatorStatus.init,
-                });
+                renderLayer(threadProps);
 
                 const callsBeforeTimeout = disconnectSpy.mock.calls.length;
 

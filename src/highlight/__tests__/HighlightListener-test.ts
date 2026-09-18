@@ -1,6 +1,6 @@
 import createStore from '../../store/__mocks__/createStore';
 import HighlightListener from '../HighlightListener';
-import { AppStore, setSelectionAction, getIsSelecting } from '../../store';
+import { AppStore, setSelectionAction, getActiveAnnotationId, getIsSelecting } from '../../store';
 import { mockContainerRect, mockRange } from '../../store/highlight/__mocks__/data';
 
 jest.mock('lodash/debounce', () => (func: (...args: any[]) => never) => func);
@@ -67,6 +67,15 @@ describe('HighlightListener', () => {
 
         test('should do nothing if select using mouse', () => {
             (getIsSelecting as jest.Mock).mockReturnValue(true);
+
+            highlightListener.handleSelectionChange();
+
+            expect(defaults.store.dispatch).not.toHaveBeenCalled();
+        });
+
+        test('should do nothing if an annotation is already active', () => {
+            (getIsSelecting as jest.Mock).mockReturnValue(false);
+            (getActiveAnnotationId as jest.Mock).mockReturnValue('anno-1');
 
             highlightListener.handleSelectionChange();
 

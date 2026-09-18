@@ -124,6 +124,15 @@ describe('HighlightAnnotations', () => {
 
             expect(wrapper.find(HighlightList).prop('activeId')).toBe('123');
         });
+
+        test('should not render popup promoter when an annotation is active', () => {
+            const wrapper = getWrapper({
+                activeAnnotationId: '123',
+                selection: selectionMock,
+            });
+
+            expect(wrapper.exists(PopupHighlight)).toBe(false);
+        });
     });
 
     describe('handleAnnotationActive()', () => {

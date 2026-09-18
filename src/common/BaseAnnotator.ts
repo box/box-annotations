@@ -341,8 +341,45 @@ export default class BaseAnnotator extends EventEmitter {
     };
 
     protected handleSetActive = (annotationId: string | null): void => {
+        const state = this.store.getState();
+
+        if (annotationId) {
+            this.dismissPendingCreation(state);
+        }
+
+        // Shared EventManager broadcasts ACTIVE_SET to every annotator. An id this instance
+        // does not have belongs to a sibling pane, so activating it here would open a popup
+        // for an annotation this pane cannot render. Close whatever this pane had open
+        // instead of leaving a stale thread beside the one the user clicked, and stay silent
+        // so the host does not read it as a deselect. null still clears both panes.
+        if (annotationId && state?.annotations?.isInitialized && !store.getAnnotation(state, annotationId)) {
+            this.store.dispatch(store.clearActiveAnnotationIdAction());
+            return;
+        }
         this.setActiveId(annotationId);
     };
+
+    /**
+     * Selecting an annotation must not leave a composer floating over the page. A draft the user
+     * has typed into, or one already being saved, is never discarded.
+     */
+    protected dismissPendingCreation(state?: store.AppState): void {
+        const creator = state?.creator;
+
+        // The text selection outlives the draft. Page managers remount as the pane scrolls to the
+        // annotation, and a highlight layer mounting in create mode stages whatever selection is
+        // still in the store, putting the composer straight back on the page. HighlightListener
+        // stops clearing selections once an annotation is active, so clear it here.
+        if (state?.highlight?.selection) {
+            this.store.dispatch(store.setSelectionAction(null));
+        }
+
+        if (!creator?.staged || creator.status === store.CreatorStatus.pending || creator.message) {
+            return;
+        }
+
+        this.store.dispatch(store.resetCreatorAction());
+    }
 
     protected handleSetVisible = (visibility: boolean): void => {
         this.setVisibility(visibility);
