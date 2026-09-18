@@ -341,6 +341,13 @@ export default class BaseAnnotator extends EventEmitter {
     };
 
     protected handleSetActive = (annotationId: string | null): void => {
+        const state = this.store.getState();
+
+        // Ignore ids this pane does not own. Clear locally so the host is not told to deselect.
+        if (annotationId && state?.annotations?.isInitialized && !store.getAnnotation(state, annotationId)) {
+            this.store.dispatch(store.clearActiveAnnotationIdAction());
+            return;
+        }
         this.setActiveId(annotationId);
     };
 

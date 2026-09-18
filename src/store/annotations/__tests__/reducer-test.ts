@@ -7,6 +7,7 @@ import {
     applySidebarReplyCreateAction,
     applySidebarReplyDeleteAction,
     applySidebarReplyUpdateAction,
+    clearActiveAnnotationIdAction,
     createAnnotationAction,
     createReplyAction,
     deleteAnnotationAction,
@@ -104,6 +105,15 @@ describe('store/annotations/reducer', () => {
             const newState = reducer(state, setActiveAnnotationIdAction(payload));
 
             expect(newState.activeId).toBe(payload);
+        });
+    });
+
+    describe('clearActiveAnnotationIdAction', () => {
+        test('should set activeId to null', () => {
+            const stateWithActive = { ...state, activeId: 'anno-1' };
+            const newState = reducer(stateWithActive, clearActiveAnnotationIdAction());
+
+            expect(newState.activeId).toBeNull();
         });
     });
 
