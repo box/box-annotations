@@ -29,7 +29,7 @@ Install the following plugins in your preferred editor
 
 ### Yarn commands
 
-- `yarn build` to generate resource bundles and JS webpack bundles
+- `yarn build` to generate JS webpack bundles
 - `yarn start` to only generate JS webpack bundles on file changes
 - `yarn test` launches Jest
 - `yarn test:watch` launches Jest for debugging
