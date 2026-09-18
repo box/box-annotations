@@ -16,14 +16,12 @@ import {
 } from '../store';
 import { PopupReference } from '../components/Popups/Popper';
 
-import { MEDIA_LOCATION_INDEX, TARGET_TYPE } from '../constants';
-import { CSS_CONTAINER_CLASS } from '../common/BaseAnnotator';
+import { TARGET_TYPE } from '../constants';
 
 import './PopupLayer.scss';
 
 export type Props = {
     activeAnnotationId: string | null;
-    activeAnnotationLocation?: number;
     createDrawing?: (arg: DrawingCreateArg) => void;
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
@@ -41,9 +39,6 @@ export type Props = {
     targetType: TARGET_TYPE;
 };
 
-export const getAnnotationTargetRoot = (popupPortalEl?: HTMLElement | null): ParentNode =>
-    popupPortalEl?.closest(`.${CSS_CONTAINER_CLASS}`) ?? document;
-
 const modeStagedMap: { [M in Mode]?: (staged: CreatorItem | null) => boolean } = {
     [Mode.DRAWING]: isCreatorStagedDrawing,
     [Mode.HIGHLIGHT]: isCreatorStagedHighlight,
@@ -55,13 +50,11 @@ const ACTIVE_TARGET_OBSERVER_TIMEOUT_MS = 10000;
 const PopupLayer = (props: Props): JSX.Element | null => {
     const {
         activeAnnotationId,
-        activeAnnotationLocation,
         createDrawing = noop,
         createHighlight = noop,
         createRegion = noop,
         isPromoting = false,
         isThreadedAnnotation = false,
-        location,
         message,
         mode,
         popupPortalEl,
@@ -107,18 +100,16 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         setReference(referenceId ? document.querySelector(`[data-ba-reference-id="${referenceId}"]`) : null);
     }, [referenceId]);
 
-    // Wait for the target to mount (e.g. deep link). Limit the search to this pane and page.
+    // activeAnnotationId can be set (e.g. via deep link) before the target DOM node mounts;
+    // observe until it appears, or give up after ACTIVE_TARGET_OBSERVER_TIMEOUT_MS.
     React.useEffect(() => {
-        const isMatchingPage = location === MEDIA_LOCATION_INDEX || activeAnnotationLocation === location;
-
-        if (!activeAnnotationId || !isThreadedAnnotation || !isMatchingPage) {
+        if (!activeAnnotationId || !isThreadedAnnotation) {
             setActiveReference(null);
             return noop;
         }
 
-        const root = getAnnotationTargetRoot(popupPortalEl);
         const selector = `[data-ba-annotation-id="${CSS.escape(activeAnnotationId)}"]`;
-        const existing = root.querySelector(selector);
+        const existing = document.querySelector(selector);
         if (existing) {
             setActiveReference(existing);
             return noop;
@@ -126,14 +117,13 @@ const PopupLayer = (props: Props): JSX.Element | null => {
 
         setActiveReference(null);
         const observer = new MutationObserver(() => {
-            const el = root.querySelector(selector);
+            const el = document.querySelector(selector);
             if (el) {
                 setActiveReference(el);
                 observer.disconnect();
             }
         });
-        const observeTarget = root instanceof Document ? document.body : root;
-        observer.observe(observeTarget, { childList: true, subtree: true });
+        observer.observe(document.body, { childList: true, subtree: true });
 
         const timeoutId = window.setTimeout(() => {
             observer.disconnect();
@@ -143,7 +133,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
             observer.disconnect();
             window.clearTimeout(timeoutId);
         };
-    }, [activeAnnotationId, activeAnnotationLocation, isThreadedAnnotation, location, popupPortalEl]);
+    }, [activeAnnotationId, isThreadedAnnotation]);
 
     const showCreator = canCreate && canReply && reference && staged;
 

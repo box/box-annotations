@@ -15,7 +15,7 @@ import {
     setMessageAction,
     getCreatorReferenceId,
 } from '../store';
-import { getActiveAnnotationId, getActiveAnnotationLocation } from '../store/annotations/selectors';
+import { getActiveAnnotationId } from '../store/annotations/selectors';
 import { isFeatureEnabled } from '../store/options';
 import { createDrawingAction } from '../drawing/actions';
 import { createHighlightAction } from '../highlight/actions';
@@ -30,7 +30,6 @@ export type OwnProps = {
 
 export type Props = {
     activeAnnotationId: string | null;
-    activeAnnotationLocation?: number;
     isPromoting: boolean;
     isThreadedAnnotation?: boolean;
     message: string;
@@ -43,7 +42,6 @@ export type Props = {
 export const mapStateToProps = (state: AppState, { location }: OwnProps): Props => {
     return {
         activeAnnotationId: getActiveAnnotationId(state),
-        activeAnnotationLocation: getActiveAnnotationLocation(state),
         isPromoting: getIsPromoting(state),
         isThreadedAnnotation: isFeatureEnabled(state, 'isThreadedAnnotation'),
         message: getCreatorMessage(state),

@@ -1,7 +1,6 @@
 import { annotationState, videoAnnotationState } from '../__mocks__/annotationsState';
 import {
     getActiveAnnotationId,
-    getActiveAnnotationLocation,
     getAnnotation,
     getAnnotations,
     getAnnotationsForLocation,
@@ -53,17 +52,6 @@ describe('store/annotations/selectors', () => {
         test('should get the active id', () => {
             const newState = { annotations: { ...annotationState, activeId: '123' } };
             expect(getActiveAnnotationId(newState)).toEqual('123');
-        });
-    });
-
-    describe('getActiveAnnotationLocation', () => {
-        test('should return undefined when there is no active annotation', () => {
-            expect(getActiveAnnotationLocation(state)).toBeUndefined();
-        });
-
-        test('should return the page location of the active annotation', () => {
-            const newState = { annotations: { ...annotationState, activeId: 'test3' } };
-            expect(getActiveAnnotationLocation(newState)).toBe(2);
         });
     });
 

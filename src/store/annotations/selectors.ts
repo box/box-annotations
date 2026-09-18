@@ -7,13 +7,6 @@ type State = Pick<AppState, 'annotations'>;
 
 export const getActiveAnnotationId = ({ annotations }: State): string | null => annotations.activeId;
 export const getAnnotation = ({ annotations }: State, id: string): Annotation | undefined => annotations.byId[id];
-export const getActiveAnnotationLocation = (state: State): number | undefined => {
-    const id = getActiveAnnotationId(state);
-    if (!id) {
-        return undefined;
-    }
-    return getProp(getAnnotation(state, id), 'target.location.value');
-};
 export const getAnnotations = ({ annotations }: State): Annotation[] => [...Object.values(annotations.byId)];
 export const getAnnotationsForLocation = (state: State, location: number): Annotation[] => {
     const annotations = getAnnotations(state);
