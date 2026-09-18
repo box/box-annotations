@@ -1,0 +1,25 @@
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {
+    "ba.annotationsClose": "Sluiten",
+    "ba.annotationsCreateError": "De annotatie kan niet worden gemaakt.",
+    "ba.annotationsLoadError": "De annotaties voor dit bestand kunnen niet worden geladen.",
+    "ba.annotationsPost": "Plaatsen",
+    "ba.annotationsSave": "Opslaan",
+    "ba.boundingBoxHighlight.viewNextReference": "Volgende referentie weergeven",
+    "ba.boundingBoxHighlight.viewPrevReference": "Vorige referentie weergeven",
+    "ba.popup.reply.comment": "Opmerking",
+    "ba.popup.reply.field": "Typ een opmerking",
+    "ba.popup.reply.mentionLoading": "Gebruikers laden…",
+    "ba.popup.reply.mentionSelector": "Medebewerker noemen",
+    "ba.popups.cancel": "Annuleren",
+    "ba.popups.drawing.addComment": "Opmerking toevoegen",
+    "ba.popups.drawing.delete": "Verwijderen",
+    "ba.popups.drawing.redo": "Opnieuw uitvoeren",
+    "ba.popups.drawing.undo": "Ongedaan maken",
+    "ba.popups.popupCursor.regionPrompt": "Teken een vak om een opmerking te plaatsen",
+    "ba.popups.popupHighlight.promoter": "Markeringen en opmerkingen plaatsen",
+    "ba.popups.popupHighlight.restrictedPrompt": "Opmerkingen beperkt tot enkele pagina",
+    "ba.popups.popupList.prompt": "Noem iemand om die persoon een melding te sturen",
+    "ba.popups.post": "Plaatsen",
+    "ba.popups.replyField.placeholder": "Typ een opmerking…"
+};

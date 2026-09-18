@@ -29,10 +29,14 @@ export function getPageNumber(element: Element | null): number | undefined {
     return pageNumber ? parseInt(pageNumber, 10) : undefined;
 }
 
-export function getSelection(): Selection | null {
+export function getSelection(rootEl?: HTMLElement | null): Selection | null {
     const selection = window.getSelection();
 
     if (!selection || selection.isCollapsed || !selection.rangeCount || !selection.focusNode) {
+        return null;
+    }
+
+    if (rootEl && !rootEl.contains(selection.focusNode)) {
         return null;
     }
 

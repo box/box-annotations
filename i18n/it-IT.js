@@ -1,0 +1,25 @@
+// THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
+export default {
+    "ba.annotationsClose": "Chiudi",
+    "ba.annotationsCreateError": "Impossibile creare la nota.",
+    "ba.annotationsLoadError": "Caricamento delle note di questo file non riuscito.",
+    "ba.annotationsPost": "Pubblica",
+    "ba.annotationsSave": "Salva",
+    "ba.boundingBoxHighlight.viewNextReference": "Visualizza il riferimento successivo",
+    "ba.boundingBoxHighlight.viewPrevReference": "Visualizza il riferimento precedente",
+    "ba.popup.reply.comment": "Commenta",
+    "ba.popup.reply.field": "Digita un commento",
+    "ba.popup.reply.mentionLoading": "Caricamento utenti in corso...",
+    "ba.popup.reply.mentionSelector": "Menziona un collaboratore",
+    "ba.popups.cancel": "Annulla",
+    "ba.popups.drawing.addComment": "Aggiungi commento",
+    "ba.popups.drawing.delete": "Elimina",
+    "ba.popups.drawing.redo": "Ripristina",
+    "ba.popups.drawing.undo": "Annulla",
+    "ba.popups.popupCursor.regionPrompt": "Disegna una casella per il commento",
+    "ba.popups.popupHighlight.promoter": "Evidenzia e commenta",
+    "ba.popups.popupHighlight.restrictedPrompt": "I commenti sono limitati a una sola pagina",
+    "ba.popups.popupList.prompt": "Menziona qualcuno per inviargli una notifica",
+    "ba.popups.post": "Pubblica",
+    "ba.popups.replyField.placeholder": "Scrivi un commento..."
+};
