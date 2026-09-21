@@ -13,6 +13,7 @@ let mockOnSubmit: ((text: string) => void) | undefined;
 jest.mock('../../components/Popups/PopupV2', () => {
     const ReactMock = jest.requireActual('react');
     return (props: Record<string, unknown>) => {
+        mockOnCancel = props.onCancel as typeof mockOnCancel;
         mockOnSubmit = props.onSubmit as typeof mockOnSubmit;
         return ReactMock.createElement('div', {
             'data-testid': 'popup-v2',
@@ -301,6 +302,14 @@ describe('PopupLayer', () => {
             test('should reset creator and reset isPromoting', () => {
                 const resetCreator = jest.fn();
                 renderLayer({ resetCreator });
+                mockOnCancel!();
+
+                expect(resetCreator).toHaveBeenCalled();
+            });
+
+            test('should reset creator when PopupV2 cancels a threaded create', () => {
+                const resetCreator = jest.fn();
+                renderLayer({ isThreadedAnnotation: true, resetCreator });
                 mockOnCancel!();
 
                 expect(resetCreator).toHaveBeenCalled();

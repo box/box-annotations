@@ -19,6 +19,7 @@ import FocusTrap from 'box-ui-elements/es/components/focus-trap/FocusTrap';
 
 import { annotationToMessages, collaboratorToUserContact } from '../../adapters/threadedAnnotationsAdapters';
 import AnnotationCallbacksContext from '../../common/AnnotationCallbacksContext';
+import useOutsideEvent from '../../common/useOutsideEvent';
 import {
     createReplyAction,
     deleteAnnotationAction,
@@ -41,6 +42,7 @@ import './PopupV2.scss';
 
 export type Props = {
     annotationId?: string;
+    onCancel?: () => void;
     onSubmit: (text: string) => void;
     popupPortalEl?: HTMLElement | null;
     reference: PopupReference;
@@ -69,6 +71,15 @@ const createDocumentNode = (content: JSONContent | null): DocumentNodeV2 => {
 
 const serializePopupMessage = (doc: DocumentNodeV2, isRichTextEnabled: boolean): string =>
     isRichTextEnabled ? serializeMessageToMarkdown(doc) : serializeMentionMarkup(doc).text;
+
+const isEmptyEditorContent = (content: JSONContent | null, isRichTextEnabled: boolean): boolean => {
+    if (!content) {
+        return true;
+    }
+
+    const text = serializePopupMessage(createDocumentNode(content), isRichTextEnabled);
+    return text.trim().length === 0;
+};
 
 const literalToString = (literal: TokenLiteral): string | null => {
     if (!literal) return null;
@@ -105,13 +116,14 @@ const fetchAvatarBlob = async (
     }
 };
 
-const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
+const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }: Props): JSX.Element | null => {
     const intl = useIntl();
     const dispatch = useDispatch<AppThunkDispatch>();
     const { onCopyLink: consumerOnCopyLink } = React.useContext(AnnotationCallbacksContext);
     const popupRef = React.useRef<HTMLDivElement>(null);
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
+    const hasTextRef = React.useRef(false);
 
     const apiHost = useSelector(getApiHost);
     const fileId = useSelector(getFileId);
@@ -184,6 +196,21 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
     const handleEvent = React.useCallback((event: React.SyntheticEvent) => {
         event.stopPropagation();
     }, []);
+
+    const handleEditorChange = React.useCallback(
+        (content: JSONContent | null): void => {
+            hasTextRef.current = !isEmptyEditorContent(content, isRichTextEnabled);
+        },
+        [isRichTextEnabled],
+    );
+
+    const handleClickAway = React.useCallback((): void => {
+        if (!hasTextRef.current) {
+            onCancel?.();
+        }
+    }, [onCancel]);
+
+    useOutsideEvent('mousedown', popupRef, onCancel ? handleClickAway : undefined);
 
     React.useEffect(() => {
         if (!annotation) return undefined;
@@ -362,6 +389,7 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
                                 <MessageEditorV2
                                     isFirstAnnotation
                                     isRichTextEnabled={isRichTextEnabled}
+                                    onChange={handleEditorChange}
                                     onPost={handlePost}
                                     userSelectorProps={userSelectorProps}
                                 />
