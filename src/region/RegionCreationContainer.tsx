@@ -4,6 +4,7 @@ import {
     CreatorItemRegion,
     CreatorStatus,
     getAnnotationMode,
+    getCreatorStaged,
     getCreatorStagedForLocation,
     getCreatorStatus,
     getRotation,
@@ -18,6 +19,7 @@ import RegionCreation from './RegionCreation';
 import withProviders from '../common/withProviders';
 
 export type Props = {
+    hasStagedItem: boolean;
     isCreating: boolean;
     rotation: number;
     staged: CreatorItemRegion | null;
@@ -27,6 +29,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     const staged = getCreatorStagedForLocation(state, location);
 
     return {
+        hasStagedItem: Boolean(getCreatorStaged(state)),
         isCreating: getAnnotationMode(state) === Mode.REGION && getCreatorStatus(state) !== CreatorStatus.pending,
         rotation: getRotation(state),
         staged: isCreatorStagedRegion(staged) ? staged : null,
