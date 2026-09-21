@@ -3,6 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { serializeMentionMarkup, serializeMessageToMarkdown } from '@box/threaded-annotations';
 import type { MentionContextData, ThreadedAnnotationsPropsV2 } from '@box/threaded-annotations';
+import type { JSONContent } from '@tiptap/core';
 import AnnotationCallbacksContext from '../../../common/AnnotationCallbacksContext';
 import PopupV2, { Props } from '../PopupV2';
 import {
@@ -36,13 +37,15 @@ jest.mock('@box/blueprint-web', () => ({
     TooltipProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-let lastMentionContextValue: MentionContextData = {};
-let lastMessageEditorProps: {
+type MessageEditorProps = {
     isFirstAnnotation?: boolean;
     isRichTextEnabled?: boolean;
-    onChange?: (content: unknown) => void;
-    onPost?: (content: unknown) => Promise<void>;
-} = {};
+    onChange?: (content: JSONContent | null) => void;
+    onPost?: (content: JSONContent | null) => Promise<void>;
+};
+
+let lastMentionContextValue: MentionContextData = {};
+let lastMessageEditorProps: MessageEditorProps = {};
 let lastThreadedAnnotationsProps: Partial<ThreadedAnnotationsPropsV2> = {};
 
 jest.mock('@box/threaded-annotations', () => {
@@ -52,12 +55,7 @@ jest.mock('@box/threaded-annotations', () => {
             lastMentionContextValue = value;
             return ReactMock.createElement('div', { 'data-testid': 'mention-context' }, children);
         },
-        MessageEditorV2: (props: {
-            isFirstAnnotation?: boolean;
-            isRichTextEnabled?: boolean;
-            onChange?: (content: unknown) => void;
-            onPost?: (content: unknown) => Promise<void>;
-        }) => {
+        MessageEditorV2: (props: MessageEditorProps) => {
             lastMessageEditorProps = props;
             return ReactMock.createElement('div', {
                 'data-testid': 'message-editor-v2',
