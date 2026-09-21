@@ -310,6 +310,9 @@ const PopupV2 = ({ annotationId, onSubmit, popupPortalEl, reference }: Props): J
         await dispatch(updateAnnotationAction({ annotationId, payload: { status: 'open' } }));
     }, [annotationId, dispatch]);
 
+    // No messages means this pane does not own the thread; do not render an empty composer.
+    if (annotationId && !threadMessages.length) return null;
+
     if (!popupPortalEl) return null;
 
     return ReactDOM.createPortal(

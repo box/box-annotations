@@ -354,12 +354,12 @@ describe('PopupV2', () => {
             );
         });
 
-        test('should render empty messages when annotation is not found', async () => {
+        test('should render nothing when the annotation is not found', async () => {
             mockSelectorValues();
             render(<PopupV2 {...defaults} />);
             await flushPromises();
 
-            expect(screen.getByTestId('threaded-annotations-v2').getAttribute('data-messages-count')).toBe('0');
+            expect(screen.queryByTestId('threaded-annotations-v2')).not.toBeInTheDocument();
         });
 
         test('should pass all action callbacks to ThreadedAnnotationsV2', async () => {
