@@ -8,6 +8,7 @@ import { TARGET_TYPE } from '../constants';
 import { getVideoCurrentTimeInMilliseconds } from '../utils/useVideoTiming';
 
 type Props = {
+    hasStagedItem?: boolean;
     isCreating: boolean;
     location: number;
     resetCreator: () => void;
@@ -33,10 +34,10 @@ export default class RegionCreation extends React.PureComponent<Props, State> {
     state: State = {};
 
     handleAbort = (): void => {
-        const { resetCreator, staged } = this.props;
+        const { hasStagedItem, resetCreator, staged } = this.props;
 
-        // Click-away (a click too small to start a new region) must not discard an in-progress comment/annotation
-        if (staged) {
+        // Click-away must not discard any in-progress comment/annotation
+        if (staged || hasStagedItem) {
             return;
         }
 

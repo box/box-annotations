@@ -9,6 +9,7 @@ jest.mock('../../common/withProviders');
 jest.mock('../RegionCreation', () => ({
     __esModule: true,
     default: (props: {
+        hasStagedItem?: boolean;
         isCreating: boolean;
         location: number;
         rotation?: number;
@@ -17,6 +18,7 @@ jest.mock('../RegionCreation', () => ({
     }) => (
         <article
             aria-label="region creation"
+            data-has-staged-item={String(props.hasStagedItem)}
             data-is-creating={String(props.isCreating)}
             data-location={String(props.location)}
             data-rotation={String(props.rotation)}
@@ -45,6 +47,24 @@ describe('RegionCreationContainer', () => {
         expect(el).toHaveAttribute('data-target-type', 'page');
         expect(el).toHaveAttribute('data-location', '1');
         expect(el).toHaveAttribute('data-is-creating', 'false');
+        expect(el).toHaveAttribute('data-has-staged-item', 'false');
+        expect(el).toHaveAttribute('data-staged', 'none');
+    });
+
+    test('marks hasStagedItem when a non-region creator item is staged', () => {
+        const store = createStore({
+            creator: {
+                staged: {
+                    location: 1,
+                    shapes: [{ type: 'rect', height: 10, width: 10, x: 0, y: 0 }],
+                },
+                status: CreatorStatus.staged,
+            },
+        });
+        renderContainer({ store });
+
+        const el = screen.getByRole('article', { name: 'region creation' });
+        expect(el).toHaveAttribute('data-has-staged-item', 'true');
         expect(el).toHaveAttribute('data-staged', 'none');
     });
 

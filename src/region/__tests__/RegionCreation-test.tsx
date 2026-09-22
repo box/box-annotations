@@ -58,6 +58,14 @@ describe('RegionCreation', () => {
 
                 expect(defaults.resetCreator).toHaveBeenCalled();
             });
+
+            test('should not reset creator when a non-region item is staged', () => {
+                wrapper = getWrapper({ hasStagedItem: true, staged: null });
+                instance = wrapper.instance() as InstanceType<typeof RegionCreation>;
+                instance.handleAbort();
+
+                expect(defaults.resetCreator).not.toHaveBeenCalled();
+            });
         });
 
         describe('handleStart', () => {
