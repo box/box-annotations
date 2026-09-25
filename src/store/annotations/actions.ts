@@ -41,10 +41,21 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
         });
 
         const shouldFetchReplies = isFeatureEnabled({ options: getState().options }, 'isThreadedAnnotation');
+        const shouldEnableRichText = isFeatureEnabled({ options: getState().options }, 'isRichTextEnabled');
 
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Annotation>>((resolve, reject) => {
-            client.getAnnotations(fileId, fileVersionId, permissions, resolve, reject, 1000, false, shouldFetchReplies);
+            client.getAnnotations(
+                fileId,
+                fileVersionId,
+                permissions,
+                resolve,
+                reject,
+                1000,
+                false,
+                shouldFetchReplies,
+                shouldEnableRichText,
+            );
         });
     },
 );
