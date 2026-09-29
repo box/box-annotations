@@ -36,6 +36,13 @@ describe('ReplyFormContainer', () => {
             },
         );
 
+        test('should clamp the cursor position to the end of the text', () => {
+            const { editorState } = mapPropsToValues({ ...defaults, cursorPosition: 10, value: 'abc' });
+
+            expect(editorState.getSelection().getAnchorOffset()).toBe(3);
+            expect(editorState.getSelection().getFocusOffset()).toBe(3);
+        });
+
         test('should convert mention markup in the value into a mention entity', () => {
             const { editorState } = mapPropsToValues({ ...defaults, value: '@[123:Test User] hello' });
             const content = editorState.getCurrentContent();

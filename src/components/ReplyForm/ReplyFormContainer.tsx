@@ -31,12 +31,15 @@ export const mapPropsToErrors = (): FormErrors => ({ editorState: 'initial' });
 
 export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: Props): FormValues => {
     const mentionState = withMentionDecorator(createMentionTimestampSelectorState(value));
-    const cursorPosition = value ? prevCursorPosition : 0;
+    const selection = mentionState.getSelection();
+    const blockLength = mentionState.getCurrentContent().getBlockForKey(selection.getAnchorKey()).getLength();
+    // The saved message is trimmed, so the saved cursor can sit past the end of the rebuilt text
+    const cursorPosition = value ? Math.min(prevCursorPosition, blockLength) : 0;
 
     return {
         editorState: EditorState.forceSelection(
             mentionState,
-            mentionState.getSelection().merge({
+            selection.merge({
                 anchorOffset: cursorPosition,
                 focusOffset: cursorPosition,
                 hasFocus: true,
