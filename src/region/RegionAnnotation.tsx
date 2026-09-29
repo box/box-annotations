@@ -2,7 +2,6 @@ import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { useIntl } from 'react-intl';
-import { annotationCommentDescriptionId, toAccessibleCommentText } from '../common/annotationCommentText';
 import messages from '../common/annotationTargetMessages';
 import { MOUSE_PRIMARY } from '../constants';
 import { Shape } from '../@types';
@@ -12,7 +11,6 @@ import './RegionAnnotation.scss';
 type Props = {
     annotationId: string;
     className?: string;
-    commentMessage?: string;
     isActive?: boolean;
     onSelect?: (annotationId: string) => void;
     shape: Shape;
@@ -21,10 +19,8 @@ type Props = {
 export type RegionAnnotationRef = HTMLButtonElement;
 
 export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRef>): JSX.Element => {
-    const { annotationId, className, commentMessage, isActive, onSelect = noop, shape } = props;
+    const { annotationId, className, isActive, onSelect = noop, shape } = props;
     const intl = useIntl();
-    const commentText = toAccessibleCommentText(commentMessage);
-    const descriptionId = commentText ? annotationCommentDescriptionId(annotationId) : undefined;
 
     const handleFocus = (): void => {
         onSelect(annotationId);
@@ -40,27 +36,19 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
     };
 
     return (
-        <>
-            <button
-                ref={ref}
-                aria-describedby={descriptionId}
-                aria-label={intl.formatMessage(messages.ariaLabelRegionInlineComment)}
-                className={classNames('ba-RegionAnnotation', className, { 'is-active': isActive })}
-                data-ba-annotation-id={annotationId}
-                data-resin-itemid={annotationId}
-                data-resin-target="highlightRegion"
-                data-testid={`ba-AnnotationTarget-${annotationId}`}
-                onFocus={handleFocus}
-                onMouseDown={handleMouseDown}
-                style={styleShape(shape)}
-                type="button"
-            />
-            {descriptionId ? (
-                <span className="ba-RegionAnnotation-commentText" id={descriptionId}>
-                    {commentText}
-                </span>
-            ) : null}
-        </>
+        <button
+            ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelRegionInlineComment)}
+            className={classNames('ba-RegionAnnotation', className, { 'is-active': isActive })}
+            data-ba-annotation-id={annotationId}
+            data-resin-itemid={annotationId}
+            data-resin-target="highlightRegion"
+            data-testid={`ba-AnnotationTarget-${annotationId}`}
+            onFocus={handleFocus}
+            onMouseDown={handleMouseDown}
+            style={styleShape(shape)}
+            type="button"
+        />
     );
 };
 

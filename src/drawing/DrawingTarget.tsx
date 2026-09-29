@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import noop from 'lodash/noop';
 import { useIntl } from 'react-intl';
 import { TargetDrawing } from '../@types';
-import { annotationCommentDescriptionId, toAccessibleCommentText } from '../common/annotationCommentText';
 import messages from '../common/annotationTargetMessages';
 import { MOUSE_PRIMARY } from '../constants';
 import DecoratedDrawingPath from './DecoratedDrawingPath';
@@ -15,7 +14,6 @@ import './DrawingTarget.scss';
 export type Props = {
     annotationId: string;
     className?: string;
-    commentMessage?: string;
     isActive?: boolean;
     onSelect?: (annotationId: string) => void;
     rootEl: DrawingSVGRef | null;
@@ -28,15 +26,12 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
     const {
         annotationId,
         className,
-        commentMessage,
         isActive = false,
         onSelect = noop,
         rootEl,
         target: { path_groups: pathGroups },
     } = props;
     const intl = useIntl();
-    const commentText = toAccessibleCommentText(commentMessage);
-    const descriptionId = commentText ? annotationCommentDescriptionId(annotationId) : undefined;
     const shape = getShape(pathGroups);
     const { x: centerX, y: centerY } = getCenter(shape);
 
@@ -75,7 +70,6 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
             data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}
             data-resin-target="highlightDrawing"
-            aria-describedby={descriptionId}
             aria-label={intl.formatMessage(messages.ariaLabelDrawingInlineComment)}
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
@@ -84,7 +78,6 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
             role="button"
             tabIndex={0}
         >
-            {descriptionId ? <desc id={descriptionId}>{commentText}</desc> : null}
             <rect
                 fill="transparent"
                 transform={`translate(-${centerX * 0.1}, -${centerY * 0.1}) scale(1.1)`}

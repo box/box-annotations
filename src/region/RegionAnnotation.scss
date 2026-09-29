@@ -20,14 +20,3 @@
         @include ba-RegionRect-callout;
     }
 }
-
-// Off-screen, not clipped. clip and clip-path drop the node from the
-// accessibility tree, so aria-describedby would not expose the comment.
-.ba-RegionAnnotation-commentText {
-    position: absolute;
-    top: auto;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-}

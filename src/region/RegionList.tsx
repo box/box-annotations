@@ -41,14 +41,13 @@ export function RegionList({ activeId, annotations, className, onSelect = noop }
             {annotations
                 .filter(filterRegion)
                 .sort(sortRegion)
-                .map(annotation => (
+                .map(({ id, target }) => (
                     <RegionAnnotation
-                        key={annotation.id}
-                        annotationId={annotation.id}
-                        commentMessage={annotation.description?.message}
-                        isActive={activeId === annotation.id}
+                        key={id}
+                        annotationId={id}
+                        isActive={activeId === id}
                         onSelect={onSelect}
-                        shape={annotation.target.shape}
+                        shape={target.shape}
                     />
                 ))}
         </div>

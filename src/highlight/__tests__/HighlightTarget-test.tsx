@@ -41,20 +41,7 @@ describe('HighlightTarget', () => {
         });
 
         test('should name the highlight for assistive technology', () => {
-            const anchor = getWrapper().find('a');
-
-            expect(anchor.prop('aria-label')).toBe('Highlight Annotation Inline Comment');
-            expect(anchor.prop('aria-describedby')).toBeUndefined();
-            expect(anchor.find('desc').exists()).toBe(false);
-        });
-
-        test('should describe the highlight with the comment text', () => {
-            const anchor = getWrapper({ commentMessage: 'Noted @[7:Grace Hopper]' }).find('a');
-            const description = anchor.find('desc');
-
-            expect(anchor.prop('aria-describedby')).toBe('ba-annotation-comment-123');
-            expect(description.prop('id')).toBe('ba-annotation-comment-123');
-            expect(description.text()).toBe('Noted Grace Hopper');
+            expect(getWrapper().find('a').prop('aria-label')).toBe('Highlight Annotation Inline Comment');
         });
     });
 
