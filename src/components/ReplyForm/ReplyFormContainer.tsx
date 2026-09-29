@@ -1,4 +1,4 @@
-import createMentionSelectorState from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/createMentionSelectorState';
+import createMentionTimestampSelectorState from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/createMentionTimestampSelectorState';
 import { getFormattedCommentText } from 'box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils';
 import { EditorState, SelectionState } from 'draft-js';
 import { FormikBag, withFormik } from 'formik';
@@ -30,7 +30,7 @@ export const mapStateToProps = (state: AppState): PropsFromState => ({
 export const mapPropsToErrors = (): FormErrors => ({ editorState: 'initial' });
 
 export const mapPropsToValues = ({ cursorPosition: prevCursorPosition, value = '' }: Props): FormValues => {
-    const mentionState = withMentionDecorator(createMentionSelectorState(value));
+    const mentionState = withMentionDecorator(createMentionTimestampSelectorState(value));
     const cursorPosition = value ? prevCursorPosition : 0;
 
     return {

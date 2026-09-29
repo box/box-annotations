@@ -5246,10 +5246,10 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-box-ui-elements@^20.0.0:
-  version "20.0.0"
-  resolved "https://registry.yarnpkg.com/box-ui-elements/-/box-ui-elements-20.0.0.tgz#a1777a692a5e2f71a79d6dbbcaa785af9a5f8c7c"
-  integrity sha512-56jY34zxigRi77tja4y+4KF3Z6nqgF7xWz2H0fMwLxD2VPuQVFG2k6GSxGWFBWTHP8JMLzQQ2y+/rxfCdTUhtg==
+box-ui-elements@^28.0.0-beta.2:
+  version "28.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/box-ui-elements/-/box-ui-elements-28.0.0-beta.2.tgz#6db6cf528cf24d1238bfc18812d3c60c1c166993"
+  integrity sha512-mzVsjWeUQeaHxQoSvL5aRrsZCEmhPAPFRMrkS9KhlDXdASgvaAC4aqbM7LErWydKGHL7N8J0ZU7WcsQU1ychNg==
 
 brace-expansion@^1.1.7:
   version "1.1.18"
