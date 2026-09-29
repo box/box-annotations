@@ -19,7 +19,6 @@ const mockEditorState = EditorState.createEmpty();
 
 jest.mock('box-ui-elements/es/components/form-elements/draft-js-mention-selector/utils', () => ({
     addMention: jest.fn(() => mockEditorState),
-    createMentionSelectorState: jest.fn(() => mockEditorState),
     getActiveMentionForEditorState: jest.fn(() => mockMention),
     getFormattedCommentText: jest.fn(() => ({ hasMention: false, text: 'test' })),
 }));
