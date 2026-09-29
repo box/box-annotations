@@ -3,7 +3,7 @@ import { Annotation, NewAnnotation, Reply } from '../../@types';
 import { APICollection } from '../../api';
 import { AppThunkAPI } from '../types';
 import { getAnnotation } from './selectors';
-import { getFileId, getFileVersionId, getPermissions, isFeatureEnabled } from '../options';
+import { getFileId, getFileVersionId, getIsRichTextEnabled, getPermissions, isFeatureEnabled } from '../options';
 
 export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation, AppThunkAPI>(
     'CREATE_ANNOTATION',
@@ -14,7 +14,7 @@ export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation
         const fileId = getFileId(state);
         const fileVersionId = getFileVersionId(state);
         const permissions = getPermissions(state);
-        const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
+        const shouldEnableRichText = getIsRichTextEnabled(state);
 
         signal.addEventListener('abort', () => {
             client.destroy();
@@ -49,8 +49,8 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
             client.destroy();
         });
 
-        const shouldFetchReplies = isFeatureEnabled({ options: getState().options }, 'isThreadedAnnotation');
-        const shouldEnableRichText = isFeatureEnabled({ options: getState().options }, 'isRichTextEnabled');
+        const shouldFetchReplies = isFeatureEnabled(state, 'isThreadedAnnotation');
+        const shouldEnableRichText = getIsRichTextEnabled(state);
 
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Annotation>>((resolve, reject) => {
@@ -80,7 +80,7 @@ export const createReplyAction = createAsyncThunk<
     const filePermissions = getPermissions(state);
     const annotation = getAnnotation(state, annotationId);
     const permissions = { ...filePermissions, ...annotation?.permissions };
-    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
+    const shouldEnableRichText = getIsRichTextEnabled(state);
 
     signal.addEventListener('abort', () => {
         client.destroy();
@@ -126,7 +126,7 @@ export const updateAnnotationAction = createAsyncThunk<
     const filePermissions = getPermissions(state);
     const existingAnnotation = getAnnotation(state, annotationId);
     const permissions = { ...filePermissions, ...existingAnnotation?.permissions };
-    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
+    const shouldEnableRichText = getIsRichTextEnabled(state);
 
     signal.addEventListener('abort', () => {
         client.destroy();
@@ -147,7 +147,7 @@ export const updateReplyAction = createAsyncThunk<
     const fileId = getFileId(state);
     const annotation = getAnnotation(state, annotationId);
     const reply = annotation?.replies?.find(r => r.id === replyId);
-    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
+    const shouldEnableRichText = getIsRichTextEnabled(state);
 
     if (!reply) {
         throw new Error(`updateReplyAction: reply ${replyId} not found on annotation ${annotationId}`);

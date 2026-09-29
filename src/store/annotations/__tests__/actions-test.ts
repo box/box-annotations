@@ -68,37 +68,49 @@ describe('store/annotations/actions', () => {
             expect(result.payload).toBe(undefined);
         });
 
-        test('should pass isRichTextEnabled into getAnnotations', async () => {
-            const getAnnotations = jest.fn((fileId, fileVersionId, permissions, resolve) =>
-                resolve({ entries: [], limit: 1000, next_marker: null }),
-            );
-            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
-                getAnnotations,
-                destroy: jest.fn(),
+        describe('rich text', () => {
+            afterEach(() => {
+                getState.mockReturnValue(baseState);
             });
-            getState.mockReturnValue({
-                ...baseState,
-                options: {
-                    ...baseState.options,
-                    features: { isRichTextEnabled: true },
+
+            test.each`
+                isThreadedAnnotation | isRichTextEnabled | expected
+                ${true}              | ${true}           | ${true}
+                ${false}             | ${true}           | ${false}
+                ${true}              | ${false}          | ${false}
+            `(
+                'should pass $expected into getAnnotations when isThreadedAnnotation is $isThreadedAnnotation and isRichTextEnabled is $isRichTextEnabled',
+                async ({ isThreadedAnnotation, isRichTextEnabled, expected }) => {
+                    const getAnnotations = jest.fn((fileId, fileVersionId, permissions, resolve) =>
+                        resolve({ entries: [], limit: 1000, next_marker: null }),
+                    );
+                    (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                        getAnnotations,
+                        destroy: jest.fn(),
+                    });
+                    getState.mockReturnValue({
+                        ...baseState,
+                        options: {
+                            ...baseState.options,
+                            features: { isRichTextEnabled, isThreadedAnnotation },
+                        },
+                    });
+
+                    await fetchAnnotationsAction()(dispatch, getState, { api });
+
+                    expect(getAnnotations).toHaveBeenCalledWith(
+                        '12345',
+                        '67890',
+                        baseState.options.permissions,
+                        expect.any(Function),
+                        expect.any(Function),
+                        1000,
+                        false,
+                        isThreadedAnnotation,
+                        expected,
+                    );
                 },
-            });
-
-            await fetchAnnotationsAction()(dispatch, getState, { api });
-
-            expect(getAnnotations).toHaveBeenCalledWith(
-                '12345',
-                '67890',
-                baseState.options.permissions,
-                expect.any(Function),
-                expect.any(Function),
-                1000,
-                false,
-                false,
-                true,
             );
-
-            getState.mockReturnValue(baseState);
         });
     });
 
