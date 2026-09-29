@@ -39,6 +39,23 @@ describe('DrawingTarget', () => {
         test('should render correct number of DrawingPathGroup', () => {
             expect(getWrapper().find(DrawingPathGroup).length).toEqual(2);
         });
+
+        test('should name the drawing for assistive technology', () => {
+            const anchor = getWrapper().find('a');
+
+            expect(anchor.prop('aria-label')).toBe('Drawing Annotation Inline Comment');
+            expect(anchor.prop('aria-describedby')).toBeUndefined();
+            expect(anchor.find('desc').exists()).toBe(false);
+        });
+
+        test('should describe the drawing with the comment text', () => {
+            const anchor = getWrapper({ commentMessage: 'Sketch @[9:Alan Turing]' }).find('a');
+            const description = anchor.find('desc');
+
+            expect(anchor.prop('aria-describedby')).toBe('ba-annotation-comment-123');
+            expect(description.prop('id')).toBe('ba-annotation-comment-123');
+            expect(description.text()).toBe('Sketch Alan Turing');
+        });
     });
 
     describe('interactivity', () => {

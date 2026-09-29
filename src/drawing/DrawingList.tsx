@@ -43,14 +43,15 @@ export function DrawingList({ activeId = null, annotations, className, onSelect 
             {annotations
                 .filter(filterDrawing)
                 .sort(sortDrawing)
-                .map(({ id, target }) => (
+                .map(annotation => (
                     <DrawingTarget
-                        key={id}
-                        annotationId={id}
-                        isActive={activeId === id}
+                        key={annotation.id}
+                        annotationId={annotation.id}
+                        commentMessage={annotation.description?.message}
+                        isActive={activeId === annotation.id}
                         onSelect={onSelect}
                         rootEl={rootEl}
-                        target={target}
+                        target={annotation.target}
                     />
                 ))}
         </DrawingSVG>

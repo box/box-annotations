@@ -1,6 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { useIntl } from 'react-intl';
+import { annotationCommentDescriptionId, toAccessibleCommentText } from '../common/annotationCommentText';
+import messages from '../common/annotationTargetMessages';
 import useMountId from '../common/useMountId';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
@@ -9,6 +12,7 @@ import './HighlightTarget.scss';
 type Props = {
     annotationId: string;
     className?: string;
+    commentMessage?: string;
     isActive?: boolean;
     onHover?: (annotationId: string | null) => void;
     onMount?: (uuid: string) => void;
@@ -19,8 +23,12 @@ type Props = {
 export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
-    const { annotationId, className, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } = props;
+    const { annotationId, className, commentMessage, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } =
+        props;
+    const intl = useIntl();
     const uuid = useMountId(onMount);
+    const commentText = toAccessibleCommentText(commentMessage);
+    const descriptionId = commentText ? annotationCommentDescriptionId(annotationId) : undefined;
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
         // These are needed to prevent the anchor link from being followed and updating the url location
@@ -73,6 +81,8 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             data-ba-reference-id={uuid}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
+            aria-describedby={descriptionId}
+            aria-label={intl.formatMessage(messages.ariaLabelHighlightInlineComment)}
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
             onClick={handleClick}
@@ -83,6 +93,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
             role="button"
             tabIndex={0}
         >
+            {descriptionId ? <desc id={descriptionId}>{commentText}</desc> : null}
             {shapes.map(rect => {
                 const { height, width, x, y } = rect;
                 return (

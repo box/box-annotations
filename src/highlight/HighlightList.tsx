@@ -74,14 +74,15 @@ export function HighlightList({ activeId = null, annotations, className, onSelec
         <div className={classNames('ba-HighlightList', className)} data-resin-component="highlightList">
             <HighlightCanvas shapes={canvasShapes} />
             <HighlightSvg ref={svgElRef} className={classNames({ 'is-listening': isListening })}>
-                {sortedAnnotations.map(({ id, target }) => (
+                {sortedAnnotations.map(annotation => (
                     <HighlightTarget
-                        key={id}
-                        annotationId={id}
-                        isActive={activeId === id}
+                        key={annotation.id}
+                        annotationId={annotation.id}
+                        commentMessage={annotation.description?.message}
+                        isActive={activeId === annotation.id}
                         onHover={handleTargetHover}
                         onSelect={onSelect}
-                        shapes={target.shapes}
+                        shapes={annotation.target.shapes}
                     />
                 ))}
             </HighlightSvg>

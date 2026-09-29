@@ -22,6 +22,7 @@ describe('RegionAnnotation', () => {
     const getWrapper = (props = {}): ShallowWrapper => {
         return shallow(<RegionAnnotation {...defaults} {...props} />);
     };
+    const getButton = (props = {}): ShallowWrapper => getWrapper(props).find('button');
 
     beforeEach(() => {
         jest.spyOn(ReactRedux, 'useSelector').mockImplementation(() => true);
@@ -29,7 +30,7 @@ describe('RegionAnnotation', () => {
 
     describe('mouse event handlers', () => {
         test('should select the annotation on focus', () => {
-            const wrapper = getWrapper();
+            const wrapper = getButton();
 
             wrapper.simulate('focus', mockEvent);
 
@@ -39,7 +40,7 @@ describe('RegionAnnotation', () => {
         test('should focus the button on mousedown', () => {
             const button = { focus: jest.fn() };
             const event = { buttons: 1, currentTarget: button, ...mockEvent };
-            const wrapper = getWrapper();
+            const wrapper = getButton();
 
             wrapper.simulate('mousedown', event);
 
@@ -51,13 +52,13 @@ describe('RegionAnnotation', () => {
 
     describe('render()', () => {
         test('should render the class name based on the isActive prop', () => {
-            expect(getWrapper().hasClass('ba-RegionAnnotation')).toBe(true);
-            expect(getWrapper({ isActive: true }).hasClass('is-active')).toBe(true);
-            expect(getWrapper({ isActive: false }).hasClass('is-active')).toBe(false);
+            expect(getButton().hasClass('ba-RegionAnnotation')).toBe(true);
+            expect(getButton({ isActive: true }).hasClass('is-active')).toBe(true);
+            expect(getButton({ isActive: false }).hasClass('is-active')).toBe(false);
         });
 
         test('should render a RegionRect and pass it the provided shape', () => {
-            const wrapper = getWrapper();
+            const wrapper = getButton();
 
             expect(wrapper.prop('style')).toMatchObject({
                 display: 'block',
@@ -69,7 +70,7 @@ describe('RegionAnnotation', () => {
         });
 
         test('should pass the required props to the underlying anchor', () => {
-            const wrapper = getWrapper({ className: 'ba-Test' });
+            const wrapper = getButton({ className: 'ba-Test' });
 
             expect(wrapper.props()).toMatchObject({
                 className: 'ba-RegionAnnotation ba-Test',
@@ -80,7 +81,7 @@ describe('RegionAnnotation', () => {
         });
 
         test('should pass a noop method for onClick if not defined', () => {
-            const wrapper = getWrapper({ onSelect: undefined });
+            const wrapper = getButton({ onSelect: undefined });
 
             expect(wrapper.props()).toMatchObject({
                 className: 'ba-RegionAnnotation',
@@ -91,12 +92,31 @@ describe('RegionAnnotation', () => {
         });
 
         test('shoud render resin tags', () => {
-            const wrapper = getWrapper();
+            const wrapper = getButton();
 
             expect(wrapper.props()).toMatchObject({
                 'data-resin-itemid': defaults.annotationId,
                 'data-resin-target': 'highlightRegion',
             });
+        });
+
+        test('should name the button for assistive technology', () => {
+            const wrapper = getWrapper();
+
+            expect(getButton().prop('aria-label')).toBe('Region Annotation Inline Comment');
+            expect(getButton().prop('aria-describedby')).toBeUndefined();
+            expect(wrapper.find('.ba-RegionAnnotation-commentText').exists()).toBe(false);
+        });
+
+        test('should describe the button with the comment text', () => {
+            const wrapper = getWrapper({ commentMessage: 'Hello @[42:Ada Lovelace]' });
+            const description = wrapper.find('.ba-RegionAnnotation-commentText');
+
+            expect(getButton({ commentMessage: 'Hello @[42:Ada Lovelace]' }).prop('aria-describedby')).toBe(
+                'ba-annotation-comment-1',
+            );
+            expect(description.prop('id')).toBe('ba-annotation-comment-1');
+            expect(description.text()).toBe('Hello Ada Lovelace');
         });
     });
 });
