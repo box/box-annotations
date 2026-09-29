@@ -1,3 +1,8 @@
+## <small>5.3.1-beta.2 (2026-09-29)</small>
+
+* feat(annotations): pass rich-text flag on fetch and writes (#782) ([bad1b7b](https://github.com/box/box-annotations/commit/bad1b7b)), closes [#782](https://github.com/box/box-annotations/issues/782)
+* chore(i18n): update translations (#791) ([c7c8f1a](https://github.com/box/box-annotations/commit/c7c8f1a)), closes [#791](https://github.com/box/box-annotations/issues/791)
+
 ## <small>5.3.1-beta.1 (2026-09-22)</small>
 
 * fix(annotator): isolate active threads per pane in side-by-side preview (#790) ([7b19da2](https://github.com/box/box-annotations/commit/7b19da2)), closes [#790](https://github.com/box/box-annotations/issues/790)
