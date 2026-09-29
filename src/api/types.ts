@@ -31,6 +31,7 @@ export interface AnnotationsAPI {
         permissions: Permissions,
         successCallback: (result: Annotation) => void,
         errorCallback: (error: APIError) => void,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     createAnnotationReply(
@@ -40,6 +41,7 @@ export interface AnnotationsAPI {
         message: string,
         successCallback: (result: Reply) => void,
         errorCallback: (error: APIError) => void,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     deleteAnnotation(
@@ -59,6 +61,7 @@ export interface AnnotationsAPI {
         limit?: number,
         shouldFetchAll?: boolean,
         shouldFetchReplies?: boolean,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     updateAnnotation(
@@ -68,6 +71,7 @@ export interface AnnotationsAPI {
         payload: { message?: string; status?: string },
         successCallback: (result: Annotation) => void,
         errorCallback: (error: APIError) => void,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     destroy(): void;
@@ -88,6 +92,7 @@ export interface ThreadedCommentsAPI {
         fileId: string | null;
         message?: string;
         permissions: ReplyPermissions;
+        shouldEnableRichText?: boolean;
         status?: string;
         successCallback: (reply: Reply) => void;
     }): void;

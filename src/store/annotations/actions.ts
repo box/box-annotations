@@ -14,13 +14,22 @@ export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation
         const fileId = getFileId(state);
         const fileVersionId = getFileVersionId(state);
         const permissions = getPermissions(state);
+        const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
 
         signal.addEventListener('abort', () => {
             client.destroy();
         });
 
         return new Promise<Annotation>((resolve, reject) => {
-            client.createAnnotation(fileId, fileVersionId, newAnnotation, permissions, resolve, reject);
+            client.createAnnotation(
+                fileId,
+                fileVersionId,
+                newAnnotation,
+                permissions,
+                resolve,
+                reject,
+                shouldEnableRichText,
+            );
         });
     },
 );
@@ -41,10 +50,21 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
         });
 
         const shouldFetchReplies = isFeatureEnabled({ options: getState().options }, 'isThreadedAnnotation');
+        const shouldEnableRichText = isFeatureEnabled({ options: getState().options }, 'isRichTextEnabled');
 
         // Wrap the client request in a promise to allow it to be returned and cancelled
         return new Promise<APICollection<Annotation>>((resolve, reject) => {
-            client.getAnnotations(fileId, fileVersionId, permissions, resolve, reject, 1000, false, shouldFetchReplies);
+            client.getAnnotations(
+                fileId,
+                fileVersionId,
+                permissions,
+                resolve,
+                reject,
+                1000,
+                false,
+                shouldFetchReplies,
+                shouldEnableRichText,
+            );
         });
     },
 );
@@ -60,13 +80,14 @@ export const createReplyAction = createAsyncThunk<
     const filePermissions = getPermissions(state);
     const annotation = getAnnotation(state, annotationId);
     const permissions = { ...filePermissions, ...annotation?.permissions };
+    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
 
     signal.addEventListener('abort', () => {
         client.destroy();
     });
 
     const reply = await new Promise<Reply>((resolve, reject) => {
-        client.createAnnotationReply(fileId, annotationId, permissions, message, resolve, reject);
+        client.createAnnotationReply(fileId, annotationId, permissions, message, resolve, reject, shouldEnableRichText);
     });
 
     return { annotationId, reply };
@@ -105,13 +126,14 @@ export const updateAnnotationAction = createAsyncThunk<
     const filePermissions = getPermissions(state);
     const existingAnnotation = getAnnotation(state, annotationId);
     const permissions = { ...filePermissions, ...existingAnnotation?.permissions };
+    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
 
     signal.addEventListener('abort', () => {
         client.destroy();
     });
 
     return new Promise<Annotation>((resolve, reject) => {
-        client.updateAnnotation(fileId, annotationId, permissions, payload, resolve, reject);
+        client.updateAnnotation(fileId, annotationId, permissions, payload, resolve, reject, shouldEnableRichText);
     });
 });
 
@@ -125,6 +147,7 @@ export const updateReplyAction = createAsyncThunk<
     const fileId = getFileId(state);
     const annotation = getAnnotation(state, annotationId);
     const reply = annotation?.replies?.find(r => r.id === replyId);
+    const shouldEnableRichText = isFeatureEnabled({ options: state.options }, 'isRichTextEnabled');
 
     if (!reply) {
         throw new Error(`updateReplyAction: reply ${replyId} not found on annotation ${annotationId}`);
@@ -141,6 +164,7 @@ export const updateReplyAction = createAsyncThunk<
             fileId,
             message: payload.message,
             permissions: reply.permissions ?? {},
+            shouldEnableRichText,
             status: payload.status,
             successCallback: resolve,
         });
