@@ -18,3 +18,8 @@ export const getScale = (state: State): number => state.options.scale;
 export const getToken = (state: State): Token => state.options.token;
 export const isFeatureEnabled = (state: State, featurename: string): boolean =>
     getProp(getFeatures(state), featurename, false);
+
+// Rich text is only rendered and authored in the threaded popup (PopupV2). The legacy popup editor
+// is plain text, so the flag only applies when threaded annotations are on.
+export const getIsRichTextEnabled = (state: State): boolean =>
+    isFeatureEnabled(state, 'isThreadedAnnotation') && isFeatureEnabled(state, 'isRichTextEnabled');

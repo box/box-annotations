@@ -1,5 +1,12 @@
 import API from '../../../api';
-import { createAnnotationAction, deleteReplyAction, fetchAnnotationsAction, updateReplyAction } from '../actions';
+import {
+    createAnnotationAction,
+    createReplyAction,
+    deleteReplyAction,
+    fetchAnnotationsAction,
+    updateAnnotationAction,
+    updateReplyAction,
+} from '../actions';
 import { Annotation, NewAnnotation, Reply } from '../../../@types';
 
 jest.mock('../../../api/APIFactory');
@@ -21,9 +28,37 @@ describe('store/annotations/actions', () => {
         },
     };
     const getState = jest.fn().mockReturnValue(baseState);
+    const richTextOptions = {
+        ...baseState.options,
+        features: { isRichTextEnabled: true, isThreadedAnnotation: true },
+    };
 
     describe('createAnnotationAction', () => {
         const arg = { target: { shape: { x: 10, y: 10 } } } as NewAnnotation;
+
+        afterEach(() => {
+            getState.mockReturnValue(baseState);
+        });
+
+        test('should pass isRichTextEnabled into createAnnotation', async () => {
+            const createAnnotation = jest.fn((fileId, fileVersionId, payload, permissions, resolve) =>
+                resolve({ id: 'anno_1' }),
+            );
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({ createAnnotation, destroy: jest.fn() });
+            getState.mockReturnValue({ ...baseState, options: richTextOptions });
+
+            await createAnnotationAction(arg)(dispatch, getState, { api });
+
+            expect(createAnnotation).toHaveBeenCalledWith(
+                '12345',
+                '67890',
+                arg,
+                baseState.options.permissions,
+                expect.any(Function),
+                expect.any(Function),
+                true,
+            );
+        });
 
         test('should return a promise that resolves with an annotation', async () => {
             const result = await createAnnotationAction(arg)(dispatch, getState, { api });
@@ -67,6 +102,104 @@ describe('store/annotations/actions', () => {
             expect(result.meta).toMatchObject({ aborted: true });
             expect(result.payload).toBe(undefined);
         });
+
+        describe('rich text', () => {
+            afterEach(() => {
+                getState.mockReturnValue(baseState);
+            });
+
+            test.each`
+                isThreadedAnnotation | isRichTextEnabled | expected
+                ${true}              | ${true}           | ${true}
+                ${false}             | ${true}           | ${false}
+                ${true}              | ${false}          | ${false}
+            `(
+                'should pass $expected into getAnnotations when isThreadedAnnotation is $isThreadedAnnotation and isRichTextEnabled is $isRichTextEnabled',
+                async ({ isThreadedAnnotation, isRichTextEnabled, expected }) => {
+                    const getAnnotations = jest.fn((fileId, fileVersionId, permissions, resolve) =>
+                        resolve({ entries: [], limit: 1000, next_marker: null }),
+                    );
+                    (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                        getAnnotations,
+                        destroy: jest.fn(),
+                    });
+                    getState.mockReturnValue({
+                        ...baseState,
+                        options: {
+                            ...baseState.options,
+                            features: { isRichTextEnabled, isThreadedAnnotation },
+                        },
+                    });
+
+                    await fetchAnnotationsAction()(dispatch, getState, { api });
+
+                    expect(getAnnotations).toHaveBeenCalledWith(
+                        '12345',
+                        '67890',
+                        baseState.options.permissions,
+                        expect.any(Function),
+                        expect.any(Function),
+                        1000,
+                        false,
+                        isThreadedAnnotation,
+                        expected,
+                    );
+                },
+            );
+        });
+    });
+
+    describe('createReplyAction', () => {
+        afterEach(() => {
+            getState.mockReturnValue(baseState);
+        });
+
+        test('should pass isRichTextEnabled into createAnnotationReply', async () => {
+            const createAnnotationReply = jest.fn((fileId, annotationId, permissions, message, resolve) =>
+                resolve({ id: 'reply_1', message }),
+            );
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({ createAnnotationReply, destroy: jest.fn() });
+            getState.mockReturnValue({ ...baseState, options: richTextOptions });
+
+            await createReplyAction({ annotationId: 'anno_1', message: 'hello' })(dispatch, getState, { api });
+
+            expect(createAnnotationReply).toHaveBeenCalledWith(
+                '12345',
+                'anno_1',
+                baseState.options.permissions,
+                'hello',
+                expect.any(Function),
+                expect.any(Function),
+                true,
+            );
+        });
+    });
+
+    describe('updateAnnotationAction', () => {
+        afterEach(() => {
+            getState.mockReturnValue(baseState);
+        });
+
+        test('should pass isRichTextEnabled into updateAnnotation', async () => {
+            const payload = { message: 'updated' };
+            const updateAnnotation = jest.fn((fileId, annotationId, permissions, data, resolve) =>
+                resolve({ id: annotationId }),
+            );
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({ updateAnnotation, destroy: jest.fn() });
+            getState.mockReturnValue({ ...baseState, options: richTextOptions });
+
+            await updateAnnotationAction({ annotationId: 'anno_1', payload })(dispatch, getState, { api });
+
+            expect(updateAnnotation).toHaveBeenCalledWith(
+                '12345',
+                'anno_1',
+                baseState.options.permissions,
+                payload,
+                expect.any(Function),
+                expect.any(Function),
+                true,
+            );
+        });
     });
 
     describe('updateReplyAction', () => {
@@ -91,6 +224,22 @@ describe('store/annotations/actions', () => {
             const result = await updateReplyAction(arg)(dispatch, getState, { api });
 
             expect(result.payload).toEqual({ annotationId, reply: { id: 'reply_1', message: 'updated' } });
+        });
+
+        test('should pass isRichTextEnabled into updateComment', async () => {
+            const updateComment = jest.fn(({ successCallback }) =>
+                successCallback({ id: replyId, message: 'updated' }),
+            );
+            (api.getThreadedCommentsAPI as jest.Mock).mockReturnValueOnce({ updateComment, destroy: jest.fn() });
+            getState.mockReturnValue({
+                ...baseState,
+                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
+                options: richTextOptions,
+            });
+
+            await updateReplyAction(arg)(dispatch, getState, { api });
+
+            expect(updateComment).toHaveBeenCalledWith(expect.objectContaining({ shouldEnableRichText: true }));
         });
 
         test('should reject with a clear error when the reply is not in state', async () => {
