@@ -90,7 +90,13 @@ export const fetchAnnotationRepliesAction = createAsyncThunk<
             fileId,
             annotationId,
             permissions,
-            ({ entries }) => resolve(entries),
+            result => {
+                if (!result || !Array.isArray(result.entries)) {
+                    reject(new Error(`getAnnotationReplies returned malformed payload for ${annotationId}`));
+                    return;
+                }
+                resolve(result.entries);
+            },
             reject,
         );
     });

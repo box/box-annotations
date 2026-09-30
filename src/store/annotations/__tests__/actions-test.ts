@@ -250,6 +250,28 @@ describe('store/annotations/actions', () => {
             expect(result.payload).toBeUndefined();
             expect((result as { error: { message: string } }).error.message).toBe('boom');
         });
+
+        test.each([
+            ['no result object', undefined],
+            ['null result', null],
+            ['result missing entries', {}],
+            ['non-array entries', { entries: null }],
+        ])(
+            'should reject instead of returning success when the success callback fires with %s',
+            async (_label, malformed) => {
+                const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve) => resolve(malformed));
+                (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                    getAnnotationReplies,
+                    destroy: jest.fn(),
+                });
+
+                const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+                expect(result.type).toBe('FETCH_ANNOTATION_REPLIES/rejected');
+                expect(result.payload).toBeUndefined();
+                expect((result as { error: { message: string } }).error.message).toContain('malformed payload');
+            },
+        );
     });
 
     describe('updateReplyAction', () => {
