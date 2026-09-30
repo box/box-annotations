@@ -12,6 +12,7 @@ import {
     createReplyAction,
     deleteAnnotationAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
@@ -96,6 +97,52 @@ describe('store/annotations/reducer', () => {
                     ],
                 },
             });
+        });
+    });
+
+    describe('fetchAnnotationRepliesAction', () => {
+        const replyA = {
+            created_at: '2026-01-01T00:00:00Z',
+            created_by: { id: '1', login: 'user@box.com', name: 'User', type: 'user' },
+            id: 'reply-1',
+            message: 'first',
+            parent: { id: 'test1', type: 'annotation' },
+            type: 'reply',
+        } as Reply;
+        const replyB = { ...replyA, id: 'reply-2', message: 'second' } as Reply;
+
+        test('should replace replies on the annotation with the full list', () => {
+            const stateWithSingleReply = {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    test1: { ...state.byId.test1, replies: [replyA] } as unknown as Annotation,
+                },
+            };
+
+            const newState = reducer(
+                stateWithSingleReply,
+                fetchAnnotationRepliesAction.fulfilled(
+                    { annotationId: 'test1', replies: [replyA, replyB] },
+                    'test',
+                    'test1',
+                ),
+            );
+
+            expect(newState.byId.test1.replies).toEqual([replyA, replyB]);
+        });
+
+        test('should not modify state if the annotation is not in the store', () => {
+            const newState = reducer(
+                state,
+                fetchAnnotationRepliesAction.fulfilled(
+                    { annotationId: 'nonexistent', replies: [replyA] },
+                    'test',
+                    'nonexistent',
+                ),
+            );
+
+            expect(newState.byId).toEqual(state.byId);
         });
     });
 
