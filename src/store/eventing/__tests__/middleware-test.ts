@@ -8,6 +8,8 @@ import {
     createReplyAction,
     deleteAnnotationAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
+    fetchAnnotationsAction,
     updateAnnotationAction,
     updateReplyAction,
 } from '../../annotations/actions';
@@ -55,6 +57,13 @@ describe('store/eventing/middleware', () => {
             expect(eventHandlers).toHaveProperty(thunk.pending.toString());
             expect(eventHandlers).toHaveProperty(thunk.rejected.toString());
         });
+
+        test.each([fetchAnnotationRepliesAction, fetchAnnotationsAction])(
+            'should register a rejected handler for fetch-family thunk $typePrefix',
+            thunk => {
+                expect(eventHandlers).toHaveProperty(thunk.rejected.toString());
+            },
+        );
 
         test.each([
             applySidebarAnnotationUpdateAction,

@@ -183,8 +183,11 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
     // The initial annotations fetch only returns the backend's default number of replies
     // (currently 1), so refetch the full reply list when a thread popover opens.
     React.useEffect(() => {
-        if (!annotationId) return;
-        dispatch(fetchAnnotationRepliesAction(annotationId));
+        if (!annotationId) return undefined;
+        const promise = dispatch(fetchAnnotationRepliesAction(annotationId));
+        return () => {
+            promise.abort();
+        };
     }, [annotationId, dispatch]);
 
     React.useEffect(() => {

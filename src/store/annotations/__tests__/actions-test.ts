@@ -235,6 +235,21 @@ describe('store/annotations/actions', () => {
             expect(result.meta).toMatchObject({ aborted: true });
             expect(result.payload).toBe(undefined);
         });
+
+        test('should dispatch a rejected action carrying the API error when getAnnotationReplies fails', async () => {
+            const apiError = { message: 'boom', status: 500 };
+            const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve, reject) => reject(apiError));
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                getAnnotationReplies,
+                destroy: jest.fn(),
+            });
+
+            const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(result.type).toBe('FETCH_ANNOTATION_REPLIES/rejected');
+            expect(result.payload).toBeUndefined();
+            expect((result as { error: { message: string } }).error.message).toBe('boom');
+        });
     });
 
     describe('updateReplyAction', () => {

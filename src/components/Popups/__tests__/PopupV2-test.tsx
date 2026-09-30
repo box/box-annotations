@@ -186,6 +186,8 @@ describe('PopupV2', () => {
         lastMentionContextValue = {};
         lastMessageEditorProps = {};
         lastThreadedAnnotationsProps = {};
+        // dispatch returns a thunk-like promise with .abort() so the PopupV2 cleanup can call it.
+        mockDispatch.mockReturnValue({ abort: jest.fn() });
         mockUseDispatch.mockReturnValue(mockDispatch);
         mockFetch.mockResolvedValue({
             blob: () => Promise.resolve(new Blob(['avatar'])),
@@ -610,6 +612,17 @@ describe('PopupV2', () => {
             await flushPromises();
 
             expect(fetchAnnotationRepliesAction).toHaveBeenCalledWith('annotation-1');
+        });
+
+        test('should abort the in-flight fetchAnnotationRepliesAction on unmount', async () => {
+            const abort = jest.fn();
+            mockDispatch.mockReturnValueOnce({ abort });
+
+            const { unmount } = render(<PopupV2 {...defaults} />);
+            await flushPromises();
+            unmount();
+
+            expect(abort).toHaveBeenCalledTimes(1);
         });
 
         test('should not call fetch when fileId is missing', async () => {
