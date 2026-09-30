@@ -24,6 +24,7 @@ import {
     createReplyAction,
     deleteAnnotationAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     setActiveAnnotationIdAction,
     updateAnnotationAction,
     updateReplyAction,
@@ -178,6 +179,13 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
             popperRef.current?.destroy();
         };
     }, [reference]);
+
+    // The initial annotations fetch only returns the backend's default number of replies
+    // (currently 1), so refetch the full reply list when a thread popover opens.
+    React.useEffect(() => {
+        if (!annotationId) return;
+        dispatch(fetchAnnotationRepliesAction(annotationId));
+    }, [annotationId, dispatch]);
 
     React.useEffect(() => {
         const cache = avatarCacheRef.current;

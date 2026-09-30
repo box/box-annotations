@@ -9,6 +9,7 @@ import PopupV2, { Props } from '../PopupV2';
 import {
     createReplyAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     updateAnnotationAction,
     updateReplyAction,
 } from '../../../store/annotations/actions';
@@ -87,6 +88,7 @@ jest.mock('../../../store/annotations/actions', () => ({
     createReplyAction: jest.fn(),
     deleteAnnotationAction: jest.fn(),
     deleteReplyAction: jest.fn(),
+    fetchAnnotationRepliesAction: jest.fn(),
     setActiveAnnotationIdAction: jest.fn(),
     updateAnnotationAction: Object.assign(jest.fn(), {
         fulfilled: { match: jest.fn().mockReturnValue(true) },
@@ -601,6 +603,13 @@ describe('PopupV2', () => {
             expect(mockFetch).toHaveBeenCalledWith('https://api.box.com/2.0/users/100/avatar?pic_type=large', {
                 headers: { Authorization: 'Bearer read-token' },
             });
+        });
+
+        test('should dispatch fetchAnnotationRepliesAction on open so the full replies list is loaded', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(fetchAnnotationRepliesAction).toHaveBeenCalledWith('annotation-1');
         });
 
         test('should not call fetch when fileId is missing', async () => {

@@ -1,5 +1,12 @@
 import API from '../../../api';
-import { createAnnotationAction, deleteReplyAction, fetchAnnotationsAction, updateReplyAction } from '../actions';
+import {
+    createAnnotationAction,
+    deleteReplyAction,
+    fetchAnnotationRepliesAction,
+    fetchAnnotationsAction,
+    updateReplyAction,
+} from '../actions';
+import { annotationReplies } from '../../../api/__mocks__/APIFactory';
 import { Annotation, NewAnnotation, Reply } from '../../../@types';
 
 jest.mock('../../../api/APIFactory');
@@ -59,6 +66,39 @@ describe('store/annotations/actions', () => {
 
         test('should abort the request if the action abort method is called', async () => {
             const action = fetchAnnotationsAction()(dispatch, getState, { api });
+
+            action.abort();
+
+            const result = await action;
+
+            expect(result.meta).toMatchObject({ aborted: true });
+            expect(result.payload).toBe(undefined);
+        });
+    });
+
+    describe('fetchAnnotationRepliesAction', () => {
+        const annotationId = 'anno_1';
+        const annotation = { id: annotationId, permissions: { can_view_annotations: true } } as unknown as Annotation;
+
+        beforeEach(() => {
+            getState.mockReturnValue({
+                ...baseState,
+                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
+            });
+        });
+
+        afterEach(() => {
+            getState.mockReturnValue(baseState);
+        });
+
+        test('should resolve with annotationId and the replies list from the API', async () => {
+            const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(result.payload).toEqual({ annotationId, replies: annotationReplies });
+        });
+
+        test('should abort the request if the action abort method is called', async () => {
+            const action = fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
 
             action.abort();
 

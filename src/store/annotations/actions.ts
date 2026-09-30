@@ -49,6 +49,35 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
     },
 );
 
+export const fetchAnnotationRepliesAction = createAsyncThunk<
+    { annotationId: string; replies: Reply[] },
+    string,
+    AppThunkAPI
+>('FETCH_ANNOTATION_REPLIES', async (annotationId, { extra, getState, signal }) => {
+    const client = extra.api.getAnnotationsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const filePermissions = getPermissions(state);
+    const annotation = getAnnotation(state, annotationId);
+    const permissions = { ...filePermissions, ...annotation?.permissions };
+
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
+
+    const replies = await new Promise<Reply[]>((resolve, reject) => {
+        client.getAnnotationReplies(
+            fileId,
+            annotationId,
+            permissions,
+            ({ entries }) => resolve(entries),
+            reject,
+        );
+    });
+
+    return { annotationId, replies };
+});
+
 export const createReplyAction = createAsyncThunk<
     { annotationId: string; reply: Reply },
     { annotationId: string; message: string },
