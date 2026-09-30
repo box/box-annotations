@@ -66,11 +66,11 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelDrawingInlineComment)}
             className={classNames('ba-DrawingTarget', className, { 'is-active': isActive })}
             data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}
             data-resin-target="highlightDrawing"
-            aria-label={intl.formatMessage(messages.ariaLabelDrawingInlineComment)}
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
             onFocus={handleFocus}

@@ -71,12 +71,12 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelHighlightInlineComment)}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
             data-ba-annotation-id={annotationId}
             data-ba-reference-id={uuid}
             data-resin-itemid={annotationId}
             data-resin-target="highlightText"
-            aria-label={intl.formatMessage(messages.ariaLabelHighlightInlineComment)}
             data-testid={`ba-AnnotationTarget-${annotationId}`}
             href="#"
             onClick={handleClick}
