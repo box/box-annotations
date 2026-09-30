@@ -39,6 +39,10 @@ describe('HighlightTarget', () => {
             expect(anchor.hasClass('ba-HighlightTarget')).toBe(true);
             expect(anchor.hasClass('is-active')).toBe(isActive);
         });
+
+        test('should name the highlight for assistive technology', () => {
+            expect(getWrapper().find('a').prop('aria-label')).toBe('Highlight Annotation Inline Comment');
+        });
     });
 
     describe('interactivity', () => {

@@ -39,6 +39,10 @@ describe('DrawingTarget', () => {
         test('should render correct number of DrawingPathGroup', () => {
             expect(getWrapper().find(DrawingPathGroup).length).toEqual(2);
         });
+
+        test('should name the drawing for assistive technology', () => {
+            expect(getWrapper().find('a').prop('aria-label')).toBe('Drawing Annotation Inline Comment');
+        });
     });
 
     describe('interactivity', () => {
