@@ -1,6 +1,8 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { useIntl } from 'react-intl';
+import messages from '../common/annotationTargetMessages';
 import { MOUSE_PRIMARY } from '../constants';
 import { Shape } from '../@types';
 import { styleShape } from './regionUtil';
@@ -18,6 +20,7 @@ export type RegionAnnotationRef = HTMLButtonElement;
 
 export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRef>): JSX.Element => {
     const { annotationId, className, isActive, onSelect = noop, shape } = props;
+    const intl = useIntl();
 
     const handleFocus = (): void => {
         onSelect(annotationId);
@@ -35,6 +38,7 @@ export const RegionAnnotation = (props: Props, ref: React.Ref<RegionAnnotationRe
     return (
         <button
             ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelRegionInlineComment)}
             className={classNames('ba-RegionAnnotation', className, { 'is-active': isActive })}
             data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}

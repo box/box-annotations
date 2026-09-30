@@ -1,12 +1,14 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { useIntl } from 'react-intl';
+import { TargetDrawing } from '../@types';
+import messages from '../common/annotationTargetMessages';
+import { MOUSE_PRIMARY } from '../constants';
 import DecoratedDrawingPath from './DecoratedDrawingPath';
 import DrawingPathGroup from './DrawingPathGroup';
 import { DrawingSVGRef } from './DrawingSVG';
 import { getCenter, getShape } from './drawingUtil';
-import { MOUSE_PRIMARY } from '../constants';
-import { TargetDrawing } from '../@types';
 import './DrawingTarget.scss';
 
 export type Props = {
@@ -29,6 +31,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         rootEl,
         target: { path_groups: pathGroups },
     } = props;
+    const intl = useIntl();
     const shape = getShape(pathGroups);
     const { x: centerX, y: centerY } = getCenter(shape);
 
@@ -63,6 +66,7 @@ export const DrawingTarget = (props: Props, ref: React.Ref<DrawingTargetRef>): J
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelDrawingInlineComment)}
             className={classNames('ba-DrawingTarget', className, { 'is-active': isActive })}
             data-ba-annotation-id={annotationId}
             data-resin-itemid={annotationId}

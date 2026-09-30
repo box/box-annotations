@@ -98,5 +98,9 @@ describe('RegionAnnotation', () => {
                 'data-resin-target': 'highlightRegion',
             });
         });
+
+        test('should name the button for assistive technology', () => {
+            expect(getWrapper().prop('aria-label')).toBe('Region Annotation Inline Comment');
+        });
     });
 });

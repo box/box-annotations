@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
+import { useIntl } from 'react-intl';
+import messages from '../common/annotationTargetMessages';
 import useMountId from '../common/useMountId';
 import { MOUSE_PRIMARY } from '../constants';
 import { Rect } from '../@types/model';
@@ -20,6 +22,7 @@ export type HighlightTargetRef = HTMLAnchorElement;
 
 const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.Element => {
     const { annotationId, className, isActive, onHover = noop, onMount = noop, onSelect = noop, shapes } = props;
+    const intl = useIntl();
     const uuid = useMountId(onMount);
 
     const handleClick = (event: React.MouseEvent<HighlightTargetRef>): void => {
@@ -68,6 +71,7 @@ const HighlightTarget = (props: Props, ref: React.Ref<HighlightTargetRef>): JSX.
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <a
             ref={ref}
+            aria-label={intl.formatMessage(messages.ariaLabelHighlightInlineComment)}
             className={classNames('ba-HighlightTarget', className, { 'is-active': isActive })}
             data-ba-annotation-id={annotationId}
             data-ba-reference-id={uuid}
