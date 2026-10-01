@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "ड्रॉइंग एनोटेशन की इनलाइन टिप्पणी",
+    "ba.annotationTarget.highlightInlineComment": "हाइलाइट एनोटेशन की इनलाइन टिप्पणी",
+    "ba.annotationTarget.regionInlineComment": "क्षेत्र एनोटेशन की इनलाइन टिप्पणी",
     "ba.annotationsClose": "बंद करें",
     "ba.annotationsCreateError": "हमें खेद है, टिप्पणी बनाई नहीं जा सकी।",
     "ba.annotationsLoadError": "हमें खेद है, इस फ़ाइल के लिए टिप्पणियाँ लोड होने में विफल रहीं।",
