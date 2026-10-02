@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Inline-kommentar til tegningsanmærkning",
+    "ba.annotationTarget.highlightInlineComment": "Inline-kommentar til fremhævelsesanmærkning",
+    "ba.annotationTarget.regionInlineComment": "Inline-kommentar til regionsanmærkning",
     "ba.annotationsClose": "Luk",
     "ba.annotationsCreateError": "Vi beklager, anmærkningen kunne ikke oprettes.",
     "ba.annotationsLoadError": "Vi beklager, anmærkningerne for denne fil kunne ikke indlæses.",

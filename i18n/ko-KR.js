@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "그림 주석 인라인 코멘트",
+    "ba.annotationTarget.highlightInlineComment": "강조 주석 인라인 코멘트",
+    "ba.annotationTarget.regionInlineComment": "영역 주석 인라인 코멘트",
     "ba.annotationsClose": "닫기",
     "ba.annotationsCreateError": "죄송합니다. 주석을 만들 수 없습니다.",
     "ba.annotationsLoadError": "죄송합니다. 이 파일에 대한 주석을 로드하지 못했습니다.",
