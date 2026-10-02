@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "অঙ্কন টীকার ইনলাইন মন্তব্য",
+    "ba.annotationTarget.highlightInlineComment": "হাইলাইট অ্যানোটেশনের ইনলাইন মন্তব্য",
+    "ba.annotationTarget.regionInlineComment": "অঞ্চল অ্যানোটেশনের ইনলাইন মন্তব্য",
     "ba.annotationsClose": "বন্ধ করুন",
     "ba.annotationsCreateError": "আমরা দুঃখিত, অ্যানোটেশন তৈরি করা যায়নি।",
     "ba.annotationsLoadError": "আমরা দুঃখিত, এই ফাইলের জন্য অ্যানোটেশন লোড করা যায়নি।",

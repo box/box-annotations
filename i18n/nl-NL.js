@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Inline-opmerking tekening-aantekening",
+    "ba.annotationTarget.highlightInlineComment": "Inline-opmerking markering-aantekening",
+    "ba.annotationTarget.regionInlineComment": "Inline-opmerking regio-aantekening",
     "ba.annotationsClose": "Sluiten",
     "ba.annotationsCreateError": "De annotatie kan niet worden gemaakt.",
     "ba.annotationsLoadError": "De annotaties voor dit bestand kunnen niet worden geladen.",

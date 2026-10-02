@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Inline-Kommentar zu Zeichnungsanmerkung",
+    "ba.annotationTarget.highlightInlineComment": "Inline-Kommentar zu Hervorhebungsanmerkung",
+    "ba.annotationTarget.regionInlineComment": "Inline-Kommentar zu Bereichsanmerkung",
     "ba.annotationsClose": "Schließen",
     "ba.annotationsCreateError": "Die Anmerkung konnte leider nicht erstellt werden.",
     "ba.annotationsLoadError": "Die Anmerkungen für diese Datei konnten leider nicht geladen werden.",
