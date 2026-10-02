@@ -11,6 +11,7 @@ import {
     createReplyAction,
     deleteAnnotationAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     fetchAnnotationsAction,
     removeAnnotationAction,
     setActiveAnnotationIdAction,
@@ -112,6 +113,11 @@ const annotationsById = createReducer<AnnotationsState['byId']>({}, builder =>
             payload.entries.forEach(annotation => {
                 state[annotation.id] = isDrawing(annotation) ? formatDrawing(annotation) : annotation;
             });
+        })
+        .addCase(fetchAnnotationRepliesAction.fulfilled, (state, { payload: { annotationId, replies } }) => {
+            const annotation = state[annotationId];
+            if (!annotation) return;
+            annotation.replies = replies;
         }),
 );
 

@@ -64,6 +64,14 @@ export interface AnnotationsAPI {
         shouldEnableRichText?: boolean,
     ): Promise<void>;
 
+    getAnnotationReplies(
+        fileId: string | null,
+        annotationId: string,
+        permissions: Permissions,
+        successCallback: (result: APICollection<Reply>) => void,
+        errorCallback: (error: APIError) => void,
+    ): Promise<void>;
+
     updateAnnotation(
         fileId: string | null,
         annotationId: string,
