@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Adnotacja rysunku – komentarz w tekście",
+    "ba.annotationTarget.highlightInlineComment": "Adnotacja wyróżnienia – komentarz w tekście",
+    "ba.annotationTarget.regionInlineComment": "Adnotacja regionu – komentarz w tekście",
     "ba.annotationsClose": "Zamknij",
     "ba.annotationsCreateError": "Przepraszamy, nie można utworzyć uwagi.",
     "ba.annotationsLoadError": "Przepraszamy, nie można wczytać uwag dla tego pliku.",

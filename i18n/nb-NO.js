@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Innebygd kommentar for tegningsmerknad",
+    "ba.annotationTarget.highlightInlineComment": "Innebygd kommentar for uthevingsmerknad",
+    "ba.annotationTarget.regionInlineComment": "Innebygd kommentar for regionmerknad",
     "ba.annotationsClose": "Lukk",
     "ba.annotationsCreateError": "Vi beklager, men merknaden kunne ikke opprettes.",
     "ba.annotationsLoadError": "Kan ikke laste inn merknadene for denne filen.",

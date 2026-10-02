@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Встроенный комментарий для примечания-рисунка",
+    "ba.annotationTarget.highlightInlineComment": "Встроенный комментарий для примечания с выделением текста",
+    "ba.annotationTarget.regionInlineComment": "Встроенный комментарий для примечания к региону",
     "ba.annotationsClose": "Закрыть",
     "ba.annotationsCreateError": "К сожалению, не удалось создать примечание.",
     "ba.annotationsLoadError": "К сожалению, при загрузке примечаний для этого файла произошел сбой.",
