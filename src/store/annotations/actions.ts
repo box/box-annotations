@@ -80,6 +80,7 @@ export const fetchAnnotationRepliesAction = createAsyncThunk<
     const filePermissions = getPermissions(state);
     const annotation = getAnnotation(state, annotationId);
     const permissions = { ...filePermissions, ...annotation?.permissions };
+    const shouldEnableRichText = getIsRichTextEnabled(state);
 
     signal.addEventListener('abort', () => {
         client.destroy();
@@ -98,6 +99,7 @@ export const fetchAnnotationRepliesAction = createAsyncThunk<
                 resolve(result.entries);
             },
             reject,
+            shouldEnableRichText,
         );
     });
 

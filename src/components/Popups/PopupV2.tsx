@@ -180,9 +180,10 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
         };
     }, [reference]);
 
-    // The initial annotation thread is from the annotation list loaded on the file page,
-    // which only includes the backend's default number of replies (currently 1). Fetch
-    // the full reply list for this annotation when its thread popover opens.
+    // The thread shown here starts from the annotation list loaded on the file page.
+    // That request has no parameter for how many replies to include, so each annotation
+    // only has the backend's default (currently 1). Load the rest with
+    // GET /undoc/annotations/{annotationId}/replies when this popover opens.
     React.useEffect(() => {
         if (!annotationId) return undefined;
         const promise = dispatch(fetchAnnotationRepliesAction(annotationId));

@@ -70,6 +70,7 @@ export interface AnnotationsAPI {
         permissions: Permissions,
         successCallback: (result: APICollection<Reply>) => void,
         errorCallback: (error: APIError) => void,
+        shouldEnableRichText?: boolean,
     ): Promise<void>;
 
     updateAnnotation(

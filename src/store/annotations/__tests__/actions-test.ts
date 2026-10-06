@@ -225,6 +225,32 @@ describe('store/annotations/actions', () => {
             expect(result.payload).toEqual({ annotationId, replies: annotationReplies });
         });
 
+        test('should pass isRichTextEnabled into getAnnotationReplies', async () => {
+            const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve) =>
+                resolve({ entries: annotationReplies }),
+            );
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                getAnnotationReplies,
+                destroy: jest.fn(),
+            });
+            getState.mockReturnValue({
+                ...baseState,
+                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
+                options: richTextOptions,
+            });
+
+            await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(getAnnotationReplies).toHaveBeenCalledWith(
+                '12345',
+                annotationId,
+                { ...baseState.options.permissions, ...annotation.permissions },
+                expect.any(Function),
+                expect.any(Function),
+                true,
+            );
+        });
+
         test('should abort the request if the action abort method is called', async () => {
             const action = fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
 
