@@ -24,6 +24,7 @@ import {
     createReplyAction,
     deleteAnnotationAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     setActiveAnnotationIdAction,
     updateAnnotationAction,
     updateReplyAction,
@@ -178,6 +179,18 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
             popperRef.current?.destroy();
         };
     }, [reference]);
+
+    // The thread shown here starts from the annotation list loaded on the file page.
+    // That request has no parameter for how many replies to include, so each annotation
+    // only has the backend's default (currently 1). Load the rest with
+    // GET /undoc/annotations/{annotationId}/replies when this popover opens.
+    React.useEffect(() => {
+        if (!annotationId) return undefined;
+        const promise = dispatch(fetchAnnotationRepliesAction(annotationId));
+        return () => {
+            promise.abort();
+        };
+    }, [annotationId, dispatch]);
 
     React.useEffect(() => {
         const cache = avatarCacheRef.current;

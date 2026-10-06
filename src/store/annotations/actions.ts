@@ -69,6 +69,43 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
     },
 );
 
+export const fetchAnnotationRepliesAction = createAsyncThunk<
+    { annotationId: string; replies: Reply[] },
+    string,
+    AppThunkAPI
+>('FETCH_ANNOTATION_REPLIES', async (annotationId, { extra, getState, signal }) => {
+    const client = extra.api.getAnnotationsAPI();
+    const state = getState();
+    const fileId = getFileId(state);
+    const filePermissions = getPermissions(state);
+    const annotation = getAnnotation(state, annotationId);
+    const permissions = { ...filePermissions, ...annotation?.permissions };
+    const shouldEnableRichText = getIsRichTextEnabled(state);
+
+    signal.addEventListener('abort', () => {
+        client.destroy();
+    });
+
+    const replies = await new Promise<Reply[]>((resolve, reject) => {
+        client.getAnnotationReplies(
+            fileId,
+            annotationId,
+            permissions,
+            result => {
+                if (!result || !Array.isArray(result.entries)) {
+                    reject(new Error(`getAnnotationReplies returned malformed payload for ${annotationId}`));
+                    return;
+                }
+                resolve(result.entries);
+            },
+            reject,
+            shouldEnableRichText,
+        );
+    });
+
+    return { annotationId, replies };
+});
+
 export const createReplyAction = createAsyncThunk<
     { annotationId: string; reply: Reply },
     { annotationId: string; message: string },

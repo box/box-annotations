@@ -3,10 +3,12 @@ import {
     createAnnotationAction,
     createReplyAction,
     deleteReplyAction,
+    fetchAnnotationRepliesAction,
     fetchAnnotationsAction,
     updateAnnotationAction,
     updateReplyAction,
 } from '../actions';
+import { annotationReplies } from '../../../api/__mocks__/APIFactory';
 import { Annotation, NewAnnotation, Reply } from '../../../@types';
 
 jest.mock('../../../api/APIFactory');
@@ -200,6 +202,102 @@ describe('store/annotations/actions', () => {
                 true,
             );
         });
+    });
+
+    describe('fetchAnnotationRepliesAction', () => {
+        const annotationId = 'anno_1';
+        const annotation = { id: annotationId, permissions: { can_view_annotations: true } } as unknown as Annotation;
+
+        beforeEach(() => {
+            getState.mockReturnValue({
+                ...baseState,
+                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
+            });
+        });
+
+        afterEach(() => {
+            getState.mockReturnValue(baseState);
+        });
+
+        test('should resolve with annotationId and the replies list from the API', async () => {
+            const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(result.payload).toEqual({ annotationId, replies: annotationReplies });
+        });
+
+        test('should pass isRichTextEnabled into getAnnotationReplies', async () => {
+            const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve) =>
+                resolve({ entries: annotationReplies }),
+            );
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                getAnnotationReplies,
+                destroy: jest.fn(),
+            });
+            getState.mockReturnValue({
+                ...baseState,
+                annotations: { ...baseState.annotations, byId: { [annotationId]: annotation } },
+                options: richTextOptions,
+            });
+
+            await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(getAnnotationReplies).toHaveBeenCalledWith(
+                '12345',
+                annotationId,
+                { ...baseState.options.permissions, ...annotation.permissions },
+                expect.any(Function),
+                expect.any(Function),
+                true,
+            );
+        });
+
+        test('should abort the request if the action abort method is called', async () => {
+            const action = fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            action.abort();
+
+            const result = await action;
+
+            expect(result.meta).toMatchObject({ aborted: true });
+            expect(result.payload).toBe(undefined);
+        });
+
+        test('should dispatch a rejected action carrying the API error when getAnnotationReplies fails', async () => {
+            const apiError = { message: 'boom', status: 500 };
+            const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve, reject) => reject(apiError));
+            (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                getAnnotationReplies,
+                destroy: jest.fn(),
+            });
+
+            const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+            expect(result.type).toBe('FETCH_ANNOTATION_REPLIES/rejected');
+            expect(result.payload).toBeUndefined();
+            expect((result as { error: { message: string } }).error.message).toBe('boom');
+        });
+
+        test.each([
+            ['no result object', undefined],
+            ['null result', null],
+            ['result missing entries', {}],
+            ['non-array entries', { entries: null }],
+        ])(
+            'should reject instead of returning success when the success callback fires with %s',
+            async (_label, malformed) => {
+                const getAnnotationReplies = jest.fn((fileId, id, permissions, resolve) => resolve(malformed));
+                (api.getAnnotationsAPI as jest.Mock).mockReturnValueOnce({
+                    getAnnotationReplies,
+                    destroy: jest.fn(),
+                });
+
+                const result = await fetchAnnotationRepliesAction(annotationId)(dispatch, getState, { api });
+
+                expect(result.type).toBe('FETCH_ANNOTATION_REPLIES/rejected');
+                expect(result.payload).toBeUndefined();
+                expect((result as { error: { message: string } }).error.message).toContain('malformed payload');
+            },
+        );
     });
 
     describe('updateReplyAction', () => {
