@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Comentario en línea de anotación de dibujo",
+    "ba.annotationTarget.highlightInlineComment": "Comentario en línea de anotación de resaltado",
+    "ba.annotationTarget.regionInlineComment": "Comentario en línea de anotación de región",
     "ba.annotationsClose": "Cerrar",
     "ba.annotationsCreateError": "Lo sentimos, no se pudo crear la anotación.",
     "ba.annotationsLoadError": "Lo sentimos, no se pudieron cargar las anotaciones para este archivo.",

@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Çizim Dipnotuna Eklenen Satır İçi Yorum",
+    "ba.annotationTarget.highlightInlineComment": "Vurgulama Dipnotuna Eklenen Satır İçi Yorum",
+    "ba.annotationTarget.regionInlineComment": "Bölge Dipnotuna Eklenen Satır İçi Yorum",
     "ba.annotationsClose": "Kapat",
     "ba.annotationsCreateError": "Üzgünüz, açıklama oluşturulamadı.",
     "ba.annotationsLoadError": "Üzgünüz, açıklamalar bu dosya için yüklenemedi.",

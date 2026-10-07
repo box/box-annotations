@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Piirustuksen huomautuksen sisäinen kommentti",
+    "ba.annotationTarget.highlightInlineComment": "Korostushuomautuksen sisäinen kommentti",
+    "ba.annotationTarget.regionInlineComment": "Alueen huomautuksen sisäinen kommentti",
     "ba.annotationsClose": "Sulje",
     "ba.annotationsCreateError": "Olemme pahoillamme, huomautusta ei voitu luoda.",
     "ba.annotationsLoadError": "Tämän tiedoston huomautuksia ei voitu ladata.",

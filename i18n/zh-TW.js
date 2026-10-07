@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "繪製註解內嵌留言",
+    "ba.annotationTarget.highlightInlineComment": "清楚標示註解內嵌留言",
+    "ba.annotationTarget.regionInlineComment": "地區註解內嵌留言",
     "ba.annotationsClose": "關閉",
     "ba.annotationsCreateError": "很抱歉，無法建立註解。",
     "ba.annotationsLoadError": "很抱歉，無法載入此檔案的註解。",

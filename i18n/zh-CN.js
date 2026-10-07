@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "绘图批注内联评论",
+    "ba.annotationTarget.highlightInlineComment": "突出显示批注内联评论",
+    "ba.annotationTarget.regionInlineComment": "区域批注内联评论",
     "ba.annotationsClose": "关闭",
     "ba.annotationsCreateError": "抱歉，无法创建批注。",
     "ba.annotationsLoadError": "抱歉，无法为此文件加载批注。",

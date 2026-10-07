@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "Inline-kommentar för anteckning av ritning",
+    "ba.annotationTarget.highlightInlineComment": "Markeringsanteckning som inline-kommentar",
+    "ba.annotationTarget.regionInlineComment": "Inline-kommentar för regionanteckning",
     "ba.annotationsClose": "Stäng",
     "ba.annotationsCreateError": "Det gick inte att skapa anteckningen.",
     "ba.annotationsLoadError": "Det gick inte att ladda anteckningar för den här filen.",
