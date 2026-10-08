@@ -70,10 +70,8 @@ describe('Discoverability', () => {
         // Check that after zooming in, the region annotation button is no longer active
         cy.getByTestId('bp-AnnotationsControls-regionBtn').should('have.class', 'bp-is-active');
         cy.getByTestId('bp-ZoomControls-in').click();
-        cy.getByTestId('bp-AnnotationsControls-regionBtn')
-            .should('not.have.class', 'bp-is-active')
-            .click()
-            .should('have.class', 'bp-is-active');
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('not.have.class', 'bp-is-active').click();
+        cy.getByTestId('bp-AnnotationsControls-regionBtn').should('have.class', 'bp-is-active');
 
         cy.getByTestId('bp-ZoomControls-out').click();
         cy.getByTestId('bp-AnnotationsControls-regionBtn').should('have.class', 'bp-is-active');
