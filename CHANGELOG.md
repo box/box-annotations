@@ -1,3 +1,11 @@
+## <small>5.3.1-beta.3 (2026-10-08)</small>
+
+* chore(deps): Bump axios, brace-expansion, and serialize-javascript (#795) ([e86ef87](https://github.com/box/box-annotations/commit/e86ef87)), closes [#795](https://github.com/box/box-annotations/issues/795)
+* chore(deps): Bump fast-uri to 3.1.7 in the lockfile (#794) ([2531592](https://github.com/box/box-annotations/commit/2531592)), closes [#794](https://github.com/box/box-annotations/issues/794) [high-severity](https://github.com/hi/issues/severity)
+* chore(i18n): update translations (#798) ([781bdb0](https://github.com/box/box-annotations/commit/781bdb0)), closes [#798](https://github.com/box/box-annotations/issues/798)
+* fix(a11y): name inline comment targets (#793) ([f16ec26](https://github.com/box/box-annotations/commit/f16ec26)), closes [#793](https://github.com/box/box-annotations/issues/793)
+* fix(popup): refetch full replies when a thread popover opens (#797) ([202c5ac](https://github.com/box/box-annotations/commit/202c5ac)), closes [#797](https://github.com/box/box-annotations/issues/797)
+
 ## <small>5.3.1-beta.2 (2026-09-29)</small>
 
 * feat(annotations): pass rich-text flag on fetch and writes (#782) ([bad1b7b](https://github.com/box/box-annotations/commit/bad1b7b)), closes [#782](https://github.com/box/box-annotations/issues/782)
