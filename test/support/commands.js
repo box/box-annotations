@@ -11,19 +11,17 @@ Cypress.Commands.add('showPreview', (fileId, { token } = {}) => {
 });
 
 function getMouseMoveCommands(targetSelector, { height, width, x, y }) {
-    cy.getByTestId(targetSelector)
-        .first()
-        .trigger('mousedown', {
-            buttons: 1,
-            clientX: x,
-            clientY: y,
-        })
-        .trigger('mousemove', {
-            buttons: 1,
-            clientX: x + width,
-            clientY: y + height,
-        })
-        .trigger('mouseup');
+    cy.getByTestId(targetSelector).first().trigger('mousedown', {
+        buttons: 1,
+        clientX: x,
+        clientY: y,
+    });
+    cy.getByTestId(targetSelector).first().trigger('mousemove', {
+        buttons: 1,
+        clientX: x + width,
+        clientY: y + height,
+    });
+    cy.getByTestId(targetSelector).first().trigger('mouseup');
 }
 
 // Annotations-specific commands
@@ -39,17 +37,18 @@ Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
         .eq(Math.max(0, page - 1))
         .children('span')
         .eq(Math.max(0, block - 1))
-        .trigger('mousedown')
-        .then($el => {
-            const el = $el[0];
-            const document = el.ownerDocument;
-            const range = document.createRange();
-            const selection = document.getSelection();
-            range.selectNodeContents(el);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        })
-        .trigger('mouseup');
+        .as('selectedText');
+    cy.get('@selectedText').trigger('mousedown');
+    cy.get('@selectedText').then($el => {
+        const el = $el[0];
+        const document = el.ownerDocument;
+        const range = document.createRange();
+        const selection = document.getSelection();
+        range.selectNodeContents(el);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    });
+    cy.get('@selectedText').trigger('mouseup');
 });
 
 Cypress.Commands.add('submitReply', (message = 'Automated test annotations') => {

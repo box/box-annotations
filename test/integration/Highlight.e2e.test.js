@@ -66,20 +66,19 @@ describe('Highlights', () => {
             .children('span')
             .first()
             .then($pageTwoStartTextEl => {
-                cy.get('@pageOneEndTextEl')
-                    .trigger('mousedown')
-                    .then($pageOneEndTextEl => {
-                        const pageOneEndTextEl = $pageOneEndTextEl[0];
-                        const pageTwoStartTextEl = $pageTwoStartTextEl[0];
-                        const document = pageOneEndTextEl.ownerDocument;
-                        const range = document.createRange();
-                        const selection = document.getSelection();
-                        range.setStartBefore(pageOneEndTextEl);
-                        range.setEndAfter(pageTwoStartTextEl);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    })
-                    .trigger('mouseup');
+                cy.get('@pageOneEndTextEl').trigger('mousedown');
+                cy.get('@pageOneEndTextEl').then($pageOneEndTextEl => {
+                    const pageOneEndTextEl = $pageOneEndTextEl[0];
+                    const pageTwoStartTextEl = $pageTwoStartTextEl[0];
+                    const document = pageOneEndTextEl.ownerDocument;
+                    const range = document.createRange();
+                    const selection = document.getSelection();
+                    range.setStartBefore(pageOneEndTextEl);
+                    range.setEndAfter(pageTwoStartTextEl);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                });
+                cy.get('@pageOneEndTextEl').trigger('mouseup');
             });
 
         // Assert error popup shows
