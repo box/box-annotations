@@ -23,12 +23,8 @@ before_install:
     - export TZ=America/Los_Angeles
 jobs:
     include:
-        - name: 'Build'
-          script: yarn build
-        - name: 'Code Lint'
-          script: yarn lint
-        - name: 'Unit Tests'
-          script: yarn test
+        - name: 'Build & Test'
+          script: yarn build && yarn lint && yarn test
         - name: 'E2E Tests'
           if: fork = false # Note: We can only run E2E tests on canonical due to security concerns
           script: yarn test:e2e
