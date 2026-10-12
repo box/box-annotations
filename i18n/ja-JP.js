@@ -1,5 +1,8 @@
 // THIS IS A GENERATED FILE. DO NOT EDIT MANUALLY OR YOUR CHANGES WILL BE OVERWRITTEN
 export default {
+    "ba.annotationTarget.drawingInlineComment": "図面注釈のインラインコメント",
+    "ba.annotationTarget.highlightInlineComment": "ハイライト注釈のインラインコメント",
+    "ba.annotationTarget.regionInlineComment": "地域注釈のインラインコメント",
     "ba.annotationsClose": "閉じる",
     "ba.annotationsCreateError": "注釈を作成できませんでした。",
     "ba.annotationsLoadError": "このファイルの注釈を読み込めませんでした。",
