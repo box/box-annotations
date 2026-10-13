@@ -30,4 +30,17 @@ describe('store/eventing/fetch', () => {
             });
         },
     );
+
+    test('should not emit a fetch error when the rejected action was aborted', () => {
+        const rejectedType = fetchAnnotationRepliesAction.rejected.toString();
+        const handler = eventHandlers[rejectedType];
+
+        handler({} as AppState, {} as AppState, {
+            error: new Error('aborted'),
+            meta: { aborted: true, arg: 'annotation-1', requestId: 'req-1' },
+            type: rejectedType,
+        } as AsyncAction);
+
+        expect(eventManager.emit).not.toHaveBeenCalled();
+    });
 });
