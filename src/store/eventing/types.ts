@@ -20,6 +20,7 @@ export interface ActionEvent {
 export interface ThunkMeta<M> {
     arg: M;
     requestId: string;
+    aborted?: boolean;
 }
 
 export interface AsyncAction<TArg = unknown, TPayload = unknown> extends Action {
