@@ -18,6 +18,7 @@ export interface ActionEvent {
 }
 
 export interface ThunkMeta<M> {
+    aborted?: boolean;
     arg: M;
     requestId: string;
 }
