@@ -1,3 +1,12 @@
+## <small>5.3.1-beta.4 (2026-10-13)</small>
+
+* fix(eventing): skip emit on aborted replies refetch (#807) ([cae0e72](https://github.com/box/box-annotations/commit/cae0e72)), closes [#807](https://github.com/box/box-annotations/issues/807)
+* chore(deps-dev): bump uuid from 8.3.2 to 14.0.0 (#804) ([dba8ade](https://github.com/box/box-annotations/commit/dba8ade)), closes [#804](https://github.com/box/box-annotations/issues/804)
+* chore(deps): Bump shell-quote, proxy-addr, compression, and more (#802) ([f41434d](https://github.com/box/box-annotations/commit/f41434d)), closes [#802](https://github.com/box/box-annotations/issues/802)
+* chore(deps): Remove unused packages and bump Cypress ESLint (#801) ([b053d17](https://github.com/box/box-annotations/commit/b053d17)), closes [#801](https://github.com/box/box-annotations/issues/801)
+* chore(deps): widen Blueprint web peer to ^17  (#800) ([f792940](https://github.com/box/box-annotations/commit/f792940)), closes [#800](https://github.com/box/box-annotations/issues/800)
+* ci: Combine build, lint, and unit tests into one job (#803) ([d099954](https://github.com/box/box-annotations/commit/d099954)), closes [#803](https://github.com/box/box-annotations/issues/803)
+
 ## <small>5.3.1-beta.3 (2026-10-08)</small>
 
 * chore(deps): Bump axios, brace-expansion, and serialize-javascript (#795) ([e86ef87](https://github.com/box/box-annotations/commit/e86ef87)), closes [#795](https://github.com/box/box-annotations/issues/795)
