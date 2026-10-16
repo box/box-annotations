@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { BlueprintModernizationProvider, TooltipProvider } from '@box/blueprint-web';
+import { TooltipProvider } from '@box/blueprint-web';
 import {
     MentionContextProvider,
     MessageEditorV2,
@@ -369,8 +369,7 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
                 onTouchStart={handleEvent}
                 role="presentation"
             >
-                <BlueprintModernizationProvider enableModernizedComponents>
-                    <TooltipProvider>
+                <TooltipProvider>
                         <MentionContextProvider
                             value={{
                                 collaborationPopoverProps: {
@@ -408,8 +407,7 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
                                 />
                             )}
                         </MentionContextProvider>
-                    </TooltipProvider>
-                </BlueprintModernizationProvider>
+                </TooltipProvider>
                 <div data-threaded-annotations-portal />
             </div>
         </FocusTrap>,
