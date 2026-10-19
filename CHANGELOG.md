@@ -1,3 +1,8 @@
+## <small>5.3.1-beta.5 (2026-10-19)</small>
+
+* Peer Blueprint 18.3.0 and drop the modernization provider (#809) ([a56ee9d](https://github.com/box/box-annotations/commit/a56ee9d)), closes [#809](https://github.com/box/box-annotations/issues/809)
+* chore(i18n): update translations (#805) ([0a94e4b](https://github.com/box/box-annotations/commit/0a94e4b)), closes [#805](https://github.com/box/box-annotations/issues/805)
+
 ## <small>5.3.1-beta.4 (2026-10-13)</small>
 
 * fix(eventing): skip emit on aborted replies refetch (#807) ([cae0e72](https://github.com/box/box-annotations/commit/cae0e72)), closes [#807](https://github.com/box/box-annotations/issues/807)
