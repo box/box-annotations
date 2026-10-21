@@ -192,6 +192,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                             onReply={handleReply}
                             onUndo={handleUndo}
                             reference={drawingSVGGroup}
+                            tooltipContainer={popupPortalEl}
                         />
                     );
                     return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;

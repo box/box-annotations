@@ -5,6 +5,8 @@
         "lib": ["DOM", "ES2020"],
         "jsx": "react-jsx",
         "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
         "skipLibCheck": true,
         "types": ["classnames", "draft-js", "enzyme", "jest", "lodash", "react", "react-dom", "react-redux", "uuid"]
     }

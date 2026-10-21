@@ -335,6 +335,18 @@ describe('DrawingAnnotations', () => {
             document.body.removeChild(popupPortalEl);
         });
 
+        test('should portal the toolbar tooltips into popupPortalEl so they show in fullscreen', () => {
+            const popupPortalEl = document.createElement('div');
+            const wrapper = getWrapper({
+                canShowPopupToolbar: true,
+                drawnPathGroups: pathGroups,
+                isCreating: true,
+                popupPortalEl,
+            });
+
+            expect(wrapper.find(PopupDrawingToolbar).prop('tooltipContainer')).toBe(popupPortalEl);
+        });
+
         test('should render PopupDrawingToolbar inline when popupPortalEl is missing', () => {
             const wrapper = getWrapper({
                 canShowPopupToolbar: true,

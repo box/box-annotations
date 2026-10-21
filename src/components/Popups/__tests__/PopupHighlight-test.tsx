@@ -1,13 +1,11 @@
-import React, { act } from 'react';
-import { mount, ReactWrapper } from 'enzyme';
-import PopupBase from '../PopupBase';
-import PopupHighlight from '../PopupHighlight';
-
-jest.mock('../PopupBase');
+import React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import * as Popper from '../Popper';
+import PopupHighlight, { Props } from '../PopupHighlight';
 
 describe('PopupHighlight', () => {
-    const getWrapper = (props = {}): ReactWrapper =>
-        mount(
+    const renderPopup = (props: Partial<Props> = {}): ReturnType<typeof render> =>
+        render(
             <PopupHighlight
                 onCancel={jest.fn()}
                 onSubmit={jest.fn()}
@@ -21,59 +19,78 @@ describe('PopupHighlight', () => {
             />,
         );
 
-    const buttonRef = React.createRef();
-
-    beforeEach(() => {
-        jest.spyOn(React, 'useRef').mockImplementationOnce(() => buttonRef);
-    });
-
     describe('event handlers', () => {
         test('should handle outside mousedown events', () => {
             const onCancel = jest.fn();
-            const wrapper = getWrapper({ onCancel });
+            renderPopup({ onCancel });
 
-            act(() => {
-                document.dispatchEvent(new MouseEvent('mousedown'));
-            });
-            wrapper.update();
+            fireEvent.mouseDown(document.body);
 
-            expect(onCancel).toBeCalled();
+            expect(onCancel).toHaveBeenCalled();
+        });
+
+        test('should not cancel on mousedown inside the toolbar around the button', () => {
+            const onCancel = jest.fn();
+            renderPopup({ onCancel });
+
+            fireEvent.mouseDown(screen.getByRole('toolbar'));
+
+            expect(onCancel).not.toHaveBeenCalled();
         });
 
         test('should handle outside keydown events', () => {
+            const onSubmit = jest.fn();
             const event = new KeyboardEvent('keydown', { key: 'Enter' });
-            const wrapper = getWrapper();
+            renderPopup({ onSubmit });
 
             jest.spyOn(event, 'preventDefault');
             jest.spyOn(event, 'stopPropagation');
 
-            act(() => {
-                document.dispatchEvent(event);
-            });
-            wrapper.update();
+            document.dispatchEvent(event);
 
-            expect(event.preventDefault).toBeCalled();
-            expect(event.stopPropagation).toBeCalled();
+            expect(event.preventDefault).toHaveBeenCalled();
+            expect(event.stopPropagation).toHaveBeenCalled();
+            expect(onSubmit).toHaveBeenCalled();
+        });
+
+        test('should leave Enter on the button to the button so it submits once', () => {
+            const onSubmit = jest.fn();
+            renderPopup({ onSubmit });
+
+            fireEvent.keyDown(screen.getByTestId('ba-PopupHighlight-button'), { key: 'Enter' });
+
+            expect(onSubmit).not.toHaveBeenCalled();
         });
     });
 
     describe('mouse events', () => {
-        test('should call onClick', () => {
+        test('should call onSubmit when the button is clicked', () => {
             const onSubmit = jest.fn();
-            const wrapper = getWrapper({ onSubmit });
+            renderPopup({ onSubmit });
 
-            wrapper.find('[data-testid="ba-PopupHighlight-button"]').simulate('click');
+            fireEvent.click(screen.getByTestId('ba-PopupHighlight-button'));
 
-            expect(onSubmit).toBeCalled();
+            expect(onSubmit).toHaveBeenCalled();
         });
     });
 
     describe('render()', () => {
-        test('should render correct rect', () => {
-            const wrapper = getWrapper();
+        test('should render the promoter as a toolbar button inside the dialog', () => {
+            renderPopup();
+            const button = screen.getByRole('button', { name: 'Highlight and Comment' });
 
-            const newVirtualElement = wrapper.find(PopupBase).prop('reference');
-            const rect = newVirtualElement.getBoundingClientRect();
+            expect(button).toHaveAttribute('aria-haspopup', 'dialog');
+            expect(button).toHaveAttribute('data-testid', 'ba-PopupHighlight-button');
+            expect(button.querySelector('svg')).toBeInTheDocument();
+            expect(screen.getByRole('dialog')).toContainElement(screen.getByRole('toolbar'));
+        });
+
+        test('should position the popup against the selection rect', () => {
+            const createPopper = jest.spyOn(Popper, 'default');
+            renderPopup();
+
+            const [reference] = createPopper.mock.calls[0];
+            const rect = reference.getBoundingClientRect();
 
             expect(rect.height).toEqual(10);
             expect(rect.width).toEqual(100);

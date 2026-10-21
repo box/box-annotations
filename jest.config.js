@@ -26,5 +26,7 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/scripts/jest/enzyme-adapter.js', '<rootDir>/scripts/jest/jest-setup.ts'],
     snapshotSerializers: ['enzyme-to-json/serializer'],
     testEnvironment: 'jsdom',
-    transformIgnorePatterns: ['node_modules/(?!(box-ui-elements|uuid)/)'],
+    transformIgnorePatterns: [
+        'node_modules/(?!(box-ui-elements|uuid|@box/blueprint-web|@box/blueprint-web-assets|@tanstack|@ariakit)/)',
+    ],
 };
