@@ -2,6 +2,7 @@ import {
     getFeatures,
     getFileId,
     getFileVersionId,
+    getIsBlueprintToolbarEnabled,
     getIsRichTextEnabled,
     getPermissions,
     getRotation,
@@ -110,6 +111,17 @@ describe('store/options/selectors', () => {
             ${{}}                                                       | ${false}
         `('should return $expected for features $features', ({ features, expected }) => {
             expect(getIsRichTextEnabled({ options: { ...optionsState, features } })).toBe(expected);
+        });
+    });
+
+    describe('getIsBlueprintToolbarEnabled', () => {
+        test.each`
+            features                                    | expected
+            ${{ blueprintMigrationControlsBar: true }}  | ${true}
+            ${{ blueprintMigrationControlsBar: false }} | ${false}
+            ${{}}                                       | ${false}
+        `('should return $expected for features $features', ({ features, expected }) => {
+            expect(getIsBlueprintToolbarEnabled({ options: { ...optionsState, features } })).toBe(expected);
         });
     });
 });

@@ -1,11 +1,9 @@
 import React from 'react';
+import IconHighlightTextAnnotation from 'box-ui-elements/es/icon/fill/AnnotationsHighlight16';
 import noop from 'lodash/noop';
-import TextHighlight from '@box/blueprint-web-assets/icons/Medium/TextHighlight';
-import { Toolbar } from '@box/blueprint-web';
-import { useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 import PopupBase from './PopupBase';
-import PopupToolbar from './PopupToolbar';
 import useOutsideEvent from '../../common/useOutsideEvent';
 import { clientBoundingRect, Options } from './Popper';
 import { Shape } from '../../@types/model';
@@ -48,8 +46,7 @@ const options: Partial<Options> = {
 };
 
 export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape }: Props): JSX.Element {
-    const intl = useIntl();
-    const toolbarRef = React.useRef<HTMLDivElement>(null);
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
     const { height, width, x, y } = shape;
 
     const reference = {
@@ -67,8 +64,8 @@ export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape
         onSubmit();
     };
 
-    useOutsideEvent('keydown', toolbarRef, handleKeydownOutside);
-    useOutsideEvent('mousedown', toolbarRef, onCancel);
+    useOutsideEvent('keydown', buttonRef, handleKeydownOutside);
+    useOutsideEvent('mousedown', buttonRef, onCancel);
 
     return (
         <PopupBase
@@ -78,12 +75,17 @@ export default function PopupHighlight({ onCancel = noop, onSubmit = noop, shape
             reference={reference}
             role="dialog"
         >
-            <PopupToolbar ref={toolbarRef}>
-                <Toolbar.Button aria-haspopup="dialog" data-testid="ba-PopupHighlight-button" onClick={onSubmit}>
-                    <Toolbar.Icon icon={TextHighlight} />
-                    {intl.formatMessage(messages.popupHighlightPromoter)}
-                </Toolbar.Button>
-            </PopupToolbar>
+            <button
+                ref={buttonRef}
+                aria-haspopup="dialog"
+                className="ba-PopupHighlight-button"
+                data-testid="ba-PopupHighlight-button"
+                onClick={onSubmit}
+                type="button"
+            >
+                <IconHighlightTextAnnotation className="ba-PopupHighlight-icon" />
+                <FormattedMessage {...messages.popupHighlightPromoter} />
+            </button>
         </PopupBase>
     );
 }

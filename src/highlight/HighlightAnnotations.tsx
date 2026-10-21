@@ -6,6 +6,7 @@ import HighlightSvg from './HighlightSvg';
 import HighlightTarget from './HighlightTarget';
 import PopupHighlight from '../components/Popups/PopupHighlight';
 import PopupHighlightError from '../components/Popups/PopupHighlightError';
+import PopupHighlightV2 from '../components/Popups/PopupHighlightV2';
 import { AnnotationHighlight } from '../@types';
 import { CreateArg } from './actions';
 import { CreatorItemHighlight, CreatorStatus, SelectionArg, SelectionItem } from '../store';
@@ -16,6 +17,7 @@ type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
     createHighlight?: (arg: CreateArg) => void;
+    isBlueprintToolbarEnabled?: boolean;
     isCreating: boolean;
     isPending: boolean;
     isPromoting: boolean;
@@ -37,6 +39,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
     const {
         activeAnnotationId,
         annotations = [],
+        isBlueprintToolbarEnabled = false,
         isCreating = false,
         isPending = false,
         isPromoting = false,
@@ -131,9 +134,10 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 !selection.hasError &&
                 (() => {
                     const popupShape = selection.popupRect || getBoundingRect(selection.rects);
+                    const Promoter = isBlueprintToolbarEnabled ? PopupHighlightV2 : PopupHighlight;
                     const popup = (
                         <div className="ba-HighlightAnnotations-popup">
-                            <PopupHighlight onCancel={handleCancel} onSubmit={handlePromote} shape={popupShape} />
+                            <Promoter onCancel={handleCancel} onSubmit={handlePromote} shape={popupShape} />
                         </div>
                     );
                     return rotation && popupPortalEl ? ReactDOM.createPortal(popup, popupPortalEl) : popup;

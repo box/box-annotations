@@ -8,6 +8,7 @@ import DrawingPathGroup from './DrawingPathGroup';
 import DrawingSVG, { DrawingSVGRef } from './DrawingSVG';
 import DrawingSVGGroup from './DrawingSVGGroup';
 import PopupDrawingToolbar, { PopupBaseRef } from '../components/Popups/PopupDrawingToolbar';
+import PopupDrawingToolbarV2 from '../components/Popups/PopupDrawingToolbarV2';
 import { AnnotationDrawing, PathGroup } from '../@types';
 import { CreatorItemDrawing, CreatorStatus } from '../store';
 import './DrawingAnnotations.scss';
@@ -21,6 +22,7 @@ export type Props = {
     canShowPopupToolbar: boolean;
     color: string;
     drawnPathGroups: Array<PathGroup>;
+    isBlueprintToolbarEnabled?: boolean;
     isCreating: boolean;
     location: number;
     popupPortalEl?: HTMLElement | null;
@@ -46,6 +48,7 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
         canShowPopupToolbar,
         color,
         drawnPathGroups,
+        isBlueprintToolbarEnabled = false,
         isCreating,
         location,
         popupPortalEl,
@@ -180,20 +183,22 @@ const DrawingAnnotations = (props: Props): JSX.Element => {
                 drawingSVGGroup &&
                 canShowPopupToolbar &&
                 (() => {
-                    const toolbar = (
-                        <PopupDrawingToolbar
-                            ref={popupDrawingToolbarRef}
-                            canComment={hasDrawnPathGroups}
-                            canRedo={hasStashedPathGroups}
-                            canUndo={hasDrawnPathGroups}
-                            className={classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing })}
-                            onDelete={handleDelete}
-                            onRedo={handleRedo}
-                            onReply={handleReply}
-                            onUndo={handleUndo}
-                            reference={drawingSVGGroup}
-                            tooltipContainer={popupPortalEl}
-                        />
+                    const toolbarProps = {
+                        ref: popupDrawingToolbarRef,
+                        canComment: hasDrawnPathGroups,
+                        canRedo: hasStashedPathGroups,
+                        canUndo: hasDrawnPathGroups,
+                        className: classNames('ba-DrawingAnnotations-toolbar', { 'ba-is-drawing': isDrawing }),
+                        onDelete: handleDelete,
+                        onRedo: handleRedo,
+                        onReply: handleReply,
+                        onUndo: handleUndo,
+                        reference: drawingSVGGroup,
+                    };
+                    const toolbar = isBlueprintToolbarEnabled ? (
+                        <PopupDrawingToolbarV2 {...toolbarProps} tooltipContainer={popupPortalEl} />
+                    ) : (
+                        <PopupDrawingToolbar {...toolbarProps} />
                     );
                     return popupPortalEl ? ReactDOM.createPortal(toolbar, popupPortalEl) : toolbar;
                 })()}
