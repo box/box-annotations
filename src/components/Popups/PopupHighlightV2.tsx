@@ -72,6 +72,7 @@ export default function PopupHighlightV2({ onCancel = noop, onSubmit = noop, sha
 
     return (
         <PopupBase
+            aria-label={intl.formatMessage(messages.popupHighlightPromoter)}
             aria-live="polite"
             className="ba-PopupHighlightBlueprint"
             options={options}

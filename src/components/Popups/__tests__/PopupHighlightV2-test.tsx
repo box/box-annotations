@@ -85,6 +85,12 @@ describe('PopupHighlightV2', () => {
             expect(screen.getByRole('dialog')).toContainElement(screen.getByRole('toolbar'));
         });
 
+        test('should name the dialog for screen readers', () => {
+            renderPopup();
+
+            expect(screen.getByRole('dialog', { name: 'Highlight and Comment' })).toBeInTheDocument();
+        });
+
         test('should position the popup against the selection rect', () => {
             const createPopper = jest.spyOn(Popper, 'default');
             renderPopup();
