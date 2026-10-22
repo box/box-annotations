@@ -92,5 +92,15 @@ describe('DrawingAnnotationsContainer', () => {
                 expect(wrapper.find(DrawingAnnotations).prop('isCreating')).toEqual(isCreating);
             },
         );
+
+        test.each([true, false])(
+            'should pass down isBlueprintToolbarEnabled as %s from the controls bar feature',
+            enabled => {
+                const store = createStore({ options: { features: { blueprintMigrationControlsBar: enabled } } });
+                const wrapper = getWrapper({ store });
+
+                expect(wrapper.find(DrawingAnnotations).prop('isBlueprintToolbarEnabled')).toBe(enabled);
+            },
+        );
     });
 });

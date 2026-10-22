@@ -5,6 +5,7 @@ import HighlightCanvas from '../HighlightCanvas';
 import HighlightList from '../HighlightList';
 import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
+import PopupHighlightV2 from '../../components/Popups/PopupHighlightV2';
 import PopupHighlightError from '../../components/Popups/PopupHighlightError';
 import PopupReply from '../../components/Popups/PopupReply';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
@@ -269,6 +270,20 @@ describe('HighlightAnnotations', () => {
             expect(wrapper.exists(PopupHighlight)).toBe(true);
             expect(popupPortalEl.querySelector('.ba-HighlightAnnotations-popup')).toBeNull();
         });
+
+        test.each`
+            isBlueprintToolbarEnabled | legacy   | v2
+            ${false}                  | ${true}  | ${false}
+            ${true}                   | ${false} | ${true}
+        `(
+            'should render the Blueprint promoter only if isBlueprintToolbarEnabled is $isBlueprintToolbarEnabled',
+            ({ isBlueprintToolbarEnabled, legacy, v2 }) => {
+                const wrapper = getWrapper({ isBlueprintToolbarEnabled, selection: selectionMock });
+
+                expect(wrapper.exists(PopupHighlight)).toBe(legacy);
+                expect(wrapper.exists(PopupHighlightV2)).toBe(v2);
+            },
+        );
 
         test('should render PopupHighlight inline when popupPortalEl is not provided', () => {
             const wrapper = getWrapper({

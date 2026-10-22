@@ -183,6 +183,7 @@
         "**/react-intl/**/@types/react": "^18.3.12",
         "**/@types/react": "^18.3.12",
         "**/@types/react-dom": "^18.2.0",
-        "draft-js/immutable": "^3.8.3"
+        "draft-js/immutable": "^3.8.3",
+        "nwsapi": "2.2.24"
     }
 }

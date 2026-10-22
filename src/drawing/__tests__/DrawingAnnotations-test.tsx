@@ -6,6 +6,7 @@ import DrawingList from '../DrawingList';
 import DrawingSVG from '../DrawingSVG';
 import DrawingSVGGroup from '../DrawingSVGGroup';
 import PopupDrawingToolbar from '../../components/Popups/PopupDrawingToolbar';
+import PopupDrawingToolbarV2 from '../../components/Popups/PopupDrawingToolbarV2';
 import { annotations, videoAnnotations } from '../__mocks__/drawingData';
 import { CreatorStatus } from '../../store';
 import { TARGET_TYPE } from '../../constants';
@@ -333,6 +334,38 @@ describe('DrawingAnnotations', () => {
             expect(popupPortalEl.querySelector('.ba-PopupDrawingToolbar')).toBeTruthy();
 
             document.body.removeChild(popupPortalEl);
+        });
+
+        test.each`
+            isBlueprintToolbarEnabled | legacy   | v2
+            ${false}                  | ${true}  | ${false}
+            ${true}                   | ${false} | ${true}
+        `(
+            'should render the Blueprint toolbar only if isBlueprintToolbarEnabled is $isBlueprintToolbarEnabled',
+            ({ isBlueprintToolbarEnabled, legacy, v2 }) => {
+                const wrapper = getWrapper({
+                    canShowPopupToolbar: true,
+                    drawnPathGroups: pathGroups,
+                    isBlueprintToolbarEnabled,
+                    isCreating: true,
+                });
+
+                expect(wrapper.exists(PopupDrawingToolbar)).toBe(legacy);
+                expect(wrapper.exists(PopupDrawingToolbarV2)).toBe(v2);
+            },
+        );
+
+        test('should portal the Blueprint toolbar tooltips into popupPortalEl so they show in fullscreen', () => {
+            const popupPortalEl = document.createElement('div');
+            const wrapper = getWrapper({
+                canShowPopupToolbar: true,
+                drawnPathGroups: pathGroups,
+                isBlueprintToolbarEnabled: true,
+                isCreating: true,
+                popupPortalEl,
+            });
+
+            expect(wrapper.find(PopupDrawingToolbarV2).prop('tooltipContainer')).toBe(popupPortalEl);
         });
 
         test('should render PopupDrawingToolbar inline when popupPortalEl is missing', () => {

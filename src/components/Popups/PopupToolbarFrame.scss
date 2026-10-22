@@ -1,0 +1,19 @@
+// Blueprint's Toolbar.Root draws the popup surface, so the popup frame around it stays invisible and
+// must not clip the toolbar's shadow
+@mixin ba-PopupToolbarFrame {
+    .ba-Popup-arrow {
+        display: none;
+    }
+
+    .ba-Popup-content {
+        overflow: visible;
+        background: none;
+        border: none;
+        box-shadow: none;
+    }
+
+    // Blueprint indents toolbar button text on the left only, so text buttons mirror that space on the right
+    .ba-PopupToolbar-textButton {
+        padding-inline-end: calc(var(--bp-space-020) - var(--bp-border-01));
+    }
+}

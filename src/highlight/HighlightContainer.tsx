@@ -11,6 +11,7 @@ import {
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
     getCreatorStatus,
+    getIsBlueprintToolbarEnabled,
     getIsPromoting,
     getIsSelecting,
     getRotation,
@@ -30,6 +31,7 @@ import { isHighlight } from './highlightUtil';
 export type Props = {
     activeAnnotationId: string | null;
     annotations: AnnotationHighlight[];
+    isBlueprintToolbarEnabled: boolean;
     isCreating: boolean;
     isPending: boolean;
     isPromoting: boolean;
@@ -45,6 +47,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     return {
         activeAnnotationId: getActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
+        isBlueprintToolbarEnabled: getIsBlueprintToolbarEnabled(state),
         isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,
         isPending: getCreatorStatus(state) === CreatorStatus.pending,
         isPromoting: getIsPromoting(state),

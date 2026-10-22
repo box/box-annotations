@@ -1,0 +1,7 @@
+@import './PopupToolbarFrame';
+
+.ba {
+    .ba-PopupHighlightBlueprint {
+        @include ba-PopupToolbarFrame;
+    }
+}

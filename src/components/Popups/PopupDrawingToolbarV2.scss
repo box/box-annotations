@@ -1,0 +1,7 @@
+@import './PopupToolbarFrame';
+
+.ba {
+    .ba-PopupDrawingToolbarBlueprint {
+        @include ba-PopupToolbarFrame;
+    }
+}

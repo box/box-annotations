@@ -10012,10 +10012,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-nwsapi@^2.2.2:
-  version "2.2.27"
-  resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.27.tgz#a7c71fc7d401546ad94a026c30e868c078a70e87"
-  integrity sha512-gQPNF78qebCQ6tvVFBYrvJdBNOrYZm90ZlXgpIFm06p6qHDHq/XC4TnJftN6OMbxVE0UTBAoRgcsDeJBBooITw==
+nwsapi@2.2.24, nwsapi@^2.2.2:
+  version "2.2.24"
+  resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.24.tgz#f8927043d4c9b516abdebe804a32c8d1f9484d1f"
+  integrity sha512-7YRhZ3jS45LwmSCT4b2sVFHt/WuovaktDU07QrtOBY2PXskss5a9jfmR9jptyumwXST+rFjrmppMY1KT/yn35A==
 
 object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"

@@ -51,6 +51,11 @@ export default defineMessages({
         description: 'Button title for undoing a staged drawing',
         defaultMessage: 'Undo',
     },
+    drawingToolbarLabel: {
+        id: 'ba.popups.drawing.toolbar',
+        description: 'Accessible name for the toolbar shown over a staged drawing',
+        defaultMessage: 'Drawing actions',
+    },
     fieldPlaceholder: {
         id: 'ba.popups.replyField.placeholder',
         description: 'Placeholder for reply field editor',

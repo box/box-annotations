@@ -19,6 +19,10 @@ export const getToken = (state: State): Token => state.options.token;
 export const isFeatureEnabled = (state: State, featurename: string): boolean =>
     getProp(getFeatures(state), featurename, false);
 
+// Preview forwards its controls bar flag so the popups move to the Blueprint toolbar together with the bar
+export const getIsBlueprintToolbarEnabled = (state: State): boolean =>
+    isFeatureEnabled(state, 'blueprintMigrationControlsBar');
+
 // Rich text is only rendered and authored in the threaded popup (PopupV2). The legacy popup editor
 // is plain text, so the flag only applies when threaded annotations are on.
 export const getIsRichTextEnabled = (state: State): boolean =>
