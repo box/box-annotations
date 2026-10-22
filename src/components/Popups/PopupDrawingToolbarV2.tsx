@@ -106,6 +106,7 @@ const PopupDrawingToolbarV2 = (props: Props, ref: React.Ref<PopupBaseRef>): JSX.
                 </Tooltip>
                 <Toolbar.Separator />
                 <Toolbar.Button
+                    className="ba-PopupToolbar-textButton"
                     data-testid="ba-PopupDrawingToolbar-comment"
                     disabled={!canComment}
                     onClick={() => onReply()}

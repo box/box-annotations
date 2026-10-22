@@ -11,4 +11,9 @@
         border: none;
         box-shadow: none;
     }
+
+    // Blueprint indents toolbar button text on the left only, so text buttons mirror that space on the right
+    .ba-PopupToolbar-textButton {
+        padding-inline-end: calc(var(--bp-space-020) - var(--bp-border-01));
+    }
 }

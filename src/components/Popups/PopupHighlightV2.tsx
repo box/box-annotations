@@ -80,7 +80,12 @@ export default function PopupHighlightV2({ onCancel = noop, onSubmit = noop, sha
             role="dialog"
         >
             <PopupToolbar ref={toolbarRef}>
-                <Toolbar.Button aria-haspopup="dialog" data-testid="ba-PopupHighlight-button" onClick={onSubmit}>
+                <Toolbar.Button
+                    aria-haspopup="dialog"
+                    className="ba-PopupToolbar-textButton"
+                    data-testid="ba-PopupHighlight-button"
+                    onClick={onSubmit}
+                >
                     <Toolbar.Icon icon={TextHighlight} />
                     {intl.formatMessage(messages.popupHighlightPromoter)}
                 </Toolbar.Button>
