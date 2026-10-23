@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "टिप्पणी जोड़ें",
     "ba.popups.drawing.delete": "हटाएं",
     "ba.popups.drawing.redo": "फिर से करें",
+    "ba.popups.drawing.toolbar": "ड्रॉइंग की कार्रवाइयाँ",
     "ba.popups.drawing.undo": "पूर्ववत् करें",
     "ba.popups.popupCursor.regionPrompt": "टिप्पणी करने के लिए एक Box बनाएं",
     "ba.popups.popupHighlight.promoter": "हाइलाइट करें और टिप्पणी दें",
