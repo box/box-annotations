@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "মন্তব্য যোগ করুন",
     "ba.popups.drawing.delete": "মুছুন",
     "ba.popups.drawing.redo": "আবার করুন",
+    "ba.popups.drawing.toolbar": "অঙ্কনের ক্রিয়াকলাপ",
     "ba.popups.drawing.undo": "বাতিল করুন",
     "ba.popups.popupCursor.regionPrompt": "মন্তব্য করতে একটি বক্স আঁকুন",
     "ba.popups.popupHighlight.promoter": "হাইলাইট ও মন্তব্য করুন",
