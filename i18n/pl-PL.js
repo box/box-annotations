@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Dodaj komentarz",
     "ba.popups.drawing.delete": "Usuń",
     "ba.popups.drawing.redo": "Ponów",
+    "ba.popups.drawing.toolbar": "Operacje rysowania",
     "ba.popups.drawing.undo": "Cofnij",
     "ba.popups.popupCursor.regionPrompt": "Narysuj pole, aby skomentować",
     "ba.popups.popupHighlight.promoter": "Wyróżnij i skomentuj",

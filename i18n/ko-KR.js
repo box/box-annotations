@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "코멘트 추가",
     "ba.popups.drawing.delete": "삭제",
     "ba.popups.drawing.redo": "다시 실행",
+    "ba.popups.drawing.toolbar": "그림 작업",
     "ba.popups.drawing.undo": "실행 취소",
     "ba.popups.popupCursor.regionPrompt": "코멘트를 입력할 상자 그리기",
     "ba.popups.popupHighlight.promoter": "강조 표시 및 코멘트",

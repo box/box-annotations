@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "新增留言",
     "ba.popups.drawing.delete": "刪除",
     "ba.popups.drawing.redo": "重做",
+    "ba.popups.drawing.toolbar": "繪圖動作",
     "ba.popups.drawing.undo": "復原",
     "ba.popups.popupCursor.regionPrompt": "繪圖一個方塊以留言",
     "ba.popups.popupHighlight.promoter": "醒目提示和留言",

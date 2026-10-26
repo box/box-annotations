@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Lisää kommentti",
     "ba.popups.drawing.delete": "Poista",
     "ba.popups.drawing.redo": "Tee uudelleen",
+    "ba.popups.drawing.toolbar": "Piirustustoiminnot",
     "ba.popups.drawing.undo": "Kumoa",
     "ba.popups.popupCursor.regionPrompt": "Kommentoi piirtämällä laatikko",
     "ba.popups.popupHighlight.promoter": "Korosta ja kommentoi",

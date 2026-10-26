@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Açıklama Ekle",
     "ba.popups.drawing.delete": "Sil",
     "ba.popups.drawing.redo": "Yinele",
+    "ba.popups.drawing.toolbar": "Çizim eylemleri",
     "ba.popups.drawing.undo": "Geri al",
     "ba.popups.popupCursor.regionPrompt": "Yorum yapmak için bir kutu çizin",
     "ba.popups.popupHighlight.promoter": "Vurgulayın ve Yorum Yapın",

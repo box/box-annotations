@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Ajouter un commentaire",
     "ba.popups.drawing.delete": "Supprimer",
     "ba.popups.drawing.redo": "Rétablir",
+    "ba.popups.drawing.toolbar": "Actions de dessin",
     "ba.popups.drawing.undo": "Annuler",
     "ba.popups.popupCursor.regionPrompt": "Dessinez un cadre pour commenter",
     "ba.popups.popupHighlight.promoter": "Surligner et commenter",
