@@ -1,3 +1,12 @@
+## <small>5.3.1-beta.6 (2026-10-27)</small>
+
+* chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 (#810) ([18ddf9f](https://github.com/box/box-annotations/commit/18ddf9f)), closes [#810](https://github.com/box/box-annotations/issues/810)
+* chore(deps): bump launch-editor from 2.14.1 to 2.14.2 (#811) ([48aa890](https://github.com/box/box-annotations/commit/48aa890)), closes [#811](https://github.com/box/box-annotations/issues/811)
+* chore(deps): bump markdown-it from 14.3.1 to 14.3.3 (#812) ([8152886](https://github.com/box/box-annotations/commit/8152886)), closes [#812](https://github.com/box/box-annotations/issues/812)
+* chore(i18n): update translations (#808) ([d37f516](https://github.com/box/box-annotations/commit/d37f516)), closes [#808](https://github.com/box/box-annotations/issues/808)
+* chore(i18n): update translations (#814) ([cce3cab](https://github.com/box/box-annotations/commit/cce3cab)), closes [#814](https://github.com/box/box-annotations/issues/814)
+* feat(popups): add Blueprint toolbar popups behind the controls bar feature (#813) ([7f8de64](https://github.com/box/box-annotations/commit/7f8de64)), closes [#813](https://github.com/box/box-annotations/issues/813)
+
 ## <small>5.3.1-beta.5 (2026-10-19)</small>
 
 * Peer Blueprint 18.3.0 and drop the modernization provider (#809) ([a56ee9d](https://github.com/box/box-annotations/commit/a56ee9d)), closes [#809](https://github.com/box/box-annotations/issues/809)
