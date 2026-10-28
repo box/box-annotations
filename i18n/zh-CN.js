@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "添加评论",
     "ba.popups.drawing.delete": "删除",
     "ba.popups.drawing.redo": "重做",
+    "ba.popups.drawing.toolbar": "绘图操作",
     "ba.popups.drawing.undo": "撤销",
     "ba.popups.popupCursor.regionPrompt": "绘制一个框进行评论",
     "ba.popups.popupHighlight.promoter": "突出显示和评论",

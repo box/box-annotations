@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Legg til kommentar",
     "ba.popups.drawing.delete": "Slett",
     "ba.popups.drawing.redo": "Gjenta",
+    "ba.popups.drawing.toolbar": "Tegnehandlinger",
     "ba.popups.drawing.undo": "Angre",
     "ba.popups.popupCursor.regionPrompt": "Tegn en boks for å kommentere",
     "ba.popups.popupHighlight.promoter": "Merk og kommenter",

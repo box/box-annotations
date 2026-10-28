@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Lägg till kommentar",
     "ba.popups.drawing.delete": "Radera",
     "ba.popups.drawing.redo": "Gör om",
+    "ba.popups.drawing.toolbar": "Ritningsåtgärder",
     "ba.popups.drawing.undo": "Ångra",
     "ba.popups.popupCursor.regionPrompt": "Rita en ruta för att kommentera",
     "ba.popups.popupHighlight.promoter": "Markera och kommentera",

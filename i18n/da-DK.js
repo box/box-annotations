@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Tilføj kommentar",
     "ba.popups.drawing.delete": "Slet",
     "ba.popups.drawing.redo": "Annuller fortryd",
+    "ba.popups.drawing.toolbar": "Tegnehandlinger",
     "ba.popups.drawing.undo": "Fortryd",
     "ba.popups.popupCursor.regionPrompt": "Tegn et felt for at kommentere",
     "ba.popups.popupHighlight.promoter": "Fremhæv og kommenter",

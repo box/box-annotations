@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Opmerking toevoegen",
     "ba.popups.drawing.delete": "Verwijderen",
     "ba.popups.drawing.redo": "Opnieuw uitvoeren",
+    "ba.popups.drawing.toolbar": "Tekenacties",
     "ba.popups.drawing.undo": "Ongedaan maken",
     "ba.popups.popupCursor.regionPrompt": "Teken een vak om een opmerking te plaatsen",
     "ba.popups.popupHighlight.promoter": "Markeringen en opmerkingen plaatsen",

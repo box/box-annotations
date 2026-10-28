@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "Добавить комментарий",
     "ba.popups.drawing.delete": "Удалить",
     "ba.popups.drawing.redo": "Вернуть",
+    "ba.popups.drawing.toolbar": "Инструменты рисования",
     "ba.popups.drawing.undo": "Отменить",
     "ba.popups.popupCursor.regionPrompt": "Нарисуйте рамку для добавления комментария",
     "ba.popups.popupHighlight.promoter": "Выделить и прокомментировать",
