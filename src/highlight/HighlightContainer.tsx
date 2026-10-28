@@ -6,7 +6,6 @@ import {
     AppState,
     CreatorItemHighlight,
     CreatorStatus,
-    getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
     getCreatorStagedForLocation,
@@ -16,6 +15,7 @@ import {
     getIsSelecting,
     getRotation,
     getSelectionForLocation,
+    getVisibleActiveAnnotationId,
     isCreatorStagedHighlight,
     Mode,
     SelectionItem,
@@ -45,7 +45,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     const staged = getCreatorStagedForLocation(state, location);
 
     return {
-        activeAnnotationId: getActiveAnnotationId(state),
+        activeAnnotationId: getVisibleActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isHighlight),
         isBlueprintToolbarEnabled: getIsBlueprintToolbarEnabled(state),
         isCreating: getAnnotationMode(state) === Mode.HIGHLIGHT,

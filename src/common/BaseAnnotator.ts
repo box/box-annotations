@@ -127,6 +127,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.addListener(Event.ACTIVE_SET, this.handleSetActive);
         this.addListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.addListener(Event.COLOR_SET, this.handleSetColor);
+        this.addListener(Event.SHOW_RESOLVED_SET, this.handleSetShowResolved);
         this.addListener(Event.VISIBLE_SET, this.handleSetVisible);
         this.addListener(Event.BOUNDING_BOX_HIGHLIGHTS_SET, this.handleSetBoundingBoxHighlights);
         this.addListener(Event.BOUNDING_BOX_HIGHLIGHT_NAVIGATE, this.handleNavigateBoundingBoxHighlight);
@@ -166,6 +167,7 @@ export default class BaseAnnotator extends EventEmitter {
         this.removeListener(Event.ACTIVE_SET, this.handleSetActive);
         this.removeListener(Event.ANNOTATION_REMOVE, this.handleRemove);
         this.removeListener(Event.COLOR_SET, this.handleSetColor);
+        this.removeListener(Event.SHOW_RESOLVED_SET, this.handleSetShowResolved);
         this.removeListener(Event.VISIBLE_SET, this.handleSetVisible);
         this.removeListener(Event.BOUNDING_BOX_HIGHLIGHTS_SET, this.handleSetBoundingBoxHighlights);
         this.removeListener(Event.BOUNDING_BOX_HIGHLIGHT_NAVIGATE, this.handleNavigateBoundingBoxHighlight);
@@ -308,6 +310,10 @@ export default class BaseAnnotator extends EventEmitter {
         this.store.dispatch(store.setColorAction(color));
     }
 
+    public setShowResolved(showResolved: boolean): void {
+        this.store.dispatch(store.setShowResolvedAction(showResolved));
+    }
+
     public setVisibility(visibility: boolean): void {
         if (!this.containerEl) {
             return;
@@ -349,6 +355,10 @@ export default class BaseAnnotator extends EventEmitter {
             return;
         }
         this.setActiveId(annotationId);
+    };
+
+    protected handleSetShowResolved = (showResolved: boolean): void => {
+        this.setShowResolved(showResolved);
     };
 
     protected handleSetVisible = (visibility: boolean): void => {

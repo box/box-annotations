@@ -2,7 +2,12 @@ import { connect } from 'react-redux';
 import RegionAnnotations from './RegionAnnotations';
 import withProviders from '../common/withProviders';
 import { AnnotationRegion } from '../@types';
-import { AppState, getActiveAnnotationId, getAnnotationsForLocation, setActiveAnnotationIdAction } from '../store';
+import {
+    AppState,
+    getAnnotationsForLocation,
+    getVisibleActiveAnnotationId,
+    setActiveAnnotationIdAction,
+} from '../store';
 import { isRegion } from './regionUtil';
 
 export type Props = {
@@ -12,7 +17,7 @@ export type Props = {
 
 export const mapStateToProps = (state: AppState, { location }: { location: number }): Props => {
     return {
-        activeAnnotationId: getActiveAnnotationId(state),
+        activeAnnotationId: getVisibleActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isRegion),
     };
 };

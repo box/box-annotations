@@ -5,6 +5,7 @@ import {
     getAnnotations,
     getAnnotationsForLocation,
     getIsInitialized,
+    getVisibleActiveAnnotationId,
 } from '../selectors';
 
 describe('store/annotations/selectors', () => {
@@ -42,6 +43,39 @@ describe('store/annotations/selectors', () => {
                 expect.objectContaining({ id: 'testVid3' }),
             ]);
         });
+
+        test('should omit resolved annotations when showResolved is false', () => {
+            const hiddenState = {
+                annotations: {
+                    ...annotationState,
+                    byId: {
+                        ...annotationState.byId,
+                        test1: { ...annotationState.byId.test1, status: 'resolved' as const },
+                    },
+                },
+                options: { showResolved: false },
+            };
+
+            expect(getAnnotationsForLocation(hiddenState, 1)).toEqual([expect.objectContaining({ id: 'test2' })]);
+        });
+
+        test('should keep resolved annotations when showResolved is true', () => {
+            const visibleState = {
+                annotations: {
+                    ...annotationState,
+                    byId: {
+                        ...annotationState.byId,
+                        test1: { ...annotationState.byId.test1, status: 'resolved' as const },
+                    },
+                },
+                options: { showResolved: true },
+            };
+
+            expect(getAnnotationsForLocation(visibleState, 1)).toEqual([
+                expect.objectContaining({ id: 'test1' }),
+                expect.objectContaining({ id: 'test2' }),
+            ]);
+        });
     });
 
     describe('getActiveAnnotationId', () => {
@@ -52,6 +86,48 @@ describe('store/annotations/selectors', () => {
         test('should get the active id', () => {
             const newState = { annotations: { ...annotationState, activeId: '123' } };
             expect(getActiveAnnotationId(newState)).toEqual('123');
+        });
+    });
+
+    describe('getVisibleActiveAnnotationId', () => {
+        test('should return the active id when the annotation is open', () => {
+            const openState = {
+                annotations: { ...annotationState, activeId: 'test1' },
+                options: { showResolved: false },
+            };
+
+            expect(getVisibleActiveAnnotationId(openState)).toEqual('test1');
+        });
+
+        test('should hide the active id when that annotation is resolved and showResolved is false', () => {
+            const hiddenState = {
+                annotations: {
+                    ...annotationState,
+                    activeId: 'test1',
+                    byId: {
+                        ...annotationState.byId,
+                        test1: { ...annotationState.byId.test1, status: 'resolved' as const },
+                    },
+                },
+                options: { showResolved: false },
+            };
+
+            expect(getVisibleActiveAnnotationId(hiddenState)).toEqual(null);
+        });
+
+        test('should keep a resolved active id when showResolved is unset', () => {
+            const visibleState = {
+                annotations: {
+                    ...annotationState,
+                    activeId: 'test1',
+                    byId: {
+                        ...annotationState.byId,
+                        test1: { ...annotationState.byId.test1, status: 'resolved' as const },
+                    },
+                },
+            };
+
+            expect(getVisibleActiveAnnotationId(visibleState)).toEqual('test1');
         });
     });
 

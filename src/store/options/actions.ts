@@ -7,4 +7,5 @@ export const setFileVersionIdAction = createAction<string | null>('SET_FILE_VERS
 export const setPermissionsAction = createAction<Permissions>('SET_PERMISSIONS');
 export const setRotationAction = createAction<number>('SET_ROTATION');
 export const setScaleAction = createAction<number>('SET_SCALE');
+export const setShowResolvedAction = createAction<boolean>('SET_SHOW_RESOLVED');
 export const setViewModeAction = createAction<ViewMode>('SET_VIEW_MODE');

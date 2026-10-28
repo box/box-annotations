@@ -13,13 +13,13 @@ import { AnnotationDrawing, PathGroup } from '../@types';
 import {
     AppState,
     CreatorStatus,
-    getActiveAnnotationId,
     getAnnotationMode,
     getAnnotationsForLocation,
     getColor,
     getCreatorStatus,
     getIsBlueprintToolbarEnabled,
     getRotation,
+    getVisibleActiveAnnotationId,
     Mode,
     setActiveAnnotationIdAction,
     setReferenceIdAction,
@@ -45,7 +45,7 @@ export const mapStateToProps = (state: AppState, { location }: { location: numbe
     const creatorStatus = getCreatorStatus(state);
 
     return {
-        activeAnnotationId: getActiveAnnotationId(state),
+        activeAnnotationId: getVisibleActiveAnnotationId(state),
         annotations: getAnnotationsForLocation(state, location).filter(isDrawing),
         color: getColor(state),
         canShowPopupToolbar: creatorStatus === CreatorStatus.started,

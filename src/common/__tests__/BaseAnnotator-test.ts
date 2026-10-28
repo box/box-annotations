@@ -218,6 +218,7 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.COLOR_SET, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(Event.SHOW_RESOLVED_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(
@@ -272,6 +273,7 @@ describe('BaseAnnotator', () => {
             jest.spyOn(annotator, 'removeAnnotation');
             jest.spyOn(annotator, 'setActiveId');
             jest.spyOn(annotator, 'setColor');
+            jest.spyOn(annotator, 'setShowResolved');
             jest.spyOn(annotator, 'setVisibility');
         });
 
@@ -287,6 +289,9 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.VISIBLE_SET, true);
             expect(annotator.setVisibility).toHaveBeenCalledWith(true);
+
+            annotator.emit(Event.SHOW_RESOLVED_SET, false);
+            expect(annotator.setShowResolved).toHaveBeenCalledWith(false);
 
             annotator.emit(Event.COLOR_SET, '#000');
             expect(annotator.setColor).toHaveBeenCalledWith('#000');

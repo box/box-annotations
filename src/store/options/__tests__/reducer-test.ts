@@ -1,5 +1,11 @@
 import reducer from '../reducer';
-import { setFileIdAction, setFileVersionIdAction, setPermissionsAction, setViewModeAction } from '../actions';
+import {
+    setFileIdAction,
+    setFileVersionIdAction,
+    setPermissionsAction,
+    setShowResolvedAction,
+    setViewModeAction,
+} from '../actions';
 
 describe('store/options/reducer', () => {
     describe('setFileIdAction', () => {
@@ -20,6 +26,13 @@ describe('store/options/reducer', () => {
         test('should set the permissions', () => {
             const newState = reducer(undefined, setPermissionsAction({ can_create_annotations: true }));
             expect(newState.permissions).toEqual({ can_create_annotations: true });
+        });
+    });
+
+    describe('setShowResolvedAction', () => {
+        test('should set whether resolved annotations are shown', () => {
+            const newState = reducer(undefined, setShowResolvedAction(false));
+            expect(newState.showResolved).toEqual(false);
         });
     });
 
