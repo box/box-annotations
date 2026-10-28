@@ -1,3 +1,7 @@
+## <small>5.3.1-beta.7 (2026-10-28)</small>
+
+* chore(i18n): update translations (#815) ([d8a8bc3](https://github.com/box/box-annotations/commit/d8a8bc3)), closes [#815](https://github.com/box/box-annotations/issues/815)
+
 ## <small>5.3.1-beta.6 (2026-10-27)</small>
 
 * chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 (#810) ([18ddf9f](https://github.com/box/box-annotations/commit/18ddf9f)), closes [#810](https://github.com/box/box-annotations/issues/810)
