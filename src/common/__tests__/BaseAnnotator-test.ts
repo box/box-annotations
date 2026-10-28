@@ -218,6 +218,7 @@ describe('BaseAnnotator', () => {
             expect(annotator.removeListener).toBeCalledWith(Event.ACTIVE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.ANNOTATION_REMOVE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.COLOR_SET, expect.any(Function));
+            expect(annotator.removeListener).toBeCalledWith(Event.SHOW_RESOLVED_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(Event.VISIBLE_SET, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(LegacyEvent.SCALE, expect.any(Function));
             expect(annotator.removeListener).toBeCalledWith(
@@ -272,6 +273,7 @@ describe('BaseAnnotator', () => {
             jest.spyOn(annotator, 'removeAnnotation');
             jest.spyOn(annotator, 'setActiveId');
             jest.spyOn(annotator, 'setColor');
+            jest.spyOn(annotator, 'setShowResolved');
             jest.spyOn(annotator, 'setVisibility');
         });
 
@@ -287,6 +289,9 @@ describe('BaseAnnotator', () => {
 
             annotator.emit(Event.VISIBLE_SET, true);
             expect(annotator.setVisibility).toHaveBeenCalledWith(true);
+
+            annotator.emit(Event.SHOW_RESOLVED_SET, false);
+            expect(annotator.setShowResolved).toHaveBeenCalledWith(false);
 
             annotator.emit(Event.COLOR_SET, '#000');
             expect(annotator.setColor).toHaveBeenCalledWith('#000');
@@ -393,6 +398,43 @@ describe('BaseAnnotator', () => {
             annotator.containerEl = document.querySelector('nonsense') as HTMLElement;
             annotator.setVisibility(true);
             expect(annotator.containerEl?.classList).toBeFalsy();
+        });
+    });
+
+    describe('setShowResolved()', () => {
+        test('should dispatch setShowResolvedAction', () => {
+            annotator.setShowResolved(true);
+
+            expect(annotator.store.dispatch).toBeCalledWith(store.setShowResolvedAction(true));
+            expect(annotator.store.dispatch).not.toBeCalledWith(store.setActiveAnnotationIdAction(null));
+        });
+
+        test('should deselect a resolved annotation when the filter turns off', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: {
+                    activeId: 'anno-1',
+                    byId: { 'anno-1': { id: 'anno-1', status: 'resolved' } },
+                },
+            });
+
+            annotator.setShowResolved(false);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setShowResolvedAction(false));
+        });
+
+        test('should keep an open annotation selected when the filter turns off', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: {
+                    activeId: 'anno-1',
+                    byId: { 'anno-1': { id: 'anno-1', status: 'open' } },
+                },
+            });
+
+            annotator.setShowResolved(false);
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setShowResolvedAction(false));
         });
     });
 

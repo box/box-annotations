@@ -5,6 +5,7 @@ enum Event {
     BOUNDING_BOX_HIGHLIGHTS_SET = 'bounding_box_highlights_set',
     BOUNDING_BOX_HIGHLIGHT_SELECT = 'bounding_box_highlight_select',
     COLOR_SET = 'annotations_color_set',
+    SHOW_RESOLVED_SET = 'annotations_show_resolved_set',
     VIEW_MODE_SET = 'view_mode_set',
     VISIBLE_SET = 'annotations_visible_set',
 

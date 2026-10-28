@@ -6,6 +6,7 @@ import {
     setPermissionsAction,
     setRotationAction,
     setScaleAction,
+    setShowResolvedAction,
     setViewModeAction,
 } from './actions';
 
@@ -38,6 +39,9 @@ export default createReducer<OptionsState>(initialState, builder =>
         })
         .addCase(setScaleAction, (state, { payload }) => {
             state.scale = payload;
+        })
+        .addCase(setShowResolvedAction, (state, { payload }) => {
+            state.showResolved = payload;
         })
         .addCase(setViewModeAction, (state, { payload }) => {
             state.viewMode = payload;

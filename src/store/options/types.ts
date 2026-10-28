@@ -13,6 +13,7 @@ export type OptionsState = {
     permissions: Permissions;
     rotation: number;
     scale: number;
+    showResolved?: boolean;
     token: Token;
     viewMode: ViewMode;
 };
