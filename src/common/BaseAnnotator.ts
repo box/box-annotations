@@ -311,6 +311,16 @@ export default class BaseAnnotator extends EventEmitter {
     }
 
     public setShowResolved(showResolved: boolean): void {
+        if (!showResolved) {
+            const annotations = this.store.getState()?.annotations;
+            const activeId = annotations?.activeId;
+            const activeAnnotation = activeId ? annotations?.byId?.[activeId] : undefined;
+            // Leaving this id set would reopen the thread when the filter turns back on.
+            if (activeAnnotation?.status === 'resolved') {
+                this.store.dispatch(store.setActiveAnnotationIdAction(null));
+            }
+        }
+
         this.store.dispatch(store.setShowResolvedAction(showResolved));
     }
 

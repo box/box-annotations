@@ -401,6 +401,43 @@ describe('BaseAnnotator', () => {
         });
     });
 
+    describe('setShowResolved()', () => {
+        test('should dispatch setShowResolvedAction', () => {
+            annotator.setShowResolved(true);
+
+            expect(annotator.store.dispatch).toBeCalledWith(store.setShowResolvedAction(true));
+            expect(annotator.store.dispatch).not.toBeCalledWith(store.setActiveAnnotationIdAction(null));
+        });
+
+        test('should deselect a resolved annotation when the filter turns off', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: {
+                    activeId: 'anno-1',
+                    byId: { 'anno-1': { id: 'anno-1', status: 'resolved' } },
+                },
+            });
+
+            annotator.setShowResolved(false);
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setShowResolvedAction(false));
+        });
+
+        test('should keep an open annotation selected when the filter turns off', () => {
+            annotator.store.getState = jest.fn().mockReturnValue({
+                annotations: {
+                    activeId: 'anno-1',
+                    byId: { 'anno-1': { id: 'anno-1', status: 'open' } },
+                },
+            });
+
+            annotator.setShowResolved(false);
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(store.setActiveAnnotationIdAction(null));
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(store.setShowResolvedAction(false));
+        });
+    });
+
     describe('setActiveAnnotationId()', () => {
         test.each([null, '12345'])('should dispatch setActiveAnnotationIdAction with id %s', id => {
             annotator.setActiveId(id);
