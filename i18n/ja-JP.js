@@ -18,6 +18,7 @@ export default {
     "ba.popups.drawing.addComment": "コメントを追加",
     "ba.popups.drawing.delete": "削除",
     "ba.popups.drawing.redo": "やり直す",
+    "ba.popups.drawing.toolbar": "描画操作",
     "ba.popups.drawing.undo": "元に戻す",
     "ba.popups.popupCursor.regionPrompt": "四角形を描画してコメントします",
     "ba.popups.popupHighlight.promoter": "ハイライトとコメント",
