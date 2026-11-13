@@ -1,3 +1,7 @@
+## <small>5.3.1-beta.9 (2026-11-13)</small>
+
+* fix: remove isThreadedAnnotation feature flag (#823) ([0564493](https://github.com/box/box-annotations/commit/0564493)), closes [#823](https://github.com/box/box-annotations/issues/823)
+
 ## <small>5.3.1-beta.8 (2026-11-13)</small>
 
 * chore(deps): bump fast-uri from 3.1.7 to 3.1.9 (#818) ([7111e03](https://github.com/box/box-annotations/commit/7111e03)), closes [#818](https://github.com/box/box-annotations/issues/818)
