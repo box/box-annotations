@@ -31,7 +31,7 @@ export default createReducer<DrawingState>(initialState, builder =>
                 state.drawnPathGroups.push(pathGroup);
             }
         })
-        .addCase(resetCreatorAction, () => initialState) // Needed for when `PopupReply` is cancelled
+        .addCase(resetCreatorAction, () => initialState) // Needed for when the popup is cancelled
         .addCase(resetDrawingAction, () => initialState)
         .addCase(setDrawingLocationAction, (state, { payload }) => {
             if (state.location !== payload) {

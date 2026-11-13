@@ -103,12 +103,10 @@ describe('store/options/selectors', () => {
 
     describe('getIsRichTextEnabled', () => {
         test.each`
-            features                                                    | expected
-            ${{ isRichTextEnabled: true, isThreadedAnnotation: true }}  | ${true}
-            ${{ isRichTextEnabled: true, isThreadedAnnotation: false }} | ${false}
-            ${{ isRichTextEnabled: true }}                              | ${false}
-            ${{ isRichTextEnabled: false, isThreadedAnnotation: true }} | ${false}
-            ${{}}                                                       | ${false}
+            features                         | expected
+            ${{ isRichTextEnabled: true }}    | ${true}
+            ${{ isRichTextEnabled: false }}   | ${false}
+            ${{}}                            | ${false}
         `('should return $expected for features $features', ({ features, expected }) => {
             expect(getIsRichTextEnabled({ options: { ...optionsState, features } })).toBe(expected);
         });

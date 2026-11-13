@@ -3,7 +3,7 @@ import { Annotation, NewAnnotation, Reply } from '../../@types';
 import { APICollection } from '../../api';
 import { AppThunkAPI } from '../types';
 import { getAnnotation } from './selectors';
-import { getFileId, getFileVersionId, getIsRichTextEnabled, getPermissions, isFeatureEnabled } from '../options';
+import { getFileId, getFileVersionId, getIsRichTextEnabled, getPermissions } from '../options';
 
 export const createAnnotationAction = createAsyncThunk<Annotation, NewAnnotation, AppThunkAPI>(
     'CREATE_ANNOTATION',
@@ -49,7 +49,6 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
             client.destroy();
         });
 
-        const shouldFetchReplies = isFeatureEnabled(state, 'isThreadedAnnotation');
         const shouldEnableRichText = getIsRichTextEnabled(state);
 
         // Wrap the client request in a promise to allow it to be returned and cancelled
@@ -62,7 +61,7 @@ export const fetchAnnotationsAction = createAsyncThunk<APICollection<Annotation>
                 reject,
                 1000,
                 false,
-                shouldFetchReplies,
+                true,
                 shouldEnableRichText,
             );
         });
