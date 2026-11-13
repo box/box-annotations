@@ -1,7 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import noop from 'lodash/noop';
-import PopupReply from '../components/Popups/PopupReply';
 import PopupV2 from '../components/Popups/PopupV2';
 import { CreateArg as DrawingCreateArg } from '../drawing/actions';
 import { CreateArg as HighlightCreateArg } from '../highlight/actions';
@@ -26,7 +24,6 @@ export type Props = {
     createHighlight?: (arg: HighlightCreateArg) => void;
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
-    isThreadedAnnotation?: boolean;
     location: number;
     message: string;
     mode: Mode;
@@ -54,13 +51,11 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         createHighlight = noop,
         createRegion = noop,
         isPromoting = false,
-        isThreadedAnnotation = false,
         message,
         mode,
         popupPortalEl,
         referenceId,
         resetCreator,
-        setMessage,
         staged,
         status,
         targetType,
@@ -70,14 +65,9 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     const [activeReference, setActiveReference] = React.useState<PopupReference | null>(null);
     const canCreate = (modeStagedMap[mode]?.(staged ?? null) ?? false) || isPromoting;
     const canReply = status !== CreatorStatus.started && status !== CreatorStatus.init;
-    const isPending = status === CreatorStatus.pending;
 
     const handleCancel = (): void => {
         resetCreator();
-    };
-
-    const handleChange = (text = ''): void => {
-        setMessage(text);
     };
 
     const handleSubmit = (text?: string): void => {
@@ -103,7 +93,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
     // activeAnnotationId can be set (e.g. via deep link) before the target DOM node mounts;
     // observe until it appears, or give up after ACTIVE_TARGET_OBSERVER_TIMEOUT_MS.
     React.useEffect(() => {
-        if (!activeAnnotationId || !isThreadedAnnotation) {
+        if (!activeAnnotationId) {
             setActiveReference(null);
             return noop;
         }
@@ -133,11 +123,11 @@ const PopupLayer = (props: Props): JSX.Element | null => {
             observer.disconnect();
             window.clearTimeout(timeoutId);
         };
-    }, [activeAnnotationId, isThreadedAnnotation]);
+    }, [activeAnnotationId]);
 
     const showCreator = canCreate && canReply && reference && staged;
 
-    if (showCreator && isThreadedAnnotation) {
+    if (showCreator) {
         return (
             <div className="ba-PopupLayer-popup">
                 <PopupV2
@@ -150,24 +140,7 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         );
     }
 
-    if (showCreator) {
-        if (!popupPortalEl) return null;
-        return ReactDOM.createPortal(
-            <div className="ba-PopupLayer-popup">
-                <PopupReply
-                    isPending={isPending}
-                    onCancel={handleCancel}
-                    onChange={handleChange}
-                    onSubmit={handleSubmit}
-                    reference={reference}
-                    value={message}
-                />
-            </div>,
-            popupPortalEl,
-        );
-    }
-
-    if (isThreadedAnnotation && activeAnnotationId && activeReference) {
+    if (activeAnnotationId && activeReference) {
         return (
             <div className="ba-PopupLayer-popup">
                 <PopupV2

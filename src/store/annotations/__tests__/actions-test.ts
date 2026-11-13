@@ -32,7 +32,7 @@ describe('store/annotations/actions', () => {
     const getState = jest.fn().mockReturnValue(baseState);
     const richTextOptions = {
         ...baseState.options,
-        features: { isRichTextEnabled: true, isThreadedAnnotation: true },
+        features: { isRichTextEnabled: true },
     };
 
     describe('createAnnotationAction', () => {
@@ -111,13 +111,12 @@ describe('store/annotations/actions', () => {
             });
 
             test.each`
-                isThreadedAnnotation | isRichTextEnabled | expected
-                ${true}              | ${true}           | ${true}
-                ${false}             | ${true}           | ${false}
-                ${true}              | ${false}          | ${false}
+                isRichTextEnabled | expected
+                ${true}           | ${true}
+                ${false}          | ${false}
             `(
-                'should pass $expected into getAnnotations when isThreadedAnnotation is $isThreadedAnnotation and isRichTextEnabled is $isRichTextEnabled',
-                async ({ isThreadedAnnotation, isRichTextEnabled, expected }) => {
+                'should pass shouldEnableRichText=$expected into getAnnotations when isRichTextEnabled is $isRichTextEnabled',
+                async ({ isRichTextEnabled, expected }) => {
                     const getAnnotations = jest.fn((fileId, fileVersionId, permissions, resolve) =>
                         resolve({ entries: [], limit: 1000, next_marker: null }),
                     );
@@ -129,7 +128,7 @@ describe('store/annotations/actions', () => {
                         ...baseState,
                         options: {
                             ...baseState.options,
-                            features: { isRichTextEnabled, isThreadedAnnotation },
+                            features: { isRichTextEnabled },
                         },
                     });
 
@@ -143,7 +142,7 @@ describe('store/annotations/actions', () => {
                         expect.any(Function),
                         1000,
                         false,
-                        isThreadedAnnotation,
+                        true,
                         expected,
                     );
                 },
