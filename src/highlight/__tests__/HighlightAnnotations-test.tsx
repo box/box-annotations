@@ -7,7 +7,6 @@ import HighlightSvg from '../HighlightSvg';
 import PopupHighlight from '../../components/Popups/PopupHighlight';
 import PopupHighlightV2 from '../../components/Popups/PopupHighlightV2';
 import PopupHighlightError from '../../components/Popups/PopupHighlightError';
-import PopupReply from '../../components/Popups/PopupReply';
 import { CreatorStatus, CreatorItemHighlight } from '../../store';
 import { Rect } from '../../@types';
 import { selection as selectionMock } from '../__mocks__/data';
@@ -16,7 +15,6 @@ jest.mock('../HighlightList');
 jest.mock('../HighlightTarget');
 jest.mock('../../components/Popups/PopupHighlight');
 jest.mock('../../components/Popups/PopupHighlightError');
-jest.mock('../../components/Popups/PopupReply');
 
 describe('HighlightAnnotations', () => {
     const defaults = {
@@ -65,7 +63,6 @@ describe('HighlightAnnotations', () => {
             expect(wrapper.find(HighlightList).exists()).toBe(true);
             expect(wrapper.exists(HighlightCanvas)).toBe(false);
             expect(wrapper.exists(HighlightSvg)).toBe(false);
-            expect(wrapper.exists(PopupReply)).toBe(false);
         });
 
         test('should render a staged highlight if staged object exists', () => {

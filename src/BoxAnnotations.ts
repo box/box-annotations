@@ -21,7 +21,6 @@ type AnnotationsOptions = {
 
 export type Features = {
     isRichTextEnabled?: boolean;
-    isThreadedAnnotation?: boolean;
     [key: string]: boolean | undefined;
 };
 

@@ -7,7 +7,6 @@ import { Rect } from '../../@types';
 import { TARGET_TYPE } from '../../constants';
 
 let mockOnCancel: ((text?: string) => void) | undefined;
-let mockOnChange: ((text?: string) => void) | undefined;
 let mockOnSubmit: ((text: string) => void) | undefined;
 
 jest.mock('../../components/Popups/PopupV2', () => {
@@ -18,19 +17,6 @@ jest.mock('../../components/Popups/PopupV2', () => {
         return ReactMock.createElement('div', {
             'data-testid': 'popup-v2',
             'data-annotation-id': props.annotationId || '',
-        });
-    };
-});
-
-jest.mock('../../components/Popups/PopupReply', () => {
-    const ReactMock = jest.requireActual('react');
-    return (props: Record<string, unknown>) => {
-        mockOnCancel = props.onCancel as typeof mockOnCancel;
-        mockOnChange = props.onChange as typeof mockOnChange;
-        mockOnSubmit = props.onSubmit as typeof mockOnSubmit;
-        return ReactMock.createElement('div', {
-            'data-testid': 'popup-reply',
-            'data-is-pending': String(props.isPending),
         });
     };
 });
@@ -80,7 +66,6 @@ describe('PopupLayer', () => {
         document.body.innerHTML = `<div data-ba-reference-id="${referenceId}"></div>`;
         document.body.appendChild(popupPortalEl);
         mockOnCancel = undefined;
-        mockOnChange = undefined;
         mockOnSubmit = undefined;
     });
 
@@ -94,64 +79,40 @@ describe('PopupLayer', () => {
 
     describe('render()', () => {
         test.each`
-            status                    | showReply
+            status                    | showPopup
             ${CreatorStatus.init}     | ${false}
             ${CreatorStatus.pending}  | ${true}
             ${CreatorStatus.rejected} | ${true}
             ${CreatorStatus.staged}   | ${true}
-        `('should render a reply popup ($showReply) if the creator status is $status', ({ status, showReply }) => {
+        `('should render PopupV2 ($showPopup) if the creator status is $status', ({ status, showPopup }) => {
             renderLayer({ status });
 
-            if (showReply) {
-                expect(screen.getByTestId('popup-reply')).toBeDefined();
+            if (showPopup) {
+                expect(screen.getByTestId('popup-v2')).toBeDefined();
             } else {
-                expect(screen.queryByTestId('popup-reply')).toBeNull();
+                expect(screen.queryByTestId('popup-v2')).toBeNull();
             }
         });
 
-        test.each`
-            status                    | isPending
-            ${CreatorStatus.rejected} | ${false}
-            ${CreatorStatus.pending}  | ${true}
-            ${CreatorStatus.staged}   | ${false}
-        `('should render reply popup with isPending $isPending', ({ status, isPending }) => {
-            renderLayer({ status });
-
-            expect(screen.getByTestId('popup-reply').getAttribute('data-is-pending')).toBe(String(isPending));
-        });
-
-        test('should not render PopupReply if there is a staged type and mode mismatch', () => {
-            // defaults has staged as highlight
+        test('should not render PopupV2 if there is a staged type and mode mismatch', () => {
             renderLayer({ mode: Mode.REGION });
 
-            expect(screen.queryByTestId('popup-reply')).toBeNull();
-        });
-
-        test('should render PopupReply if promoting a highlight and staged exists', () => {
-            renderLayer({ mode: Mode.NONE, isPromoting: true });
-            expect(screen.getByTestId('popup-reply')).toBeDefined();
-        });
-
-        test('should not render PopupReply if promoting a highlight but staged does not exist', () => {
-            renderLayer({ mode: Mode.NONE, isPromoting: true, staged: null });
-            expect(screen.queryByTestId('popup-reply')).toBeNull();
-        });
-
-        test('should render PopupReply if it is a staged drawing', () => {
-            renderLayer({ mode: Mode.DRAWING, staged: getStagedDrawing() });
-            expect(screen.getByTestId('popup-reply')).toBeDefined();
-        });
-
-        test('should render PopupReplyV2 when isThreadedAnnotation is true', () => {
-            renderLayer({ isThreadedAnnotation: true });
-            expect(screen.getByTestId('popup-v2')).toBeDefined();
-            expect(screen.queryByTestId('popup-reply')).toBeNull();
-        });
-
-        test('should render PopupReply when isThreadedAnnotation is false', () => {
-            renderLayer();
-            expect(screen.getByTestId('popup-reply')).toBeDefined();
             expect(screen.queryByTestId('popup-v2')).toBeNull();
+        });
+
+        test('should render PopupV2 if promoting a highlight and staged exists', () => {
+            renderLayer({ mode: Mode.NONE, isPromoting: true });
+            expect(screen.getByTestId('popup-v2')).toBeDefined();
+        });
+
+        test('should not render PopupV2 if promoting a highlight but staged does not exist', () => {
+            renderLayer({ mode: Mode.NONE, isPromoting: true, staged: null });
+            expect(screen.queryByTestId('popup-v2')).toBeNull();
+        });
+
+        test('should render PopupV2 if it is a staged drawing', () => {
+            renderLayer({ mode: Mode.DRAWING, staged: getStagedDrawing() });
+            expect(screen.getByTestId('popup-v2')).toBeDefined();
         });
 
         describe('active annotation thread', () => {
@@ -170,7 +131,6 @@ describe('PopupLayer', () => {
 
                 renderLayer({
                     activeAnnotationId,
-                    isThreadedAnnotation: true,
                     staged: null,
                     status: CreatorStatus.init,
                 });
@@ -195,7 +155,6 @@ describe('PopupLayer', () => {
 
                 const { rerender } = renderLayer({
                     activeAnnotationId,
-                    isThreadedAnnotation: true,
                     staged: null,
                     status: CreatorStatus.init,
                 });
@@ -207,7 +166,6 @@ describe('PopupLayer', () => {
                         <PopupLayer
                             {...getDefaults()}
                             activeAnnotationId="annotation-2"
-                            isThreadedAnnotation
                             staged={null}
                             status={CreatorStatus.init}
                         />,
@@ -224,7 +182,6 @@ describe('PopupLayer', () => {
 
                 const { unmount } = renderLayer({
                     activeAnnotationId,
-                    isThreadedAnnotation: true,
                     staged: null,
                     status: CreatorStatus.init,
                 });
@@ -242,7 +199,6 @@ describe('PopupLayer', () => {
             test('should not update reference when target appears after unmount', () => {
                 const { unmount } = renderLayer({
                     activeAnnotationId,
-                    isThreadedAnnotation: true,
                     staged: null,
                     status: CreatorStatus.init,
                 });
@@ -264,7 +220,6 @@ describe('PopupLayer', () => {
 
                 renderLayer({
                     activeAnnotationId,
-                    isThreadedAnnotation: true,
                     staged: null,
                     status: CreatorStatus.init,
                 });
@@ -283,54 +238,14 @@ describe('PopupLayer', () => {
         });
     });
 
-    describe('popup portal', () => {
-        test('should render PopupReply into popupPortalEl', () => {
-            renderLayer();
-
-            expect(popupPortalEl.querySelector('[data-testid="popup-reply"]')).toBeTruthy();
-        });
-
-        test('should render nothing when popupPortalEl is missing', () => {
-            renderLayer({ popupPortalEl: null });
-
-            expect(screen.queryByTestId('popup-reply')).toBeNull();
-        });
-    });
-
     describe('event handlers', () => {
         describe('handleCancel()', () => {
-            test('should reset creator and reset isPromoting', () => {
+            test('should reset creator', () => {
                 const resetCreator = jest.fn();
                 renderLayer({ resetCreator });
                 mockOnCancel!();
 
                 expect(resetCreator).toHaveBeenCalled();
-            });
-
-            test('should reset creator when PopupV2 cancels a threaded create', () => {
-                const resetCreator = jest.fn();
-                renderLayer({ isThreadedAnnotation: true, resetCreator });
-                mockOnCancel!();
-
-                expect(resetCreator).toHaveBeenCalled();
-            });
-        });
-
-        describe('handleChange', () => {
-            test('should set the staged state with the new message', () => {
-                const setMessage = jest.fn();
-                renderLayer({ setMessage });
-                mockOnChange!('foo');
-
-                expect(setMessage).toHaveBeenCalledWith('foo');
-            });
-
-            test('should set the staged state with empty string', () => {
-                const setMessage = jest.fn();
-                renderLayer({ setMessage });
-                mockOnChange!();
-
-                expect(setMessage).toHaveBeenCalledWith('');
             });
         });
 

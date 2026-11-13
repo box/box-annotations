@@ -23,7 +23,4 @@ export const isFeatureEnabled = (state: State, featurename: string): boolean =>
 export const getIsBlueprintToolbarEnabled = (state: State): boolean =>
     isFeatureEnabled(state, 'blueprintMigrationControlsBar');
 
-// Rich text is only rendered and authored in the threaded popup (PopupV2). The legacy popup editor
-// is plain text, so the flag only applies when threaded annotations are on.
-export const getIsRichTextEnabled = (state: State): boolean =>
-    isFeatureEnabled(state, 'isThreadedAnnotation') && isFeatureEnabled(state, 'isRichTextEnabled');
+export const getIsRichTextEnabled = (state: State): boolean => isFeatureEnabled(state, 'isRichTextEnabled');

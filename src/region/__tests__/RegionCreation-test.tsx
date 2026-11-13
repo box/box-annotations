@@ -7,7 +7,6 @@ import { CreatorItem, CreatorStatus } from '../../store';
 import { Rect } from '../../@types';
 import { TARGET_TYPE } from '../../constants';
 
-jest.mock('../../components/Popups/PopupReply');
 jest.mock('../RegionCreator');
 jest.mock('../RegionRect');
 

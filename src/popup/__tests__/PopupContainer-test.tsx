@@ -30,7 +30,6 @@ describe('PopupContainer', () => {
                 createHighlight: expect.any(Function),
                 createRegion: expect.any(Function),
                 isPromoting: false,
-                isThreadedAnnotation: false,
                 mode: Mode.NONE,
                 referenceId: null,
                 resetCreator: expect.any(Function),
@@ -39,19 +38,6 @@ describe('PopupContainer', () => {
                 status: CreatorStatus.init,
                 store: defaults.store,
             });
-        });
-
-        test('should pass isThreadedAnnotation as true when feature is enabled in store', () => {
-            const store = createStore({
-                options: {
-                    features: {
-                        isThreadedAnnotation: true,
-                    },
-                },
-            });
-            const wrapper = getWrapper({ store });
-
-            expect(wrapper.find(PopupLayer).prop('isThreadedAnnotation')).toBe(true);
         });
     });
 });
