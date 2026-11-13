@@ -1,3 +1,12 @@
+## <small>5.3.1-beta.8 (2026-11-13)</small>
+
+* chore(deps): bump fast-uri from 3.1.7 to 3.1.9 (#818) ([7111e03](https://github.com/box/box-annotations/commit/7111e03)), closes [#818](https://github.com/box/box-annotations/issues/818)
+* chore(deps): bump follow-redirects from 1.16.1 to 1.16.2 (#821) ([1bb3016](https://github.com/box/box-annotations/commit/1bb3016)), closes [#821](https://github.com/box/box-annotations/issues/821)
+* chore(deps): bump serialize-javascript from 7.1.2 to 7.1.4 (#819) ([d5c416f](https://github.com/box/box-annotations/commit/d5c416f)), closes [#819](https://github.com/box/box-annotations/issues/819)
+* chore(deps): bump systeminformation from 5.33.5 to 5.33.19 (#820) ([b27a463](https://github.com/box/box-annotations/commit/b27a463)), closes [#820](https://github.com/box/box-annotations/issues/820)
+* chore(i18n): update translations (#816) ([cd260c7](https://github.com/box/box-annotations/commit/cd260c7)), closes [#816](https://github.com/box/box-annotations/issues/816)
+* fix(annotations): hide resolved marks when the host turns the filter off (#817) ([148867e](https://github.com/box/box-annotations/commit/148867e)), closes [#817](https://github.com/box/box-annotations/issues/817)
+
 ## <small>5.3.1-beta.7 (2026-10-28)</small>
 
 * chore(i18n): update translations (#815) ([d8a8bc3](https://github.com/box/box-annotations/commit/d8a8bc3)), closes [#815](https://github.com/box/box-annotations/issues/815)
