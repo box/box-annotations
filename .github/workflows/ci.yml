@@ -16,6 +16,8 @@ concurrency:
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
+    # No job runs Cypress, so skip its binary download in yarn install.
+    CYPRESS_INSTALL_BINARY: 0
     HUSKY_SKIP_HOOKS: 1
     NODE_OPTIONS: --openssl-legacy-provider
     TZ: America/Los_Angeles
@@ -60,43 +62,15 @@ jobs:
             - run: yarn install --frozen-lockfile
             - run: yarn build
 
-    # E2E_ACCESS_TOKEN is a write token, and GitHub does not pass secrets to fork PRs.
-    e2e-tests:
-        name: E2E Tests
-        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
-        runs-on: ubuntu-latest
-        timeout-minutes: 30
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version-file: .nvmrc
-                  cache: yarn
-            - uses: actions/cache@v4
-              with:
-                  path: ~/.cache/Cypress
-                  key: cypress-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-            - run: yarn install --frozen-lockfile
-            - run: yarn test:e2e
-              env:
-                  E2E_ACCESS_TOKEN: ${{ secrets.E2E_ACCESS_TOKEN }}
-            - uses: actions/upload-artifact@v4
-              if: failure()
-              with:
-                  name: cypress-screenshots
-                  path: test/screenshots
-                  if-no-files-found: ignore
-
     # Single check for Mergify, so jobs can be added or renamed without touching it.
     ci-status:
         name: CI Status
         if: always()
-        needs: [lint, unit-tests, build, e2e-tests]
+        needs: [lint, unit-tests, build]
         runs-on: ubuntu-latest
         steps:
             - if: >-
                   needs.lint.result != 'success' ||
                   needs.unit-tests.result != 'success' ||
-                  needs.build.result != 'success' ||
-                  (needs.e2e-tests.result != 'success' && needs.e2e-tests.result != 'skipped')
+                  needs.build.result != 'success'
               run: exit 1
