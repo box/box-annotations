@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import noop from 'lodash/noop';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -47,6 +48,14 @@ export type Props = {
     onSubmit: (text: string) => void;
     popupPortalEl?: HTMLElement | null;
     reference: PopupReference;
+};
+
+const isKeyboardFocusVisible = (element: Element): boolean => {
+    try {
+        return element.matches(':focus-visible');
+    } catch {
+        return false;
+    }
 };
 
 const getPopupOptions = (): Partial<Options> => ({
@@ -125,6 +134,9 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
     const popperRef = React.useRef<Instance>();
     const optionsRef = React.useRef<Partial<Options>>(getPopupOptions());
     const hasTextRef = React.useRef(false);
+    const [isKeyboardFocused, setIsKeyboardFocused] = React.useState(
+        () => reference instanceof Element && isKeyboardFocusVisible(reference),
+    );
 
     const apiHost = useSelector(getApiHost);
     const fileId = useSelector(getFileId);
@@ -177,6 +189,28 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
 
         return () => {
             popperRef.current?.destroy();
+        };
+    }, [reference]);
+
+    // The comment card is portaled away from the annotation target, so the target's
+    // :focus-visible state has to be mirrored onto the card.
+    React.useEffect(() => {
+        if (!(reference instanceof Element)) {
+            setIsKeyboardFocused(false);
+            return undefined;
+        }
+
+        const syncKeyboardFocus = (): void => {
+            setIsKeyboardFocused(isKeyboardFocusVisible(reference));
+        };
+
+        syncKeyboardFocus();
+        reference.addEventListener('focus', syncKeyboardFocus);
+        reference.addEventListener('blur', syncKeyboardFocus);
+
+        return () => {
+            reference.removeEventListener('focus', syncKeyboardFocus);
+            reference.removeEventListener('blur', syncKeyboardFocus);
         };
     }, [reference]);
 
@@ -360,7 +394,7 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
             <div
                 ref={popupRef}
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
-                className="ba-PopupAnnotation"
+                className={classNames('ba-PopupAnnotation', { 'is-keyboard-focused': isKeyboardFocused })}
                 data-resin-component={annotationId ? 'popupThreadV2' : 'popupReplyV2'}
                 data-resin-feature="annotations"
                 onMouseDown={handleEvent}
