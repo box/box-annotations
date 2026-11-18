@@ -68,32 +68,33 @@ export const findTextRanges = (contentEl: HTMLElement, text: string, excludeEl?:
 
 /**
  * Returns the shapes of a text-anchored highlight, relative to the content element as it is laid out now.
- * When the text appears more than once, the match nearest the stored first shape wins.
- * Returns null when the text is not found, so the highlight renders nothing.
+ * When the text appears more than once, the rendered match whose first shape is nearest the stored first shape wins.
+ * Returns null when no rendered match is found, so the highlight renders nothing.
  */
 export const getHighlightShapes = (
     contentEl: HTMLElement,
     { shapes = [], text = '' }: TargetHighlight,
     excludeEl?: HTMLElement | null,
 ): Rect[] | null => {
-    const ranges = findTextRanges(contentEl, text, excludeEl);
+    const contentShape = getShape(contentEl.getBoundingClientRect());
+    // Matches in hidden content have no client rects, so they have no shapes and are skipped
+    const matches = findTextRanges(contentEl, text, excludeEl)
+        .map(range =>
+            combineRects(Array.from(range.getClientRects()).map(getShape)).map(rect => ({
+                ...getShapeRelativeToContainer(rect, contentShape),
+                type: 'rect' as const,
+            })),
+        )
+        .filter(matchShapes => matchShapes.length);
 
-    if (!ranges.length) {
+    if (!matches.length) {
         return null;
     }
 
-    const contentShape = getShape(contentEl.getBoundingClientRect());
     const { x: storedX = 0, y: storedY = 0 } = shapes[0] ?? {};
-    const getDistance = (range: Range): number => {
-        const { x, y } = getShapeRelativeToContainer(getShape(range.getBoundingClientRect()), contentShape);
-        return Math.hypot(x - storedX, y - storedY);
-    };
-    const closest = ranges.reduce((best, range) => (getDistance(range) < getDistance(best) ? range : best));
+    const getDistance = ([{ x, y }]: Rect[]): number => Math.hypot(x - storedX, y - storedY);
 
-    return combineRects(Array.from(closest.getClientRects()).map(getShape)).map(rect => ({
-        ...getShapeRelativeToContainer(rect, contentShape),
-        type: 'rect' as const,
-    }));
+    return matches.reduce((best, matchShapes) => (getDistance(matchShapes) < getDistance(best) ? matchShapes : best));
 };
 
 /**

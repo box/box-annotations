@@ -103,6 +103,73 @@ describe('html/htmlUtil', () => {
             ]);
         });
 
+        describe('with a repeated text', () => {
+            // Places the two "target" matches of the second paragraph by their start offset
+            const mockMatchLayout = (layouts: Record<number, DOMRect[]>): void => {
+                const getRects = (range: Range): DOMRect[] => layouts[range.startOffset] ?? [];
+                const getBounds = (rects: DOMRect[]): DOMRect => {
+                    const left = Math.min(...rects.map(rect => rect.left));
+                    const top = Math.min(...rects.map(rect => rect.top));
+                    const right = Math.max(...rects.map(rect => rect.right));
+                    const bottom = Math.max(...rects.map(rect => rect.bottom));
+                    return rects.length
+                        ? ({
+                              bottom,
+                              height: bottom - top,
+                              left,
+                              right,
+                              top,
+                              width: right - left,
+                              x: left,
+                              y: top,
+                          } as DOMRect)
+                        : ({ bottom: 0, height: 0, left: 0, right: 0, top: 0, width: 0, x: 0, y: 0 } as DOMRect);
+                };
+
+                jest.spyOn(Range.prototype, 'getClientRects').mockImplementation(function getClientRects(this: Range) {
+                    return getRects(this) as unknown as DOMRectList;
+                });
+                jest.spyOn(Range.prototype, 'getBoundingClientRect').mockImplementation(function getBoundingClientRect(
+                    this: Range,
+                ) {
+                    return getBounds(getRects(this));
+                });
+            };
+            const getRect = (left: number, top: number, width: number): DOMRect =>
+                ({ bottom: top + 20, height: 20, left, right: left + width, top, width, x: left, y: top }) as DOMRect;
+
+            test('should keep the stored match of a highlight that wraps onto the next line', () => {
+                mockMatchLayout({ 0: [getRect(700, 300, 300), getRect(0, 320, 100)], 11: [getRect(600, 400, 200)] });
+                const target = getTarget({
+                    shapes: [{ height: 2, type: 'rect', width: 30, x: 70, y: 30 }],
+                    text: 'target',
+                });
+
+                expect(getHighlightShapes(contentEl, target)).toEqual([
+                    { height: 2, type: 'rect', width: 30, x: 70, y: 30 },
+                    { height: 2, type: 'rect', width: 10, x: 0, y: 32 },
+                ]);
+            });
+
+            test('should skip a match that is not rendered', () => {
+                mockMatchLayout({ 0: [getRect(500, 300, 200)] });
+                const target = getTarget({
+                    shapes: [{ height: 2, type: 'rect', width: 20, x: 5, y: 5 }],
+                    text: 'target',
+                });
+
+                expect(getHighlightShapes(contentEl, target)).toEqual([
+                    { height: 2, type: 'rect', width: 20, x: 50, y: 30 },
+                ]);
+            });
+
+            test('should return null when no match is rendered', () => {
+                mockMatchLayout({});
+
+                expect(getHighlightShapes(contentEl, getTarget({ text: 'target' }))).toBeNull();
+            });
+        });
+
         test.each([undefined, '', 'missing'])('should return null when the text is %p', text => {
             expect(getHighlightShapes(contentEl, getTarget({ text }), getPortal())).toBeNull();
         });
