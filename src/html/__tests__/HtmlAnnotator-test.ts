@@ -13,6 +13,7 @@ import { annotations as regions } from '../../region/__mocks__/data';
 import { RegionCreationManager, RegionManager } from '../../region';
 import { fetchAnnotationsAction, getIsInitialized, getScale, Mode } from '../../store';
 import { getHighlightShapes, scrollWindowToLocation } from '../htmlUtil';
+import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
 
 jest.mock('@box/blueprint-web', () => ({}));
@@ -80,6 +81,13 @@ describe('HtmlAnnotator', () => {
     const initAnnotator = async (): Promise<void> => {
         annotator.init();
         await flushPromises();
+    };
+
+    // The created managers listen on the shared content element and document until destroyed
+    const replaceManagers = (managers: Manager[]): void => {
+        const created = annotator.managers;
+        annotator.managers = new Set(managers);
+        created.forEach(manager => manager.destroy());
     };
 
     const runAnimationFrame = (): void => frameCallbacks.splice(0).forEach(callback => callback(0));
@@ -194,7 +202,7 @@ describe('HtmlAnnotator', () => {
 
         test('should place the layers at the content rect minus the overlay rect when the scroller scrolls', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             jest.spyOn(annotator.layersEl as HTMLElement, 'getBoundingClientRect').mockReturnValue({
                 left: 5,
                 top: 60,
@@ -216,7 +224,7 @@ describe('HtmlAnnotator', () => {
 
         test('should not schedule another update for the scroll it signals on the layers box', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             jest.clearAllMocks();
 
             scrollEl.dispatchEvent(new window.Event('scroll'));
@@ -451,7 +459,7 @@ describe('HtmlAnnotator', () => {
             await initAnnotator();
             const listener = annotator.highlightListener as HighlightListener;
             jest.spyOn(listener, 'destroy');
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             annotator.scheduleUpdate();
 
             annotator.destroy();
