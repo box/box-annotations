@@ -53,6 +53,12 @@ Cypress.Commands.add('selectText', ({ page = 1, block = 1 } = {}) => {
 
 Cypress.Commands.add('submitReply', (message = 'Automated test annotations') => {
     // Type a message in the reply form and save the new annotation
-    cy.getByTestId('ba-ReplyField-editor').type(message);
-    cy.getByTestId('ba-Popup-submit').click();
+    // The threaded popup comes from @box/threaded-annotations and has no test IDs, so target it by role/label
+    cy.get('.ba-PopupAnnotation [aria-label="Message editor"]').type(message);
+    cy.get('.ba-PopupAnnotation button[aria-label="Post"]').click();
+});
+
+Cypress.Commands.add('cancelReply', () => {
+    // The threaded popup has no Cancel button; Escape closes it without saving
+    cy.get('.ba-PopupAnnotation [aria-label="Message editor"]').type('{esc}');
 });
