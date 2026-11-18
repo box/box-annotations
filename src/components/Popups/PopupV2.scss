@@ -4,6 +4,17 @@
     left: 0;
     z-index: 150;
     width: 348px;
+
+    // Keyboard focus on the annotation popup
+    &.is-keyboard-focused::after {
+        position: absolute;
+        inset: 2px;
+        z-index: 1;
+        border: 2px solid var(--bp-outline-focus-on-light);
+        border-radius: calc(1.25rem - 2px);
+        pointer-events: none;
+        content: '';
+    }
 }
 
 // Specificity must beat .ba selectors from box-ui-elements globals

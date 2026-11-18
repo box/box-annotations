@@ -653,6 +653,29 @@ describe('PopupV2', () => {
         expect(portal).not.toBeNull();
     });
 
+    test('should draw a focus ring on the comment card when the annotation target has keyboard focus', () => {
+        mockSelectorValues();
+        const portalEl = makePortalEl();
+        const reference = document.createElement('button');
+        document.body.appendChild(reference);
+        const matches = jest
+            .spyOn(reference, 'matches')
+            .mockImplementation(selector => selector === ':focus-visible');
+
+        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={reference} />);
+
+        const card = portalEl.querySelector('.ba-PopupAnnotation');
+        expect(card).toHaveClass('is-keyboard-focused');
+
+        matches.mockImplementation(() => false);
+        act(() => {
+            reference.dispatchEvent(new FocusEvent('blur'));
+        });
+
+        expect(card).not.toHaveClass('is-keyboard-focused');
+        document.body.removeChild(reference);
+    });
+
     test('should render popup into popupPortalEl, not the render container', () => {
         mockSelectorValues();
         const portalEl = makePortalEl();
