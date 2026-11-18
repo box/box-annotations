@@ -238,6 +238,17 @@ describe('HtmlAnnotator', () => {
             expect(scrollEl.scrollBy).toHaveBeenCalledWith(3, 40);
         });
 
+        test.each(['ctrlKey', 'metaKey'])('should leave a zoom wheel (%s) to the browser', async modifier => {
+            await initAnnotator();
+            scrollEl.scrollBy = jest.fn();
+            const event = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: 40, [modifier]: true });
+
+            annotator.referenceEl?.dispatchEvent(event);
+
+            expect(event.defaultPrevented).toBe(false);
+            expect(scrollEl.scrollBy).not.toHaveBeenCalled();
+        });
+
         test('should listen for selection changes and resizes of the content in this document', async () => {
             await initAnnotator();
 

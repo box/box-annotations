@@ -223,6 +223,11 @@ export default class HtmlAnnotator extends BaseAnnotator {
     // Over the overlay (while drawing, or over a highlight), the wheel would scroll what is under the overlay in this
     // page instead of the content's scroller
     handleWheel = (event: WheelEvent): void => {
+        // Browsers zoom on a modified wheel, and deliver a trackpad pinch as a ctrlKey wheel
+        if (event.ctrlKey || event.metaKey) {
+            return;
+        }
+
         const scale = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? WHEEL_LINE_HEIGHT : 1;
         const view = this.contentDocument?.defaultView;
 
