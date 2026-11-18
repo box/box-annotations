@@ -18,6 +18,7 @@ export type CreatorItemRegion = CreatorItemBase & {
 
 export type CreatorItemHighlight = CreatorItemBase & {
     shapes: Rect[];
+    text?: string;
 };
 
 export type CreatorItemDrawing = CreatorItemBase & {
