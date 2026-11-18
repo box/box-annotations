@@ -1,14 +1,30 @@
 import BaseAnnotator, { ANNOTATION_CLASSES, Options } from '../common/BaseAnnotator';
 import DeselectManager from '../common/DeselectManager';
 import HtmlDrawingManager from './HtmlDrawingManager';
+import HtmlHighlightCreatorManager from './HtmlHighlightCreatorManager';
+import HtmlHighlightListener from './HtmlHighlightListener';
 import HtmlHighlightManager from './HtmlHighlightManager';
 import PopupManager from '../popup/PopupManager';
 import { centerDrawing, isDrawing } from '../drawing';
-import { centerHighlight, HighlightCreatorManager, HighlightListener, isHighlight } from '../highlight';
+import { centerHighlight, isHighlight } from '../highlight';
 import { centerRegion, isRegion, RegionCreationManager, RegionManager } from '../region';
 import { Event } from '../@types';
-import { fetchAnnotationsAction, getAnnotation, getFileId, getIsCurrentFileVersion, Mode } from '../store';
-import { getHighlightShapes, getScrollParent, getSelection, HTML_LOCATION, scrollWindowToLocation } from './htmlUtil';
+import {
+    fetchAnnotationsAction,
+    getAnnotation,
+    getFileId,
+    getIsCurrentFileVersion,
+    Mode,
+    setActiveAnnotationIdAction,
+} from '../store';
+import {
+    getFrameOffset,
+    getHighlightShapes,
+    getScrollParent,
+    getSelection,
+    HTML_LOCATION,
+    scrollWindowToLocation,
+} from './htmlUtil';
 import { Manager } from '../common/BaseManager';
 import { scrollToLocation } from '../utils/scroll';
 import './HtmlAnnotator.scss';
@@ -24,13 +40,13 @@ const WHEEL_LINE_HEIGHT = 16;
 const pendingFetches = new WeakMap<HtmlAnnotator, Promise<void>>();
 
 export type HtmlOptions = Options & {
-    // The content element, treated as page 1. The container is an overlay placed over the content's scroller, and the
-    // annotation UI renders there. Defaults to the container.
+    // The content element, treated as page 1, in this page or in a frame. The container is an overlay in this page
+    // placed over the content's scroller or frame, and the annotation UI renders there. Defaults to the container.
     contentEl?: HTMLElement;
 };
 
 /**
- * Annotates HTML content the host renders (Markdown previews), which re-wraps when the width
+ * Annotates HTML content the host renders (Markdown previews and HTML files), which re-wraps when the width
  * changes. Highlights are anchored on their text and drawings on the content box. The annotator only reads the
  * content's document (text, selection, input); its layers and popups always render in this page, so the content's
  * own CSS never reaches them.
@@ -44,10 +60,12 @@ export default class HtmlAnnotator extends BaseAnnotator {
 
     contentWidth?: number;
 
-    // The content's document, captured at init; its window is always reached through it, never kept
+    // The content's document, captured at init. Its frame can navigate away, even cross-origin; the frame's window
+    // object then throws on access, while this Document stays safe to touch and its defaultView becomes null. So the
+    // window is always reached through it, never kept.
     contentDocument?: Document;
 
-    highlightListener?: HighlightListener;
+    highlightListener?: HtmlHighlightListener;
 
     isDestroyed = false;
 
@@ -93,6 +111,7 @@ export default class HtmlAnnotator extends BaseAnnotator {
         this.contentDocument?.defaultView?.removeEventListener('resize', this.handleResize);
         this.contentDocument?.removeEventListener('scroll', this.handleScroll, { capture: true });
         this.contentDocument?.fonts?.removeEventListener('loadingdone', this.handleFontsLoaded);
+        this.contentDocument?.removeEventListener('mousedown', this.handleFrameMouseDown);
         this.annotatedEl?.classList.remove(CONTENT_CLASS);
         this.highlightListener?.destroy();
         this.managers.forEach(manager => manager.destroy());
@@ -108,15 +127,16 @@ export default class HtmlAnnotator extends BaseAnnotator {
 
     getContentSelection = (): ReturnType<typeof getSelection> => getSelection(this.annotatedEl);
 
-    // Relative to the layers box
+    // Relative to the layers box. Content in a frame reports rects in the frame's viewport, hence the frame offset.
     getContentBox(contentEl: HTMLElement): Partial<CSSStyleDeclaration> {
         const { height, left, top, width } = contentEl.getBoundingClientRect();
+        const { x, y } = getFrameOffset(contentEl.ownerDocument);
         const layersRect = this.layersEl?.getBoundingClientRect() ?? { left: 0, top: 0 };
 
         return {
             height: `${height}px`,
-            left: `${left - layersRect.left}px`,
-            top: `${top - layersRect.top}px`,
+            left: `${left + x - layersRect.left}px`,
+            top: `${top + y - layersRect.top}px`,
             width: `${width}px`,
         };
     }
@@ -145,7 +165,7 @@ export default class HtmlAnnotator extends BaseAnnotator {
         if (this.canCreate) {
             this.managers.add(new RegionCreationManager(options));
             this.managers.add(
-                new HighlightCreatorManager({
+                new HtmlHighlightCreatorManager({
                     getSelection: this.getContentSelection,
                     referenceEl: contentEl,
                     store: this.store,
@@ -204,9 +224,14 @@ export default class HtmlAnnotator extends BaseAnnotator {
         this.scheduleUpdate();
     };
 
-    // Captured on the content's document, since scrolls of elements do not bubble. A scroller around the content moves
-    // the content box; one inside it moves only the text. The capture also sees the scroll signalled on the layers box,
-    // which must not schedule again.
+    // Mousedown in the frame does not reach this page's document, where DeselectListener listens
+    handleFrameMouseDown = (): void => {
+        this.store.dispatch(setActiveAnnotationIdAction(null));
+    };
+
+    // Captured on the content's document: a frame's own scroll fires at the document, and scrolls of elements do not
+    // bubble. A scroller around the content moves the content box; one inside it moves only the text. When the content
+    // is in this document, the capture also sees the scroll signalled on the layers box, which must not schedule again.
     handleScroll = ({ target }: { target: EventTarget | null }): void => {
         if (target === this.layersEl) {
             return;
@@ -221,7 +246,7 @@ export default class HtmlAnnotator extends BaseAnnotator {
     };
 
     // Over the overlay (while drawing, or over a highlight), the wheel would scroll what is under the overlay in this
-    // page instead of the content's scroller
+    // page instead of the content's scroller or frame
     handleWheel = (event: WheelEvent): void => {
         // Browsers zoom on a modified wheel, and deliver a trackpad pinch as a ctrlKey wheel
         if (event.ctrlKey || event.metaKey) {
@@ -282,19 +307,25 @@ export default class HtmlAnnotator extends BaseAnnotator {
         ownerDocument.fonts?.addEventListener('loadingdone', this.handleFontsLoaded);
 
         if (this.canCreate) {
-            this.highlightListener = new HighlightListener({
+            this.highlightListener = new HtmlHighlightListener({
                 getSelection: this.getContentSelection,
+                ownerDocument,
                 store: this.store,
             });
         }
 
-        // The content's own window observes the content element's size changes
+        // The content's own window: in a frame, that window's observer sees the content element's size changes
         this.resizeObserver = new view.ResizeObserver(this.scheduleUpdate);
         this.resizeObserver.observe(contentEl);
 
         view.addEventListener('resize', this.handleResize);
         ownerDocument.addEventListener('scroll', this.handleScroll, { capture: true, passive: true });
         this.layersEl?.addEventListener('wheel', this.handleWheel, { passive: false });
+
+        // In this document, DeselectListener already handles mousedown, and skips it inside popups
+        if (ownerDocument !== document) {
+            ownerDocument.addEventListener('mousedown', this.handleFrameMouseDown);
+        }
     }
 
     // Lets the host construct the annotator, which starts the annotations fetch, before its content exists. Call before
@@ -411,8 +442,8 @@ export default class HtmlAnnotator extends BaseAnnotator {
             }
         });
 
-        // Popper re-places open popups on scroll of their reference's scroll parents, which include the layers box but
-        // not the content's scroller. Signalled after a move too, since the highlight targets popups point at moved.
+        // Popper re-places open popups on scroll of their reference's scroll parents in this page, which include the
+        // layers box but not the frame. Signalled after a move too, since the highlight targets popups point at moved.
         this.layersEl?.dispatchEvent(new window.Event('scroll'));
     };
 }

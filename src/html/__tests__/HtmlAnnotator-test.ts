@@ -3,15 +3,16 @@ import DeselectManager from '../../common/DeselectManager';
 import eventManager from '../../common/EventManager';
 import HtmlDrawingManager from '../HtmlDrawingManager';
 import HtmlAnnotator from '../HtmlAnnotator';
+import HtmlHighlightCreatorManager from '../HtmlHighlightCreatorManager';
+import HtmlHighlightListener from '../HtmlHighlightListener';
 import HtmlHighlightManager from '../HtmlHighlightManager';
 import PopupManager from '../../popup/PopupManager';
 import { Annotation, Event } from '../../@types';
 import { annotation as highlight } from '../../highlight/__mocks__/data';
 import { annotations as drawings } from '../../drawing/__mocks__/drawingData';
-import { HighlightCreatorManager, HighlightListener } from '../../highlight';
 import { annotations as regions } from '../../region/__mocks__/data';
 import { RegionCreationManager, RegionManager } from '../../region';
-import { fetchAnnotationsAction, getIsInitialized, getScale, Mode } from '../../store';
+import { fetchAnnotationsAction, getIsInitialized, getScale, Mode, setActiveAnnotationIdAction } from '../../store';
 import { getHighlightShapes, scrollWindowToLocation } from '../htmlUtil';
 import { Manager } from '../../common/BaseManager';
 import { scrollToLocation } from '../../utils/scroll';
@@ -163,8 +164,8 @@ describe('HtmlAnnotator', () => {
             expect(managers[2]).toBeInstanceOf(RegionManager);
             expect(managers[3]).toBeInstanceOf(RegionCreationManager);
             expect((managers[3] as RegionCreationManager).referenceEl).toBe(annotator.referenceEl);
-            expect(managers[4]).toBeInstanceOf(HighlightCreatorManager);
-            expect((managers[4] as HighlightCreatorManager).referenceEl).toBe(contentEl);
+            expect(managers[4]).toBeInstanceOf(HtmlHighlightCreatorManager);
+            expect((managers[4] as HtmlHighlightCreatorManager).referenceEl).toBe(contentEl);
             expect(managers[5]).toBeInstanceOf(HtmlHighlightManager);
             expect(Array.from(annotator.getManagers(contentEl))).toEqual(managers);
         });
@@ -177,7 +178,7 @@ describe('HtmlAnnotator', () => {
             const managers = Array.from(annotator.managers);
 
             expect(annotator.highlightListener).toBeUndefined();
-            expect(managers.some(m => m instanceof HighlightCreatorManager)).toBe(false);
+            expect(managers.some(m => m instanceof HtmlHighlightCreatorManager)).toBe(false);
             expect(managers.some(m => m instanceof RegionCreationManager)).toBe(false);
             expect(managers.some(m => m instanceof RegionManager)).toBe(true);
         });
@@ -257,10 +258,20 @@ describe('HtmlAnnotator', () => {
             expect(scrollEl.scrollBy).not.toHaveBeenCalled();
         });
 
+        test('should leave mousedown in this document to the deselect listener', async () => {
+            await initAnnotator();
+            jest.spyOn(annotator.store, 'dispatch');
+
+            contentEl.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+            expect(annotator.store.dispatch).not.toHaveBeenCalled();
+        });
+
         test('should listen for selection changes and resizes of the content in this document', async () => {
             await initAnnotator();
 
-            expect(annotator.highlightListener).toBeInstanceOf(HighlightListener);
+            expect(annotator.highlightListener).toBeInstanceOf(HtmlHighlightListener);
+            expect(annotator.highlightListener?.ownerDocument).toBe(document);
             expect(window.ResizeObserver).toHaveBeenCalledTimes(1);
             expect(resizeObserver.observe).toHaveBeenCalledWith(contentEl);
         });
@@ -411,7 +422,7 @@ describe('HtmlAnnotator', () => {
             await flushPromises();
 
             expect(window.ResizeObserver).toHaveBeenCalledTimes(1);
-            expect(annotator.highlightListener).toBeInstanceOf(HighlightListener);
+            expect(annotator.highlightListener).toBeInstanceOf(HtmlHighlightListener);
             expect(getScale(annotator.store.getState())).toBe(2);
         });
 
@@ -457,7 +468,7 @@ describe('HtmlAnnotator', () => {
     describe('destroy()', () => {
         test('should stop listening and destroy the managers', async () => {
             await initAnnotator();
-            const listener = annotator.highlightListener as HighlightListener;
+            const listener = annotator.highlightListener as HtmlHighlightListener;
             jest.spyOn(listener, 'destroy');
             replaceManagers([mockManager]);
             annotator.scheduleUpdate();
@@ -528,6 +539,316 @@ describe('HtmlAnnotator', () => {
 
             expect(scrollToLocation).not.toHaveBeenCalled();
             expect(scrollWindowToLocation).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('with an overlay over a frame (HTML files)', () => {
+        let iframe: HTMLIFrameElement;
+        let frameWindow: Window & typeof globalThis;
+        let frameBody: HTMLElement;
+        let frameResizeCallback: ResizeObserverCallback;
+        const frameResizeObserver = { disconnect: jest.fn(), observe: jest.fn() };
+        const overlayEl = document.createElement('div');
+        const highlightManager = Object.assign(Object.create(HtmlHighlightManager.prototype), mockManager, {
+            style: jest.fn(),
+            updateShapes: jest.fn(),
+        });
+        // The frame's own scroll fires at its document, as in browsers
+        const scrollFrame = (target: EventTarget = frameWindow.document): void => {
+            target.dispatchEvent(new frameWindow.Event('scroll'));
+        };
+
+        beforeEach(() => {
+            iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            document.body.appendChild(overlayEl);
+            frameWindow = iframe.contentWindow as Window & typeof globalThis;
+            frameWindow.ResizeObserver = jest.fn().mockImplementation((callback: ResizeObserverCallback) => {
+                frameResizeCallback = callback;
+                return frameResizeObserver;
+            });
+            frameBody = frameWindow.document.body;
+            frameBody.innerHTML = '<p>Hello world</p>';
+            setOffsets(frameBody, { offsetWidth: 600 });
+            jest.spyOn(frameBody, 'getBoundingClientRect').mockReturnValue({
+                height: 900,
+                left: 8,
+                top: -42,
+                width: 600,
+            } as DOMRect);
+
+            annotator.destroy();
+            annotator = getAnnotator({ container: overlayEl, contentEl: frameBody });
+        });
+
+        afterEach(() => {
+            annotator.destroy();
+            iframe.remove();
+            overlayEl.remove();
+        });
+
+        test('should annotate the frame content and render layers and popups in the overlay', async () => {
+            await initAnnotator();
+
+            const { layersEl, popupPortalEl, referenceEl } = annotator;
+
+            expect(annotator.annotatedEl).toBe(frameBody);
+            expect(overlayEl.classList.contains('ba')).toBe(true);
+            expect(layersEl?.parentElement).toBe(overlayEl);
+            expect(popupPortalEl?.parentElement).toBe(overlayEl);
+            expect(layersEl?.contains(popupPortalEl as HTMLElement)).toBe(false);
+            expect(referenceEl?.parentElement).toBe(layersEl);
+            expect(layersEl?.querySelector('[data-testid="ba-Layer--drawing"]')).not.toBeNull();
+            expect(frameBody.ownerDocument.querySelector('.ba-Layer')).toBeNull();
+            expect(DeselectManager).toHaveBeenCalledWith({ referenceEl });
+        });
+
+        test('should anchor highlights on the frame content and read input from the frame document', async () => {
+            await initAnnotator();
+
+            const creator = Array.from(annotator.managers).find(m => m instanceof HtmlHighlightCreatorManager);
+
+            expect(HtmlHighlightManager).toHaveBeenCalledWith(
+                expect.objectContaining({ contentEl: frameBody, referenceEl: annotator.referenceEl }),
+            );
+            expect((creator as HtmlHighlightCreatorManager).referenceEl).toBe(frameBody);
+            expect(annotator.highlightListener?.ownerDocument).toBe(frameBody.ownerDocument);
+        });
+
+        test("should observe the content's size with the frame's own ResizeObserver", async () => {
+            await initAnnotator();
+
+            expect(frameWindow.ResizeObserver).toHaveBeenCalledTimes(1);
+            expect(frameResizeObserver.observe).toHaveBeenCalledWith(frameBody);
+            expect(window.ResizeObserver).not.toHaveBeenCalled();
+        });
+
+        test('should update positions and highlight shapes when the frame content changes height', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager, highlightManager]);
+            jest.clearAllMocks();
+            setOffsets(frameBody, { offsetHeight: 1500 });
+
+            frameResizeCallback([], frameResizeObserver as unknown as ResizeObserver);
+            runAnimationFrame();
+
+            expect(mockManager.style).toHaveBeenCalledTimes(1);
+            expect(highlightManager.updateShapes).toHaveBeenCalledTimes(1);
+        });
+
+        test('should move the layers without finding shapes again when a scroller around the content scrolls', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager, highlightManager]);
+            jest.clearAllMocks();
+
+            scrollFrame(frameWindow.document.documentElement);
+            runAnimationFrame();
+
+            expect(mockManager.style).toHaveBeenCalledTimes(1);
+            expect(highlightManager.updateShapes).not.toHaveBeenCalled();
+        });
+
+        test('should find highlight shapes again when a scroller inside the content scrolls', async () => {
+            frameBody.innerHTML = '<main><p>Hello world</p></main>';
+            await initAnnotator();
+            annotator.managers = new Set([mockManager, highlightManager]);
+            jest.clearAllMocks();
+
+            scrollFrame(frameBody.querySelector('main') as HTMLElement);
+            runAnimationFrame();
+
+            expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+            expect(mockManager.style).toHaveBeenCalledTimes(1);
+            expect(highlightManager.updateShapes).toHaveBeenCalledTimes(1);
+        });
+
+        test('should place the layers at the content box in the frame viewport', async () => {
+            jest.spyOn(annotator, 'getManagers').mockImplementation(el => {
+                annotator.getReferenceEl(el);
+                return new Set([mockManager]);
+            });
+
+            await initAnnotator();
+
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '900px',
+                left: '8px',
+                top: '-42px',
+                width: '600px',
+            });
+        });
+
+        test('should shift the layers by the frame offset relative to the layers box', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager]);
+            jest.spyOn(iframe, 'getBoundingClientRect').mockReturnValue({ left: 100, top: 50 } as DOMRect);
+            setOffsets(iframe, { clientLeft: 2, clientTop: 2 });
+            jest.spyOn(annotator.layersEl as HTMLElement, 'getBoundingClientRect').mockReturnValue({
+                left: 90,
+                top: 40,
+            } as DOMRect);
+            jest.clearAllMocks();
+
+            scrollFrame();
+            runAnimationFrame();
+
+            // Content rect in the frame (8, -42) + frame content origin (102, 52) - layers box (90, 40)
+            expect(mockManager.style).toHaveBeenCalledWith({
+                height: '900px',
+                left: '20px',
+                top: '-30px',
+                width: '600px',
+            });
+        });
+
+        test('should update positions only on frame scroll, once per animation frame', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager]);
+            jest.spyOn(annotator, 'render');
+            jest.spyOn(annotator.store, 'dispatch');
+            jest.clearAllMocks();
+
+            scrollFrame();
+            scrollFrame();
+            runAnimationFrame();
+
+            expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+            expect(mockManager.style).toHaveBeenCalledTimes(1);
+            expect(mockManager.render).not.toHaveBeenCalled();
+            expect(annotator.render).not.toHaveBeenCalled();
+            expect(annotator.store.dispatch).not.toHaveBeenCalled();
+        });
+
+        test('should signal a scroll on the layers box after moving the layers on frame scroll', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager]);
+            const onLayersScroll = jest.fn(() => expect(mockManager.style).toHaveBeenCalled());
+            annotator.layersEl?.addEventListener('scroll', onLayersScroll);
+            jest.clearAllMocks();
+
+            scrollFrame();
+            runAnimationFrame();
+
+            expect(onLayersScroll).toHaveBeenCalledTimes(1);
+        });
+
+        test('should signal a scroll on the layers box after finding highlight shapes again on a content height change', async () => {
+            // An open popup points at a highlight target; opening a <details> above it moves the target, not the frame
+            await initAnnotator();
+            annotator.managers = new Set([mockManager, highlightManager]);
+            const onLayersScroll = jest.fn(() => expect(highlightManager.updateShapes).toHaveBeenCalled());
+            annotator.layersEl?.addEventListener('scroll', onLayersScroll);
+            jest.clearAllMocks();
+            setOffsets(frameBody, { offsetHeight: 1500 });
+
+            frameResizeCallback([], frameResizeObserver as unknown as ResizeObserver);
+            runAnimationFrame();
+
+            expect(onLayersScroll).toHaveBeenCalledTimes(1);
+        });
+
+        test('should not signal a scroll on the layers box when nothing moved', async () => {
+            await initAnnotator();
+            annotator.managers = new Set([mockManager]);
+            const onLayersScroll = jest.fn();
+            annotator.layersEl?.addEventListener('scroll', onLayersScroll);
+
+            frameResizeCallback([], frameResizeObserver as unknown as ResizeObserver);
+            runAnimationFrame();
+
+            expect(mockManager.style).not.toHaveBeenCalled();
+            expect(onLayersScroll).not.toHaveBeenCalled();
+        });
+
+        test('should schedule an update on frame resize', async () => {
+            await initAnnotator();
+            jest.clearAllMocks();
+
+            frameWindow.dispatchEvent(new frameWindow.Event('resize'));
+
+            expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+        });
+
+        test('should clear the active annotation on mousedown in the frame', async () => {
+            await initAnnotator();
+            jest.spyOn(annotator.store, 'dispatch');
+
+            frameBody.dispatchEvent(new frameWindow.MouseEvent('mousedown', { bubbles: true }));
+
+            expect(annotator.store.dispatch).toHaveBeenCalledWith(setActiveAnnotationIdAction(null));
+        });
+
+        test('should forward the wheel over the layers to the frame window', async () => {
+            await initAnnotator();
+            frameWindow.scrollBy = jest.fn();
+            const event = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaX: 3, deltaY: 40 });
+
+            annotator.referenceEl?.dispatchEvent(event);
+
+            expect(event.defaultPrevented).toBe(true);
+            expect(frameWindow.scrollBy).toHaveBeenCalledWith(3, 40);
+        });
+
+        test('should convert wheel deltas in lines to pixels', async () => {
+            await initAnnotator();
+            frameWindow.scrollBy = jest.fn();
+
+            annotator.layersEl?.dispatchEvent(
+                new WheelEvent('wheel', { cancelable: true, deltaMode: WheelEvent.DOM_DELTA_LINE, deltaY: 3 }),
+            );
+
+            expect(frameWindow.scrollBy).toHaveBeenCalledWith(0, 48);
+        });
+
+        describe('after the frame navigates cross-origin', () => {
+            // The frame's WindowProxy stays the same object but throws on most accessors, while the original
+            // Document stays reachable and reports no window once it is no longer the frame's active document
+            const navigateFrameCrossOrigin = (): void => {
+                const throwSecurityError = (): never => {
+                    throw new DOMException('Permission denied to access property', 'SecurityError');
+                };
+                frameWindow.removeEventListener = jest.fn(throwSecurityError);
+                frameWindow.scrollBy = jest.fn(throwSecurityError);
+                Object.defineProperty(frameWindow.document, 'defaultView', { configurable: true, get: () => null });
+            };
+
+            test('should destroy without throwing and still clean up in this page', async () => {
+                await initAnnotator();
+                const { layersEl, popupPortalEl } = annotator;
+                const managers = Array.from(annotator.managers);
+                managers.forEach(manager => jest.spyOn(manager, 'destroy'));
+                navigateFrameCrossOrigin();
+
+                expect(() => annotator.destroy()).not.toThrow();
+                expect(frameResizeObserver.disconnect).toHaveBeenCalled();
+                expect(layersEl?.isConnected).toBe(false);
+                expect(popupPortalEl?.isConnected).toBeFalsy();
+                expect(overlayEl.classList.contains('ba')).toBe(false);
+                managers.forEach(manager => expect(manager.destroy).toHaveBeenCalled());
+            });
+
+            test('should not forward the wheel to the navigated frame', async () => {
+                await initAnnotator();
+                navigateFrameCrossOrigin();
+                const event = new WheelEvent('wheel', { cancelable: true, deltaY: 40 });
+
+                expect(() => annotator.handleWheel(event)).not.toThrow();
+                expect(frameWindow.scrollBy).not.toHaveBeenCalled();
+            });
+        });
+
+        test('should remove its layers and frame listeners on destroy', async () => {
+            await initAnnotator();
+            const { layersEl } = annotator;
+            jest.spyOn(annotator.store, 'dispatch');
+
+            annotator.destroy();
+            frameBody.dispatchEvent(new frameWindow.MouseEvent('mousedown', { bubbles: true }));
+            scrollFrame();
+
+            expect(layersEl?.isConnected).toBe(false);
+            expect(annotator.store.dispatch).not.toHaveBeenCalledWith(setActiveAnnotationIdAction(null));
+            expect(window.requestAnimationFrame).not.toHaveBeenCalled();
         });
     });
 });

@@ -1,4 +1,4 @@
-import { findTextRanges, getHighlightShapes, getScrollParent, getSelection } from '../htmlUtil';
+import { findTextRanges, getHighlightShapes, getScrollParent, getSelection, scrollWindowToLocation } from '../htmlUtil';
 import { TargetHighlight } from '../../@types';
 import { TARGET_TYPE } from '../../constants';
 
@@ -226,6 +226,74 @@ describe('html/htmlUtil', () => {
 
         test('should return null when no ancestor scrolls', () => {
             expect(getScrollParent(contentEl)).toBeNull();
+        });
+    });
+
+    describe('in an iframe document', () => {
+        let iframe: HTMLIFrameElement;
+        let frameDocument: Document;
+
+        beforeEach(() => {
+            iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            frameDocument = iframe.contentDocument as Document;
+            frameDocument.body.innerHTML = '<p data-top="100">Hello <b>wor</b>ld</p>';
+        });
+
+        afterEach(() => {
+            iframe.remove();
+        });
+
+        test('should find text in the iframe document', () => {
+            const ranges = findTextRanges(frameDocument.body, 'Hello world');
+
+            expect(ranges.map(range => range.toString())).toEqual(['Hello world']);
+            expect(ranges[0].startContainer.ownerDocument).toBe(frameDocument);
+        });
+
+        test('should read the selection of the iframe document, shifted into page coordinates', () => {
+            mockRangeLayout((iframe.contentWindow as Window & typeof globalThis).Range);
+            jest.spyOn(iframe, 'getBoundingClientRect').mockReturnValue({ left: 50, top: 70 } as DOMRect);
+            Object.defineProperty(iframe, 'clientLeft', { value: 6 });
+            Object.defineProperty(iframe, 'clientTop', { value: 6 });
+            jest.spyOn(frameDocument.body, 'getBoundingClientRect').mockReturnValue({
+                height: 1000,
+                left: 8,
+                top: 8,
+                width: 800,
+            } as DOMRect);
+            const range = frameDocument.createRange();
+            range.selectNodeContents(frameDocument.querySelector('b') as Node);
+            frameDocument.getSelection()?.addRange(range);
+
+            const selection = getSelection(frameDocument.body);
+
+            expect(selection).toMatchObject({ containerRect: { left: 64, top: 84 }, location: 1, text: 'wor' });
+            expect(Array.from(selection?.range.getClientRects() ?? [])).toEqual([
+                expect.objectContaining({ height: 20, left: 156, top: 176, width: 200 }),
+            ]);
+            expect(window.getSelection()?.rangeCount).toBe(0);
+        });
+
+        test('should return null for the scroll parent when the content scrolls with the frame', () => {
+            expect(getScrollParent(frameDocument.body)).toBeNull();
+        });
+
+        test('should scroll the frame window to center the location', () => {
+            const frameWindow = iframe.contentWindow as Window;
+            frameWindow.scrollBy = jest.fn();
+            Object.defineProperty(frameDocument.documentElement, 'clientWidth', { value: 800 });
+            Object.defineProperty(frameDocument.documentElement, 'clientHeight', { value: 600 });
+            jest.spyOn(frameDocument.body, 'getBoundingClientRect').mockReturnValue({
+                height: 2000,
+                left: 0,
+                top: -200,
+                width: 1000,
+            } as DOMRect);
+
+            scrollWindowToLocation(frameDocument.body, { x: 50, y: 50 });
+
+            expect(frameWindow.scrollBy).toHaveBeenCalledWith(100, 500);
         });
     });
 });
