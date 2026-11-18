@@ -197,8 +197,9 @@ export default class HtmlAnnotator extends BaseAnnotator {
     };
 
     // A window resize can move the content box without resizing it, such as fixed-width content centered in its
-    // scroller, which the content's ResizeObserver does not report
+    // scroller, or re-wrap its text through a media query, neither of which the content's ResizeObserver reports
     handleResize = (): void => {
+        this.isContentScrollPending = true;
         this.isScrollPending = true;
         this.scheduleUpdate();
     };
@@ -371,7 +372,8 @@ export default class HtmlAnnotator extends BaseAnnotator {
 
     // Scroll and resize move, re-wrap or resize the content but do not change it, so only positions are updated: the
     // layers follow the content box, and the highlight shapes, which are relative to that box, are found again when
-    // its size changes (re-wrap, an opened <details>, a late image) or a scroller inside it moves the text
+    // its size changes (re-wrap, an opened <details>, a late image), the window resizes, or a scroller inside it moves
+    // the text
     updatePositions = (): void => {
         const contentEl = this.annotatedEl;
         const isContentScrolled = this.isContentScrollPending;

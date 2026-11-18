@@ -319,15 +319,17 @@ describe('HtmlAnnotator', () => {
             expect(annotator.store.dispatch).not.toHaveBeenCalled();
         });
 
-        test('should move the layers without finding shapes again when a window resize moves the content', () => {
-            // Fixed-width content centered in its scroller moves on a window resize but keeps its size
+        test('should move the layers and find highlight shapes again when a window resize keeps the content size', () => {
+            // Fixed-width content centered in its scroller moves on a window resize but keeps its size, and a media
+            // query can re-wrap its text without resizing it
             setOffsets(contentEl, { offsetLeft: 120 });
 
             window.dispatchEvent(new window.Event('resize'));
             runAnimationFrame();
 
             expect(mockManager.style).toHaveBeenCalledWith(expect.objectContaining({ left: '120px' }));
-            expect(highlightManager.updateShapes).not.toHaveBeenCalled();
+            expect(highlightManager.updateShapes).toHaveBeenCalledTimes(1);
+            expect(annotator.render).not.toHaveBeenCalled();
         });
 
         test('should find highlight shapes again without clearing the selection when fonts load', () => {
