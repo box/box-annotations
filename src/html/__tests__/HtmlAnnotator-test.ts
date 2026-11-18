@@ -625,7 +625,7 @@ describe('HtmlAnnotator', () => {
 
         test('should update positions and highlight shapes when the frame content changes height', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager, highlightManager]);
+            replaceManagers([mockManager, highlightManager]);
             jest.clearAllMocks();
             setOffsets(frameBody, { offsetHeight: 1500 });
 
@@ -638,7 +638,7 @@ describe('HtmlAnnotator', () => {
 
         test('should move the layers without finding shapes again when a scroller around the content scrolls', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager, highlightManager]);
+            replaceManagers([mockManager, highlightManager]);
             jest.clearAllMocks();
 
             scrollFrame(frameWindow.document.documentElement);
@@ -651,7 +651,7 @@ describe('HtmlAnnotator', () => {
         test('should find highlight shapes again when a scroller inside the content scrolls', async () => {
             frameBody.innerHTML = '<main><p>Hello world</p></main>';
             await initAnnotator();
-            annotator.managers = new Set([mockManager, highlightManager]);
+            replaceManagers([mockManager, highlightManager]);
             jest.clearAllMocks();
 
             scrollFrame(frameBody.querySelector('main') as HTMLElement);
@@ -680,7 +680,7 @@ describe('HtmlAnnotator', () => {
 
         test('should shift the layers by the frame offset relative to the layers box', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             jest.spyOn(iframe, 'getBoundingClientRect').mockReturnValue({ left: 100, top: 50 } as DOMRect);
             setOffsets(iframe, { clientLeft: 2, clientTop: 2 });
             jest.spyOn(annotator.layersEl as HTMLElement, 'getBoundingClientRect').mockReturnValue({
@@ -703,7 +703,7 @@ describe('HtmlAnnotator', () => {
 
         test('should update positions only on frame scroll, once per animation frame', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             jest.spyOn(annotator, 'render');
             jest.spyOn(annotator.store, 'dispatch');
             jest.clearAllMocks();
@@ -721,7 +721,7 @@ describe('HtmlAnnotator', () => {
 
         test('should signal a scroll on the layers box after moving the layers on frame scroll', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             const onLayersScroll = jest.fn(() => expect(mockManager.style).toHaveBeenCalled());
             annotator.layersEl?.addEventListener('scroll', onLayersScroll);
             jest.clearAllMocks();
@@ -735,7 +735,7 @@ describe('HtmlAnnotator', () => {
         test('should signal a scroll on the layers box after finding highlight shapes again on a content height change', async () => {
             // An open popup points at a highlight target; opening a <details> above it moves the target, not the frame
             await initAnnotator();
-            annotator.managers = new Set([mockManager, highlightManager]);
+            replaceManagers([mockManager, highlightManager]);
             const onLayersScroll = jest.fn(() => expect(highlightManager.updateShapes).toHaveBeenCalled());
             annotator.layersEl?.addEventListener('scroll', onLayersScroll);
             jest.clearAllMocks();
@@ -749,7 +749,7 @@ describe('HtmlAnnotator', () => {
 
         test('should not signal a scroll on the layers box when nothing moved', async () => {
             await initAnnotator();
-            annotator.managers = new Set([mockManager]);
+            replaceManagers([mockManager]);
             const onLayersScroll = jest.fn();
             annotator.layersEl?.addEventListener('scroll', onLayersScroll);
 
