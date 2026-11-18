@@ -259,6 +259,31 @@ describe('PopupV2', () => {
             expect(defaults.onSubmit).toHaveBeenCalledWith('markdown text');
         });
 
+        test('should show the card focus ring as a third tab stop after the editor and Post', () => {
+            render(<PopupV2 {...defaults} />);
+
+            const stop = screen.getByRole('group', { name: 'Comment' });
+            const card = stop.parentElement;
+
+            expect(stop).toHaveClass('ba-PopupAnnotation-focusStop');
+            expect(stop.compareDocumentPosition(screen.getByTestId('message-editor-v2'))).toBe(
+                Node.DOCUMENT_POSITION_PRECEDING,
+            );
+
+            jest.spyOn(stop, 'matches').mockImplementation(selector => selector === ':focus-visible');
+            act(() => {
+                stop.focus();
+            });
+
+            expect(card).toHaveClass('is-keyboard-focused');
+
+            act(() => {
+                stop.blur();
+            });
+
+            expect(card).not.toHaveClass('is-keyboard-focused');
+        });
+
         test('should set popupReplyV2 as resin component', () => {
             render(<PopupV2 {...defaults} />);
 
@@ -384,6 +409,13 @@ describe('PopupV2', () => {
 
         beforeEach(() => {
             mockSelectorValues({ annotation: mockAnnotation });
+        });
+
+        test('should not add the composer focus stop to an existing thread', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(screen.queryByRole('group', { name: 'Comment' })).toBeNull();
         });
 
         test('should render ThreadedAnnotationsV2 with FocusTrap and MentionContextProvider', async () => {

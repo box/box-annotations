@@ -137,6 +137,7 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
     const [isKeyboardFocused, setIsKeyboardFocused] = React.useState(
         () => reference instanceof Element && isKeyboardFocusVisible(reference),
     );
+    const [isComposerKeyboardFocused, setIsComposerKeyboardFocused] = React.useState(false);
 
     const apiHost = useSelector(getApiHost);
     const fileId = useSelector(getFileId);
@@ -213,6 +214,14 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
             reference.removeEventListener('blur', syncKeyboardFocus);
         };
     }, [reference]);
+
+    const handleComposerFocus = (event: React.FocusEvent<HTMLDivElement>): void => {
+        setIsComposerKeyboardFocused(isKeyboardFocusVisible(event.currentTarget));
+    };
+
+    const handleComposerBlur = (): void => {
+        setIsComposerKeyboardFocused(false);
+    };
 
     // The thread shown here starts from the annotation list loaded on the file page.
     // That request has no parameter for how many replies to include, so each annotation
@@ -394,7 +403,9 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
             <div
                 ref={popupRef}
                 aria-label={intl.formatMessage(messages.ariaLabelComment)}
-                className={classNames('ba-PopupAnnotation', { 'is-keyboard-focused': isKeyboardFocused })}
+                className={classNames('ba-PopupAnnotation', {
+                    'is-keyboard-focused': isKeyboardFocused || isComposerKeyboardFocused,
+                })}
                 data-resin-component={annotationId ? 'popupThreadV2' : 'popupReplyV2'}
                 data-resin-feature="annotations"
                 onMouseDown={handleEvent}
@@ -442,6 +453,18 @@ const PopupV2 = ({ annotationId, onCancel, onSubmit, popupPortalEl, reference }:
                             )}
                         </MentionContextProvider>
                 </TooltipProvider>
+                {!annotationId && (
+                    // The composer card is its own tab stop, separate from the editor and Post button.
+                    <div
+                        aria-label={intl.formatMessage(messages.ariaLabelComment)}
+                        className="ba-PopupAnnotation-focusStop"
+                        onBlur={handleComposerBlur}
+                        onFocus={handleComposerFocus}
+                        role="group"
+                        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+                        tabIndex={0}
+                    />
+                )}
                 <div data-threaded-annotations-portal />
             </div>
         </FocusTrap>,

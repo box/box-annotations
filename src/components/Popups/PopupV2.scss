@@ -17,6 +17,20 @@
     }
 }
 
+// Third tab stop in the new-annotation composer, after the text editor and Post.
+// The ring is drawn on the card; this stop only receives keyboard focus.
+.ba-PopupAnnotation-focusStop {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+    outline: none;
+}
+
 // Specificity must beat .ba selectors from box-ui-elements globals
 // (forms, buttons, links) that cascade into threaded-annotations components.
 .ba .ba-PopupAnnotation {
