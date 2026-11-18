@@ -153,6 +153,13 @@ describe('HighlightAnnotations', () => {
             expect(defaults.setStatus).toHaveBeenCalledWith('staged');
             expect(defaults.setIsPromoting).toHaveBeenCalledWith(true);
         });
+
+        test('should stage the selected text when the selection has it', () => {
+            const wrapper = getWrapper({ selection: { ...selectionMock, text: 'selected text' } });
+            wrapper.find(PopupHighlight).prop('onSubmit')!();
+
+            expect(defaults.setStaged).toHaveBeenCalledWith(expect.objectContaining({ text: 'selected text' }));
+        });
     });
 
     describe('handleCancel()', () => {

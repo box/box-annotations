@@ -11,6 +11,7 @@ export type SelectionArg = {
     location: number;
     range: Range;
     rotation?: number;
+    text?: string;
 };
 
 type Payload = {
@@ -84,7 +85,7 @@ export const setSelectionAction = createAction('SET_SELECTION', (arg: SelectionA
         };
     }
 
-    const { containerEl, containerRect, hasError, location, range, rotation } = arg;
+    const { containerEl, containerRect, hasError, location, range, rotation, text } = arg;
 
     let rects = Array.from(range.getClientRects());
     // getClientRects on IE/Edge might return 0 rects
@@ -119,6 +120,7 @@ export const setSelectionAction = createAction('SET_SELECTION', (arg: SelectionA
                 location,
                 popupRect: getBoundingRect(screenShapes),
                 rects: combineRects(localRects),
+                ...(text !== undefined && { text }),
             },
         };
     }
@@ -129,6 +131,7 @@ export const setSelectionAction = createAction('SET_SELECTION', (arg: SelectionA
             hasError,
             location,
             rects: combineRects(screenShapes),
+            ...(text !== undefined && { text }),
         },
     };
 });

@@ -1,0 +1,50 @@
+@import '~box-ui-elements/es/styles/variables';
+@import '../highlight/HighlightCreator';
+
+// The layers sit in a box in the overlay that clips them to the content's viewport; the popup portal is outside it
+.ba-HtmlAnnotator-layers > .ba-Layer {
+    position: absolute;
+    pointer-events: none;
+}
+
+// Highlights paint with the SVG targets (see HtmlHighlightAnnotations), matching HighlightCanvas
+.ba-HtmlAnnotator-layers > .ba-Layer--highlight {
+    .ba-HighlightCanvas {
+        display: none;
+    }
+
+    .ba-HighlightSvg {
+        mix-blend-mode: multiply;
+    }
+
+    .ba-HighlightTarget-rect {
+        fill: $bdl-yellow;
+        fill-opacity: 0.33;
+        stroke: $white;
+        stroke-width: 1px;
+    }
+
+    // The staged target is also .is-active, but HighlightCanvas paints it at the normal strength
+    .ba-HighlightList .ba-HighlightTarget.is-active,
+    .ba-HighlightList .ba-HighlightTarget.is-hover {
+        .ba-HighlightTarget-rect {
+            fill-opacity: 0.66;
+        }
+    }
+}
+
+.ba-HtmlAnnotator-layers {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.ba-HtmlAnnotator-reference {
+    display: none;
+}
+
+// Reaches content in this page only; this stylesheet is not in a content frame
+.ba-HtmlAnnotator-content.ba-is-create--highlight {
+    @include ba-HighlightCreator-cursor;
+}

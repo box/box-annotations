@@ -5,6 +5,7 @@ import ImageAnnotator from './image/ImageAnnotator';
 import DocumentAnnotator from './document/DocumentAnnotator';
 import { IntlOptions, Permissions, PERMISSIONS, Type } from './@types';
 import MediaAnnotator from './media/MediaAnnotator';
+import HtmlAnnotator from './html/HtmlAnnotator';
 
 type Annotator = {
     CONSTRUCTOR: typeof BaseAnnotator;
@@ -70,6 +71,14 @@ const ANNOTATORS: Annotator[] = [
         NAME: 'Media',
         TYPES: [Type.region],
         VIEWERS: ['Dash', 'MP4'],
+    },
+    {
+        CONSTRUCTOR: HtmlAnnotator,
+        NAME: 'Html',
+        TYPES: [Type.highlight, Type.region, Type.drawing],
+        // Not box-content-preview's viewer name (its Markdown viewer is 'Markdown'), so only hosts that render the
+        // content and pass it in get this annotator
+        VIEWERS: ['XplatMarkdown'],
     },
 ];
 
