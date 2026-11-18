@@ -51,9 +51,10 @@ export default class HtmlAnnotator extends BaseAnnotator {
 
     isDestroyed = false;
 
-    // A scroller inside the content moved its text without moving the content box
+    // The text moved without moving the content box: a scroller inside the content scrolled, or fonts loaded
     isContentScrollPending = false;
 
+    // The content box may have moved without changing size: a scroll, or a window resize
     isScrollPending = false;
 
     // Clips the layers to the overlay; the popup portal stays outside it so popups near the edges are not cut off
@@ -89,7 +90,7 @@ export default class HtmlAnnotator extends BaseAnnotator {
         }
 
         this.resizeObserver?.disconnect();
-        this.contentDocument?.defaultView?.removeEventListener('resize', this.scheduleUpdate);
+        this.contentDocument?.defaultView?.removeEventListener('resize', this.handleResize);
         this.contentDocument?.removeEventListener('scroll', this.handleScroll, { capture: true });
         this.contentDocument?.fonts?.removeEventListener('loadingdone', this.handleFontsLoaded);
         this.annotatedEl?.classList.remove(CONTENT_CLASS);
@@ -188,8 +189,18 @@ export default class HtmlAnnotator extends BaseAnnotator {
         }
     };
 
+    // New font metrics move the text, often without resizing the content. Only positions and highlight shapes are
+    // updated: a full render would also reset the highlight creator, which clears a pending text selection.
     handleFontsLoaded = (): void => {
-        this.render();
+        this.isContentScrollPending = true;
+        this.scheduleUpdate();
+    };
+
+    // A window resize can move the content box without resizing it, such as fixed-width content centered in its
+    // scroller, which the content's ResizeObserver does not report
+    handleResize = (): void => {
+        this.isScrollPending = true;
+        this.scheduleUpdate();
     };
 
     // Captured on the content's document, since scrolls of elements do not bubble. A scroller around the content moves
@@ -275,7 +286,7 @@ export default class HtmlAnnotator extends BaseAnnotator {
         this.resizeObserver = new view.ResizeObserver(this.scheduleUpdate);
         this.resizeObserver.observe(contentEl);
 
-        view.addEventListener('resize', this.scheduleUpdate);
+        view.addEventListener('resize', this.handleResize);
         ownerDocument.addEventListener('scroll', this.handleScroll, { capture: true, passive: true });
         this.layersEl?.addEventListener('wheel', this.handleWheel, { passive: false });
     }

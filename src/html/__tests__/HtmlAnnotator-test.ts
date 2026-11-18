@@ -319,10 +319,25 @@ describe('HtmlAnnotator', () => {
             expect(annotator.store.dispatch).not.toHaveBeenCalled();
         });
 
-        test('should run the full render when fonts load', () => {
-            annotator.handleFontsLoaded();
+        test('should move the layers without finding shapes again when a window resize moves the content', () => {
+            // Fixed-width content centered in its scroller moves on a window resize but keeps its size
+            setOffsets(contentEl, { offsetLeft: 120 });
 
-            expect(annotator.render).toHaveBeenCalledTimes(1);
+            window.dispatchEvent(new window.Event('resize'));
+            runAnimationFrame();
+
+            expect(mockManager.style).toHaveBeenCalledWith(expect.objectContaining({ left: '120px' }));
+            expect(highlightManager.updateShapes).not.toHaveBeenCalled();
+        });
+
+        test('should find highlight shapes again without clearing the selection when fonts load', () => {
+            annotator.handleFontsLoaded();
+            runAnimationFrame();
+
+            expect(annotator.render).not.toHaveBeenCalled();
+            expect(annotator.store.dispatch).not.toHaveBeenCalled();
+            expect(mockManager.style).toHaveBeenCalled();
+            expect(highlightManager.updateShapes).toHaveBeenCalledTimes(1);
         });
     });
 
