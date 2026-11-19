@@ -1,9 +1,7 @@
 import { CreatorStatus } from '../types';
 
 export const pageCreatorState = {
-    cursor: 0,
     error: null,
-    message: 'test',
     referenceId: '100001',
     staged: {
         location: 1,
@@ -21,9 +19,7 @@ export const pageCreatorState = {
 };
 
 export const videoCreatorState = {
-    cursor: 0,
     error: null,
-    message: 'test',
     referenceId: '20001',
     staged: {
         location: 120,

@@ -33,7 +33,6 @@ describe('PopupContainer', () => {
                 mode: Mode.NONE,
                 referenceId: null,
                 resetCreator: expect.any(Function),
-                setMessage: expect.any(Function),
                 staged: null,
                 status: CreatorStatus.init,
                 store: defaults.store,

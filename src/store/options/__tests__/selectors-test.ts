@@ -6,7 +6,6 @@ import {
     getIsRichTextEnabled,
     getPermissions,
     getRotation,
-    getScale,
     getToken,
     getViewMode,
     isFeatureEnabled,
@@ -59,12 +58,6 @@ describe('store/options/selectors', () => {
     describe('getRotation', () => {
         test('should return the current rotation', () => {
             expect(getRotation({ options: optionsState })).toBe(0);
-        });
-    });
-
-    describe('getScale', () => {
-        test('should return the current scale', () => {
-            expect(getScale({ options: optionsState })).toBe(1);
         });
     });
 

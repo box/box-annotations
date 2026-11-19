@@ -14,7 +14,6 @@ export const getFileVersionId = (state: State): string | null => state.options.f
 export const getIsCurrentFileVersion = (state: State): boolean => state.options.isCurrentFileVersion;
 export const getPermissions = (state: State): Permissions => state.options.permissions;
 export const getRotation = (state: State): number => state.options.rotation;
-export const getScale = (state: State): number => state.options.scale;
 export const getToken = (state: State): Token => state.options.token;
 export const isFeatureEnabled = (state: State, featurename: string): boolean =>
     getProp(getFeatures(state), featurename, false);

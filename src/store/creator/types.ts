@@ -27,9 +27,7 @@ export type CreatorItemDrawing = CreatorItemBase & {
 export type CreatorItem = CreatorItemRegion | CreatorItemHighlight | CreatorItemDrawing | null;
 
 export type CreatorState = {
-    cursor: number;
     error: SerializedError | null;
-    message: string;
     referenceId: string | null;
     staged: CreatorItem;
     status: CreatorStatus;

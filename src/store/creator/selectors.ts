@@ -4,8 +4,6 @@ import { CreatorItem, CreatorItemDrawing, CreatorItemHighlight, CreatorItemRegio
 
 type State = Pick<AppState, 'creator'>;
 
-export const getCreatorCursor = (state: State): number => state.creator.cursor;
-export const getCreatorMessage = (state: State): string => state.creator.message;
 export const getCreatorReferenceId = (state: State): string | null => state.creator.referenceId;
 export const getCreatorStaged = (state: State): CreatorItem | null => state.creator.staged;
 export const getCreatorStagedForLocation = (state: State, location: number): CreatorItem | null => {
