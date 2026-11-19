@@ -13,7 +13,7 @@ describe('Discoverability', () => {
 
         // Add a region annotation on the document
         cy.drawRegion();
-        cy.getByTestId('ba-Popup-cancel').click();
+        cy.cancelReply();
 
         // Assert that annotation target is not active
         cy.get('.ba-RegionAnnotation').should('not.have.class', 'is-active');
@@ -35,7 +35,7 @@ describe('Discoverability', () => {
         // Add a highlight annotation on the document
         cy.selectText();
         cy.getByTestId('ba-PopupHighlight-button').click();
-        cy.getByTestId('ba-Popup-cancel').click();
+        cy.cancelReply();
 
         // Assert that annotation target is not active
         cy.get('.ba-HighlightTarget').should('not.have.class', 'is-active');
