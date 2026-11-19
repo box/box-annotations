@@ -1,7 +1,7 @@
 [![Project Status](https://img.shields.io/badge/status-active-brightgreen.svg)](http://opensource.box.com/badges)
 [![Mergify Status](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/box/box-annotations&style=flat)](https://mergify.io)
 [![Styled With Prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![build status](https://travis-ci.com/box/box-annotations.svg?branch=master)](https://travis-ci.com/box/box-annotations)
+[![CI](https://github.com/box/box-annotations/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/box/box-annotations/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/box-annotations.svg)](https://www.npmjs.com/package/box-annotations)
 
 # [Box Annotations](https://support.box.com/hc/en-us/articles/360048016153-Annotating-Documents)
