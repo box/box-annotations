@@ -48,7 +48,7 @@ if (fs.existsSync('scripts/rsync.json')) {
 /* eslint-disable key-spacing, require-jsdoc */
 const config = Object.assign(commonConfig(), {
     entry: {
-        annotations: ['./src/BoxAnnotations.ts'],
+        annotations: ['./src/DoesNotExist.ts'],
     },
     // The test page loads annotations.js with a classic script tag, so the
     // webpack-dev-server build inlines deps and emits a non-module file.
