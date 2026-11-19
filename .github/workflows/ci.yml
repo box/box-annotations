@@ -1,0 +1,76 @@
+name: CI
+
+on:
+    pull_request:
+        branches:
+            - master
+    push:
+        branches:
+            - master
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+    # No job runs Cypress, so skip its binary download in yarn install.
+    CYPRESS_INSTALL_BINARY: 0
+    HUSKY_SKIP_HOOKS: 1
+    NODE_OPTIONS: --openssl-legacy-provider
+    TZ: America/Los_Angeles
+
+jobs:
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: yarn
+            - run: yarn install --frozen-lockfile
+            - run: yarn lint
+
+    unit-tests:
+        name: Unit Tests
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: yarn
+            - run: yarn install --frozen-lockfile
+            - run: yarn test
+
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: yarn
+            - run: yarn install --frozen-lockfile
+            - run: yarn build
+
+    # Single check for Mergify, so jobs can be added or renamed without touching it.
+    ci-status:
+        name: CI Status
+        if: always()
+        needs: [lint, unit-tests, build]
+        runs-on: ubuntu-latest
+        steps:
+            - if: >-
+                  needs.lint.result != 'success' ||
+                  needs.unit-tests.result != 'success' ||
+                  needs.build.result != 'success'
+              run: exit 1
