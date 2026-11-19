@@ -3,14 +3,7 @@ import { pageCreatorState as state } from '../__mocks__/creatorState';
 import { createAnnotationAction } from '../../annotations';
 import { CreatorStatus } from '../types';
 import { NewAnnotation } from '../../../@types';
-import {
-    resetCreatorAction,
-    setCursorAction,
-    setMessageAction,
-    setReferenceIdAction,
-    setStagedAction,
-    setStatusAction,
-} from '../actions';
+import { resetCreatorAction, setReferenceIdAction, setStagedAction, setStatusAction } from '../actions';
 import { toggleAnnotationModeAction } from '../../common';
 
 describe('store/creator/reducer', () => {
@@ -19,16 +12,13 @@ describe('store/creator/reducer', () => {
             const newState = reducer(
                 {
                     ...state,
-                    cursor: 1,
                     error: new Error('error'),
                     status: CreatorStatus.rejected,
                 },
                 createAnnotationAction.fulfilled,
             );
 
-            expect(newState.cursor).toEqual(0);
             expect(newState.error).toEqual(null);
-            expect(newState.message).toEqual('');
             expect(newState.staged).toEqual(null);
             expect(newState.status).toEqual(CreatorStatus.init);
         });
@@ -47,15 +37,6 @@ describe('store/creator/reducer', () => {
 
             expect(newState.error).toEqual(error);
             expect(newState.status).toEqual(CreatorStatus.rejected);
-        });
-    });
-
-    describe('setMessageAction', () => {
-        test('should set the message in state', () => {
-            const payload = 'message';
-            const newState = reducer(state, setMessageAction(payload));
-
-            expect(newState.message).toEqual(payload);
         });
     });
 
@@ -85,20 +66,11 @@ describe('store/creator/reducer', () => {
         });
     });
 
-    describe('setStagedCursorAction', () => {
-        test('should set the cursor in state', () => {
-            const newState = reducer(state, setCursorAction(2));
-
-            expect(newState.cursor).toEqual(2);
-        });
-    });
-
     describe('toggleAnnotationModeAction', () => {
         test('should reset the creator state', () => {
             const newState = reducer(
                 {
                     ...state,
-                    cursor: 1,
                     error: new Error('error'),
                     status: CreatorStatus.rejected,
                 },
@@ -106,9 +78,7 @@ describe('store/creator/reducer', () => {
             );
 
             expect(newState).toEqual({
-                cursor: 0,
                 error: null,
-                message: '',
                 referenceId: null,
                 staged: null,
                 status: CreatorStatus.init,
@@ -122,7 +92,6 @@ describe('store/creator/reducer', () => {
             const newState = reducer(
                 {
                     ...state,
-                    cursor: 1,
                     error,
                     referenceId: '123',
                     status: CreatorStatus.rejected,
@@ -131,9 +100,7 @@ describe('store/creator/reducer', () => {
             );
 
             expect(newState).toEqual({
-                cursor: 1,
                 error,
-                message: '',
                 referenceId: null,
                 staged: null,
                 status: CreatorStatus.init,

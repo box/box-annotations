@@ -18,15 +18,6 @@
         .ba-Popup {
             z-index: 0; // Changing z-index causes page to flicker in IE11
         }
-
-        .ba-ItemList {
-            // stylelint-disable-next-line declaration-no-important
-            max-height: 140px !important; // Prevent list overflow onto subsequent pages in IE11
-        }
-
-        .ba-ReplyForm {
-            opacity: 0.99; // Creates a new stacking context so that the collaborators list shows on top of the ba-Popup-footer
-        }
     }
 
     .ba-Popup-content {
@@ -35,13 +26,5 @@
         border: 1px solid $popup-border-color;
         border-radius: 6px;
         box-shadow: 0 2px 12px 0 rgb(0 0 0 / 15%);
-    }
-
-    .ba-Popup-footer {
-        display: flex;
-        justify-content: flex-end;
-        padding: 5px;
-        background-color: $popup-footer-bg;
-        border-top: 1px solid $popup-border-color;
     }
 }

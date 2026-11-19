@@ -14,7 +14,6 @@ describe('RegionCreation', () => {
     const defaults = {
         location: 1,
         resetCreator: jest.fn(),
-        setMessage: jest.fn(),
         setReferenceId: jest.fn(),
         setStaged: jest.fn(),
         setStatus: jest.fn(),

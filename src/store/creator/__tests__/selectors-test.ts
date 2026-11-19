@@ -1,12 +1,6 @@
 import { pageCreatorState, videoCreatorState } from '../__mocks__/creatorState';
 import { CreatorStatus } from '../types';
-import {
-    getCreatorMessage,
-    getCreatorReferenceId,
-    getCreatorStaged,
-    getCreatorStagedForLocation,
-    getCreatorStatus,
-} from '../selectors';
+import { getCreatorReferenceId, getCreatorStaged, getCreatorStagedForLocation, getCreatorStatus } from '../selectors';
 
 describe('store/annotations/selectors', () => {
     const state = { creator: pageCreatorState };
@@ -90,12 +84,6 @@ describe('store/annotations/selectors', () => {
             });
 
             expect(getCreatorStagedForLocation(videoState, 1)).toEqual(null);
-        });
-    });
-
-    describe('getCreatorMessage', () => {
-        test('should return creator message', () => {
-            expect(getCreatorMessage(state)).toEqual('test');
         });
     });
 });

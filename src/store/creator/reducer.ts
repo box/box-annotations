@@ -1,20 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { createAnnotationAction } from '../annotations';
 import { CreatorState, CreatorStatus } from './types';
-import {
-    resetCreatorAction,
-    setCursorAction,
-    setMessageAction,
-    setReferenceIdAction,
-    setStagedAction,
-    setStatusAction,
-} from './actions';
+import { resetCreatorAction, setReferenceIdAction, setStagedAction, setStatusAction } from './actions';
 import { toggleAnnotationModeAction } from '../common';
 
 export const initialState = {
-    cursor: 0,
     error: null,
-    message: '',
     referenceId: null,
     staged: null,
     status: CreatorStatus.init,
@@ -32,13 +23,9 @@ export default createReducer<CreatorState>(initialState, builder =>
             state.status = CreatorStatus.rejected;
         })
         .addCase(resetCreatorAction, state => {
-            state.message = '';
             state.referenceId = null;
             state.staged = null;
             state.status = CreatorStatus.init;
-        })
-        .addCase(setMessageAction, (state, { payload }) => {
-            state.message = payload;
         })
         .addCase(setReferenceIdAction, (state, { payload }) => {
             state.referenceId = payload;
@@ -48,9 +35,6 @@ export default createReducer<CreatorState>(initialState, builder =>
         })
         .addCase(setStatusAction, (state, { payload }) => {
             state.status = payload;
-        })
-        .addCase(setCursorAction, (state, { payload }) => {
-            state.cursor = payload;
         })
         .addCase(toggleAnnotationModeAction, () => initialState),
 );

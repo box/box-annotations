@@ -16,21 +16,6 @@ export default defineMessages({
         description: 'Aria role description for mention user selector',
         defaultMessage: 'Mention a collaborator',
     },
-    ariaLabelReplyField: {
-        id: 'ba.popup.reply.field',
-        description: 'Aria label description for annotation comment field',
-        defaultMessage: 'Type a comment',
-    },
-    buttonCancel: {
-        id: 'ba.popups.cancel',
-        description: 'Button label for cancelling the creation of a description, comment, or reply',
-        defaultMessage: 'Cancel',
-    },
-    buttonPost: {
-        id: 'ba.popups.post',
-        description: 'Button label for creating a description, comment, or reply',
-        defaultMessage: 'Post',
-    },
     drawingButtonAddComment: {
         id: 'ba.popups.drawing.addComment',
         description: 'Button label for adding a comment in the drawing toolbar',
@@ -56,11 +41,6 @@ export default defineMessages({
         description: 'Accessible name for the toolbar shown over a staged drawing',
         defaultMessage: 'Drawing actions',
     },
-    fieldPlaceholder: {
-        id: 'ba.popups.replyField.placeholder',
-        description: 'Placeholder for reply field editor',
-        defaultMessage: 'Type a comment...',
-    },
     popupHighlightPromoter: {
         id: 'ba.popups.popupHighlight.promoter',
         description: 'Popup message for highlight promoter',
@@ -70,11 +50,6 @@ export default defineMessages({
         id: 'ba.popups.popupHighlight.restrictedPrompt',
         description: 'Prompt message when selection crosses multiple pages',
         defaultMessage: 'Comments restricted to single page',
-    },
-    popupListPrompt: {
-        id: 'ba.popups.popupList.prompt',
-        description: 'Prompt message for empty popup list',
-        defaultMessage: 'Mention someone to notify them',
     },
     regionCursorPrompt: {
         id: 'ba.popups.popupCursor.regionPrompt',

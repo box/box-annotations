@@ -6,13 +6,11 @@ import {
     CreatorItem,
     CreatorStatus,
     getAnnotationMode,
-    getCreatorMessage,
     getCreatorStagedForLocation,
     getCreatorStatus,
     getIsPromoting,
     Mode,
     resetCreatorAction,
-    setMessageAction,
     getCreatorReferenceId,
 } from '../store';
 import { getVisibleActiveAnnotationId } from '../store/annotations/selectors';
@@ -30,7 +28,6 @@ export type OwnProps = {
 export type Props = {
     activeAnnotationId: string | null;
     isPromoting: boolean;
-    message: string;
     mode: Mode;
     referenceId: string | null;
     staged: CreatorItem | null;
@@ -41,7 +38,6 @@ export const mapStateToProps = (state: AppState, { location }: OwnProps): Props 
     return {
         activeAnnotationId: getVisibleActiveAnnotationId(state),
         isPromoting: getIsPromoting(state),
-        message: getCreatorMessage(state),
         mode: getAnnotationMode(state),
         referenceId: getCreatorReferenceId(state),
         staged: getCreatorStagedForLocation(state, location),
@@ -54,7 +50,6 @@ export const mapDispatchToProps = {
     createHighlight: createHighlightAction,
     createRegion: createRegionAction,
     resetCreator: resetCreatorAction,
-    setMessage: setMessageAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withProviders(PopupLayer));

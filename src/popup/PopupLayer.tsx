@@ -25,12 +25,10 @@ export type Props = {
     createRegion?: (arg: RegionCreateArg) => void;
     isPromoting: boolean;
     location: number;
-    message: string;
     mode: Mode;
     popupPortalEl?: HTMLElement | null;
     referenceId: string | null;
     resetCreator: () => void;
-    setMessage: (message: string) => void;
     staged?: CreatorItem | null;
     status: CreatorStatus;
     targetType: TARGET_TYPE;
@@ -51,7 +49,6 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         createHighlight = noop,
         createRegion = noop,
         isPromoting = false,
-        message,
         mode,
         popupPortalEl,
         referenceId,
@@ -70,19 +67,17 @@ const PopupLayer = (props: Props): JSX.Element | null => {
         resetCreator();
     };
 
-    const handleSubmit = (text?: string): void => {
+    const handleSubmit = (text: string): void => {
         if (!staged) {
             return;
         }
 
-        const submitMessage = text ?? message;
-
         if (isCreatorStagedHighlight(staged)) {
-            createHighlight({ ...staged, message: submitMessage, targetType });
+            createHighlight({ ...staged, message: text, targetType });
         } else if (isCreatorStagedRegion(staged)) {
-            createRegion({ ...staged, message: submitMessage, targetType });
+            createRegion({ ...staged, message: text, targetType });
         } else if (isCreatorStagedDrawing(staged)) {
-            createDrawing({ ...staged, message: submitMessage, targetType });
+            createDrawing({ ...staged, message: text, targetType });
         }
     };
 
