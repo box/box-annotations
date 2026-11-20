@@ -76,9 +76,9 @@ const ANNOTATORS: Annotator[] = [
         CONSTRUCTOR: HtmlAnnotator,
         NAME: 'Html',
         TYPES: [Type.highlight, Type.region, Type.drawing],
-        // Not box-content-preview's viewer name (its Markdown viewer is 'Markdown'), so only hosts that render the
+        // Not box-content-preview's viewer names (its Markdown viewer is 'Markdown'), so only hosts that render the
         // content and pass it in get this annotator
-        VIEWERS: ['XplatMarkdown'],
+        VIEWERS: ['XplatHtml', 'XplatMarkdown'],
     },
 ];
 

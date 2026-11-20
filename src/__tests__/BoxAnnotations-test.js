@@ -113,14 +113,14 @@ describe('BoxAnnotations', () => {
             expect(loader.determineAnnotator(options).TYPES).toStrictEqual(['highlight', 'region']);
         });
 
-        test.each(['XplatMarkdown'])('should return the HTML annotator for the %s viewer', viewerName => {
+        test.each(['XplatHtml', 'XplatMarkdown'])('should return the HTML annotator for the %s viewer', viewerName => {
             const result = loader.determineAnnotator({ ...options, viewer: { NAME: viewerName } });
 
             expect(result.NAME).toBe('Html');
             expect(result.TYPES).toStrictEqual(['highlight', 'region', 'drawing']);
         });
 
-        test.each(['Html', 'Markdown', 'XplatHtml'])('should not return an annotator for the %s viewer', viewerName => {
+        test.each(['Html', 'Markdown'])('should not return an annotator for the %s viewer', viewerName => {
             expect(loader.determineAnnotator({ ...options, viewer: { NAME: viewerName } })).toBeNull();
         });
 

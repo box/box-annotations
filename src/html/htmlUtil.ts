@@ -97,8 +97,34 @@ export const getHighlightShapes = (
     return matches.reduce((best, matchShapes) => (getDistance(matchShapes) < getDistance(best) ? matchShapes : best));
 };
 
+// Where a frame document's client coordinates start in this page's client coordinates: inside the frame's border
+export const getFrameOffset = (ownerDocument: Document): Position => {
+    const frameEl = ownerDocument === document ? null : ownerDocument.defaultView?.frameElement;
+
+    if (!frameEl) {
+        return { x: 0, y: 0 };
+    }
+
+    const { left, top } = frameEl.getBoundingClientRect();
+    return { x: left + frameEl.clientLeft, y: top + frameEl.clientTop };
+};
+
+const offsetRect = ({ height, left, top, width }: DOMRect, { x, y }: Position): DOMRect =>
+    ({
+        bottom: top + y + height,
+        height,
+        left: left + x,
+        right: left + x + width,
+        top: top + y,
+        width,
+        x: left + x,
+        y: top + y,
+    }) as DOMRect;
+
 /**
  * Returns the current selection when it lies inside the content element, with its text as the anchor.
+ * Rects are in this page's client coordinates, since the popups that place against them render in this page even
+ * when the content lives in a frame.
  */
 export const getSelection = (contentEl?: HTMLElement | null): SelectionArg | null => {
     const selection = contentEl?.ownerDocument.getSelection();
@@ -114,10 +140,13 @@ export const getSelection = (contentEl?: HTMLElement | null): SelectionArg | nul
         return null;
     }
 
+    const offset = getFrameOffset(contentEl.ownerDocument);
+    const rects = Array.from(range.getClientRects(), rect => offsetRect(rect, offset));
+
     return {
-        containerRect: contentEl.getBoundingClientRect(),
+        containerRect: offsetRect(contentEl.getBoundingClientRect(), offset),
         location: HTML_LOCATION,
-        range,
+        range: Object.assign(range.cloneRange(), { getClientRects: () => rects as unknown as DOMRectList }),
         text,
     };
 };
