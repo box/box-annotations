@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Visa nästa referens",
     "ba.boundingBoxHighlight.viewPrevReference": "Visa föregående referens",
     "ba.popup.reply.comment": "Kommentar",
-    "ba.popup.reply.field": "Skriv en kommentar",
     "ba.popup.reply.mentionLoading": "Läser in användare...",
     "ba.popup.reply.mentionSelector": "Nämn en medarbetare",
-    "ba.popups.cancel": "Avbryt",
     "ba.popups.drawing.addComment": "Lägg till kommentar",
     "ba.popups.drawing.delete": "Radera",
     "ba.popups.drawing.redo": "Gör om",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Ångra",
     "ba.popups.popupCursor.regionPrompt": "Rita en ruta för att kommentera",
     "ba.popups.popupHighlight.promoter": "Markera och kommentera",
-    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer begränsas till en sida",
-    "ba.popups.popupList.prompt": "Nämn någon för att meddela dem",
-    "ba.popups.post": "Publicera",
-    "ba.popups.replyField.placeholder": "Skriv en kommentar ..."
+    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer begränsas till en sida"
 };

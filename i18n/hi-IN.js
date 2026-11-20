@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "अगला संदर्भ देखें",
     "ba.boundingBoxHighlight.viewPrevReference": "पिछला संदर्भ देखें",
     "ba.popup.reply.comment": "टिप्पणी",
-    "ba.popup.reply.field": "एक टिप्पणी टाइप करें",
     "ba.popup.reply.mentionLoading": "उपयोगकर्ताओं को लोड किया जा रहा है...",
     "ba.popup.reply.mentionSelector": "एक सहयोगी का उल्लेख करें",
-    "ba.popups.cancel": "रद्द करें",
     "ba.popups.drawing.addComment": "टिप्पणी जोड़ें",
     "ba.popups.drawing.delete": "हटाएं",
     "ba.popups.drawing.redo": "फिर से करें",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "पूर्ववत् करें",
     "ba.popups.popupCursor.regionPrompt": "टिप्पणी करने के लिए एक Box बनाएं",
     "ba.popups.popupHighlight.promoter": "हाइलाइट करें और टिप्पणी दें",
-    "ba.popups.popupHighlight.restrictedPrompt": "टिप्पणियाँ एक पेज तक सीमित की गईं हैं",
-    "ba.popups.popupList.prompt": "किसी व्यक्ति को सूचित करने के लिए उनका उल्लेख करें",
-    "ba.popups.post": "पोस्ट",
-    "ba.popups.replyField.placeholder": "एक टिप्पणी लिखें..."
+    "ba.popups.popupHighlight.restrictedPrompt": "टिप्पणियाँ एक पेज तक सीमित की गईं हैं"
 };

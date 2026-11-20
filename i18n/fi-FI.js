@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Näytä seuraava viittaus",
     "ba.boundingBoxHighlight.viewPrevReference": "Näytä edellinen viittaus",
     "ba.popup.reply.comment": "Kommentti",
-    "ba.popup.reply.field": "Kirjoita kommentti",
     "ba.popup.reply.mentionLoading": "Ladataan käyttäjiä...",
     "ba.popup.reply.mentionSelector": "Mainitse yhteistyökumppani",
-    "ba.popups.cancel": "Peruuta",
     "ba.popups.drawing.addComment": "Lisää kommentti",
     "ba.popups.drawing.delete": "Poista",
     "ba.popups.drawing.redo": "Tee uudelleen",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Kumoa",
     "ba.popups.popupCursor.regionPrompt": "Kommentoi piirtämällä laatikko",
     "ba.popups.popupHighlight.promoter": "Korosta ja kommentoi",
-    "ba.popups.popupHighlight.restrictedPrompt": "Kommentit on rajoitettu yhteen sivuun",
-    "ba.popups.popupList.prompt": "Mainitse käyttäjä, jotta hän saa ilmoituksen",
-    "ba.popups.post": "Lähetä",
-    "ba.popups.replyField.placeholder": "Kirjoita kommentti..."
+    "ba.popups.popupHighlight.restrictedPrompt": "Kommentit on rajoitettu yhteen sivuun"
 };

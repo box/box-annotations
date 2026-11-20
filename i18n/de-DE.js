@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Nächste Referenz anzeigen",
     "ba.boundingBoxHighlight.viewPrevReference": "Vorherige Referenz anzeigen",
     "ba.popup.reply.comment": "Kommentar",
-    "ba.popup.reply.field": "Einen Kommentar eingeben",
     "ba.popup.reply.mentionLoading": "Benutzer werden geladen ...",
     "ba.popup.reply.mentionSelector": "Mitarbeiter erwähnen",
-    "ba.popups.cancel": "Abbrechen",
     "ba.popups.drawing.addComment": "Kommentar hinzufügen",
     "ba.popups.drawing.delete": "Löschen",
     "ba.popups.drawing.redo": "Wiederholen",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Rückgängig machen",
     "ba.popups.popupCursor.regionPrompt": "Zeichnen Sie ein Feld zum Kommentieren",
     "ba.popups.popupHighlight.promoter": "Markieren und kommentieren",
-    "ba.popups.popupHighlight.restrictedPrompt": "Kommentare sind auf eine Seite beschränkt",
-    "ba.popups.popupList.prompt": "Erwähnen Sie eine Person, um sie zu benachrichtigen.",
-    "ba.popups.post": "Posten",
-    "ba.popups.replyField.placeholder": "Kommentar eingeben ..."
+    "ba.popups.popupHighlight.restrictedPrompt": "Kommentare sind auf eine Seite beschränkt"
 };

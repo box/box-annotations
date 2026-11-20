@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "다음 참조 보기",
     "ba.boundingBoxHighlight.viewPrevReference": "이전 참조 보기",
     "ba.popup.reply.comment": "코멘트",
-    "ba.popup.reply.field": "코멘트 입력",
     "ba.popup.reply.mentionLoading": "사용자 로드 중...",
     "ba.popup.reply.mentionSelector": "공동 작업자 멘션하기",
-    "ba.popups.cancel": "취소",
     "ba.popups.drawing.addComment": "코멘트 추가",
     "ba.popups.drawing.delete": "삭제",
     "ba.popups.drawing.redo": "다시 실행",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "실행 취소",
     "ba.popups.popupCursor.regionPrompt": "코멘트를 입력할 상자 그리기",
     "ba.popups.popupHighlight.promoter": "강조 표시 및 코멘트",
-    "ba.popups.popupHighlight.restrictedPrompt": "단일 페이지로 제한된 코멘트",
-    "ba.popups.popupList.prompt": "다른 사용자에게 알리기 위해 멘션 달기",
-    "ba.popups.post": "게시",
-    "ba.popups.replyField.placeholder": "코멘트 입력..."
+    "ba.popups.popupHighlight.restrictedPrompt": "단일 페이지로 제한된 코멘트"
 };
