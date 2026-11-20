@@ -139,6 +139,7 @@ export interface TargetRegion {
 }
 
 export enum Type {
+    drawing = 'drawing',
     highlight = 'highlight',
     region = 'region',
 }

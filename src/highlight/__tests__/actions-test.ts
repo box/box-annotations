@@ -47,5 +47,15 @@ describe('highlight/actions', () => {
                 },
             });
         });
+
+        test('should include the highlighted text in the target when provided', async () => {
+            await createHighlightAction({ ...arg, text: 'selected text' })(dispatch, getState);
+
+            expect(createAnnotationAction).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    target: expect.objectContaining({ text: 'selected text' }),
+                }),
+            );
+        });
     });
 });

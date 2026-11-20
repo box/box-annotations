@@ -12,7 +12,7 @@ export type CreateArg = {
 };
 
 export const createHighlightAction = (arg: CreateArg) => (dispatch: AppThunkDispatch, getState: () => AppState) => {
-    const { location, message, shapes } = arg;
+    const { location, message, shapes, text } = arg;
     const state = getState();
     const newAnnotation = {
         description: {
@@ -28,6 +28,7 @@ export const createHighlightAction = (arg: CreateArg) => (dispatch: AppThunkDisp
                 value: location,
             },
             shapes,
+            ...(text !== undefined && { text }),
             type: 'highlight' as const,
         },
     };
