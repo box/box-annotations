@@ -50,6 +50,13 @@ describe('store/highlight/actions', () => {
             });
         });
 
+        test('should pass the selected text through when provided', () => {
+            expect(setSelectionAction({ ...arg, text: 'test' })).toEqual({
+                payload: { ...state.selection, text: 'test' },
+                type: 'SET_SELECTION',
+            });
+        });
+
         test('should return null payload when arg is null', () => {
             expect(setSelectionAction(null)).toEqual({
                 payload: null,

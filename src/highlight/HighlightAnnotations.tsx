@@ -66,7 +66,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
             return;
         }
 
-        const { containerRect, location, rects } = selection;
+        const { containerRect, location, rects, text } = selection;
 
         setStaged({
             location,
@@ -74,6 +74,7 @@ const HighlightAnnotations = (props: Props): JSX.Element => {
                 ...getShapeRelativeToContainer(rect, containerRect),
                 type: 'rect',
             })),
+            ...(text !== undefined && { text }),
         });
         setStatus(CreatorStatus.staged);
     }, [selection, setStaged, setStatus]);

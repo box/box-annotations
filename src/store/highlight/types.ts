@@ -12,4 +12,5 @@ export type SelectionItem = {
     location: number;
     popupRect?: Shape;
     rects: Array<Shape>;
+    text?: string;
 };
