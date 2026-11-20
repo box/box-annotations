@@ -259,6 +259,31 @@ describe('PopupV2', () => {
             expect(defaults.onSubmit).toHaveBeenCalledWith('markdown text');
         });
 
+        test('should show the card focus ring as a third tab stop after the editor and Post', () => {
+            render(<PopupV2 {...defaults} />);
+
+            const stop = screen.getByRole('group', { name: 'Comment' });
+            const card = stop.parentElement;
+
+            expect(stop).toHaveClass('ba-PopupAnnotation-focusStop');
+            expect(stop.compareDocumentPosition(screen.getByTestId('message-editor-v2'))).toBe(
+                Node.DOCUMENT_POSITION_PRECEDING,
+            );
+
+            jest.spyOn(stop, 'matches').mockImplementation(selector => selector === ':focus-visible');
+            act(() => {
+                stop.focus();
+            });
+
+            expect(card).toHaveClass('is-keyboard-focused');
+
+            act(() => {
+                stop.blur();
+            });
+
+            expect(card).not.toHaveClass('is-keyboard-focused');
+        });
+
         test('should set popupReplyV2 as resin component', () => {
             render(<PopupV2 {...defaults} />);
 
@@ -384,6 +409,13 @@ describe('PopupV2', () => {
 
         beforeEach(() => {
             mockSelectorValues({ annotation: mockAnnotation });
+        });
+
+        test('should not add the composer focus stop to an existing thread', async () => {
+            render(<PopupV2 {...defaults} />);
+            await flushPromises();
+
+            expect(screen.queryByRole('group', { name: 'Comment' })).toBeNull();
         });
 
         test('should render ThreadedAnnotationsV2 with FocusTrap and MentionContextProvider', async () => {
@@ -651,6 +683,29 @@ describe('PopupV2', () => {
 
         const portal = screen.getByRole('presentation').querySelector('[data-threaded-annotations-portal]');
         expect(portal).not.toBeNull();
+    });
+
+    test('should draw a focus ring on the comment card when the annotation target has keyboard focus', () => {
+        mockSelectorValues();
+        const portalEl = makePortalEl();
+        const reference = document.createElement('button');
+        document.body.appendChild(reference);
+        const matches = jest
+            .spyOn(reference, 'matches')
+            .mockImplementation(selector => selector === ':focus-visible');
+
+        render(<PopupV2 onSubmit={jest.fn()} popupPortalEl={portalEl} reference={reference} />);
+
+        const card = portalEl.querySelector('.ba-PopupAnnotation');
+        expect(card).toHaveClass('is-keyboard-focused');
+
+        matches.mockImplementation(() => false);
+        act(() => {
+            reference.dispatchEvent(new FocusEvent('blur'));
+        });
+
+        expect(card).not.toHaveClass('is-keyboard-focused');
+        document.body.removeChild(reference);
     });
 
     test('should render popup into popupPortalEl, not the render container', () => {
