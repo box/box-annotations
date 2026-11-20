@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "次の参照を表示",
     "ba.boundingBoxHighlight.viewPrevReference": "前の参照を表示",
     "ba.popup.reply.comment": "コメント",
-    "ba.popup.reply.field": "コメントを入力する",
     "ba.popup.reply.mentionLoading": "ユーザーを読み込み中…",
     "ba.popup.reply.mentionSelector": "コラボレータにメンションする",
-    "ba.popups.cancel": "キャンセル",
     "ba.popups.drawing.addComment": "コメントを追加",
     "ba.popups.drawing.delete": "削除",
     "ba.popups.drawing.redo": "やり直す",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "元に戻す",
     "ba.popups.popupCursor.regionPrompt": "四角形を描画してコメントします",
     "ba.popups.popupHighlight.promoter": "ハイライトとコメント",
-    "ba.popups.popupHighlight.restrictedPrompt": "コメントは1つのページに制限されています",
-    "ba.popups.popupList.prompt": "ユーザーにメンションして知らせます",
-    "ba.popups.post": "投稿",
-    "ba.popups.replyField.placeholder": "コメントを入力…"
+    "ba.popups.popupHighlight.restrictedPrompt": "コメントは1つのページに制限されています"
 };

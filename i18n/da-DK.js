@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Vis næste reference",
     "ba.boundingBoxHighlight.viewPrevReference": "Vis tidligere reference",
     "ba.popup.reply.comment": "Kommentar",
-    "ba.popup.reply.field": "Skriv en kommentar",
     "ba.popup.reply.mentionLoading": "Henter brugere ...",
     "ba.popup.reply.mentionSelector": "Omtal en samarbejdspartner",
-    "ba.popups.cancel": "Annuller",
     "ba.popups.drawing.addComment": "Tilføj kommentar",
     "ba.popups.drawing.delete": "Slet",
     "ba.popups.drawing.redo": "Annuller fortryd",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Fortryd",
     "ba.popups.popupCursor.regionPrompt": "Tegn et felt for at kommentere",
     "ba.popups.popupHighlight.promoter": "Fremhæv og kommenter",
-    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer er begrænset til enkelt side",
-    "ba.popups.popupList.prompt": "Omtal nogen for at give vedkommende besked",
-    "ba.popups.post": "Opslå",
-    "ba.popups.replyField.placeholder": "Skriv en kommentar ..."
+    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer er begrænset til enkelt side"
 };

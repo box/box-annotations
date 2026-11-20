@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Vis neste referanse",
     "ba.boundingBoxHighlight.viewPrevReference": "Vis forrige referanse",
     "ba.popup.reply.comment": "Kommentar",
-    "ba.popup.reply.field": "Skriv en kommentar",
     "ba.popup.reply.mentionLoading": "Laster brukere ...",
     "ba.popup.reply.mentionSelector": "Nevn en samarbeidspartner",
-    "ba.popups.cancel": "Avbryt",
     "ba.popups.drawing.addComment": "Legg til kommentar",
     "ba.popups.drawing.delete": "Slett",
     "ba.popups.drawing.redo": "Gjenta",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Angre",
     "ba.popups.popupCursor.regionPrompt": "Tegn en boks for å kommentere",
     "ba.popups.popupHighlight.promoter": "Merk og kommenter",
-    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer er begrenset til én side",
-    "ba.popups.popupList.prompt": "Nevn noen for å varsle dem",
-    "ba.popups.post": "Publiser",
-    "ba.popups.replyField.placeholder": "Skriv en kommentar …"
+    "ba.popups.popupHighlight.restrictedPrompt": "Kommentarer er begrenset til én side"
 };

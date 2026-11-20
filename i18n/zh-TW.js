@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "檢視下一個參考項目",
     "ba.boundingBoxHighlight.viewPrevReference": "檢視先前的參考項目",
     "ba.popup.reply.comment": "留言",
-    "ba.popup.reply.field": "鍵入留言",
     "ba.popup.reply.mentionLoading": "正在載入使用者...",
     "ba.popup.reply.mentionSelector": "提及共同作業者",
-    "ba.popups.cancel": "取消",
     "ba.popups.drawing.addComment": "新增留言",
     "ba.popups.drawing.delete": "刪除",
     "ba.popups.drawing.redo": "重做",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "復原",
     "ba.popups.popupCursor.regionPrompt": "繪圖一個方塊以留言",
     "ba.popups.popupHighlight.promoter": "醒目提示和留言",
-    "ba.popups.popupHighlight.restrictedPrompt": "留言限制在單一頁面",
-    "ba.popups.popupList.prompt": "提及某人以進行通知",
-    "ba.popups.post": "張貼",
-    "ba.popups.replyField.placeholder": "輸入留言..."
+    "ba.popups.popupHighlight.restrictedPrompt": "留言限制在單一頁面"
 };

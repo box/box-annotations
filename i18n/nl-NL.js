@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "Volgende referentie weergeven",
     "ba.boundingBoxHighlight.viewPrevReference": "Vorige referentie weergeven",
     "ba.popup.reply.comment": "Opmerking",
-    "ba.popup.reply.field": "Typ een opmerking",
     "ba.popup.reply.mentionLoading": "Gebruikers laden…",
     "ba.popup.reply.mentionSelector": "Medebewerker noemen",
-    "ba.popups.cancel": "Annuleren",
     "ba.popups.drawing.addComment": "Opmerking toevoegen",
     "ba.popups.drawing.delete": "Verwijderen",
     "ba.popups.drawing.redo": "Opnieuw uitvoeren",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "Ongedaan maken",
     "ba.popups.popupCursor.regionPrompt": "Teken een vak om een opmerking te plaatsen",
     "ba.popups.popupHighlight.promoter": "Markeringen en opmerkingen plaatsen",
-    "ba.popups.popupHighlight.restrictedPrompt": "Opmerkingen beperkt tot enkele pagina",
-    "ba.popups.popupList.prompt": "Noem iemand om die persoon een melding te sturen",
-    "ba.popups.post": "Plaatsen",
-    "ba.popups.replyField.placeholder": "Typ een opmerking…"
+    "ba.popups.popupHighlight.restrictedPrompt": "Opmerkingen beperkt tot enkele pagina"
 };

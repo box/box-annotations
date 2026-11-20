@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "পরবর্তী রেফারেন্স দেখুন",
     "ba.boundingBoxHighlight.viewPrevReference": "পূর্ববর্তী রেফারেন্স দেখুন",
     "ba.popup.reply.comment": "মন্তব্য",
-    "ba.popup.reply.field": "মন্তব্য টাইপ করুন",
     "ba.popup.reply.mentionLoading": "ব্যবহারকারীদের লোড করা হচ্ছে...",
     "ba.popup.reply.mentionSelector": "একজন কোলাবোরেটরকে উল্লেখ করুন",
-    "ba.popups.cancel": "বাতিল করুন",
     "ba.popups.drawing.addComment": "মন্তব্য যোগ করুন",
     "ba.popups.drawing.delete": "মুছুন",
     "ba.popups.drawing.redo": "আবার করুন",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "বাতিল করুন",
     "ba.popups.popupCursor.regionPrompt": "মন্তব্য করতে একটি বক্স আঁকুন",
     "ba.popups.popupHighlight.promoter": "হাইলাইট ও মন্তব্য করুন",
-    "ba.popups.popupHighlight.restrictedPrompt": "মন্তব্যগুলি কেবলমাত্র একটি পৃষ্ঠায় সীমাবদ্ধ রয়েছে",
-    "ba.popups.popupList.prompt": "তাদের জানাতে কেউ একজনকে উল্লেখ করুন",
-    "ba.popups.post": "পোস্ট করুন",
-    "ba.popups.replyField.placeholder": "একটি মন্তব্য টাইপ করুন..."
+    "ba.popups.popupHighlight.restrictedPrompt": "মন্তব্যগুলি কেবলমাত্র একটি পৃষ্ঠায় সীমাবদ্ধ রয়েছে"
 };

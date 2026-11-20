@@ -11,10 +11,8 @@ export default {
     "ba.boundingBoxHighlight.viewNextReference": "查看下一个引用",
     "ba.boundingBoxHighlight.viewPrevReference": "查看先前引用",
     "ba.popup.reply.comment": "评论",
-    "ba.popup.reply.field": "输入评论",
     "ba.popup.reply.mentionLoading": "正在加载用户...",
     "ba.popup.reply.mentionSelector": "提及协作者",
-    "ba.popups.cancel": "取消",
     "ba.popups.drawing.addComment": "添加评论",
     "ba.popups.drawing.delete": "删除",
     "ba.popups.drawing.redo": "重做",
@@ -22,8 +20,5 @@ export default {
     "ba.popups.drawing.undo": "撤销",
     "ba.popups.popupCursor.regionPrompt": "绘制一个框进行评论",
     "ba.popups.popupHighlight.promoter": "突出显示和评论",
-    "ba.popups.popupHighlight.restrictedPrompt": "评论仅限一页",
-    "ba.popups.popupList.prompt": "提及某人去通知他们",
-    "ba.popups.post": "发布",
-    "ba.popups.replyField.placeholder": "输入评论..."
+    "ba.popups.popupHighlight.restrictedPrompt": "评论仅限一页"
 };
