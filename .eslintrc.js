@@ -29,11 +29,5 @@ module.exports = {
                 'import/no-import-module-exports': 'off',
             },
         },
-        {
-            files: ['*.e2e.test.js'],
-            rules: {
-                'spaced-comment': 'off', // Allow JS files to use TS Triple-Slash Directives
-            },
-        },
     ],
 };
