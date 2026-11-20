@@ -16,8 +16,6 @@ concurrency:
     cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-    # No job runs Cypress, so skip its binary download in yarn install.
-    CYPRESS_INSTALL_BINARY: 0
     HUSKY_SKIP_HOOKS: 1
     NODE_OPTIONS: --openssl-legacy-provider
     TZ: America/Los_Angeles
